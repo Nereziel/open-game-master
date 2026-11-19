@@ -20,6 +20,7 @@
 import { asiPickAmount } from "@/lib/srd/race-asi";
 import { ALL_SKILLS, STANDARD_LANGUAGES } from "@/lib/content/mechanics";
 import { textKey } from "@/lib/language/text-logic";
+import type { Locale } from "@/lib/messages-logic";
 import { featChoice, withFeatChoice, type Ability, type AsiChoice } from "@/lib/schemas/sheet";
 import { skillLabel, SRD_SKILLS } from "@/lib/srd";
 import { companionImprovements, preferredSpellOrder } from "@/lib/srd/companion-build";
@@ -239,7 +240,7 @@ export type FillContext = {
   // picks' labels read in the reader's language.
   t: (key: string, vars?: Record<string, string | number>) => string;
   // The reader's locale, for the skills' official names.
-  locale?: "en" | "fr";
+  locale?: Locale;
   fields: BuilderDraftFields;
   derived: BuilderDerived;
   race: RaceOption | undefined;
@@ -268,7 +269,7 @@ export type FillRound = { patch: Partial<BuilderDraftFields>; filled: FilledPick
 
 // A skill's name in the reader's language (the official French words where
 // the dictionaries carry them), the English row standing in.
-const skillName = (id: string, locale: "en" | "fr" = "en") => skillLabel(id, locale);
+const skillName = (id: string, locale: Locale = "en") => skillLabel(id, locale);
 const has = (list: readonly string[], name: string) => list.some((entry) => textKey(entry) === textKey(name));
 
 // Fills a slot-indexed list's blanks (and the slots past its end) from the
