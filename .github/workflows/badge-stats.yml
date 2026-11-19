@@ -7,18 +7,11 @@ name: Badge stats
 # published, when this file lands on main (which creates the branch), and by
 # hand.
 
+# Fork safety: disabled. Does not schedule runs or write the badges branch.
 on:
-  schedule:
-    - cron: "17 */6 * * *"
-  release:
-    types: [published]
-  push:
-    branches: [main]
-    paths: [.github/workflows/badge-stats.yml, scripts/badge-stats.mjs]
   workflow_dispatch:
-
 permissions:
-  contents: write
+  contents: read
 
 concurrency:
   group: badge-stats
@@ -26,6 +19,7 @@ concurrency:
 
 jobs:
   count:
+    if: ${{ false }} # Intentionally disabled on this fork
     runs-on: ubuntu-latest
     steps:
       - uses: actions/checkout@v6
