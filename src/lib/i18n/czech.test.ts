@@ -3,8 +3,14 @@ import catalog from "./cs.json";
 import { installCatalog, translate, translatePlural } from "./translate";
 import { localeFromAcceptLanguage, localeOfServerLanguage, parseLocale, resolveLocale } from "./locale";
 import { localeTag, pluralCategory } from "../messages-logic";
+import { CS_NAMES_BY_TABLE } from "../content/names-cs";
+import { FR_NAMES_BY_TABLE } from "../content/names-fr";
+import { installCsTables } from "./cs-tables";
+import { contentName, classFeatureName, subclassName } from "../content/names";
+
 
 installCatalog("cs", catalog);
+installCsTables({ names: CS_NAMES_BY_TABLE });
 
 describe("Czech localization", () => {
   it("selects Czech in settings and HTTP requests", () => {
@@ -30,5 +36,17 @@ describe("Czech localization", () => {
     expect(translatePlural("cs", singular, plural, { count: 5 })).toBe("5 hráčů");
     expect(translatePlural("cs", singular, plural, { count: 0 })).toBe("0 hráčů");
     expect(pluralCategory("cs", 4)).toBe("few");
+  });
+  it("covers every reference SRD name without changing stored source IDs", () => {
+    for (const [category, names] of Object.entries(FR_NAMES_BY_TABLE)) {
+      const czech = CS_NAMES_BY_TABLE[category] ?? {};
+      const missing = Object.keys(names).filter((key) => !czech[key]?.trim());
+      expect(missing, "Missing Czech names in " + category).toEqual([]);
+    }
+    expect(contentName("spells", { slug: "fireball", name: "Fireball" }, "cs")).toBe("Ohnivá koule");
+    expect(contentName("monsters", { slug: "goblin", name: "Goblin" }, "cs")).toBe("Goblin");
+    expect(classFeatureName("fighter", "Second Wind", "cs")).toBe("Druhý dech");
+    expect(subclassName("cleric", "Life Domain", "cs")).toBe("Doména života");
+    expect(contentName("spells", "Unknown Spell", "cs")).toBe("Unknown Spell");
   });
 });
