@@ -34,3 +34,17 @@ human review of rules, technical text, terminology and grammatical context.
 
 The rulebook and long-form SRD text need a separate content localization,
 not just UI catalog coverage.
+
+## Verified coverage on this branch
+
+- **Interface:** 1,702 of 10,549 source UI message keys translated (16.1%).
+- **Context-specific variants:** 304 of 304 translated.
+- **Plural keys:** 239 of 239 translated with Czech one/few/many forms.
+- **Core SRD display names:** 1,591 of 1,591 keys translated (spells, monsters, items, classes, class features, equipment and other name tables).
+
+These figures measure catalog keys, not the percent of the user experience that
+appears in Czech. Some longer UI screens and the full SRD/rulebook descriptions
+remain in English, so **this is still a partial localization**. The main branch
+does not gain these changes until the pull request is merged. Changes should be
+tested with `npm run lint`, `npm test` and `npm run build` before merging.
+
