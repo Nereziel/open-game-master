@@ -2213,6 +2213,526 @@
       "zjišťování {topic} ({count} den)",
       "zjišťování {topic} ({count} dny)",
       "zjišťování {topic} ({count} dní)"
+    ],
+    "{names} acts first: wait for its turn, then take yours.\u0000{names} act first: wait for their turns, then take yours.": [
+      "{names} jedná jako první: počkej na jeho tah a potom hraj.",
+      "{names} jednají jako první: počkej na jejich tahy a potom hraj.",
+      "{names} jednají jako první: počkej na jejich tahy a potom hraj."
+    ],
+    "Your account is signed out everywhere and erased after {count} day, together with the campaigns you created, your characters and your pictures. Signing in before then lets you keep it.\u0000Your account is signed out everywhere and erased after {count} days, together with the campaigns you created, your characters and your pictures. Signing in before then lets you keep it.": [
+      "Tvůj účet bude odhlášen všude a za {count} den smazán včetně kampaní, postav a obrázků. Pokud se přihlásíš dříve, můžeš si ho ponechat.",
+      "Tvůj účet bude odhlášen všude a za {count} dny smazán včetně kampaní, postav a obrázků. Pokud se přihlásíš dříve, můžeš si ho ponechat.",
+      "Tvůj účet bude odhlášen všude a za {count} dní smazán včetně kampaní, postav a obrázků. Pokud se přihlásíš dříve, můžeš si ho ponechat."
+    ],
+    "Party: {count} pregen offered to players who join tables you run ({names}). One player each; tick or untick them in the workshop's Party panel.\u0000Party: {count} pregens offered to players who join tables you run ({names}). One player each; tick or untick them in the workshop's Party panel.": [
+      "Družina: hráčům je nabídnuta {count} předpřipravená postava ({names}). Každý hráč si vezme jednu; výběr můžeš změnit v dílně v části Družina.",
+      "Družina: hráčům jsou nabídnuty {count} předpřipravené postavy ({names}). Každý hráč si vezme jednu; výběr můžeš změnit v dílně v části Družina.",
+      "Družina: hráčům je nabídnuto {count} předpřipravených postav ({names}). Každý hráč si vezme jednu; výběr můžeš změnit v dílně v části Družina."
+    ],
+    "The cantrip on the list is never taken; take it off.\u0000The {count} cantrips on the list are never taken; take them off.": [
+      "Trik na seznamu nebude nikdy použit; odeber ho.",
+      "Triky na seznamu nebudou nikdy použity; odeber je ({count}).",
+      "Triky na seznamu nebudou nikdy použity; odeber je ({count})."
+    ],
+    "Drafted {count} pregen at level {level}. Look them over, edit or take off any you do not want, and tick Offer to players on the ones you keep.\u0000Drafted {count} pregens at level {level}. Look them over, edit or take off any you do not want, and tick Offer to players on the ones you keep.": [
+      "Připravena {count} postava na úrovni {level}. Zkontroluj ji, uprav nebo odeber a u ponechané zvol Nabídnout hráčům.",
+      "Připraveny {count} postavy na úrovni {level}. Zkontroluj je, uprav nebo odeber a u ponechaných zvol Nabídnout hráčům.",
+      "Připraveno {count} postav na úrovni {level}. Zkontroluj je, uprav nebo odeber a u ponechaných zvol Nabídnout hráčům."
+    ],
+    "{count} picture is for something the pack no longer names ({list}). They are left out of the export.\u0000{count} pictures are for something the pack no longer names ({list}). They are left out of the export.": [
+      "{count} obrázek odkazuje na chybějící obsah balíčku ({list}), proto nebude exportován.",
+      "{count} obrázky odkazují na chybějící obsah balíčku ({list}), proto nebudou exportovány.",
+      "{count} obrázků odkazuje na chybějící obsah balíčku ({list}), proto nebudou exportovány."
+    ],
+    "{count} entry stays in the workshop; Check & publish lists them.\u0000{count} entries stay in the workshop; Check & publish lists them.": [
+      "{count} položka zůstává v dílně; zobrazuje se v Kontrola a publikování.",
+      "{count} položky zůstávají v dílně; zobrazují se v Kontrola a publikování.",
+      "{count} položek zůstává v dílně; zobrazují se v Kontrola a publikování."
+    ],
+    "One chapter draws on this workshop: {list}. Its cast, places, maps and fights show in their pickers.\u0000{count} chapters draw on this workshop: {list}. Its cast, places, maps and fights show in their pickers.": [
+      "Tato dílna je použita v jedné kapitole: {list}. Postavy, místa, mapy a boje jsou k dispozici ve výběru.",
+      "Tato dílna je použita v {count} kapitolách: {list}. Postavy, místa, mapy a boje jsou k dispozici ve výběru.",
+      "Tato dílna je použita v {count} kapitolách: {list}. Postavy, místa, mapy a boje jsou k dispozici ve výběru."
+    ],
+    "{name} is placed in the Region and moves with its pin.\u0000{count} places are placed in the Region and move with their pins.": [
+      "{name} je umístěn v regionu a pohybuje se se značkou.",
+      "{count} místa jsou umístěna v regionu a pohybují se se značkami.",
+      "{count} míst je umístěno v regionu a pohybuje se se značkami."
+    ],
+    "Cast the other one\u0000Cast the other {count}": [
+      "Seslat druhé",
+      "Seslat zbývající {count}",
+      "Seslat zbývajících {count}"
+    ],
+    "{count} line has no known weight and is not counted, so the load is at least this.\u0000{count} lines have no known weight and are not counted, so the load is at least this.": [
+      "{count} řádek nemá známou hmotnost a nepočítá se, takže zatížení může být vyšší.",
+      "{count} řádky nemají známou hmotnost a nepočítají se, takže zatížení může být vyšší.",
+      "{count} řádků nemá známou hmotnost a nepočítá se, takže zatížení může být vyšší."
+    ],
+    "Pick {count} more {label} you know how to use (tool proficiency).\u0000Pick {count} more {label}s you know how to use (tool proficiency).": [
+      "Vyber ještě {count} nástroj {label}, se kterým máš zběhlost.",
+      "Vyber ještě {count} nástroje {label}, se kterými máš zběhlost.",
+      "Vyber ještě {count} nástrojů {label}, se kterými máš zběhlost."
+    ],
+    "Pick {count} more language your hero can speak.\u0000Pick {count} more languages your hero can speak.": [
+      "Vyber ještě {count} jazyk, kterým hrdina mluví.",
+      "Vyber ještě {count} jazyky, kterými hrdina mluví.",
+      "Vyber ještě {count} jazyků, kterými hrdina mluví."
+    ],
+    "Pick {count} {more}simple spell your {species} can cast at will (cantrip).\u0000Pick {count} {more}simple spells your {species} can cast at will (cantrips).": [
+      "Vyber ještě {count} {more}trik, který může {species} sesílat dle libosti.",
+      "Vyber ještě {count} {more}triky, které může {species} sesílat dle libosti.",
+      "Vyber ještě {count} {more}triků, které může {species} sesílat dle libosti."
+    ],
+    "Your race and background both give the same skill; pick another skill in its place.\u0000Your race and background both give the same skill; pick {count} other skills in its place.": [
+      "Druh a minulost poskytují stejnou dovednost. Vyber místo ní jinou.",
+      "Druh a minulost poskytují stejnou dovednost. Vyber místo ní {count} jiné dovednosti.",
+      "Druh a minulost poskytují stejnou dovednost. Vyber místo ní {count} jiných dovedností."
+    ],
+    "Pick {count} more skill your training taught you (class skills).\u0000Pick {count} more skills your training taught you (class skills).": [
+      "Vyber ještě {count} dovednost získanou výcvikem povolání.",
+      "Vyber ještě {count} dovednosti získané výcvikem povolání.",
+      "Vyber ještě {count} dovedností získaných výcvikem povolání."
+    ],
+    "Pick how you like to fight (fighting style).\u0000Pick how you like to fight ({count} fighting styles).": [
+      "Vyber svůj bojový styl.",
+      "Vyber {count} bojové styly.",
+      "Vyber {count} bojových stylů."
+    ],
+    "Pick {count} more skill you are especially good at (expertise).\u0000Pick {count} more skills you are especially good at (expertise).": [
+      "Vyber ještě {count} dovednost, ve které vynikáš (odbornost).",
+      "Vyber ještě {count} dovednosti, ve kterých vynikáš (odbornost).",
+      "Vyber ještě {count} dovedností, ve kterých vynikáš (odbornost)."
+    ],
+    "Pick the skill your {klass} levels taught you (skill proficiency).\u0000Pick the {count} skills your {klass} levels taught you (skill proficiency).": [
+      "Vyber dovednost, kterou ti přinesly úrovně povolání {klass} (zběhlost).",
+      "Vyber {count} dovednosti, které ti přinesly úrovně povolání {klass} (zběhlost).",
+      "Vyber {count} dovedností, které ti přinesly úrovně povolání {klass} (zběhlost)."
+    ],
+    "Pick {count} more simple spell you can cast at will (cantrip).\u0000Pick {count} more simple spells you can cast at will (cantrips).": [
+      "Vyber ještě {count} trik k libovolnému sesílání.",
+      "Vyber ještě {count} triky k libovolnému sesílání.",
+      "Vyber ještě {count} triků k libovolnému sesílání."
+    ],
+    "Remove {count} cantrip: a {klass} knows {known} at this level.\u0000Remove {count} cantrips: a {klass} knows {known} at this level.": [
+      "Odeber {count} trik: {klass} na této úrovni zná jen {known}.",
+      "Odeber {count} triky: {klass} na této úrovni zná jen {known}.",
+      "Odeber {count} triků: {klass} na této úrovni zná jen {known}."
+    ],
+    "Write {count} more spell in your spellbook.\u0000Write {count} more spells in your spellbook.": [
+      "Zapiš ještě {count} kouzlo do knihy kouzel.",
+      "Zapiš ještě {count} kouzla do knihy kouzel.",
+      "Zapiš ještě {count} kouzel do knihy kouzel."
+    ],
+    "Remove {count} spell from your spellbook: a level {level} wizard starts with {known}.\u0000Remove {count} spells from your spellbook: a level {level} wizard starts with {known}.": [
+      "Odeber {count} kouzlo z knihy: kouzelník na úrovni {level} začíná s {known}.",
+      "Odeber {count} kouzla z knihy: kouzelník na úrovni {level} začíná s {known}.",
+      "Odeber {count} kouzel z knihy: kouzelník na úrovni {level} začíná s {known}."
+    ],
+    "Prepare {count} more spell from your spellbook.\u0000Prepare {count} more spells from your spellbook.": [
+      "Připrav ještě {count} kouzlo z knihy kouzel.",
+      "Připrav ještě {count} kouzla z knihy kouzel.",
+      "Připrav ještě {count} kouzel z knihy kouzel."
+    ],
+    "Pick {count} more spell ({list}).\u0000Pick {count} more spells ({list}).": [
+      "Vyber ještě {count} kouzlo ({list}).",
+      "Vyber ještě {count} kouzla ({list}).",
+      "Vyber ještě {count} kouzel ({list})."
+    ],
+    "Remove {count} spell: the limit is {limit} {list}.\u0000Remove {count} spells: the limit is {limit} {list}.": [
+      "Odeber {count} kouzlo: limit je {limit} {list}.",
+      "Odeber {count} kouzla: limit je {limit} {list}.",
+      "Odeber {count} kouzel: limit je {limit} {list}."
+    ],
+    "Point buy is {count} point over its {budget}. Lower a score first.\u0000Point buy is {count} points over its {budget}. Lower a score first.": [
+      "Bodový nákup přesahuje rozpočet {budget} o {count} bod. Nejprve sniž hodnotu.",
+      "Bodový nákup přesahuje rozpočet {budget} o {count} body. Nejprve sniž hodnotu.",
+      "Bodový nákup přesahuje rozpočet {budget} o {count} bodů. Nejprve sniž hodnotu."
+    ],
+    "the improvement\u0000the improvements": [
+      "zvýšení",
+      "zvýšení",
+      "zvýšení"
+    ],
+    "Bonus language\u0000Bonus languages": [
+      "Bonusový jazyk",
+      "Bonusové jazyky",
+      "Bonusových jazyků"
+    ],
+    "Tool proficiency: {count} {label}\u0000Tool proficiency: {count} {label}s": [
+      "Zběhlost s nástroji: {count} {label}",
+      "Zběhlost s nástroji: {count} {label}",
+      "Zběhlost s nástroji: {count} {label}"
+    ],
+    "{name}, {level} level\u0000{name}, {level} levels": [
+      "{name}, {level} úroveň",
+      "{name}, {level} úrovně",
+      "{name}, {level} úrovní"
+    ],
+    "One pick is still to choose. Fix goes straight to each one.\u0000{count} picks are still to choose. Fix goes straight to each one.": [
+      "Zbývá jedna volba. Opravit tě přenese přímo k ní.",
+      "Zbývají {count} volby. Opravit tě přenese přímo k nim.",
+      "Zbývá {count} voleb. Opravit tě přenese přímo k nim."
+    ],
+    "You already know {count} cantrip. Remove one to choose {name}.\u0000You already know {count} cantrips. Remove one to choose {name}.": [
+      "Už znáš {count} trik. Pro výběr {name} jeden odeber.",
+      "Už znáš {count} triky. Pro výběr {name} jeden odeber.",
+      "Už znáš {count} triků. Pro výběr {name} jeden odeber."
+    ],
+    "One choice is still to make below. Choose for me fills only the empty ones.\u0000{count} choices are still to make below. Choose for me fills only the empty ones.": [
+      "Níže zbývá jedna volba. Vybrat za mě doplní jen prázdné volby.",
+      "Níže zbývají {count} volby. Vybrat za mě doplní jen prázdné volby.",
+      "Níže zbývá {count} voleb. Vybrat za mě doplní jen prázdné volby."
+    ],
+    "Edit the whole build to choose it\u0000Edit the whole build to choose them": [
+      "Upravit celou postavu a vybrat",
+      "Upravit celou postavu a vybrat",
+      "Upravit celou postavu a vybrat"
+    ],
+    "{count} Flurry of Blows strike left\u0000{count} Flurry of Blows strikes left": [
+      "Zbývá {count} úder Přívalu ran",
+      "Zbývají {count} údery Přívalu ran",
+      "Zbývá {count} úderů Přívalu ran"
+    ],
+    "The hit becomes a miss, for {count} level of exhaustion.\u0000The hit becomes a miss, for {count} levels of exhaustion.": [
+      "Zásah se mění na minutí za {count} stupeň vyčerpání.",
+      "Zásah se mění na minutí za {count} stupně vyčerpání.",
+      "Zásah se mění na minutí za {count} stupňů vyčerpání."
+    ],
+    " for {count} ki\u0000 for {count} ki": [
+      " za {count} bod ki",
+      " za {count} body ki",
+      " za {count} bodů ki"
+    ],
+    "{name} has already made all {count} of their attack this turn. They cannot attack again; move, take a bonus action, or end their turn.\u0000{name} has already made all {count} of their attacks this turn. They cannot attack again; move, take a bonus action, or end their turn.": [
+      "{name} už provedl(a) svůj {count} útok v tomto tahu. Další útok není možný; můžeš se pohnout, použít bonusovou akci nebo ukončit tah.",
+      "{name} už provedl(a) {count} útoky v tomto tahu. Další útok není možný; můžeš se pohnout, použít bonusovou akci nebo ukončit tah.",
+      "{name} už provedl(a) všech {count} útoků v tomto tahu. Další útok není možný; můžeš se pohnout, použít bonusovou akci nebo ukončit tah."
+    ],
+    "Extra Attack: {count} swings on this action.\u0000Extra Attack: {count} swings on this action.": [
+      "Další útok: {count} úder při této akci.",
+      "Další útok: {count} údery při této akci.",
+      "Další útok: {count} úderů při této akci."
+    ],
+    "Lasts {count} round.\u0000Lasts {count} rounds.": [
+      "Trvá {count} kolo.",
+      "Trvá {count} kola.",
+      "Trvá {count} kol."
+    ],
+    "{names} takes a seat first while it matters\u0000{names} take a seat first while they matter": [
+      "{names} dostává místo jako první",
+      "{names} dostávají místo jako první",
+      "{names} dostávají místo jako první"
+    ],
+    "; {names} waits in More until then\u0000; {names} wait in More until then": [
+      "; {names} zatím čeká mezi dalšími",
+      "; {names} zatím čekají mezi dalšími",
+      "; {names} zatím čekají mezi dalšími"
+    ],
+    "One card you chose is not in this hand now (no longer prepared or carried), so its seat is free.\u0000{count} cards you chose are not in this hand now (no longer prepared or carried), so their seats are free.": [
+      "Jedna vybraná karta už v ruce není (není připravená nebo nesená), takže její místo je volné.",
+      "{count} vybrané karty už v ruce nejsou (nejsou připravené nebo nesené), takže jejich místa jsou volná.",
+      "{count} vybraných karet už v ruce není (nejsou připravené nebo nesené), takže jejich místa jsou volná."
+    ],
+    "{urgent} took a seat for now; {displaced} waits here until it is no longer needed. Your arrangement is kept.\u0000{urgent} took a seat for now; {displaced} wait here until they are no longer needed. Your arrangement is kept.": [
+      "{urgent} nyní zabírá místo; {displaced} čeká zde, než bude opět potřeba. Rozložení zůstává uloženo.",
+      "{urgent} nyní zabírá místo; {displaced} čekají zde, než budou opět potřeba. Rozložení zůstává uloženo.",
+      "{urgent} nyní zabírá místo; {displaced} čekají zde, než budou opět potřeba. Rozložení zůstává uloženo."
+    ],
+    "{count} more card\u0000{count} more cards": [
+      "{count} další karta",
+      "{count} další karty",
+      "{count} dalších karet"
+    ],
+    "Casting: {count} rounds left.\u0000Casting: {count} rounds left.": [
+      "Sesílání: zbývá {count} kolo.",
+      "Sesílání: zbývají {count} kola.",
+      "Sesílání: zbývá {count} kol."
+    ],
+    "Revert this turn ({count})\u0000Revert this turn ({count})": [
+      "Vrátit tento tah ({count})",
+      "Vrátit tento tah ({count})",
+      "Vrátit tento tah ({count})"
+    ],
+    " ({count} change)\u0000 ({count} changes)": [
+      " ({count} změna)",
+      " ({count} změny)",
+      " ({count} změn)"
+    ],
+    "{name} spends {count} use of {resource}\u0000{name} spends {count} uses of {resource}": [
+      "{name} spotřebuje {count} použití {resource}",
+      "{name} spotřebuje {count} použití {resource}",
+      "{name} spotřebuje {count} použití {resource}"
+    ],
+    "{outcome} after 1 round ({time})\u0000{outcome} after {count} rounds ({time})": [
+      "{outcome} po 1 kole ({time})",
+      "{outcome} po {count} kolech ({time})",
+      "{outcome} po {count} kolech ({time})"
+    ],
+    "Waiting for {names} to choose a hero.\u0000Waiting for {names} to choose a hero.": [
+      "Čeká se, až si {names} vybere hrdinu.",
+      "Čeká se, až si {names} vyberou hrdinu.",
+      "Čeká se, až si {names} vyberou hrdinu."
+    ],
+    "Waiting for {names} to ready up.\u0000Waiting for {names} to ready up.": [
+      "Čeká se na potvrzení připravenosti: {names}.",
+      "Čeká se na potvrzení připravenosti: {names}.",
+      "Čeká se na potvrzení připravenosti: {names}."
+    ],
+    "{name}'s Homebrew came with the file and is on your shelf now ({count} entry).\u0000{name}'s Homebrew came with the file and is on your shelf now ({count} entries).": [
+      "Vlastní obsah {name} byl importován ze souboru do knihovny ({count} položka).",
+      "Vlastní obsah {name} byl importován ze souboru do knihovny ({count} položky).",
+      "Vlastní obsah {name} byl importován ze souboru do knihovny ({count} položek)."
+    ],
+    "hero at level\u0000heroes at level": [
+      "hrdina na úrovni",
+      "hrdinové na úrovni",
+      "hrdinů na úrovni"
+    ],
+    "{list} The rest of the workshop came in without it.\u0000{list} The rest of the workshop came in without them.": [
+      "{list} Zbytek dílny byl importován bez této položky.",
+      "{list} Zbytek dílny byl importován bez těchto položek.",
+      "{list} Zbytek dílny byl importován bez těchto položek."
+    ],
+    "{count} swing a turn · Dex {mod}\u0000{count} swings a turn · Dex {mod}": [
+      "{count} útok za tah · OBR {mod}",
+      "{count} útoky za tah · OBR {mod}",
+      "{count} útoků za tah · OBR {mod}"
+    ],
+    "{count} link from {from} to {to} is dropped while those stay behind.\u0000{count} links from {from} to {to} are dropped while those stay behind.": [
+      "{count} odkaz z {from} do {to} bude zrušen, zatímco místa zůstanou.",
+      "{count} odkazy z {from} do {to} budou zrušeny, zatímco místa zůstanou.",
+      "{count} odkazů z {from} do {to} bude zrušeno, zatímco místa zůstanou."
+    ],
+    "{count} hero at level {level}, the party this workshop is built for: {classes}. Built by the rules when the test starts.\u0000{count} heroes at level {level}, the party this workshop is built for: {classes}. Built by the rules when the test starts.": [
+      "{count} hrdina na úrovni {level}; družina, pro kterou je dílna určena: {classes}. Vytvoří se podle pravidel při spuštění testu.",
+      "{count} hrdinové na úrovni {level}; družina, pro kterou je dílna určena: {classes}. Vytvoří se podle pravidel při spuštění testu.",
+      "{count} hrdinů na úrovni {level}; družina, pro kterou je dílna určena: {classes}. Vytvoří se podle pravidel při spuštění testu."
+    ],
+    "1 campaign could not paint on its old picture backend and now uses the new default: {list}{more}.\u0000{count} campaigns could not paint on their old picture backend and now use the new default: {list}{more}.": [
+      "Jedna kampaň nemohla vytvářet obrázky ve starém backendu a nyní používá nový: {list}{more}.",
+      "{count} kampaně nemohly vytvářet obrázky ve starém backendu a nyní používají nový: {list}{more}.",
+      "{count} kampaní nemohlo vytvářet obrázky ve starém backendu a nyní používá nový: {list}{more}."
+    ],
+    "1 model the backend lists cannot run the {role}\u0000{count} models the backend lists cannot run the {role}": [
+      "Jeden model nabízený backendem nedokáže plnit roli {role}",
+      "{count} modely nabízené backendem nedokážou plnit roli {role}",
+      "{count} modelů nabízených backendem nedokáže plnit roli {role}"
+    ],
+    " and is left off the list. \u0000 and are left off the list. ": [
+      " a proto není v seznamu. ",
+      " a proto nejsou v seznamu. ",
+      " a proto nejsou v seznamu. "
+    ],
+    "1 more model the server lists does not look like {kind}. \u0000{count} more models the server lists do not look like {kind}. ": [
+      "Jeden další model serveru neodpovídá typu {kind}. ",
+      "{count} další modely serveru neodpovídají typu {kind}. ",
+      "{count} dalších modelů serveru neodpovídá typu {kind}. "
+    ],
+    "1 entry in the catalog could not be read and is not shown.\u0000{count} entries in the catalog could not be read and are not shown.": [
+      "Jedna položka katalogu se nedá načíst a není zobrazena.",
+      "{count} položky katalogu se nedají načíst a nejsou zobrazeny.",
+      "{count} položek katalogu se nedá načíst a nejsou zobrazeny."
+    ],
+    "1 model that cannot paint well here is left off the list. \u0000{count} models that cannot paint well here are left off the list. ": [
+      "Jeden model nevhodný pro tvorbu obrázků zde není v seznamu. ",
+      "{count} modely nevhodné pro tvorbu obrázků zde nejsou v seznamu. ",
+      "{count} modelů nevhodných pro tvorbu obrázků zde není v seznamu. "
+    ],
+    "1 model cannot paint well here\u0000{count} models cannot paint well here": [
+      "Jeden model zde nedokáže kvalitně vytvářet obrázky",
+      "{count} modely zde nedokážou kvalitně vytvářet obrázky",
+      "{count} modelů zde nedokáže kvalitně vytvářet obrázky"
+    ],
+    " Moved {count} campaign off a backend that could not paint: {list}{maps}.\u0000 Moved {count} campaigns off a backend that could not paint: {list}{maps}.": [
+      " Přesunuta {count} kampaň z backendu, který neuměl vytvářet obrázky: {list}{maps}.",
+      " Přesunuty {count} kampaně z backendu, který neuměl vytvářet obrázky: {list}{maps}.",
+      " Přesunuto {count} kampaní z backendu, který neuměl vytvářet obrázky: {list}{maps}."
+    ],
+    " Continue, and the campaign on a backend that cannot paint right now ({list}) moves to it too.\u0000 Continue, and the {count} campaigns on a backend that cannot paint right now ({list}) move to it too.": [
+      " Pokračuj a kampaň s nefunkčním obrázkovým backendem ({list}) se na něj také přesune.",
+      " Pokračuj a {count} kampaně s nefunkčním obrázkovým backendem ({list}) se na něj také přesunou.",
+      " Pokračuj a {count} kampaní s nefunkčním obrázkovým backendem ({list}) se na něj také přesune."
+    ],
+    " {count} campaign is on a backend that cannot paint right now ({list}); it moves to the agent too.\u0000 {count} campaigns are on a backend that cannot paint right now ({list}); they move to the agent too.": [
+      " {count} kampaň má nefunkční obrázkový backend ({list}); přesune se také na agenta.",
+      " {count} kampaně mají nefunkční obrázkový backend ({list}); přesunou se také na agenta.",
+      " {count} kampaní má nefunkční obrázkový backend ({list}); přesune se také na agenta."
+    ],
+    "1 campaign keeps its own working backend ({list}); a lead can switch in the campaign's Settings tab, under Story AI.\u0000{count} campaigns keep their own working backends ({list}); a lead can switch in the campaign's Settings tab, under Story AI.": [
+      "Jedna kampaň si ponechává vlastní funkční backend ({list}); vůdce ho může změnit v Nastavení kampaně v části AI příběhu.",
+      "{count} kampaně si ponechávají vlastní funkční backendy ({list}); vůdce je může změnit v Nastavení kampaně v části AI příběhu.",
+      "{count} kampaní si ponechává vlastní funkční backendy ({list}); vůdce je může změnit v Nastavení kampaně v části AI příběhu."
+    ],
+    "{over} over the limit: shorten it to send.\u0000{over} over the limit: shorten it to send.": [
+      "Překročeno o {over}: pro odeslání zkrať text.",
+      "Překročeno o {over}: pro odeslání zkrať text.",
+      "Překročeno o {over}: pro odeslání zkrať text."
+    ],
+    "{names} is now standing in sea or on a peak. The marker stays where you put it; move it with Move a place if that was not the idea.\u0000{names} are now standing in sea or on a peak. The marker stays where you put it; move it with Move a place if that was not the idea.": [
+      "{names} teď stojí v moři nebo na vrcholu hory. Značka zůstává na místě; pokud to nebyl záměr, použij Přesunout místo.",
+      "{names} teď stojí v moři nebo na vrcholu hory. Značka zůstává na místě; pokud to nebyl záměr, použij Přesunout místo.",
+      "{names} teď stojí v moři nebo na vrcholu hory. Značka zůstává na místě; pokud to nebyl záměr, použij Přesunout místo."
+    ],
+    "Gives back {count} Ability Score Improvement this level has not earned.\u0000Gives back {count} Ability Score Improvements this level has not earned.": [
+      "Vrací {count} zvýšení vlastností, které tato úroveň ještě nezískala.",
+      "Vrací {count} zvýšení vlastností, která tato úroveň ještě nezískala.",
+      "Vrací {count} zvýšení vlastností, která tato úroveň ještě nezískala."
+    ],
+    "Gives back {count} Ability Score Improvement this level has not earned, with {feats}.\u0000Gives back {count} Ability Score Improvements this level has not earned, with {feats}.": [
+      "Vrací {count} zvýšení vlastností, které tato úroveň ještě nezískala, včetně {feats}.",
+      "Vrací {count} zvýšení vlastností, která tato úroveň ještě nezískala, včetně {feats}.",
+      "Vrací {count} zvýšení vlastností, která tato úroveň ještě nezískala, včetně {feats}."
+    ],
+    "Gives back {count} spell this level cannot hold: {spells}.\u0000Gives back {count} spells this level cannot hold: {spells}.": [
+      "Vrací {count} kouzlo, které tato úroveň nemůže mít: {spells}.",
+      "Vrací {count} kouzla, která tato úroveň nemůže mít: {spells}.",
+      "Vrací {count} kouzel, která tato úroveň nemůže mít: {spells}."
+    ],
+    "Table menu ({n} narration waiting)\u0000Table menu ({n} narrations waiting)": [
+      "Nabídka hry ({n} vyprávění čeká)",
+      "Nabídka hry ({n} vyprávění čekají)",
+      "Nabídka hry ({n} vyprávění čeká)"
+    ],
+    "{names} comes from another setting; this table plays {setting}.\u0000{names} come from another setting; this table plays {setting}.": [
+      "{names} pochází z jiného prostředí; tato hra používá {setting}.",
+      "{names} pocházejí z jiného prostředí; tato hra používá {setting}.",
+      "{names} pocházejí z jiného prostředí; tato hra používá {setting}."
+    ],
+    "({count} rd)\u0000({count} rd)": [
+      "({count} kolo)",
+      "({count} kola)",
+      "({count} kol)"
+    ],
+    "A restock refills this shelf every {count} day; what the party sold the keeper stays.\u0000A restock refills this shelf every {count} days; what the party sold the keeper stays.": [
+      "Doplnění skladu probíhá každý {count} den; předměty prodané družinou obchodníkovi zůstanou.",
+      "Doplnění skladu probíhá každé {count} dny; předměty prodané družinou obchodníkovi zůstanou.",
+      "Doplnění skladu probíhá každých {count} dní; předměty prodané družinou obchodníkovi zůstanou."
+    ],
+    "It restocks from the content pack every {count} day until you save a shelf here.\u0000It restocks from the content pack every {count} days until you save a shelf here.": [
+      "Dokud zde neuložíš sklad, doplňuje se z balíčku obsahu každý {count} den.",
+      "Dokud zde neuložíš sklad, doplňuje se z balíčku obsahu každé {count} dny.",
+      "Dokud zde neuložíš sklad, doplňuje se z balíčku obsahu každých {count} dní."
+    ],
+    "{count} creature, {verdict} ({xp} XP against a {ceiling} ceiling)\u0000{count} creatures, {verdict} ({xp} XP against a {ceiling} ceiling)": [
+      "{count} tvor, {verdict} ({xp} ZK z limitu {ceiling})",
+      "{count} tvorové, {verdict} ({xp} ZK z limitu {ceiling})",
+      "{count} tvorů, {verdict} ({xp} ZK z limitu {ceiling})"
+    ],
+    "for {count} character at level {levels}\u0000for {count} characters at level {levels}": [
+      "pro {count} postavu na úrovni {levels}",
+      "pro {count} postavy na úrovni {levels}",
+      "pro {count} postav na úrovni {levels}"
+    ],
+    "{who} can still make you roll it again with Chronal Shift.\u0000{who} can still make you roll it again with Chronal Shift.": [
+      "{who} tě stále může nechat hodit znovu pomocí Chronálního posunu.",
+      "{who} tě stále může nechat hodit znovu pomocí Chronálního posunu.",
+      "{who} tě stále může nechat hodit znovu pomocí Chronálního posunu."
+    ],
+    "{who} can still help with this roll.\u0000{who} can still help with this roll.": [
+      "{who} ti s tímto hodem stále může pomoci.",
+      "{who} ti s tímto hodem stále může pomoci.",
+      "{who} ti s tímto hodem stále může pomoci."
+    ],
+    "that cannot paint well here is left off the list\u0000that cannot paint well here are left off the list": [
+      "který zde neumí dobře vytvářet obrázky, není v seznamu",
+      "které zde neumějí dobře vytvářet obrázky, nejsou v seznamu",
+      "které zde neumějí dobře vytvářet obrázky, nejsou v seznamu"
+    ],
+    "A stored pick is no longer on offer: {named}.\u0000Stored picks are no longer on offer: {named}.": [
+      "Uložená možnost už není dostupná: {named}.",
+      "Uložené možnosti už nejsou dostupné: {named}.",
+      "Uložené možnosti už nejsou dostupné: {named}."
+    ],
+    "Changing the {because} set aside {named}: it no longer fits.\u0000Changing the {because} set aside {named}: they no longer fit.": [
+      "Změna {because} vyřadila {named}, protože už nevyhovuje.",
+      "Změna {because} vyřadila {named}, protože už nevyhovují.",
+      "Změna {because} vyřadila {named}, protože už nevyhovují."
+    ],
+    "This background adds {count} more language to your bonus languages, picked below{wait}.\u0000This background adds {count} more languages to your bonus languages, picked below{wait}.": [
+      "Tato minulost přidává {count} bonusový jazyk, který vybereš níže{wait}.",
+      "Tato minulost přidává {count} bonusové jazyky, které vybereš níže{wait}.",
+      "Tato minulost přidává {count} bonusových jazyků, které vybereš níže{wait}."
+    ],
+    "These are your base scores, the same at every level. Your level has earned {count} ability score improvement on top of them; pick those in the section below, and each Final here counts them.\u0000These are your base scores, the same at every level. Your level has earned {count} ability score improvements on top of them; pick those in the section below, and each Final here counts them.": [
+      "To jsou základní hodnoty pro všechny úrovně. Získal(a) jsi {count} zvýšení vlastností; vyber ho níže, aby se započítalo do konečných hodnot.",
+      "To jsou základní hodnoty pro všechny úrovně. Získal(a) jsi {count} zvýšení vlastností; vyber je níže, aby se započítala do konečných hodnot.",
+      "To jsou základní hodnoty pro všechny úrovně. Získal(a) jsi {count} zvýšení vlastností; vyber je níže, aby se započítala do konečných hodnot."
+    ],
+    "Each level after the first adds {die} plus that modifier, so {levels} more level adds {total}. You begin on {begin}.\u0000Each level after the first adds {die} plus that modifier, so {levels} more levels add {total}. You begin on {begin}.": [
+      "Každá další úroveň přidává {die} a modifikátor, takže {levels} další úroveň přidává {total}. Začínáš na {begin}.",
+      "Každá další úroveň přidává {die} a modifikátor, takže {levels} další úrovně přidávají {total}. Začínáš na {begin}.",
+      "Každá další úroveň přidává {die} a modifikátor, takže {levels} dalších úrovní přidává {total}. Začínáš na {begin}."
+    ],
+    "Level {level}: {count} ability score improvement earned\u0000Level {level}: {count} ability score improvements earned": [
+      "Úroveň {level}: získáno {count} zvýšení vlastností",
+      "Úroveň {level}: získána {count} zvýšení vlastností",
+      "Úroveň {level}: získáno {count} zvýšení vlastností"
+    ],
+    "{lead}. {count} more number changed.\u0000{lead}. {count} more numbers changed.": [
+      "{lead}. Změněno ještě {count} číslo.",
+      "{lead}. Změněna ještě {count} čísla.",
+      "{lead}. Změněno ještě {count} čísel."
+    ],
+    "One more tongue of your choice, asked for on this step.\u0000{count} more tongues of your choice, asked for on this step.": [
+      "Ještě jeden jazyk podle výběru na tomto kroku.",
+      "Ještě {count} jazyky podle výběru na tomto kroku.",
+      "Ještě {count} jazyků podle výběru na tomto kroku."
+    ],
+    "One {list} cantrip of your choice, asked for on this step.\u0000{count} {list} cantrips of your choice, asked for on this step.": [
+      "Jeden volitelný trik ze seznamu {list} na tomto kroku.",
+      "{count} volitelné triky ze seznamu {list} na tomto kroku.",
+      "{count} volitelných triků ze seznamu {list} na tomto kroku."
+    ],
+    "Add adventurer's starter pack ({count} item the kit lacks)\u0000Add adventurer's starter pack ({count} items the kit lacks)": [
+      "Přidat dobrodružný balíček ({count} chybějící předmět)",
+      "Přidat dobrodružný balíček ({count} chybějící předměty)",
+      "Přidat dobrodružný balíček ({count} chybějících předmětů)"
+    ],
+    "One item above cannot be paid for; the Continue button waits on that.\u0000{count} items above cannot be paid for; the Continue button waits on that.": [
+      "Jeden předmět výše nelze zaplatit; nejprve ho vyřeš.",
+      "{count} předměty výše nelze zaplatit; nejprve je vyřeš.",
+      "{count} předmětů výše nelze zaplatit; nejprve je vyřeš."
+    ],
+    " One choice is still yours to make.\u0000 {count} choices are still yours to make.": [
+      " Ještě zbývá jedna volba.",
+      " Ještě zbývají {count} volby.",
+      " Ještě zbývá {count} voleb."
+    ],
+    " The missing one does not stop you saving.\u0000 The {count} missing ones do not stop you saving.": [
+      " Chybějící položka nebrání uložení.",
+      " Chybějící položky ({count}) nebrání uložení.",
+      " Chybějící položky ({count}) nebrání uložení."
+    ],
+    "The GM stepped away; the AI is answering one more time.\u0000The GM stepped away; the AI is answering the next {count} times.": [
+      "PJ je pryč; AI odpoví ještě jednou.",
+      "PJ je pryč; AI odpoví ještě {count}krát.",
+      "PJ je pryč; AI odpoví ještě {count}krát."
+    ],
+    "Part of the book's text (GM lore)\u0000The book's text (GM lore)": [
+      "Část textu knihy (znalosti PJ)",
+      "Text knihy (znalosti PJ)",
+      "Text knihy (znalosti PJ)"
+    ],
+    "Read the missed piece again\u0000Read the missed pieces again": [
+      "Znovu přečíst chybějící část",
+      "Znovu přečíst chybějící části",
+      "Znovu přečíst chybějící části"
+    ],
+    "{count} thing to check, marked below.\u0000{count} things to check, marked below.": [
+      "{count} věc ke kontrole je označena níže.",
+      "{count} věci ke kontrole jsou označeny níže.",
+      "{count} věcí ke kontrole je označeno níže."
+    ],
+    "Confirm the SRD 5.1 match above first.\u0000Confirm the SRD 5.1 matches of {count} creatures above first.": [
+      "Nejprve potvrď shodu se SRD 5.1 výše.",
+      "Nejprve potvrď shodu {count} tvorů se SRD 5.1 výše.",
+      "Nejprve potvrď shodu {count} tvorů se SRD 5.1 výše."
+    ],
+    "Make the workshop ({count} things)\u0000Make the workshop ({count} things)": [
+      "Vytvořit dílnu ({count} věc)",
+      "Vytvořit dílnu ({count} věci)",
+      "Vytvořit dílnu ({count} věcí)"
     ]
   }
 }
