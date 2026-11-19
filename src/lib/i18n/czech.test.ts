@@ -7,6 +7,8 @@ import { CS_NAMES_BY_TABLE } from "../content/names-cs";
 import { FR_NAMES_BY_TABLE } from "../content/names-fr";
 import { installCsTables } from "./cs-tables";
 import { contentName, classFeatureName, subclassName } from "../content/names";
+import { damageTypeWord, damageWords } from "../dm/damage-logic";
+import { deviceSpeechLanguage, whisperLanguageCode } from "../stt-logic";
 
 
 installCatalog("cs", catalog);
@@ -37,6 +39,20 @@ describe("Czech localization", () => {
     expect(translatePlural("cs", singular, plural, { count: 0 })).toBe("0 hráčů");
     expect(pluralCategory("cs", 4)).toBe("few");
   });
+  it("supports Czech speech recognition language hints", () => {
+    expect(whisperLanguageCode("czech")).toBe("cs");
+    expect(deviceSpeechLanguage("czech")).toBe("cs");
+    expect(whisperLanguageCode("english")).toBe("en");
+  });
+
+  it("translates display-only damage words without changing English or French", () => {
+    expect(damageTypeWord("fire", "cs")).toBe("Ohnivé");
+    expect(damageTypeWord("slashing", "cs")).toBe("Sečné");
+    expect(damageWords("1d6 fire + 2d8 slashing", "cs")).toBe("1d6 ohnivé + 2d8 sečné");
+    expect(damageWords("1d6 fire", "en")).toBe("1d6 fire");
+    expect(damageTypeWord("fire", "fr")).toBe("Feu");
+  });
+
   it("covers every reference SRD name without changing stored source IDs", () => {
     for (const [category, names] of Object.entries(FR_NAMES_BY_TABLE)) {
       const czech = CS_NAMES_BY_TABLE[category] ?? {};
