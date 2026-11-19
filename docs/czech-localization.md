@@ -61,7 +61,7 @@ not just UI catalog coverage.
 
 ## Verified coverage on this branch
 
-- **Interface:** 3,049 of 10,549 source UI message keys translated (28.9%).
+- **Interface:** 3,549 of 10,549 source UI message keys translated (33.6%).
 - **Context-specific variants:** 304 of 304 translated.
 - **Plural keys:** 239 of 239 translated with Czech one/few/many forms.
 - **Core SRD display names:** 1,463 of 1,463 keys translated (spells, monsters, items, classes, class features, equipment and other name tables).
@@ -86,3 +86,7 @@ Current source catalog: **3049 / 10549 messages translated**, **7500 missing**. 
 - **Batch 3 (500 strings, Nov 2026):** Manually translated five 100-key groups covering voice chat and speaker casting, combat conditions, character sheets, spell slots and spellbooks, inventory, level advancement and character creation. All source placeholders and markup checked; no missing or altered tokens.
 
 **After batch 3:** 3,049 of 10,549 source messages have Czech translations (28.9%); 7,500 remain. Context-specific and plural catalogs are unchanged. The full build and automated tests have not yet been run.
+
+- **Batch 4 (+500 strings, Nov 2026):** Five further commits manually translated 500 source message keys (100 + 100 + 101 + 100 + 99). Areas include character creation and multiclassing, spellbooks, questions to the GM, travel formation, reaction cards, combat actions, conditions, class features, weapons and spellcasting. No external translation service was used. Verified the complete Czech source-message catalog against English placeholders and HTML tags: **0 mismatches**.
+
+**After batch 4 (current):** **3,549 / 10,549** English UI source keys have Czech translations (**33.6%**), with **7,000 untranslated**. The Czech catalog also contains locale-only keys. The full lint, tests and build have not yet been executed; this PR is open and unmerged.
