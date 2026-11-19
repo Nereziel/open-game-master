@@ -48,6 +48,7 @@ export function embeddingModelFor(
 // of that language will look for, by ISO 3166 code.
 export const LANGUAGE_FLAGS: Record<TableLanguage, string> = {
   english: "gb",
+  czech: "cz",
   danish: "dk",
   dutch: "nl",
   finnish: "fi",
@@ -68,7 +69,7 @@ export const LANGUAGE_FLAGS: Record<TableLanguage, string> = {
 // first guess on a fresh server: the admin's own browser language, when it
 // is one the server can play in. null for any other.
 const BY_CODE: Record<string, TableLanguage> = {
-  en: "english", da: "danish", nl: "dutch", fi: "finnish", fr: "french", de: "german",
+  en: "english", cs: "czech", da: "danish", nl: "dutch", fi: "finnish", fr: "french", de: "german",
   hu: "hungarian", id: "indonesian", ga: "irish", it: "italian", no: "norwegian",
   nb: "norwegian", nn: "norwegian", pt: "portuguese", ru: "russian", es: "spanish", sv: "swedish",
 };

@@ -21,6 +21,16 @@ export const PROBE_ENGLISH: readonly string[] = [
 ];
 
 export const PROBE_SENTENCES: Record<ProbedLanguage, readonly string[]> = {
+  czech: [
+    "Stará žena nám včera ráno prodala chléb.",
+    "Můj bratr se bojí temného lesa.",
+    "Přešli jsme řeku, než začalo pršet.",
+    "Schovala klíč pod kámen poblíž dveří.",
+    "Děti se smály, zatímco pes honil svůj ocas.",
+    "Ztratil boty a šel domů bosý.",
+    "Náš kůň je unavený a potřebuje vodu.",
+    "Dnes večer je studený vítr a jasná obloha.",
+  ],
   danish: [
     "Den gamle kvinde solgte os brød i går morges.",
     "Min bror er bange for den mørke skov.",

@@ -1,4 +1,4 @@
-export type Locale = "en" | "fr";
+export type Locale = "en" | "fr" | "cs";
 
 export type TranslateVars = Record<string, string | number> & {
   context?: string;
@@ -7,7 +7,7 @@ export type TranslateVars = Record<string, string | number> & {
 type Catalog = {
   messages: Record<string, string>;
   contexts: Record<string, Record<string, string>>;
-  plurals: Record<string, [string, string]>;
+  plurals: Record<string, [string, string, string?]>;
 };
 
 // The French catalog is about 1 MB of JSON (340 KiB gzip). Imported here it
@@ -46,15 +46,14 @@ function interpolate(template: string, vars?: TranslateVars): string {
 }
 
 // Gettext-style translation: English is the key and fallback.
-// When `vars.context` is given and an override exists in `contexts`,
-// that disambiguated French string wins over the default entry.
+// Context overrides are selected from the catalog of the requested locale.
 export function translate(locale: Locale, english: string, vars?: TranslateVars): string {
   let text = english;
-  const FR = locale === "fr" ? catalogs().fr : undefined;
-  if (FR) {
+  const catalog = locale !== "en" ? catalogs()[locale] : undefined;
+  if (catalog) {
     const ctx = vars?.context;
-    const ctxMatch = ctx ? FR.contexts[english]?.[ctx] : undefined;
-    text = ctxMatch ?? FR.messages[english] ?? english;
+    const ctxMatch = ctx ? catalog.contexts[english]?.[ctx] : undefined;
+    text = ctxMatch ?? catalog.messages[english] ?? english;
   }
   return interpolate(text, vars);
 }
@@ -66,10 +65,16 @@ export function translatePlural(
   vars: TranslateVars & { count: number },
 ): string {
   const isOne = locale === "fr" ? vars.count <= 1 : vars.count === 1;
-  const FR = locale === "fr" ? catalogs().fr : undefined;
-  if (FR) {
-    const pair = FR.plurals[`${englishOne}\0${englishOther}`];
+  const catalog = locale !== "en" ? catalogs()[locale] : undefined;
+  if (catalog) {
+    const pair = catalog.plurals[`${englishOne}\0${englishOther}`];
     if (pair) {
+      // Czech: one (1), few (2–4), other (0 and 5+). The third
+      // translation is optional so two-form catalogs still work.
+      if (locale === "cs") {
+        const form = vars.count === 1 ? 0 : vars.count >= 2 && vars.count <= 4 ? 1 : 2;
+        return interpolate(pair[form] ?? pair[1], vars);
+      }
       return interpolate(isOne ? pair[0] : pair[1], vars);
     }
   }

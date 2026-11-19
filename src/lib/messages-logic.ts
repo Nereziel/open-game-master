@@ -7,11 +7,13 @@ export type MessageKey = string;
 export type MessageVars = TranslateVars;
 export type MessageDictionary = Record<string, string>;
 
-export function pluralCategory(locale: Locale, count: number): "one" | "other" {
+export function pluralCategory(locale: Locale, count: number): "one" | "few" | "other" {
   if (!Number.isFinite(count)) {
     return "other";
   }
-  return locale === "fr" ? (count <= 1 ? "one" : "other") : count === 1 ? "one" : "other";
+  if (locale === "fr") return count <= 1 ? "one" : "other";
+  if (locale === "cs") return count === 1 ? "one" : count >= 2 && count <= 4 ? "few" : "other";
+  return count === 1 ? "one" : "other";
 }
 
 export function formatMessage(template: string, vars?: MessageVars): string {
@@ -25,7 +27,7 @@ export function formatMessage(template: string, vars?: MessageVars): string {
 
 // The BCP 47 tag a locale resolves to, for toLocaleDateString and friends.
 export function localeTag(locale: Locale): string {
-  return locale === "fr" ? "fr-FR" : "en-US";
+  return locale === "fr" ? "fr-FR" : locale === "cs" ? "cs-CZ" : "en-US";
 }
 
 export type Translator = ((english: string, vars?: TranslateVars) => string) & { locale?: Locale };

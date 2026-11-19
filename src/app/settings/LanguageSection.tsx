@@ -13,6 +13,7 @@ const CHOICES: Array<{ id: LocaleChoice; label: string; glyph: string }> = [
   { id: "auto", label: "auto", glyph: "sense-darkvision" },
   { id: "en", label: "English", glyph: "daypart-dusk" },
   { id: "fr", label: "Français", glyph: "daypart-night" },
+  { id: "cs", label: "Čeština", glyph: "daypart-dusk" },
 ];
 
 export function LanguageSection() {
@@ -22,7 +23,7 @@ export function LanguageSection() {
     <PageSection
       heading={t("Language")}
       glyph="system-lore"
-      intro={t("The language of the menus and screens, kept on this device. Automatic follows the server where its language is French, else the browser. The Game Master narrates in whatever language the table speaks.")}
+      intro={t("The language of the menus and screens, kept on this device. Automatic follows the server when it uses a translated language, otherwise the browser. The Game Master narrates in the language of the table.")}
     >
       <div data-pill-group="" role="group" aria-label={t("Language")} className="flex flex-wrap gap-2">
         {CHOICES.map((entry) => {

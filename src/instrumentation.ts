@@ -13,6 +13,7 @@ export async function register() {
     // The French catalog, for whatever the server says in French outside a
     // page or a route that imports it (src/lib/i18n/translate.ts).
     await import("@/lib/i18n/fr-catalog");
+    await import("@/lib/i18n/cs-catalog");
 
     const { startJobRunner } = await import("@/lib/jobs");
     startJobRunner();

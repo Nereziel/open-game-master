@@ -1,13 +1,14 @@
 // Reading text in the table's language: Snowball's stemmer and stop list for
 // it, English included, so every lexical reader (retrieval, waypoints, goal
 // collisions, safety lines, the rulebook) compares words the same way at
-// every table. No hand-written vocabulary: the stemmers are Snowball's own
+// every table. The stemmers are Snowball's own
 // algorithms (multilingual-stemmer), the stop lists Snowball's own files
 // (./stop-words). Pure apart from that package, so scripts load it directly.
 
 import * as snowball from "multilingual-stemmer";
 import type { TableLanguage } from "../schemas/game-settings-options.ts";
 import { words } from "./text-logic.ts";
+import { STOP_LIST as czech } from "./stop-words/czech.ts";
 import { STOP_LIST as danish } from "./stop-words/danish.ts";
 import { STOP_LIST as dutch } from "./stop-words/dutch.ts";
 import { STOP_LIST as english } from "./stop-words/english.ts";
@@ -25,6 +26,7 @@ import { STOP_LIST as spanish } from "./stop-words/spanish.ts";
 import { STOP_LIST as swedish } from "./stop-words/swedish.ts";
 
 const STEMMERS: Record<TableLanguage, (word: string) => string> = {
+  czech: snowball.czech,
   danish: snowball.danish,
   dutch: snowball.dutch,
   english: snowball.english,
@@ -43,6 +45,7 @@ const STEMMERS: Record<TableLanguage, (word: string) => string> = {
 };
 
 const STOP_LISTS: Record<TableLanguage, string> = {
+  czech,
   danish,
   dutch,
   english,

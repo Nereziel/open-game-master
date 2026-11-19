@@ -46,12 +46,21 @@ export const SRD_SKILLS = skillsJson.skills as SrdSkill[];
 // A skill's name in the reader's language. The French names come from
 // Wizards of the Coast's official French SRD 5.1 (see skills.json's fr
 // field); a name the locale does not carry stays English.
-export function skillLabel(skillId: string, locale: "en" | "fr"): string {
+const CZECH_SKILLS: Record<string, string> = {
+  acrobatics: "Akrobacie", animal_handling: "Zacházení se zvířaty", arcana: "Magie",
+  athletics: "Atletika", deception: "Klamání", history: "Historie",
+  insight: "Odhad", intimidation: "Zastrašování", investigation: "Pátrání",
+  medicine: "Lékařství", nature: "Příroda", perception: "Vnímání",
+  performance: "Vystupování", persuasion: "Přesvědčování", religion: "Náboženství",
+  sleight_of_hand: "Obratnost rukou", stealth: "Plížení", survival: "Přežití",
+};
+
+export function skillLabel(skillId: string, locale: "en" | "fr" | "cs"): string {
   const skill = SRD_SKILLS.find((entry) => entry.id === skillId.trim().toLowerCase());
   if (!skill) {
     return skillId;
   }
-  return locale === "fr" && skill.fr ? skill.fr : skill.name;
+  return locale === "cs" ? CZECH_SKILLS[skill.id] ?? skill.name : locale === "fr" && skill.fr ? skill.fr : skill.name;
 }
 export const SRD_CLASSES = classesJson.classes as SrdClass[];
 export const SRD_RACES = racesJson.races as SrdRace[];
