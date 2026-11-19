@@ -29,7 +29,10 @@
     "fetch-ambience": "node scripts/fetch-ambience.mjs",
     "postinstall": "node scripts/copy-dice-assets.mjs",
     "generate-ambience": "node scripts/generate-ambience.mjs",
-    "pack-ambience": "node scripts/pack-ambience.mjs"
+    "pack-ambience": "node scripts/pack-ambience.mjs",
+    "i18n:cs:report": "node scripts/generate-cs-localization.mjs --report",
+    "i18n:cs:check": "node scripts/generate-cs-localization.mjs --check",
+    "i18n:cs:generate": "node scripts/generate-cs-localization.mjs"
   },
   "dependencies": {
     "@3d-dice/dice-box-threejs": "^0.0.12",
