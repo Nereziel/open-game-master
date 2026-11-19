@@ -8,6 +8,7 @@ import { RAGING } from "@/lib/srd/class-resources";
 import { conditionGrantedImmunity } from "@/lib/srd/condition-effect-queries";
 import { isWorn, matchArmor, type SrdArmor } from "@/lib/srd/armor";
 import { hasItemTag, type TaggedItem } from "@/lib/srd/item-tags";
+import type { Locale } from "@/lib/messages-logic";
 
 function has(conditions: string[], names: string[]): string | null {
   const lowered = conditions.map((entry) => entry.toLowerCase());
@@ -39,16 +40,31 @@ export const DAMAGE_TYPE_WORDS_FR: Record<string, string> = {
   thunder: "Tonnerre",
 };
 
-export type DamageLocale = "en" | "fr";
+// Display-only names: the combat engine continues using English damage IDs.
+export const DAMAGE_TYPE_WORDS_CS: Record<string, string> = {
+  acid: "Kyselinové",
+  bludgeoning: "Drtivé",
+  cold: "Chladné",
+  fire: "Ohnivé",
+  force: "Silové",
+  lightning: "Bleskové",
+  necrotic: "Nekrotické",
+  piercing: "Bodné",
+  poison: "Jedové",
+  psychic: "Psychické",
+  radiant: "Zářivé",
+  slashing: "Sečné",
+  thunder: "Hromové",
+};
+
+export type DamageLocale = Locale;
 
 // A damage type as a word on screen ("Slashing", « Tranchants »): the French
 // SRD's own capitalized list heading; a type the maps do not carry stays as
 // it was spelled in.
 export function damageTypeWord(type: string, locale: DamageLocale): string {
-  if (locale !== "fr") {
-    return type;
-  }
-  return DAMAGE_TYPE_WORDS_FR[type.trim().toLowerCase()] ?? type;
+  const words = locale === "cs" ? DAMAGE_TYPE_WORDS_CS : locale === "fr" ? DAMAGE_TYPE_WORDS_FR : null;
+  return words?.[type.trim().toLowerCase()] ?? type;
 }
 
 // The type word inside a damage expression ("1d6 slashing") reads in the
@@ -60,10 +76,9 @@ const DAMAGE_TYPE_WORD_RE =
   /\b(acid|bludgeoning|cold|fire|force|lightning|necrotic|piercing|poison|psychic|radiant|slashing|thunder)\b/g;
 
 export function damageWords(damage: string, locale: DamageLocale): string {
-  if (locale !== "fr") {
-    return damage;
-  }
-  return damage.replace(DAMAGE_TYPE_WORD_RE, (word) => (DAMAGE_TYPE_WORDS_FR[word] ?? word).toLowerCase());
+  const words = locale === "cs" ? DAMAGE_TYPE_WORDS_CS : locale === "fr" ? DAMAGE_TYPE_WORDS_FR : null;
+  if (!words) return damage;
+  return damage.replace(DAMAGE_TYPE_WORD_RE, (word) => (words[word] ?? word).toLowerCase());
 }
 
 const wholeWord = (text: string, word: string) =>

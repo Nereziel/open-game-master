@@ -11,7 +11,7 @@
 // Voix du royaume de cendre » assembles mechanically and always reads
 // right. Evocative translations, not word-for-word ones.
 
-type Locale = "en" | "fr";
+import type { Locale } from "@/lib/messages-logic";
 type Bank = { things: string[]; places: string[]; marks: string[] };
 
 const FANTASY: Bank = {
