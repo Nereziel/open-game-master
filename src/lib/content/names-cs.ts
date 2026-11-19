@@ -91,7 +91,10 @@ export const CS_NAMES_BY_TABLE: Record<string, Record<string, string>> = {
     "trident": "Trojzubec",
     "warhammer": "Válečné kladivo",
     "whip": "Bič",
-    "unarmed-strike": "Neozbrojený úder"
+    "unarmed-strike": "Neozbrojený úder",
+    "blowgun": "Foukačka",
+    "net": "Síť",
+    "war-pick": "Válečný krumpáč"
   },
   "armor": {
     "padded": "Vycpávaná zbroj",
@@ -1177,7 +1180,8 @@ export const CS_NAMES_BY_TABLE: Record<string, Record<string, string>> = {
     "lucky": "Šťastlivec",
     "tough": "Houževnatý",
     "war-caster": "Válečný sesilatel",
-    "skilled": "Zručný"
+    "skilled": "Zručný",
+    "grappler": "Chvat"
   },
   "classFeatures": {
     "fighter:second-wind": "Druhý dech",
