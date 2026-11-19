@@ -7,21 +7,11 @@ name: Stable branch
 # when this file lands on main, which creates the branch at the latest
 # release, and by hand with a tag to set the branch to that release.
 
+# Fork safety: disabled. Does not react to releases or move the stable branch.
 on:
-  release:
-    types: [released]
-  push:
-    branches: [main]
-    paths: [.github/workflows/stable-branch.yml]
   workflow_dispatch:
-    inputs:
-      tag:
-        description: "Stable release tag the branch should point at (vX.Y.Z)"
-        required: true
-        type: string
-
 permissions:
-  contents: write
+  contents: read
 
 concurrency:
   group: stable-branch
@@ -29,6 +19,7 @@ concurrency:
 
 jobs:
   move:
+    if: ${{ false }} # Intentionally disabled on this fork
     runs-on: ubuntu-latest
     steps:
       - uses: actions/checkout@v6
