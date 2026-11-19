@@ -1568,6 +1568,651 @@
       "{count} kampaň",
       "{count} kampaně",
       "{count} kampaní"
+    ],
+    "{count} place\u0000{count} places": [
+      "{count} místo",
+      "{count} místa",
+      "{count} míst"
+    ],
+    "{count} faction\u0000{count} factions": [
+      "{count} frakce",
+      "{count} frakce",
+      "{count} frakcí"
+    ],
+    "{count} creature\u0000{count} creatures": [
+      "{count} tvor",
+      "{count} tvorové",
+      "{count} tvorů"
+    ],
+    " · {count} wake-up could not be delivered\u0000 · {count} wake-ups could not be delivered": [
+      " · {count} probuzení se nepodařilo doručit",
+      " · {count} probuzení se nepodařila doručit",
+      " · {count} probuzení se nepodařilo doručit"
+    ],
+    "{count} lore entry\u0000{count} lore entries": [
+      "{count} záznam o světě",
+      "{count} záznamy o světě",
+      "{count} záznamů o světě"
+    ],
+    "{count} line\u0000{count} lines": [
+      "{count} řádek",
+      "{count} řádky",
+      "{count} řádků"
+    ],
+    "{count} veil\u0000{count} veils": [
+      "{count} závoj",
+      "{count} závoje",
+      "{count} závojů"
+    ],
+    "{count} variant rule\u0000{count} variant rules": [
+      "{count} volitelné pravidlo",
+      "{count} volitelná pravidla",
+      "{count} volitelných pravidel"
+    ],
+    ", 1 item\u0000, {count} items": [
+      ", 1 předmět",
+      ", {count} předměty",
+      ", {count} předmětů"
+    ],
+    "Brought {count} item across.\u0000Brought {count} items across.": [
+      "Přenesen {count} předmět.",
+      "Přeneseny {count} předměty.",
+      "Přeneseno {count} předmětů."
+    ],
+    "{count} beat joined the arc.\u0000{count} beats joined the arc.": [
+      "Do děje přibyl {count} bod.",
+      "Do děje přibyly {count} body.",
+      "Do děje přibylo {count} bodů."
+    ],
+    "House rules: {count} ruling\u0000House rules: {count} rulings": [
+      "Domácí pravidla: {count} pravidlo",
+      "Domácí pravidla: {count} pravidla",
+      "Domácí pravidla: {count} pravidel"
+    ],
+    "Applied {name}: {count} change.\u0000Applied {name}: {count} changes.": [
+      "Použito {name}: {count} změna.",
+      "Použito {name}: {count} změny.",
+      "Použito {name}: {count} změn."
+    ],
+    "{count} creature, {xp} XP against a {ceiling} ceiling\u0000{count} creatures, {xp} XP against a {ceiling} ceiling": [
+      "{count} tvor, {xp} ZK z limitu {ceiling}",
+      "{count} tvorové, {xp} ZK z limitu {ceiling}",
+      "{count} tvorů, {xp} ZK z limitu {ceiling}"
+    ],
+    "{count} item, the most a kit keeps ({max}). Remove one to add another.\u0000{count} items, the most a kit keeps ({max}). Remove one to add another.": [
+      "{count} předmět; maximum výbavy je {max}. Pro další jeden odeber.",
+      "{count} předměty; maximum výbavy je {max}. Pro další jeden odeber.",
+      "{count} předmětů; maximum výbavy je {max}. Pro další jeden odeber."
+    ],
+    "{count} tool, the most a class keeps ({max}).\u0000{count} tools, the most a class keeps ({max}).": [
+      "{count} nástroj; maximum pro povolání je {max}.",
+      "{count} nástroje; maximum pro povolání je {max}.",
+      "{count} nástrojů; maximum pro povolání je {max}."
+    ],
+    "{count} other entry of yours\u0000{count} other entries of yours": [
+      "{count} další tvoje položka",
+      "{count} další tvoje položky",
+      "{count} dalších tvých položek"
+    ],
+    "{count} NPC, fight, table or shop\u0000{count} NPCs, fights, tables or shops": [
+      "{count} NPC, boj, stůl nebo obchod",
+      "{count} NPC, boje, stoly nebo obchody",
+      "{count} NPC, bojů, stolů nebo obchodů"
+    ],
+    "{count} target\u0000{count} targets": [
+      "{count} cíl",
+      "{count} cíle",
+      "{count} cílů"
+    ],
+    "{count} round\u0000{count} rounds": [
+      "{count} kolo",
+      "{count} kola",
+      "{count} kol"
+    ],
+    "{count} spell, the most it gives.\u0000{count} spells, the most it gives.": [
+      "{count} kouzlo, maximum, které poskytuje.",
+      "{count} kouzla, maximum, které poskytuje.",
+      "{count} kouzel, maximum, které poskytuje."
+    ],
+    "{count} spell on the list\u0000{count} spells on the list": [
+      "{count} kouzlo na seznamu",
+      "{count} kouzla na seznamu",
+      "{count} kouzel na seznamu"
+    ],
+    "{count} hero\u0000{count} heroes": [
+      "{count} hrdina",
+      "{count} hrdinové",
+      "{count} hrdinů"
+    ],
+    "Draft {count} pregen\u0000Draft {count} pregens": [
+      "Vytvořit {count} připravenou postavu",
+      "Vytvořit {count} připravené postavy",
+      "Vytvořit {count} připravených postav"
+    ],
+    "{count} thing to fix first\u0000{count} things to fix first": [
+      "Nejprve opravit {count} věc",
+      "Nejprve opravit {count} věci",
+      "Nejprve opravit {count} věcí"
+    ],
+    "{count} suggestion before sharing\u0000{count} suggestions before sharing": [
+      "{count} návrh před sdílením",
+      "{count} návrhy před sdílením",
+      "{count} návrhů před sdílením"
+    ],
+    "Pulled {count} entry into the setting lists.\u0000Pulled {count} entries into the setting lists.": [
+      "Do seznamů prostředí přidána {count} položka.",
+      "Do seznamů prostředí přidány {count} položky.",
+      "Do seznamů prostředí přidáno {count} položek."
+    ],
+    "{count} entry\u0000{count} entries": [
+      "{count} položka",
+      "{count} položky",
+      "{count} položek"
+    ],
+    "{count} route to choose\u0000{count} routes to choose": [
+      "{count} cesta na výběr",
+      "{count} cesty na výběr",
+      "{count} cest na výběr"
+    ],
+    "{count} gap\u0000{count} gaps": [
+      "{count} mezera",
+      "{count} mezery",
+      "{count} mezer"
+    ],
+    "{count} overlap\u0000{count} overlaps": [
+      "{count} překrytí",
+      "{count} překrytí",
+      "{count} překrytí"
+    ],
+    "{count} row\u0000{count} rows": [
+      "{count} řádek",
+      "{count} řádky",
+      "{count} řádků"
+    ],
+    "A new picture is ready.\u0000{count} new pictures are ready.": [
+      "Nový obrázek je připraven.",
+      "{count} nové obrázky jsou připraveny.",
+      "{count} nových obrázků je připraveno."
+    ],
+    "Voice chat: you are on the call with {count} person\u0000Voice chat: you are on the call with {count} people": [
+      "Hlasový chat: mluvíš s {count} osobou",
+      "Hlasový chat: mluvíš s {count} osobami",
+      "Hlasový chat: mluvíš s {count} osobami"
+    ],
+    "{count} use, back after a short rest\u0000{count} uses, back after a short rest": [
+      "{count} použití, obnoví se po krátkém odpočinku",
+      "{count} použití, obnoví se po krátkém odpočinku",
+      "{count} použití, obnoví se po krátkém odpočinku"
+    ],
+    "{count} use, back after a long rest\u0000{count} uses, back after a long rest": [
+      "{count} použití, obnoví se po dlouhém odpočinku",
+      "{count} použití, obnoví se po dlouhém odpočinku",
+      "{count} použití, obnoví se po dlouhém odpočinku"
+    ],
+    "{count} success\u0000{count} successes": [
+      "{count} úspěch",
+      "{count} úspěchy",
+      "{count} úspěchů"
+    ],
+    "{count} failure\u0000{count} failures": [
+      "{count} neúspěch",
+      "{count} neúspěchy",
+      "{count} neúspěchů"
+    ],
+    "used {count} time since {rest}\u0000used {count} times since {rest}": [
+      "použito {count}krát od {rest}",
+      "použito {count}krát od {rest}",
+      "použito {count}krát od {rest}"
+    ],
+    "plus {count} line of unknown weight\u0000plus {count} lines of unknown weight": [
+      "plus {count} řádek s neznámou hmotností",
+      "plus {count} řádky s neznámou hmotností",
+      "plus {count} řádků s neznámou hmotností"
+    ],
+    "{count} class matches.\u0000{count} classes match.": [
+      "Odpovídá {count} povolání.",
+      "Odpovídají {count} povolání.",
+      "Odpovídá {count} povolání."
+    ],
+    "{count} choice left on this step\u0000{count} choices left on this step": [
+      "Na tomto kroku zbývá {count} volba",
+      "Na tomto kroku zbývají {count} volby",
+      "Na tomto kroku zbývá {count} voleb"
+    ],
+    "{count} minute\u0000{count} minutes": [
+      "{count} minuta",
+      "{count} minuty",
+      "{count} minut"
+    ],
+    "{count} second\u0000{count} seconds": [
+      "{count} sekunda",
+      "{count} sekundy",
+      "{count} sekund"
+    ],
+    "{count} minute at the table\u0000{count} minutes at the table": [
+      "{count} minuta u stolu",
+      "{count} minuty u stolu",
+      "{count} minut u stolu"
+    ],
+    "{count} slain\u0000{count} slain": [
+      "{count} zabitý",
+      "{count} zabití",
+      "{count} zabitých"
+    ],
+    "{count} knocked out and spared\u0000{count} knocked out and spared": [
+      "{count} omráčený a ušetřený",
+      "{count} omráčení a ušetření",
+      "{count} omráčených a ušetřených"
+    ],
+    "{count} die rolled from it so far.\u0000{count} dice rolled from it so far.": [
+      "Dosud z něj padla {count} kostka.",
+      "Dosud z něj padly {count} kostky.",
+      "Dosud z něj padlo {count} kostek."
+    ],
+    "{count} item of unknown weight is not counted.\u0000{count} items of unknown weight are not counted.": [
+      "{count} předmět s neznámou hmotností se nezapočítává.",
+      "{count} předměty s neznámou hmotností se nezapočítávají.",
+      "{count} předmětů s neznámou hmotností se nezapočítává."
+    ],
+    "{count} open seat. Share the room code to fill it.\u0000{count} open seats. Share the room code to fill them.": [
+      "Volné je {count} místo. Sdílej kód místnosti.",
+      "Volná jsou {count} místa. Sdílej kód místnosti.",
+      "Volných je {count} míst. Sdílej kód místnosti."
+    ],
+    "{count} hour\u0000{count} hours": [
+      "{count} hodina",
+      "{count} hodiny",
+      "{count} hodin"
+    ],
+    "{count} party note on {name}\u0000{count} party notes on {name}": [
+      "{count} poznámka družiny k {name}",
+      "{count} poznámky družiny k {name}",
+      "{count} poznámek družiny k {name}"
+    ],
+    "Light: {count} minute left\u0000Light: {count} minutes left": [
+      "Světlo: zbývá {count} minuta",
+      "Světlo: zbývají {count} minuty",
+      "Světlo: zbývá {count} minut"
+    ],
+    "{count} piece of prep\u0000{count} pieces of prep": [
+      "{count} přípravný prvek",
+      "{count} přípravné prvky",
+      "{count} přípravných prvků"
+    ],
+    "{count} link\u0000{count} links": [
+      "{count} odkaz",
+      "{count} odkazy",
+      "{count} odkazů"
+    ],
+    "{count} event\u0000{count} events": [
+      "{count} událost",
+      "{count} události",
+      "{count} událostí"
+    ],
+    "{count} pregen ready\u0000{count} pregens ready": [
+      "Připravena {count} předpřipravená postava",
+      "Připraveny {count} předpřipravené postavy",
+      "Připraveno {count} předpřipravených postav"
+    ],
+    "{count} place on it\u0000{count} places on it": [
+      "Na ní je {count} místo",
+      "Na ní jsou {count} místa",
+      "Na ní je {count} míst"
+    ],
+    "{count} fight\u0000{count} fights": [
+      "{count} boj",
+      "{count} boje",
+      "{count} bojů"
+    ],
+    "{count} person\u0000{count} people": [
+      "{count} osoba",
+      "{count} osoby",
+      "{count} osob"
+    ],
+    "{count} monster\u0000{count} monsters": [
+      "{count} nestvůra",
+      "{count} nestvůry",
+      "{count} nestvůr"
+    ],
+    "{count} piece of homebrew\u0000{count} pieces of homebrew": [
+      "{count} vlastní prvek",
+      "{count} vlastní prvky",
+      "{count} vlastních prvků"
+    ],
+    "{count} shop\u0000{count} shops": [
+      "{count} obchod",
+      "{count} obchody",
+      "{count} obchodů"
+    ],
+    "{count} table\u0000{count} tables": [
+      "{count} herní stůl",
+      "{count} herní stoly",
+      "{count} herních stolů"
+    ],
+    "{count} entry in the pack\u0000{count} entries in the pack": [
+      "{count} položka v balíčku",
+      "{count} položky v balíčku",
+      "{count} položek v balíčku"
+    ],
+    "skill\u0000skills": [
+      "dovednost",
+      "dovednosti",
+      "dovedností"
+    ],
+    "spell\u0000spells": [
+      "kouzlo",
+      "kouzla",
+      "kouzel"
+    ],
+    "special\u0000specials": [
+      "speciální možnost",
+      "speciální možnosti",
+      "speciálních možností"
+    ],
+    "trait line\u0000trait lines": [
+      "řádek rysu",
+      "řádky rysů",
+      "řádků rysů"
+    ],
+    "{count} relationship\u0000{count} relationships": [
+      "{count} vztah",
+      "{count} vztahy",
+      "{count} vztahů"
+    ],
+    "{count} picked\u0000{count} picked": [
+      "{count} vybraná položka",
+      "{count} vybrané položky",
+      "{count} vybraných položek"
+    ],
+    "{count} model\u0000{count} models": [
+      "{count} model",
+      "{count} modely",
+      "{count} modelů"
+    ],
+    "Found {count}\u0000Found {count}": [
+      "Nalezen {count}",
+      "Nalezeny {count}",
+      "Nalezeno {count}"
+    ],
+    "1 model\u0000{count} models": [
+      "1 model",
+      "{count} modely",
+      "{count} modelů"
+    ],
+    "{count} campaign · joined {date}\u0000{count} campaigns · joined {date}": [
+      "{count} kampaň · připojeno {date}",
+      "{count} kampaně · připojeno {date}",
+      "{count} kampaní · připojeno {date}"
+    ],
+    "Copied 1 line.\u0000Copied {count} lines.": [
+      "Zkopírován 1 řádek.",
+      "Zkopírovány {count} řádky.",
+      "Zkopírováno {count} řádků."
+    ],
+    "Narrating 1 table now.\u0000Narrating {count} tables now.": [
+      "Právě vyprávím u 1 stolu.",
+      "Právě vyprávím u {count} stolů.",
+      "Právě vyprávím u {count} stolů."
+    ],
+    ": {count} campaign\u0000: {count} campaigns": [
+      ": {count} kampaň",
+      ": {count} kampaně",
+      ": {count} kampaní"
+    ],
+    "{count} live update\u0000{count} live updates": [
+      "{count} živá aktualizace",
+      "{count} živé aktualizace",
+      "{count} živých aktualizací"
+    ],
+    "{count} usage row\u0000{count} usage rows": [
+      "{count} záznam využití",
+      "{count} záznamy využití",
+      "{count} záznamů využití"
+    ],
+    "{count} trace\u0000{count} traces": [
+      "{count} záznam trasování",
+      "{count} záznamy trasování",
+      "{count} záznamů trasování"
+    ],
+    "{count} update\u0000{count} updates": [
+      "{count} aktualizace",
+      "{count} aktualizace",
+      "{count} aktualizací"
+    ],
+    "1 file\u0000{count} files": [
+      "1 soubor",
+      "{count} soubory",
+      "{count} souborů"
+    ],
+    "Removed {count} file, {size}.\u0000Removed {count} files, {size}.": [
+      "Odstraněn {count} soubor ({size}).",
+      "Odstraněny {count} soubory ({size}).",
+      "Odstraněno {count} souborů ({size})."
+    ],
+    "{count} file no campaign, account or setting names\u0000{count} files no campaign, account or setting names": [
+      "{count} soubor bez názvů kampaní, účtů a nastavení",
+      "{count} soubory bez názvů kampaní, účtů a nastavení",
+      "{count} souborů bez názvů kampaní, účtů a nastavení"
+    ],
+    "{n} track installed\u0000{n} tracks installed": [
+      "Nainstalována {n} stopa",
+      "Nainstalovány {n} stopy",
+      "Nainstalováno {n} stop"
+    ],
+    "{n} inside\u0000{n} inside": [
+      "{n} uvnitř",
+      "{n} uvnitř",
+      "{n} uvnitř"
+    ],
+    "{n} point so far.\u0000{n} points so far.": [
+      "Zatím {n} bod.",
+      "Zatím {n} body.",
+      "Zatím {n} bodů."
+    ],
+    "{n} tile\u0000{n} tiles": [
+      "{n} políčko",
+      "{n} políčka",
+      "{n} políček"
+    ],
+    "max {count} guest\u0000max {count} guests": [
+      "nejvýše {count} host",
+      "nejvýše {count} hosté",
+      "nejvýše {count} hostů"
+    ],
+    "{n} passage found\u0000{n} passages found": [
+      "Nalezen {n} úryvek",
+      "Nalezeny {n} úryvky",
+      "Nalezeno {n} úryvků"
+    ],
+    "{count} coming\u0000{count} coming": [
+      "{count} přicházející",
+      "{count} přicházející",
+      "{count} přicházejících"
+    ],
+    "{count} earlier entry\u0000{count} earlier entries": [
+      "{count} starší záznam",
+      "{count} starší záznamy",
+      "{count} starších záznamů"
+    ],
+    "{count} planned ally\u0000{count} planned allies": [
+      "{count} plánovaný spojenec",
+      "{count} plánovaní spojenci",
+      "{count} plánovaných spojenců"
+    ],
+    "{count} action\u0000{count} actions": [
+      "{count} akce",
+      "{count} akce",
+      "{count} akcí"
+    ],
+    "{count} pick is missing\u0000{count} picks are missing": [
+      "Chybí {count} volba",
+      "Chybějí {count} volby",
+      "Chybí {count} voleb"
+    ],
+    "{count} source the desk would read\u0000{count} sources the desk would read": [
+      "{count} zdroj k přečtení",
+      "{count} zdroje k přečtení",
+      "{count} zdrojů k přečtení"
+    ],
+    "{count} choice was picked for you.\u0000{count} choices were picked for you.": [
+      "Byla za tebe vybrána {count} možnost.",
+      "Byly za tebe vybrány {count} možnosti.",
+      "Bylo za tebe vybráno {count} možností."
+    ],
+    "{count} point left\u0000{count} points left": [
+      "Zbývá {count} bod",
+      "Zbývají {count} body",
+      "Zbývá {count} bodů"
+    ],
+    "another skill\u0000{count} other skills": [
+      "další dovednost",
+      "další dovednosti",
+      "dalších dovedností"
+    ],
+    "{count} {noun} matches.\u0000{count} {noun} match.": [
+      "Odpovídá {count} {noun}.",
+      "Odpovídají {count} {noun}.",
+      "Odpovídá {count} {noun}."
+    ],
+    "One ability to raise by {amount}\u0000{count} abilities to raise by {amount}": [
+      "Jedna vlastnost ke zvýšení o {amount}",
+      "{count} vlastnosti ke zvýšení o {amount}",
+      "{count} vlastností ke zvýšení o {amount}"
+    ],
+    "One bonus language\u0000{count} bonus languages": [
+      "Jeden bonusový jazyk",
+      "{count} bonusové jazyky",
+      "{count} bonusových jazyků"
+    ],
+    "One skill proficiency\u0000{count} skill proficiencies": [
+      "Jedna zběhlost v dovednosti",
+      "{count} zběhlosti v dovednostech",
+      "{count} zběhlostí v dovednostech"
+    ],
+    "One {list} cantrip\u0000{count} {list} cantrips": [
+      "Jeden trik ze seznamu {list}",
+      "{count} triky ze seznamu {list}",
+      "{count} triků ze seznamu {list}"
+    ],
+    "One set of artisan's tools\u0000{count} sets of artisan's tools": [
+      "Jedna sada řemeslnických nástrojů",
+      "{count} sady řemeslnických nástrojů",
+      "{count} sad řemeslnických nástrojů"
+    ],
+    "choice\u0000choices": [
+      "volba",
+      "volby",
+      "voleb"
+    ],
+    "Gear: {count} item, {names}\u0000Gear: {count} items, {names}": [
+      "Vybavení: {count} předmět, {names}",
+      "Vybavení: {count} předměty, {names}",
+      "Vybavení: {count} předmětů, {names}"
+    ],
+    "{total} entry, {unrun} yours to run\u0000{total} entries, {unrun} yours to run": [
+      "{total} položka, {unrun} k vyřízení",
+      "{total} položky, {unrun} k vyřízení",
+      "{total} položek, {unrun} k vyřízení"
+    ],
+    "Storyboard card\u0000Storyboard cards": [
+      "Karta scénáře",
+      "Karty scénáře",
+      "Karet scénáře"
+    ],
+    "Place\u0000Places": [
+      "Místo",
+      "Místa",
+      "Míst"
+    ],
+    "Person\u0000People": [
+      "Osoba",
+      "Osoby",
+      "Osob"
+    ],
+    "Faction\u0000Factions": [
+      "Frakce",
+      "Frakce",
+      "Frakcí"
+    ],
+    "Creature\u0000Creatures": [
+      "Tvor",
+      "Tvorové",
+      "Tvorů"
+    ],
+    "Prepared fight\u0000Prepared fights": [
+      "Připravený boj",
+      "Připravené boje",
+      "Připravených bojů"
+    ],
+    "Item\u0000Items": [
+      "Předmět",
+      "Předměty",
+      "Předmětů"
+    ],
+    "Spell\u0000Spells": [
+      "Kouzlo",
+      "Kouzla",
+      "Kouzel"
+    ],
+    "Roll table\u0000Roll tables": [
+      "Tabulka hodů",
+      "Tabulky hodů",
+      "Tabulek hodů"
+    ],
+    "Map\u0000Maps": [
+      "Mapa",
+      "Mapy",
+      "Map"
+    ],
+    "Picture\u0000Pictures": [
+      "Obrázek",
+      "Obrázky",
+      "Obrázků"
+    ],
+    "model call\u0000model calls": [
+      "volání modelu",
+      "volání modelu",
+      "volání modelu"
+    ],
+    "roll\u0000rolls": [
+      "hod",
+      "hody",
+      "hodů"
+    ],
+    "{left} of {count} charge\u0000{left} of {count} charges": [
+      "{left} z {count} náboje",
+      "{left} z {count} nábojů",
+      "{left} z {count} nábojů"
+    ],
+    "Costs {count} charge\u0000Costs {count} charges": [
+      "Stojí {count} náboj",
+      "Stojí {count} náboje",
+      "Stojí {count} nábojů"
+    ],
+    "{count} charge\u0000{count} charges": [
+      "{count} náboj",
+      "{count} náboje",
+      "{count} nábojů"
+    ],
+    "{count} day {hours} h\u0000{count} days {hours} h": [
+      "{count} den {hours} h",
+      "{count} dny {hours} h",
+      "{count} dní {hours} h"
+    ],
+    "{count} character from your library\u0000{count} characters from your library": [
+      "{count} postava z knihovny",
+      "{count} postavy z knihovny",
+      "{count} postav z knihovny"
+    ],
+    "once\u0000{count} times": [
+      "jednou",
+      "{count}krát",
+      "{count}krát"
+    ],
+    "researching {topic} ({count} day)\u0000researching {topic} ({count} days)": [
+      "zjišťování {topic} ({count} den)",
+      "zjišťování {topic} ({count} dny)",
+      "zjišťování {topic} ({count} dní)"
     ]
   }
 }
