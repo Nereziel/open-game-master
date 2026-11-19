@@ -111,6 +111,7 @@ export const STARTING_WEALTH_LABELS: Record<StartingWealthSetting, string> = {
 // every one is read the same way; the ids are Snowball's own names.
 export const TABLE_LANGUAGES = [
   "english",
+  "czech",
   "danish",
   "dutch",
   "finnish",
@@ -132,6 +133,7 @@ export type TableLanguage = (typeof TABLE_LANGUAGES)[number];
 // who choose it.
 export const TABLE_LANGUAGE_NAMES: Record<TableLanguage, { english: string; native: string }> = {
   english: { english: "English", native: "English" },
+  czech: { english: "Czech", native: "Čeština" },
   danish: { english: "Danish", native: "Dansk" },
   dutch: { english: "Dutch", native: "Nederlands" },
   finnish: { english: "Finnish", native: "Suomi" },
@@ -157,4 +159,4 @@ export const TABLE_LANGUAGE_LABELS: Record<TableLanguage, string> = Object.fromE
 
 // Shared by the create dialog and the settings panel.
 export const TABLE_LANGUAGE_HELP =
-  "The Game Master writes the story in this language, and the server reads the story and your messages in it. The app, the rules and the rulebook stay in English.";
+  "The Game Master writes the story in this language, and the server reads the story and your messages in it. Menus and rules use the reader’s language where translations are available, with English as fallback.";
