@@ -1611,7 +1611,7 @@
     "Done.": "Hotovo.",
     "Suggested": "Doporučeno",
     "suggested": "doporučeno",
-    "Open to more than one partner": "Otevřený vztahu s více partnery",
+    "Open to more than one partner": "Možnost mít více partnerů",
     "Callings of {pack}": "Povolání z {pack}",
     "Other settings": "Další nastavení",
     "Cantrip": "Trik",
@@ -3722,6 +3722,21 @@
       "Vytvořit dílnu ({count} věc)",
       "Vytvořit dílnu ({count} věci)",
       "Vytvořit dílnu ({count} věcí)"
+    ],
+    "Your own {list} is not offered at this table. Homebrew counts at a table when whoever runs it (the owner, the GM or the assistant GM) keeps it: send them a Workshop bundle with your Homebrew ticked, and it is offered here once they bring it in. In your own library it is offered as it is.\u0000Your own {list} are not offered at this table. Homebrew counts at a table when whoever runs it (the owner, the GM or the assistant GM) keeps it: send them a Workshop bundle with your Homebrew ticked, and it is offered here once they bring it in. In your own library it is offered as it is.": [
+      "Tvůj vlastní obsah {list} není u tohoto stolu dostupný. Přijme ho vlastník, PJ nebo pomocný PJ, když ho přidá do dílny. Pošli mu balíček dílny se zaškrtnutým vlastním obsahem. Ve tvé osobní knihovně je dostupný.",
+      "Tvůj vlastní obsah {list} není u tohoto stolu dostupný. Přijme ho vlastník, PJ nebo pomocný PJ, když ho přidá do dílny. Pošli mu balíček dílny se zaškrtnutým vlastním obsahem. Ve tvé osobní knihovně je dostupný.",
+      "Tvůj vlastní obsah {list} není u tohoto stolu dostupný. Přijme ho vlastník, PJ nebo pomocný PJ, když ho přidá do dílny. Pošli mu balíček dílny se zaškrtnutým vlastním obsahem. Ve tvé osobní knihovně je dostupný."
+    ],
+    "Your own {list} is not offered at this table: whoever runs it (the owner, the GM or the assistant GM) keeps a copy in their workshop to admit one.\u0000Your own {list} are not offered at this table: whoever runs it (the owner, the GM or the assistant GM) keeps a copy in their workshop to admit one.": [
+      "Tvůj vlastní obsah {list} není u tohoto stolu dostupný. Vlastník, PJ nebo pomocný PJ jej musí přidat do své dílny.",
+      "Tvůj vlastní obsah {list} není u tohoto stolu dostupný. Vlastník, PJ nebo pomocný PJ jej musí přidat do své dílny.",
+      "Tvůj vlastní obsah {list} není u tohoto stolu dostupný. Vlastník, PJ nebo pomocný PJ jej musí přidat do své dílny."
+    ],
+    "Your own {list} is not offered at this table: whoever runs it (the owner, the GM or the assistant GM) keeps a copy to admit one.\u0000Your own {list} are not offered at this table: whoever runs it (the owner, the GM or the assistant GM) keeps a copy to admit one.": [
+      "Tvůj vlastní obsah {list} není u tohoto stolu dostupný. Vlastník, PJ nebo pomocný PJ musí uložit jeho kopii.",
+      "Tvůj vlastní obsah {list} není u tohoto stolu dostupný. Vlastník, PJ nebo pomocný PJ musí uložit jeho kopii.",
+      "Tvůj vlastní obsah {list} není u tohoto stolu dostupný. Vlastník, PJ nebo pomocný PJ musí uložit jeho kopii."
     ]
   }
 }
