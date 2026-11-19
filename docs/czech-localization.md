@@ -61,7 +61,7 @@ not just UI catalog coverage.
 
 ## Verified coverage on this branch
 
-- **Interface:** 2,549 of 10,549 source UI message keys translated (24.2%).
+- **Interface:** 3,049 of 10,549 source UI message keys translated (28.9%).
 - **Context-specific variants:** 304 of 304 translated.
 - **Plural keys:** 239 of 239 translated with Czech one/few/many forms.
 - **Core SRD display names:** 1,463 of 1,463 keys translated (spells, monsters, items, classes, class features, equipment and other name tables).
@@ -77,8 +77,12 @@ tested with `npm run lint`, `npm test` and `npm run build` before merging.
 
 - **Batch 1 (200 strings, Nov 2026):** Hand-translated story-lore entries, party-roster setup, map generation and worldpack settings. Preserved variable placeholders and verified the entries against the English source keys. No DeepL or other translation API was used.
 
-Current source catalog: **2549 / 10549 messages translated**, **8000 missing**. The remaining UI messages can be translated in additional manually reviewed batches. Full rulebook descriptions still need their own translation effort.
+Current source catalog: **3049 / 10549 messages translated**, **7500 missing**. The remaining UI messages can be translated in additional manually reviewed batches. Full rulebook descriptions still need their own translation effort.
 
 - **Batch 2 (647 strings, Nov 2026):** Manually translated worldpack settings, storyboard and lore connections, bestiary linking, regional maps, WorldForge encyclopedia and timeline, image generation, session and narration controls, trading, and companions. Seven consecutive commits (six 100-key batches and one 47-key batch), all saved to `feat/czech-localization`. Source placeholders and markup were compared with the English keys across the full Czech UI catalog: zero mismatches.
 
-**Current catalog coverage:** 2,549 of 10,549 strings (24.2%), with 8000 still untranslated. Full build/test not yet run.
+**Current catalog coverage:** 3,049 of 10,549 strings (28.9%), with 7500 still untranslated. Full build/test not yet run.
+
+- **Batch 3 (500 strings, Nov 2026):** Manually translated five 100-key groups covering voice chat and speaker casting, combat conditions, character sheets, spell slots and spellbooks, inventory, level advancement and character creation. All source placeholders and markup checked; no missing or altered tokens.
+
+**After batch 3:** 3,049 of 10,549 source messages have Czech translations (28.9%); 7,500 remain. Context-specific and plural catalogs are unchanged. The full build and automated tests have not yet been run.
