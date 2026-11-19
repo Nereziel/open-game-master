@@ -69,8 +69,11 @@ if (has("check")) {
     if (!one || !many || !Array.isArray(forms) || forms.length !== 3) {
       console.error("Czech plural must have three forms: " + one); failures++; continue;
     }
+    const allowed = new Set((one + " " + many).match(/\{[a-zA-Z_][\w]*\}/g) ?? []);
+    const required = (one.match(/\{[a-zA-Z_][\w]*\}/g) ?? []).filter((v) => many.includes(v));
     for (const form of forms) {
-      if (typeof form !== "string" || !form.trim() || tokens(form) !== tokens(one) || tokens(form) !== tokens(many)) {
+      const used = form?.match?.(/\{[a-zA-Z_][\w]*\}/g) ?? [];
+      if (typeof form !== "string" || !form.trim() || used.some((v) => !allowed.has(v)) || required.some((v) => !used.includes(v))) {
         console.error("Invalid Czech plural form: " + one); failures++;
       }
     }
@@ -133,8 +136,11 @@ if (has("check")) {
       if (!row) throw new Error("Missing translation id: " + id);
       if (job.kind === "plural") {
         const values = [row.one, row.few, row.many].map((v) => retainSpacing(job.one, v));
+        const allowed = new Set((job.one + " " + job.many).match(/\{[a-zA-Z_][\w]*\}/g) ?? []);
+        const required = (job.one.match(/\{[a-zA-Z_][\w]*\}/g) ?? []).filter((v) => job.many.includes(v));
         for (const value of values) {
-          if (!value.trim() || tokens(value) !== tokens(job.one) || tokens(value) !== tokens(job.many)) {
+          const used = value.match(/\{[a-zA-Z_][\w]*\}/g) ?? [];
+          if (!value.trim() || used.some((v) => !allowed.has(v)) || required.some((v) => !used.includes(v))) {
             throw new Error("Wrong Czech plural placeholders: " + job.one);
           }
         }
