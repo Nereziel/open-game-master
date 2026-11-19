@@ -61,7 +61,7 @@ not just UI catalog coverage.
 
 ## Verified coverage on this branch
 
-- **Interface:** 4,549 of 10,549 source UI message keys translated (43.1%).
+- **Interface:** 5,049 of 10,549 source UI message keys translated (47.9%).
 - **Context-specific variants:** 304 of 304 translated.
 - **Plural keys:** 239 of 239 translated with Czech one/few/many forms.
 - **Core SRD display names:** 1,463 of 1,463 keys translated (spells, monsters, items, classes, class features, equipment and other name tables).
@@ -97,4 +97,8 @@ Current source catalog: **3049 / 10549 messages translated**, **7500 missing**. 
 
 - **Batch 6 (+500 strings, Nov 2026):** Five further commits manually translate exactly **104 + 100 + 100 + 100 + 96 = 500** previously untranslated English UI source keys. Coverage includes session/lobby onboarding, character sheets, real dice and PDF/story export, roles and session scheduling, invite codes and sharing, character library and portraits, friends and in-app help, workshop imports, world-building tool labels. Source placeholders and HTML tags have been validated across the full Czech UI catalog: **0 mismatches**. No translation service or API was used.
 
-**After batch 6 (current):** **4,549 / 10,549** source UI messages translated (**43.1%**), **6,000** remaining. Full `npm run lint`, `npm test`, `npm run build` are still pending. The PR remains open and unmerged.
+**After batch 6 (historical):** **4,549 / 10,549** source UI messages translated (**43.1%**), **6,000** remaining. Full `npm run lint`, `npm test`, `npm run build` are still pending. The PR remains open and unmerged.
+
+- **Batch 7 (+500 strings, Nov 2026):** Manually translated 500 new UI source messages in five 100-key commits. Areas: workshop content and world creation, monster and encounter mechanics (recharge, resistances, attacks and CR), bestiary and NPC editors, spell lists, tabletop and Bluetooth dice, test fights, rulebook browsing, legal section headings, server onboarding, AI provider configuration and image generation via ComfyUI/OpenAI. No third-party translation API was used. All Czech UI source keys were checked against source placeholders and HTML tags: **zero mismatches**.
+
+**After batch 7 (current):** **5,049 / 10,549** UI source messages translated (**47.9%**); **5,500 remain**. Full `npm run lint`, `npm test`, `npm run build` are still pending. PR is open and unmerged.
