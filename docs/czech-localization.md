@@ -61,7 +61,7 @@ not just UI catalog coverage.
 
 ## Verified coverage on this branch
 
-- **Interface:** 1,702 of 10,549 source UI message keys translated (16.1%).
+- **Interface:** 1,902 of 10,549 source UI message keys translated (18.0%).
 - **Context-specific variants:** 304 of 304 translated.
 - **Plural keys:** 239 of 239 translated with Czech one/few/many forms.
 - **Core SRD display names:** 1,463 of 1,463 keys translated (spells, monsters, items, classes, class features, equipment and other name tables).
@@ -72,3 +72,9 @@ remain in English, so **this is still a partial localization**. The main branch
 does not gain these changes until the pull request is merged. Changes should be
 tested with `npm run lint`, `npm test` and `npm run build` before merging.
 
+
+## Manual translation batches
+
+- **Batch 1 (200 strings, Nov 2026):** Hand-translated story-lore entries, party-roster setup, map generation and worldpack settings. Preserved variable placeholders and verified the entries against the English source keys. No DeepL or other translation API was used.
+
+Current source catalog: **1902 / 10549 messages translated**, **8647 missing**. The remaining UI messages can be translated in additional manually reviewed batches. Full rulebook descriptions still need their own translation effort.
