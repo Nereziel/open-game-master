@@ -1540,9 +1540,998 @@
     "Find a spell to add: fire bolt, shield...": "Najdi kouzlo: ohnivý výboj, štít…",
     "Adding the {list}'s list": "Přidává se seznam {list}",
     "Add a class's list": "Přidat seznam povolání",
-    "The {list}'s list": "Seznam {list}"
+    "The {list}'s list": "Seznam {list}",
+    "The builder asks for it under this name, and the sheet records the pick as it.": "Tvůrce postavy nabízí tuto volbu pod tímto názvem a takto ji také zapíše do listu postavy.",
+    "New entry": "Nová položka",
+    "No lore yet. Write your world's places, factions, and history; the GM treats it as canon.": "Zatím žádné informace o světě. Napiš o místech, frakcích a historii; PJ je bude považovat za platnou součást světa.",
+    "The party lead has not written any world lore yet.": "Vůdce družiny ještě nenapsal žádné informace o světě.",
+    "That image would not upload.": "Obrázek se nepodařilo nahrát.",
+    "Replace the picture": "Nahradit obrázek",
+    "Take it away": "Odebrat",
+    "Rolling": "Házení kostkami",
+    "Name it first.": "Nejprve zadej název.",
+    "Bright": "Jasné",
+    "Dim": "Šero",
+    "Dark": "Tma",
+    "Down": "Na zemi",
+    "Homepage (optional)": "Domovská stránka (volitelné)",
+    "Rights holder": "Držitel práv",
+    "Place": "Místo",
+    "People": "Lidé",
+    "Cover": "Kryt",
+    "Species": "Druh",
+    "Background": "Minulost",
+    "Replace": "Nahradit",
+    "Backgrounds": "Minulosti",
+    "Features": "Schopnosti",
+    "That could not be built.": "Tuto položku se nepodařilo vytvořit.",
+    "Start blank": "Začít od nuly",
+    "Throw it away": "Zahodit",
+    "Guided setup": "Průvodce nastavením",
+    "Your changes are kept here.": "Tvoje změny se ukládají zde.",
+    "Nothing on the board. Start with a reason the party would go somewhere.": "Na plánovací tabuli zatím nic není. Začni důvodem, proč by se družina měla někam vydat.",
+    "What this board is missing": "Co na této tabuli chybí",
+    "Nothing yet. Cards become lore, quests, prepared fights, GM notes and the story arc.": "Zatím nic. Karty se mohou stát informacemi o světě, úkoly, připravenými boji, poznámkami PJ a součástí příběhu.",
+    "Known": "Známé",
+    "The server could not be reached.": "Nelze se připojit k serveru.",
+    "Now": "Nyní",
+    "New": "Nový",
+    "Lore": "Informace o světě",
+    "waiting": "čeká",
+    "Power": "Moc",
+    "Timeline": "Časová osa",
+    "Draft": "Koncept",
+    "Not set": "Nenastaveno",
+    "Lore check": "Kontrola informací o světě",
+    "Arrange the table": "Uspořádat herní stůl",
+    "Lead": "Vůdce",
+    "Waiting on you": "Čeká se na tebe",
+    "Campaign prep": "Příprava kampaně",
+    "End the session": "Ukončit sezení",
+    "Resume the table": "Pokračovat ve hře",
+    "From your library": "Z tvé knihovny",
+    "Painting portrait…": "Vytváření portrétu…",
+    "Voice": "Hlas",
+    "Microphone": "Mikrofon",
+    "System default": "Výchozí systémové nastavení",
+    "Microphone mode": "Režim mikrofonu",
+    "Rooms": "Místnosti",
+    "The cast": "Postavy",
+    "AI companion": "AI společník",
+    "Pace": "Tempo",
+    "Narrator pace": "Tempo vypravěče",
+    "Cast {name}": "Seslat {name}",
+    "Use {name}": "Použít {name}",
+    "Stable": "Stabilizovaný",
+    "Dying {successes}/{failures}": "Umírání {successes}/{failures}",
+    "Readied": "Připraveno",
+    "Immune to": "Imunita proti",
+    "Carried": "Neseno",
+    "Cantrips full": "Seznam triků je plný",
+    "Done.": "Hotovo.",
+    "Suggested": "Doporučeno",
+    "suggested": "doporučeno",
+    "Open to more than one partner": "Otevřený vztahu s více partnery",
+    "Callings of {pack}": "Povolání z {pack}",
+    "Other settings": "Další nastavení",
+    "Cantrip": "Trik",
+    "Ability scores": "Hodnoty vlastností",
+    "more ": "další ",
+    "at its highest face": "s maximální hodnotou kostky",
+    "Backstory": "Příběh postavy",
+    "Choose a language...": "Vyber jazyk…",
+    ".": ". ",
+    "Known spells full": "Seznam známých kouzel je plný",
+    "Spell attack": "Útok kouzlem",
+    "From the record": "Ze záznamu",
+    "Do": "Udělat",
+    "Narrate": "Vyprávět",
+    "Direct": "Řídit",
+    "close": "blízký",
+    "Out": "Neúčastní se",
+    "action": "akce",
+    "bonus action": "bonusová akce",
+    "Self": "Sesilatel",
+    "no roll": "bez hodu",
+    "knocked out": "v bezvědomí",
+    "Hand on the turn": "Karty v tomto tahu",
+    "Straight": "Bez výhody",
+    "Advantage": "Výhoda",
+    "Disadvantage": "Nevýhoda",
+    "The order would not take that.": "Pořadí tuto změnu nepovoluje.",
+    "Dash": "Sprintovat",
+    "Dodge": "Uhýbat",
+    "Hide": "Skrýt",
+    "attack": "útok",
+    "move": "pohyb",
+    "{ability} save DC {dc}": "Záchranný hod na {ability}, SO {dc}",
+    "{ability} save": "Záchrana na {ability}",
+    "slashing": "sečné",
+    " and ": " a ",
+    "Type": "Typ",
+    "Flanking": "Obcházení",
+    "Melee": "Na blízko",
+    "Cast": "Seslat",
+    "Characters from a library took their progress home with them. The story stays here to read.": "Postavy z knihovny si svůj pokrok odnesly s sebou. Příběh si zde můžeš stále přečíst.",
+    "That did not work.": "Akce se nezdařila.",
+    "Their walking speed.": "Jejich rychlost chůze.",
+    "Languages and training": "Jazyky a zběhlosti",
+    "your": "tvůj",
+    "Download PDF": "Stáhnout PDF",
+    "ready": "připraveno",
+    "Next session": "Příští sezení",
+    "Move": "Pohyb",
+    "Saved": "Uloženo",
+    "Actions for {name}": "Akce pro {name}",
+    "More actions for {name}": "Další akce pro {name}",
+    "Spell save DC": "SO záchrany proti kouzlu",
+    "Join the party": "Připojit se k družině",
+    "Getting started": "Začínáme",
+    "Join the table": "Připojit se ke hře",
+    "Rider dice": "Kostky dodatečného účinku",
+    "Ancestry": "Původ",
+    "by {name}": "od {name}",
+    "What they want": "Co chtějí",
+    "The test could not be ended.": "Test se nepodařilo ukončit.",
+    "Saving...": "Ukládání…",
+    "Look again": "Podívat se znovu",
+    "Look": "Prohlédnout",
+    "Installed": "Nainstalováno",
+    "Run it": "Spustit",
+    "Player agents": "Agenti hráčů",
+    "Storage": "Úložiště",
+    "API key": "Klíč API",
+    " and {count} more": " a dalších {count}",
+    "•••••••• (set)": "•••••••• (nastaveno)",
+    "Replace it": "Nahradit",
+    "Uses": "Použití",
+    "Show": "Zobrazit",
+    "Failed": "Neúspěšné",
+    "Every model ODM can paint with on ComfyUI. Times are per picture once the model is loaded, timed with ODM's own portrait, creature and scene prompts at 1024 px; the first picture after switching models also loads it from disk. Add a model's files to ComfyUI, then Refresh.": "Všechny modely, které může ODM použít v ComfyUI pro tvorbu obrázků. Uvedené časy platí pro jednotlivé obrázky po načtení modelu a vycházejí z testů portrétů, tvorů a scén v rozlišení 1024 px. První obrázek po změně modelu navíc vyžaduje načtení z disku. Přidej soubory modelu do ComfyUI a klikni na Obnovit.",
+    "Measured on {hardware}": "Změřeno na {hardware}",
+    "Not measured on {hardware} yet": "Na {hardware} zatím nezměřeno",
+    "Poor pictures on {hardware}": "Nekvalitní obrázky na {hardware}",
+    "More GPU memory than this one has": "Vyžaduje více grafické paměti, než je k dispozici",
+    "The chosen models have no {effort} setting and run at their own default.": "Vybrané modely nemají nastavení {effort} a používají svou výchozí hodnotu.",
+    "The bookkeeping model has no {effort} setting and runs at its own default.": "Model pro správu herních dat nemá nastavení {effort} a používá svou výchozí hodnotu.",
+    "AI story setup": "Příprava příběhu pomocí AI",
+    "Show what enemies look likely to do next": "Zobrazovat pravděpodobné další kroky nepřátel",
+    "Music": "Hudba",
+    "Sounds": "Zvuky",
+    "Held": "Pozastaveno",
+    "(hidden)": "(skryté)",
+    "Medium": "Střední",
+    "Vast": "Rozsáhlé",
+    "Length": "Délka",
+    "Short": "Krátké",
+    "Story AI": "Příběhová AI",
+    "Unpin": "Odepnout",
+    "The server did not answer and the copy is not in the list, so it was not made. Duplicate it again.": "Server neodpověděl a kopie není v seznamu, takže nebyla vytvořena. Zkus duplikování znovu.",
+    "The server could not be reached, so it is not known yet whether the copy was made. Check the list before duplicating it again.": "Server nebyl dostupný, proto není jisté, zda se kopie vytvořila. Než se pokusíš znovu o duplikování, zkontroluj seznam.",
+    "Hit": "Zásah",
+    "Save changes": "Uložit změny",
+    "spent": "spotřebováno",
+    "Double": "Dvojnásobek",
+    "Stop": "Zastavit",
+    "medium": "střední",
+    "Could not save that.": "Nepodařilo se uložit.",
+    "held": "udrženo",
+    "friendly": "přátelský",
+    "wary": "obezřetný",
+    "free": "zdarma",
+    "poor": "chudý",
+    "Tiny": "Drobný"
   },
-  "contexts": {},
+  "contexts": {
+    "Remove": {
+      "creator.defaults.remove": "Odebrat"
+    },
+    "Change": {
+      "setup.ready.change": "Změnit"
+    },
+    "Clear": {
+      "board.clearShort": "Vymazat"
+    },
+    "Done": {
+      "quests.status.done": "Dokončeno"
+    },
+    "Try again": {
+      "action.retry": "Zkusit znovu"
+    },
+    "Settings": {
+      "menu.settings": "Nastavení",
+      "creator.setting.infoLabel": "Nastavení"
+    },
+    "Admin panel": {
+      "admin.title": "Správa serveru"
+    },
+    "Help": {
+      "menu.help": "Nápověda"
+    },
+    "About": {
+      "workshop.world.secrets.aboutLabel": "O čem",
+      "table.ask.about": "O",
+      "table.ask.aboutAria": "O",
+      "help.talking.ask.span2": "O"
+    },
+    "Signed in as {name}": {
+      "admin.signedInAs": "Přihlášen(a) jako {name}"
+    },
+    "Log in": {
+      "friends.login.link": "Přihlásit se"
+    },
+    "Licenses and attribution": {
+      "docs.licenses.title": "Licence a autoři"
+    },
+    "Could not reach the server.": {
+      "table.join.unreachable": "Nelze se připojit k serveru.",
+      "table.ask.unreachable": "Nelze se připojit k serveru.",
+      "characters.unreachable": "Nelze se připojit k serveru.",
+      "characters.use.unreachable": "Nelze se připojit k serveru.",
+      "table.errors.unreachable": "Nelze se připojit k serveru."
+    },
+    "None set": {
+      "workshop.bestiary.folds.sensesNone": "Nenastaveno"
+    },
+    "Finish": {
+      "builder.shell.step.finish": "Dokončit"
+    },
+    "Water": {
+      "dm.maps.theme.riverside": "Řeka"
+    },
+    "Solo adventure": {
+      "home.menu.solo": "Sólo dobrodružství"
+    },
+    "ended": {
+      "table.bonds.ended": "ukončeno"
+    },
+    "In play": {
+      "home.slot.inPlay": "Hraje se"
+    },
+    "Open": {
+      "dm.console.floor.status.open": "Otevřeno"
+    },
+    "Close": {
+      "table.bonds.tier.close": "Blízký vztah",
+      "workshop.cast.knownBefore.close": "Blízcí"
+    },
+    "Share": {
+      "workshop.system.share.label": "Sdílet"
+    },
+    "Experience": {
+      "table.sheet.experience": "Zkušenosti"
+    },
+    "Review": {
+      "workshop.world.region.review": "Kontrola"
+    },
+    "Live voice chat": {
+      "help.voice.p1.span3": "Živý hlasový chat"
+    },
+    "Narration": {
+      "help.voice.p1.span1": "Vyprávění"
+    },
+    "Custom": {
+      "creator.genre.custom": "Vlastní"
+    },
+    "deadly": {
+      "workbench.band.deadly": "smrtící"
+    },
+    "The first roll stands": {
+      "admin.accounts.rolled.first": "Platí první hod"
+    },
+    "Premise": {
+      "workshop.plugin.premise": "Výchozí situace"
+    },
+    "off": {
+      "voice.peer.off": "vypnuto",
+      "admin.speech.auto.off": "vypnuto",
+      "admin.voice.state.off": "vypnuto"
+    },
+    "Off": {
+      "creator.summary.voiceOff": "Vypnuto",
+      "admin.addons.status.disabled": "Vypnuto",
+      "admin.voice.off": "Vypnuto",
+      "table.settings.companions.off": "Vypnuto",
+      "ai.imagesOff": "Vypnuto"
+    },
+    "On": {
+      "creator.summary.voiceOn": "Zapnuto",
+      "workshop.homebrew.spellMore.on": "Zapnuto",
+      "table.settings.narration.on": "Zapnuto",
+      "table.settings.ambience.on": "Zapnuto"
+    },
+    "Voice chat": {
+      "device.playback.voiceChat": "Hlasový chat"
+    },
+    "Bring in prep": {
+      "help.workshop.inOut.span1": "Importovat přípravu"
+    },
+    "House rules": {
+      "docs.ref.tab.rulings": "Domácí pravidla"
+    },
+    "Magic": {
+      "builder.quiz.method.magic": "Magie"
+    },
+    "Other": {
+      "sheet.spells.tabOther": "Ostatní"
+    },
+    "None": {
+      "creator.import.none": "Žádné",
+      "workshop.world.play.none": "Žádné",
+      "builder.levels.none": "Žádné"
+    },
+    "on": {
+      "admin.voice.state.on": "zapnuto"
+    },
+    "Hidden": {
+      "quests.status.hidden": "Skryté"
+    },
+    "Roster": {
+      "table.side.roster": "Družina",
+      "characters.roster": "Seznam postav",
+      "dm.wb.rosterLabel": "Seznam družiny"
+    },
+    "How many {name}": {
+      "workshop.homebrew.background.howManyNamed": "Počet: {name}"
+    },
+    "Feature": {
+      "table.hand.type.feature": "Schopnost"
+    },
+    "Read it in the rulebook": {
+      "workshop.bestiary.printed.read": "Přečíst v knize pravidel"
+    },
+    "level": {
+      "builder.undo.noun.level": "úroveň"
+    },
+    "weapon": {
+      "table.hand.attack.offhand.word.weapon": "zbraň"
+    },
+    "class": {
+      "builder.undo.noun.class": "povolání"
+    },
+    "none": {
+      "sheet.training.none": "žádné",
+      "workshop.system.rules.figureNone": "žádné"
+    },
+    "no": {
+      "builder.spellshortage.haveNone": "žádné"
+    },
+    "background": {
+      "builder.calling.sourceBackground": "minulost"
+    },
+    "species": {
+      "builder.scope.noun.species": "druh"
+    },
+    "subclass": {
+      "builder.undo.noun.subclass": "podtřída"
+    },
+    "Cost": {
+      "table.hand.preview.cost": "Cena"
+    },
+    "Raised by": {
+      "workshop.homebrew.itemEffect.raisedBy": "Zvýšeno o"
+    },
+    "Cantrips": {
+      "lead.edit.cantrips": "Triky"
+    },
+    "The player reads this; the table runs only the grants below.": {
+      "workshop.homebrew.subclassChoice.whatItSaysHint": "Hráč čte tento text; herní engine vyhodnocuje jen schopnosti níže."
+    },
+    "The builder asks for it under this name, and the sheet records the pick as it.": {
+      "workshop.homebrew.subclassChoice.whatPlayerChoosesHint": "Tvůrce postavy nabízí tuto volbu pod tímto názvem a takto ji také zapíše do listu postavy."
+    },
+    "Material": {
+      "maptools.material": "Materiál"
+    },
+    "cantrip": {
+      "lead.edit.cantripMeta": "trik"
+    },
+    "yours": {
+      "table.formation.yours": "tvoje"
+    },
+    "New entry": {
+      "table.lore.newEntry": "Nová položka"
+    },
+    "No lore yet. Write your world's places, factions, and history; the GM treats it as canon.": {
+      "table.lore.empty.lead": "Zatím žádné informace o světě. Napiš o místech, frakcích a historii; PJ je bude považovat za platnou součást světa."
+    },
+    "The party lead has not written any world lore yet.": {
+      "table.lore.empty.player": "Vůdce družiny ještě nenapsal žádné informace o světě."
+    },
+    "That image would not upload.": {
+      "table.map.error.upload": "Obrázek se nepodařilo nahrát."
+    },
+    "Replace the picture": {
+      "workshop.lore.replacePicture": "Nahradit obrázek"
+    },
+    "Take it away": {
+      "workshop.lore.takeAway": "Odebrat"
+    },
+    "Rolling": {
+      "table.tray.rolling": "Házení kostkami"
+    },
+    "Name it first.": {
+      "board.error.nameFirst": "Nejprve zadej název."
+    },
+    "Bright": {
+      "scene.light.bright": "Jasné"
+    },
+    "Dim": {
+      "scene.light.dim": "Šero",
+      "scene.zone.ambient.dim": "Šero"
+    },
+    "Dark": {
+      "scene.zone.ambient.dark": "Tma"
+    },
+    "Down": {
+      "board.health.down": "Na zemi"
+    },
+    "Homepage (optional)": {
+      "share.field.homepage": "Domovská stránka (volitelné)"
+    },
+    "Rights holder": {
+      "share.field.rights": "Držitel práv"
+    },
+    "Place": {
+      "workshop.world.region.place": "Umístit",
+      "board.tools.placeTitle": "Umístit",
+      "builder.dice.socketPlace": "Umístit"
+    },
+    "People": {
+      "table.name.group.people": "Lidé"
+    },
+    "Cover": {
+      "table.hand.preview.cover": "Kryt",
+      "rulebook.quick.cover": "Kryt"
+    },
+    "Species": {
+      "workshop.plugin.reskin.speciesTitle": "Druh"
+    },
+    "Background": {
+      "workshop.plugin.art.background": "Pozadí"
+    },
+    "Replace": {
+      "workshop.plugin.publish.replaceAction": "Nahradit"
+    },
+    "Backgrounds": {
+      "docs.ref.tab.backgrounds": "Minulosti"
+    },
+    "Features": {
+      "builder.levels.features": "Schopnosti"
+    },
+    "That could not be built.": {
+      "workshop.bestiary.rows.buildFailed": "Tuto položku se nepodařilo vytvořit.",
+      "share.error.build": "Tuto položku se nepodařilo vytvořit."
+    },
+    "Start blank": {
+      "workshop.create.way.blank": "Začít od nuly"
+    },
+    "Throw it away": {
+      "workshop.world.outline.throwAway": "Zahodit"
+    },
+    "Guided setup": {
+      "admin.setup.card": "Průvodce nastavením"
+    },
+    "Your changes are kept here.": {
+      "sb.keptHere": "Tvoje změny se ukládají zde."
+    },
+    "Nothing on the board. Start with a reason the party would go somewhere.": {
+      "sb.empty": "Na plánovací tabuli zatím nic není. Začni důvodem, proč by se družina měla někam vydat."
+    },
+    "What this board is missing": {
+      "sb.missingTitle": "Co na této tabuli chybí"
+    },
+    "Nothing yet. Cards become lore, quests, prepared fights, GM notes and the story arc.": {
+      "sb.becomesEmpty": "Zatím nic. Karty se mohou stát informacemi o světě, úkoly, připravenými boji, poznámkami PJ a součástí příběhu."
+    },
+    "Roll": {
+      "workshop.tables.rows.roll": "Hodit",
+      "table.tray.roll": "Hodit"
+    },
+    "Known": {
+      "workshop.world.linkEditor.known": "Známé"
+    },
+    "The server could not be reached.": {
+      "workshop.world.paint.unreachable": "Nelze se připojit k serveru."
+    },
+    "Now": {
+      "builder.levels.now": "Nyní"
+    },
+    "New": {
+      "workshop.world.paint.new": "Nový"
+    },
+    "Lore": {
+      "workshop.system.lore.label": "Informace o světě"
+    },
+    "waiting": {
+      "lead.floor.waiting": "čeká"
+    },
+    "Power": {
+      "faction.powerLabel": "Vliv"
+    },
+    "Timeline": {
+      "timeline.title": "Časová osa"
+    },
+    "Draft": {
+      "tables.draft": "Koncept"
+    },
+    "Not set": {
+      "admin.secret.notSet": "Nenastaveno",
+      "admin.discord.notSet": "Nenastaveno",
+      "ai.keyNotSet": "Nenastaveno",
+      "dm.action.notSet": "Nenastaveno"
+    },
+    "Lore check": {
+      "lorecheck.title": "Kontrola informací o světě"
+    },
+    "Arrange the table": {
+      "help.panel.layout.span2": "Uspořádat herní stůl"
+    },
+    "Lead": {
+      "admin.usage.th.lead": "Vůdce"
+    },
+    "Waiting on you": {
+      "friends.requests.ribbon": "Čeká se na tebe",
+      "dm.console.queueTitle": "Čeká se na tebe"
+    },
+    "Roll dice": {
+      "table.tray.title": "Hodit kostkami"
+    },
+    "Campaign prep": {
+      "table.lobby.prepTitle": "Příprava kampaně"
+    },
+    "End the session": {
+      "table.session.endTitle": "Ukončit sezení"
+    },
+    "Resume the table": {
+      "menu.phone.resume": "Pokračovat ve hře"
+    },
+    "From your library": {
+      "table.hero.libraryTitle": "Z tvé knihovny"
+    },
+    "Painting portrait…": {
+      "characters.portrait.painting": "Vytváření portrétu…"
+    },
+    "Voice": {
+      "voice.voice": "Hlas"
+    },
+    "Microphone": {
+      "device.mic.title": "Mikrofon"
+    },
+    "System default": {
+      "device.systemDefault": "Výchozí systémové nastavení"
+    },
+    "Microphone mode": {
+      "device.mic.modeLabel": "Režim mikrofonu"
+    },
+    "Rooms": {
+      "admin.sound.layer.bed": "Prostředí"
+    },
+    "The cast": {
+      "workshop.cast.title": "Postavy",
+      "load.label.cast": "Postavy"
+    },
+    "AI companion": {
+      "table.party.companion": "AI společník"
+    },
+    "Pace": {
+      "narrator.pace": "Tempo"
+    },
+    "Narrator pace": {
+      "narrator.paceLabel": "Tempo vypravěče"
+    },
+    "Cast {name}": {
+      "table.hand.panel.cast": "Seslat {name}"
+    },
+    "Use {name}": {
+      "setup.suggestion.use": "Použít {name}"
+    },
+    "Strength": {
+      "maptools.strength": "Síla"
+    },
+    "Weapons": {
+      "builder.quiz.method.weapons": "Zbraně"
+    },
+    "Stable": {
+      "table.party.stable": "Stabilizovaný"
+    },
+    "Dying {successes}/{failures}": {
+      "board.stage.dying": "Umírání {successes}/{failures}"
+    },
+    "Readied": {
+      "table.hand.cond.readied": "Připraveno"
+    },
+    "Immune to": {
+      "workshop.bestiary.stats.immune": "Imunita proti"
+    },
+    "Carried": {
+      "table.sheet.carried": "Neseno"
+    },
+    "Cantrips full": {
+      "sheet.anyList.cantripsFull": "Seznam triků je plný"
+    },
+    "Done.": {
+      "result.done": "Hotovo."
+    },
+    "Ready": {
+      "table.hand.basic.ready": "Připraveno"
+    },
+    "Suggested": {
+      "sheet.spells.suggested": "Doporučeno",
+      "table.hero.suggested": "Doporučeno"
+    },
+    "suggested": {
+      "table.hand.cond.suggested": "doporučeno"
+    },
+    "Open to more than one partner": {
+      "table.party.openToMore": "Otevřený vztahu s více partnery"
+    },
+    "Callings of {pack}": {
+      "builder.group.callingsOf": "Povolání z {pack}"
+    },
+    "Other settings": {
+      "maptools.group.other": "Další nastavení"
+    },
+    "Cantrip": {
+      "table.hand.spell.cantrip": "Trik"
+    },
+    "Ability scores": {
+      "builder.owed.scores": "Hodnoty vlastností",
+      "builder.dice.abilityScores": "Hodnoty vlastností",
+      "builder.summaryrow.abilities": "Hodnoty vlastností"
+    },
+    "more ": {
+      "builder.math.more": "další "
+    },
+    "at its highest face": {
+      "builder.hp.how.max": "s maximální hodnotou kostky"
+    },
+    "Backstory": {
+      "table.sheet.backstory": "Příběh postavy"
+    },
+    "Choose a language...": {
+      "builder.feats.chooseLanguage": "Vyber jazyk…"
+    },
+    ".": {
+      "auth.legal.after": ". "
+    },
+    "Known spells full": {
+      "sheet.anyList.spellsFull": "Seznam známých kouzel je plný"
+    },
+    "Spell attack": {
+      "builder.math.spellAttack": "Útok kouzlem"
+    },
+    "From the record": {
+      "help.talking.ask.span4": "Ze záznamu"
+    },
+    "Do": {
+      "help.talking.do.label": "Udělat"
+    },
+    "Narrate": {
+      "cine.mode.narrate": "Vyprávět"
+    },
+    "Direct": {
+      "help.talking.direct.label": "Řídit"
+    },
+    "close": {
+      "rel.close": "blízký"
+    },
+    "Out": {
+      "schedule.rsvp.no": "Neúčastní se"
+    },
+    "action": {
+      "table.hand.gate.word.action": "akce"
+    },
+    "bonus action": {
+      "table.hand.gate.word.bonus": "bonusová akce"
+    },
+    "Self": {
+      "table.hand.range.self": "Sesilatel"
+    },
+    "no roll": {
+      "table.hand.roll.none": "bez hodu"
+    },
+    "knocked out": {
+      "table.condition.source.knockedOut": "v bezvědomí"
+    },
+    "Hand on the turn": {
+      "lead.floor.handOn": "Karty v tomto tahu"
+    },
+    "Straight": {
+      "dm.odds.roll.none": "Bez výhody"
+    },
+    "Advantage": {
+      "dm.odds.roll.advantage": "Výhoda"
+    },
+    "Disadvantage": {
+      "dm.odds.roll.disadvantage": "Nevýhoda"
+    },
+    "The order would not take that.": {
+      "dminit.error.refused": "Pořadí tuto změnu nepovoluje."
+    },
+    "Dash": {
+      "board.hud.dash": "Sprintovat"
+    },
+    "Dodge": {
+      "board.hud.dodge": "Uhýbat"
+    },
+    "Hide": {
+      "table.hand.hide.foldHide": "Skrýt",
+      "board.hud.hide": "Skrýt",
+      "layers.hide": "Skrýt",
+      "builder.math.panel.hideWord": "Skrýt"
+    },
+    "Search": {
+      "docs.ref.searchAria": "Hledat"
+    },
+    "attack": {
+      "workshop.bestiary.attack.unnamed": "útok"
+    },
+    "move": {
+      "board.strip.move": "pohyb"
+    },
+    "{ability} save DC {dc}": {
+      "table.hand.monster.saveRoll": "Záchranný hod na {ability}, SO {dc}"
+    },
+    "{ability} save": {
+      "workshop.bestiary.stats.saveAria": "Záchrana na {ability}",
+      "builder.math.saveOf": "Záchrana na {ability}"
+    },
+    "slashing": {
+      "workshop.bestiary.attack.typePlaceholder": "sečné"
+    },
+    " and ": {
+      "auth.legal.and": " a "
+    },
+    "Type": {
+      "table.hand.tutorial.typeTag": "Typ",
+      "workshop.bestiary.attack.type": "Typ"
+    },
+    "Damage": {
+      "board.hud.damage": "Zranění"
+    },
+    "Save": {
+      "table.hand.preview.save": "Záchranný hod",
+      "workshop.bestiary.attack.save": "Záchranný hod"
+    },
+    "Flanking": {
+      "table.rules.variant.flanking.label": "Obcházení"
+    },
+    "Melee": {
+      "workshop.bestiary.attack.modeMelee": "Na blízko"
+    },
+    "Cast": {
+      "workshop.system.cast.label": "Postavy",
+      "board.targeting.cast": "Seslat",
+      "dm.console.tab.cast": "Postavy"
+    },
+    "Characters from a library took their progress home with them. The story stays here to read.": {
+      "table.settings.end.doneBody": "Postavy z knihovny si svůj pokrok odnesly s sebou. Příběh si zde můžeš stále přečíst."
+    },
+    "That did not work.": {
+      "table.advance.failed": "Akce se nezdařila.",
+      "overworld.error.fallback": "Akce se nezdařila.",
+      "load.write.fallback": "Akce se nezdařila."
+    },
+    "Armor class": {
+      "builder.math.armorClass": "Třída zbroje"
+    },
+    "Their walking speed.": {
+      "characters.sheet.speedTitle": "Jejich rychlost chůze."
+    },
+    "Languages and training": {
+      "characters.sheet.languages": "Jazyky a zběhlosti"
+    },
+    "your": {
+      "builder.scope.yours": "tvůj"
+    },
+    "Download PDF": {
+      "characters.action.pdf": "Stáhnout PDF"
+    },
+    "ready": {
+      "board.hud.budget.actionReady": "připraveno",
+      "board.hud.budget.reactionReady": "připraveno"
+    },
+    "Next session": {
+      "session.hold.next": "Příští sezení"
+    },
+    "Move": {
+      "board.moveMode.title": "Pohyb"
+    },
+    "Saved": {
+      "report.savedLine.pre": "Uloženo"
+    },
+    "Actions for {name}": {
+      "board.hud.actionsAria": "Akce pro {name}"
+    },
+    "More actions for {name}": {
+      "admin.users.actionsAria": "Další akce pro {name}"
+    },
+    "Spell save DC": {
+      "workshop.bestiary.spells.saveDc": "SO záchrany proti kouzlu",
+      "builder.math.spellDc": "SO záchrany proti kouzlu"
+    },
+    "Join the party": {
+      "chooser.join": "Připojit se k družině"
+    },
+    "Getting started": {
+      "help.started.heading": "Začínáme",
+      "dm.stage.starting": "Začínáme"
+    },
+    "Username": {
+      "auth.field.username": "Uživatelské jméno"
+    },
+    "Something went wrong.": {
+      "auth.error.generic": "Něco se pokazilo."
+    },
+    "Join the table": {
+      "auth.submit.join": "Připojit se ke hře"
+    },
+    "Rider dice": {
+      "workshop.bestiary.attack.riderChip": "Kostky dodatečného účinku"
+    },
+    "Ancestry": {
+      "builder.shell.step.ancestry": "Původ"
+    },
+    "by {name}": {
+      "admin.worlds.by": "od {name}"
+    },
+    "What they want": {
+      "faction.wantLabel": "Co chtějí"
+    },
+    "The test could not be ended.": {
+      "load.write.testEnd": "Test se nepodařilo ukončit."
+    },
+    "Saving...": {
+      "tables.saving": "Ukládání…"
+    },
+    "Look again": {
+      "admin.models.lookAgain": "Podívat se znovu"
+    },
+    "Look": {
+      "atlas.mode.look": "Prohlédnout"
+    },
+    "Installed": {
+      "admin.worlds.installedHeading": "Nainstalováno"
+    },
+    "Run it": {
+      "dm.action.runIt": "Spustit"
+    },
+    "Player agents": {
+      "admin.section.playerAgents": "Agenti hráčů"
+    },
+    "Storage": {
+      "load.label.storage": "Úložiště"
+    },
+    "API key": {
+      "ai.apiKey": "Klíč API"
+    },
+    " and {count} more": {
+      "builder.summaryrow.andMore": " a dalších {count}"
+    },
+    "•••••••• (set)": {
+      "ai.keySet": "•••••••• (nastaveno)"
+    },
+    "Replace it": {
+      "admin.addons.replaceAction": "Nahradit"
+    },
+    "Uses": {
+      "table.hand.pool.usesShort": "Použití"
+    },
+    "Show": {
+      "layers.show": "Zobrazit"
+    },
+    "Refresh": {
+      "table.context.refresh": "Obnovit"
+    },
+    "Failed": {
+      "cine.verdict.failed": "Neúspěšné",
+      "quests.status.failed": "Neúspěšné"
+    },
+    "Every model ODM can paint with on ComfyUI. Times are per picture once the model is loaded, timed with ODM's own portrait, creature and scene prompts at 1024 px; the first picture after switching models also loads it from disk. Add a model's files to ComfyUI, then Refresh.": {
+      "admin.comfy.intro": "Všechny modely, které může ODM použít v ComfyUI pro tvorbu obrázků. Uvedené časy platí pro jednotlivé obrázky po načtení modelu a vycházejí z testů portrétů, tvorů a scén v rozlišení 1024 px. První obrázek po změně modelu navíc vyžaduje načtení z disku. Přidej soubory modelu do ComfyUI a klikni na Obnovit."
+    },
+    "Measured on {hardware}": {
+      "admin.comfy.measuredOn": "Změřeno na {hardware}"
+    },
+    "Not measured on {hardware} yet": {
+      "admin.comfy.notMeasuredOn": "Na {hardware} zatím nezměřeno"
+    },
+    "Poor pictures on {hardware}": {
+      "admin.comfy.poorOn": "Nekvalitní obrázky na {hardware}"
+    },
+    "More GPU memory than this one has": {
+      "admin.comfy.tooBig": "Vyžaduje více grafické paměti, než je k dispozici"
+    },
+    "The chosen models have no {effort} setting and run at their own default.": {
+      "admin.harness.effort.staleNamed": "Vybrané modely nemají nastavení {effort} a používají svou výchozí hodnotu."
+    },
+    "The bookkeeping model has no {effort} setting and runs at its own default.": {
+      "admin.harness.utilityEffort.staleNamed": "Model pro správu herních dat nemá nastavení {effort} a používá svou výchozí hodnotu."
+    },
+    "AI story setup": {
+      "table.settings.read.storySetup": "Příprava příběhu pomocí AI"
+    },
+    "Show what enemies look likely to do next": {
+      "table.settings.intent.tip": "Zobrazovat pravděpodobné další kroky nepřátel"
+    },
+    "Music": {
+      "admin.sound.layer.music": "Hudba"
+    },
+    "Sounds": {
+      "sound.layer.sting": "Zvuky"
+    },
+    "Held": {
+      "dm.console.floor.status.hold": "Pozastaveno"
+    },
+    "(hidden)": {
+      "cine.hidden": "(skryté)"
+    },
+    "Medium": {
+      "dm.verdict.medium": "Střední",
+      "art.prose.medium": "Středně podrobné"
+    },
+    "Vast": {
+      "art.prose.huge": "Rozsáhlé"
+    },
+    "Length": {
+      "narr.row.length": "Délka"
+    },
+    "Short": {
+      "table.settings.length.short": "Krátké"
+    },
+    "Story AI": {
+      "ai.title": "Příběhová AI"
+    },
+    "Unpin": {
+      "facts.unpin": "Odepnout"
+    },
+    "The server did not answer and the copy is not in the list, so it was not made. Duplicate it again.": {
+      "dm.prep.copyMissingLost": "Server neodpověděl a kopie není v seznamu, takže nebyla vytvořena. Zkus duplikování znovu."
+    },
+    "The server could not be reached, so it is not known yet whether the copy was made. Check the list before duplicating it again.": {
+      "dm.prep.copyUnknownLost": "Server nebyl dostupný, proto není jisté, zda se kopie vytvořila. Než se pokusíš znovu o duplikování, zkontroluj seznam."
+    },
+    "Hit": {
+      "result.hit": "Zásah"
+    },
+    "Save changes": {
+      "characters.edit.submit": "Uložit změny"
+    },
+    "spent": {
+      "board.hud.budget.bonusSpent": "spotřebováno"
+    },
+    "Double": {
+      "dm.action.share.double": "Dvojnásobek"
+    },
+    "Stop": {
+      "pdf.stop": "Zastavit"
+    },
+    "medium": {
+      "workbench.band.medium": "střední"
+    },
+    "Could not save that.": {
+      "consent.error.save": "Nepodařilo se uložit."
+    },
+    "held": {
+      "result.concentration.held": "udrženo"
+    },
+    "friendly": {
+      "faction.attitude.friendly": "přátelský"
+    },
+    "wary": {
+      "faction.attitude.wary": "obezřetný"
+    },
+    "free": {
+      "builder.gear.freeWord": "zdarma"
+    },
+    "poor": {
+      "sheet.between.lifestyle.poor": "chudý"
+    },
+    "Tiny": {
+      "art.prose.tiny": "Drobný"
+    }
+  },
   "plurals": {
     "{count} player\u0000{count} players": [
       "{count} hráč",
