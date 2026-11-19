@@ -61,7 +61,7 @@ not just UI catalog coverage.
 
 ## Verified coverage on this branch
 
-- **Interface:** 4,049 of 10,549 source UI message keys translated (38.4%).
+- **Interface:** 4,549 of 10,549 source UI message keys translated (43.1%).
 - **Context-specific variants:** 304 of 304 translated.
 - **Plural keys:** 239 of 239 translated with Czech one/few/many forms.
 - **Core SRD display names:** 1,463 of 1,463 keys translated (spells, monsters, items, classes, class features, equipment and other name tables).
@@ -93,4 +93,8 @@ Current source catalog: **3049 / 10549 messages translated**, **7500 missing**. 
 
 - **Batch 5 (+500 strings, Nov 2026):** Added five manual translation commits of 104 + 99 + 100 + 100 + 97 new source UI message keys. Covers combat and inventory actions, card hand customization, targeting and spell effects, combat history and outcomes, character inventory and money, equipment and conditions, companions and relationships, dice controls and game session management. No external translation API used. Validated all source keys' placeholders and HTML tags against the Czech translations: **0 mismatches**.
 
-**After batch 5 (current):** **4,049 / 10,549** UI source keys translated (**38.4%**), **6,500** untranslated. Full lint, tests and build still pending.
+**After batch 5 (historical):** **4,049 / 10,549** UI source keys translated (**38.4%**), **6,500** untranslated. Full lint, tests and build still pending.
+
+- **Batch 6 (+500 strings, Nov 2026):** Five further commits manually translate exactly **104 + 100 + 100 + 100 + 96 = 500** previously untranslated English UI source keys. Coverage includes session/lobby onboarding, character sheets, real dice and PDF/story export, roles and session scheduling, invite codes and sharing, character library and portraits, friends and in-app help, workshop imports, world-building tool labels. Source placeholders and HTML tags have been validated across the full Czech UI catalog: **0 mismatches**. No translation service or API was used.
+
+**After batch 6 (current):** **4,549 / 10,549** source UI messages translated (**43.1%**), **6,000** remaining. Full `npm run lint`, `npm test`, `npm run build` are still pending. The PR remains open and unmerged.
