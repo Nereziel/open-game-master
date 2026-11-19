@@ -42,8 +42,8 @@ concurrency:
 
 jobs:
   publish:
-    if: ${{ false }} # Intentionally disabled on this fork
-    if: ${{ github.event_name != 'release' || github.event.action == 'released' || github.event.release.prerelease }}
+    # No Docker build, retag, publish or smoke job can run until explicitly re-enabled.
+    if: ${{ false }}
     runs-on: ubuntu-latest
     # The build bakes the Open5e pack and the MiniLM model, so it is slower than
     # a plain next build.
