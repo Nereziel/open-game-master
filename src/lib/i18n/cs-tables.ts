@@ -1,5 +1,8 @@
 // Czech translations for visible SRD names. Never change stored English IDs.
-type CsTables = { names: Record<string, Record<string, string>> };
+type CsTables = {
+  names: Record<string, Record<string, string>>;
+  guidance?: Record<string, string>;
+};
 const STORE = "__odmCsTables";
 
 export function installCsTables(tables: CsTables): void {
