@@ -87,6 +87,18 @@ export function presetTheme<T extends ThemeSlice>(draft: T, locale: Locale = "en
   return { ...draft, theme: genrePresetFor(draft.genre, locale).defaultTheme };
 }
 
+// The locale may hydrate after the draft was first seeded in English.
+// Replace only an untouched built-in preset sentence, never player text or
+// content from a world pack. Handles switching between any UI languages.
+export function relocalizePresetTheme<T extends ThemeSlice>(draft: T, locale: Locale): T {
+  if (draft.themeTouched || draft.worldPack) return draft;
+  if (!(["en", "fr", "cs"] as const).some((language) => genrePresetFor(draft.genre, language).defaultTheme === draft.theme)) {
+    return draft;
+  }
+  const next = presetTheme(draft, locale);
+  return next.theme === draft.theme ? draft : next;
+}
+
 export const TYPE_MS_PER_CHAR = 22;
 
 export type TypeInPlan = { text: string; chars: number; typeMs: number; sweepMs: number };
