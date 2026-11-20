@@ -93,7 +93,8 @@ export default function AdminPage() {
       title={t("Admin panel", { context: "admin.title" })}
       blurb={t("Signed in as {name}", { name: me.username, context: "admin.signedInAs" })}
     >
-      {/* Seven long labels do not fit 360 px: the row scrolls rather than clipping the last mode. */}
+      {/* Keep every admin section visible at every width. A responsive grid
+          avoids hiding tabs behind two nested, scrollbar-free scroll areas. */}
       {/* The same settings, asked one question at a time, with what runs on
           this computer found and filled in (src/app/setup). */}
       {deviceWorld ? null : (
@@ -110,7 +111,7 @@ export default function AdminPage() {
       </div>
       )}
 
-      <div className="-mx-1 overflow-x-auto px-1 pb-1 [scrollbar-width:none]">
+      <div className="min-w-0 pb-1">
         <SegmentedControl
           // The Android app does not offer addons yet (src/lib/addons/use-addons.ts).
           options={(addonsOfferedHere() ? TABS : TABS.filter((option) => option.value !== "addons")).map((option) => ({
@@ -120,7 +121,8 @@ export default function AdminPage() {
           value={tab}
           onChange={setTab}
           label={t("Admin section")}
-          className="w-max"
+          className="grid w-full grid-cols-2 gap-1 overflow-visible overflow-x-visible sm:grid-cols-3 lg:grid-cols-4 2xl:grid-cols-7"
+          optionClassName="h-auto min-h-11 min-w-0 whitespace-normal px-2 py-2 text-center text-xs leading-tight tracking-[0.06em]"
         />
       </div>
 
