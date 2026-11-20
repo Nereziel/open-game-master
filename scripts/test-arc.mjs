@@ -1,6 +1,6 @@
 // Story-arc parsing, clamped delta merges, and player-safe projections.
 import assert from "node:assert/strict";
-import { openingActFormatRecovery, arcReplyPreview } from "../src/lib/dm/arc-format-recovery.ts";
+import { openingActFormatRecovery, arcReplyPreview, arcReplyRootKeys } from "../src/lib/dm/arc-format-recovery.ts";
 import {
   activeBeatNumber,
   applyArcDelta,
@@ -23,6 +23,14 @@ function test(name, fn) {
   passed += 1;
 }
 
+test("valid but differently shaped saga and opening-act JSON expose their keys for diagnostics", () => {
+  const saga = JSON.stringify({ title: "Zvon", premise: "Vesnice u řeky", acts: [{ milestones: ["Přívoz"] }] });
+  const opening = JSON.stringify({ saga: "Zvon", act: { number: 1, milestones: [{ title: "Přívoz", beats: ["Náves"] }] } });
+  assert.deepEqual(arcReplyRootKeys(saga), ["title", "premise", "acts"]);
+  assert.deepEqual(arcReplyRootKeys(opening), ["saga", "act"]);
+  assert.deepEqual(arcReplyRootKeys("{broken json"), []);
+  assert.deepEqual(arcReplyRootKeys("[]"), []);
+});
 const validArcJson = JSON.stringify({
   premise: "A dead god's heart is waking beneath the city.",
   stakes: "If it beats again, the city drowns in divine fire.",
