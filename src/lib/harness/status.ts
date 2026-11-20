@@ -54,8 +54,10 @@ function cache(): StatusCache {
   return globalThis.__odmHarnessStatus;
 }
 
-// A test turn that went all the way through proves the lockdown for the
-// adapters that could not be proven from their tool list alone.
+// A successful test can mark lockdown proven only for adapters whose tool
+// inventory/containment can actually be verified. Antigravity's init.tools
+// is a global catalogue, so a successful turn does not certify its isolation
+// (test-run.ts deliberately does not mark Antigravity proven).
 declare global {
   var __odmHarnessProven: Set<HarnessId> | undefined;
 }
