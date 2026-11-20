@@ -386,38 +386,38 @@ export function SoundDialog({
     <Dialog open={open} onOpenChange={onOpenChange} title={t("Sound")} icon={<Music className="size-5 text-amber-300" />} width="w-[min(94vw,38rem)]">
       <NarrationSoundSection narration={narration} />
       {ambienceEnabled ? (
-      <div className="mt-4 border-t border-stone-700/40 pt-4">
-        <div className="flex flex-wrap items-center justify-between gap-3">
-          <div className="flex items-center gap-2">
-            <Switch label={t("Sound on")} on={!ambience.muted} onChange={(on) => ambience.setMuted(!on)} />
-            <span className="text-sm text-stone-300">{ambience.muted ? t("Sound off for you") : t("Sound on")}</span>
+        <div className="mt-4 border-t border-stone-700/40 pt-4">
+          <div className="flex flex-wrap items-center justify-between gap-3">
+            <div className="flex items-center gap-2">
+              <Switch label={t("Sound on")} on={!ambience.muted} onChange={(on) => ambience.setMuted(!on)} />
+              <span className="text-sm text-stone-300">{ambience.muted ? t("Sound off for you") : t("Sound on")}</span>
+            </div>
+            <div className="flex items-center gap-2">
+              <span className="sound-caption">{t("Volume")}</span>
+              <Slider
+                label={t("Sound volume")}
+                value={ambience.volume}
+                min={0}
+                max={1}
+                step={0.05}
+                onChange={ambience.setVolume}
+                bubble={(value) => `${Math.round(value * 100)}%`}
+                disabled={ambience.muted}
+                className="w-32 sm:w-40"
+              />
+              <span className="sound-caption w-9 text-right tabular-nums">{Math.round(ambience.volume * 100)}%</span>
+            </div>
           </div>
-          <div className="flex items-center gap-2">
-            <span className="sound-caption">{t("Volume")}</span>
-            <Slider
-              label={t("Sound volume")}
-              value={ambience.volume}
-              min={0}
-              max={1}
-              step={0.05}
-              onChange={ambience.setVolume}
-              bubble={(value) => `${Math.round(value * 100)}%`}
-              disabled={ambience.muted}
-              className="w-32 sm:w-40"
-            />
-            <span className="sound-caption w-9 text-right tabular-nums">{Math.round(ambience.volume * 100)}%</span>
+          {ambience.playing.blocked ? (
+            <p className="sound-note text-amber-200">{t("Your browser is holding the sound back until you tap something on the page.")}</p>
+          ) : null}
+          <div className="mt-4 space-y-3">
+            <LayerRow layer="bed" ambience={ambience} />
+            <LayerRow layer="music" ambience={ambience} />
           </div>
+          <LibraryNote ambience={ambience} steering={steering} />
+          {steering.canSteer ? <Pickers ambience={ambience} steering={steering} /> : null}
         </div>
-        {ambience.playing.blocked ? (
-          <p className="sound-note text-amber-200">{t("Your browser is holding the sound back until you tap something on the page.")}</p>
-        ) : null}
-        <div className="mt-4 space-y-3">
-          <LayerRow layer="bed" ambience={ambience} />
-          <LayerRow layer="music" ambience={ambience} />
-        </div>
-        <LibraryNote ambience={ambience} steering={steering} />
-        {steering.canSteer ? <Pickers ambience={ambience} steering={steering} /> : null}
-      </div>
       ) : null}
     </Dialog>
   );
