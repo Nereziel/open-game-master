@@ -17,6 +17,26 @@ Noto Serif / Georgia** for fantasy-style titles and rulebook text, and
 require no network access or font downloads and switch with the UI language.
 English and French retain the original fonts.
 
+### Czech and French character-sheet PDF export
+
+The fillable character-sheet exporter now embeds the existing local
+`public/pdfjs/standard_fonts/LiberationSans-{Regular,Bold}.ttf` assets with
+`@pdf-lib/fontkit`. It no longer removes Czech Unicode characters from names,
+notes, equipment, backstories or other editable PDF fields. Both TTF faces are
+embedded **without subsetting** so the character sheet retains Czech glyphs
+when a player edits a field in a PDF viewer later. PDF field captions, skills
+and ability abbreviations are translated to Czech or French according to the
+current interface locale; English remains the default.
+
+This is separate from browser CSS font fallback: web typography still uses
+system fonts for `cs-CZ`. Existing D&D names stored in characters are not
+automatically rewritten or translated during export. The browser fetches
+these already-bundled font files on demand when exporting, and the Node
+tests supply the same font bytes directly, without external font downloads.
+Run `node scripts/test-character-pdf.mjs` and the PDF Vitest case to check
+Unicode data and editable AcroForm fields; visually inspect an exported
+PDF with Czech names in a desktop reader before release.
+
 Not every user-facing text comes from the JSON catalogs. The atmospheric
 messages shown while the game master thinks or rolls are maintained in
 `src/app/campaigns/[campaignId]/dmStatusPhrases.ts`; Czech now uses the
