@@ -3024,6 +3024,7 @@
     "lib/srd/wear-slots.ts#keyed": [["identity",2,"SRD, spell, feature, subclass, hazard and magic rows by textKey (or armorKey/gearKey/rowKey/featureKey/priceKey, textKey-based); row tables keyed by the row's own name; the workshop's tables"]],
     "lib/srd/wear-slots.ts#partial": [["key",1,"the wear-slot index"]],
     "lib/srd/weather.ts#fallback": [["key",1,"a climate table, its documented default"]],
+    "lib/srd/weather.ts#partial": [["parse",1,"the fixed English weather sentence parsed for Czech client display; never used to identify a game record"]],
     "lib/story-prompt.ts#partial": [["pattern",11,"a fixed pattern over text that reads no record's name: its English words are scripts/text-comparisons.json's to classify"],["parse",8,"ODM's own stream markers"],["parse",4,"a model's streamed reply: marker and JSON starts, and a roll marker it imitates (protocol)"],["parse",4,"a call a model wrote out in words found and held as the reply streams, and the code fence above it (issue 1025)"]],
     "lib/story-window.ts#partial": [["pattern",1,"a fixed pattern over text that reads no record's name: its English words are scripts/text-comparisons.json's to classify"]],
     "lib/stream-repetition.ts#partial": [["parse",1,"repeated narration, compared with itself"],["pattern",1,"a fixed pattern over text that reads no record's name: its English words are scripts/text-comparisons.json's to classify"]],
