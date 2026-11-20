@@ -3,6 +3,7 @@
 // transcoded there, see src/lib/pdf/download.ts); here the sheet has none,
 // which is the common case for a fresh character anyway.
 import assert from "node:assert/strict";
+import { readFile } from "node:fs/promises";
 import { register } from "node:module";
 import { PDFDocument } from "pdf-lib";
 
@@ -12,6 +13,20 @@ const { buildCharacterSheetPdf, libraryToPdfCharacter } = await import(
   "../src/lib/pdf/character-sheet-pdf.ts"
 );
 const { createSheetSchema } = await import("../src/lib/schemas/sheet.ts");
+const { pdfLabel } = await import("../src/lib/pdf/labels.ts");
+
+const [regularFont, boldFont] = await Promise.all([
+  readFile(new URL("../public/pdfjs/standard_fonts/LiberationSans-Regular.ttf", import.meta.url)),
+  readFile(new URL("../public/pdfjs/standard_fonts/LiberationSans-Bold.ttf", import.meta.url)),
+]);
+
+function buildPdf(character, options = {}) {
+  return buildCharacterSheetPdf(character, {
+    fontBytes: new Uint8Array(regularFont),
+    boldFontBytes: new Uint8Array(boldFont),
+    ...options,
+  });
+}
 
 let passed = 0;
 async function test(name, fn) {
@@ -44,13 +59,13 @@ const sheet = createSheetSchema.parse({
 // prints its gold.
 await test("the purse prints all its coin, and a sheet with no copper prints its gold", async () => {
   const texts = async (purse) => {
-    const doc = await PDFDocument.load(await buildCharacterSheetPdf(libraryToPdfCharacter({ name: sheet.name, race: sheet.race, class: sheet.class, subclass: "", background: "soldier", level: 1, sheet: { ...sheet, ...purse } })));
+    const doc = await PDFDocument.load(await buildPdf(libraryToPdfCharacter({ name: sheet.name, race: sheet.race, class: sheet.class, subclass: "", background: "soldier", level: 1, sheet: { ...sheet, ...purse } })));
     return doc.getForm().getFields().map((field) => (typeof field.getText === "function" ? field.getText() : ""));
   };
   assert.ok((await texts({ gold: 3, copper: 47 })).includes("3 gp 4 sp 7 cp"));
   const old = { ...sheet, gold: 50 };
   delete old.copper;
-  const doc = await PDFDocument.load(await buildCharacterSheetPdf(libraryToPdfCharacter({ name: sheet.name, race: sheet.race, class: sheet.class, subclass: "", background: "soldier", level: 1, sheet: old })));
+  const doc = await PDFDocument.load(await buildPdf(libraryToPdfCharacter({ name: sheet.name, race: sheet.race, class: sheet.class, subclass: "", background: "soldier", level: 1, sheet: old })));
   assert.ok(doc.getForm().getFields().some((field) => typeof field.getText === "function" && field.getText() === "50 gp"));
 });
 
@@ -64,7 +79,7 @@ await test("a fighter builds to a PDF with a fillable form", async () => {
     level: 1,
     sheet,
   });
-  const bytes = await buildCharacterSheetPdf(character);
+  const bytes = await buildPdf(character);
   assert.ok(bytes.length > 1000, "PDF has substance");
   const head = Buffer.from(bytes.subarray(0, 5)).toString("latin1");
   assert.equal(head, "%PDF-");
@@ -89,12 +104,37 @@ await test("pre-fetched portrait bytes are embedded without a fetch", async () =
     level: 1,
     sheet: { ...sheet, portrait: { url: "/uploads/nonexistent.png" } },
   });
-  const bytes = await buildCharacterSheetPdf(character, { portraitBytes: new Uint8Array(png) });
+  const bytes = await buildPdf(character, { portraitBytes: new Uint8Array(png) });
   const doc = await PDFDocument.load(bytes);
   // pdf-lib registers every embedded image as an XObject in the page tree.
   const text = Buffer.from(bytes).toString("latin1");
   assert.ok(text.includes("/Subtype /Image"), "an image XObject is present");
   assert.equal(doc.getPageCount(), 1);
+});
+
+await test("Czech names and notes survive a fillable PDF without stripping accents", async () => {
+  const name = "Jiří Štěpán Černý";
+  const notes = "Žluťoučký kůň úpěl ďábelské ódy: ěščřžýáíéúůňďť.";
+  const character = libraryToPdfCharacter({
+    name,
+    race: "human",
+    class: "fighter",
+    subclass: "",
+    background: "soldier",
+    level: 1,
+    sheet: { ...sheet, name, notes },
+  });
+  const bytes = await buildPdf(character, { locale: "cs" });
+  const doc = await PDFDocument.load(bytes);
+  const values = doc.getForm().getFields().map((field) =>
+    typeof field.getText === "function" ? field.getText() : "",
+  );
+  assert.ok(values.includes(name), "Czech name stays readable and editable");
+  assert.ok(values.includes(notes), "Czech notes retain every accent");
+  assert.equal(pdfLabel("cs", "Successes"), "Úspěchy");
+  assert.equal(pdfLabel("cs", "Damage / Type"), "Zran. / typ");
+  assert.equal(pdfLabel("fr", "Successes"), "Réussites");
+  assert.equal(pdfLabel("en", "Successes"), "Successes");
 });
 
 console.log(`test-character-pdf: ${passed} passed`);
