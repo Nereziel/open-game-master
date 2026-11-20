@@ -31,6 +31,7 @@ const { mintSession } = await import("../src/lib/auth.ts");
 const { getCampaignById } = await import("../src/lib/db/campaigns.ts");
 const { buildDmSystem } = await import("../src/lib/dm/prompt.ts");
 const { languageDirective, englishNarrationAtCzechTable } = await import("../src/lib/dm/table-language-logic.ts");
+const { englishArcPlanningAtCzechTable, arcPlanningLanguageRequest } = await import("../src/lib/dm/arc-language-logic.ts");
 const { TABLE_LANGUAGES } = await import("../src/lib/schemas/game-settings-options.ts");
 const { THIS_TURN_HEADING } = await import("../src/lib/prompt-boundary.ts");
 
@@ -139,6 +140,29 @@ await test("a long English GM reply at a Czech table is detected without flaggin
   assert.equal(englishNarrationAtCzechTable("The Bell of Ashmoor", "czech"), false);
 });
 
+await test("Czech arc planner rejects English descriptions without misreading JSON keys and established names", () => {
+  const english = {
+    title: "The Secret of the Marsh",
+    premise: "The party arrives in a river town and learns that a banker has promised a reward to anyone willing to recover a stolen relic before dawn.",
+    stakes: "The city will fall under the shadow of the ancient order if the heroes do not reach the tower and take back its seal.",
+    actPlan: [
+      { milestone: "The party crosses the river and finds a hidden passage beneath the old tower where the order keeps the first relic.", boss: { name: "Sir Kordan", detail: "A guardian who has sworn to keep all strangers away from the tower." } },
+    ],
+  };
+  const czech = {
+    title: "Tajemství močálu",
+    premise: "Družina přichází do říčního města, kde bankéř slíbil odměnu tomu, kdo před svítáním získá zpět ukradenou relikvii.",
+    stakes: "Nad městem se stahuje stín dávného řádu a hrdinové musejí najít cestu do věže, jinak bude pozdě.",
+    actPlan: [{ milestone: "Družina překročí řeku a objeví skrytou chodbu pod starou věží, kde řád střeží první část pečeti." }],
+  };
+  assert.equal(englishArcPlanningAtCzechTable(english, "czech"), true);
+  assert.equal(englishArcPlanningAtCzechTable(czech, "czech"), false);
+  assert.equal(englishArcPlanningAtCzechTable(english, "english"), false);
+  assert.equal(englishArcPlanningAtCzechTable({ kind: "npc_encounter", name: "The River Knight" }, "czech"), false);
+  assert.equal(englishArcPlanningAtCzechTable({ beats: [{ text: english.premise, waypoints: [{ kind: "narrative", text: english.stakes }] }] }, "czech"), true);
+  assert.match(arcPlanningLanguageRequest("Write a story plan.", "czech"), /ALL newly generated human-readable story text/);
+  assert.equal(arcPlanningLanguageRequest("Write a story plan.", "english"), "Write a story plan.");
+});
 await test("the DM's system prompt carries the directive, and an English one reads as before", async () => {
   const english = getCampaignById(await newCampaign({}));
   const italian = { ...english, gameSettings: { ...english.gameSettings, tableLanguage: "italian" } };
