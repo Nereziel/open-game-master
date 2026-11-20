@@ -1,4 +1,5 @@
 import { describe, expect, it } from "vitest";
+import { APPEARANCE_THEMES } from "../appearance-themes";
 import catalog from "./cs.json";
 import { installCatalog, translate, translatePlural } from "./translate";
 import { localeFromAcceptLanguage, localeOfServerLanguage, parseLocale, resolveLocale } from "./locale";
@@ -37,6 +38,22 @@ describe("Czech localization", () => {
     expect(
       translate("cs", "Memory search reads with {model}, which reads every table language.", { model: "e5" }),
     ).toBe("Vyhledávání v paměti používá model e5, který rozumí všem jazykům herních stolů.");
+  });
+
+  it("translates appearance themes and About status without changing the stored source names", () => {
+    for (const theme of APPEARANCE_THEMES) {
+      expect(translate("cs", theme.name, { context: "appearance.theme" })).not.toBe(theme.name);
+      expect(translate("cs", theme.description)).not.toBe(theme.description);
+      expect(translate("en", theme.name)).toBe(theme.name);
+    }
+    expect(translate("cs", "Light", { context: "appearance.brightness" })).toBe("Světlý");
+    expect(translate("cs", "Dark", { context: "appearance.brightness" })).toBe("Tmavý");
+    expect(translate("cs", "Dark")).toBe("Tma");
+    expect(translate("cs", "Using {theme} · {choice}.", { theme: "Prastarý hvozd", choice: "vlastní volba" }))
+      .toBe("Používá se motiv Prastarý hvozd · vlastní volba.");
+    expect(translate("cs", "Could not reach GitHub to look for a newer release.")).toContain("GitHubem");
+    expect(translate("cs", "Changes since the {tag} release: {count}.", { tag: "v1", count: 4 }))
+      .toBe("Počet změn od vydání v1: 4.");
   });
 
   it("uses three Czech plural forms", () => {
