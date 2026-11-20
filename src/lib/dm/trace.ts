@@ -46,6 +46,8 @@ function redactText(input: string): string {
     .replace(/\b(Bearer\s+)[a-z0-9._~+/-]{8,}/gi, "$1[REDACTED]")
     .replace(/\bsk-(?:proj-)?[a-z0-9_-]{12,}\b/gi, "[REDACTED_KEY]")
     .replace(/\bAIza[a-z0-9_-]{30,}\b/g, "[REDACTED_KEY]")
+    .replace(/data:(?:image|audio)\/[a-z0-9.+-]+;base64,[a-z0-9+/=]+/gi, "[binary data URL omitted]")
+    .replace(/([?&](?:api[_-]?key|access[_-]?token|token|auth)=)[^&#\s]+/gi, "$1[REDACTED]")
     .replace(/(["'](?:api[_-]?key|token|password|secret|authorization)["']\s*:\s*["'])[^"']+(["'])/gi, "$1[REDACTED]$2");
   return redacted.length > MAX_STRING
     ? redacted.slice(0, MAX_STRING) + "[TRUNCATED " + (redacted.length - MAX_STRING) + " characters]"
