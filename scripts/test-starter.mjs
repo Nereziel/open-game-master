@@ -52,6 +52,7 @@ test("the one-shot campaign carries its premise, its secret outline and a short 
   assert.equal(table.gameSettings.dmMode, "ai");
   assert.equal(table.gameSettings.campaignLength, "short");
   assert.equal(table.gameSettings.genre, "high_fantasy");
+  assert.equal(table.gameSettings.tableLanguage, "english");
   const stored = getCampaignById(table.id);
   assert.ok(stored.dmOutline.includes("Aldo Merrin"), "the DM's outline is written");
   assert.ok(stored.description.includes("Marrow's Crossing"));
@@ -92,8 +93,14 @@ test("a Czech starter stores its Czech premise and Czech GM guidance without cha
   assert.equal(stored.theme, seed.theme);
   assert.equal(stored.startingLevel, 1);
   assert.equal(stored.gameSettings.genre, "high_fantasy");
+  assert.equal(stored.gameSettings.tableLanguage, "czech", "the Czech story must also play in Czech");
   assert.equal(stored.maxPlayers, 1);
   assert.equal(breakDown(stored.clock.calendar, stored.clock.instant).hour, 18);
+});
+
+test("French starter still chooses French as the game language", () => {
+  const table = createStarterCampaign(host.id, { solo: true, locale: "fr" });
+  assert.equal(getCampaignById(table.id).gameSettings.tableLanguage, "french");
 });
 
 test("Czech starter hero cards and seated backstories are translated, game mechanics stay English", () => {
