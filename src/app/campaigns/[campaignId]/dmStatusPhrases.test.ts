@@ -44,14 +44,20 @@ describe("localized DM progress messages", () => {
   }
 
 
-  it("uses complete Central European fallback families for cs-CZ", () => {
+  it("uses complete Latin Extended webfonts for Czech labels and headings", () => {
     const css = readFileSync(new URL("../../globals.css", import.meta.url), "utf8");
-    expect(css).toContain('html[lang^="cs"]');
+    const fonts = readFileSync(new URL("../../styles/fonts.css", import.meta.url), "utf8");
+    expect(css).toContain('@import "./styles/fonts.css"');
     for (const name of ["--font-ui", "--font-source-serif", "--font-display", "--font-code-face"]) {
-      expect(css, `No Czech override for ${name}`).toContain(`${name}:`);
+      expect(fonts, `No webfont family for ${name}`).toContain(`${name}:`);
     }
-    expect(css).toContain('"Palatino Linotype"');
-    expect(css).toContain('"Noto Sans"');
+    expect(fonts).toContain("unicode-range: U+0100-02BA");
+    expect(fonts).toContain("../fonts/cinzel-latin-ext.woff2");
+    expect(fonts).toContain("../fonts/ysabeau-office-latin-ext.woff2");
+    expect(fonts).toContain("../fonts/ysabeau-office-latin-ext-italic.woff2");
+    expect(fonts).toContain("../fonts/source-serif-4-latin-ext.woff2");
+    expect(fonts).toContain("../fonts/source-serif-4-latin-ext-italic.woff2");
+    expect(fonts).toContain("../fonts/geist-mono-latin-ext.woff2");
   });
 
   it("keeps animated dice digits out of text selection", () => {
