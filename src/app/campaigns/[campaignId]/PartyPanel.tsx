@@ -44,6 +44,7 @@ import type { Genre, LastingCompanionBlock } from "@/lib/schemas/game-settings";
 import type { CharacterSheet } from "@/lib/schemas/sheet";
 import { computeSheetDerived, formatModifier } from "@/lib/srd";
 import { resourceName } from "@/lib/srd/class-resources";
+import { resourceDisplayName } from "@/lib/srd/class-resources-fr";
 import { conditionWord } from "@/lib/battlemap/hand-display";
 import { contentName } from "@/lib/content/names";
 import { usePackArt } from "@/lib/worlds/use-pack-art";
@@ -848,7 +849,7 @@ export function PartyPanel({
                     className="rounded-full border border-stone-700/50 bg-stone-950/60 px-2 py-0.5 text-[10px] text-stone-300"
                     title={t("Limited-use resource: remaining/max")}
                   >
-                    {t(resourceName(id))} {state.max - state.used}/{state.max}
+                    {resourceDisplayName(id, locale) ?? t(resourceName(id))} {state.max - state.used}/{state.max}
                   </span>
                 ))}
               </div>
