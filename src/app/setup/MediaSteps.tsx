@@ -238,7 +238,9 @@ export function PicturesStep({
   const imageHost = normalizeBaseUrl(imageBaseUrl);
   const savedImageHost = normalizeBaseUrl(savedImageBaseUrl || env.openaiImageBaseUrl || OPENAI_V1);
   const imageKeySavedForHost = openaiKeySaved && imageHost === savedImageHost;
-  const envImageKeyForHost = env.hasOpenaiImageApiKey && imageHost === normalizeBaseUrl(env.openaiImageBaseUrl || OPENAI_V1);
+  const envImageKeyForHost =
+    (env.hasDedicatedImageApiKey && imageHost === normalizeBaseUrl(env.openaiImageBaseUrl || OPENAI_V1)) ||
+    (env.hasOpenaiImageApiKey && imageHost === normalizeBaseUrl(OPENAI_V1));
   const storytellerImageKey = storyIsOpenAi && imageHost === normalizeBaseUrl(OPENAI_V1);
   const scannedComfy = scan?.comfyui ?? null;
   const address = draft.comfy.url.trim();
