@@ -27,16 +27,16 @@ export function PregenPicker({
 }) {
   const locale = useLocale();
   const t = useT();
-  const [heroes, setHeroes] = useState<Hero[] | null>(null);
+  const [loaded, setLoaded] = useState<{ locale: string; heroes: Hero[] } | null>(null);
+  const heroes = loaded?.locale === locale ? loaded.heroes : null;
   const [picked, setPicked] = useState<JoinHero | null>(null);
 
   useEffect(() => {
     let active = true;
-    setHeroes(null);
     fetch("/api/starter", { headers: odmLocaleHeaders() })
       .then((response) => (response.ok ? response.json() : null))
-      .then((data: { pregens?: Hero[] } | null) => { if (active) setHeroes(data?.pregens ?? []); })
-      .catch(() => { if (active) setHeroes([]); });
+      .then((data: { pregens?: Hero[] } | null) => { if (active) setLoaded({ locale, heroes: data?.pregens ?? [] }); })
+      .catch(() => { if (active) setLoaded({ locale, heroes: [] }); });
     return () => { active = false; };
   }, [locale]);
 

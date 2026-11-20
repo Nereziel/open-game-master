@@ -23,6 +23,7 @@ import type { GroupId, StepKey } from "@/app/create-campaign/groups";
 import { useCampaignDefaults } from "@/app/create-campaign/useCampaignDefaults";
 import { withCapabilities, type ServerCapabilities } from "@/app/create-campaign/capabilities";
 import { narratorVoiceFor } from "@/lib/tts-voices";
+import { useTtsVoices } from "@/components/VoicePicker";
 import { campaignPayload } from "@/app/create-campaign/payload";
 import { useT, useTp } from "@/lib/locale";
 import { newTableLanguage, tableLanguageForLocale } from "@/lib/table-language-default";
@@ -61,6 +62,7 @@ export function CreateCampaignDialog({
   // The default genre's preset writes the first theme, exactly as picking any
   // other portal would; typing in the field takes it over for good.
   const locale = useLocale();
+  const voiceProvider = useTtsVoices().provider;
   // The handlers below read the locale through a ref, kept current after
   // each render (never written during one).
   const localeRef = useRef(locale);
@@ -91,13 +93,13 @@ export function CreateCampaignDialog({
     const changeLanguage = from !== locale && !edited.current && !fromSaved.current
       && current.tableLanguage === tableLanguageForLocale(from);
     const next = changeLanguage
-      ? { ...localized, tableLanguage: tableLanguageForLocale(locale), ttsVoice: narratorVoiceFor(tableLanguageForLocale(locale), current.ttsVoice) }
+      ? { ...localized, tableLanguage: tableLanguageForLocale(locale), ttsVoice: narratorVoiceFor(tableLanguageForLocale(locale), current.ttsVoice, voiceProvider === "openai") }
       : localized;
     if (next !== current) {
       latest.current = next;
       setDraft(next);
     }
-  }, [locale]);
+  }, [locale, voiceProvider]);
   // Whether the person has changed anything themselves: saved defaults that
   // arrive after that are offered, never laid over their work.
   // What they wanted where the server overrode it (withCapabilities).

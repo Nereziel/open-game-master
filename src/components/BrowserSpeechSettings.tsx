@@ -1,6 +1,6 @@
 "use client";
 
-import { useEffect, useState } from "react";
+import { useEffect, useState, useSyncExternalStore } from "react";
 import { Select, type SelectOption } from "@/components/ui/Select";
 import { Slider } from "@/components/ui/Slider";
 import { cn } from "@/lib/cn";
@@ -17,6 +17,11 @@ import {
   type BrowserNarrationMode,
 } from "@/lib/browser-speech-prefs";
 
+// Availability is a stable browser capability, not state to set synchronously
+// from an effect. The server snapshot is false to keep hydration consistent.
+const subscribeSpeechSupport = () => () => {};
+const browserSpeechSupported = () => typeof window !== "undefined" && "speechSynthesis" in window && "SpeechSynthesisUtterance" in window;
+
 // The voice list is browser/OS specific and may arrive asynchronously. Do
 // not ask the Open Game Master server for voices in this mode.
 export function BrowserSpeechSettings() {
@@ -25,21 +30,23 @@ export function BrowserSpeechSettings() {
   const mode = useBrowserNarrationMode();
   const savedVoice = useBrowserSpeechVoice();
   const rate = useBrowserSpeechRate();
-  const [supported, setSupported] = useState(false);
+  const supported = useSyncExternalStore(subscribeSpeechSupport, browserSpeechSupported, () => false);
   const [voices, setVoices] = useState<SpeechSynthesisVoice[]>([]);
   const [previewing, setPreviewing] = useState(false);
   const language = locale === "cs" ? "cs-CZ" : locale === "fr" ? "fr-FR" : "en-US";
 
   useEffect(() => {
-    const available = "speechSynthesis" in window && "SpeechSynthesisUtterance" in window;
-    setSupported(available);
-    if (!available) return;
+    if (!supported) return;
     const engine = window.speechSynthesis;
     const refresh = () => setVoices(engine.getVoices());
-    refresh();
+    // Avoid synchronous React state writes during effect setup.
+    const frame = window.requestAnimationFrame(refresh);
     engine.addEventListener("voiceschanged", refresh);
-    return () => engine.removeEventListener("voiceschanged", refresh);
-  }, []);
+    return () => {
+      window.cancelAnimationFrame(frame);
+      engine.removeEventListener("voiceschanged", refresh);
+    };
+  }, [supported]);
 
   // The same browser speech engine plays live GM narration. Closing the
   // settings dialog must not cancel a passage that another component started.
