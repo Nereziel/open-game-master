@@ -10,10 +10,12 @@ import {
   type PDFFont,
   type PDFForm,
   type PDFPage,
-  StandardFonts,
   TextAlignment,
   rgb,
 } from "pdf-lib";
+import fontkit from "@pdf-lib/fontkit";
+import type { Locale } from "@/lib/i18n/translate";
+import { pdfLabel } from "./labels";
 import type {
   AbilityScores,
   ClassEntry,
@@ -129,17 +131,6 @@ function titleCase(value: string): string {
   return value.replace(/[-_]/g, " ").replace(/\b\w/g, (letter) => letter.toUpperCase());
 }
 
-// Standard fonts encode WinAnsi only; swap the smart punctuation player text
-// tends to carry and drop anything left that would throw on setText.
-function sanitize(value: string): string {
-  return (value ?? "")
-    .replace(/[‘’‛]/g, "'")
-    .replace(/[“”]/g, '"')
-    .replace(/[–—−]/g, "-")
-    .replace(/…/g, "...")
-    .replace(/[^\x09\x0A\x0D\x20-\xFF]/g, "");
-}
-
 // One drawing context bundles the page, form, fonts, and a counter that keeps
 // every field name unique.
 type Ctx = {
@@ -148,6 +139,7 @@ type Ctx = {
   form: PDFForm;
   font: PDFFont;
   bold: PDFFont;
+  locale: Locale;
   n: number;
 };
 
@@ -164,11 +156,11 @@ function box(ctx: Ctx, x: number, y: number, w: number, h: number, filled = fals
 }
 
 function caption(ctx: Ctx, x: number, y: number, text: string, size = 6.5) {
-  ctx.page.drawText(text.toUpperCase(), { x, y, size, font: ctx.bold, color: LINE });
+  ctx.page.drawText(pdfLabel(ctx.locale, text).toUpperCase(), { x, y, size, font: ctx.bold, color: LINE });
 }
 
 function heading(ctx: Ctx, x: number, y: number, text: string, size = 8) {
-  ctx.page.drawText(text.toUpperCase(), { x, y, size, font: ctx.bold, color: INK });
+  ctx.page.drawText(pdfLabel(ctx.locale, text).toUpperCase(), { x, y, size, font: ctx.bold, color: INK });
 }
 
 // Create a placed, pre-filled text field. Every value on the sheet goes
@@ -183,7 +175,7 @@ function field(
   opts: { size?: number; align?: TextAlignment; multiline?: boolean } = {},
 ) {
   const f = ctx.form.createTextField(`f${ctx.n++}`);
-  f.setText(sanitize(value));
+  f.setText(value ?? "");
   if (opts.multiline) {
     f.enableMultiline();
   }
@@ -226,7 +218,9 @@ function stat(
 ) {
   box(ctx, x, y, w, h, true);
   field(ctx, x + 2, y + 12, w - 4, h - 14, value, { size, align: TextAlignment.Center });
-  caption(ctx, x + w / 2 - label.length * 1.7, y + 3, label);
+  const captionText = pdfLabel(ctx.locale, label).toUpperCase();
+  const captionSize = 6.5;
+  caption(ctx, x + (w - ctx.bold.widthOfTextAtSize(captionText, captionSize)) / 2, y + 3, label, captionSize);
 }
 
 // Prefers bytes the caller already fetched (the browser half transcodes
@@ -350,7 +344,7 @@ function drawSavesAndSkills(
   for (const ability of ["str", "dex", "con", "int", "wis", "cha"] as const) {
     checkbox(ctx, x + 5, ry, 8, c.proficiencies.saves.includes(ability));
     field(ctx, x + 16, ry - 2, 20, 12, formatModifier(derived.saves[ability]), { size: 8, align: TextAlignment.Center });
-    ctx.page.drawText(ability.toUpperCase(), { x: x + 40, y: ry, size: 7, font: ctx.font, color: INK });
+    ctx.page.drawText(pdfLabel(ctx.locale, ability.toUpperCase()), { x: x + 40, y: ry, size: 7, font: ctx.font, color: INK });
     ry -= 12;
   }
   y -= 106;
@@ -365,10 +359,14 @@ function drawSavesAndSkills(
     const proficient = c.proficiencies.skills.includes(skill.id) || expertise.includes(skill.id);
     checkbox(ctx, x + 5, ry, 8, proficient);
     field(ctx, x + 16, ry - 2, 20, 12, formatModifier(derived.skills[skill.id] ?? 0), { size: 8, align: TextAlignment.Center });
-    ctx.page.drawText(`${skill.name} (${skill.ability.toUpperCase()})`, {
+    const skillLine = `${pdfLabel(ctx.locale, skill.name)} (${pdfLabel(ctx.locale, skill.ability.toUpperCase())})`;
+    // Long Czech skill names must still fit the narrow skills column.
+    const naturalWidth = ctx.font.widthOfTextAtSize(skillLine, 6);
+    const labelSize = Math.min(6, (6 * (w - 44)) / Math.max(naturalWidth, 1));
+    ctx.page.drawText(skillLine, {
       x: x + 40,
       y: ry,
-      size: 6,
+      size: labelSize,
       font: ctx.font,
       color: INK,
     });
@@ -404,8 +402,8 @@ function drawCombat(ctx: Ctx, c: PdfCharacter, derived: ReturnType<typeof comput
   const half = (w - 6) / 2;
   stat(ctx, x, y - 30, half, 30, "Hit Dice", `${c.hitDice.total}${c.hitDice.die}`, 11);
   box(ctx, x + half + 6, y - 30, half, 30, true);
-  ctx.page.drawText("Successes", { x: x + half + 10, y: y - 11, size: 6, font: ctx.font, color: INK });
-  ctx.page.drawText("Failures", { x: x + half + 10, y: y - 21, size: 6, font: ctx.font, color: INK });
+  ctx.page.drawText(pdfLabel(ctx.locale, "Successes"), { x: x + half + 10, y: y - 11, size: 6, font: ctx.font, color: INK });
+  ctx.page.drawText(pdfLabel(ctx.locale, "Failures"), { x: x + half + 10, y: y - 21, size: 6, font: ctx.font, color: INK });
   field(ctx, x + half + 48, y - 13, half - 52, 9, "", { size: 8 });
   field(ctx, x + half + 48, y - 23, half - 52, 9, "", { size: 8 });
   caption(ctx, x + half + 10, y - 29, "Death Saves");
@@ -416,9 +414,9 @@ function drawCombat(ctx: Ctx, c: PdfCharacter, derived: ReturnType<typeof comput
   const rowsH = 8 * 12 + 16;
   box(ctx, x, y - rowsH, w, rowsH, true);
   heading(ctx, x + 4, y - 11, "Attacks & Spellcasting");
-  ctx.page.drawText("Name", { x: x + 4, y: y - 22, size: 6, font: ctx.bold, color: LINE });
-  ctx.page.drawText("Atk", { x: x + w - 78, y: y - 22, size: 6, font: ctx.bold, color: LINE });
-  ctx.page.drawText("Damage / Type", { x: x + w - 58, y: y - 22, size: 6, font: ctx.bold, color: LINE });
+  ctx.page.drawText(pdfLabel(ctx.locale, "Name"), { x: x + 4, y: y - 22, size: 6, font: ctx.bold, color: LINE });
+  ctx.page.drawText(pdfLabel(ctx.locale, "Atk"), { x: x + w - 78, y: y - 22, size: 6, font: ctx.bold, color: LINE });
+  ctx.page.drawText(pdfLabel(ctx.locale, "Damage / Type"), { x: x + w - 58, y: y - 22, size: 6, font: ctx.bold, color: LINE });
   let ry = y - 34;
   for (let i = 0; i < 8; i += 1) {
     const a = attacks[i];
@@ -454,7 +452,7 @@ async function drawTraits(ctx: Ctx, c: PdfCharacter, portraitBytes?: Uint8Array)
   // Features & traits (features + feats).
   const featText = [
     ...c.features.map((f) => f.name),
-    ...c.feats.map((name) => `Feat: ${name}`),
+    ...c.feats.map((name) => `${pdfLabel(ctx.locale, "Feat")}: ${name}`),
   ].join("\n");
   const featH = 176;
   box(ctx, x, y - featH, w, featH, true);
@@ -465,10 +463,10 @@ async function drawTraits(ctx: Ctx, c: PdfCharacter, portraitBytes?: Uint8Array)
   // Other proficiencies & languages.
   const p = c.proficiencies;
   const profText = [
-    p.armor.length ? `Armor: ${p.armor.join(", ")}` : "",
-    p.weapons.length ? `Weapons: ${p.weapons.join(", ")}` : "",
-    p.tools.length ? `Tools: ${p.tools.join(", ")}` : "",
-    p.languages.length ? `Languages: ${p.languages.join(", ")}` : "",
+    p.armor.length ? `${pdfLabel(ctx.locale, "Armor")}: ${p.armor.join(", ")}` : "",
+    p.weapons.length ? `${pdfLabel(ctx.locale, "Weapons")}: ${p.weapons.join(", ")}` : "",
+    p.tools.length ? `${pdfLabel(ctx.locale, "Tools")}: ${p.tools.join(", ")}` : "",
+    p.languages.length ? `${pdfLabel(ctx.locale, "Languages")}: ${p.languages.join(", ")}` : "",
   ]
     .filter(Boolean)
     .join("\n");
@@ -482,7 +480,7 @@ async function drawTraits(ctx: Ctx, c: PdfCharacter, portraitBytes?: Uint8Array)
   const bioH = y - MARGIN;
   box(ctx, x, MARGIN, w, bioH, true);
   heading(ctx, x + 4, y - 11, "Backstory & Notes");
-  const bioText = [c.personality ? `Personality: ${c.personality}` : "", c.backstory, c.notes].filter(Boolean).join("\n\n");
+  const bioText = [c.personality ? `${pdfLabel(ctx.locale, "Personality")}: ${c.personality}` : "", c.backstory, c.notes].filter(Boolean).join("\n\n");
   field(ctx, x + 4, MARGIN + 3, w - 8, bioH - 16, bioText, { size: 8, multiline: true });
 }
 
@@ -528,7 +526,7 @@ function drawSpellPage(ctx: Ctx, c: PdfCharacter, derived: ReturnType<typeof com
     classListFor(c).find((entry) => findClass(entry.id)?.spellAbility)?.id ?? c.class,
   );
   box(ctx, MARGIN, y - 40, PAGE_W - MARGIN * 2, 40, true);
-  field(ctx, MARGIN + 6, y - 28, 200, 20, `${casterName} Spellcasting`, { size: 13 });
+  field(ctx, MARGIN + 6, y - 28, 200, 20, `${casterName} ${pdfLabel(ctx.locale, "Spellcasting")}`, { size: 13 });
   const infoX = MARGIN + 230;
   stat(ctx, infoX, y - 34, 90, 30, "Ability", sc.ability.toUpperCase(), 11);
   stat(ctx, infoX + 96, y - 34, 90, 30, "Spell Save DC", String(derived.spellSaveDc ?? ""), 11);
@@ -548,7 +546,7 @@ function drawSpellPage(ctx: Ctx, c: PdfCharacter, derived: ReturnType<typeof com
     const max = stored[String(lvl)]?.max ?? slots[String(lvl)] ?? 0;
     caption(ctx, cx + colW / 2 - 3, y - 20, String(lvl), 8);
     field(ctx, cx + 2, y - 40, colW - 4, 16, max ? String(max) : "", { size: 10, align: TextAlignment.Center });
-    ctx.page.drawText(max ? `used ${stored[String(lvl)]?.used ?? 0}` : "", {
+    ctx.page.drawText(max ? `${pdfLabel(ctx.locale, "used")} ${stored[String(lvl)]?.used ?? 0}` : "", {
       x: cx + 4,
       y: y - 30,
       size: 5,
@@ -559,18 +557,18 @@ function drawSpellPage(ctx: Ctx, c: PdfCharacter, derived: ReturnType<typeof com
   // Pact magic column.
   if (sc.pact) {
     const cx = MARGIN + 9 * colW;
-    caption(ctx, cx + 2, y - 20, `Pact ${sc.pact.level}`, 6);
+    caption(ctx, cx + 2, y - 20, `${pdfLabel(ctx.locale, "Pact")} ${sc.pact.level}`, 6);
     field(ctx, cx + 2, y - 40, colW - 4, 16, String(sc.pact.max), { size: 10, align: TextAlignment.Center });
   }
   y -= 54;
 
   // Cantrips, then known / prepared spells.
   const spellText = [
-    sc.cantrips?.length ? `Cantrips:\n${sc.cantrips.join(", ")}` : "",
-    sc.prepared.length ? `Prepared:\n${sc.prepared.join(", ")}` : "",
-    sc.known.length ? `Known:\n${sc.known.join(", ")}` : "",
-    sc.pending?.length ? `Prepared after the next long rest:\n${sc.pending.join(", ")}` : "",
-    sc.spellbook?.length ? `Spellbook:\n${sc.spellbook.join(", ")}` : "",
+    sc.cantrips?.length ? `${pdfLabel(ctx.locale, "Cantrips")}:\n${sc.cantrips.join(", ")}` : "",
+    sc.prepared.length ? `${pdfLabel(ctx.locale, "Prepared")}:\n${sc.prepared.join(", ")}` : "",
+    sc.known.length ? `${pdfLabel(ctx.locale, "Known")}:\n${sc.known.join(", ")}` : "",
+    sc.pending?.length ? `${pdfLabel(ctx.locale, "Prepared after the next long rest")}:\n${sc.pending.join(", ")}` : "",
+    sc.spellbook?.length ? `${pdfLabel(ctx.locale, "Spellbook")}:\n${sc.spellbook.join(", ")}` : "",
   ]
     .filter(Boolean)
     .join("\n\n");
@@ -584,6 +582,11 @@ function drawSpellPage(ctx: Ctx, c: PdfCharacter, derived: ReturnType<typeof com
 }
 
 export type BuildPdfOptions = {
+  // Already-bundled Liberation Sans TTFs, supplied by browser or Node caller.
+  // Required so no export accidentally falls back to WinAnsi standard fonts.
+  fontBytes: Uint8Array;
+  boldFontBytes: Uint8Array;
+  locale?: Locale;
   // Pre-fetched PNG or JPEG portrait bytes. When given, the builder never
   // fetches the portrait url itself.
   portraitBytes?: Uint8Array;
@@ -591,16 +594,19 @@ export type BuildPdfOptions = {
 
 export async function buildCharacterSheetPdf(
   character: PdfCharacter,
-  options: BuildPdfOptions = {},
+  options: BuildPdfOptions,
 ): Promise<Uint8Array> {
   const doc = await PDFDocument.create();
-  const font = await doc.embedFont(StandardFonts.Helvetica);
-  const bold = await doc.embedFont(StandardFonts.HelveticaBold);
+  doc.registerFontkit(fontkit);
+  // Do not subset: fillable fields must retain Czech glyphs even after edits
+  // in a PDF reader, not just for the prefilled character.
+  const font = await doc.embedFont(options.fontBytes, { subset: false });
+  const bold = await doc.embedFont(options.boldFontBytes, { subset: false });
   const form = doc.getForm();
   const derived = computeSheetDerived(character);
 
   const page1 = doc.addPage([PAGE_W, PAGE_H]);
-  const ctx: Ctx = { doc, page: page1, form, font, bold, n: 0 };
+  const ctx: Ctx = { doc, page: page1, form, font, bold, locale: options.locale ?? "en", n: 0 };
   drawHeader(ctx, character);
   drawAbilities(ctx, character, derived);
   drawSavesAndSkills(ctx, character, derived);
