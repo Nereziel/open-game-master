@@ -48,7 +48,7 @@ describe("localized DM progress messages", () => {
     const css = readFileSync(new URL("../../globals.css", import.meta.url), "utf8");
     expect(css).toContain('html[lang^="cs"]');
     for (const name of ["--font-ui", "--font-source-serif", "--font-display", "--font-code-face"]) {
-      expect(css, `No Czech override for ${name}`).toMatch(new RegExp(`\\b${name}:`));
+      expect(css, `No Czech override for ${name}`).toContain(`${name}:`);
     }
     expect(css).toContain('"Palatino Linotype"');
     expect(css).toContain('"Noto Sans"');
