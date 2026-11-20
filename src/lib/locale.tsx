@@ -25,9 +25,9 @@ const ServerLocaleContext = createContext<Locale>("en");
 // French and throwing the page away. On the server the catalogs are already
 // installed, so nothing waits there.
 function CatalogGate({ locale, children }: { locale: Locale; children: ReactNode }) {
-  if (!catalogInstalled(locale)) {
-    use(loadCatalog(locale));
-  }
+  // A stable promise preserves the hook's identity before and after the
+  // catalog arrives, for Czech and French alike (upstream 094a037).
+  use(loadCatalog(locale));
   return <>{children}</>;
 }
 

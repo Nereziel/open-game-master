@@ -9,24 +9,30 @@ import { catalogInstalled, installCatalog, type Locale } from "./translate.ts";
 const loading = new Map<Locale, Promise<void>>();
 
 export function loadCatalog(locale: Locale): Promise<void> {
-  if (catalogInstalled(locale)) {
-    return Promise.resolve();
-  }
+  // React's use() must receive the same settled promise on subsequent
+  // renders; Promise.resolve() on every call would create new identities.
+  // Apply upstream 094a037 for both French and our additional Czech locale.
   let pending = loading.get(locale);
-  if (!pending) {
-    if (locale === "cs") {
-      pending = Promise.all([import("./cs.json"), import("../content/names-cs.ts")])
-        .then(([catalog, names]) => {
-          installCsTables({ names: names.CS_NAMES_BY_TABLE });
-          installCatalog("cs", (catalog as { default?: unknown }).default ?? catalog);
-        })
-        .catch((error) => {
-          loading.delete(locale);
-          console.error("[i18n] the Czech catalog did not load", error);
-        });
-      loading.set(locale, pending);
-      return pending;
-    }
+  if (pending) {
+    return pending;
+  }
+  if (catalogInstalled(locale)) {
+    pending = Promise.resolve();
+    loading.set(locale, pending);
+    return pending;
+  }
+
+  if (locale === "cs") {
+    pending = Promise.all([import("./cs.json"), import("../content/names-cs.ts")])
+      .then(([catalog, names]) => {
+        installCsTables({ names: names.CS_NAMES_BY_TABLE });
+        installCatalog("cs", (catalog as { default?: unknown }).default ?? catalog);
+      })
+      .catch((error) => {
+        loading.delete(locale);
+        console.error("[i18n] the Czech catalog did not load", error);
+      });
+  } else {
     pending = Promise.all([
       import("./fr.json"),
       import("../content/names-fr.ts"),
@@ -43,7 +49,7 @@ export function loadCatalog(locale: Locale): Promise<void> {
         loading.delete(locale);
         console.error("[i18n] the French catalog did not load", error);
       });
-    loading.set(locale, pending);
   }
+  loading.set(locale, pending);
   return pending;
 }
