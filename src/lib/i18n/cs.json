@@ -1,5 +1,13 @@
 {
   "messages": {
+    "Image API base URL": "Základní URL API pro obrázky",
+    "Use an OpenAI-compatible image API base URL, normally ending in /v1. Leave blank for the server default.": "Zadejte základní URL API pro obrázky kompatibilního s OpenAI, obvykle končící na /v1. Prázdné pole použije nastavení serveru.",
+    "Pictures can use the storyteller's key for the default image service.": "Obrázky mohou pro výchozí službu použít API klíč vypravěče.",
+    "Used only for pictures. Changing the API URL requires a key for that service.": "Používá se jen pro obrázky. Při změně adresy API je nutný klíč pro danou službu.",
+    "A remote image service, optionally using the storyteller's key.": "Vzdálená služba pro obrázky; může použít API klíč vypravěče.",
+    "A remote image service with your own model and API key. No GPU needed.": "Vzdálená služba pro obrázky s vlastním modelem a API klíčem. Není potřeba GPU.",
+    "Enter a valid picture API base URL.": "Zadejte platnou základní URL API pro obrázky.",
+    "Paste an API key for this picture service, or choose another answer.": "Zadejte API klíč pro tuto obrázkovou službu, nebo vyberte jinou možnost.",
     "Language": "Jazyk",
     "Automatic": "Automaticky",
     "The language of the menus and screens, kept on this device. Automatic follows the server when it uses a translated language, otherwise the browser. The Game Master narrates in the language of the table.": "Jazyk nabídek a obrazovek se ukládá na tomto zařízení. Automatická volba upřednostní jazyk serveru, pokud má překlad, jinak použije jazyk prohlížeče. Pán jeskyně vypráví v jazyce kampaně.",
