@@ -1,4 +1,5 @@
 import { stripReasoningArtifacts } from "../story-prompt.ts";
+import type { StoryArc } from "./arc-logic.ts";
 
 // Pure world-arc logic, kept free of alias imports so node test scripts
 // (scripts/test-world-arcs.mjs) can load it directly.
@@ -117,6 +118,42 @@ export function normalizeWorldArcs(raw: unknown): WorldArc[] {
     }
   }
   return arcs;
+}
+
+
+/**
+ * The world-clock model needs facts, not the GM's turn-by-turn instructions.
+ * renderArcForPrompt includes [NOW], complete_beat, and the whole main-beat
+ * list; giving that to a weak utility model makes it echo the main story
+ * instead of creating separate off-screen escalation clocks.
+ *
+ * Keep this source short and factual. Existing place/person names are copied
+ * exactly, but this is not the shape of the desired JSON response.
+ */
+export function worldArcPlanningContext(arc: StoryArc): string {
+  const nextBeats = arc.beats
+    .filter((beat) => beat.status === "active" || beat.status === "pending")
+    .slice(0, 3);
+  const nextActs = (arc.saga?.sketches ?? [])
+    .filter((sketch) => sketch.status !== "done")
+    .slice(0, 3);
+  const lines = [
+    `Premise: ${arc.premise.slice(0, 650)}`,
+    arc.stakes ? `Stakes: ${arc.stakes.slice(0, 350)}` : "",
+    arc.antagonist ? `Antagonist: ${arc.antagonist.slice(0, 280)}` : "",
+    ...nextBeats.map((beat) => `Story situation: ${beat.text.slice(0, 190)}`),
+    ...nextActs.map((sketch) =>
+      `Planned setting: ${[sketch.place, sketch.milestone, sketch.boss?.name].filter(Boolean).join(" — ").slice(0, 230)}`),
+    ...arc.subArcs
+      .filter((thread) => thread.status !== "resolved" && thread.status !== "abandoned")
+      .slice(0, 3)
+      .map((thread) => `Unresolved thread: ${[thread.name, thread.goal, thread.hook].filter(Boolean).join(" — ").slice(0, 240)}`),
+    ...arc.cast
+      .filter((npc) => npc.status === "active")
+      .slice(0, 3)
+      .map((npc) => `Relevant figure: ${[npc.name, npc.role, npc.agenda].filter(Boolean).join(" — ").slice(0, 200)}`),
+  ];
+  return lines.filter(Boolean).join("\n").slice(0, 2600);
 }
 
 // Parses the generation pass's JSON (an array of {name, driver, rungs}).
