@@ -4,6 +4,8 @@ import { Check, Loader2, Music, VolumeX } from "lucide-react";
 import { useEffect, useMemo, useState } from "react";
 import { useAmbienceInstall } from "@/app/admin/useAmbienceInstall";
 import type { AmbienceAudio } from "@/app/campaigns/[campaignId]/useAmbienceAudio";
+import type { NarrationAudio } from "@/app/campaigns/[campaignId]/useNarrationAudio";
+import { BrowserSpeechSettings } from "@/components/BrowserSpeechSettings";
 import { HeaderGlyph } from "@/app/campaigns/[campaignId]/SessionGlyph";
 import { headerButtonClass } from "@/app/campaigns/[campaignId]/headerButton";
 import { Dialog } from "@/components/ui/Dialog";
@@ -320,15 +322,55 @@ function LibraryInstall({ ambience }: { ambience: AmbienceAudio }) {
   );
 }
 
+// Narration belongs beside room and music: all three are audible on this
+// device, but only the first uses the browser's speech settings.
+function NarrationSoundSection({ narration }: { narration: NarrationAudio }) {
+  const t = useT();
+  return (
+    <section className="sound-layer space-y-3">
+      <span className={ui.sectionEyebrow}>{t("Narration", { context: "table.settings.row.narration" })}</span>
+      <div className="flex flex-wrap items-center justify-between gap-3">
+        <div className="flex items-center gap-2">
+          <Switch
+            label={t("Narration read aloud")}
+            on={!narration.muted}
+            onChange={(on) => narration.setMuted(!on)}
+          />
+          <span className="text-sm text-stone-300">{t("Narration read aloud")}</span>
+        </div>
+        <div className="flex min-w-0 flex-1 items-center gap-3 sm:max-w-60">
+          <Slider
+            label={t("Narration volume")}
+            value={narration.volume}
+            min={0}
+            max={1}
+            step={0.05}
+            onChange={narration.setVolume}
+            bubble={(value) => `${Math.round(value * 100)}%`}
+            disabled={narration.muted}
+            className="min-w-0 flex-1"
+          />
+          <span className="sound-caption w-9 text-right tabular-nums">{Math.round(narration.volume * 100)}%</span>
+        </div>
+      </div>
+      <BrowserSpeechSettings />
+    </section>
+  );
+}
+
 export function SoundDialog({
   open,
   onOpenChange,
+  ambienceEnabled,
   ambience,
+  narration,
   steering,
 }: {
   open: boolean;
   onOpenChange: (open: boolean) => void;
+  ambienceEnabled: boolean;
   ambience: AmbienceAudio;
+  narration: NarrationAudio;
   steering: SoundSteering;
 }) {
   // Ask again when the panel opens; the page gesture listener also retries
@@ -336,42 +378,47 @@ export function SoundDialog({
   const t = useT();
   const { unlock } = ambience;
   useEffect(() => {
-    if (open) {
+    if (open && ambienceEnabled) {
       unlock();
     }
-  }, [open, unlock]);
+  }, [open, ambienceEnabled, unlock]);
   return (
     <Dialog open={open} onOpenChange={onOpenChange} title={t("Sound")} icon={<Music className="size-5 text-amber-300" />} width="w-[min(94vw,38rem)]">
-      <div className="flex flex-wrap items-center justify-between gap-3">
-        <div className="flex items-center gap-2">
-          <Switch label={t("Sound on")} on={!ambience.muted} onChange={(on) => ambience.setMuted(!on)} />
-          <span className="text-sm text-stone-300">{ambience.muted ? t("Sound off for you") : t("Sound on")}</span>
+      <NarrationSoundSection narration={narration} />
+      {ambienceEnabled ? (
+        <div className="mt-4 border-t border-stone-700/40 pt-4">
+          <div className="flex flex-wrap items-center justify-between gap-3">
+            <div className="flex items-center gap-2">
+              <Switch label={t("Sound on")} on={!ambience.muted} onChange={(on) => ambience.setMuted(!on)} />
+              <span className="text-sm text-stone-300">{ambience.muted ? t("Sound off for you") : t("Sound on")}</span>
+            </div>
+            <div className="flex items-center gap-2">
+              <span className="sound-caption">{t("Volume")}</span>
+              <Slider
+                label={t("Sound volume")}
+                value={ambience.volume}
+                min={0}
+                max={1}
+                step={0.05}
+                onChange={ambience.setVolume}
+                bubble={(value) => `${Math.round(value * 100)}%`}
+                disabled={ambience.muted}
+                className="w-32 sm:w-40"
+              />
+              <span className="sound-caption w-9 text-right tabular-nums">{Math.round(ambience.volume * 100)}%</span>
+            </div>
+          </div>
+          {ambience.playing.blocked ? (
+            <p className="sound-note text-amber-200">{t("Your browser is holding the sound back until you tap something on the page.")}</p>
+          ) : null}
+          <div className="mt-4 space-y-3">
+            <LayerRow layer="bed" ambience={ambience} />
+            <LayerRow layer="music" ambience={ambience} />
+          </div>
+          <LibraryNote ambience={ambience} steering={steering} />
+          {steering.canSteer ? <Pickers ambience={ambience} steering={steering} /> : null}
         </div>
-        <div className="flex items-center gap-2">
-          <span className="sound-caption">{t("Volume")}</span>
-          <Slider
-            label={t("Sound volume")}
-            value={ambience.volume}
-            min={0}
-            max={1}
-            step={0.05}
-            onChange={ambience.setVolume}
-            bubble={(value) => `${Math.round(value * 100)}%`}
-            disabled={ambience.muted}
-            className="w-32 sm:w-40"
-          />
-          <span className="sound-caption w-9 text-right tabular-nums">{Math.round(ambience.volume * 100)}%</span>
-        </div>
-      </div>
-      {ambience.playing.blocked ? (
-        <p className="sound-note text-amber-200">{t("Your browser is holding the sound back until you tap something on the page.")}</p>
       ) : null}
-      <div className="mt-4 space-y-3">
-        <LayerRow layer="bed" ambience={ambience} />
-        <LayerRow layer="music" ambience={ambience} />
-      </div>
-      <LibraryNote ambience={ambience} steering={steering} />
-      {steering.canSteer ? <Pickers ambience={ambience} steering={steering} /> : null}
     </Dialog>
   );
 }
@@ -396,10 +443,23 @@ export function soundSummary(t: T, ambience: AmbienceAudio): { quiet: boolean; p
   return { quiet, playing, tip };
 }
 
-export function SoundControl({ ambience, steering }: { ambience: AmbienceAudio; steering: SoundSteering }) {
+export function SoundControl({
+  ambienceEnabled,
+  ambience,
+  narration,
+  steering,
+}: {
+  ambienceEnabled: boolean;
+  ambience: AmbienceAudio;
+  narration: NarrationAudio;
+  steering: SoundSteering;
+}) {
   const t = useT();
   const [open, setOpen] = useState(false);
-  const { quiet, playing, tip } = soundSummary(t, ambience);
+  const summary = ambienceEnabled ? soundSummary(t, ambience) : null;
+  const quiet = (summary?.quiet ?? true) && (narration.mode !== "browser" || narration.muted);
+  const playing = summary?.playing ?? "";
+  const tip = summary?.tip ?? t("Narration playback");
   return (
     <>
       <div className="flex items-center">
@@ -410,12 +470,12 @@ export function SoundControl({ ambience, steering }: { ambience: AmbienceAudio; 
             aria-label={t("Sound")}
             aria-haspopup="dialog"
             data-tour="header-sound"
-            className={headerButtonClass(!quiet && Boolean(playing))}
+            className={headerButtonClass(!quiet && (Boolean(playing) || narration.mode === "browser"))}
           >
             <HeaderGlyph glyph="tab-ambience" off={quiet} />
           </button>
         </Tooltip>
-        {ambience.unlocked && !ambience.muted ? (
+        {ambienceEnabled && ambience.unlocked && !ambience.muted ? (
           <div className="hidden sm:block">
             <Tooltip content={t("Sound volume")} side="bottom">
               <Slider
@@ -432,7 +492,7 @@ export function SoundControl({ ambience, steering }: { ambience: AmbienceAudio; 
           </div>
         ) : null}
       </div>
-      <SoundDialog open={open} onOpenChange={setOpen} ambience={ambience} steering={steering} />
+      <SoundDialog open={open} onOpenChange={setOpen} ambienceEnabled={ambienceEnabled} ambience={ambience} narration={narration} steering={steering} />
     </>
   );
 }

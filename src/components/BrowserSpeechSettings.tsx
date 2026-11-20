@@ -41,11 +41,8 @@ export function BrowserSpeechSettings() {
     return () => engine.removeEventListener("voiceschanged", refresh);
   }, []);
 
-  useEffect(() => {
-    return () => {
-      if ("speechSynthesis" in window) window.speechSynthesis.cancel();
-    };
-  }, []);
+  // The same browser speech engine plays live GM narration. Closing the
+  // settings dialog must not cancel a passage that another component started.
 
   const voiceOptions: SelectOption<string>[] = [
     { value: "", label: t("Automatic voice (match language)") },

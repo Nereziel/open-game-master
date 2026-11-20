@@ -413,7 +413,15 @@ function MicrophoneSection({ devices }: { devices: ReturnType<typeof useDevices>
   );
 }
 
-function PlaybackSection({ devices }: { devices: ReturnType<typeof useDevices> }) {
+function PlaybackSection({
+  devices,
+  showHeading = true,
+  showVoiceChat = true,
+}: {
+  devices: ReturnType<typeof useDevices>;
+  showHeading?: boolean;
+  showVoiceChat?: boolean;
+}) {
   const t = useT();
   const outputId = useOutputId();
   const volumes = useVolumePrefs();
@@ -426,7 +434,7 @@ function PlaybackSection({ devices }: { devices: ReturnType<typeof useDevices> }
   const selectable = supportsOutputSelection();
   return (
     <section>
-      <SectionHead title={t("Playback")} glyph="tab-ambience" />
+      {showHeading ? <SectionHead title={t("Playback")} glyph="tab-ambience" /> : null}
       <p className="-mt-1 mb-2 text-xs text-stone-500">
         {t("Adjust what you hear on this device. Choose server or browser speech below; the campaign's Narration setting controls server speech only.")}
       </p>
@@ -453,12 +461,14 @@ function PlaybackSection({ devices }: { devices: ReturnType<typeof useDevices> }
             </p>
           )}
         </div>
-        <Slider
-          label={t("Voice chat", { context: "device.playback.voiceChat" })}
-          value={volumes.master}
-          max={MASTER_VOLUME_MAX}
-          onChange={setMasterVolume}
-        />
+        {showVoiceChat ? (
+          <Slider
+            label={t("Voice chat", { context: "device.playback.voiceChat" })}
+            value={volumes.master}
+            max={MASTER_VOLUME_MAX}
+            onChange={setMasterVolume}
+          />
+        ) : null}
         <Slider
           label={t("Narration", { context: "device.playback.narration" })}
           value={narrationVolume}
@@ -607,6 +617,14 @@ function EffectsSection() {
       </div>
     </section>
   );
+}
+
+// Expose the same per-device playback settings on the web account page.
+// Voice chat has a separate server/campaign gate and is not part of the
+// browser narration settings presented there.
+export function DevicePlaybackSettings() {
+  const devices = useDevices();
+  return <PlaybackSection devices={devices} showHeading={false} showVoiceChat={false} />;
 }
 
 export function DeviceSettings() {

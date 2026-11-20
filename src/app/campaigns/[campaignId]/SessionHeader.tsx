@@ -326,11 +326,9 @@ export const SessionHeader = memo(function SessionHeader({
             glyph="ui-speech"
           />
         ) : null}
-        {ambienceEnabled ? (
-          <div className="hidden sm:flex">
-            <SoundControl ambience={ambience} steering={sound} />
-          </div>
-        ) : null}
+        <div className="hidden sm:flex">
+          <SoundControl ambienceEnabled={ambienceEnabled} ambience={ambience} narration={narration} steering={sound} />
+        </div>
         {stage ? (
           <Tooltip content={stage.on ? t("Show the story here, with the board in its tab") : t("Show the board here, with the story beside it")} side="bottom">
             <button

@@ -8,6 +8,7 @@ import { PIXEL_ICONS, UserAvatar, ui } from "@/lib/ui";
 import { localeTag } from "@/lib/messages-logic";
 import { useLocale, useT, useTp } from "@/lib/locale";
 import { DiceLookSummary } from "@/components/DiceLookEditor";
+import { DevicePlaybackSettings } from "@/components/DeviceSettings";
 import { PageLoading, PageNotice, PageSection, PageShell } from "@/components/PageShell";
 import { GameIcon } from "@/components/ui/GameIcon";
 import { ImageLightbox } from "@/components/ui/ImageLightbox";
@@ -255,6 +256,7 @@ export default function SettingsPage() {
         {[
           { id: "settings-profile", label: t("Profile"), glyph: "tab-characters" },
           { id: "settings-dice", label: t("Dice"), glyph: "die-d20" },
+          { id: "settings-playback", label: t("Playback"), glyph: "tab-ambience" },
           ...(deviceWorld ? [] : [{ id: "settings-signin", label: t("Sign-in"), glyph: "tab-admin" }]),
           { id: "settings-appearance", label: t("Appearance"), glyph: "tab-settings" },
           { id: "settings-language", label: t("Language"), glyph: "system-lore" },
@@ -326,6 +328,14 @@ export default function SettingsPage() {
         intro={t("The virtual dice that tumble across every table you sit at. Follows your account on this server, on every device.")}
       >
         <DiceLookSummary />
+      </PageSection>
+
+      <PageSection
+        id="settings-playback"
+        heading={t("Playback")}
+        glyph="tab-ambience"
+      >
+        <DevicePlaybackSettings />
       </PageSection>
 
       {deviceWorld ? null : (
