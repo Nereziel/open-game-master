@@ -511,7 +511,7 @@ await test("A malformed claims reply gets one JSON retry and a valid second repl
 });
 
 await test("Unreadable reader replies log reason and size by default, and their bounded contents only with DM_DEBUG.", async () => {
-  const invalid = "Not JSON: The keeper's hidden note.\\n{broken";
+  const invalid = ["Not JSON: The keeper's hidden note.", "{broken", "x".repeat(900)].join("\n");
   let requests = 0;
   const server = http.createServer((req, res) => {
     req.resume();
@@ -553,6 +553,7 @@ await test("Unreadable reader replies log reason and size by default, and their 
     process.env.DM_DEBUG = "1";
     assert.deepEqual(await read(["fight_start"], "Another hidden note lies on the table."), []);
     assert.ok(logs.some((entry) => entry.level === "debug" && entry.text.includes("keeper's hidden note")), "debug logs lack model reply");
+    assert.ok(logs.some((entry) => entry.level === "debug" && entry.text.includes("[truncated;")), "debug preview must be bounded");
     assert.ok(logs.filter((entry) => entry.level === "debug").every((entry) => !entry.text.includes("\n")), "raw model reply must stay escaped on one log line");
   } finally {
     if (debugBefore === undefined) delete process.env.DM_DEBUG;
