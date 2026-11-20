@@ -95,6 +95,7 @@ function envDefaults() {
     imageBackend: serverEnv("DEFAULT_IMAGE_BACKEND"),
     hasOpenaiImageApiKey:
       serverEnv("OPENAI_IMAGE_API_KEY") !== "" || serverEnv("OPENAI_API_KEY") !== "",
+    hasDedicatedImageApiKey: serverEnv("OPENAI_IMAGE_API_KEY") !== "",
     openaiImageModel: serverEnv("OPENAI_IMAGE_MODEL"),
     openaiImageBaseUrl: serverEnv("OPENAI_IMAGE_BASE_URL"),
     kokoroUrl: serverEnv("KOKORO_URL", "http://127.0.0.1:8880"),
