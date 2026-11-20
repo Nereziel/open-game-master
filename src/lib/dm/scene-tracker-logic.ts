@@ -225,6 +225,46 @@ export function describeTracker(tracker: SceneTracker): string {
   return `${TRACKER_KIND_LABELS[tracker.kind]} in progress, "${tracker.title}", round ${tracker.round}: ${tracker.successes} of ${tracker.successesNeeded} successes, ${tracker.failures} of ${tracker.failuresAllowed} failures.`;
 }
 
+// The table's system notes are stored in English for stable game history.
+// Translate only when rendering, so each player sees the current interface
+// language and notes saved before a language switch are localized too. Leave
+// describeTracker and trackerPromptBlock English for the game engine / AI.
+type TrackerNoteTranslator = (key: string, vars?: Record<string, string | number>) => string;
+
+export function translateTrackerSystemNote(t: TrackerNoteTranslator, raw: string): string | null {
+  let m = /^(Exploration|Negotiation|Chase|Ritual or task) in progress, "(.*)", round (\d+): (\d+) of (\d+) successes, (\d+) of (\d+) failures\.$/.exec(raw);
+  if (m) {
+    return t('{kind} in progress, "{title}", round {round}: {successes} of {successesNeeded} successes, {failures} of {failuresAllowed} failures.', {
+      kind: t(m[1]),
+      title: m[2],
+      round: m[3],
+      successes: m[4],
+      successesNeeded: m[5],
+      failures: m[6],
+      failuresAllowed: m[7],
+    });
+  }
+  m = /^(.*): (succeeded|failed)(?: \((.*)\))?\.$/.exec(raw);
+  if (m) {
+    const won = m[2] === "succeeded";
+    if (m[3] !== undefined) {
+      return won
+        ? t("{title}: succeeded ({outcome}).", { title: m[1], outcome: m[3] })
+        : t("{title}: failed ({outcome}).", { title: m[1], outcome: m[3] });
+    }
+    return won ? t("{title}: succeeded.", { title: m[1] }) : t("{title}: failed.", { title: m[1] });
+  }
+  m = /^(.*): called off\.$/.exec(raw);
+  if (m) return t("{title}: called off.", { title: m[1] });
+  m = /^"(.*)" is called off(?:: (.*))?\.$/.exec(raw);
+  if (m) {
+    return m[2] === undefined
+      ? t('"{title}" is called off.', { title: m[1] })
+      : t('"{title}" is called off: {reason}.', { title: m[1], reason: m[2] });
+  }
+  return null;
+}
+
 // The block the DM prompt carries while a tracker runs. It states the stakes
 // as well as the count, because a model that knows only the numbers narrates
 // arithmetic.
