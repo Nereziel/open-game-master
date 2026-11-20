@@ -1,4 +1,5 @@
 @import "tailwindcss";
+@import "./styles/fonts.css";
 @import "./styles/furniture.css";
 @import "./styles/kit.css";
 @import "./styles/motion-app.css";
@@ -412,20 +413,6 @@ html {
      as both the variable and the root font size. Canvases size in pixels. */
   --ui-scale: 1;
 }
-/* Czech texts need complete Latin Extended glyphs. The bundled Google
-   Fonts files were exported as Latin-only subsets, which caused mixed
-   fallback letters (č, ř, ě, š, ů…) inside headlines and menus.
-   Use cohesive, OS-provided families with Czech coverage throughout the
-   document rather than relying on per-glyph substitutions. This preserves
-   the rulebook/fantasy serif display while keeping builds fully offline.
-   lang is BCP 47 (cs-CZ), not just "cs"; LocaleApplier changes it live. */
-html[lang^="cs"] {
-  --font-ui: "Trebuchet MS", "Noto Sans", "DejaVu Sans", system-ui, sans-serif;
-  --font-source-serif: "Palatino Linotype", Palatino, "Book Antiqua", "Noto Serif", "DejaVu Serif", Georgia, serif;
-  --font-display: "Palatino Linotype", Palatino, "Book Antiqua", "Noto Serif", "DejaVu Serif", Georgia, serif;
-  --font-code-face: Consolas, "DejaVu Sans Mono", "Liberation Mono", ui-monospace, monospace;
-}
-
 [data-theme="light"] html,
 html[data-theme="light"] {
   color-scheme: light;
