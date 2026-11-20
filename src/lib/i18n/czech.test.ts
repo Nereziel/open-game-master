@@ -1,6 +1,7 @@
 import { describe, expect, it } from "vitest";
 import { calculatorDisplayText } from "../reference/calculator-display";
 import { APPEARANCE_THEMES } from "../appearance-themes";
+import { SHELF_TOUR, HUB_TOUR } from "../tours/workshop";
 import catalog from "./cs.json";
 import { installCatalog, translate, translatePlural } from "./translate";
 import { localeFromAcceptLanguage, localeOfServerLanguage, parseLocale, resolveLocale } from "./locale";
@@ -75,6 +76,19 @@ describe("Czech localization", () => {
       .toBe("An unfamiliar pack-specific result");
     expect(calculatorDisplayText("2 monsters against 4 players", en))
       .toBe("2 monsters against 4 players");
+  });
+
+  it("localizes the campaign editor and the complete workshop shelf and hub tours", () => {
+    expect(translate("cs", "Edit campaign")).toBe("Upravit kampaň");
+    expect(translate("cs", "The story")).toBe("Příběh");
+    expect(translate("cs", "The table", { context: "campaign.edit.table" })).toBe("Herní stůl");
+    expect(translate("cs", "Paint one", { context: "campaign.cover.paint" })).toBe("Vytvořit obrázek");
+    for (const step of [...SHELF_TOUR, ...HUB_TOUR]) {
+      expect(translate("cs", step.title), step.title).not.toBe(step.title);
+      expect(translate("cs", step.body), step.id).not.toBe(step.body);
+      expect(translate("en", step.title)).toBe(step.title);
+    }
+    expect(translate("cs", "The workshop shelf")).toBe("Polička dílny");
   });
 
   it("uses three Czech plural forms", () => {
