@@ -25,6 +25,7 @@ import { withCapabilities, type ServerCapabilities } from "@/app/create-campaign
 import { narratorVoiceFor } from "@/lib/tts-voices";
 import { campaignPayload } from "@/app/create-campaign/payload";
 import { useT, useTp } from "@/lib/locale";
+import { newTableLanguage, tableLanguageForLocale } from "@/lib/table-language-default";
 
 const STEP_KEYS: readonly StepKey[] = ["essentials", "experience", "review"];
 
@@ -66,7 +67,10 @@ export function CreateCampaignDialog({
   useEffect(() => {
     localeRef.current = locale;
   }, [locale]);
-  const [draft, setDraft] = useState<CampaignDraft>(() => presetTheme(DEFAULT_DRAFT, locale));
+  const edited = useRef(false);
+  const fromSaved = useRef(false);
+  const previousLocale = useRef(locale);
+  const [draft, setDraft] = useState<CampaignDraft>(() => presetTheme({ ...DEFAULT_DRAFT, tableLanguage: tableLanguageForLocale(locale) }, locale));
   // Every write goes through here, from handlers and callbacks only, so the
   // ref is always the draft as last written: a save pressed right after
   // typing reads the line just typed.
@@ -79,7 +83,16 @@ export function CreateCampaignDialog({
   // Re-localize only built-in preset text; keep player edits and pack notes.
   useEffect(() => {
     const current = latest.current;
-    const next = relocalizePresetTheme(current, locale);
+    const localized = relocalizePresetTheme(current, locale);
+    const from = previousLocale.current;
+    previousLocale.current = locale;
+    // Relocalize the language of an untouched new campaign along with its
+    // preset prose, not just the menus. Never override an edited or saved choice.
+    const changeLanguage = from !== locale && !edited.current && !fromSaved.current
+      && current.tableLanguage === tableLanguageForLocale(from);
+    const next = changeLanguage
+      ? { ...localized, tableLanguage: tableLanguageForLocale(locale), ttsVoice: narratorVoiceFor(tableLanguageForLocale(locale), current.ttsVoice) }
+      : localized;
     if (next !== current) {
       latest.current = next;
       setDraft(next);
@@ -87,12 +100,9 @@ export function CreateCampaignDialog({
   }, [locale]);
   // Whether the person has changed anything themselves: saved defaults that
   // arrive after that are offered, never laid over their work.
-  const edited = useRef(false);
   // What they wanted where the server overrode it (withCapabilities).
   const wanted = useRef<Partial<Pick<CampaignDraft, "dmMode" | "ttsEnabled">>>({});
-  // Whether a saved setup was laid over the draft: its language stands over
-  // the server's.
-  const fromSaved = useRef(false);
+  // A saved setup retains its own table language (fromSaved is declared above).
   const [step, setStep] = useState(0);
   const [openGroups, setOpenGroups] = useState<ReadonlySet<GroupId>>(() => new Set());
   // Arrived at a step from the review's Edit, so the way back is offered.
@@ -170,7 +180,7 @@ export function CreateCampaignDialog({
     const applied = applyDefaults(latest.current, settings, selectedPack, localeRef.current);
     const limits = capabilitiesNow.current;
     // The app's own setup plays in the server's language, as a fresh draft does.
-    const language = source === "mine" ? undefined : limits?.language;
+    const language = source === "mine" ? undefined : newTableLanguage(localeRef.current, limits?.language);
     const base = language
       ? { ...applied.draft, tableLanguage: language, ttsVoice: narratorVoiceFor(language, applied.draft.ttsVoice, limits?.tts?.provider === "openai") }
       : applied.draft;
@@ -224,9 +234,9 @@ export function CreateCampaignDialog({
         setCapabilities(data);
         // A new table plays in the server's language, unless the person
         // already chose one or their saved setup names one.
-        const language = data.language;
+        const language = newTableLanguage(localeRef.current, data.language);
         const start =
-          language && !edited.current && !fromSaved.current && latest.current.tableLanguage === DEFAULT_DRAFT.tableLanguage
+          !edited.current && !fromSaved.current && latest.current.tableLanguage === tableLanguageForLocale(localeRef.current)
             ? { ...latest.current, tableLanguage: language, ttsVoice: narratorVoiceFor(language, latest.current.ttsVoice, data.tts?.provider === "openai") }
             : latest.current;
         // Defaults follow reality: a table should not discover on turn one

@@ -1,6 +1,7 @@
 import { createCampaign, getCampaignForUser, setDmOutline, type Campaign } from "@/lib/db/campaigns";
 import { getClock, setClockInstant } from "@/lib/db/clock";
 import type { Locale } from "@/lib/messages-logic";
+import { tableLanguageForLocale } from "@/lib/table-language-default";
 import { MINUTES_PER_DAY, MINUTES_PER_HOUR } from "@/lib/dm/calendar";
 
 // The starter one-shot: a table that opens in ten minutes for people who
@@ -92,6 +93,9 @@ export function createStarterCampaign(userId: string, options: { solo: boolean; 
     gameSettings: {
       dmMode: "ai",
       genre: "high_fantasy",
+      // The localized seed is also a localized game; otherwise the narrator
+      // still receives an English table-language directive after creation.
+      tableLanguage: tableLanguageForLocale(options.locale ?? "en"),
       campaignLength: "short",
       ttsEnabled: options.narration ?? true,
       // The outline is written below, before anyone presses Begin, so the
