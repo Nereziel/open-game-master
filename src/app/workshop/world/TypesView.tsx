@@ -9,7 +9,8 @@ import { KitButton } from "@/app/campaigns/[campaignId]/PanelKit";
 import { FIELD_KINDS, FIELD_KIND_LABELS, LORE_CATEGORIES, SHELF_LABELS, SHELVES, TYPE_COLORS, newId, type FieldDef, type WorldType } from "@/lib/worldforge/model";
 import type { WorldApi, WorldState } from "./useWorld";
 import { tint, typeOf } from "./world-ui";
-import { useT, useTp } from "@/lib/locale";
+import { useLocale, useT, useTp } from "@/lib/locale";
+import { worldFieldLabel, worldTypeLabel } from "@/lib/worldforge/display-labels";
 
 // The types of thing the world holds, after WorldForge's type manager. Each
 // type lives on one of the table's shelves (the Cast, places, factions,
@@ -21,6 +22,7 @@ import { useT, useTp } from "@/lib/locale";
 export function TypesView({ api, world }: { api: WorldApi; world: WorldState }) {
   const t = useT();
   const tp = useTp();
+  const locale = useLocale();
   const { doc, entities } = world;
   const [editing, setEditing] = useState<WorldType | null>(null);
   const used = (type: WorldType) => entities.filter((entity) => typeOf(doc, entity).id === type.id).length;
@@ -55,14 +57,14 @@ export function TypesView({ api, world }: { api: WorldApi; world: WorldState }) 
             <li key={type.id} className="panel wf-rise flex flex-col gap-1.5 rounded-lg p-3" style={{ "--i": index, borderColor: tint(type.color, 0.35) } as React.CSSProperties}>
               <div className="flex items-center gap-2">
                 <span className="size-3 rounded-full" style={{ background: type.color }} />
-                <span className="font-display text-sm" style={{ color: type.color }}>{t(type.name)}</span>
+                <span className="font-display text-sm" style={{ color: type.color }}>{worldTypeLabel(type, locale)}</span>
                 <span className="text-[11px] text-stone-500">{t(SHELF_LABELS[type.shelf])}{type.shelf === "lore" ? `, ${t(type.loreCategory)}` : ""}, {tp("{count} entry", "{count} entries", { count: used(type) })}</span>
                 <span className="ml-auto flex gap-1">
                   <KitButton tone="small" onClick={() => setEditing(type)}>{t("Edit")}</KitButton>
                   <KitButton
                     tone="iconDanger"
                     always
-                    aria-label={t("Remove the type {name}", { name: type.name })}
+                    aria-label={t("Remove the type {name}", { name: worldTypeLabel(type, locale) })}
                     title={used(type) ? t("Entries still use it") : doc.types.filter((other) => other.shelf === type.shelf).length < 2 ? t("Each shelf keeps one type") : t("Remove", { context: "workshop.world.types.removeTitle" })}
                     disabled={used(type) > 0 || doc.types.filter((other) => other.shelf === type.shelf).length < 2}
                     onClick={() => api.patch({ types: doc.types.filter((other) => other.id !== type.id) })}
@@ -75,7 +77,7 @@ export function TypesView({ api, world }: { api: WorldApi; world: WorldState }) 
                 <p className="text-xs text-stone-400">
                   {type.fields.map((field) => (
                     <span key={field.id} className={cn("mr-2 inline-flex items-center gap-0.5", field.authorOnly && "text-red-300")}>
-                      {t(field.name)}
+                      {worldFieldLabel(field, locale)}
                       <span className="text-stone-600">({t(FIELD_KIND_LABELS[field.kind]).toLowerCase()}{field.role ? `, ${t(field.role)}` : ""})</span>
                       {field.authorOnly ? <Lock className="size-3" /> : null}
                     </span>
