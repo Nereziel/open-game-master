@@ -13,6 +13,7 @@ import type { CharacterSheet } from "@/lib/schemas/sheet";
 import { arcTextTimeoutMs } from "@/lib/model-client";
 import { requestUtilityMessage } from "@/lib/dm/model";
 import { stripReasoningArtifacts } from "@/lib/story-prompt";
+import { replyJsonObject } from "@/lib/reply-json-logic";
 import { SRD_SKILLS } from "@/lib/srd";
 import spellManifest from "@/lib/srd/manifest/spells.json";
 import {
@@ -286,6 +287,26 @@ export function speakerRoster(
 }
 
 // Readings kept for a few minutes, a bounded handful (see readClaims).
+const READER_LOG_PREVIEW_CHARS = 800;
+
+// Log structure in the normal admin/server log without exposing narration
+// text. DM_DEBUG is an explicit opt-in for the *actual*, bounded model output.
+// Keep previews to a single escaped line to prevent log injection.
+function readerReplyFailure(reply: string): "empty" | "invalid-json" | "invalid-claims-shape" {
+  const visible = stripReasoningArtifacts(reply).trim();
+  if (!visible) return "empty";
+  return replyJsonObject(visible) === null ? "invalid-json" : "invalid-claims-shape";
+}
+
+function debugUnreadReaderReply(label: string, attempt: number, reply: string): void {
+  if (!process.env.DM_DEBUG) return;
+  const clipped = reply.slice(0, READER_LOG_PREVIEW_CHARS);
+  const omitted = reply.length - clipped.length;
+  console.debug(
+    `[dm-debug] claims ${label}: reader attempt ${attempt}/2 returned ${JSON.stringify(clipped)}${omitted ? ` [truncated; ${omitted} more chars]` : ""}`,
+  );
+}
+
 const READING_TTL_MS = 10 * 60_000;
 const READINGS_KEPT = 64;
 
@@ -417,27 +438,59 @@ export async function readClaims(
     )
     .digest("hex");
   let reply = rememberedReading(key);
+  let raw = reply === null ? null : parseReaderReply(stripReasoningArtifacts(reply));
   if (reply === null) {
-    const { message, error } = await requestUtilityMessage(campaign.settings, reading, {
-      meta: { task: "claims" },
-      timeoutMs: arcTextTimeoutMs(),
-      thinking: false,
-      temperature: 0,
-    });
-    if (error) {
-      console.error(`[claims] ${input.label}: the reader call failed; the passage counts as claiming nothing`);
-      input.onUnread?.();
-      return [];
+    // Utility providers can answer HTTP 200 but return an empty response,
+    // prose instead of JSON, or truncated JSON. Unlike a transport error,
+    // requestUtilityMessage cannot recognize these as failures and fall back
+    // to the story model. Give the reader one bounded chance to correct the
+    // format before treating the passage as unread (and never cache failure).
+    for (let attempt = 0; attempt < 2; attempt += 1) {
+      const retry = attempt > 0;
+      const messages = retry
+        ? [
+            {
+              ...reading[0],
+              content: `${reading[0].content}\n\nYour previous reply was not valid JSON. Try once more. Return only one JSON object with a "claims" array; use {"claims":[]} if nothing applies.`,
+            },
+            reading[1],
+          ]
+        : reading;
+      const { message, error, finishReason } = await requestUtilityMessage(campaign.settings, messages, {
+        meta: { task: "claims" },
+        timeoutMs: arcTextTimeoutMs(),
+        thinking: false,
+        temperature: 0,
+      });
+      if (error) {
+        console.error(`[claims] ${input.label}: reader attempt ${attempt + 1}/2 failed (HTTP ${error.status}); the passage counts as claiming nothing`);
+        if (process.env.DM_DEBUG) {
+          // A backend error may include its own diagnostic message. It can
+          // also repeat prompt fragments, so expose it only during debugging.
+          const body = await error.clone().text().catch(() => "");
+          const clipped = body.slice(0, READER_LOG_PREVIEW_CHARS);
+          console.debug(`[dm-debug] claims ${input.label}: reader attempt ${attempt + 1}/2 backend error ${JSON.stringify(clipped)}${body.length > clipped.length ? ` [truncated; ${body.length - clipped.length} more chars]` : ""}`);
+        }
+        input.onUnread?.();
+        return [];
+      }
+      reply = String(message?.content ?? "");
+      raw = parseReaderReply(stripReasoningArtifacts(reply));
+      if (raw) {
+        rememberReading(key, reply);
+        break;
+      }
+      const reason = readerReplyFailure(reply);
+      const finish = finishReason ? ` finish=${finishReason.slice(0, 40).replace(/[^a-zA-Z0-9_-]/g, "_")}` : "";
+      console.warn(`[claims] ${input.label}: reader attempt ${attempt + 1}/2 unreadable (reason=${reason}, chars=${reply.length}${finish}); ${retry ? "giving up" : "retrying JSON"}`);
+      debugUnreadReaderReply(input.label, attempt + 1, reply);
     }
-    reply = String(message?.content ?? "");
-  }
-  const raw = parseReaderReply(stripReasoningArtifacts(reply));
-  // Only a reading that parsed is kept: an unreadable one is worth asking again.
-  if (raw) {
-    rememberReading(key, reply);
   }
   if (!raw) {
-    console.error(`[claims] ${input.label}: the reader's reply was unreadable; the passage counts as claiming nothing`);
+    // Normal log retains only metadata. Raw replies can contain private
+    // narration and are shown only by the opt-in DM_DEBUG log above.
+    const failure = readerReplyFailure(reply ?? "");
+    console.error(`[claims] ${input.label}: the reader's reply was unreadable after one JSON retry (${failure}); the passage counts as claiming nothing`);
     input.onUnread?.();
     return [];
   }
