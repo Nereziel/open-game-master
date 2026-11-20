@@ -58,6 +58,7 @@ export function safeDmTraceValue(value: unknown): unknown {
   const seen = new WeakSet<object>();
   const visit = (item: unknown, depth: number, field = ""): unknown => {
     if (SECRET_FIELD.test(field)) return "[REDACTED]";
+    if (item === undefined) return undefined;
     if (item === null || typeof item === "number" || typeof item === "boolean") return item;
     if (typeof item === "string") return redactText(item);
     if (typeof item !== "object") return String(item);
