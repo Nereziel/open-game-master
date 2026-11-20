@@ -337,7 +337,7 @@ async function sagaFromPlan(
       : [];
   let plan = parseSagaPlanJson(raw, profile);
   recordDmTrace("json_validation", {
-    stage: "saga_plan", attempt: "first", accepted: Boolean(plan),
+    stage: "saga_plan", attempt: "first", accepted: Boolean(plan) && !languageProblem(plan?.record).length,
     responseChars: raw.length, problems: plan ? [...sagaPlanProblems(plan), ...languageProblem(plan.record)] : ["invalid-json-or-saga-shape"],
   });
   if (!plan) {
@@ -363,7 +363,7 @@ async function sagaFromPlan(
     }
     plan = parseSagaPlanJson(again, profile);
     recordDmTrace("json_validation", {
-      stage: "saga_plan", attempt: "format_recovery", accepted: Boolean(plan),
+      stage: "saga_plan", attempt: "format_recovery", accepted: Boolean(plan) && !languageProblem(plan?.record).length,
       responseChars: again.length, problems: plan ? [...sagaPlanProblems(plan), ...languageProblem(plan.record)] : ["invalid-json-or-saga-shape"],
     });
     if (!plan) {
@@ -386,7 +386,7 @@ async function sagaFromPlan(
     const again = await arcModelCall(campaignId, planSystem, correction, "saga replan");
     const second = again === null ? null : parseSagaPlanJson(again, profile);
     recordDmTrace("json_validation", {
-      stage: "saga_plan", attempt: "replot", accepted: Boolean(second),
+      stage: "saga_plan", attempt: "replot", accepted: Boolean(second) && !languageProblem(second?.record).length,
       problems: second ? [...sagaPlanProblems(second), ...languageProblem(second.record)] : ["invalid-json-or-saga-shape"],
     });
     if (again !== null && second && [...sagaPlanProblems(second), ...languageProblem(second.record)].length < planProblems.length) {
