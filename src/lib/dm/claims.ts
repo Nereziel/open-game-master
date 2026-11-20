@@ -417,27 +417,48 @@ export async function readClaims(
     )
     .digest("hex");
   let reply = rememberedReading(key);
+  let raw = reply === null ? null : parseReaderReply(stripReasoningArtifacts(reply));
   if (reply === null) {
-    const { message, error } = await requestUtilityMessage(campaign.settings, reading, {
-      meta: { task: "claims" },
-      timeoutMs: arcTextTimeoutMs(),
-      thinking: false,
-      temperature: 0,
-    });
-    if (error) {
-      console.error(`[claims] ${input.label}: the reader call failed; the passage counts as claiming nothing`);
-      input.onUnread?.();
-      return [];
+    // Utility providers can answer HTTP 200 but return an empty response,
+    // prose instead of JSON, or truncated JSON. Unlike a transport error,
+    // requestUtilityMessage cannot recognize these as failures and fall back
+    // to the story model. Give the reader one bounded chance to correct the
+    // format before treating the passage as unread (and never cache failure).
+    for (let attempt = 0; attempt < 2; attempt += 1) {
+      const retry = attempt > 0;
+      const messages = retry
+        ? [
+            {
+              ...reading[0],
+              content: `${reading[0].content}\n\nYour previous reply was not valid JSON. Try once more. Return only one JSON object with a "claims" array; use {"claims":[]} if nothing applies.`,
+            },
+            reading[1],
+          ]
+        : reading;
+      const { message, error } = await requestUtilityMessage(campaign.settings, messages, {
+        meta: { task: "claims" },
+        timeoutMs: arcTextTimeoutMs(),
+        thinking: false,
+        temperature: 0,
+      });
+      if (error) {
+        console.error(`[claims] ${input.label}: the reader call failed${retry ? " on the JSON retry" : ""}; the passage counts as claiming nothing`);
+        input.onUnread?.();
+        return [];
+      }
+      reply = String(message?.content ?? "");
+      raw = parseReaderReply(stripReasoningArtifacts(reply));
+      if (raw) {
+        rememberReading(key, reply);
+        break;
+      }
     }
-    reply = String(message?.content ?? "");
-  }
-  const raw = parseReaderReply(stripReasoningArtifacts(reply));
-  // Only a reading that parsed is kept: an unreadable one is worth asking again.
-  if (raw) {
-    rememberReading(key, reply);
   }
   if (!raw) {
-    console.error(`[claims] ${input.label}: the reader's reply was unreadable; the passage counts as claiming nothing`);
+    // Do not log the reader's raw answer or narration text: it may contain
+    // private story details. Empty vs malformed helps diagnose bad models.
+    const failure = reply?.trim() ? "malformed" : "empty";
+    console.error(`[claims] ${input.label}: the reader's reply was unreadable after one JSON retry (${failure}); the passage counts as claiming nothing`);
     input.onUnread?.();
     return [];
   }
