@@ -70,7 +70,11 @@ export function HeaderPhoneMenu({
   const notePress = () => {
     enablingRef.current = !narration.unlocked && !narration.muted;
   };
-  const soundState = ambienceEnabled ? soundSummary(t, ambience) : null;
+  // Always offer the sound dialog: its narration controls must be reachable
+  // even at a table whose ambience library is switched off.
+  const soundState = ambienceEnabled
+    ? soundSummary(t, ambience)
+    : { quiet: narration.mode !== "browser" || narration.muted, tip: t("Narration playback") };
   return (
     <div className="relative sm:hidden">
       <DropdownMenu.Root>
@@ -208,7 +212,7 @@ export function HeaderPhoneMenu({
                 <HeaderGlyph glyph="tab-ambience" off={soundState.quiet} />
                 <span>
                   {soundState.tip}
-                  {hint(t("Ambience and music, and how loud they play for you"))}
+                  {hint(ambienceEnabled ? t("Ambience and music, and how loud they play for you") : t("Narration playback"))}
                 </span>
               </DropdownMenu.Item>
             ) : null}
@@ -240,7 +244,7 @@ export function HeaderPhoneMenu({
           {held}
         </span>
       ) : null}
-      {ambienceEnabled ? <SoundDialog open={soundOpen} onOpenChange={setSoundOpen} ambience={ambience} steering={sound} /> : null}
+      <SoundDialog open={soundOpen} onOpenChange={setSoundOpen} ambienceEnabled={ambienceEnabled} ambience={ambience} narration={narration} steering={sound} />
       <RulebookDialog open={rulebookOpen} onOpenChange={setRulebookOpen} />
     </div>
   );
