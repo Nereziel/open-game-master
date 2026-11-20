@@ -1,5 +1,5 @@
 import type { CreateSheetInput } from "@/lib/schemas/sheet";
-type Locale = "en" | "fr";
+import type { Locale } from "@/lib/messages-logic";
 
 // Four ready-made heroes for a table that wants to start in ten minutes.
 // Each is a complete level 1 sheet in the shape the character builder
@@ -191,11 +191,13 @@ export const PREGENS: Pregen[] = [
 
 export function pregenById(id: string, locale: Locale = "en"): Pregen | null {
   const pregen = PREGENS.find((pregen) => pregen.id === id) ?? null;
-  if (!pregen || locale !== "fr") {
-    return pregen;
-  }
-  const fr = PREGEN_TEXT_FR[id];
-  return fr ? { ...pregen, tagline: fr.tagline, blurb: fr.blurb, sheet: { ...pregen.sheet, backstory: fr.backstory } } : pregen;
+  if (!pregen) return null;
+  const localized = locale === "cs" ? PREGEN_TEXT_CS[id]
+    : locale === "fr" ? PREGEN_TEXT_FR[id]
+    : undefined;
+  return localized
+    ? { ...pregen, tagline: localized.tagline, blurb: localized.blurb, sheet: { ...pregen.sheet, backstory: localized.backstory } }
+    : pregen;
 }
 
 // The heroes' own words in French: the picker's line, the card's pitch and
@@ -226,15 +228,42 @@ const PREGEN_TEXT_FR: Record<string, { tagline: string; blurb: string; backstory
   },
 };
 
+// Czech card text and backstories. Rule identifiers, proficiencies, spells,
+// equipment, statistics and the original English pregens remain unchanged.
+const PREGEN_TEXT_CS: Record<string, { tagline: string; blurb: string; backstory: string }> = {
+  brakk: {
+    tagline: "Brakk, člověk barbar",
+    blurb: "Nejdřív udeří, potom se ptá. Rozmáchni se obouruční sekerou, vydrž nepřátelské údery a chraň ostatní tím, že budeš stát v první linii.",
+    backstory: "Brakk vyrůstal ve vysokohorských průsmycích. Když stáda uhynula, sestoupil do nížin a dosud nenašel důvod se vrátit.",
+  },
+  kara: {
+    tagline: "Kara, člověk bojovnice",
+    blurb: "Štít, meč a kroužková zbroj. Nejspolehlivější opora družiny: těžko ji zasáhnout, ještě těžší je s ní pohnout a na každé zavřené dveře má plán.",
+    backstory: "Deset let sloužila ve stráži říčního barona. Propustili ji, když baronovi došly peníze. Ze zvyku stále salutuje.",
+  },
+  vex: {
+    tagline: "Vex, člověk tulák",
+    blurb: "Zámky, stíny a rapír. Prozkoumej cestu před družinou, objev pasti dřív, než objeví ony tebe, a zasáhni nepřítele na nejcitlivějším místě.",
+    backstory: "Vex opustil městský cech těsně předtím, než ho dostihl dluh. Vede si seznam lidí, kterým někdo něco dluží, a kratší seznam těch, kterým dluží sám.",
+  },
+  sera: {
+    tagline: "Sera, člověk klerička Domény života",
+    blurb: "Palcát, štít a ruce léčitelky. Udržuje družinu na nohou pomocí kouzel Léčení zranění a Požehnání a sama dokáže udržet bojovou linii.",
+    backstory: "Sera vyrůstala jako sirotek při kapli. Naučila se, že klidný hlas a ještě jistější ruka vykonají víc dobra než celé kázání.",
+  },
+};
+
 // What the picker shows: no sheet, nothing to tamper with.
 export function pregenSummaries(locale: Locale = "en") {
   return PREGENS.map((pregen) => {
-    const fr = locale === "fr" ? PREGEN_TEXT_FR[pregen.id] : undefined;
+    const localized = locale === "cs" ? PREGEN_TEXT_CS[pregen.id]
+      : locale === "fr" ? PREGEN_TEXT_FR[pregen.id]
+      : undefined;
     return {
       id: pregen.id,
       name: pregen.sheet.name,
-      tagline: fr ? fr.tagline : pregen.tagline,
-      blurb: fr ? fr.blurb : pregen.blurb,
+      tagline: localized?.tagline ?? pregen.tagline,
+      blurb: localized?.blurb ?? pregen.blurb,
       race: pregen.sheet.race,
       class: pregen.sheet.class,
     };
