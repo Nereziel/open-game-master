@@ -1,4 +1,5 @@
 import { withLanguage } from "@/lib/dm/table-language-logic";
+import { openingActFormatRecovery, arcReplyPreview } from "@/lib/dm/arc-format-recovery";
 import { campaignSeats, getCampaignById, latestSeq, setStoryArc } from "@/lib/db/campaigns";
 import { listChapters } from "@/lib/db/chapters";
 import { slainFoeNames } from "@/lib/db/encounters";
@@ -340,12 +341,12 @@ async function sagaFromPlan(
     // once more before the campaign goes without a spine until its first
     // chapter closes.
     if (process.env.DM_DEBUG) {
-      console.log("[dm-debug] saga plan: unreadable reply, asking once more:", raw.slice(0, 200));
+      console.debug(`[dm-debug] saga plan: unreadable reply, retrying (${raw.length} chars): ${arcReplyPreview(raw)}`);
     }
     const retryContext = `${context}\n\nFORMAT CORRECTION: The previous answer was a scene of narration, not a story plan. This call is NOT a game turn. Do not continue the story or address the players. Return ONLY one JSON object with title, premise, stakes, antagonist, actPlan (at least two acts with their own places and bosses), finale, finaleBoss, cast and subArcs. Every actPlan entry has title, place, milestone, boss {name, detail}, allies and hooks. Begin with { and end with }. No prose outside JSON.`;
     // A separate utility/completion route can recover when an agent's
     // storytelling persona keeps replying with narration to planning tasks.
-    const again = await arcModelCall(campaignId, planSystem, retryContext, "saga plan retry", true);
+    const again = await arcModelCall(campaignId, planSystem, retryContext, "saga plan retry", "arc_plan_recovery");
     if (again === null) {
       return null;
     }
@@ -353,7 +354,7 @@ async function sagaFromPlan(
     if (!plan) {
       const wholeAgain = parseSagaJson(again, profile);
       if (!wholeAgain && process.env.DM_DEBUG) {
-        console.log("[dm-debug] saga plan: JSON recovery also returned an unreadable reply:", again.slice(0, 200));
+        console.debug(`[dm-debug] saga plan: JSON recovery still unreadable (${again.length} chars): ${arcReplyPreview(again)}`);
       }
       return wholeAgain ? { arc: wholeAgain, raw: again } : null;
     }
@@ -374,9 +375,21 @@ async function sagaFromPlan(
     }
   }
   const user = [context, `The saga's plan:\n${renderSagaPlan(plan)}`, opening].filter(Boolean).join("\n\n");
-  const write = async (extra: string) => {
-    const reply = await arcModelCall(campaignId, OPENING_ACT_SYSTEM, extra ? `${user}\n\n${extra}` : user, "opening act");
-    return reply === null ? null : parseOpeningActJson(reply);
+  const write = async (extra: string, recoverFormat = false) => {
+    const prompt = recoverFormat ? openingActFormatRecovery(user) : extra ? `${user}\n\n${extra}` : user;
+    const reply = await arcModelCall(
+      campaignId,
+      OPENING_ACT_SYSTEM,
+      prompt,
+      recoverFormat ? "opening act JSON recovery" : "opening act",
+      recoverFormat ? "arc_opening_recovery" : null,
+    );
+    if (reply === null) return null;
+    const parsed = parseOpeningActJson(reply);
+    if (!parsed && process.env.DM_DEBUG) {
+      console.debug(`[dm-debug] opening act: unreadable reply (${reply.length} chars): ${arcReplyPreview(reply)}`);
+    }
+    return parsed;
   };
   let act = await write("");
   const actProblems = act ? openingActProblems(plan, act.beats) : [];
@@ -384,12 +397,13 @@ async function sagaFromPlan(
     if (process.env.DM_DEBUG) {
       console.log(`[dm-debug] opening act: writing again (${act ? actProblems.join(" | ") : "unreadable reply"})`);
     }
-    const second = await write(actProblems.length ? feedback(actProblems, "act") : "");
+    const second = await write(actProblems.length ? feedback(actProblems, "act") : "", !act);
     if (second && (!act || openingActProblems(plan, second.beats).length < actProblems.length)) {
       act = second;
     }
   }
   if (!act) {
+    console.warn(`[arc] campaign ${campaignId}: opening act unreadable after JSON recovery; the arc was not stored`);
     return null;
   }
   const arc = sagaWithOpeningAct(plan, act, profile);
@@ -448,7 +462,7 @@ export async function generateStoryArc(
     if (!plotted) {
       console.warn(`[arc] campaign ${campaignId}: the story arc was not planned; the model's reply was not a readable plan`);
       if (process.env.DM_DEBUG) {
-        console.log("[dm-debug] arc generation: unparseable reply:", raw.slice(0, 500));
+        console.debug(`[dm-debug] arc generation: unparseable reply (${raw.length} chars): ${arcReplyPreview(raw)}`);
       }
       return;
     }
@@ -791,19 +805,19 @@ async function arcModelCall(
   system: string,
   user: string,
   label: string,
-  utility = false,
+  utilityTask: "arc_plan_recovery" | "arc_opening_recovery" | null = null,
 ): Promise<string | null> {
   const campaign = getCampaignById(campaignId);
   if (!campaign) {
     return null;
   }
-  const { message, error } = await (utility ? requestUtilityMessage : requestDmMessage)(
+  const { message, error } = await (utilityTask ? requestUtilityMessage : requestDmMessage)(
     campaign.settings,
     [
       { role: "system", content: withLanguage(system, campaign.gameSettings.tableLanguage) },
       { role: "user", content: user },
     ],
-    { meta: { task: utility ? "arc_plan_recovery" : "arc_plan" }, timeoutMs: arcTextTimeoutMs(), ...(utility ? { thinking: false } : {}) },
+    { meta: { task: utilityTask ?? "arc_plan" }, timeoutMs: arcTextTimeoutMs(), ...(utilityTask ? { thinking: false } : {}) },
   );
   if (error) {
     if (process.env.DM_DEBUG) {
