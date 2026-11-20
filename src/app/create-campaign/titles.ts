@@ -145,7 +145,7 @@ const BANKS_CS: Record<string, Bank> = {
   high_fantasy: {
     things: ["Koruna", "Přísaha", "Trůn", "Jiskra", "Čepel", "Propast", "Příliv", "Píseň", "Drak", "Lucerna"],
     places: ["z Popelavého království", "od Šedé řeky", "z Potopené pevnosti", "z Trnové tvrze", "ze Stříbrného pohraničí", "z Vaelu", "ze Staré stezky", "z Údolí žáru"],
-    marks: ["bez dědice", "v plamenech", "beze jména", "ve stínu", "z dávných věků", "beze svědků", "ztracená v čase"],
+    marks: ["bez dědice", "v plamenech", "beze jména", "ve stínu", "z dávných věků", "beze svědků", "mimo čas"],
   },
   dark_fantasy: {
     things: ["Hniloba", "Hlad", "Hranice", "Zvon", "Koruna", "Rána", "Závoj", "Hrob"],
