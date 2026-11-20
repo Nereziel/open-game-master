@@ -29,6 +29,11 @@ function localizeRollWhat(what: string, locale: "en" | "fr" | "cs"): string {
 
 function localizeDetail(detail: string, locale: "en" | "fr" | "cs"): string {
   if (locale === "en" || !detail) return detail;
+  // Older stored reaction rolls retain English protocol text. Localize it
+  // only when presented, so the original roll and its NPC name stay intact.
+  if (locale === "cs" && detail.startsWith("Reaction roll for ")) {
+    return `Reakce při setkání: ${detail.slice("Reaction roll for ".length)}`;
+  }
   const vsAt = detail.indexOf(" vs ");
   if (vsAt > 0) {
     return `${localizeRollWhat(detail.slice(0, vsAt), locale)} ${locale === "cs" ? "proti" : "c/"} ${detail.slice(vsAt + 4)}`;
