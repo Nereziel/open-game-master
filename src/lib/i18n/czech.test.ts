@@ -17,7 +17,7 @@ import authoredResources from "../srd/authored-resources.json";
 import genreResources from "../classes/resources.json";
 import { FR_NAMES_BY_TABLE } from "../content/names-fr";
 import { installCsTables } from "./cs-tables";
-import { contentName, classFeatureName, subclassName } from "../content/names";
+import { contentName, classFeatureName, speciesTraitName, subclassName } from "../content/names";
 import { damageTypeWord, damageWords } from "../dm/damage-logic";
 import { deviceSpeechLanguage, whisperLanguageCode } from "../stt-logic";
 
@@ -54,6 +54,8 @@ describe("Czech localization", () => {
     expect(Object.keys(RESOURCE_CS_FEATURE_NAME_LOOKUP).length).toBe(417);
     expect(classFeatureName("street_samurai", "Bullet Time", "cs")).toBe("Zpomalený čas");
     expect(classFeatureName("warlock", "Healing Light", "cs")).toBe("Léčivé světlo");
+    expect(speciesTraitName("aasimar", "Healing Hands", "cs")).toBe("Léčivé ruce");
+    expect(speciesTraitName("homebrew-custom", "Healing Hands", "cs")).toBe("Healing Hands");
     expect(classFeatureName("homebrew:my-class", "Bullet Time", "cs")).toBe("Bullet Time");
     expect(classFeatureName("street_samurai", "Bullet Time", "en")).toBe("Bullet Time");
   });
