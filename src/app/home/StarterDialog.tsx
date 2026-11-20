@@ -3,7 +3,7 @@
 import { Loader2, Play, Users } from "lucide-react";
 import { useEffect, useState } from "react";
 import { ui } from "@/lib/ui";
-import { odmLocaleHeaders, useT } from "@/lib/locale";
+import { odmLocaleHeaders, useLocale, useT } from "@/lib/locale";
 import { Dialog } from "@/components/ui/Dialog";
 
 type Starter = {
@@ -24,23 +24,28 @@ export function StarterDialog({
   onCreated: (campaignId: string) => void;
 }) {
   const t = useT();
+  const locale = useLocale();
   const [starter, setStarter] = useState<Starter | null>(null);
+  const [loadedLocale, setLoadedLocale] = useState<string | null>(null);
   const [busy, setBusy] = useState<"" | "solo" | "friends">("");
   const [error, setError] = useState("");
 
   useEffect(() => {
-    if (!open || starter) {
-      return;
-    }
+    if (!open || (starter && loadedLocale === locale)) return;
+    let active = true;
+    // A player can change UI language without leaving the home screen.
+    // Do not retain the previous language's adventure between openings.
     fetch("/api/starter", { headers: odmLocaleHeaders() })
       .then((response) => (response.ok ? response.json() : null))
       .then((data: Starter | null) => {
-        if (data) {
+        if (active && data) {
           setStarter(data);
+          setLoadedLocale(locale);
         }
       })
       .catch(() => undefined);
-  }, [open, starter]);
+    return () => { active = false; };
+  }, [open, starter, loadedLocale, locale]);
 
   async function start(solo: boolean) {
     setBusy(solo ? "solo" : "friends");
@@ -67,15 +72,15 @@ export function StarterDialog({
     <Dialog open={open} onOpenChange={onOpenChange} title={t("Quick start")} icon={<Play className="size-4 text-amber-300" />}>
       <div className="space-y-4">
         <div>
-          <p className="font-display text-lg tracking-wide text-amber-50">{starter?.oneShot.title ?? t("A one-evening adventure")}</p>
+          <p className="font-display text-lg tracking-wide text-amber-50">{(loadedLocale === locale ? starter?.oneShot.title : null) ?? t("A one-evening adventure")}</p>
           <p className="mt-1 text-sm leading-6 text-stone-400">
-            {starter?.oneShot.description ?? t("Loading the adventure...")}
+            {(loadedLocale === locale ? starter?.oneShot.description : null) ?? t("Loading the adventure...")}
           </p>
         </div>
         <div>
           <p className="mb-1.5 text-xs uppercase tracking-wide text-stone-500">{t("Ready-made heroes, picked in the lobby")}</p>
           <ul className="grid grid-cols-1 gap-1.5 sm:grid-cols-2">
-            {(starter?.pregens ?? []).map((hero) => (
+            {(loadedLocale === locale ? starter?.pregens ?? [] : []).map((hero) => (
               <li key={hero.id} className="rounded-lg border border-stone-800 bg-stone-950/50 px-3 py-2">
                 <p className="text-sm text-stone-100">{hero.tagline}</p>
                 <p className="text-xs text-stone-500">{hero.blurb}</p>

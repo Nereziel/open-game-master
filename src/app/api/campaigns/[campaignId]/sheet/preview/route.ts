@@ -9,7 +9,7 @@ import { createSheetSchema } from "@/lib/schemas/sheet";
 import { olderBuilderOf } from "@/lib/srd/legality/older-builder";
 import { pregenById } from "@/lib/starter/pregens";
 import { seatPicksSchema } from "@/lib/characters/seat-picks";
-import { bookLocaleOf } from "@/lib/rulebook/book";
+import { bookLocaleOf } from "@/lib/request-locale";
 import { translate, type Locale } from "@/lib/messages-logic";
 import { claimRefusal, offeredPregenFor, pregenSeatRefusal } from "@/lib/db/pregen-offers";
 
