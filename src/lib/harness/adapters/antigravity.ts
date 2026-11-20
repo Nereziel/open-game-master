@@ -137,12 +137,6 @@ const ANTIGRAVITY_KEPT_TOOLS = new Set([
   ANTIGRAVITY_IMAGE_TOOL,
 ]);
 
-// Whether a tool agy reports at init is one of the built-ins above or ODM's
-// own; anything else stops the run.
-export function antigravityKnownTool(name: string): boolean {
-  return ANTIGRAVITY_BUILTIN_TOOLS.includes(name) || name.startsWith(ANTIGRAVITY_MCP_PREFIX);
-}
-
 const BASE_DENIED_TOOLS = [
   "command(*)",
   "read_file(*)",
