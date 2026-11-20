@@ -81,7 +81,7 @@ export function buildTimeline(sources: TimelineSources, steersStory: boolean): T
       id: `session-${session.id}`,
       kind: "session",
       title: session.title || "Session",
-      detail: Number.isFinite(at) ? new Date(at).toLocaleString() : session.startsAt,
+      detail: Number.isFinite(at) ? new Date(at).toLocaleString(undefined, { hourCycle: "h23" }) : session.startsAt,
       when: "",
       // Sessions sit on the real calendar: the ones already played sort
       // before now, the ones to come after.
