@@ -1,5 +1,5 @@
 import { generateStoryImage } from "@/lib/image-generate";
-import { recordDmTrace } from "@/lib/dm/trace";
+import { recordDmTrace, withDmTrace } from "@/lib/dm/trace";
 import { getLocation, setLocationMap, setLocationMapFailed, setLocationMapPending } from "@/lib/db/locations";
 import { presetFor } from "@/lib/worlds/preset";
 import { publishPersisted } from "@/lib/events";
@@ -31,7 +31,7 @@ export function enqueueLocationMap(campaign: Campaign, locationId: string) {
     publishLocation(campaign.id, locationId);
   }
   publishMediaStatus(campaign.id, "map", locationId, "queued");
-  return enqueueMediaJob(`map ${locationId}`, async () => {
+  return enqueueMediaJob(`map ${locationId}`, async () => withDmTrace({ flow: "location_map", campaignId: campaign.id }, async () => {
     const location = getLocation(locationId);
     if (!location) {
       return;
@@ -76,5 +76,5 @@ export function enqueueLocationMap(campaign: Campaign, locationId: string) {
       }
       throw error;
     }
-  });
+  }));
 }
