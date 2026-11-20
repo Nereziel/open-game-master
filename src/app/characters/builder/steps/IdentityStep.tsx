@@ -6,6 +6,7 @@ import { AttractionPicker, CHARACTER_ATTRACTION_HINT } from "@/components/Attrac
 import { InfoButton } from "@/components/ui/InfoDialog";
 import { LengthNote } from "@/components/ui/LengthNote";
 import { cn } from "@/lib/cn";
+import { contentName } from "@/lib/content/names";
 import { genderLabel } from "@/lib/gender";
 import { useLocale, useT } from "@/lib/locale";
 import type { CreateSheetInput } from "@/lib/schemas/sheet";
@@ -231,16 +232,23 @@ export function IdentityStep({
 
       {asksPersona ? (
         <StepPanel
-          title="Personality (optional)"
-          help={`A trait, an ideal, a bond and a flaw: four short lines the GM plays your hero by. Pick from ${
-            background ? `the ${background.name}'s suggestions` : "the suggestions"
-          } or write your own. Leave any of them blank. The party can read these, and you can change them later from your character sheet.`}
+          title={t("Personality (optional)")}
+          help={t(
+            "A trait, an ideal, a bond and a flaw: four short lines the GM plays your hero by. Pick from {source} or write your own. Leave any of them blank. The party can read these, and you can change them later from your character sheet.",
+            {
+              source: background
+                ? t("the suggestions for {background}", {
+                    background: contentName("backgrounds", { slug: background.id, name: background.name }, locale),
+                  })
+                : t("the suggestions"),
+            },
+          )}
         >
           <PersonalityFields
             value={state.persona ?? EMPTY_PERSONA}
             onChange={state.setPersona}
             suggestions={personaSuggestionsFor(background)}
-            backgroundName={background?.name}
+            backgroundName={background ? contentName("backgrounds", { slug: background.id, name: background.name }, locale) : undefined}
           />
         </StepPanel>
       ) : null}
