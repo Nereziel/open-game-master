@@ -3,21 +3,22 @@
 // French catalog (src/lib/i18n/fr-tables.ts), so a page in English never
 // loads it; until it is in, a French reader sees the stored English def.
 import { frTables } from "@/lib/i18n/fr-tables";
+import { csTables } from "@/lib/i18n/cs-tables";
 import type { Locale } from "@/lib/messages-logic";
 
-// A resource's display name in the reader's language; null outside French or
-// when the map does not carry the id, so the caller falls back to the def.
+// A resource's player-facing name in the selected language. Resources keep
+// their original English ids and rules for the engine and model tools.
 export function resourceDisplayName(id: string, locale: Locale): string | null {
-  if (locale !== "fr") {
-    return null;
+  if (locale === "cs") {
+    return csTables()?.names.resources?.[id] ?? null;
   }
-  return frTables()?.resources[id]?.name ?? null;
+  return locale === "fr" ? frTables()?.resources[id]?.name ?? null : null;
 }
 
 // A resource's guidance line in the reader's language, same fallback.
 export function resourceGuidance(id: string, locale: Locale): string | null {
-  if (locale !== "fr") {
-    return null;
+  if (locale === "cs") {
+    return csTables()?.guidance?.[id] ?? null;
   }
-  return frTables()?.resources[id]?.guidance ?? null;
+  return locale === "fr" ? frTables()?.resources[id]?.guidance ?? null : null;
 }
