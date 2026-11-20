@@ -3478,7 +3478,7 @@
       ]
     ],
     "lib/content/names.ts#normalizer": [["key",4,"official SRD name table key normalizers (gearKey, slugKey, canonicalKey) for FR_NAMES_BY_TABLE lookup"]],
-    "lib/content/names.ts#keyed": [["key",13,"official SRD table lookups into FR_NAMES_BY_TABLE using normalized keys"]],
+    "lib/content/names.ts#keyed": [["key",17,"official SRD table lookups into FR_NAMES_BY_TABLE and Czech name tables using normalized keys"]],
     "lib/content/names.ts#partial": [["key",3,"parenthetical and measurement suffix stripping for speciesTraitName and backgroundFeatureName"]],
     "lib/dm/charge-logic.ts#partial": [["pattern",12,"a fixed pattern over text that reads no record's name: its English words are scripts/text-comparisons.json's to classify"],["parse",1,"the attacks a Charge or Pounce line names, split on its \"or\""]],
     "lib/dm/charge-logic.ts#number": [["key",3,"digits a regex already captured, ids, headers, stored and form numbers (number inputs), dice parts, the pack's English text (\"1,000 feet\", a purse); src/: every site read"]],
