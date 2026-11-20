@@ -7,6 +7,7 @@ import {
   applyWorldArcUpdates,
   normalizeWorldArcs,
   parseWorldArcsJson,
+  worldArcPlanningContext,
   renderWorldArcsForPrompt,
   resolveWorldArc,
   stanceCadence,
@@ -134,6 +135,46 @@ const baseArc = {
   premise: "Stop the cult",
   beats: ["Find the shrine", "Break the beacon", "Face the summoner"],
 };
+
+test("world-clock planning gets short story facts, not the GM's full active-turn instructions", () => {
+  const arc = normalizeStoryArc({
+    ...baseArc,
+    premise: "Marrowův Brod: ztracený zvon, pašeráci a zakázaný přívoz.",
+    stakes: "Kdo ovládne řeku, získá vesnici.",
+    antagonist: "Pašeráci pod vedením Tama Rilla.",
+  });
+  assert.ok(arc);
+  const context = worldArcPlanningContext(arc);
+  assert.match(context, /Marrowův Brod/);
+  assert.match(context, /Pašeráci/);
+  assert.match(context, /Story situation/);
+  assert.ok(context.length <= 2600);
+  assert.ok(!context.includes("complete_beat"), "never mix GM tool instructions into world-clock generation");
+  assert.ok(!context.includes("[NOW]"), "never confuse a clock with the active main-story beat");
+});
+
+test("a model echoing the main saga JSON is never accepted as a world clock", () => {
+  assert.deepEqual(
+    parseWorldArcsJson(JSON.stringify({
+      premise: "Marrowův Brod",
+      acts: [{ act: 1, beats: [{ id: 1, text: "Družina přichází" }] }],
+      finale: "Zvon se rozezní",
+    })),
+    [],
+  );
+  const valid = [{
+    name: "Pašerácké dluhy",
+    driver: "Tajná převoznická síť",
+    rungs: [
+      "Po vesnici se šíří zvěsti.",
+      "Rybáři mizí na řece.",
+      "Zvyšuje se cena převozu.",
+      "Některé lodě přestanou vyplouvat.",
+      "Síť ovládne všechny přístavy.",
+    ],
+  }];
+  assert.equal(parseWorldArcsJson(JSON.stringify(valid))[0].name, valid[0].name);
+});
 
 test("legacy v3 arcs normalize with empty worldArcs", () => {
   const arc = normalizeStoryArc(baseArc);
