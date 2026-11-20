@@ -76,14 +76,14 @@ export type PicturesChoice =
   | { kind: "comfyui"; url: string; checkpoint: string; preset?: string }
   // OpenAI's images API on the storyteller's OpenAI key, or on its own,
   // with the model picked from its list.
-  | { kind: "openai"; apiKey: string; model: string }
+  | { kind: "openai"; baseUrl: string; apiKey: string; model: string }
   // The agent program's own image tool, once a test picture has come back.
   | { kind: "agent" }
   // Painted placeholders. A ComfyUI started later at its default address is
   // picked up on its own.
   | { kind: "none" };
 
-export function picturesPatch(choice: PicturesChoice): Patch {
+export function picturesPatch(choice: PicturesChoice, savedBaseUrl = "", envBaseUrl = ""): Patch {
   if (choice.kind === "comfyui") {
     return {
       images: {
@@ -96,7 +96,21 @@ export function picturesPatch(choice: PicturesChoice): Patch {
   }
   if (choice.kind === "openai") {
     const apiKey = choice.apiKey.trim();
-    return { images: { defaultBackend: "openai", openaiBaseUrl: "", openaiModel: choice.model.trim(), ...(apiKey ? { openaiApiKey: apiKey } : {}) } };
+    const baseUrl = normalizeBaseUrl(choice.baseUrl.replace(/\\/images\\/generations\\/?$/i, ""));
+    const defaultUrl = normalizeBaseUrl(envBaseUrl || "https://api.openai.com/v1");
+    const oldUrl = normalizeBaseUrl(savedBaseUrl || defaultUrl);
+    const target = baseUrl || defaultUrl;
+    // A saved key belongs to the old host. Changing the URL without
+    // supplying a key clears it, rather than forwarding it to the new host.
+    const sameHost = keyForListing({ typed: "", savedKey: "kept", savedBaseUrl: oldUrl, baseUrl: target }) === "kept";
+    return {
+      images: {
+        defaultBackend: "openai",
+        openaiBaseUrl: baseUrl,
+        openaiModel: choice.model.trim(),
+        ...(apiKey ? { openaiApiKey: apiKey } : sameHost ? {} : { openaiApiKey: "" }),
+      },
+    };
   }
   if (choice.kind === "agent") {
     // Both switches: the default backend alone leaves the agent's pictures
