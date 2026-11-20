@@ -464,6 +464,49 @@ await test("A reader that fails or answers nonsense counts as claiming nothing, 
   assert.ok(!failed.lines.some((line) => line.includes("Lich Queen")), "the narration reached the log");
 });
 
+await test("A malformed claims reply gets one JSON retry and a valid second reply is used without marking the passage unread.", async () => {
+  let requests = 0;
+  const server = http.createServer((req, res) => {
+    req.resume();
+    req.on("end", () => {
+      if (!req.url?.includes("/chat/completions")) {
+        res.writeHead(404);
+        res.end();
+        return;
+      }
+      requests += 1;
+      const content = requests === 1
+        ? "I cannot produce the JSON yet."
+        : '{"claims":[{"kind":"fight_start","quote":"Roll initiative!"}]}';
+      res.writeHead(200, { "Content-Type": "application/json" });
+      res.end(JSON.stringify({ choices: [{ index: 0, finish_reason: "stop", message: { role: "assistant", content } }] }));
+    });
+  });
+  await new Promise((resolve) => server.listen(0, "127.0.0.1", resolve));
+  campaigns.updateStorySettings(world.campaignId, {
+    textProvider: "custom",
+    customBaseUrl: `http://127.0.0.1:${server.address().port}/v1`,
+    customModel: "fake",
+  });
+  let unread = 0;
+  try {
+    const result = await errorsDuring(() => readClaims(world.campaign(), {
+      label: "turn retry",
+      text: "Roll initiative!",
+      kinds: ["fight_start"],
+      outcomes,
+      sheets: world.sheets(),
+      onUnread: () => { unread += 1; },
+    }));
+    assert.deepEqual(result.result, [{ kind: "fight_start", quote: "Roll initiative!" }]);
+    assert.equal(requests, 2, "exactly one format retry");
+    assert.equal(unread, 0, "a successful second reading is not unread");
+    assert.ok(!result.lines.some((line) => line.includes("[claims]")), result.lines.join("\n"));
+  } finally {
+    server.close();
+  }
+});
+
 await test("Who speaks is read from the public cast, the party and an NPC the reply itself registers.", async () => {
   const model = await fakeModel();
   model.pointAt(world);
