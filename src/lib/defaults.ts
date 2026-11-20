@@ -33,6 +33,9 @@ export const DEFAULT_STORY_SETTINGS: StorySettings = {
   // from what that ComfyUI has installed (Admin > Images): none is named
   // here, and none is guessed from its list.
   imageBackend: "comfyui",
+  imageApiBaseUrl: "",
+  imageApiModel: "",
+  imageApiKey: "",
   comfyUrl: "",
   comfyCheckpoint: "",
   aspect: "square",
