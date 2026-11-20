@@ -8,6 +8,8 @@ import type { Shelf, WorldDoc, WorldType } from "@/lib/worldforge/model";
 import { typeFor } from "@/lib/worldforge/model";
 import type { WorldEntity } from "@/lib/db/world-forge";
 import { textKey } from "@/lib/language/text-logic";
+import { useLocale, useT } from "@/lib/locale";
+import { worldTypeLabel } from "@/lib/worldforge/display-labels";
 
 // Small shared pieces of the WorldForge section.
 
@@ -29,12 +31,13 @@ export function tint(color: string, alpha: number): string {
 }
 
 export function TypeChip({ type, className }: { type: WorldType; className?: string }) {
+  const locale = useLocale();
   return (
     <span
       className={cn("inline-flex items-center rounded-md border px-1.5 py-0.5 text-[10px] uppercase tracking-[0.12em]", className)}
       style={{ background: tint(type.color, 0.16), borderColor: tint(type.color, 0.4), color: type.color }}
     >
-      {type.name}
+      {worldTypeLabel(type, locale)}
     </span>
   );
 }
@@ -75,6 +78,8 @@ export function EntityPicker({
   label: string;
   autoFocus?: boolean;
 }) {
+  const locale = useLocale();
+  const t = useT();
   const [query, setQuery] = useState("");
   const groups = useMemo(() => {
     const words = textKey(query);
@@ -93,8 +98,8 @@ export function EntityPicker({
         <Search className="pointer-events-none absolute left-2.5 top-1/2 size-3.5 -translate-y-1/2 text-stone-500" />
         <input
           className={cn(ui.input, "pl-8 text-xs")}
-          placeholder={`Find ${label}`}
-          aria-label={`Find ${label}`}
+          placeholder={t("Find {label}", { label })}
+          aria-label={t("Find {label}", { label })}
           value={query}
           // eslint-disable-next-line jsx-a11y/no-autofocus -- callers pass autoFocus only when the picker opens because the author just asked for it (LinkEditor)
           autoFocus={autoFocus}
@@ -102,11 +107,11 @@ export function EntityPicker({
         />
       </label>
       <div className="max-h-64 overflow-y-auto pr-1" role="listbox" aria-label={label}>
-        {groups.length === 0 ? <p className="px-1 py-2 text-xs text-stone-500">Nothing by that name.</p> : null}
+        {groups.length === 0 ? <p className="px-1 py-2 text-xs text-stone-500">{t("Nothing by that name.")}</p> : null}
         {groups.map(({ type, rows }) => (
           <div key={type.id} className="mb-2">
             <p className="eyebrow mb-1 px-1 text-[10px]" style={{ color: type.color }}>
-              {type.name}
+              {worldTypeLabel(type, locale)}
             </p>
             {rows.map((entity) => (
               <button
