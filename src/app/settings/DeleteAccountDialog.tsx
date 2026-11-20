@@ -65,7 +65,7 @@ export function DeleteAccountDialog({
         {error ? <p role="alert" className="motion-shake mt-2 text-xs text-red-400">{error}</p> : null}
         <div className="mt-4 flex justify-end gap-2">
           <button type="button" onClick={onClose} disabled={deleting} className={ui.btnSmall}>
-            Cancel
+            {t("Cancel")}
           </button>
           <button
             type="button"
