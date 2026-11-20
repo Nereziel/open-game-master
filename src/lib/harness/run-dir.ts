@@ -18,6 +18,9 @@
 import { existsSync, lstatSync, mkdtempSync, readdirSync, rmSync, unlinkSync } from "node:fs";
 import os from "node:os";
 import path from "node:path";
+// Agent run folders live in OS temp storage, not in the Next.js source tree.
+// Turbopack must not trace these runtime-only filesystem paths into the build.
+// The ignore hints below affect static tracing only, never Node filesystem behavior.
 import {
   CODEX_HOME_DIR,
   LINKED_SIGN_IN_FILES,
@@ -46,7 +49,7 @@ function state(): RunDirState {
 }
 
 function removeFolder(dir: string) {
-  rmSync(dir, { recursive: true, force: true, maxRetries: 3, retryDelay: 100 });
+  rmSync(/* turbopackIgnore: true */ dir, { recursive: true, force: true, maxRetries: 3, retryDelay: 100 });
 }
 
 export type RemoveRunDirOptions = {
@@ -67,14 +70,14 @@ export function makeRunDir(prefix: string, options: { tmpdir?: string; now?: num
   if (now - state().lastSweep >= RUN_DIR_SWEEP_EVERY_MS) {
     sweepStaleRunDirs({ tmpdir, now });
   }
-  const dir = mkdtempSync(path.join(tmpdir, prefix));
-  state().live.add(path.resolve(dir));
+  const dir = mkdtempSync(/* turbopackIgnore: true */ path.join(/* turbopackIgnore: true */ tmpdir, prefix));
+  state().live.add(path.resolve(/* turbopackIgnore: true */ dir));
   return dir;
 }
 
 function realFolder(target: string): boolean {
   try {
-    const stat = lstatSync(target);
+    const stat = lstatSync(/* turbopackIgnore: true */ target);
     return stat.isDirectory() && !stat.isSymbolicLink();
   } catch {
     return false;
@@ -87,16 +90,16 @@ function realFolder(target: string): boolean {
 // through a codex-home that is itself a link, the "link" below would be the
 // admin's own auth.json.
 export function dropSignInLinks(dir: string): void {
-  const home = path.join(dir, CODEX_HOME_DIR);
+  const home = path.join(/* turbopackIgnore: true */ dir, CODEX_HOME_DIR);
   if (!realFolder(dir) || !realFolder(home)) {
     return;
   }
   for (const name of LINKED_SIGN_IN_FILES) {
-    const file = path.join(home, name);
+    const file = path.join(/* turbopackIgnore: true */ home, name);
     try {
-      const stat = lstatSync(file);
+      const stat = lstatSync(/* turbopackIgnore: true */ file);
       if (stat.isFile() || stat.isSymbolicLink()) {
-        unlinkSync(file);
+        unlinkSync(/* turbopackIgnore: true */ file);
       }
     } catch {
       // Not there, or held: the folder's removal below tries again.
@@ -107,7 +110,7 @@ export function dropSignInLinks(dir: string): void {
 // Never throws: a throw from here must not carry a concurrency slot away
 // with it (issue 16). Returns whether the folder is gone now.
 export function removeRunDir(dir: string, options: RemoveRunDirOptions = {}): boolean {
-  state().live.delete(path.resolve(dir));
+  state().live.delete(path.resolve(/* turbopackIgnore: true */ dir));
   return attemptRemoval(dir, options, 0);
 }
 
@@ -118,7 +121,7 @@ function attemptRemoval(dir: string, options: RemoveRunDirOptions, attempt: numb
   } catch {
     // Held a moment longer; tried again below.
   }
-  if (!existsSync(dir)) {
+  if (!existsSync(/* turbopackIgnore: true */ dir)) {
     return true;
   }
   const delays = options.retryMs ?? RUN_DIR_RETRY_MS;
@@ -140,7 +143,7 @@ export function sweepStaleRunDirs(options: { tmpdir?: string; now?: number } = {
   state().lastSweep = now;
   let names: string[];
   try {
-    names = readdirSync(tmpdir).filter(isRunDirName);
+    names = readdirSync(/* turbopackIgnore: true */ tmpdir).filter(isRunDirName);
   } catch {
     return 0;
   }
@@ -151,7 +154,7 @@ export function sweepStaleRunDirs(options: { tmpdir?: string; now?: number } = {
   for (const name of names) {
     try {
       // lstat: a link named like a run folder is not one, and is not followed.
-      const stat = lstatSync(path.join(tmpdir, name));
+      const stat = lstatSync(/* turbopackIgnore: true */ path.join(/* turbopackIgnore: true */ tmpdir, name));
       entries.push({
         name,
         isDirectory: stat.isDirectory() && !stat.isSymbolicLink(),
@@ -163,7 +166,7 @@ export function sweepStaleRunDirs(options: { tmpdir?: string; now?: number } = {
     }
   }
   const live = new Set(
-    [...state().live].filter((dir) => path.dirname(dir) === path.resolve(tmpdir)).map((dir) => path.basename(dir)),
+    [...state().live].filter((dir) => path.dirname(dir) === path.resolve(/* turbopackIgnore: true */ tmpdir)).map((dir) => path.basename(dir)),
   );
   let removed = 0;
   for (const name of staleRunDirNames(entries, { now, live, uid: ownUid })) {
