@@ -1,5 +1,6 @@
 {
   "messages": {
+    "Turn on these settings to continue.": "Zapni tato nastavení a pokračuj.",
     "Add it anyway": "Přidat přesto",
     "The storyteller needs a context window of at least {full} tokens to play the full rules; smaller windows are not supported.": "Aby mohl vypravěč používat úplná pravidla, potřebuje kontextové okno o velikosti alespoň {full} tokenů; menší okna nejsou podporována.",
     "{size} window is too small for the full rules: the GM would play on a cut tool set and rules, which Open Game Master does not support or test. {needs}": "Kontextové okno o velikosti {size} je pro úplná pravidla příliš malé: PJ by měl k dispozici jen omezenou sadu nástrojů a pravidel, což Open Game Master nepodporuje ani netestuje. {needs}",
