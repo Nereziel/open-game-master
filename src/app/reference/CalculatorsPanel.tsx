@@ -5,6 +5,7 @@ import { cn } from "@/lib/cn";
 import { NumberStepper } from "@/components/ui/NumberStepper";
 import { Select } from "@/components/ui/Select";
 import { CALCULATORS, type CalcInput } from "@/lib/reference/calculators";
+import { useT } from "@/lib/locale";
 
 // Every table calculation on one screen.
 //
@@ -14,6 +15,7 @@ import { CALCULATORS, type CalcInput } from "@/lib/reference/calculators";
 // which input produced it.
 
 export function CalculatorsPanel() {
+  const t = useT();
   const [openId, setOpenId] = useState(CALCULATORS[0]?.id ?? "");
   const [inputs, setInputs] = useState<Record<string, CalcInput>>(() =>
     Object.fromEntries(CALCULATORS.map((calculator) => [calculator.id, { ...calculator.defaults }])),
@@ -32,7 +34,7 @@ export function CalculatorsPanel() {
 
   return (
     <div>
-      <div data-pill-group="" role="group" aria-label="Calculator" className="stagger-pop mb-3 flex flex-wrap gap-1.5">
+      <div data-pill-group="" role="group" aria-label={t("Calculator")} className="stagger-pop mb-3 flex flex-wrap gap-1.5">
         {CALCULATORS.map((entry) => (
           <button
             key={entry.id}
@@ -47,23 +49,23 @@ export function CalculatorsPanel() {
                 : "border-stone-700/70 text-stone-400 hover:border-amber-500/40 hover:text-stone-200",
             )}
           >
-            {entry.label}
+            {t(entry.label)}
           </button>
         ))}
       </div>
 
-      <p className="mb-3 text-sm text-stone-400">{calculator.blurb}</p>
+      <p className="mb-3 text-sm text-stone-400">{t(calculator.blurb)}</p>
 
       <div className="stagger-up mb-4 grid gap-3 sm:grid-cols-2">
         {calculator.fields.map((field) => (
-          <div key={field.key} role="group" aria-label={field.label}>
+          <div key={field.key} role="group" aria-label={t(field.label)}>
             <span className="mb-1 block text-xs text-stone-400">
-              {field.label}
-              {field.kind === "number" && field.suffix ? ` (${field.suffix})` : ""}
+              {t(field.label)}
+              {field.kind === "number" && field.suffix ? ` (${t(field.suffix)})` : ""}
             </span>
             {field.kind === "number" ? (
               <NumberStepper
-                label={field.label}
+                label={t(field.label)}
                 min={field.min}
                 max={field.max}
                 step={field.step ?? 1}
@@ -72,10 +74,10 @@ export function CalculatorsPanel() {
               />
             ) : (
               <Select
-                label={field.label}
+                label={t(field.label)}
                 value={String(input[field.key] ?? "")}
                 onChange={(next) => set(field.key, next)}
-                options={field.options.map((option) => ({ value: option.value, label: option.label }))}
+                options={field.options.map((option) => ({ value: option.value, label: t(option.label) }))}
                 className="w-full"
               />
             )}
@@ -84,22 +86,22 @@ export function CalculatorsPanel() {
       </div>
 
       <div className="panel ornate rounded-xl p-4">
-        <p key={result.headline} className="gold-title count-pop font-display text-2xl">{result.headline}</p>
+        <p key={result.headline} className="gold-title count-pop font-display text-2xl">{t(result.headline)}</p>
         <ul className="stagger mt-3 space-y-2">
           {result.parts.map((part) => (
             <li key={part.label} className="flex items-baseline justify-between gap-3">
-              <span className="text-sm text-stone-400">{part.label}</span>
+              <span className="text-sm text-stone-400">{t(part.label)}</span>
               <span className="text-right">
-                <span className="block text-sm text-stone-200">{part.value}</span>
+                <span className="block text-sm text-stone-200">{t(part.value)}</span>
                 {part.detail ? (
-                  <span className="block text-xs text-stone-500">{part.detail}</span>
+                  <span className="block text-xs text-stone-500">{t(part.detail)}</span>
                 ) : null}
               </span>
             </li>
           ))}
         </ul>
         {result.note ? (
-          <p className="reveal mt-3 border-t border-amber-500/15 pt-3 text-xs text-stone-500">{result.note}</p>
+          <p className="reveal mt-3 border-t border-amber-500/15 pt-3 text-xs text-stone-500">{t(result.note)}</p>
         ) : null}
       </div>
     </div>
