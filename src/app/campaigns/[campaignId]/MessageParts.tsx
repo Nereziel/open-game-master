@@ -19,6 +19,7 @@ import {
   type CampaignMember,
 } from "@/lib/campaign-types";
 import { useT } from "@/lib/locale";
+import { translateTrackerSystemNote } from "@/lib/dm/scene-tracker-logic";
 import type { CampaignMessage } from "@/lib/db/messages";
 import type { CharacterSheet } from "@/lib/schemas/sheet";
 import type { TranscriptSheet } from "@/app/campaigns/[campaignId]/departing";
@@ -92,6 +93,8 @@ export function reportAction(t: T, message: CampaignMessage, onReport: (message:
 const ADVENTURE_BEGINS_DM_LINE = `${ADVENTURE_BEGINS_NOTE} The Game Master opens the scene.`;
 
 function translateSystemNote(t: (key: string, vars?: Record<string, string | number>) => string, raw: string): string {
+  const sceneNote = translateTrackerSystemNote(t, raw);
+  if (sceneNote !== null) return sceneNote;
   if (raw === "The fight is over.") return t("The fight is over.");
   let m = /^Chapter (\d+)(?:, "([^"]+)",)? comes to a close\.(.*)$/.exec(raw);
   if (m) {
