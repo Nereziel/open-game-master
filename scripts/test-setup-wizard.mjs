@@ -215,6 +215,8 @@ try {
     assert.equal(picturesBlocker(t, draft("openai", { picturesModel: "my-painter" }), { ...input, openaiKeySaved: false }), "Paste an API key for this picture service, or choose another answer.");
     assert.equal(picturesBlocker(t, draft("openai", { picturesBaseUrl: "https://images.example/v1", picturesModel: "my-painter" }), input), "Paste an API key for this picture service, or choose another answer.", "a key saved for another host cannot be reused");
     assert.equal(picturesBlocker(t, draft("openai", { picturesBaseUrl: "https://images.example/v1", picturesKey: "own-key", picturesModel: "my-painter" }), input), null);
+    assert.equal(picturesBlocker(t, draft("openai", { picturesBaseUrl: "https://images.example/v1", picturesModel: "my-painter" }), { ...input, openaiKeySaved: false, envImageBaseUrl: "https://images.example/v1", envHasImageKey: true }), "Paste an API key for this picture service, or choose another answer.", "a generic OpenAI env key must not be treated as a custom image host's key");
+    assert.equal(picturesBlocker(t, draft("openai", { picturesBaseUrl: "https://images.example/v1", picturesModel: "my-painter" }), { ...input, openaiKeySaved: false, envImageBaseUrl: "https://images.example/v1", envHasDedicatedImageKey: true }), null, "an image-specific env key can be used on its configured host");
     assert.equal(picturesBlocker(t, draft("openai", { picturesBaseUrl: "javascript:alert(1)", picturesKey: "own-key", picturesModel: "my-painter" }), input), "Enter a valid picture API base URL.");
     assert.equal(picturesBlocker(t, draft("agent"), input), "Paint a test map first: the tables only get a painter that works.");
     assert.equal(picturesBlocker(t, draft("none"), input), null);
