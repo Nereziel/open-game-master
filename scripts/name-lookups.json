@@ -3482,7 +3482,7 @@
     "lib/content/names.ts#keyed": [
       [
         "key",
-        10,
+        13,
         "official SRD table lookups into FR_NAMES_BY_TABLE using normalized keys"
       ]
     ],
