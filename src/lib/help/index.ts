@@ -127,9 +127,10 @@ export function describeFeature(classId: string, subclass: string, name: string,
   // class text below would override the translated help with English prose.
   // Keep subclass-specific English rules and all other locales' precedence
   // unchanged when there is no Czech resource translation.
-  const resource = matchResource(name, [classId]);
-  const localizedResource = locale === "cs" && resource
-    ? resourceGuidance(resource.id, locale)
+  const resource = matchResource(name);
+  const czechResource = locale === "cs" ? matchResource(name, [classId]) : null;
+  const localizedResource = czechResource
+    ? resourceGuidance(czechResource.id, locale)
     : null;
   const found =
     localizedResource ??
