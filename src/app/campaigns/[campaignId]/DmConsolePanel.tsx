@@ -292,8 +292,8 @@ export function DmConsolePanel({
     ...groups.flatMap((group) =>
       group.entries.map((entry) => ({
         id: `do-${entry.name}`,
-        label: entry.label,
-        hint: entry.summary,
+        label: t(entry.label),
+        hint: t(entry.summary),
         group: group.label,
         glyph: actionGlyph(entry.name, group.category),
         keywords: [entry.name.replace(/_/g, " ")],
@@ -488,8 +488,8 @@ export function DmConsolePanel({
                   ) : (
                     <ActionPlate
                       glyph={actionGlyph(entry.name, active?.category ?? "table")}
-                      label={entry.label}
-                      summary={entry.summary}
+                      label={t(entry.label)}
+                      summary={t(entry.summary)}
                       onClick={() => setOpenAction(entry.name)}
                     />
                   )}
