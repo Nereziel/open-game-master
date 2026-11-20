@@ -160,7 +160,7 @@ export function DmActionForm({
     // What cannot be taken back asks first (end the fight, dismiss a
     // companion, a death).
     const question = needsConfirm(entry, args);
-    if (question && !(await appConfirm(question, { title: entry.label, actionLabel: t("Run it", { context: "dm.action.runIt" }) }))) {
+    if (question && !(await appConfirm(question, { title: t(entry.label), actionLabel: t("Run it", { context: "dm.action.runIt" }) }))) {
       return;
     }
     setBusy(true);
@@ -206,8 +206,8 @@ export function DmActionForm({
       <div className="flex items-start gap-2.5">
         <GameIcon icon={{ kind: "glyph", key: glyph }} size="size-8" className="shrink-0" />
         <div className="min-w-0">
-          <p className="gold-title font-display text-sm tracking-wide">{entry.label}</p>
-          <p className="text-xs leading-snug text-stone-400">{entry.summary}</p>
+          <p className="gold-title font-display text-sm tracking-wide">{t(entry.label)}</p>
+          <p className="text-xs leading-snug text-stone-400">{t(entry.summary)}</p>
         </div>
       </div>
 
