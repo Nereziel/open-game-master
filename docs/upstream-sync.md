@@ -8,10 +8,10 @@ fork's `main`. Do not reset or force-push `main` to upstream.
 
 1. Compare `Nereziel:main...Lebbitheplow:main` and record the upstream commit
    hashes, affected files and cross-cutting dependencies.
-2. Open a small `sync/upstream-*` branch based on the fork's current `main`.
-   Port one cohesive change or tightly coupled set of changes at a time.
-   Upstream commits can depend on one another: review the whole feature before
-   selecting a patch.
+2. Open a `sync/upstream-*` branch based on the fork's current `main`.
+   Prefer coherent batches; for a whole upstream release, use a three-way
+   tree comparison against the shared base and resolve overlapping paths
+   explicitly. Preserve the upstream commit as a merge parent.
 3. Preserve and adapt the fork's localization machinery: `src/lib/i18n/cs.json`,
    `cs-tables.ts`, `src/lib/content/names-cs.ts`, `cs` locale selection,
    Czech PDF labels/fonts, and any locally translated user-facing screens.
@@ -19,11 +19,13 @@ fork's `main`. Do not reset or force-push `main` to upstream.
 4. Check new English UI messages against the catalogs and translate their
    Czech versions in the same PR. Never replace a localized component with
    an upstream English-only version just to make a merge easy.
-5. Run lint, build, relevant tests and Czech catalog coverage in CI.
-   Resolve discrepancies and review UI text before merging each PR.
-6. Compare again after merging. A ported patch does not automatically change
-   Git ancestry; upstream commits may still appear as pending until their
-   history is merged. Record what has been ported to avoid duplicate work.
+5. Temporarily, GitHub Actions runs on `main` only (and explicit manual
+   triggers): PRs have no automatic tests. After merging a sync branch,
+   inspect the `main` Linux build, lint, browser scenarios and test shards,
+   then fix failures without hiding any genuine regression.
+6. Compare again after merging. Include the upstream commit as an actual
+   merge parent if the whole release was integrated. For small manual ports,
+   note the upstream SHA so the same change is not re-applied.
 
 ## Starting comparison (2026-11-20)
 
@@ -33,19 +35,24 @@ fork's `main`. Do not reset or force-push `main` to upstream.
 - The compare showed 34 upstream-only commits and 13 fork-only commits.
   Counts are historical snapshots, not permanent progress indicators.
 
-## Batches
+## Upstream release 0.38.2 integration (2026-11-20)
 
-| Batch | Upstream reference | Scope | Status |
-| --- | --- | --- | --- |
-| 1 | `094a037` | Stable React catalog loading promise; adapt upstream fix for Czech and French | In PR |
-| 2 | `8cb47ad`, `94e1540` | Next.js security patch and coupled large-world response fix | Not started |
-| 3 | `20c14a1` plus follow-ups | Reconcile signed-in Antigravity features with this fork's MCP allowlist and restrictions | Not started |
-| 4 | `42e3a44`, `2ea54c8`, `b43eac2` | Independent mounts, movement and targeting | Not started |
-| 5 | `9e6039e` plus related commits | Request body validation, accessibility, unused code and game rule fixes | Not started |
-| 6 | `2cb6f1a` plus follow-ups | Theme art and browser checks | Not started |
+- Baseline: `3ca600b914f70bef95d85b1cd82a52d48d285866`
+- 335 upstream-changed paths compared with the common ancestor.
+- 85 fork-changed paths, including Czech UI texts, Czech name tables and PDF
+  fonts. The 316 upstream-only and 66 fork-only paths were retained exactly.
+  Nineteen overlapping paths were resolved explicitly.
+- Includes Next.js 16.4.6 with the WorldForge packed-response fix, independent
+  mounts, rule fixes, API validation, dead-code cleanup, appearance assets and
+  the upstream signed-in Antigravity work.
+- The fork retains an explicit model-facing MCP allowlist and per-run tool
+  denials for Antigravity. A successful functional test does not prove that
+  every CLI-native capability was removed; its reduced-tool mode is warned
+  about in the UI and operator guide.
+- Czech labels, `cs.json`, PDF fontkit dependency and Czech SRD names remain.
+  Added Czech text for the new reduced-rules warning.
+- **Checks run after merge on main, not in pull requests.** This document
+  records the integration, not a claim that every test has passed.
 
-These references are integration starting points, not a promise that their
-changes can be copied without conflict. Recheck upstream before each batch.
-
-For a large upstream release, prefer several reviewed PRs over one wholesale
-merge. Preserve both the new upstream behavior and the fork-specific features.
+After this release, compare against the **latest** upstream main again before
+starting the next update. Keep future changes in separate reviewed batches.
