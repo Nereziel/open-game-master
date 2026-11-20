@@ -1,4 +1,5 @@
 import { generateStoryImage } from "@/lib/image-generate";
+import { recordDmTrace } from "@/lib/dm/trace";
 import { getLocation, setLocationMap, setLocationMapFailed, setLocationMapPending } from "@/lib/db/locations";
 import { presetFor } from "@/lib/worlds/preset";
 import { publishPersisted } from "@/lib/events";
@@ -48,12 +49,17 @@ export function enqueueLocationMap(campaign: Campaign, locationId: string) {
         style: typed,
       });
       const prompt = locationMapPrompt(typed ? place.style : look.map, place);
+      recordDmTrace("image_generation_request", {
+        campaignId: campaign.id, kind: "map", locationId, backend: campaign.settings.imageBackend,
+        prompt, mode: campaign.settings.imageMode, aspect: "landscape",
+      });
       const image = await generateStoryImage(campaign.settings, {
         prompt,
         mode: campaign.settings.imageMode,
         aspect: "landscape",
         negative: MAP_NEGATIVE,
       });
+      recordDmTrace("image_generation_result", { campaignId: campaign.id, kind: "map", locationId, success: true });
       if (!setLocationMap(location.id, image)) {
         return;
       }
@@ -63,6 +69,7 @@ export function enqueueLocationMap(campaign: Campaign, locationId: string) {
       });
     } catch (error) {
       const reason = pictureFailureReason(error);
+      recordDmTrace("image_generation_result", { campaignId: campaign.id, kind: "map", locationId, success: false, reason });
       publishMediaStatus(campaign.id, "map", locationId, "failed", reason);
       if (setLocationMapFailed(locationId, reason)) {
         publishLocation(campaign.id, locationId);
