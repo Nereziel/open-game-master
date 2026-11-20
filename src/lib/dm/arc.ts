@@ -1,4 +1,5 @@
 import { withLanguage } from "@/lib/dm/table-language-logic";
+import { arcPlanningLanguageRequest, englishArcPlanningAtCzechTable } from "@/lib/dm/arc-language-logic";
 import { recordDmTrace, withDmTrace } from "@/lib/dm/trace";
 import { openingActFormatRecovery, arcReplyPreview } from "@/lib/dm/arc-format-recovery";
 import { campaignSeats, getCampaignById, latestSeq, setStoryArc } from "@/lib/db/campaigns";
@@ -329,17 +330,22 @@ async function sagaFromPlan(
   opening = "",
 ): Promise<{ arc: StoryArc; raw: string } | null> {
   let raw = planRaw;
+  const language = getCampaignById(campaignId)?.gameSettings.tableLanguage ?? "english";
+  const languageProblem = (value: unknown): string[] =>
+    englishArcPlanningAtCzechTable(value, language)
+      ? ["The narrative prose is in English. Rewrite all human-readable story text in Czech, preserving JSON keys, enum values and established names."]
+      : [];
   let plan = parseSagaPlanJson(raw, profile);
   recordDmTrace("json_validation", {
     stage: "saga_plan", attempt: "first", accepted: Boolean(plan),
-    responseChars: raw.length, problems: plan ? sagaPlanProblems(plan) : ["invalid-json-or-saga-shape"],
+    responseChars: raw.length, problems: plan ? [...sagaPlanProblems(plan), ...languageProblem(plan.record)] : ["invalid-json-or-saga-shape"],
   });
   if (!plan) {
     // A model that ignored the plan's shape and answered with a whole arc,
     // beats and all (nested acts, a flat list of beats), still yields a
     // working arc, as it always has.
     const whole = parseSagaJson(raw, profile);
-    if (whole) {
+    if (whole && !languageProblem(whole).length) {
       return { arc: whole, raw };
     }
     // A plan that cannot be read at all (cut short, or prose) is asked for
@@ -348,7 +354,7 @@ async function sagaFromPlan(
     if (process.env.DM_DEBUG) {
       console.debug(`[dm-debug] saga plan: unreadable reply, retrying (${raw.length} chars): ${arcReplyPreview(raw)}`);
     }
-    const retryContext = `${context}\n\nFORMAT CORRECTION: The previous answer was a scene of narration, not a story plan. This call is NOT a game turn. Do not continue the story or address the players. Return ONLY one JSON object with title, premise, stakes, antagonist, actPlan (at least two acts with their own places and bosses), finale, finaleBoss, cast and subArcs. Every actPlan entry has title, place, milestone, boss {name, detail}, allies and hooks. Begin with { and end with }. No prose outside JSON.`;
+    const retryContext = `${context}\n\nFORMAT CORRECTION: The previous answer was not a usable story plan in the required JSON shape or table language. This call is NOT a game turn. Do not continue the story or address the players. Return ONLY one JSON object with title, premise, stakes, antagonist, actPlan (at least two acts with their own places and bosses), finale, finaleBoss, cast and subArcs. Every actPlan entry has title, place, milestone, boss {name, detail}, allies and hooks. Begin with { and end with }. No prose outside JSON.`;
     // A separate utility/completion route can recover when an agent's
     // storytelling persona keeps replying with narration to planning tasks.
     const again = await arcModelCall(campaignId, planSystem, retryContext, "saga plan retry", "arc_plan_recovery");
@@ -358,31 +364,32 @@ async function sagaFromPlan(
     plan = parseSagaPlanJson(again, profile);
     recordDmTrace("json_validation", {
       stage: "saga_plan", attempt: "format_recovery", accepted: Boolean(plan),
-      responseChars: again.length, problems: plan ? sagaPlanProblems(plan) : ["invalid-json-or-saga-shape"],
+      responseChars: again.length, problems: plan ? [...sagaPlanProblems(plan), ...languageProblem(plan.record)] : ["invalid-json-or-saga-shape"],
     });
     if (!plan) {
       const wholeAgain = parseSagaJson(again, profile);
-      if (!wholeAgain && process.env.DM_DEBUG) {
+      if ((!wholeAgain || languageProblem(wholeAgain).length) && process.env.DM_DEBUG) {
         console.debug(`[dm-debug] saga plan: JSON recovery still unreadable (${again.length} chars): ${arcReplyPreview(again)}`);
       }
-      return wholeAgain ? { arc: wholeAgain, raw: again } : null;
+      return wholeAgain && !languageProblem(wholeAgain).length ? { arc: wholeAgain, raw: again } : null;
     }
     raw = again;
   }
   const feedback = (problems: string[], what: string) =>
     `Your last ${what} had these problems. Write it again, whole, without them:\n${problems.map((line) => `- ${line}`).join("\n")}`;
-  const planProblems = sagaPlanProblems(plan);
+  const planProblems = [...sagaPlanProblems(plan), ...languageProblem(plan.record)];
   if (planProblems.length) {
     if (process.env.DM_DEBUG) {
       console.log(`[dm-debug] saga plan: plotting again (${planProblems.join(" | ")})`);
     }
-    const again = await arcModelCall(campaignId, planSystem, `${context}\n\n${feedback(planProblems, "plan")}`, "saga replan");
+    const correction = [context, "Previous JSON story plan (keep its plot, people, established names and bosses where possible):", raw, feedback(planProblems, "plan")].join("\n\n");
+    const again = await arcModelCall(campaignId, planSystem, correction, "saga replan");
     const second = again === null ? null : parseSagaPlanJson(again, profile);
     recordDmTrace("json_validation", {
       stage: "saga_plan", attempt: "replot", accepted: Boolean(second),
-      problems: second ? sagaPlanProblems(second) : ["invalid-json-or-saga-shape"],
+      problems: second ? [...sagaPlanProblems(second), ...languageProblem(second.record)] : ["invalid-json-or-saga-shape"],
     });
-    if (again !== null && second && sagaPlanProblems(second).length < planProblems.length) {
+    if (again !== null && second && [...sagaPlanProblems(second), ...languageProblem(second.record)].length < planProblems.length) {
       plan = second;
       raw = again;
     }
