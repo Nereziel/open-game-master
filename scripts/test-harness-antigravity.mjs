@@ -136,7 +136,7 @@ await test("only this turn's ODM tools or a separate image tool pass", async () 
   assert.ok(antigravityToolAllowed("mcp_odm_odm_move", granted));
   assert.ok(antigravityToolAllowed("call_mcp_tool", granted));
   assert.ok(!antigravityToolAllowed("call_mcp_tool", new Set()));
-  for (const tool of ["mcp_odm_odm_roll", "mcp_odm_odm_delete_campaign", "mcp_other_odm_roll", "ask_custom_permission", "ask_permission", "ask_question", "browser_click_element", "manage_task", "run_command", "view_file", "write_to_file", "search_web", "read_url_content", "generate_image", "invoke_subagent", "mcp_github_search"]) {
+  for (const tool of ["mcp_odm_roll", "mcp_odm_odm_delete_campaign", "mcp_other_odm_roll", "ask_custom_permission", "ask_permission", "ask_question", "browser_click_element", "manage_task", "run_command", "view_file", "write_to_file", "search_web", "read_url_content", "generate_image", "invoke_subagent", "mcp_github_search"]) {
     assert.ok(!antigravityToolAllowed(tool, granted), tool);
   }
   assert.equal(antigravityToolAllowed("generate_image", new Set(), true), true);
