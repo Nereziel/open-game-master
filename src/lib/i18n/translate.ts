@@ -14,6 +14,7 @@ type Catalog = {
 // remains unchanged. Only apply when the catalog would display English.
 const CZECH_LABEL_FALLBACKS: Record<string, string> = {
   "Reaction roll": "Hod na reakci",
+  "Cancel": "Zrušit",
   "Rolls how an NPC takes the party on the DMG reaction table.": "Určí počáteční postoj cizí postavy k družině hodem podle tabulky reakcí.",
 };
 
