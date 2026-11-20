@@ -5,7 +5,7 @@ import { campaignCreationRefusal, canCreateCampaigns } from "@/lib/shared-host";
 import { createStarterCampaign, starterSeedFor } from "@/lib/starter/one-shot";
 import { narrationAvailable, NO_STORYTELLER_MESSAGE, storytellerConfigured } from "@/lib/capabilities";
 import { pregenSummaries } from "@/lib/starter/pregens";
-import { bookLocaleOf } from "@/lib/rulebook/book";
+import { bookLocaleOf } from "@/lib/request-locale";
 
 export const runtime = "nodejs";
 export const dynamic = "force-dynamic";
