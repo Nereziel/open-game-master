@@ -101,6 +101,14 @@ export function antigravityAgentFile(options: {
     "inheritCustomizations: false",
     "inheritMcp: false",
     `commandExecutionPolicy: ${JSON.stringify("off")}`,
+    // Excluding default components removes their prompt sections, but on
+    // some agy versions native tools are still registered. The custom
+    // agent's explicit tools allowlist is a second, independent boundary.
+    // Antigravity registers MCP tools as mcp_<server>_<tool>, where this
+    // session's only server is named "odm".
+    `tools: ${JSON.stringify(options.mcp
+      ? [...new Set((options.toolNames ?? []).map((name) => `${ANTIGRAVITY_MCP_PREFIX}${name}`))]
+      : [])}`,
   ];
   if (options.mcp) {
     // Loaded up front by name where the run says which tools it serves: a
