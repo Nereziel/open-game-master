@@ -4,6 +4,9 @@
 {
   "$schema": "https://unpkg.com/knip@6/schema.json",
   "entry": [
+    // Vitest discovers these colocated suites by glob (not by import).
+    // Keep them as entry points so Knip does not mistake live tests for dead files.
+    "src/**/*.test.{ts,tsx}",
     // Every top-level script is a program (`node scripts/<name>.mjs`, npm scripts, the docs).
     "scripts/*.{mjs,js,ts}",
     // Spawned by path, not imported: scripts/browser/run.mjs, test-boot-resync.mjs, lib/enforce-spell-kit.mjs.
