@@ -8,7 +8,7 @@ import { EmptyState } from "@/components/EmptyState";
 import { D20Spinner } from "@/components/ui/D20Spinner";
 import { Switch } from "@/components/ui/Switch";
 import { contentName } from "@/lib/content/names";
-import { useLocale } from "@/lib/locale";
+import { useLocale, useT } from "@/lib/locale";
 import type { CompareKind, CompareTable } from "@/lib/reference/compare";
 
 // Several monsters or spells side by side, with the rows that differ marked.
@@ -39,6 +39,7 @@ export function ComparePanel({
   // The compared entries' official names read in the reader's language; the
   // slugs picked and sent stay what they were.
   const locale = useLocale();
+  const t = useT();
   const shown = (entry: { slug?: string; name: string; source?: string }) =>
     contentName(selection.kind, entry, locale);
 
@@ -95,8 +96,8 @@ export function ComparePanel({
     return (
       <EmptyState
         art="scrolls"
-        title="Pick two or more spells or monsters in Browse to compare them."
-        hint="Only one kind at a time."
+        title={t("Pick two or more spells or monsters in Browse to compare them.")}
+        hint={t("Only one kind at a time.")}
       />
     );
   }
@@ -115,7 +116,7 @@ export function ComparePanel({
             <button
               type="button"
               onClick={() => onRemove(entry.slug)}
-              aria-label={`Remove ${shown(entry)}`}
+              aria-label={t("Remove {name}", { name: shown(entry) })}
               className="motion-nudge inline-flex size-7 items-center justify-center rounded-full text-stone-400 hover:text-amber-200"
             >
               <X className="size-3" />
@@ -123,22 +124,22 @@ export function ComparePanel({
           </span>
         ))}
         <button type="button" onClick={onClear} className={ui.btnSmall}>
-          Clear
+          {t("Clear")}
         </button>
       </div>
 
       {loading ? (
         <p className="reveal flex items-center gap-2 text-sm text-stone-500">
-          <D20Spinner className="size-4 text-amber-300" /> Building the table
+          <D20Spinner className="size-4 text-amber-300" /> {t("Building the table")}
         </p>
       ) : null}
-      {error ? <p role="alert" className="motion-shake text-sm text-red-300">{error}</p> : null}
+      {error ? <p role="alert" className="motion-shake text-sm text-red-300">{t(error)}</p> : null}
 
       {table ? (
         <>
           <div className="mb-3 flex items-center gap-2 text-xs text-stone-400">
-            <Switch on={onlyDiffering} onChange={setOnlyDiffering} label="Only what differs" />
-            Only what differs ({table.differingRows} of {table.rows.length} rows)
+            <Switch on={onlyDiffering} onChange={setOnlyDiffering} label={t("Only what differs")} />
+            {t("Only what differs ({different} of {total} rows)", { different: table.differingRows, total: table.rows.length })}
           </div>
 
           <div className="panel overflow-x-auto rounded-xl">
@@ -163,7 +164,7 @@ export function ComparePanel({
                 {rows.map((row) => (
                   <tr key={row.label} className="border-b border-stone-800/60 last:border-0">
                     <th className="section-head-title whitespace-nowrap px-3 py-2 text-left font-normal">
-                      {row.label}
+                      {t(row.label)}
                     </th>
                     {row.cells.map((cell, index) => (
                       <td
@@ -173,9 +174,9 @@ export function ComparePanel({
                           row.differs ? "text-stone-100" : "text-stone-400",
                         )}
                       >
-                        {cell.text}
+                        {t(cell.text)}
                         {cell.detail ? (
-                          <span className="block text-xs text-stone-500">{cell.detail}</span>
+                          <span className="block text-xs text-stone-500">{t(cell.detail)}</span>
                         ) : null}
                       </td>
                     ))}
@@ -187,7 +188,7 @@ export function ComparePanel({
                       colSpan={table.columns.length + 1}
                       className="px-3 py-4 text-sm text-stone-500"
                     >
-                      These agree on every row the table checks.
+                      {t("These agree on every row the table checks.")}
                     </td>
                   </tr>
                 ) : null}
