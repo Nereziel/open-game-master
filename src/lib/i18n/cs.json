@@ -1,5 +1,12 @@
 {
   "messages": {
+    "The language your tables play in": "Jazyk, ve kterém se hraje u tvých stolů",
+    "New campaigns start in it, and the Game Master's memory reads the story in it. Each campaign can still pick its own under Table language. The buttons and menus follow each reader's browser, or the language they pick under Settings > Language.": "Nové kampaně začínají v tomto jazyce a paměť Pána jeskyně v něm vyhledává v příběhu. Každá kampaň si může nastavit vlastní jazyk v položce Jazyk stolu. Nabídky a tlačítka se řídí jazykem prohlížeče hráče nebo jeho volbou v Nastavení → Jazyk.",
+    "Memory search reads with {model}, set by EMBEDDING_MODEL in .env.server. Remove that line to let the language choose.": "Vyhledávání v paměti používá model {model}, nastavený pomocí EMBEDDING_MODEL v .env.server. Pro automatický výběr podle jazyka tento řádek odstraň.",
+    "Saving switches memory search to the English model and re-reads every campaign's story in the background.": "Uložením se vyhledávání v paměti přepne na anglický model a příběhy všech kampaní se znovu zpracují na pozadí.",
+    "Saving switches memory search to a model that reads every language and re-reads every campaign's story in the background. It is downloaded once (about 120 MB); until it is ready, the Game Master finds things by their words.": "Uložením se vyhledávání v paměti přepne na vícejazyčný model a příběhy všech kampaní se znovu zpracují na pozadí. Model se stáhne jednou (asi 120 MB). Do dokončení používá Pán jeskyně vyhledávání podle slov.",
+    "Memory search reads with {model}, which reads English.": "Vyhledávání v paměti používá model {model}, který rozumí angličtině.",
+    "Memory search reads with {model}, which reads every table language.": "Vyhledávání v paměti používá model {model}, který rozumí všem jazykům herních stolů.",
     "Loading the table": "Načítání herního stolu",
     "The server's agent program could not be locked down, so the turn was refused.": "Program AI na serveru se nepodařilo bezpečně omezit, proto byl tah odmítnut.",
     "The server's agent program is signed out. The admin can sign it in again on this machine.": "Program AI na serveru je odhlášený. Správce se do něj může na tomto počítači znovu přihlásit.",
