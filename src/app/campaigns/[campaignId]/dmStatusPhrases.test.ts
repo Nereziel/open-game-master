@@ -53,6 +53,11 @@ describe("localized DM progress messages", () => {
     }
     expect(fonts).toContain("unicode-range: U+0100-02BA");
     expect(fonts).toContain("../fonts/cinzel-latin-ext.woff2");
+    expect(fonts).toContain("../fonts/ysabeau-office-latin-ext.woff2");
+    expect(fonts).toContain("../fonts/ysabeau-office-latin-ext-italic.woff2");
+    expect(fonts).toContain("../fonts/source-serif-4-latin-ext.woff2");
+    expect(fonts).toContain("../fonts/source-serif-4-latin-ext-italic.woff2");
+    expect(fonts).toContain("../fonts/geist-mono-latin-ext.woff2");
   });
 
   it("keeps animated dice digits out of text selection", () => {
