@@ -10,6 +10,13 @@ type Catalog = {
   plurals: Record<string, [string, string, string?]>;
 };
 
+// Small patches for missing Czech UI keys while the large generated catalog
+// remains unchanged. Only apply when the catalog would display English.
+const CZECH_LABEL_FALLBACKS: Record<string, string> = {
+  "Reaction roll": "Hod na reakci",
+  "Rolls how an NPC takes the party on the DMG reaction table.": "Určí počáteční postoj cizí postavy k družině hodem podle tabulky reakcí.",
+};
+
 // The French catalog is about 1 MB of JSON (340 KiB gzip). Imported here it
 // rode in the first load of every page, French reader or not (the shared
 // LocaleApplier and every useT pull this module in). It is installed
@@ -54,6 +61,9 @@ export function translate(locale: Locale, english: string, vars?: TranslateVars)
     const ctx = vars?.context;
     const ctxMatch = ctx ? catalog.contexts[english]?.[ctx] : undefined;
     text = ctxMatch ?? catalog.messages[english] ?? english;
+  }
+  if (locale === "cs" && text === english) {
+    text = CZECH_LABEL_FALLBACKS[english] ?? text;
   }
   return interpolate(text, vars);
 }
