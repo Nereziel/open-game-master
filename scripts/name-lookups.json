@@ -9,6 +9,7 @@
     "authoring": "the workshop's and WorldForge's authoring tools, which read what an author writes as they go"
   },
   "sites": {
+    "app/campaigns/[campaignId]/dmStatusPhrases.test.ts#partial": [["parse",1,"Czech progress-message test inspects rendered display strings and expected phrases; it selects no game record"]],
     "lib/i18n/agent-diagnostics.ts#partial": [["parse",4,"agent diagnostic text delimiters and anchored regexes used to preserve and translate known errors, not to identify a game record"]],
     "lib/pdf/download.ts#partial": [["parse",1,"the browser document language is split at its region subtag to choose the PDF translation; this parses a locale tag and chooses no game record"]],
     "app/api/admin/settings/route.ts#whole-single": [["key",1,"compare the administrator-selected agent program identifier with the configured program ID to invalidate a prior image test on a switch"]],
