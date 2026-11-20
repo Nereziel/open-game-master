@@ -212,8 +212,13 @@ export function parseWorldArcsJson(raw: string): WorldArc[] {
   };
   // Prefer the entire reply: it preserves the top-level key defining which
   // array is a world clock instead of blindly selecting an unrelated array.
-  const direct = parse(cleaned);
-  if (direct.length) return direct;
+  // A valid JSON saga object is an explicit rejection. Never extract its
+  // "acts" array as an unrelated world clock, even if entries look similar.
+  try {
+    return asWorldArcList(JSON.parse(cleaned));
+  } catch {
+    // Only incomplete wrappers or prose with embedded JSON reach extraction.
+  }
   const arrayStart = cleaned.indexOf("[");
   const arrayEnd = cleaned.lastIndexOf("]");
   if (arrayStart >= 0 && arrayEnd > arrayStart) {
