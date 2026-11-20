@@ -265,7 +265,8 @@ export async function PATCH(request: Request) {
       { status: 400 },
     );
   }
-  const before = getGlobalConfig().harness;
+  const current = getGlobalConfig();
+  const before = current.harness;
   const harnessPatch = parsed.data.harness;
   // A different program, or the same one somewhere else, has not painted a
   // test picture yet.
@@ -276,10 +277,19 @@ export async function PATCH(request: Request) {
   // A save that names a checkpoint and no workflow means that checkpoint:
   // the desktop app's local AI installer sends only the file it installed,
   // and a catalog model left standing would paint every picture without it.
-  const images =
+  const imageFields =
     parsed.data.images?.comfyCheckpoint !== undefined && parsed.data.images.comfyWorkflowPreset === undefined
       ? { ...parsed.data.images, comfyWorkflowPreset: "checkpoint" as const }
       : parsed.data.images;
+  // A stored image key belongs to the endpoint that saved it. If the admin
+  // changes that URL without entering a replacement key, clear the old key.
+  // This also applies to the guided setup, which saves through this route.
+  const imageEnvBase = serverEnv("OPENAI_IMAGE_BASE_URL", "https://api.openai.com/v1");
+  const oldImageBase = (current.images.openaiBaseUrl || imageEnvBase).replace(/\/+$/, "");
+  const nextImageBase = ((imageFields?.openaiBaseUrl ?? current.images.openaiBaseUrl) || imageEnvBase).replace(/\/+$/, "");
+  const images = imageFields && oldImageBase !== nextImageBase && imageFields.openaiApiKey === undefined
+    ? { ...imageFields, openaiApiKey: "" }
+    : imageFields;
   const saved = saveGlobalConfig({
     ...parsed.data,
     ...(images ? { images } : {}),
