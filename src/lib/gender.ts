@@ -20,11 +20,21 @@ const GENDER_LABELS_FR: Record<string, string> = {
   Nonbinary: "Non binaire",
 };
 
+const GENDER_LABELS_CS: Record<string, string> = {
+  Female: "Žena",
+  Male: "Muž",
+  Nonbinary: "Nebinární",
+};
+
 // A gender as the choice list prints it, or the stored word when the map
 // does not know it (a free-text value read as unspecified never lands
 // here). An empty gender reads as the label its picker gives it.
 export function genderLabel(gender: Gender, locale: Locale): string {
-  return locale === "fr" ? (GENDER_LABELS_FR[gender] ?? gender) : gender;
+  return locale === "cs"
+    ? (GENDER_LABELS_CS[gender] ?? gender)
+    : locale === "fr"
+      ? (GENDER_LABELS_FR[gender] ?? gender)
+      : gender;
 }
 
 // A stored value as a choice. Sheets written through the API before the
