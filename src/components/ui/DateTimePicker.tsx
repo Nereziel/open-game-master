@@ -76,7 +76,7 @@ export function DateTimePicker({
     !!a && a.getFullYear() === year && a.getMonth() === month && a.getDate() === day;
 
   const reads = chosen
-    ? chosen.toLocaleString(undefined, dateOnly ? { dateStyle: "medium" } : { dateStyle: "medium", timeStyle: "short" })
+    ? chosen.toLocaleString(undefined, dateOnly ? { dateStyle: "medium" } : { dateStyle: "medium", timeStyle: "short", hourCycle: "h23" })
     : (placeholder ?? t("Pick a date"));
 
   return (
@@ -140,7 +140,7 @@ export function DateTimePicker({
           </div>
           {dateOnly ? null : (
             <div className="kit-date-time">
-              <NumberStepper label="Hour" size="sm" min={0} max={23} value={chosen?.getHours() ?? 19} onChange={(hours) => setTime(hours, chosen?.getMinutes() ?? 0)} />
+              <NumberStepper label={t("Hour")} size="sm" min={0} max={23} value={chosen?.getHours() ?? 19} onChange={(hours) => setTime(hours, chosen?.getMinutes() ?? 0)} />
               <span className="text-stone-500">:</span>
               <NumberStepper label={t("Minute")} size="sm" min={0} max={55} step={5} value={chosen?.getMinutes() ?? 0} onChange={(minutes) => setTime(chosen?.getHours() ?? 19, minutes)} />
             </div>

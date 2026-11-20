@@ -22,7 +22,7 @@ export const dynamic = "force-dynamic";
 // stores nothing, so the table edits it before anyone saves.
 const bodySchema = z.discriminatedUnion("do", [
   z.object({ do: z.literal("save"), text: z.string().max(PARTY_BACKSTORY_MAX * 2) }),
-  z.object({ do: z.literal("draft"), current: z.string().max(PARTY_BACKSTORY_MAX * 2).optional() }),
+  z.object({ do: z.literal("draft"), current: z.string().max(PARTY_BACKSTORY_MAX * 2).optional(), readerLocale: z.enum(["en", "fr", "cs"]).optional() }),
 ]);
 
 function partyCharacters(campaignId: string) {
@@ -90,6 +90,7 @@ export async function POST(request: Request, { params }: { params: Promise<{ cam
       backstory: sheet.backstory || (sheet.isCompanion ? sheet.personality : ""),
     })),
     body.current ?? "",
+    body.readerLocale,
   );
   return error ? Response.json({ error }, { status: 502 }) : Response.json({ text });
 }

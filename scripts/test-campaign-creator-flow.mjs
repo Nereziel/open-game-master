@@ -64,6 +64,24 @@ await test("a rolled title is in the genre's words and never the one already the
   assert.ok(rollCampaignTitle("unknown-genre", "", steps).length > 4, "an unknown genre falls back to fantasy words");
 });
 
+await test("Czech title dice stay Czech across every genre without changing English or French", async () => {
+  const { rollCampaignTitle } = await import("../src/app/create-campaign/titles.ts");
+  const genres = ["high_fantasy", "dark_fantasy", "mystery", "horror", "cyberpunk", "steampunk", "post_apocalyptic", "custom"];
+  for (const genre of genres) {
+    let n = 0;
+    const random = () => ((n += 0.137) % 1);
+    const first = rollCampaignTitle(genre, "", random, "cs");
+    assert.ok(first.length > 4 && first.length <= 80, `${genre}: ${first}`);
+    assert.doesNotMatch(first, /^(The )| of | le | la /i);
+    assert.notEqual(rollCampaignTitle(genre, first, random, "cs"), first, `${genre}: title should reroll`);
+    const samples = Array.from({ length: 20 }, () => rollCampaignTitle(genre, "", random, "cs"));
+    assert.ok(samples.some((name) => /[áčďéěíňóřšťúůýž]/i.test(name)), `${genre}: Czech title bank lacks diacritics`);
+  }
+  const fixed = () => 0.42;
+  assert.match(rollCampaignTitle("high_fantasy", "", fixed, "en"), /\b(The|of)\b/);
+  assert.ok(rollCampaignTitle("high_fantasy", "", fixed, "fr").length > 4);
+});
+
 await test("every named group sits on the step that owns it, once", () => {
   const groupsIn = (source) => [...source.matchAll(/groupProps\(groups, "(\w+)"\)/g)].map((match) => match[1]);
   const onEssentials = groupsIn(essentials);

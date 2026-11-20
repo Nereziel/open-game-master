@@ -97,7 +97,8 @@ export function RecapPanel({ campaign }: { campaign: HomeCampaign }) {
   const locale = useLocale();
   const glance = campaign.glance;
   const floor = (campaign as HomeCampaign & { floor?: { mode?: string; round?: number; currentName?: string } }).floor;
-  const recap = glance?.recap?.trim() || "";
+  // Only known UI/system phrases are translated; arbitrary storyteller prose stays unchanged.
+  const recap = t(glance?.recap?.trim() || "");
   const head = recap.charAt(0);
   const tail = recap.slice(1);
   const bits: string[] = [];

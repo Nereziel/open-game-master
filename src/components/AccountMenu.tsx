@@ -263,7 +263,7 @@ export function AccountMenu({
       </DropdownMenu.Root>
       {onHelp ? null : <HelpDialog open={helpOpen} onOpenChange={setHelpOpen} />}
       <AboutDialog open={aboutOpen} onOpenChange={setAboutOpen} isAdmin={Boolean(user.isAdmin)} />
-      <Dialog open={appearanceOpen} onOpenChange={setAppearanceOpen} title="Appearance" width="w-[min(92vw,46rem)]">
+      <Dialog open={appearanceOpen} onOpenChange={setAppearanceOpen} title={t("Appearance")} width="w-[min(92vw,46rem)]">
         <AppearancePicker />
       </Dialog>
     </>

@@ -1,4 +1,8 @@
 import { describe, expect, it } from "vitest";
+import { calculatorDisplayText } from "../reference/calculator-display";
+import { APPEARANCE_THEMES } from "../appearance-themes";
+import { SHELF_TOUR, HUB_TOUR, SYSTEM_TOURS } from "../tours/workshop";
+import { PLAYER_TOUR, FIRST_TURN_TOUR, DM_TOUR } from "../tours/table";
 import catalog from "./cs.json";
 import { installCatalog, translate, translatePlural } from "./translate";
 import { localeFromAcceptLanguage, localeOfServerLanguage, parseLocale, resolveLocale } from "./locale";
@@ -33,9 +37,84 @@ describe("Czech localization", () => {
   it("translates server-language administration and accessible loading labels", () => {
     expect(translate("cs", "The language your tables play in")).toContain("Jazyk");
     expect(translate("cs", "Loading the table")).toBe("Načítání herního stolu");
+    expect(translate("cs", "Turn on these settings to continue.")).toBe("Zapni tato nastavení a pokračuj.");
     expect(
       translate("cs", "Memory search reads with {model}, which reads every table language.", { model: "e5" }),
     ).toBe("Vyhledávání v paměti používá model e5, který rozumí všem jazykům herních stolů.");
+  });
+
+  it("translates appearance themes and About status without changing the stored source names", () => {
+    for (const theme of APPEARANCE_THEMES) {
+      expect(translate("cs", theme.name, { context: "appearance.theme" })).not.toBe(theme.name);
+      expect(translate("cs", theme.description)).not.toBe(theme.description);
+      expect(translate("en", theme.name)).toBe(theme.name);
+    }
+    expect(translate("cs", "Light", { context: "appearance.brightness" })).toBe("Světlý");
+    expect(translate("cs", "Dark", { context: "appearance.brightness" })).toBe("Tmavý");
+    expect(translate("cs", "Dark")).toBe("Tma");
+    expect(translate("cs", "Using {theme} · {choice}.", { theme: "Prastarý hvozd", choice: "vlastní volba" }))
+      .toBe("Používá se motiv Prastarý hvozd · vlastní volba.");
+    expect(translate("cs", "Could not reach GitHub to look for a newer release.")).toContain("GitHubem");
+    expect(translate("cs", "Changes since the {tag} release: {count}.", { tag: "v1", count: 4 }))
+      .toBe("Počet změn od vydání v1: 4.");
+  });
+
+  it("localizes computed calculator results without altering the rule engine's English output", () => {
+    const cs = (key: string, vars?: Record<string, string | number>) => translate("cs", key, vars);
+    const en = (key: string, vars?: Record<string, string | number>) => translate("en", key, vars);
+    expect(calculatorDisplayText("2 monsters against 4 players", cs))
+      .toBe("Nestvůry: 2, hráči: 4");
+    expect(calculatorDisplayText("300 gp on average", cs)).toBe("Průměrně 300 zl.");
+    expect(calculatorDisplayText("1 day", cs)).toBe("1 den");
+    expect(calculatorDisplayText("3 days", cs)).toBe("3 dny");
+    expect(calculatorDisplayText("5 days", cs)).toBe("5 dnů");
+    expect(calculatorDisplayText("19 miles in a full 8-hour day", cs))
+      .toBe("Za celý osmihodinový den 19 mil");
+    expect(calculatorDisplayText("CR 3", cs)).toBe("NB 3");
+    expect(calculatorDisplayText("A large body carries x2 what a Medium one does.", cs))
+      .toBe("Postava velikosti velká unese 2× tolik co středně velká postava.");
+    expect(calculatorDisplayText("An unfamiliar pack-specific result", cs))
+      .toBe("An unfamiliar pack-specific result");
+    expect(calculatorDisplayText("2 monsters against 4 players", en))
+      .toBe("2 monsters against 4 players");
+  });
+
+  it("localizes the campaign editor and the complete workshop shelf and hub tours", () => {
+    expect(translate("cs", "Edit campaign")).toBe("Upravit kampaň");
+    expect(translate("cs", "The story")).toBe("Příběh");
+    expect(translate("cs", "The table", { context: "campaign.edit.table" })).toBe("Herní stůl");
+    expect(translate("cs", "Paint one", { context: "campaign.cover.paint" })).toBe("Vytvořit obrázek");
+    for (const step of [...SHELF_TOUR, ...HUB_TOUR]) {
+      expect(translate("cs", step.title), step.title).not.toBe(step.title);
+      expect(translate("cs", step.body), step.id).not.toBe(step.body);
+      expect(translate("en", step.title)).toBe(step.title);
+    }
+    expect(translate("cs", "The workshop shelf")).toBe("Polička dílny");
+  });
+
+  it("covers all 88 table tour headings and explanations in Czech", () => {
+    const entries = [...PLAYER_TOUR, ...FIRST_TURN_TOUR, ...DM_TOUR]
+      .flatMap((step) => [step.title, step.body]);
+    expect(entries).toHaveLength(88);
+    expect(entries.filter((entry) => translate("cs", entry) !== entry)).toHaveLength(88);
+    expect(translate("cs", "Welcome to the table")).toBe("Vítej u herního stolu");
+    expect(translate("cs", "Take your turn")).toBe("Odehraj svůj tah");
+    expect(translate("cs", "Write down what happened")).toBe("Zaznamenej, co se stalo");
+    expect(translate("en", "Welcome to the table")).toBe("Welcome to the table");
+  });
+
+  it("localizes all workshop tool tour headings and explanations", () => {
+    for (const step of Object.values(SYSTEM_TOURS).flat()) {
+      expect(translate("cs", step.title), step.title).not.toBe(step.title);
+      expect(translate("cs", step.body), step.id).not.toBe(step.body);
+      expect(translate("en", step.title)).toBe(step.title);
+      expect(translate("en", step.body)).toBe(step.body);
+    }
+    expect(translate("cs", "The world's history")).toBe("Historie světa");
+    expect(translate("cs", "What the board is missing")).toBe("Co v plánu chybí");
+    expect(translate("cs", "The pregens")).toBe("Předpřipravené postavy");
+    expect(translate("cs", "Saved rulesets")).toBe("Uložené sady pravidel");
+    expect(translate("cs", "Download or compile")).toBe("Stáhnout nebo sestavit");
   });
 
   it("uses three Czech plural forms", () => {

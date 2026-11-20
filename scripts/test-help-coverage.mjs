@@ -121,6 +121,22 @@ test("glossary entries are complete, unique and readable", () => {
   assert.equal(glossaryTerms().length, glossary.length);
 });
 
+test("all glossary terms have Czech names and both Czech help paragraphs", () => {
+  const missing = [];
+  for (const entry of glossary) {
+    if (!entry.cs?.trim() || !entry.shortCs?.trim() || (entry.long && !entry.longCs?.trim())) {
+      missing.push(entry.id);
+    }
+    if (entry.cs?.trim() === entry.term?.trim() && /[A-Za-z]{4,}/.test(entry.term)) {
+      // International names are allowed, but flag direct English help-body fallbacks.
+      if (entry.shortCs === entry.short || entry.longCs === entry.long) missing.push(entry.id);
+    }
+  }
+  assert.deepEqual(missing, []);
+  assert.equal(glossaryTerm("passive_perception")?.cs, "Pasivní vnímání");
+  assert.ok(glossaryTerm("passive_perception")?.shortCs.includes("10 plus"));
+});
+
 test("the six abilities are all glossary terms, so ability labels can link", () => {
   for (const ability of ["str", "dex", "con", "int", "wis", "cha"]) {
     assert.ok(glossaryTerm(ability), `no glossary entry for ${ability}`);

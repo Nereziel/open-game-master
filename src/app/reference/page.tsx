@@ -158,10 +158,15 @@ function ResultIcon({ kind, name, data }: { kind: Kind; name: string; data?: Rec
 export default function ReferencePage() {
   const t = useT();
   const locale = useLocale();
-  // Glossary bodies follow the reader: the French explanation fields when
-  // the locale is fr and present, the English source otherwise. The term's
-  // name itself is WotC's French SRD wording, carried on the entry as `fr`.
+  // The reference uses the same translated glossary fields as inline GameTerm.
   const french = locale === "fr";
+  const czech = locale === "cs";
+  const termName = (term: GlossaryTerm) =>
+    (czech ? term.cs : french ? term.fr : undefined) || term.term;
+  const termShort = (term: GlossaryTerm) =>
+    (czech ? term.shortCs : french ? term.shortFr : undefined) || term.short;
+  const termLong = (term: GlossaryTerm) =>
+    (czech ? term.longCs : french ? term.longFr : undefined) || term.long;
   const [mode, setMode] = useState<Mode>("browse");
   const [kind, setKind] = useState<Kind>("glossary");
   const [query, setQuery] = useState("");
@@ -186,9 +191,9 @@ export default function ReferencePage() {
     if (!needle) {
       return terms;
     }
-    return terms.filter(
-      (term) =>
-        textKey(term.term).includes(needle) || textKey(term.fr ?? "").includes(needle) || textKey(term.short).includes(needle),
+    return terms.filter((term) =>
+      [term.term, term.fr, term.cs, term.short, term.shortFr, term.shortCs, term.long, term.longFr, term.longCs]
+        .some((word) => textKey(word ?? "").includes(needle)),
     );
   }, [terms, query]);
 
@@ -282,9 +287,10 @@ export default function ReferencePage() {
   }
 
   function openTerm(term: GlossaryTerm) {
-    const short = french && term.shortFr ? term.shortFr : term.short;
-    const long = french && term.longFr ? term.longFr : term.long;
-    setOpen({ title: french && term.fr ? term.fr : term.term, text: [short, long].filter(Boolean).join("\n\n") });
+    setOpen({
+      title: termName(term),
+      text: [termShort(term), termLong(term)].filter(Boolean).join("\n\n"),
+    });
   }
 
   function openRow(row: Row) {
@@ -435,9 +441,9 @@ export default function ReferencePage() {
                     <button type="button" onClick={() => openTerm(term)} className={ROW}>
                       <GameIcon icon={{ kind: "glyph", key: "system-lore" }} size="size-8" />
                       <span className="min-w-0 flex-1">
-                        <span className="block font-display text-sm tracking-wide text-amber-100">{french && term.fr ? term.fr : term.term}</span>
+                        <span className="block font-display text-sm tracking-wide text-amber-100">{termName(term)}</span>
                         <span className="block text-xs text-stone-400">
-                          {french && term.shortFr ? term.shortFr : term.short}
+                          {termShort(term)}
                         </span>
                       </span>
                     </button>

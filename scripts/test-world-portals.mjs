@@ -12,7 +12,7 @@ import { register } from "node:module";
 register("./lib/register-alias.mjs", import.meta.url);
 
 const { GENRE_PRESETS } = await import("../src/lib/genres.ts");
-const { arrivalTypeIn, dmFlavorText, portalCards, presetTheme, typeInPlan, worldFacts, TYPE_MS_PER_CHAR } =
+const { arrivalTypeIn, dmFlavorText, portalCards, presetTheme, relocalizePresetTheme, typeInPlan, worldFacts, TYPE_MS_PER_CHAR } =
   await import("../src/app/create-campaign/portals.ts");
 const { countableRows, featuresOn, flipRow, tableSheet } = await import(
   "../src/app/create-campaign/table-sheet.ts"
@@ -128,6 +128,37 @@ test("an untouched theme follows the preset", () => {
   const horror = presetTheme({ ...DRAFT, genre: "horror", theme: "anything the last preset wrote" });
   assert.equal(horror.theme, GENRE_PRESETS.find((preset) => preset.id === "horror").defaultTheme);
   assert.equal(presetTheme({ ...DRAFT, genre: "custom", theme: "left over" }).theme, "");
+});
+
+test("Czech world presets seed Czech text without changing AI-facing prompts", () => {
+  for (const preset of GENRE_PRESETS) {
+    const localized = presetTheme({ ...DRAFT, genre: preset.id }, "cs");
+    assert.equal(localized.theme, preset.defaultThemeCs ?? preset.defaultTheme);
+    if (preset.id !== "custom") {
+      assert.ok(/[áčďéěíňóřšťúůýž]/i.test(localized.theme), `${preset.id}: Czech accent missing`);
+      assert.notEqual(localized.theme, preset.defaultTheme);
+    }
+    assert.equal(presetTheme({ ...DRAFT, genre: preset.id }, "en").theme, preset.defaultTheme);
+    assert.equal(presetTheme({ ...DRAFT, genre: preset.id }, "fr").theme, preset.defaultThemeFr ?? preset.defaultTheme);
+    assert.equal(dmFlavorText(preset.id), preset.dmFlavor || dmFlavorText("custom"));
+  }
+  assert.equal(typeInPlan({ theme: "", themeTouched: false }, "horror", "cs").text,
+    GENRE_PRESETS.find((preset) => preset.id === "horror").defaultThemeCs);
+  assert.equal(arrivalTypeIn(presetTheme(DRAFT, "cs"), "cs").text, GENRE_PRESETS[0].defaultThemeCs);
+});
+
+test("a late Czech locale hydrates only an untouched built-in theme", () => {
+  const english = presetTheme(DRAFT);
+  const czech = relocalizePresetTheme(english, "cs");
+  assert.equal(czech.theme, GENRE_PRESETS[0].defaultThemeCs);
+  assert.equal(relocalizePresetTheme(czech, "en").theme, english.theme);
+  assert.equal(relocalizePresetTheme(czech, "cs"), czech, "unchanged text retains object identity");
+  const typed = { ...english, theme: "My own world", themeTouched: true };
+  assert.equal(relocalizePresetTheme(typed, "cs"), typed);
+  const packed = { ...english, worldPack: "world-1", theme: "A pack's own writing" };
+  assert.equal(relocalizePresetTheme(packed, "cs"), packed);
+  const customNote = { ...english, theme: "A handwritten note", themeTouched: false };
+  assert.equal(relocalizePresetTheme(customNote, "cs"), customNote);
 });
 
 test("a typed theme is never overwritten, and neither is a pack's", () => {

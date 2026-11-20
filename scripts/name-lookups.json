@@ -769,13 +769,7 @@
     "app/characters/page.tsx#partial": [["pattern",1,"a fixed pattern over text that reads no record's name: its English words are scripts/text-comparisons.json's to classify"]],
     "app/create-campaign/NarratorFields.tsx#number": [["key",2,"digits a regex already captured, ids, headers, stored and form numbers (number inputs), dice parts, the pack's English text (\"1,000 feet\", a purse); src/: every site read"]],
     "app/create-campaign/VoiceChatFields.tsx#number": [["key",1,"digits a regex already captured, ids, headers, stored and form numbers (number inputs), dice parts, the pack's English text (\"1,000 feet\", a purse); src/: every site read"]],
-    "app/create-campaign/titles.ts#fallback": [
-      [
-        "key",
-        2,
-        "title banks by genre"
-      ]
-    ],
+    "app/create-campaign/titles.ts#fallback": [["key",3,"title banks indexed by genre id (Czech, French and English)"]],
     "app/create-campaign/titles.ts#whole": [["key",1,"title banks by genre"]],
     "app/generated-audio/[...path]/route.ts#partial": [["pattern",1,"a fixed pattern over text that reads no record's name: its English words are scripts/text-comparisons.json's to classify"]],
     "app/reference/CalculatorsPanel.tsx#fallback": [["key",3,"calculator ids and compare slugs"]],

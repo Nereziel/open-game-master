@@ -120,14 +120,14 @@ export function pickNextSession(
   return { id: next.id, title: next.title, startsAt: next.startsAt, durationMin: next.durationMin, coming };
 }
 
-// "Fri, Nov 6, 7:00 PM" in the reader's own locale and time zone; the
+// "Fri, Nov 6, 19:00" in the reader's own locale and time zone; the
 // server stores UTC and never formats a time for a person.
 export function sessionWhenLocal(startsAt: string, locale?: string): string {
   const date = new Date(startsAt);
   if (!Number.isFinite(date.getTime())) {
     return "";
   }
-  return date.toLocaleString(locale, { weekday: "short", month: "short", day: "numeric", hour: "numeric", minute: "2-digit" });
+  return date.toLocaleString(locale, { weekday: "short", month: "short", day: "numeric", hour: "2-digit", minute: "2-digit", hourCycle: "h23" });
 }
 
 // The line the banner and the home screen say about it.

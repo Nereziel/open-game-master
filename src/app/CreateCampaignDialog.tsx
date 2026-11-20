@@ -14,7 +14,7 @@ import type { Genre } from "@/lib/schemas/game-settings";
 import { applyPack, clearPack, DEFAULT_DRAFT, type CampaignDraft, type WizardGates } from "@/app/create-campaign/draft";
 import { appDefaultSettings, applyDefaults, defaultsFromDraft } from "@/app/create-campaign/defaults";
 import { DefaultsBar, DefaultsDialog, DefaultsPanel, type DefaultsActions, type StartFrom } from "@/app/create-campaign/DefaultsFields";
-import { presetTheme } from "@/app/create-campaign/portals";
+import { presetTheme, relocalizePresetTheme } from "@/app/create-campaign/portals";
 import { useLocale } from "@/lib/locale";
 import { EssentialsStep } from "@/app/create-campaign/EssentialsStep";
 import { ExperienceStep } from "@/app/create-campaign/ExperienceStep";
@@ -75,6 +75,16 @@ export function CreateCampaignDialog({
     latest.current = next;
     setDraft(next);
   };
+  // Locale selection can finish hydrating after the wizard's initial draft.
+  // Re-localize only built-in preset text; keep player edits and pack notes.
+  useEffect(() => {
+    const current = latest.current;
+    const next = relocalizePresetTheme(current, locale);
+    if (next !== current) {
+      latest.current = next;
+      setDraft(next);
+    }
+  }, [locale]);
   // Whether the person has changed anything themselves: saved defaults that
   // arrive after that are offered, never laid over their work.
   const edited = useRef(false);

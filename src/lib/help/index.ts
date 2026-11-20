@@ -35,12 +35,15 @@ export type GlossaryTerm = {
   // (CC-BY-4.0); present on every entry. The explanation bodies below are
   // this fork's own translations written with that vocabulary, not WotC text.
   fr?: string;
+  // Czech names and help texts, provided for every glossary entry.
+  cs?: string;
   short: string;
-  // The French of `short`, present on every entry.
+  // Translated short and long descriptions match the source entry.
   shortFr?: string;
+  shortCs?: string;
   long?: string;
-  // The French of `long`, present wherever `long` is.
   longFr?: string;
+  longCs?: string;
 };
 
 const TERMS = (glossaryJson as { terms: GlossaryTerm[] }).terms;
@@ -177,12 +180,11 @@ export function describeSkill(
     return null;
   }
   const ability = glossaryTerm(skill.ability);
-  const skillName = locale === "fr" && skill.fr ? skill.fr : skill.name;
+  const skillName = locale === "fr" && skill.fr ? skill.fr : locale === "cs" ? t(skill.name) : skill.name;
   const abilityName =
-    locale === "fr" && ability?.fr ? ability.fr : ability?.term ?? skill.ability.toUpperCase();
-  return `${t("{skill} uses {ability}.", { skill: skillName, ability: abilityName })} ${
-    (locale === "fr" && ability?.shortFr ? ability.shortFr : ability?.short) ?? ""
-  }`.trim();
+    (locale === "fr" ? ability?.fr : locale === "cs" ? ability?.cs : undefined) ?? ability?.term ?? skill.ability.toUpperCase();
+  const abilitySummary = (locale === "fr" ? ability?.shortFr : locale === "cs" ? ability?.shortCs : undefined) ?? ability?.short;
+  return `${t("{skill} uses {ability}.", { skill: skillName, ability: abilityName })} ${abilitySummary ?? ""}`.trim();
 }
 
 function textOf(value: unknown): string {

@@ -7,7 +7,6 @@ import { EmbeddingLanguageLine } from "@/components/EmbeddingLanguageLine";
 import { LanguageSelect } from "@/components/LanguageSelect";
 import { useTtsVoices } from "@/components/VoicePicker";
 import { cn } from "@/lib/cn";
-import { GENRE_PRESETS } from "@/lib/genres";
 import { narratorVoiceFor } from "@/lib/tts-voices";
 import {
   TABLE_LANGUAGE_HELP,
@@ -28,7 +27,7 @@ import {
 
 // The setting dialog's middle block: one line per portal, from the data
 // file's own names and blurbs (the worlds' words stay the data's).
-const settingList = () => GENRE_PRESETS.map((preset) => `**${preset.name}**: ${preset.blurb}`).join("\n\n");
+const settingList = (cards: ReturnType<typeof portalCards>) => cards.map((card) => `**${card.name}**: ${card.blurb}`).join("\n\n");
 
 // The setting as eight painted portals, its custom description, the theme the
 // preset writes (and the person may overwrite) and the premise. One component
@@ -49,6 +48,7 @@ export function WorldFields({
 }) {
   const t = useT();
   const locale = useLocale();
+  const cards = portalCards(draft.genre, t);
   const showsAiFill = gates.aiNarrates && draft.aiStorySetup;
   // The type-in is a clip played over the input while its own text hides;
   // `run` re-keys it so a second pick replays it.
@@ -85,11 +85,11 @@ export function WorldFields({
         <FieldLabel className="mb-0">
           <span className="flex items-center gap-1">
             {t("Setting")}
-            <InfoButton label={t("Settings", { context: "creator.setting.infoLabel" })} text={t("The setting decides how the world sounds, what the maps and portraits look like, and which classes and backgrounds the character builder floats to the top. It changes no rule: every setting plays 5e.\n\n{list}", { list: settingList() })} />
+            <InfoButton label={t("Settings", { context: "creator.setting.infoLabel" })} text={t("The setting decides how the world sounds, what the maps and portraits look like, and which classes and backgrounds the character builder floats to the top. It changes no rule: every setting plays 5e.\n\n{list}", { list: settingList(cards) })} />
           </span>
         </FieldLabel>
         <div className="cc-portal-grid">
-          {portalCards(draft.genre, t).map((card) => (
+          {cards.map((card) => (
             <div key={card.id} className="cc-portal-slot" style={{ "--cc-delay": `${card.delayMs}ms` } as CSSProperties}>
               <button type="button" onClick={() => pick(card.id)} aria-pressed={card.chosen} className="cc-portal motion-card">
                 <span
