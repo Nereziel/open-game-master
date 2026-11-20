@@ -111,7 +111,7 @@ export function EntityPage({
   }
 
   async function remove() {
-    const ok = await appConfirm(t("{name} is {where}: deleting it here deletes it there too, with every link to it.", { name: entity.name, where: entity.shelf === "lore" ? t("a lore entry") : t("in {shelf}", { shelf: SHELF_LABELS[entity.shelf] }) }), {
+    const ok = await appConfirm(t("{name} is {where}: deleting it here deletes it there too, with every link to it.", { name: entity.name, where: entity.shelf === "lore" ? t("a lore entry") : t("in {shelf}", { shelf: t(SHELF_LABELS[entity.shelf]) }) }), {
       title: t("Remove the folder {name}?", { name: entity.name }),
       actionLabel: t("Delete"),
       tone: "danger",
@@ -222,7 +222,7 @@ export function EntityPage({
           ) : null}
           {onOpenSystem ? (
             <KitButton tone="small" onClick={() => onOpenSystem(home.system, { id: entity.id, from: entity.ref })} title={t("Open {name}'s own tool", { name: entity.name })}>
-              <ExternalLink className="size-3.5" /> {home.label}
+              <ExternalLink className="size-3.5" /> {t(home.label)}
             </KitButton>
           ) : null}
           <KitButton tone="iconDanger" always aria-label={t("Delete {name}", { name: entity.name })} onClick={remove}>
