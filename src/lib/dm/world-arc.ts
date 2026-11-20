@@ -28,6 +28,7 @@ export async function generateWorldArcs(
 ): Promise<WorldArc[]> {
   return withDmTrace({ flow: "world_arc_generation", campaignId }, async () => {
   recordDmTrace("flow_start", { stage: "world_arc_generation" });
+  try {
   const campaign = getCampaignById(campaignId);
   if (!campaign) {
     return [];
@@ -110,6 +111,9 @@ export async function generateWorldArcs(
   }
   recordDmTrace("world_arcs_result", { arcCount: arcs.length });
   return arcs;
+  } finally {
+    recordDmTrace("flow_end", { stage: "world_arc_generation" });
+  }
   });
 }
 
