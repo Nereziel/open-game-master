@@ -98,11 +98,14 @@ export function VoicePanel({
   // the roster into a mixing desk.
   const [volumeFor, setVolumeFor] = useState<string | null>(null);
 
-  // Breakout rooms are in-memory and change only when the DM acts, so the
-  // roster event is a good enough trigger to refetch the list. Written as a
-  // promise chain rather than an awaited helper so the state update plainly
-  // happens in a callback rather than in the effect body.
+  // Breakout rooms exist only in SFU mode. Do not call the protected
+  // channels endpoint when voice is disabled or while availability is still
+  // loading: the server correctly returns 403 for disabled voice.
+  // A roster change is sufficient to refresh the in-memory room list.
   useEffect(() => {
+    if (!voice.available || voice.transport !== "sfu") {
+      return;
+    }
     let cancelled = false;
     fetch(`/api/campaigns/${campaignId}/voice/channels`)
       .then((response) => (response.ok ? response.json() : null))
@@ -117,7 +120,7 @@ export function VoicePanel({
     return () => {
       cancelled = true;
     };
-  }, [campaignId, roster]);
+  }, [campaignId, roster, voice.available, voice.transport]);
 
   const channelAction = useCallback(
     async (body: Record<string, unknown>) => {
