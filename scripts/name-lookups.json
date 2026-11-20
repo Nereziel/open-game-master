@@ -10,6 +10,7 @@
   },
   "sites": {
     "lib/i18n/agent-diagnostics.ts#partial": [["parse",4,"agent diagnostic text delimiters and anchored regexes used to preserve and translate known errors, not to identify a game record"]],
+    "lib/pdf/download.ts#partial": [["parse",1,"the browser document language is split at its region subtag to choose the PDF translation; this parses a locale tag and chooses no game record"]],
     "app/api/admin/settings/route.ts#whole-single": [["key",1,"compare the administrator-selected agent program identifier with the configured program ID to invalidate a prior image test on a switch"]],
     "lib/srd/barding.ts#whole": [["key",1,"the one word barding against each word of a carried row, both through textKey, to tell a suit made for a mount; the suit itself is then found by its whole name (armorNamed)"]],
     "lib/dm/party-npcs-fight.ts#whole": [["key",1,"an NPC's stored place against the party's current place, both written by the server, to field only who is where the fight is: no record a person named"]],
