@@ -1,5 +1,6 @@
 // Story-arc parsing, clamped delta merges, and player-safe projections.
 import assert from "node:assert/strict";
+import { openingActFormatRecovery, arcReplyPreview } from "../src/lib/dm/arc-format-recovery.ts";
 import {
   activeBeatNumber,
   applyArcDelta,
@@ -735,6 +736,26 @@ test("the act recap parses JSON, and takes prose as the recap when there is none
 
 test("roman numerals", () => {
   assert.deepEqual([1, 2, 4, 5, 9, 14, 40].map(romanNumeral), ["I", "II", "IV", "V", "IX", "XIV", "XL"]);
+});
+
+test("an unreadable opening act gets strict JSON-only instructions with act 1 bounds", () => {
+  const prompt = openingActFormatRecovery("The saga plan is about the drowned chapel.");
+  assert.ok(prompt.startsWith("The saga plan is about the drowned chapel."));
+  for (const required of ['"beats"', '"events"', '"text"', '"waypoints"']) {
+    assert.ok(prompt.includes(required), `missing ${required}`);
+  }
+  assert.match(prompt, /not a game turn/i);
+  assert.match(prompt, /Do not narrate a scene/i);
+  assert.match(prompt, /Keep every beat inside act 1/i);
+  assert.match(prompt, /No Markdown fences or prose outside JSON/i);
+});
+
+test("arc debug previews are bounded and escape multiline model text", () => {
+  const preview = arcReplyPreview("line one\nline two\r" + "x".repeat(50), 18);
+  assert.ok(!preview.includes("\n"), "the preview must be on one log line");
+  assert.ok(preview.includes("\\n"), "line breaks must be escaped as text");
+  assert.match(preview, /\[truncated; \d+ more chars\]/);
+  assert.equal(arcReplyPreview("{}", 500), '"{}"');
 });
 
 console.log(`${passed} arc tests passed`);
