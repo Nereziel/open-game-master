@@ -20,6 +20,7 @@ export function campaignPayload(draft: CampaignDraft, { solo, aiNarrates }: Pick
     tableLanguage,
     aiStorySetup,
     campaignLength,
+    narrationLength,
     dicePolicy,
     ttsEnabled,
     ttsVoice,
@@ -67,6 +68,7 @@ export function campaignPayload(draft: CampaignDraft, { solo, aiNarrates }: Pick
       tableLanguage,
       aiStorySetup: aiNarrates && aiStorySetup,
       campaignLength,
+      narrationLength,
       dicePolicy,
       ttsEnabled,
       ttsVoice,
@@ -126,12 +128,11 @@ export function campaignPayload(draft: CampaignDraft, { solo, aiNarrates }: Pick
       // party a workshop budgets prep against, and a campaign reads its real
       // character sheets instead (docs/workshop-plan.md section 1.1).
       //
-      // `narrationLength` and `styleNotes` say how the AI DM writes for this
-      // table (issue 383). What its prose needs is learned by hearing it on
-      // the table's model, so both start as no change at all and live in the
-      // settings panel's AI group, where the lead tunes them after a session.
-      // `combatPace` (issue #432) beside them, for the same reason: a table
-      // learns it wants more fights or fewer by playing.
+      // `narrationLength` is chosen alongside the saga's `campaignLength`
+      // at creation and both start short for a fresh table. `styleNotes`
+      // remains in the settings panel: custom writing preferences are easier
+      // to decide after hearing the actual narrator. `combatPace` likewise
+      // starts balanced and can be tuned after the first fights.
       //
       // `waitForTable` and `waitForTableSeconds` (PR #438): whether the AI DM
       // waits for everyone before it answers is learned once the table plays.

@@ -27,6 +27,7 @@ export const DEFAULT_GAME_SETTING_KEYS = [
   "tableLanguage",
   "aiStorySetup",
   "campaignLength",
+  "narrationLength",
   "dicePolicy",
   "hpMethod",
   "startingWealth",

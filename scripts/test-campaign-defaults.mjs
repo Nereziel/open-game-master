@@ -69,11 +69,26 @@ await test("a draft saves only table settings, never the campaign's own fields o
   );
 });
 
+await test("new campaign lengths start short and saved length choices survive", () => {
+  assert.equal(DEFAULT_DRAFT.campaignLength, "short");
+  assert.equal(DEFAULT_DRAFT.narrationLength, "short");
+  const custom = { ...structuredClone(DEFAULT_DRAFT), campaignLength: "epic", narrationLength: "rich" };
+  const saved = defaultsFromDraft(custom);
+  assert.equal(saved.campaignLength, "epic");
+  assert.equal(saved.narrationLength, "rich");
+  assert.equal(validateDefaultsWrite({ version: 1, settings: saved }).ok, true);
+  const applied = applyDefaults(structuredClone(DEFAULT_DRAFT), saved, null).draft;
+  assert.equal(applied.campaignLength, "epic");
+  assert.equal(applied.narrationLength, "rich");
+  const oldDefaults = applyDefaults(structuredClone(DEFAULT_DRAFT), { campaignLength: "standard" }, null).draft;
+  assert.equal(oldDefaults.narrationLength, "short", "missing values in older saved defaults must not override the creator's short default");
+});
+
 await test("false, null, empty lists and nested choices survive a save and a load", () => {
   const checked = validateDefaultsWrite({ version: 1, settings: defaultsFromDraft(chosen) });
   assert.equal(checked.ok, true, checked.error);
   const { draft } = applyDefaults(structuredClone(DEFAULT_DRAFT), checked.settings, null);
-  for (const key of ["dmMode", "genre", "maxPlayers", "startingLevel", "difficulty", "ttsEnabled", "ttsVoice", "ttsSpeed", "ttsAutoCast", "mapsEnabled", "abilityRerollBelow", "safety", "gm", "relationships", "romance", "variantRules", "companions", "maxGuests", "voiceChat", "houseRules"]) {
+  for (const key of ["dmMode", "genre", "maxPlayers", "startingLevel", "difficulty", "campaignLength", "narrationLength", "ttsEnabled", "ttsVoice", "ttsSpeed", "ttsAutoCast", "mapsEnabled", "abilityRerollBelow", "safety", "gm", "relationships", "romance", "variantRules", "companions", "maxGuests", "voiceChat", "houseRules"]) {
     assert.deepEqual(draft[key], chosen[key], key);
   }
 });

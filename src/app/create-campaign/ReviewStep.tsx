@@ -11,7 +11,7 @@ import type { WorldPackSummary } from "@/lib/worlds/types";
 import type { StepProps } from "@/app/create-campaign/draft";
 import type { GroupId, StepKey } from "@/app/create-campaign/groups";
 import { coverSheet } from "@/app/create-campaign/cover-sheet";
-import { customRules, narrationSummary, safetySummary } from "@/app/create-campaign/summaries";
+import { aiSummary, customRules, narrationSummary, safetySummary } from "@/app/create-campaign/summaries";
 import { featuresOn } from "@/app/create-campaign/table-sheet";
 import { bringsSomething } from "@/app/workshop/ContentImportPicker";
 import { useT } from "@/lib/locale";
@@ -96,6 +96,7 @@ export function ReviewStep({
               { step: "experience" },
               { wrap: true },
             )}
+            {gates.aiNarrates ? row(t("AI storytelling and allies"), aiSummary(t, draft), { step: "experience", group: "ai" }, { wrap: true }) : null}
             {row(t("Safety"), safetySummary(t, draft), { step: "experience", group: "safety" }, { wrap: true })}
             {row(t("Rules"), rules ?? t("The book as written"), { step: "experience", group: "variants" }, { wrap: true })}
             {row(

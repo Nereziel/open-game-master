@@ -91,6 +91,35 @@ export function NarrationFields(props: StepProps & { onFlip?: () => void }) {
   );
 }
 
+// The length of each AI-written passage is distinct from campaign length
+// (the number of planned acts). Offered before play and editable later.
+export function NarrationLengthField({ draft, patch }: Pick<StepProps, "draft" | "patch">) {
+  const t = useT();
+  return (
+    <label className="block" data-creator-field="narrationLength">
+      <FieldLabel>{t("Narration length")}</FieldLabel>
+      <Select<GameSettings["narrationLength"]>
+        value={draft.narrationLength}
+        onChange={(narrationLength) => patch({ narrationLength })}
+        label={t("Narration length")}
+        className="w-full"
+        options={([
+          { value: "short", label: t("Short narration") },
+          { value: "standard", label: t("Standard narration") },
+          { value: "rich", label: t("Rich narration") },
+        ] as Array<{ value: GameSettings["narrationLength"]; label: string }>)}
+      />
+      <p className="mt-1 text-xs text-stone-500">
+        {({
+          short: t("One or two tight paragraphs, then back to the players."),
+          standard: t("As long as the moment needs."),
+          rich: t("Fuller scenes with room for detail when the moment earns it."),
+        } as Record<GameSettings["narrationLength"], string>)[draft.narrationLength]}
+      </p>
+    </label>
+  );
+}
+
 // Who else the AI brings to the table. Allies only exist when the AI
 // narrates; the limits appear once a mode that uses them is chosen.
 export function AlliesFields({ draft, patch, gates }: StepProps) {

@@ -14,11 +14,10 @@ import { pluralOf } from "@/lib/messages-logic";
 // The translator a component hands over (`const t = useT()`).
 type Translate = (key: string, vars?: Record<string, string | number>) => string;
 
-export function worldSummary(t: Translate, draft: CampaignDraft, gates: WizardGates, packName: string | null): string {
+export function worldSummary(t: Translate, draft: CampaignDraft, _gates: WizardGates, packName: string | null): string {
   return [
     packName ?? t("No world pack"),
     TABLE_LANGUAGE_LABELS[draft.tableLanguage],
-    gates.aiNarrates ? ({ "short": t("short length"), "standard": t("standard length"), "epic": t("epic length") } as Record<string, string>)[draft.campaignLength] ?? String(draft.campaignLength) : null,
   ]
     .filter(Boolean)
     .join(" · ");
@@ -78,6 +77,8 @@ export function safetySummary(t: Translate, draft: Pick<CampaignDraft, "safety" 
 
 export function aiSummary(t: Translate, draft: CampaignDraft): string {
   return [
+    `${t("Campaign length")}: ${({ short: t("short length"), standard: t("standard length"), epic: t("epic length") } as Record<CampaignDraft["campaignLength"], string>)[draft.campaignLength]}`,
+    `${t("Narration length")}: ${({ short: t("Short narration"), standard: t("Standard narration"), rich: t("Rich narration") } as Record<CampaignDraft["narrationLength"], string>)[draft.narrationLength]}`,
     draft.aiStorySetup ? t("story setup on") : t("story setup off"),
     draft.narrationGuard ? t("outcome check on") : t("outcome check off"),
     draft.worldSimulation ? t("living world on") : t("living world off"),
