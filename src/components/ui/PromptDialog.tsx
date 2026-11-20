@@ -2,6 +2,7 @@
 
 import { useState } from "react";
 import { Dialog } from "@/components/ui/Dialog";
+import { useT } from "@/lib/locale";
 import { ui } from "@/lib/ui";
 
 // One line of text asked for in the app's own dialog. window.prompt was
@@ -34,6 +35,7 @@ function PromptForm({
   onSubmit,
   onClose,
 }: PromptProps) {
+  const t = useT();
   const [value, setValue] = useState(defaultValue);
   const trimmed = value.trim();
   const canSubmit = allowEmpty || trimmed.length > 0;
@@ -64,7 +66,7 @@ function PromptForm({
       </label>
       <div className="flex justify-end gap-2">
         <button type="button" onClick={onClose} className={ui.btnSecondary}>
-          Cancel
+          {t("Cancel")}
         </button>
         <button type="submit" disabled={!canSubmit} className={ui.btnPrimary}>
           {submitLabel}
