@@ -306,6 +306,10 @@ ${SAGA_STYLE_RULES}`;
 // edits made meanwhile survive (db/campaigns.ts setStoryArc).
 function storeArc(campaignId: string, arc: StoryArc, base: StoryArc | null = null): boolean {
   const changed = setStoryArc(campaignId, arc, base);
+  // The model reply alone cannot prove which acts and beats the server
+  // persisted after parsing, merging with table edits and world enrichment.
+  // A saved snapshot makes that difference visible in a private DM trace.
+  recordDmTrace("arc_stored", { campaignId, changed, hadBase: Boolean(base), ...(changed ? { arc } : {}) });
   if (changed) {
     publishEphemeral(campaignId, "quests_updated", { at: Date.now() });
   }
@@ -856,6 +860,10 @@ async function arcModelCall(
   if (!campaign) {
     return null;
   }
+  // The model_request / model_response pair captures the full prompt and
+  // output; this stage marker identifies what the generic arc_plan task was
+  // doing (opening act, next act, replot, correction, etc.).
+  recordDmTrace("arc_step", { campaignId, stage: label, task: utilityTask ?? "arc_plan" });
   // Every arc call expects structured planning data, never narration.
   // Use the utility route (a separate model when configured), even for replots.
   const { message, error } = await requestUtilityMessage(
@@ -1285,6 +1293,8 @@ export async function refreshStoryArc(
   // `since` is when the closed chapter opened, for the fights it held.
   options: { endAnnounced?: boolean; since?: string } = {},
 ) {
+  return withDmTrace({ flow: "arc_refresh", campaignId }, async () => {
+  recordDmTrace("flow_start", { stage: "arc_refresh", chapterIndex: closedChapter.index });
   try {
     const campaign = getCampaignById(campaignId);
     if (!campaign) {
@@ -1366,7 +1376,9 @@ export async function refreshStoryArc(
     console.error(`[arc] campaign ${campaignId}: the story arc could not be refreshed`, error);
   } finally {
     setDmStatus(campaignId, "idle");
+    recordDmTrace("flow_end", { stage: "arc_refresh" });
   }
+  });
 }
 
 // An exhausted arc gets its next stretch of plot: the sequel saga when the
@@ -1395,6 +1407,8 @@ async function planNextAct(campaignId: string, arc: StoryArc): Promise<StoryArc>
 // model no longer produces a run of stub chapters. Returns true when the
 // arc has a [NOW] beat again.
 export async function planExhaustedArc(campaignId: string): Promise<boolean> {
+  return withDmTrace({ flow: "arc_exhausted_recovery", campaignId }, async () => {
+  recordDmTrace("flow_start", { stage: "arc_exhausted_recovery" });
   try {
     const campaign = getCampaignById(campaignId);
     if (
@@ -1417,7 +1431,9 @@ export async function planExhaustedArc(campaignId: string): Promise<boolean> {
     return false;
   } finally {
     setDmStatus(campaignId, "idle");
+    recordDmTrace("flow_end", { stage: "arc_exhausted_recovery" });
   }
+  });
 }
 
 // ---- Acts, as the table hears them (issue #31) ----
