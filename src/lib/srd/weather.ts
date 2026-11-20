@@ -275,6 +275,47 @@ export function describeWeather(weather: Weather | null): string {
   return `Weather: ${TEMPERATURE_WORDS[weather.temperature]}, ${sky}${wind}${visibility}.`;
 }
 
+
+// The engine and DM prompt keep the stable English weather description.
+// Only the reader-facing chronicle translates it, including notes written
+// before Czech was supported. The GM may append its own Czech explanation
+// after the weather sentence; keep that explanation untouched.
+export function translateWeatherNote(raw: string, locale: string): string {
+  if (locale !== "cs") return raw;
+  const found = /^Weather: ([^,.;]+), ([^,.;]+)(?:, (a gale blowing|a breeze))?(?:; (visibility is very poor|visibility is poor))?\.(.*)$/s.exec(raw);
+  if (!found) return raw;
+  const temperatures: Record<string, string> = {
+    "bitterly cold": "krutý mráz",
+    cold: "chladno",
+    mild: "mírná teplota",
+    warm: "teplo",
+    hot: "horko",
+  };
+  const skies: Record<string, string> = {
+    "a clear sky": "jasná obloha",
+    "a low grey overcast": "nízká šedá oblačnost",
+    rain: "déšť",
+    "a storm": "bouře",
+    snow: "sníh",
+    "thick fog": "hustá mlha",
+    "a hard wind under a clear sky": "silný vítr pod jasnou oblohou",
+    "driving rain": "prudký déšť",
+    "light rain": "slabý déšť",
+    "heavy snow": "husté sněžení",
+    "falling snow": "sněžení",
+  };
+  const temperature = temperatures[found[1]];
+  const sky = skies[found[2]];
+  if (!temperature || !sky) return raw;
+  const wind = found[3] === "a gale blowing" ? ", silný vítr" : found[3] === "a breeze" ? ", slabý vánek" : "";
+  const visibility = found[4] === "visibility is very poor"
+    ? "; velmi špatná viditelnost"
+    : found[4] === "visibility is poor"
+      ? "; špatná viditelnost"
+      : "";
+  return `Počasí: ${temperature}, ${sky}${wind}${visibility}.${found[5]}`;
+}
+
 // Which climate a genre preset plays under, when the pack does not say.
 export function climateForGenre(genre: string | undefined | null): Climate {
   switch (genre) {
