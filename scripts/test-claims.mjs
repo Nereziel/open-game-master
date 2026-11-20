@@ -510,6 +510,60 @@ await test("A malformed claims reply gets one JSON retry and a valid second repl
   }
 });
 
+await test("Unreadable reader replies log reason and size by default, and their bounded contents only with DM_DEBUG.", async () => {
+  const invalid = "Not JSON: The keeper's hidden note.\\n{broken";
+  let requests = 0;
+  const server = http.createServer((req, res) => {
+    req.resume();
+    req.on("end", () => {
+      if (!req.url?.includes("/chat/completions")) {
+        res.writeHead(404);
+        res.end();
+        return;
+      }
+      requests += 1;
+      res.writeHead(200, { "Content-Type": "application/json" });
+      res.end(JSON.stringify({
+        choices: [{ index: 0, finish_reason: "length", message: { role: "assistant", content: invalid } }],
+      }));
+    });
+  });
+  await new Promise((resolve) => server.listen(0, "127.0.0.1", resolve));
+  campaigns.updateStorySettings(world.campaignId, {
+    textProvider: "custom",
+    customBaseUrl: `http://127.0.0.1:${server.address().port}/v1`,
+    customModel: "fake",
+  });
+
+  const original = { error: console.error, warn: console.warn, debug: console.debug };
+  const debugBefore = process.env.DM_DEBUG;
+  const logs = [];
+  console.error = (...parts) => logs.push({ level: "error", text: parts.join(" ") });
+  console.warn = (...parts) => logs.push({ level: "warn", text: parts.join(" ") });
+  console.debug = (...parts) => logs.push({ level: "debug", text: parts.join(" ") });
+  try {
+    delete process.env.DM_DEBUG;
+    assert.deepEqual(await read(["fight_start"], "A hidden note lies below the table."), []);
+    assert.equal(requests, 2, "one retry, not an unbounded loop");
+    const normal = logs.filter((entry) => entry.text.startsWith("[claims]"));
+    assert.ok(normal.some((entry) => entry.level === "warn" && entry.text.includes("reason=invalid-json") && entry.text.includes("chars=") && entry.text.includes("finish=length")));
+    assert.ok(normal.some((entry) => entry.level === "error" && entry.text.includes("unreadable")));
+    assert.ok(!normal.some((entry) => entry.text.includes("keeper's hidden note")), "normal logs leaked the raw model reply");
+    logs.length = 0;
+    process.env.DM_DEBUG = "1";
+    assert.deepEqual(await read(["fight_start"], "Another hidden note lies on the table."), []);
+    assert.ok(logs.some((entry) => entry.level === "debug" && entry.text.includes("keeper's hidden note")), "debug logs lack model reply");
+    assert.ok(logs.filter((entry) => entry.level === "debug").every((entry) => !entry.text.includes("\n")), "raw model reply must stay escaped on one log line");
+  } finally {
+    if (debugBefore === undefined) delete process.env.DM_DEBUG;
+    else process.env.DM_DEBUG = debugBefore;
+    console.error = original.error;
+    console.warn = original.warn;
+    console.debug = original.debug;
+    server.close();
+  }
+});
+
 await test("Who speaks is read from the public cast, the party and an NPC the reply itself registers.", async () => {
   const model = await fakeModel();
   model.pointAt(world);
