@@ -195,6 +195,7 @@ try {
       pictures,
       comfy: { url: "http://127.0.0.1:8188", checkpoint: "", preset: "checkpoint" },
       picturesKey: "",
+      picturesBaseUrl: "",
       picturesModel: "",
       ...patch,
     });
@@ -211,7 +212,10 @@ try {
     // OpenAI's blockers, unchanged.
     assert.equal(picturesBlocker(t, draft("openai"), input), "Pick the picture model, or choose another answer.");
     assert.equal(picturesBlocker(t, draft("openai"), { ...input, envImageModel: "env-painter" }), null);
-    assert.equal(picturesBlocker(t, draft("openai", { picturesModel: "my-painter" }), { ...input, openaiKeySaved: false }), "Paste an OpenAI key, or choose another answer.");
+    assert.equal(picturesBlocker(t, draft("openai", { picturesModel: "my-painter" }), { ...input, openaiKeySaved: false }), "Paste an API key for this picture service, or choose another answer.");
+    assert.equal(picturesBlocker(t, draft("openai", { picturesBaseUrl: "https://images.example/v1", picturesModel: "my-painter" }), input), "Paste an API key for this picture service, or choose another answer.", "a key saved for another host cannot be reused");
+    assert.equal(picturesBlocker(t, draft("openai", { picturesBaseUrl: "https://images.example/v1", picturesKey: "own-key", picturesModel: "my-painter" }), input), null);
+    assert.equal(picturesBlocker(t, draft("openai", { picturesBaseUrl: "javascript:alert(1)", picturesKey: "own-key", picturesModel: "my-painter" }), input), "Enter a valid picture API base URL.");
     assert.equal(picturesBlocker(t, draft("agent"), input), "Paint a test map first: the tables only get a painter that works.");
     assert.equal(picturesBlocker(t, draft("none"), input), null);
   });
@@ -284,8 +288,11 @@ try {
     assert.deepEqual(patches.picturesPatch({ kind: "comfyui", url: "http://127.0.0.1:8188", checkpoint: "a.safetensors", preset: "z_turbo" }).images, {
       defaultBackend: "comfyui", comfyUrl: "http://127.0.0.1:8188", comfyCheckpoint: "a.safetensors", comfyWorkflowPreset: "z_turbo",
     });
-    assert.deepEqual(patches.picturesPatch({ kind: "openai", apiKey: "", model: " my-painter " }), { images: { defaultBackend: "openai", openaiBaseUrl: "", openaiModel: "my-painter" } });
-    assert.equal(patches.picturesPatch({ kind: "openai", apiKey: "sk-i", model: "my-painter" }).images.openaiApiKey, "sk-i");
+    assert.deepEqual(patches.picturesPatch({ kind: "openai", baseUrl: "", apiKey: "", model: " my-painter " }), { images: { defaultBackend: "openai", openaiBaseUrl: "", openaiModel: "my-painter" } });
+    assert.equal(patches.picturesPatch({ kind: "openai", baseUrl: "", apiKey: "sk-i", model: "my-painter" }).images.openaiApiKey, "sk-i");
+    assert.deepEqual(patches.picturesPatch({ kind: "openai", baseUrl: "https://images.example/v1/images/generations", apiKey: "other-key", model: "my-painter" }, "https://api.openai.com/v1").images, { defaultBackend: "openai", openaiBaseUrl: "https://images.example/v1", openaiModel: "my-painter", openaiApiKey: "other-key" });
+    assert.equal(patches.picturesPatch({ kind: "openai", baseUrl: "https://images.example/v1", apiKey: "", model: "my-painter" }, "https://api.openai.com/v1").images.openaiApiKey, "", "moving to a new host removes the saved key");
+    assert.equal("openaiApiKey" in patches.picturesPatch({ kind: "openai", baseUrl: "https://api.openai.com/v1", apiKey: "", model: "my-painter" }, "https://api.openai.com/v1").images, false, "the original host keeps its key");
     assert.deepEqual(patches.picturesPatch({ kind: "agent" }), { images: { defaultBackend: "harness" }, harness: { images: "native" } });
     assert.deepEqual(patches.picturesPatch({ kind: "none" }), { images: { defaultBackend: "", comfyUrl: "" } });
     assert.deepEqual(patches.narrationPatch({ kind: "kokoro", url: "http://127.0.0.1:8880/", voice: "af_heart" }), {
