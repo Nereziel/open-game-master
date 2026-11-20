@@ -129,6 +129,32 @@ test("parseWorldArcsJson tolerates fences and prose", () => {
   assert.deepEqual(parseWorldArcsJson("no json"), []);
 });
 
+test("world-clock JSON accepts wrapped arrays and independently shaped stages", () => {
+  const stages = [
+    { text: "Na řece se objevují neznámé lodě." },
+    { text: "Přívozy začnou vybírat zvláštní poplatky." },
+    { text: "Osady odřezávají lodní hlídky." },
+    { text: "Síť pašeráků ovládá veškerou říční dopravu." },
+  ];
+  const wrapped = JSON.stringify({
+    worldArcs: [{ title: "Říční pašeráci", faction: "Skrytá převoznická síť", stages }],
+  });
+  const list = parseWorldArcsJson(wrapped);
+  assert.equal(list.length, 1);
+  assert.equal(list[0].name, "Říční pašeráci");
+  assert.equal(list[0].driver, "Skrytá převoznická síť");
+  assert.equal(list[0].rungs.length, 4);
+  assert.equal(parseWorldArcsJson(JSON.stringify({ arcs: [{ name: "Jed", driver: "Kult", rungs }] })).length, 1);
+  assert.equal(parseWorldArcsJson(JSON.stringify({ name: "Jed", driver: "Kult", rungs })).length, 1);
+  assert.equal(parseWorldArcsJson(`Answer:\n${wrapped}\nEnd of answer.`).length, 1);
+});
+
+test("valid main-story JSON is never mistaken for an independent world clock", () => {
+  const bogus = { name: "Act 1", driver: "GM", rungs };
+  assert.deepEqual(parseWorldArcsJson(JSON.stringify({ premise: "Město", acts: [bogus] })), []);
+  assert.deepEqual(parseWorldArcsJson(JSON.stringify({ storyArc: { name: "Sága", rungs } })), []);
+});
+
 // ---- arc-delta integration ----
 
 const baseArc = {
