@@ -10556,7 +10556,18 @@
     ", the least that plays the full rules.": ", le minimum qui joue les règles complètes.",
     "{name} cannot play the full rules: it holds fewer tools than the table's full set, so it plays on a reduced tool set and rules. Open Game Master does not support or test this, and fights and other rules may not run properly. For real play, choose another program.": "{name} ne peut pas jouer les règles complètes : il retient moins d’outils que le jeu complet de la table, il joue donc avec un jeu d’outils et des règles réduits. Open Game Master ne prend pas cela en charge et ne le teste pas, et les combats et d’autres règles peuvent mal fonctionner. Pour jouer pour de bon, choisis un autre programme.",
     "Let an agent you already have, Claude Code, Codex, opencode, Grok Build or Pi, narrate the tables on its own sign-in. It is started with none of its own tools: the only thing it can touch is the table's rules engine, turn by turn, under the same rules and caps as the built-in storyteller. ODM never asks for or stores its password or key.": "Permets à un agent externe que tu possèdes déjà (Claude Code, Codex, opencode, Grok Build ou Pi) d’animer les tables avec ses propres identifiants. Il démarre sans aucun de ses outils habituels : la seule chose avec laquelle il peut interagir est le moteur de règles de la table, tour par tour, selon les mêmes contraintes et limites que le narrateur intégré. OGM ne demande ni ne conserve jamais son mot de passe ou sa clé.",
-    "Claude Code, Codex, opencode, Grok Build or Pi, signed in on this computer, narrating on its own plan.": "Claude Code, Codex, opencode, Grok Build ou Pi, connecté sur cet ordinateur, qui raconte sur son propre forfait."
+    "Claude Code, Codex, opencode, Grok Build or Pi, signed in on this computer, narrating on its own plan.": "Claude Code, Codex, opencode, Grok Build ou Pi, connecté sur cet ordinateur, qui raconte sur son propre forfait.",
+    "Exploration": "exploration",
+    "Negotiation": "négociation",
+    "Ritual or task": "rituel ou tâche",
+    "{kind} in progress, \"{title}\", round {round}: {successes} of {successesNeeded} successes, {failures} of {failuresAllowed} failures.": "En cours : {kind} « {title} », manche {round} — {successes}/{successesNeeded} réussites, {failures}/{failuresAllowed} échecs.",
+    "{title}: succeeded.": "« {title} » : réussite.",
+    "{title}: succeeded ({outcome}).": "« {title} » : réussite ({outcome}).",
+    "{title}: failed.": "« {title} » : échec.",
+    "{title}: failed ({outcome}).": "« {title} » : échec ({outcome}).",
+    "{title}: called off.": "« {title} » : annulé.",
+    "\"{title}\" is called off.": "« {title} » est annulé.",
+    "\"{title}\" is called off: {reason}.": "« {title} » est annulé : {reason}."
   },
   "contexts": {
     "Remove": {
