@@ -23,6 +23,18 @@ const { homeGlanceFor } = await import("../src/lib/db/home-glance.ts");
 const { getDatabase } = await import("../src/lib/db/core.ts");
 const { runJobsOnce } = await import("../src/lib/jobs.ts");
 
+await test("scheduled session times use a 24-hour clock in all interface languages", () => {
+  // Construct a local date so this works in UTC, Prague, and other test time zones.
+  const evening = new Date(2026, 10, 20, 19, 5).toISOString();
+  const midnight = new Date(2026, 10, 21, 0, 5).toISOString();
+  for (const locale of ["cs-CZ", "en-US", "fr-FR"]) {
+    const shown = logic.sessionWhenLocal(evening, locale);
+    assert.match(shown, /19:05/, `${locale}: ${shown}`);
+    assert.doesNotMatch(shown, /\b(?:AM|PM)\b/i);
+    assert.match(logic.sessionWhenLocal(midnight, locale), /00:05/);
+  }
+});
+
 await test("the rule: whoever steers the story or the lead ends and starts sessions; nobody else.", () => {
   assert.equal(logic.maySteerSessions({ steersStory: true, isLead: false }), true, "the GM");
   assert.equal(logic.maySteerSessions({ steersStory: false, isLead: true }), true, "the lead at a person's table");
