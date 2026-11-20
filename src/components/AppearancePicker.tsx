@@ -23,7 +23,7 @@ export function AppearancePicker() {
         </button>
         <div className="appearance-brightness" role="group" aria-label={t("Brightness")}>
           {BRIGHTNESS.map((entry) => (
-            <button type="button" key={entry.id} aria-pressed={choice === entry.id} onClick={() => writeThemeChoice(entry.id)}>{t(entry.label)}</button>
+            <button type="button" key={entry.id} aria-pressed={choice === entry.id} onClick={() => writeThemeChoice(entry.id)}>{t(entry.label, { context: "appearance.brightness" })}</button>
           ))}
         </div>
       </div>
@@ -36,12 +36,12 @@ export function AppearancePicker() {
               <span className="appearance-preview" data-appearance={entry.id} data-theme={mode} data-theme-ornaments={Boolean(art?.frame || art?.corner)} style={themeArtStyle(entry.id)} aria-hidden="true">
                 <span className="appearance-preview-frame"><ThemeIcon icon={entry.icon} size={28} strokeWidth={1.2} /><span className="appearance-preview-title">{t("The adventure awaits")}</span><span className="appearance-preview-line" /><span className="appearance-preview-line appearance-preview-line-short" /></span>
               </span>
-              <span className="appearance-option-copy"><span className="appearance-option-title">{t(entry.name)}{selected ? <Check size={16} aria-hidden="true" /> : null}</span><span className="appearance-option-description">{t(entry.description)}</span></span>
+              <span className="appearance-option-copy"><span className="appearance-option-title">{t(entry.name, { context: "appearance.theme" })}{selected ? <Check size={16} aria-hidden="true" /> : null}</span><span className="appearance-option-description">{t(entry.description)}</span></span>
             </button>
           );
         })}
       </div>
-      <p className="mt-3 text-xs leading-relaxed text-stone-400" aria-live="polite">{t("Using {theme} · {choice}.", { theme: t(APPEARANCE_THEMES.find((entry) => entry.id === appearance)?.name ?? "Arcane"), choice: appearanceChoice === "campaign" ? t("following campaign") : t("personal choice") })}</p>
+      <p className="mt-3 text-xs leading-relaxed text-stone-400" aria-live="polite">{t("Using {theme} · {choice}.", { theme: t(APPEARANCE_THEMES.find((entry) => entry.id === appearance)?.name ?? "Arcane", { context: "appearance.theme" }), choice: appearanceChoice === "campaign" ? t("following campaign") : t("personal choice") })}</p>
       <p className="mt-1 text-xs leading-relaxed text-stone-400">{t("Follow campaign uses the table’s chosen theme, with Arcane elsewhere. Pick a theme to use it everywhere on this device. Brightness always stays your choice.")}</p>
     </div>
   );
