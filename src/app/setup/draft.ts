@@ -171,7 +171,7 @@ export function comfyFromScan(current: Draft["comfy"], found: NonNullable<ScanRe
 export function picturesBlocker(
   t: (key: string) => string,
   draft: Draft,
-  input: { agentVerified: boolean; storyIsOpenAi: boolean; openaiKeySaved: boolean; envImageModel: string; comfyOffers: boolean; savedImageBaseUrl?: string; envImageBaseUrl?: string; envHasImageKey?: boolean },
+  input: { agentVerified: boolean; storyIsOpenAi: boolean; openaiKeySaved: boolean; envImageModel: string; comfyOffers: boolean; savedImageBaseUrl?: string; envImageBaseUrl?: string; envHasImageKey?: boolean; envHasDedicatedImageKey?: boolean },
 ): string | null {
   if (draft.pictures === "agent" && !input.agentVerified) {
     return t("Paint a test map first: the tables only get a painter that works.");
@@ -201,7 +201,8 @@ export function picturesBlocker(
     const official = normalizeBaseUrl("https://api.openai.com/v1");
     const keyAvailable = Boolean(draft.picturesKey?.trim()) ||
       (input.openaiKeySaved && target === saved) ||
-      (input.envHasImageKey && target === env) ||
+      (input.envHasDedicatedImageKey && target === env) ||
+      (input.envHasImageKey && target === official) ||
       (input.storyIsOpenAi && target === official);
     if (!keyAvailable) return t("Paste an API key for this picture service, or choose another answer.");
     if (!draft.picturesModel.trim() && !(input.envImageModel && target === env)) {
