@@ -6,7 +6,15 @@ a odmítnutí obrázku lze zapnout **lokální** diagnostickou stopu.
 
 ## Zapnutí na Windows Serveru
 
-V PowerShellu, **před spuštěním** Node aplikace:
+Pro běžné spuštění Next.js můžete dát do souboru `.env` v kořeni
+projektu obě proměnné a restartovat Node proces:
+
+~~~dotenv
+DM_DEBUG=1
+DM_TRACE=1
+~~~
+
+Alternativně v PowerShellu, **před spuštěním** Node aplikace:
 
 ~~~powershell
 $env:DM_TRACE = "1"
@@ -52,13 +60,23 @@ Get-Content .\data\dm-traces\*.jsonl |
 - `json_validation`: konkrétní krok (plán ságy, úvodní akt, světové
   oblouky, čtečka tvrzení, překlad obrazového promptu), číslo pokusu
   a zda prošel kontrolou.
+- `arc_step`: konkrétní krok generování příběhu (`opening act`,
+  `act detail`, `saga replot` apod.), aby šlo odlišit různé
+  požadavky se společným úkolem `arc_plan`.
+- `arc_stored`: výsledek uložení a při změně kompletní podoba
+  ságy/dějství po zpracování odpovědi AI. Rozdíl mezi `model_response`
+  a `arc_stored` ukáže, co aplikace skutečně přijala a uložila.
+- `arc_plan_language`: odmítnutí plánu v nesprávném jazyce.
 - `flow_start`, `flow_end`, `arc_plan_result`, `claims_result`,
   `world_arcs_result` a `image_prompt_fallback`: průběh a výsledek.
 - `image_generation_request` a `image_generation_result`: prompt
   odeslaný pro mapu nebo scénu a důvod odmítnutí poskytovatelem.
 
-Záznamy dané úlohy lze spojit podle `flowId` a požadavek s odpovědí
-podle `traceId`. U tahů modelu se ukládá i `turnId` a `callIndex`,
+Záznamy generování ságy (`saga_generation`), aktualizace po kapitole
+(`arc_refresh`) a obnovení plánování (`arc_exhausted_recovery`) lze
+spojit podle `flowId`. Požadavek s odpovědí podle `traceId`.
+Plánovací krok, odpověď AI a uložená sága tak zůstávají propojené
+i při opakovaném generování. U tahů modelu se ukládá i `turnId` a `callIndex`,
 jsou-li dostupné.
 
 ## Soukromí a limity
