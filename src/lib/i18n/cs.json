@@ -1,5 +1,17 @@
 {
   "messages": {
+    "The server's agent program could not be locked down, so the turn was refused.": "Program AI na serveru se nepodařilo bezpečně omezit, proto byl tah odmítnut.",
+    "The server's agent program is signed out. The admin can sign it in again on this machine.": "Program AI na serveru je odhlášený. Správce se do něj může na tomto počítači znovu přihlásit.",
+    "The server's agent program has reached its plan's usage limit. The turn can be retried once the limit resets.": "Program AI na serveru vyčerpal limit svého tarifu. Tah lze zopakovat po obnovení limitu.",
+    "The server's agent program is not installed or could not be found.": "Program AI není na serveru nainstalovaný nebo se ho nepodařilo najít.",
+    "Antigravity started with its own tools still on ({tools}), so the turn was stopped.": "Antigravity bylo spuštěno se zapnutými vlastními nástroji ({tools}), proto byl tah zastaven.",
+    "Antigravity attempted a tool outside this turn's game permissions ({tool}), so the turn was stopped.": "Antigravity se pokusilo použít nástroj mimo oprávnění tohoto herního tahu ({tool}), proto byl tah zastaven.",
+    "The program answered without calling ODM's tool, so it cannot run a table.": "Program odpověděl bez použití nástroje pravidlového systému, a proto nemůže vést hru.",
+    "The program did not answer.": "Program neodpověděl.",
+    "Antigravity did not confirm the isolated ODM agent, so the turn was stopped.": "Antigravity nepotvrdilo spuštění izolovaného herního agenta, proto byl tah zastaven.",
+    "Antigravity was not granted any game engine tools for this turn.": "Antigravity nemá pro tento tah povolen žádný nástroj pravidlového systému.",
+    "Antigravity sent a step before confirming the isolated ODM agent.": "Antigravity odeslalo krok ještě před potvrzením izolovaného herního agenta.",
+    "Antigravity finished without confirming the isolated ODM agent.": "Antigravity dokončilo běh bez potvrzení izolovaného herního agenta.",
     "The GM weighs the outcome…": "PJ zvažuje výsledek…",
     "The GM consults the whims of fate…": "PJ se radí s rozmary osudu…",
     "Somewhere, a d20 holds its breath…": "Kdesi i dvacetistěnná kostka tají dech…",
