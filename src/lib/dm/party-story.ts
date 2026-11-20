@@ -1,3 +1,5 @@
+import type { TableLanguage } from "../schemas/game-settings-options";
+
 // Why this party is together, as the table tells it: the party backstory,
 // one optional text written in the lobby (the lead may write it before
 // anyone has a character, and the players once they have) and kept up
@@ -83,6 +85,16 @@ export type DraftCharacter = {
   background: string;
   backstory: string;
 };
+
+// A non-English table always keeps its explicit storytelling language. On
+// English/default tables, a player drafting from a Czech or French interface
+// can request prose in their own language without changing the campaign.
+export type PartyDraftReaderLocale = "en" | "fr" | "cs";
+
+export function partyDraftLanguage(tableLanguage: TableLanguage, readerLocale?: PartyDraftReaderLocale): TableLanguage {
+  if (tableLanguage !== "english") return tableLanguage;
+  return readerLocale === "cs" ? "czech" : readerLocale === "fr" ? "french" : "english";
+}
 
 export const PARTY_DRAFT_SYSTEM =
   "You write the shared backstory of a tabletop RPG party: how these particular characters came to travel together and what binds them. The players will edit it, so write a draft, not a verdict. Answer with the backstory itself and nothing else: no title, no preamble, no quotation marks, no options. Two short paragraphs at most, under 120 words. Name every character. Keep every fact their own backstories state, invent only what connects them, and leave each character room to keep their own secrets.";
