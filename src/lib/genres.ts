@@ -29,6 +29,8 @@ export type GenrePreset = {
   // The theme line a French-reading creator seeds (genrePresetFor); the
   // prompt-facing fields above stay English.
   defaultThemeFr?: string;
+  // Czech wording seeded into the editable theme field; AI-facing flavor remains English.
+  defaultThemeCs?: string;
   // The weather table the sky rolls from (src/lib/srd/weather.ts).
   climate: Climate;
 };
@@ -58,6 +60,7 @@ export const GENRE_PRESETS: GenrePreset[] = [
     nameHints: "Evocative medieval-fantasy names (Thornhollow, the Gilded Reach).",
     defaultTheme: "A storied realm of kingdoms, wild frontiers, and buried ruins",
     defaultThemeFr: "Un royaume chargé d'histoire, des frontières sauvages et des ruines enfouies",
+    defaultThemeCs: "Starobylá říše království, divokých pohraničí a zapomenutých ruin",
   },
   {
     id: "dark_fantasy",
@@ -74,6 +77,7 @@ export const GENRE_PRESETS: GenrePreset[] = [
     nameHints: "Bleak, heavy names (Mourngate, the Ashen Fen).",
     defaultTheme: "A blighted land under a dying sun where old powers stir",
     defaultThemeFr: "Une terre ravagée sous un soleil mourant où d'anciens pouvoirs s'éveillent",
+    defaultThemeCs: "Zkažená země pod pohasínajícím sluncem, kde se probouzejí dávné síly",
   },
   {
     id: "mystery",
@@ -91,6 +95,7 @@ export const GENRE_PRESETS: GenrePreset[] = [
     nameHints: "Grounded town-and-manor names (Harlowe House, Wickfield).",
     defaultTheme: "A tangled web of secrets in a town where everyone has something to hide",
     defaultThemeFr: "Une toile d'intrigues dans une bourgade où chacun a quelque chose à cacher",
+    defaultThemeCs: "Propletenec tajemství v městečku, kde má každý co skrývat",
   },
   {
     id: "horror",
@@ -108,6 +113,7 @@ export const GENRE_PRESETS: GenrePreset[] = [
     nameHints: "Wrong-feeling names (Hollow Vale, the Chapel of Quiet).",
     defaultTheme: "An isolated place where something ancient and hungry has woken",
     defaultThemeFr: "Un lieu isolé où quelque chose d'ancien et d'affamé s'est réveillé",
+    defaultThemeCs: "Odlehlé místo, kde procitlo cosi prastarého a hladového",
   },
   {
     id: "cyberpunk",
@@ -125,6 +131,7 @@ export const GENRE_PRESETS: GenrePreset[] = [
     nameHints: "Corporate and street names (Kiroshi Spire, the Sump, NCPD grid 7).",
     defaultTheme: "A rain-slick megacity where corporations own everything but the shadows",
     defaultThemeFr: "Une mégapole battue par la pluie où les corporations possèdent tout, sauf les ombres",
+    defaultThemeCs: "Deštěm smáčené velkoměsto, kde korporace vlastní vše kromě stínů",
   },
   {
     id: "steampunk",
@@ -141,6 +148,7 @@ export const GENRE_PRESETS: GenrePreset[] = [
     nameHints: "Victorian-industrial names (Cogsworth Yards, the Aetherium Exchange).",
     defaultTheme: "A smoke-wreathed empire of invention on the brink of a power struggle",
     defaultThemeFr: "Un empire enfumé d'inventions, au bord de la lutte pour le pouvoir",
+    defaultThemeCs: "Říše vynálezů zahalená kouřem na pokraji mocenského zápasu",
   },
   {
     id: "post_apocalyptic",
@@ -158,6 +166,7 @@ export const GENRE_PRESETS: GenrePreset[] = [
     nameHints: "Salvaged names (the Glasslands, Depot 9, New Haven).",
     defaultTheme: "A shattered world generations after the Fall, where ruins hold both treasure and death",
     defaultThemeFr: "Un monde brisé, des générations après la Chute, où les ruines recèlent aussi bien des trésors que la mort",
+    defaultThemeCs: "Rozvrácený svět generace po Pádu, kde ruiny skrývají poklady i smrt",
   },
   {
     id: "custom",
@@ -185,8 +194,6 @@ export function genrePreset(id: string): GenrePreset {
 // turns with the creator's locale.
 export function genrePresetFor(id: string, locale: Locale = "en"): GenrePreset {
   const preset = genrePreset(id);
-  if (locale !== "fr" || !preset.defaultThemeFr) {
-    return preset;
-  }
-  return { ...preset, defaultTheme: preset.defaultThemeFr };
+  const localizedTheme = locale === "cs" ? preset.defaultThemeCs : locale === "fr" ? preset.defaultThemeFr : undefined;
+  return localizedTheme ? { ...preset, defaultTheme: localizedTheme } : preset;
 }
