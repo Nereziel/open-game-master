@@ -30,6 +30,14 @@ describe("Czech localization", () => {
     expect(translate("fr", "Unknown source phrase")).toBe("Unknown source phrase");
   });
 
+  it("translates server-language administration and accessible loading labels", () => {
+    expect(translate("cs", "The language your tables play in")).toContain("Jazyk");
+    expect(translate("cs", "Loading the table")).toBe("Načítání herního stolu");
+    expect(
+      translate("cs", "Memory search reads with {model}, which reads every table language.", { model: "e5" }),
+    ).toBe("Vyhledávání v paměti používá model e5, který rozumí všem jazykům herních stolů.");
+  });
+
   it("uses three Czech plural forms", () => {
     const singular = "{count} player";
     const plural = "{count} players";

@@ -10,6 +10,7 @@ import { Switch } from "@/components/ui/Switch";
 import { CopyLine } from "@/components/CopyLine";
 import { Field, SelectField } from "@/app/admin/AdminSettingsFields";
 import { useT, useTp } from "@/lib/locale";
+import { localizeAgentDiagnostic } from "@/lib/i18n/agent-diagnostics";
 import type { MessageKey } from "@/lib/messages-logic";
 import { blanks } from "@/app/admin/model-blanks";
 import type { AdminConfigDraftPatch } from "@/app/admin/merge-config-draft";
@@ -276,7 +277,7 @@ export function AdminHarnessSection({
       </p>
       {everywhereUnavailable ? (
         <p className="reveal mb-3 rounded-lg border border-amber-700/40 bg-amber-950/30 p-3 text-xs text-amber-200">
-          {data.statuses[0]?.message}
+          {data.statuses[0]?.message ? localizeAgentDiagnostic(data.statuses[0].message, t) : null}
         </p>
       ) : null}
 
@@ -334,15 +335,15 @@ export function AdminHarnessSection({
       {chosen ? (
         <div key={chosen.id} className="reveal-height mt-4">
           <div className="space-y-3">
-            {chosen.message ? <p className="text-xs text-amber-300/90">{chosen.message}</p> : null}
+            {chosen.message ? <p className="text-xs text-amber-300/90">{localizeAgentDiagnostic(chosen.message, t)}</p> : null}
             {chosen.availability === "ok" && !chosen.installed ? (
               <Field label={t("Install it on this machine, then check again")}>
-                <CopyLine text={chosen.installHint ?? ""} label="install command" />
+                <CopyLine text={chosen.installHint ?? ""} label={t("install command")} />
               </Field>
             ) : null}
             {chosen.installed && chosen.auth.state === "signed-out" ? (
               <Field label={t("Sign it in on this machine, then check again")}>
-                <CopyLine text={chosen.signInHint ?? ""} label="sign-in command" />
+                <CopyLine text={chosen.signInHint ?? ""} label={t("sign-in command")} />
               </Field>
             ) : null}
             {chosen.installed ? (

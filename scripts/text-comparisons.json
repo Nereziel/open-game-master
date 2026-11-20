@@ -2423,7 +2423,7 @@
     "lib/page-isolation.ts#str-list": [["key",2,"HTTP header names and values (protocol)"]],
     "lib/painted-maps.ts#str-eq": [["key",1,"stored setting value"]],
     "lib/pdf/character-sheet-pdf.ts#str-list": [["key",2,"ability ids"]],
-    "lib/pdf/character-sheet-pdf.ts#toUpperCase": [["display",6,"ids title-cased, headings and ability abbreviations in capitals"]],
+    "lib/pdf/character-sheet-pdf.ts#toUpperCase": [["display",7,"ids title-cased, translated headings and ability abbreviations capitalized for PDF display; no comparisons"]],
     "lib/pdf/text.ts#re-affix": [["key",2,"PDF operators and dictionary keys (format)"]],
     "lib/pdf/text.ts#re-word": [["key",5,"PDF operators and dictionary keys (format)"]],
     "lib/pdf/text.ts#str-indexOf": [["key",1,"PDF operators and dictionary keys (format)"]],
@@ -3555,11 +3555,11 @@
         "locale tag normalization"
       ]
     ],
-    "lib/i18n/locale.ts#str-eq": [["key",5,"locale code comparisons, and the server's language code (global config serverLanguage)"]],
+    "lib/i18n/locale.ts#str-eq": [["key",8,"locale code comparisons, and the server's language code (global config serverLanguage)"]],
     "lib/i18n/locale.ts#str-startsWith": [
       [
         "key",
-        2,
+        3,
         "locale tag prefix checks"
       ]
     ],
@@ -3650,7 +3650,7 @@
     "lib/locale.tsx#str-eq": [
       [
         "key",
-        4,
+        6,
         "locale code comparisons"
       ]
     ],

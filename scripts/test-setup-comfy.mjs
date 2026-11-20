@@ -20,6 +20,8 @@ test("a changed address stops showing models from the opening scan while the new
     agentLabel: "",
     onAgentVerified: () => {},
     openaiKeySaved: false,
+    savedImageBaseUrl: "",
+    env: { openaiImageBaseUrl: "", hasOpenaiImageApiKey: false, hasDedicatedImageApiKey: false },
   }));
   assert.match(html, /Checking installed models/);
   assert.doesNotMatch(html, /old\.safetensors/);
