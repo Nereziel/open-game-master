@@ -464,6 +464,13 @@ export async function readClaims(
       });
       if (error) {
         console.error(`[claims] ${input.label}: reader attempt ${attempt + 1}/2 failed (HTTP ${error.status}); the passage counts as claiming nothing`);
+        if (process.env.DM_DEBUG) {
+          // A backend error may include its own diagnostic message. It can
+          // also repeat prompt fragments, so expose it only during debugging.
+          const body = await error.clone().text().catch(() => "");
+          const clipped = body.slice(0, READER_LOG_PREVIEW_CHARS);
+          console.debug(`[dm-debug] claims ${input.label}: reader attempt ${attempt + 1}/2 backend error ${JSON.stringify(clipped)}${body.length > clipped.length ? ` [truncated; ${body.length - clipped.length} more chars]` : ""}`);
+        }
         input.onUnread?.();
         return [];
       }
