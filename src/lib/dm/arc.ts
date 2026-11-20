@@ -394,6 +394,14 @@ async function sagaFromPlan(
       raw = again;
     }
   }
+  // A structurally valid English plan must not become a Czech campaign arc.
+  if (languageProblem(plan.record).length) {
+    console.warn(`[arc] campaign ${campaignId}: the saga plan was returned in English for a Czech table; refusing to store it`);
+    recordDmTrace("arc_plan_language", { accepted: false, stage: "saga_plan" });
+    return null;
+  }
+  let lastOpeningWasEnglish = false;
+  let lastOpeningRaw = "";
   const user = [context, `The saga's plan:\n${renderSagaPlan(plan)}`, opening].filter(Boolean).join("\n\n");
   const write = async (extra: string, recoverFormat = false) => {
     const prompt = recoverFormat ? openingActFormatRecovery(user) : extra ? `${user}\n\n${extra}` : user;
@@ -406,15 +414,17 @@ async function sagaFromPlan(
     );
     if (reply === null) return null;
     const parsed = parseOpeningActJson(reply);
+    lastOpeningRaw = reply;
+    lastOpeningWasEnglish = Boolean(parsed && englishArcPlanningAtCzechTable(parsed, language));
     recordDmTrace("json_validation", {
       stage: "opening_act", attempt: recoverFormat ? "format_recovery" : extra ? "rewrite" : "first",
-      accepted: Boolean(parsed), beatCount: parsed?.beats.length ?? 0,
-      responseChars: reply.length, problems: parsed ? openingActProblems(plan, parsed.beats) : ["invalid-json-or-opening-act-shape"],
+      accepted: Boolean(parsed) && !lastOpeningWasEnglish, beatCount: parsed?.beats.length ?? 0,
+      responseChars: reply.length, problems: parsed ? [...openingActProblems(plan, parsed.beats), ...(lastOpeningWasEnglish ? ["English prose at Czech table"] : [])] : ["invalid-json-or-opening-act-shape"],
     });
     if (!parsed && process.env.DM_DEBUG) {
       console.debug(`[dm-debug] opening act: unreadable reply (${reply.length} chars): ${arcReplyPreview(reply)}`);
     }
-    return parsed;
+    return lastOpeningWasEnglish ? null : parsed;
   };
   let act = await write("");
   const actProblems = act ? openingActProblems(plan, act.beats) : [];
@@ -422,7 +432,12 @@ async function sagaFromPlan(
     if (process.env.DM_DEBUG) {
       console.log(`[dm-debug] opening act: writing again (${act ? actProblems.join(" | ") : "unreadable reply"})`);
     }
-    const second = await write(actProblems.length ? feedback(actProblems, "act") : "", !act);
+    const correction = actProblems.length
+      ? feedback(actProblems, "act")
+      : lastOpeningWasEnglish
+        ? `LANGUAGE ERROR: The opening act is written in English. Rewrite the same JSON opening act in natural Czech. Keep its beats, waypoints, events, established names, JSON keys and enum values unchanged:\n${lastOpeningRaw}`
+        : "";
+    const second = await write(correction, !act && !lastOpeningWasEnglish);
     if (second && (!act || openingActProblems(plan, second.beats).length < actProblems.length)) {
       act = second;
     }
@@ -472,7 +487,7 @@ export async function generateStoryArc(
       campaign.settings,
       [
         { role: "system", content: withLanguage(sagaGenerateSystem(profile), campaign.gameSettings.tableLanguage) },
-        { role: "user", content: context },
+        { role: "user", content: arcPlanningLanguageRequest(context, campaign.gameSettings.tableLanguage) },
       ],
       { meta: { task: "arc_generate" }, timeoutMs: arcTextTimeoutMs(), thinking: false, temperature: 0 },
     );
@@ -847,7 +862,7 @@ async function arcModelCall(
     campaign.settings,
     [
       { role: "system", content: withLanguage(system, campaign.gameSettings.tableLanguage) },
-      { role: "user", content: user },
+      { role: "user", content: arcPlanningLanguageRequest(user, campaign.gameSettings.tableLanguage) },
     ],
     { meta: { task: utilityTask ?? "arc_plan" }, timeoutMs: arcTextTimeoutMs(), thinking: false, temperature: 0 },
   );
