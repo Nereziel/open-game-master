@@ -24,6 +24,7 @@ const { translate } = await import("../src/lib/messages-logic.ts");
 
 // The dictionaries' English, for the worded builders under test.
 const enT = (key, vars) => translate("en", key, vars);
+const csT = Object.assign((key, vars) => translate("cs", key, vars), { locale: "cs" });
 
 const aria = world.addHero({ name: "Aria" });
 world.addHero({ name: "Bren" });
@@ -68,6 +69,17 @@ await test("The chronicle card puts the attacker in front and names each creatur
     "Wolf · Attack roll (Bite vs Goblin)",
     "Shaman · Damage (Sacred Flame vs Aria)",
   ]);
+});
+
+await test("Czech UI translates reaction rolls in console labels, stored cards and cinematic narration.", () => {
+  assert.equal(csT("Reaction roll"), "Hod na reakci");
+  assert.match(csT("Rolls how an NPC takes the party on the DMG reaction table."), /počáteční postoj/);
+  const reaction = { kind: "custom", detail: "Reaction roll for Tam Rill", attacker: null, requestedBy: "dm" };
+  assert.match(rollCardLabel(csT, reaction, undefined), /Reakce při setkání: Tam Rill/);
+  assert.match(rollToastLead(csT, reaction, undefined), /Reakce při setkání: Tam Rill/);
+  assert.equal(rollChronicleLead(csT, reaction, undefined), "Reakce při setkání: Tam Rill");
+  // The source remains in English for the engine and English interface.
+  assert.equal(rollChronicleLead(enT, reaction, undefined), "Reaction roll for Tam Rill");
 });
 
 await test("A blind roll keeps the names and loses the numbers.", () => {
