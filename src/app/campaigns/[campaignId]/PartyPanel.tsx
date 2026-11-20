@@ -847,8 +847,8 @@ export function PartyPanel({
                       </div>
                     }
                   >
-                    <span
-                      tabIndex={0}
+                    <button
+                      type="button"
                       aria-label={`${statName}: ${statValue}`}
                       className={cn(
                         "inline-flex cursor-help items-baseline gap-1.5 rounded-sm outline-none focus-visible:ring-1 focus-visible:ring-amber-400",
@@ -857,7 +857,7 @@ export function PartyPanel({
                     >
                       <span className="eyebrow text-[9px] text-stone-500">{({ "AC": t("AC"), "PP": t("PP"), "Init": t("Init") } as Record<string, string>)[statLabel] ?? String(statLabel)}</span>
                       <span className={cn("font-mono text-[13px]", shape && statLabel === "AC" ? "text-lime-300" : "text-stone-100")}>{statValue}</span>
-                    </span>
+                    </button>
                   </Tooltip>
                 );
               })}
