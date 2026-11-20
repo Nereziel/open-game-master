@@ -234,8 +234,9 @@ type TrackerNoteTranslator = (key: string, vars?: Record<string, string | number
 export function translateTrackerSystemNote(t: TrackerNoteTranslator, raw: string): string | null {
   let m = /^(Exploration|Negotiation|Chase|Ritual or task) in progress, "(.*)", round (\d+): (\d+) of (\d+) successes, (\d+) of (\d+) failures\.$/.exec(raw);
   if (m) {
+    const localizedKind = t(m[1]);
     return t('{kind} in progress, "{title}", round {round}: {successes} of {successesNeeded} successes, {failures} of {failuresAllowed} failures.', {
-      kind: t(m[1]).toLocaleLowerCase(),
+      kind: localizedKind === m[1] ? m[1] : localizedKind.toLocaleLowerCase(),
       title: m[2],
       round: m[3],
       successes: m[4],
