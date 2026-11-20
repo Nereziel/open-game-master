@@ -6,7 +6,8 @@ import { InfoButton } from "@/components/ui/InfoDialog";
 import { replayAnimation } from "@/lib/motion/replay";
 import { VARIANT_TOGGLES, VariantRulesFields, REST_LABELS } from "@/app/campaigns/[campaignId]/RulesPanel";
 import { DetailGroup } from "@/app/create-campaign/fields";
-import { AlliesFields, NarrationFields } from "@/app/create-campaign/NarratorFields";
+import { AlliesFields, NarrationFields, NarrationLengthField } from "@/app/create-campaign/NarratorFields";
+import { CampaignLengthField } from "@/app/create-campaign/PartyFields";
 import { SafetyFields } from "@/app/create-campaign/SafetyFields";
 import { SheetRows } from "@/app/create-campaign/SheetRows";
 import { VoiceChatFields } from "@/app/create-campaign/VoiceChatFields";
@@ -86,6 +87,10 @@ export function ExperienceStep(props: StepProps & { active: boolean; groups: Gro
       <div className="space-y-2">
         {gates.aiNarrates ? (
           <DetailGroup {...groupProps(groups, "ai")} title={t("AI storytelling and allies")} glyph="ui-ai" summary={aiSummary(t, draft)}>
+            <div className="grid gap-3 sm:grid-cols-2">
+              <CampaignLengthField {...props} />
+              <NarrationLengthField {...props} />
+            </div>
             <SheetRows {...rows} keys={["aiStorySetup", "narrationGuard", "worldSimulation"]} />
             <AlliesFields {...props} />
           </DetailGroup>
