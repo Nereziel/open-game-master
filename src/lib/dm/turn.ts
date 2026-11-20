@@ -186,6 +186,7 @@ import { markActiveBeat, settleEarlyTicks, tickWaypointsFromCalls } from "@/lib/
 import { enforceEngineBoundary } from "@/lib/dm/narration-guard";
 import { spellAreaShape } from "@/lib/dm/aoe-shape";
 import { textKey } from "@/lib/language/text-logic";
+import { englishNarrationAtCzechTable } from "@/lib/dm/table-language-logic";
 import { conscienceSecretLines, souredLeaving } from "@/lib/dm/conscience";
 import { companionMomentBlock, settleCompanionLeaving } from "@/lib/dm/departure-turn";
 import { intentLinesForPrompt } from "@/lib/dm/departure";
@@ -2083,6 +2084,9 @@ async function runAdvance(context: TurnContext, turn: DmTurn) {
   // Held against the GM's newest passages, not the last alone: a copy of one
   // four replies back read as the story jumping backwards (issue 942).
   let repeatNudged = false;
+  // A full English paragraph at a Czech table is never accepted silently
+  // without giving the narrator one chance to restate the same scene.
+  let languageNudged = false;
   let earlier: string[] | null = null;
   const earlierNarrations = () => (earlier ??= recentGmNarrations(campaignId));
   // Whether the last call's prose, the only narration it could give, was an
@@ -2740,6 +2744,39 @@ async function runAdvance(context: TurnContext, turn: DmTurn) {
 
     if (!needsFollowUp) {
       saveDmTurn(turn);
+      // Unlike a change of game rules, this only changes the language of a
+      // tool-free paragraph. Keep all resolved state and all previous turns;
+      // never replay a tool or replace the story with a new scene.
+      if (
+        !finalCall &&
+        !languageNudged &&
+        !toolCalls.length &&
+        narration &&
+        turn.narrationParts[turn.narrationParts.length - 1] === narration &&
+        englishNarrationAtCzechTable(narration, campaign.gameSettings.tableLanguage)
+      ) {
+        languageNudged = true;
+        turn.narrationParts.pop();
+        turn.conversation.push({ role: "assistant", content: visibleText || "", ...carried });
+        turn.conversation.push({
+          role: "user",
+          content: "[System] Předchozí odpověď byla anglicky, ale jazyk této kampaně je čeština. Toto NENÍ nový tah. Přepiš POUZE stejnou scénu plně česky, se stejnými postavami, fakty a výsledky. Vymýšlené názvy míst a NPC piš česky. Nepřidávej žádné nové události ani komentáře k opravě. Zachovej jen přesné názvy existujících pravidel a identifikátory nástrojů.",
+        });
+        if (process.env.DM_DEBUG) {
+          console.debug("[dm-debug] Czech table received English-looking narration; requesting a same-scene Czech rewrite");
+        }
+        saveDmTurn(turn);
+        continue;
+      }
+      if (
+        languageNudged &&
+        !toolCalls.length &&
+        narration &&
+        englishNarrationAtCzechTable(narration, campaign.gameSettings.tableLanguage) &&
+        process.env.DM_DEBUG
+      ) {
+        console.debug("[dm-debug] Czech narration rewrite still looks English; keeping the model's reply rather than inventing new story facts");
+      }
       // A note to itself ("I will set the landing first") is not narration
       // and ends nothing; none of it was kept. Send the model once to do
       // what it planned and narrate. A model that plans again keeps no
