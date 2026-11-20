@@ -18,7 +18,7 @@ import type { EntryInput, UpdateOutcome } from "./useWorld";
 import { typeOf } from "./world-ui";
 import { KeptValueText } from "./ImportKept";
 import { useLocale, useT } from "@/lib/locale";
-import { worldFolderLabel, worldTypeLabel } from "@/lib/worldforge/display-labels";
+import { worldFieldLabel, worldFolderLabel, worldTypeLabel } from "@/lib/worldforge/display-labels";
 
 // Editing one entry: what its own record holds (name, its line or its text,
 // aliases, tags, picture) and what WorldForge adds (type, folder, canon, the
@@ -380,9 +380,11 @@ export function EntityEditor({
 
 function FieldInput({ def, doc, value, onChange }: { def: FieldDef; doc: WorldDoc; value: FieldValue | undefined; onChange: (value: FieldValue | undefined) => void }) {
   const t = useT();
+  const locale = useLocale();
+  const shownName = worldFieldLabel(def, locale);
   const label = (
     <span className="eyebrow flex items-center gap-1 text-[10px] text-stone-500">
-      {def.name}
+      {shownName}
       {def.authorOnly ? <Lock className="size-3 text-red-400" aria-label={t("Author only")} /> : null}
     </span>
   );
@@ -390,7 +392,7 @@ function FieldInput({ def, doc, value, onChange }: { def: FieldDef; doc: WorldDo
     return (
       <div className="flex flex-col gap-1">
         {label}
-        <Select label={def.name} value={(value as string) ?? ""} placeholder={t("Not set", { context: "workshop.world.editor.notSet" })} onChange={(next) => onChange(next === "__none" ? undefined : next)} options={[{ value: "__none", label: t("Not set", { context: "workshop.world.editor.notSet" }) }, ...def.options.map((option) => ({ value: option, label: option }))]} />
+        <Select label={shownName} value={(value as string) ?? ""} placeholder={t("Not set", { context: "workshop.world.editor.notSet" })} onChange={(next) => onChange(next === "__none" ? undefined : next)} options={[{ value: "__none", label: t("Not set", { context: "workshop.world.editor.notSet" }) }, ...def.options.map((option) => ({ value: option, label: option }))]} />
       </div>
     );
   }
@@ -403,12 +405,12 @@ function FieldInput({ def, doc, value, onChange }: { def: FieldDef; doc: WorldDo
           <input
             className={cn(ui.input, "w-24")}
             type="number"
-            aria-label={`${def.name}, year`}
+            aria-label={`${shownName}, year`}
             value={year.yearNum ?? ""}
             onChange={(event) => onChange(event.target.value === "" ? undefined : { ...year, yearNum: Math.round(Number(event.target.value)) })}
           />
           {doc.calendars.length ? (
-            <Select label={`${def.name}, calendar`} size="sm" className="flex-1" value={year.calendarId} onChange={(calendarId) => onChange({ ...year, calendarId })} options={doc.calendars.map((calendar) => ({ value: calendar.id, label: calendar.abbrev || calendar.name, hint: calendar.name }))} />
+            <Select label={`${shownName}, calendar`} size="sm" className="flex-1" value={year.calendarId} onChange={(calendarId) => onChange({ ...year, calendarId })} options={doc.calendars.map((calendar) => ({ value: calendar.id, label: calendar.abbrev || calendar.name, hint: calendar.name }))} />
           ) : (
             <span className="self-center text-[11px] text-stone-500">{t("Add a calendar in Timeline to name the reckoning.")}</span>
           )}
