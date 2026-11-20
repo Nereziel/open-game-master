@@ -11,6 +11,7 @@ const {
   PERSISTENCE,
   climateForGenre,
   describeWeather,
+  translateWeatherNote,
   normalizeWeather,
   rollWeather,
   weatherBedCue,
@@ -154,6 +155,21 @@ test("the sentence the prompt and the client share", () => {
     "Weather: mild, thick fog; visibility is very poor.",
   );
   assert.equal(describeWeather(null), "");
+});
+
+test("Czech reader sees translated weather but source strings and freeform reasons remain intact", () => {
+  const original = "Weather: cold, a low grey overcast, a breeze. Podzimní soumrak nad kotlinou";
+  assert.equal(translateWeatherNote(original, "cs"),
+    "Počasí: chladno, nízká šedá oblačnost, slabý vánek. Podzimní soumrak nad kotlinou");
+  assert.equal(translateWeatherNote(original, "en"), original);
+  assert.equal(translateWeatherNote(original, "fr"), original);
+  assert.equal(translateWeatherNote(
+    "Weather: cold, driving rain, a gale blowing; visibility is poor.", "cs"
+  ), "Počasí: chladno, prudký déšť, silný vítr; špatná viditelnost.");
+  assert.equal(translateWeatherNote(
+    "Weather: mild, thick fog; visibility is very poor.", "cs"
+  ), "Počasí: mírná teplota, hustá mlha; velmi špatná viditelnost.");
+  assert.equal(translateWeatherNote("Weather: impossible sky.", "cs"), "Weather: impossible sky.");
 });
 
 test("stored weather normalises and garbage reads as none", () => {
