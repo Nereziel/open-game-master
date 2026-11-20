@@ -282,7 +282,7 @@ export function describeWeather(weather: Weather | null): string {
 // after the weather sentence; keep that explanation untouched.
 export function translateWeatherNote(raw: string, locale: string): string {
   if (locale !== "cs") return raw;
-  const found = /^Weather: ([^,.;]+), ([^,.;]+)(?:, (a gale blowing|a breeze))?(?:; (visibility is very poor|visibility is poor))?\.(.*)$/s.exec(raw);
+  const found = /^Weather: ([^,.;]+), ([^,.;]+)(?:, (a gale blowing|a breeze))?(?:; (visibility is very poor|visibility is poor))?\.([\s\S]*)$/.exec(raw);
   if (!found) return raw;
   const temperatures: Record<string, string> = {
     "bitterly cold": "krutý mráz",
