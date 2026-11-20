@@ -25,6 +25,8 @@ export type CampaignDraft = {
   startingLevel: number;
   difficulty: CampaignDifficulty;
   campaignLength: CampaignLengthSetting;
+  // Approximate length of each AI narration passage, independent of saga length.
+  narrationLength: GameSettings["narrationLength"];
   genre: Genre;
   customGenreText: string;
   tableLanguage: TableLanguage;
@@ -95,7 +97,8 @@ export const DEFAULT_DRAFT: CampaignDraft = {
   maxPlayers: 5,
   startingLevel: 1,
   difficulty: "normal",
-  campaignLength: "standard",
+  campaignLength: "short",
+  narrationLength: "short",
   genre: "high_fantasy",
   customGenreText: "",
   tableLanguage: "english",
