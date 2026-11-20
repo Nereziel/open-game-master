@@ -48,7 +48,9 @@ export function calculatorDisplayText(text: string, t: CalculatorTranslator): st
     const matched = pattern.exec(text);
     if (!matched) continue;
     const vars: Record<string, string | number> = {};
-    fields.forEach((field, index) => { vars[field] = matched[index + 1]; });
+    fields.forEach((field, index) => {
+      vars[field] = field === "size" ? t(matched[index + 1]) : matched[index + 1];
+    });
     return t(key, vars);
   }
   // Unknown content-pack phrases are not guessed at or mutated.
