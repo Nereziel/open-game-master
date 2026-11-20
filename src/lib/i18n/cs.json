@@ -1,5 +1,7 @@
 {
   "messages": {
+    "Add it anyway": "Přidat přesto",
+    "{name} cannot play the full rules: it holds fewer tools than the table's full set, so it plays on a reduced tool set and rules. Open Game Master does not support or test this, and fights and other rules may not run properly. For real play, choose another program.": "{name} nemůže používat všechna pravidla: má k dispozici méně nástrojů než celý herní systém, proto používá omezenou sadu nástrojů a pravidel. Open Game Master toto nastavení nepodporuje ani netestuje; souboje a další pravidla nemusí fungovat správně. Pro běžné hraní zvolte jiný program.",
     "The language your tables play in": "Jazyk, ve kterém se hraje u tvých stolů",
     "New campaigns start in it, and the Game Master's memory reads the story in it. Each campaign can still pick its own under Table language. The buttons and menus follow each reader's browser, or the language they pick under Settings > Language.": "Nové kampaně začínají v tomto jazyce a paměť Pána jeskyně v něm vyhledává v příběhu. Každá kampaň si může nastavit vlastní jazyk v položce Jazyk stolu. Nabídky a tlačítka se řídí jazykem prohlížeče hráče nebo jeho volbou v Nastavení → Jazyk.",
     "Memory search reads with {model}, set by EMBEDDING_MODEL in .env.server. Remove that line to let the language choose.": "Vyhledávání v paměti používá model {model}, nastavený pomocí EMBEDDING_MODEL v .env.server. Pro automatický výběr podle jazyka tento řádek odstraň.",
@@ -11446,6 +11448,7 @@
     }
   },
   "plurals": {
+    "{names} cannot play the full rules, so it is left off the list. \u0000{names} cannot play the full rules, so they are left off the list. ": ["{names} nemůže používat všechna pravidla, proto není v seznamu. ","{names} nemohou používat všechna pravidla, proto nejsou v seznamu. ","{names} nemohou používat všechna pravidla, proto nejsou v seznamu. "],
     "{count} player\u0000{count} players": [
       "{count} hráč",
       "{count} hráči",
