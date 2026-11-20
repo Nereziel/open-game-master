@@ -40,6 +40,17 @@ jobs:
       - name: Install dependencies
         run: npm ci
 
+      # Next.js stores reusable compiler output here. setup-node already caches
+      # npm downloads; cache only .next/cache, never the whole .next build.
+      # The build job is the only writer to avoid six browser-shard uploads.
+      - name: Restore and save Next.js build cache
+        uses: actions/cache@v6
+        with:
+          path: .next/cache
+          key: ${{ runner.os }}-node24-next16-${{ hashFiles('package-lock.json') }}-${{ github.sha }}
+          restore-keys: |
+            ${{ runner.os }}-node24-next16-${{ hashFiles('package-lock.json') }}-
+
       - name: Lint
         run: npm run lint
 
@@ -110,6 +121,16 @@ jobs:
 
       - name: Install dependencies
         run: npm ci
+
+      # Browser shards can reuse a prior successful main build's compiler cache
+      # but do not upload six copies or depend on the build job finishing.
+      - name: Restore Next.js build cache
+        uses: actions/cache/restore@v6
+        with:
+          path: .next/cache
+          key: ${{ runner.os }}-node24-next16-${{ hashFiles('package-lock.json') }}-${{ github.sha }}
+          restore-keys: |
+            ${{ runner.os }}-node24-next16-${{ hashFiles('package-lock.json') }}-
 
       - name: Build
         run: npm run build
