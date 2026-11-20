@@ -8,51 +8,10 @@ import { LOCALE_COOKIE, localeOfServerLanguage, resolveLocale } from "@/lib/i18n
 import { ThemeApplier } from "@/lib/theme-mode";
 import type { Metadata, Viewport } from "next";
 import { cookies, headers } from "next/headers";
-import localFont from "next/font/local";
 import TopoBackground from "./TopoBackground";
 import { ServerAddressButton } from "@/components/ServerAddressButton";
 import { ConfirmHost } from "@/components/ui/ConfirmDialog";
 import "./globals.css";
-
-// The faces ship in the repo (Google Fonts' latin subsets) so a build
-// never fetches from fonts.gstatic.com: a failed download there broke CI
-// builds and made offline builds impossible.
-// The interface face: Ysabeau Office, a humanist sans drawn on a Garamond
-// skeleton, so labels and numbers sit beside Cinzel and Source Serif like
-// the tables of a rulebook. Its figures are lining and tabular by default,
-// which is what dice math and stat columns need (the Tailwind font-mono
-// utility resolves to this face too: globals.css).
-const uiSans = localFont({
-  src: [
-    { path: "./fonts/ysabeau-office.woff2", weight: "100 900", style: "normal" },
-    { path: "./fonts/ysabeau-office-italic.woff2", weight: "100 900", style: "italic" },
-  ],
-  variable: "--font-ui",
-});
-
-// A fixed-width face for what is typed or copied exactly: a room code, a
-// path, a command, a log (the font-code utility).
-const codeMono = localFont({
-  src: "./fonts/geist-mono.woff2",
-  variable: "--font-code-face",
-  weight: "100 900",
-});
-
-const sourceSerif = localFont({
-  src: [
-    { path: "./fonts/source-serif-4.woff2", weight: "200 900", style: "normal" },
-    { path: "./fonts/source-serif-4-italic.woff2", weight: "200 900", style: "italic" },
-  ],
-  variable: "--font-source-serif",
-});
-
-// Engraved-capitals display face for wordmarks, screen titles, and
-// campaign names; body text stays on the interface face and Source Serif.
-const cinzel = localFont({
-  src: "./fonts/cinzel.woff2",
-  variable: "--font-display",
-  weight: "400 900",
-});
 
 export const metadata: Metadata = {
   title: "Open Game Master",
@@ -90,7 +49,7 @@ export default async function RootLayout({
   return (
     <html
       lang={localeTag(initialLocale)}
-      className={`${uiSans.variable} ${codeMono.variable} ${sourceSerif.variable} ${cinzel.variable} h-full antialiased`}
+      className="h-full antialiased"
       // browser extensions (Grammarly among them) inject attributes into <html>
       // and <body> before React loads
       suppressHydrationWarning
