@@ -2037,6 +2037,18 @@ export function buildDmMessages(
   // table, not the story: a turn started over by Retry read it as a table
   // note and could narrate the server's trouble into the scene.
   const told = history.filter((message) => !(message.authorType === "system" && haltedTurnPrefix(message.content)));
+  // The first user-visible cue is very short, and an agent can improvise a
+  // different settlement despite the canonical premise already in GAME STATE.
+  // Put the opening's exact setting back at the end of the latest table note.
+  // This applies only to the bootstrap note, never to play that later
+  // legitimately moves away from the planned opening location.
+  const openingBeat = state.campaign.storyArc?.beats.find((beat) => beat.status === "active");
+  const openingCanon = [
+    state.campaign.description
+      ? `CANONICAL CAMPAIGN PREMISE: ${state.campaign.description.slice(0, 550)}`
+      : "",
+    openingBeat ? `CURRENT OPENING BEAT: ${openingBeat.text.slice(0, 260)}` : "",
+  ].filter(Boolean).join("\n");
   const rendered = told.map((message) => {
     const name = message.characterId
       ? sheetsById.get(message.characterId)?.name ?? "Unknown"
@@ -2050,7 +2062,7 @@ export function buildDmMessages(
             : message.content.startsWith(OFFER_NOTE_PREFIX)
               ? `[An offer was settled by the player's own answer; authoritative, and never to be offered or asked again] ${message.content.slice(OFFER_NOTE_PREFIX.length)}`
               : message.content === ADVENTURE_BEGINS_NOTE
-                ? `[Table note] ${ADVENTURE_BEGINS_NOTE} ${OPENING_SCENE_CUE}`
+                ? `[Table note] ${ADVENTURE_BEGINS_NOTE} ${OPENING_SCENE_CUE}${openingCanon ? `\n${openingCanon}\nOPEN IN THE EXACT ESTABLISHED LOCATION. Do not rename the settlement or invent a different village. Your first move_party/update_location must use the place named in the premise or active beat; match the scene and its NPCs before improvising.` : ""}`
                 : `[Table note] ${message.content}`
           : message.content.startsWith('"') || message.content.startsWith("(ooc)")
             ? `[${name}] ${message.content}`
