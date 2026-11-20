@@ -56,7 +56,7 @@ export const STARTER_ONE_SHOT_FR = {
 // and the AI storyteller receives its secret outline in Czech too.
 export const STARTER_ONE_SHOT_CS = {
   title: "Umlklý zvon Marrowova Brodu",
-  tagline: "Jednodenní dobrodružství pro začátečníky s připravenými hrdiny.",
+  tagline: "Dobrodružství na jeden večer pro začátečníky s připravenými hrdiny.",
   description:
     "Marrowův Brod je vesnice na řece se čtyřiceti obyvateli. Zvon zdejší kaple odbíjel hodiny celých dvě stě let. Před třemi nocemi ale umlkl. Po kostelníkovi se slehla zem, přívoz po setmění nevyplouvá a vesnická rada nabízí dvacet zlatých na hlavu tomu, kdo zjistí proč. Přicházíte za soumraku, právě když se nad hladinou zvedá mlha.",
   theme: "Říční vesnice zahalená mlhou, kaple na kopci a krypta pod ní",
