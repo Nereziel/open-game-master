@@ -350,7 +350,7 @@ import {
 import { dismissCompanion } from "@/lib/dm/companion-dismissal";
 import { fightNames, getActiveEncounter, listEnemies, type Encounter, type EncounterEnemy } from "@/lib/db/encounters";
 import { atTheFight } from "@/lib/dm/fight-away-logic";
-import { onFoot } from "@/lib/dm/mount-link";
+import { takesOwnTurn } from "@/lib/dm/mount-link";
 import { enemyMoveBudget, enemyMovementNote } from "@/lib/dm/enemy-speed";
 import { getBattleMapForEncounter, getTokenByRef, listTokens, type BattleMap } from "@/lib/db/battle-maps";
 import { pcMoveBudget } from "@/lib/battlemap/view";
@@ -520,7 +520,7 @@ export function buildEncounterState(campaignId: string, sheets: CharacterSheet[]
       : [],
     awaitingInitiative: encounter.orderReady
       ? []
-      : onFoot(campaignId, atTheFight(encounter, sheets)).filter((sheet) => !staged.has(sheet.id)).map((sheet) => sheet.name),
+      : takesOwnTurn(campaignId, atTheFight(encounter, sheets)).filter((sheet) => !staged.has(sheet.id)).map((sheet) => sheet.name),
     // Named while they stay away, so the GM can still bring them in: nothing
     // else in the state says they exist once the order has closed.
     ...(encounter.awayIds.length ? { away: sheets.filter((sheet) => encounter.awayIds.includes(sheet.id)).map((sheet) => sheet.name) } : {}),
@@ -1694,7 +1694,9 @@ export function dmTurnTuning(campaign: Campaign): ModelTuning {
 function toolSetTokens(campaign: Campaign, profile: ToolProfile): number {
   const imageEnabled = campaign.settings.imageGenerationEnabled && campaign.settings.autoImages;
   const leanTools = profile === "lean";
-  if (campaign.settings.textProvider === "harness") {
+  // A program on the compact profile (HarnessAdapter.reducedTools) is
+  // served each call's compact set, so it is charged like any compact call.
+  if (campaign.settings.textProvider === "harness" && profile !== "compact") {
     return estimateTokens(JSON.stringify(toMcpTools(dmTurnToolCatalogue(campaign, imageEnabled, leanTools))));
   }
   if (profile === "compact") {
