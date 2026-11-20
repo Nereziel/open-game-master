@@ -352,6 +352,9 @@ async function sagaFromPlan(
     plan = parseSagaPlanJson(again, profile);
     if (!plan) {
       const wholeAgain = parseSagaJson(again, profile);
+      if (!wholeAgain && process.env.DM_DEBUG) {
+        console.log("[dm-debug] saga plan: JSON recovery also returned an unreadable reply:", again.slice(0, 200));
+      }
       return wholeAgain ? { arc: wholeAgain, raw: again } : null;
     }
     raw = again;
