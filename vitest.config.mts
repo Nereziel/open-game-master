@@ -1,7 +1,8 @@
 import { fileURLToPath } from "node:url";
 import { defineConfig } from "vitest/config";
 
-// npm test runs every scripts/test-*.mjs under Vitest, several files at once.
+// npm test runs scripts/test-*.mjs and colocated src/**/*.test.{ts,tsx}
+// suites under Vitest, several files at once.
 // The scripts are plain Node programs with their own test() helpers, not
 // Vitest suites: a file passes when its top level finishes without throwing,
 // exactly as when each ran in its own node process, so they still run with
@@ -38,7 +39,7 @@ export default defineConfig({
     ],
   },
   test: {
-    include: ["scripts/test-*.mjs"],
+    include: ["scripts/test-*.mjs", "src/**/*.test.{ts,tsx}"],
     globalSetup: ["scripts/lib/vitest-global-setup.mjs"],
     setupFiles: ["scripts/lib/vitest-file-setup.mjs"],
     passWithNoTests: true,
