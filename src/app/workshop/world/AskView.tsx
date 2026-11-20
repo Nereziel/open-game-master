@@ -10,7 +10,7 @@ import { canonMeaning } from "@/lib/worldforge/canon";
 import { CITATION, citationNumbers, omittedLine, partWords, type AskOmitted } from "@/lib/worldforge/ask-words";
 import type { AskPassage } from "@/lib/worldforge/ask";
 import type { WorldApi, WorldState } from "./useWorld";
-import { useT } from "@/lib/locale";
+import { useLocale, useT, useTp } from "@/lib/locale";
 
 // Ask the world, after WorldForge's grounded chat: a question about the
 // world answered from the world, hidden truths included (it is the DM who
@@ -69,7 +69,32 @@ export function AskView({ api, world, onOpen }: { api: WorldApi; world: WorldSta
   );
 }
 
+
+// Display-only Czech explanations; the shared English wording also goes to
+// AI prompts, so it must not be translated at the data/source layer.
+function czechPartWords(part: AskPassage["part"], at: number, of: number): string {
+  if (part === "article") return of > 1 ? `článek, úryvek ${at} z ${of}` : "článek";
+  return part === "facts" ? "údaje" : part === "hidden" ? "skrytá pravda" : part === "event" ? "událost časové osy" : "tajemství";
+}
+
+function omittedCzechLine(omitted: AskOmitted): string {
+  const names = [...omitted.names, ...(omitted.others ? [`${omitted.others} dalších`] : [])];
+  const origin = names.length ? ` (${names.join(", ")})` : "";
+  return omitted.count === 1
+    ? `Jeden další odpovídající úryvek byl kvůli omezenému prostoru vynechán${origin}.`
+    : `Další odpovídající úryvky (${omitted.count}) byly kvůli omezenému prostoru vynechány${origin}.`;
+}
+
+function czechCanonMeaning(canon: AskPassage["canon"]): string {
+  return canon === "draft" ? "zatím nepotvrzené; používat jen v případě, že zapadá do příběhu"
+    : canon === "alternate" ? "jiná verze příběhu; nepopisovat ji jako skutečnost"
+    : canon === "retired" ? "v tomto světě už neplatí" : "";
+}
+
 function AnswerCard({ entry, named, onOpen }: { entry: Answer; named: Named[]; onOpen: (ref: string) => void }) {
+  const t = useT();
+  const tp = useTp();
+  const locale = useLocale();
   const cited = useMemo(() => new Set(entry.sources.map((source) => source.n)), [entry.sources]);
   const sourceId = (n: number) => `ask-${entry.key}-source-${n}`;
   const goTo = (n: number) => {
@@ -97,7 +122,7 @@ function AnswerCard({ entry, named, onOpen }: { entry: Answer; named: Named[]; o
     for (const n of citationNumbers(match[1])) {
       if (!cited.has(n)) continue;
       body.push(
-        <button key={`cite-${match.index}-${n}`} type="button" onClick={() => goTo(n)} aria-label={`Source ${n}`} className="mx-0.5 inline-flex min-h-6 min-w-6 items-center justify-center rounded border border-amber-500/40 px-1 align-baseline text-[11px] leading-none text-amber-200 hover:bg-amber-400/10 focus-visible:outline focus-visible:outline-2 focus-visible:outline-amber-400">
+        <button key={`cite-${match.index}-${n}`} type="button" onClick={() => goTo(n)} aria-label={t("Source {number}", { number: n })} className="mx-0.5 inline-flex min-h-6 min-w-6 items-center justify-center rounded border border-amber-500/40 px-1 align-baseline text-[11px] leading-none text-amber-200 hover:bg-amber-400/10 focus-visible:outline focus-visible:outline-2 focus-visible:outline-amber-400">
           {n}
         </button>,
       );
@@ -111,8 +136,8 @@ function AnswerCard({ entry, named, onOpen }: { entry: Answer; named: Named[]; o
     <li className="panel motion-pop rounded-lg p-3">
       <p className="text-xs text-amber-200/90">{entry.question}</p>
       <p className="mt-1.5 whitespace-pre-wrap text-sm leading-6 text-stone-200">{body}</p>
-      <section aria-label="Sources" className="mt-2.5 border-t border-stone-800/80 pt-2">
-        <h4 className="text-[11px] uppercase tracking-[0.12em] text-stone-500">Sources</h4>
+      <section aria-label={t("Sources")} className="mt-2.5 border-t border-stone-800/80 pt-2">
+        <h4 className="text-[11px] uppercase tracking-[0.12em] text-stone-500">{t("Sources")}</h4>
         {entry.sources.length ? (
           <ol className="mt-1.5 flex flex-col gap-2">
             {entry.sources.map((source) => (
@@ -122,15 +147,15 @@ function AnswerCard({ entry, named, onOpen }: { entry: Answer; named: Named[]; o
             ))}
           </ol>
         ) : (
-          <p className="mt-1 text-xs text-stone-400">The answer cites no passage. Check it against the world before you use it.</p>
+          <p className="mt-1 text-xs text-stone-400">{t("The answer cites no passage. Check it against the world before you use it.")}</p>
         )}
         {entry.omitted.count ? (
-          <p className="mt-2 text-xs text-stone-400">{omittedLine(entry.omitted)} Ask about one of them by name to read it.</p>
+          <p className="mt-2 text-xs text-stone-400">{locale === "cs" ? omittedCzechLine(entry.omitted) : omittedLine(entry.omitted)} {t("Ask about one of them by name to read it.")}</p>
         ) : null}
         {uncited.length ? (
           <details className="mt-2 text-xs text-stone-400">
             <summary className="flex min-h-10 cursor-pointer items-center rounded-md px-1 hover:text-stone-200 focus-visible:outline focus-visible:outline-2 focus-visible:outline-amber-400">
-              {uncited.length} other passage{uncited.length === 1 ? "" : "s"} read, not cited
+              {tp("{count} other passage read, not cited", "{count} other passages read, not cited", { count: uncited.length })}
             </summary>
             <ol className="mt-1 flex flex-col gap-2">
               {uncited.map((passage) => (
@@ -147,7 +172,9 @@ function AnswerCard({ entry, named, onOpen }: { entry: Answer; named: Named[]; o
 }
 
 function PassageCard({ passage, onOpen }: { passage: AskPassage; onOpen: (ref: string) => void }) {
-  const meaning = canonMeaning(passage.canon);
+  const t = useT();
+  const locale = useLocale();
+  const meaning = locale === "cs" ? czechCanonMeaning(passage.canon) : canonMeaning(passage.canon);
   return (
     <div className="flex flex-col gap-1">
       <div className="flex flex-wrap items-center gap-x-2 gap-y-1 text-xs">
@@ -159,14 +186,14 @@ function PassageCard({ passage, onOpen }: { passage: AskPassage; onOpen: (ref: s
         ) : (
           <span className="text-stone-200">{passage.name}</span>
         )}
-        <span className="text-stone-500">{partWords(passage.part, passage.at, passage.of)}</span>
+        <span className="text-stone-500">{locale === "cs" ? czechPartWords(passage.part, passage.at, passage.of) : partWords(passage.part, passage.at, passage.of)}</span>
         {passage.canon !== "canon" ? (
           <span title={meaning} className="rounded-md border border-stone-600 px-1.5 py-0.5 text-[10px] uppercase tracking-[0.12em] text-stone-400">
-            {passage.canon}
-            <span className="sr-only">: {meaning.slice(passage.canon.length + 2)}</span>
+            {locale === "cs" ? t(passage.canon) : passage.canon}
+            <span className="sr-only">: {locale === "cs" ? meaning : meaning.slice(passage.canon.length + 2)}</span>
           </span>
         ) : null}
-        {passage.dmOnly ? <span className="rounded-md border border-rose-500/40 px-1.5 py-0.5 text-[10px] uppercase tracking-[0.12em] text-rose-300">GM only</span> : null}
+        {passage.dmOnly ? <span className="rounded-md border border-rose-500/40 px-1.5 py-0.5 text-[10px] uppercase tracking-[0.12em] text-rose-300">{t("GM only")}</span> : null}
       </div>
       <blockquote className="border-l-2 border-stone-700 pl-2 text-xs leading-5 text-stone-300">{passage.text}</blockquote>
     </div>
