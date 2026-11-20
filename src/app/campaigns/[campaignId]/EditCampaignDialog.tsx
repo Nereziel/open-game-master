@@ -271,7 +271,7 @@ export function EditCampaignDialog({
               size="sm"
               label={t("Difficulty")}
               className="w-full"
-              options={CAMPAIGN_DIFFICULTIES.map((value) => ({ value, label: ({ "easy": t("easy"), "normal": t("normal"), "hard": t("hard"), "deadly": t("deadly"), "info": t("Difficulty is guidance to the Game Master, not a damage multiplier: every rule underneath stays 5e. It steers how hard encounters are built and how often a bad roll is allowed to really cost you.\n\n{list}\n\nThe party lead can change it later from the table's settings.") } as Record<string, string>)[value] ?? String(value) }))}
+              options={CAMPAIGN_DIFFICULTIES.map((value) => ({ value, label: t(value) }))}
               value={difficulty}
               onChange={setDifficulty}
             />
