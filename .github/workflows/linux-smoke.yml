@@ -16,9 +16,11 @@ env:
   ONNXRUNTIME_NODE_INSTALL: skip
 
 # Run checks only for commits on main or when explicitly requested.
+# Only the latest main push needs the full matrix. Group by branch,
+# not SHA, so superseded pushes cancel rather than consuming 10 more jobs.
 concurrency:
-  group: ${{ github.workflow }}-${{ github.sha }}
-  cancel-in-progress: false
+  group: ${{ github.workflow }}-${{ github.ref }}
+  cancel-in-progress: true
 
 # One job doing all of this took 60 minutes by 0.30.0 (213 scenario runs,
 # 770-odd test files one at a time): the work is split across runners
