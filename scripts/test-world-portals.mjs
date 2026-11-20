@@ -130,6 +130,23 @@ test("an untouched theme follows the preset", () => {
   assert.equal(presetTheme({ ...DRAFT, genre: "custom", theme: "left over" }).theme, "");
 });
 
+test("Czech world presets seed Czech text without changing AI-facing prompts", () => {
+  for (const preset of GENRE_PRESETS) {
+    const localized = presetTheme({ ...DRAFT, genre: preset.id }, "cs");
+    assert.equal(localized.theme, preset.defaultThemeCs ?? preset.defaultTheme);
+    if (preset.id !== "custom") {
+      assert.ok(/[áčďéěíňóřšťúůýž]/i.test(localized.theme), `${preset.id}: Czech accent missing`);
+      assert.notEqual(localized.theme, preset.defaultTheme);
+    }
+    assert.equal(presetTheme({ ...DRAFT, genre: preset.id }, "en").theme, preset.defaultTheme);
+    assert.equal(presetTheme({ ...DRAFT, genre: preset.id }, "fr").theme, preset.defaultThemeFr ?? preset.defaultTheme);
+    assert.equal(dmFlavorText(preset.id), preset.dmFlavor || dmFlavorText("custom"));
+  }
+  assert.equal(typeInPlan({ theme: "", themeTouched: false }, "horror", "cs").text,
+    GENRE_PRESETS.find((preset) => preset.id === "horror").defaultThemeCs);
+  assert.equal(arrivalTypeIn(presetTheme(DRAFT, "cs"), "cs").text, GENRE_PRESETS[0].defaultThemeCs);
+});
+
 test("a typed theme is never overwritten, and neither is a pack's", () => {
   const typed = { ...DRAFT, theme: "Mine", themeTouched: true };
   assert.equal(presetTheme(typed), typed);
