@@ -1,3 +1,4 @@
+import { readFileSync } from "node:fs";
 import { describe, expect, it } from "vitest";
 import csCatalog from "@/lib/i18n/cs.json";
 import { installCatalog } from "@/lib/i18n/translate";
@@ -41,6 +42,22 @@ describe("localized DM progress messages", () => {
       expect(dmStatusPhrase("en", status, "same-turn")).toMatch(/\S/u);
     });
   }
+
+
+  it("uses complete Central European fallback families for cs-CZ", () => {
+    const css = readFileSync(new URL("../../globals.css", import.meta.url), "utf8");
+    expect(css).toContain('html[lang^="cs"]');
+    for (const name of ["--font-ui", "--font-source-serif", "--font-display", "--font-code-face"]) {
+      expect(css, `No Czech override for ${name}`).toMatch(new RegExp(`\\b${name}:`));
+    }
+    expect(css).toContain('"Palatino Linotype"');
+    expect(css).toContain('"Noto Sans"');
+  });
+
+  it("keeps animated dice digits out of text selection", () => {
+    const spinner = readFileSync(new URL("../../../components/ui/D20Spinner.tsx", import.meta.url), "utf8");
+    expect(spinner).toContain("select-none");
+  });
 
   it("renders the reported d20 phrase in Czech", () => {
     const phrase = "Somewhere, a d20 holds its breath…";
