@@ -11,7 +11,7 @@ export function D20Spinner({ className }: { className?: string }) {
   return (
     <svg
       viewBox="0 0 24 24"
-      className={cn("size-4", className)}
+      className={cn("size-4 select-none", className)}
       aria-hidden="true"
       focusable="false"
     >
