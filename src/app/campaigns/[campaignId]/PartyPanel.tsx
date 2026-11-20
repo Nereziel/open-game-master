@@ -14,6 +14,8 @@ import type { PublicEncounter } from "@/lib/db/encounter-view";
 import { GameIcon } from "@/components/ui/GameIcon";
 import { spellGlyphIcon } from "@/lib/battlemap/spell-glyph-table";
 import { SectionHead } from "@/components/ui/SectionHead";
+import { Tooltip } from "@/components/ui/Tooltip";
+import { glossaryTerm } from "@/lib/help";
 import { PartyGone } from "@/app/campaigns/[campaignId]/PartyGone";
 import type { DepartingSheet } from "@/app/campaigns/[campaignId]/departing";
 import { KitButton, SettingToggle } from "./PanelKit";
@@ -827,18 +829,38 @@ export function PartyPanel({
                   ["PP", String(derived.passivePerception)],
                   ["Init", formatModifier(derived.initiative)],
                 ] as const
-              ).map(([statLabel, statValue]) => (
-                <span
-                  key={statLabel}
-                  className={cn("inline-flex items-baseline gap-1.5", shape && statLabel === "AC" && "text-lime-300")}
-                  title={
-                    statLabel === "AC" ? (acView(sheet, t).note ?? undefined) : undefined
-                  }
-                >
-                  <span className="eyebrow text-[9px] text-stone-500">{({ "AC": t("AC"), "PP": t("PP"), "Init": t("Init") } as Record<string, string>)[statLabel] ?? String(statLabel)}</span>
-                  <span className={cn("font-mono text-[13px]", shape && statLabel === "AC" ? "text-lime-300" : "text-stone-100")}>{statValue}</span>
-                </span>
-              ))}
+              ).map(([statLabel, statValue]) => {
+                const termId = statLabel === "AC" ? "armor_class" : statLabel === "PP" ? "passive_perception" : "initiative";
+                const term = glossaryTerm(termId);
+                const statName = (locale === "cs" ? term?.cs : locale === "fr" ? term?.fr : term?.term) ?? statLabel;
+                const explanation = (locale === "cs" ? term?.shortCs : locale === "fr" ? term?.shortFr : term?.short) ?? "";
+                // Preserve the armor-specific calculation note in the hover help.
+                const armorNote = statLabel === "AC" ? acView(sheet, t).note : null;
+                return (
+                  <Tooltip
+                    key={statLabel}
+                    content={
+                      <div className="space-y-1">
+                        <p className="font-semibold text-stone-100">{statName}</p>
+                        <p>{explanation}</p>
+                        {armorNote ? <p className="text-amber-200">{armorNote}</p> : null}
+                      </div>
+                    }
+                  >
+                    <span
+                      tabIndex={0}
+                      aria-label={`${statName}: ${statValue}`}
+                      className={cn(
+                        "inline-flex cursor-help items-baseline gap-1.5 rounded-sm outline-none focus-visible:ring-1 focus-visible:ring-amber-400",
+                        shape && statLabel === "AC" && "text-lime-300",
+                      )}
+                    >
+                      <span className="eyebrow text-[9px] text-stone-500">{({ "AC": t("AC"), "PP": t("PP"), "Init": t("Init") } as Record<string, string>)[statLabel] ?? String(statLabel)}</span>
+                      <span className={cn("font-mono text-[13px]", shape && statLabel === "AC" ? "text-lime-300" : "text-stone-100")}>{statValue}</span>
+                    </span>
+                  </Tooltip>
+                );
+              })}
             </div>
 
             {Object.keys(sheet.resources ?? {}).length ? (
