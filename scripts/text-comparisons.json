@@ -14,6 +14,7 @@
     "lib/db/core.ts"
   ],
   "sites": {
+    "lib/i18n/agent-diagnostics.ts#re-word": [["key",2,"anchored regexes match two fixed English server diagnostic protocol messages and capture their tool identifiers for localized display, never identify a game record or read player prose"]],
     "lib/dm/npc-state-guard-logic.ts#str-list": [["table-language",1,"Italian and English words for a body's change in the narrator's prose, only deciding whether a utility read of the narration is worth its call: a miss is caught on the next turn's read of a named person"]],
     "lib/dm/party-npcs-fight-logic.ts#str-list": [["key",1,"an NPC's custody, restraint and condition values (engine vocabulary)"]],
     "lib/dm/party-npcs-fight-logic.ts#str-eq": [["key",2,"an NPC's custody, restraint and condition values and an enemy row's status (engine vocabulary)"]],
