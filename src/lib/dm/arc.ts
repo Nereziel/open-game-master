@@ -878,7 +878,7 @@ async function arcModelCall(
     campaign.settings,
     [
       { role: "system", content: withLanguage(system, campaign.gameSettings.tableLanguage) },
-      { role: "user", content: [arcPlanningLanguageRequest(user, campaign.gameSettings.tableLanguage), label.startsWith("opening act") ? OPENING_ACT_FINAL_SHAPE : label.startsWith("saga plan") || label === "saga replan" ? SAGA_FINAL_SHAPE : ""].filter(Boolean).join("\n\n") },
+      { role: "user", content: [arcPlanningLanguageRequest(user, campaign.gameSettings.tableLanguage), label.startsWith("opening act") ? OPENING_ACT_FINAL_SHAPE : label.startsWith("saga plan") || label === "saga replan" || label === "saga chain" ? SAGA_FINAL_SHAPE : ""].filter(Boolean).join("\n\n") },
     ],
     { meta: { task: utilityTask ?? "arc_plan" }, timeoutMs: arcTextTimeoutMs(), thinking: false, temperature: 0 },
   );
