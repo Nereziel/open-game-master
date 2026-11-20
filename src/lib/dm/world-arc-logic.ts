@@ -156,22 +156,75 @@ export function worldArcPlanningContext(arc: StoryArc): string {
   return lines.filter(Boolean).join("\n").slice(0, 2600);
 }
 
-// Parses the generation pass's JSON (an array of {name, driver, rungs}).
+// Utility models sometimes wrap an otherwise valid list in an object:
+// {"worldArcs":[...]}, {"arcs":[...]}, or write a single world-clock object.
+// Accept those narrow variants, but NEVER interpret the main saga's "acts"
+// or "beats" as independent off-screen clocks.
+function asWorldArcList(raw: unknown): WorldArc[] {
+  const payload = raw && typeof raw === "object" && !Array.isArray(raw)
+    ? (raw as Record<string, unknown>)
+    : null;
+  const batch = Array.isArray(raw)
+    ? raw
+    : Array.isArray(payload?.worldArcs) ? payload.worldArcs
+    : Array.isArray(payload?.world_arcs) ? payload.world_arcs
+    : Array.isArray(payload?.arcs) ? payload.arcs
+    : Array.isArray(payload?.worldClocks) ? payload.worldClocks
+    : Array.isArray(payload?.clocks) ? payload.clocks
+    : Array.isArray(payload?.storylines) ? payload.storylines
+    : payload && (Array.isArray(payload.rungs) || Array.isArray(payload.stages)) ? [payload]
+    : [];
+  return normalizeWorldArcs(batch.map((entry) => {
+    const fields = entry && typeof entry === "object" && !Array.isArray(entry)
+      ? entry as Record<string, unknown>
+      : null;
+    if (!fields) return entry;
+    const rawRungs = fields.rungs ?? fields.stages ?? fields.steps;
+    return {
+      ...fields,
+      name: fields.name ?? fields.title,
+      driver: fields.driver ?? fields.faction ?? fields.actor,
+      rungs: Array.isArray(rawRungs)
+        ? rawRungs.map((rung) => {
+            if (!rung || typeof rung !== "object") return rung;
+            const stage = rung as Record<string, unknown>;
+            return stage.text ?? stage.description ?? stage.event;
+          })
+        : rawRungs,
+    };
+  }));
+}
+
+// Parses JSON arrays, single clock objects and explicit world-clock wrappers.
+// A syntactically valid main saga is still refused. Trimmed text around JSON
+// and Markdown fences are tolerated without executing model-supplied code.
 export function parseWorldArcsJson(raw: string): WorldArc[] {
   const cleaned = stripReasoningArtifacts(raw || "")
     .replace(/^```(?:json)?\s*/i, "")
     .replace(/```\s*$/, "")
     .trim();
-  const start = cleaned.indexOf("[");
-  const end = cleaned.lastIndexOf("]");
-  if (start < 0 || end <= start) {
-    return [];
+  const parse = (candidate: string): WorldArc[] => {
+    try {
+      return asWorldArcList(JSON.parse(candidate));
+    } catch {
+      return [];
+    }
+  };
+  // Prefer the entire reply: it preserves the top-level key defining which
+  // array is a world clock instead of blindly selecting an unrelated array.
+  const direct = parse(cleaned);
+  if (direct.length) return direct;
+  const arrayStart = cleaned.indexOf("[");
+  const arrayEnd = cleaned.lastIndexOf("]");
+  if (arrayStart >= 0 && arrayEnd > arrayStart) {
+    const embedded = parse(cleaned.slice(arrayStart, arrayEnd + 1));
+    if (embedded.length) return embedded;
   }
-  try {
-    return normalizeWorldArcs(JSON.parse(cleaned.slice(start, end + 1)));
-  } catch {
-    return [];
-  }
+  const objectStart = cleaned.indexOf("{");
+  const objectEnd = cleaned.lastIndexOf("}");
+  return objectStart >= 0 && objectEnd > objectStart
+    ? parse(cleaned.slice(objectStart, objectEnd + 1))
+    : [];
 }
 
 // One dice-driven step up the ladder. The caller decides WHETHER the arc
