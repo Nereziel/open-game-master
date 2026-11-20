@@ -8,6 +8,9 @@ import { installCatalog, translate, translatePlural } from "./translate";
 import { localeFromAcceptLanguage, localeOfServerLanguage, parseLocale, resolveLocale } from "./locale";
 import { localeTag, pluralCategory } from "../messages-logic";
 import { CS_NAMES_BY_TABLE } from "../content/names-cs";
+import { RESOURCE_CS_GUIDANCE } from "../srd/class-resources-cs-data";
+import { resourceDisplayName, resourceGuidance } from "../srd/class-resources-fr";
+import { resourceName } from "../srd/class-resources";
 import { FR_NAMES_BY_TABLE } from "../content/names-fr";
 import { installCsTables } from "./cs-tables";
 import { contentName, classFeatureName, subclassName } from "../content/names";
@@ -16,9 +19,25 @@ import { deviceSpeechLanguage, whisperLanguageCode } from "../stt-logic";
 
 
 installCatalog("cs", catalog);
-installCsTables({ names: CS_NAMES_BY_TABLE });
+installCsTables({ names: CS_NAMES_BY_TABLE, guidance: RESOURCE_CS_GUIDANCE });
 
 describe("Czech localization", () => {
+  it("translates resource counter names and help without changing the rule engine's English ids", () => {
+    expect(resourceName("lay_on_hands")).toBe("Lay on Hands (HP pool)");
+    expect(resourceName("divine_sense")).toBe("Divine Sense");
+    expect(resourceName("race_healing_hands")).toBe("Healing Hands");
+
+    expect(resourceDisplayName("lay_on_hands", "cs")).toBe("Vkládání rukou (zásoba životů)");
+    expect(resourceDisplayName("divine_sense", "cs")).toBe("Božský smysl");
+    expect(resourceDisplayName("race_healing_hands", "cs")).toBe("Léčivé ruce");
+    expect(resourceGuidance("race_healing_hands", "cs")).toContain("aasimar");
+    expect(resourceGuidance("lay_on_hands", "cs")).toContain("životů");
+    expect(resourceDisplayName("lay_on_hands", "en")).toBeNull();
+    expect(resourceGuidance("race_healing_hands", "en")).toBeNull();
+    expect(resourceDisplayName("unknown_resource", "cs")).toBeNull();
+    expect(Object.keys(CS_NAMES_BY_TABLE.resources).length).toBeGreaterThanOrEqual(35);
+  });
+
   it("selects Czech in settings and HTTP requests", () => {
     expect(parseLocale("cs")).toBe("cs");
     expect(localeOfServerLanguage("czech")).toBe("cs");
