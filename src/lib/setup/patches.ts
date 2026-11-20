@@ -96,7 +96,7 @@ export function picturesPatch(choice: PicturesChoice, savedBaseUrl = "", envBase
   }
   if (choice.kind === "openai") {
     const apiKey = choice.apiKey.trim();
-    const baseUrl = normalizeBaseUrl(choice.baseUrl.replace(/\\/images\\/generations\\/?$/i, ""));
+    const baseUrl = normalizeBaseUrl(choice.baseUrl.replace(/\/images\/generations\/?$/i, ""));
     const defaultUrl = normalizeBaseUrl(envBaseUrl || "https://api.openai.com/v1");
     const oldUrl = normalizeBaseUrl(savedBaseUrl || defaultUrl);
     const target = baseUrl || defaultUrl;
