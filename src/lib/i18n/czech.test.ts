@@ -2,6 +2,7 @@ import { describe, expect, it } from "vitest";
 import { calculatorDisplayText } from "../reference/calculator-display";
 import { APPEARANCE_THEMES } from "../appearance-themes";
 import { SHELF_TOUR, HUB_TOUR } from "../tours/workshop";
+import { PLAYER_TOUR, FIRST_TURN_TOUR, DM_TOUR } from "../tours/table";
 import catalog from "./cs.json";
 import { installCatalog, translate, translatePlural } from "./translate";
 import { localeFromAcceptLanguage, localeOfServerLanguage, parseLocale, resolveLocale } from "./locale";
@@ -89,6 +90,17 @@ describe("Czech localization", () => {
       expect(translate("en", step.title)).toBe(step.title);
     }
     expect(translate("cs", "The workshop shelf")).toBe("Polička dílny");
+  });
+
+  it("covers at least 69 of the 88 table tour headings and explanations in Czech", () => {
+    const entries = [...PLAYER_TOUR, ...FIRST_TURN_TOUR, ...DM_TOUR]
+      .flatMap((step) => [step.title, step.body]);
+    expect(entries).toHaveLength(88);
+    expect(entries.filter((entry) => translate("cs", entry) !== entry)).toHaveLength(69);
+    expect(translate("cs", "Welcome to the table")).toBe("Vítej u herního stolu");
+    expect(translate("cs", "Take your turn")).toBe("Odehraj svůj tah");
+    expect(translate("cs", "Write down what happened")).toBe("Zaznamenej, co se stalo");
+    expect(translate("en", "Welcome to the table")).toBe("Welcome to the table");
   });
 
   it("uses three Czech plural forms", () => {
