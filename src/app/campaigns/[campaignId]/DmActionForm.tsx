@@ -223,9 +223,18 @@ export function DmActionForm({
           its caption was tapped. Each control carries the field's name. */}
       <div className="stagger space-y-2.5">
         {shown.map((rawField) => {
-          const field = rawField.name === "meal" && rawField.variant === "supplies"
+          const baseField = rawField.name === "meal" && rawField.variant === "supplies"
             ? { ...rawField, label: t("Meal from the story"), placeholder: t("The host's dinner and the well"), help: t("Only when the party eats and drinks from something other than their packs. Covers the next dawn: no ration, no thirst. Scarce water still applies.") }
             : rawField;
+          // The names and values sent to the engine stay untouched; translate
+          // only labels, options and hints rendered in the human DM console.
+          const field = {
+            ...baseField,
+            label: t(baseField.label),
+            ...(baseField.placeholder ? { placeholder: t(baseField.placeholder) } : {}),
+            ...(baseField.help ? { help: t(baseField.help) } : {}),
+            ...(baseField.options ? { options: baseField.options.map((option) => ({ ...option, label: t(option.label) })) } : {}),
+          };
           return (
           <div key={field.name} className={cn(field.kind === "boolean" && "flex flex-wrap items-center justify-between gap-x-3")}>
             <div className={cn(field.square && "flex flex-wrap items-center gap-x-2")}>
