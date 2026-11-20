@@ -13,6 +13,23 @@ Four backends are exposed in the Images panel:
 | ComfyUI | anything ComfyUI runs on | the image model catalog, or any checkpoint |
 | OpenAI | none, the pictures are made off-box | the picture models your key lists |
 
+## Custom image API in the setup wizard
+
+In **Setup → Pictures** (the step headed **Should the table have pictures?**),
+select **OpenAI-compatible images API**. Enter the API **base URL**, model
+identifier, and the key issued for that service. A typical base URL ends in
+`/v1`; the application sends generations to `/v1/images/generations`.
+Leave the URL blank to inherit the server's image API address. You can also
+change these fields later in **Admin → Image generation**.
+
+The API endpoint must implement OpenAI-compatible image generation and return
+image data as base64 or a downloadable image URL. Model availability and the
+supported request parameters vary by service; the model picker also permits
+entering an identifier manually if the API does not list its image models.
+Credentials are stored on the server, not included in campaign snapshots.
+Changing to a different API host clears the saved image key unless you
+provide a key for the new service.
+
 ## The FLUX worker (MFLUX / SDNQ)
 
 Inline images are produced by a small HTTP worker that wraps the optimized
