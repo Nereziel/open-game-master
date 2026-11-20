@@ -33,7 +33,7 @@ function day(iso: string, locale: string): string {
 
 function moment(iso: string, locale: string): string {
   const date = new Date(iso);
-  return Number.isNaN(date.getTime()) ? "" : date.toLocaleString(locale, { dateStyle: "medium", timeStyle: "short" });
+  return Number.isNaN(date.getTime()) ? "" : date.toLocaleString(locale, { dateStyle: "medium", timeStyle: "short", hourCycle: "h23" });
 }
 
 // The build in a sentence: what the label's metadata means, for someone who
