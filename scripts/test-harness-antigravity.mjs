@@ -90,6 +90,8 @@ await test("the agent drops the defaults and the admin's customizations, and ser
   assert.equal(fields.inheritMcp, false);
   assert.equal(fields.subagent, false);
   assert.equal(fields.commandExecutionPolicy, "off");
+  assert.deepEqual(fields.tools, ["mcp_odm_odm_roll", "mcp_odm_odm_move"], "custom agent must not expose built-in CLI tools");
+  assert.ok(!fields.tools.includes("ask_permission") && !fields.tools.includes("browser_click_element"));
   assert.equal(fields.mcpServers.length, 1);
   const [server] = fields.mcpServers;
   assert.equal(server.name, "odm");
@@ -102,12 +104,14 @@ await test("the agent drops the defaults and the admin's customizations, and ser
   const plain = frontMatter(antigravityAgentFile({ system: "Summarise.", mcp: null }));
   assert.equal(plain.fields.mcpServers, undefined);
   assert.equal(plain.fields.excludeDefaultComponents, true);
+  assert.deepEqual(plain.fields.tools, [], "no MCP connection must mean no usable tools");
 });
 
 await test("only ODM's tools pass", async () => {
   assert.ok(antigravityToolAllowed("mcp_odm_roll"));
+  assert.ok(antigravityToolAllowed("mcp_odm_odm_roll"));
   assert.ok(antigravityToolAllowed("call_mcp_tool"));
-  for (const tool of ["run_command", "view_file", "write_to_file", "search_web", "read_url_content", "generate_image", "invoke_subagent", "mcp_github_search"]) {
+  for (const tool of ["ask_custom_permission", "ask_permission", "ask_question", "browser_click_element", "run_command", "view_file", "write_to_file", "search_web", "read_url_content", "generate_image", "invoke_subagent", "mcp_github_search"]) {
     assert.ok(!antigravityToolAllowed(tool), tool);
   }
 });
@@ -195,6 +199,16 @@ if (unix) {
     const error = seen.find((event) => event.type === "error");
     assert.equal(error?.kind, "lockdown");
     assert.match(error.message, /run_command/);
+    assert.ok(!seen.some((event) => event.type === "ready"));
+  });
+
+  await test("native Antigravity permission and browser tools still fail closed", async () => {
+    const { seen } = await run(session("agy-native", [
+      init(["mcp_odm_odm_roll", "ask_custom_permission", "ask_permission", "ask_question", "browser_click_element"]),
+    ]));
+    const error = seen.find((event) => event.type === "error");
+    assert.equal(error?.kind, "lockdown");
+    assert.match(error.message, /ask_custom_permission/);
     assert.ok(!seen.some((event) => event.type === "ready"));
   });
 
