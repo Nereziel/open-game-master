@@ -1,3 +1,5 @@
+import { RESOURCE_CS_EXTRA_NAMES } from "@/lib/srd/resource-names-cs-extra";
+
 // Community Czech display names for common SRD 5.1 entries.
 // Not an official Czech translation. Stored rules, slugs and DM tool arguments
 // remain English; unknown names fall back to the original English text.
@@ -1184,6 +1186,7 @@ export const CS_NAMES_BY_TABLE: Record<string, Record<string, string>> = {
     "grappler": "Chvat"
   },
   "resources": {
+    ...RESOURCE_CS_EXTRA_NAMES,
     "rage": "Zuřivost",
     "ki": "Body ki",
     "sorcery_points": "Body magie",
