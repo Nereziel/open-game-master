@@ -1,10 +1,9 @@
 // Image prompts in English at any table (src/lib/image-english.ts): at a
 // table playing in another language, the story text an image job sends is
-// first rewritten by one utility call inside the job; an English table makes
-// no call and sends its text as it was. A failed or unreadable rewrite fails
-// the job through its failed status and never reaches the image backend, and
-// the log names no text. One local server stands in for both the text model
-// and ComfyUI.
+// first rewritten by a utility call inside the job; an English table makes
+// no call. A malformed rewrite gets one strict retry, then safely falls back
+// to the original story text so the image job can still proceed. No story
+// text is written to logs. One local server stands in for text and ComfyUI.
 import assert from "node:assert/strict";
 import { randomBytes } from "node:crypto";
 import fs from "node:fs";
@@ -134,11 +133,25 @@ await test("another table sends the non-empty fields once, under the image instr
   assert.deepEqual(JSON.parse(user.content), PLACE);
 });
 
-await test("a failed or unreadable rewrite throws without naming the text", async () => {
-  answer = { status: 500 };
-  await assert.rejects(toEnglishForImage(table("italian"), PLACE), (error) => !error.message.includes("Vael"));
-  answer = { content: "Mi dispiace." };
-  await assert.rejects(toEnglishForImage(table("italian"), PLACE), (error) => !error.message.includes("Vael"));
+await test("failed image translation falls back without throwing or leaking story text", async () => {
+  const warning = [];
+  const originalWarn = console.warn;
+  console.warn = (...args) => warning.push(args.map(String).join(" "));
+  try {
+    answer = { status: 500 };
+    const beforeFailure = chatRequests.length;
+    assert.deepEqual(await toEnglishForImage(table("italian"), PLACE), PLACE);
+    assert.equal(chatRequests.length, beforeFailure + 1);
+    answer = { content: "Mi dispiace." };
+    const beforeUnreadable = chatRequests.length;
+    assert.deepEqual(await toEnglishForImage(table("italian"), PLACE), PLACE);
+    assert.equal(chatRequests.length, beforeUnreadable + 2, "malformed output gets one strict retry");
+    assert.ok(chatRequests.at(-1).messages[0].content.includes("TRANSLATION task"));
+    assert.ok(warning.some((line) => line.includes("fallback")));
+    assert.ok(!warning.some((line) => line.includes("Vael") || line.includes("allagata")));
+  } finally {
+    console.warn = originalWarn;
+  }
 });
 
 // ---- inside a job ----
@@ -162,13 +175,12 @@ await test("a location map at another table is drawn from the English rewrite", 
   assert.ok(!comfyPrompts.at(-1).includes("allagata"));
 });
 
-await test("a failed rewrite fails the map job and nothing reaches the image backend or the log", async () => {
+await test("failed image translation still sends a location map job to the image backend", async () => {
   answer = { status: 500 };
   const before = comfyPrompts.length;
-  const { failed, lines } = await mapJob("italian");
-  assert.ok(failed, "the table was not told the map failed");
-  assert.equal(comfyPrompts.length, before);
-  assert.ok(lines.length > 0);
+  const { lines } = await mapJob("italian");
+  assert.equal(comfyPrompts.length, before + 1);
+  assert.match(comfyPrompts.at(-1), /Una cripta allagata/);
   assert.ok(!lines.some((line) => line.includes("Vael") || line.includes("allagata")), "story text reached the log");
 });
 
@@ -217,11 +229,11 @@ await test("a WorldForge picture at another table is painted from the English re
   assert.ok(!prompts[0].includes("allagata"));
 });
 
-await test("a failed rewrite paints nothing and logs no story text", async () => {
+await test("failed translation does not block WorldForge painting and logs no story text", async () => {
   answer = { status: 500 };
   const { prompts, lines } = await paintJob("italian");
-  assert.equal(prompts.length, 0);
-  assert.ok(lines.some((line) => line.includes("[worldforge] picture failed")));
+  assert.equal(prompts.length, 1);
+  assert.match(prompts[0], /Una cripta allagata/);
   assert.ok(!lines.some((line) => line.includes("allagata")), "story text reached the log");
 });
 
