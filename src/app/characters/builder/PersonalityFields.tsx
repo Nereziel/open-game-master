@@ -2,6 +2,7 @@
 
 import { useId, useState } from "react";
 import { cn } from "@/lib/cn";
+import { useT } from "@/lib/locale";
 import {
   PERSONA_HINTS,
   PERSONA_KEYS,
@@ -34,6 +35,7 @@ export function PersonalityFields({
   suggestions: { lists: PersonaLists; fromBackground: boolean };
   backgroundName?: string;
 }) {
+  const t = useT();
   const baseId = useId();
   // Lines the player chose to write, kept open while still blank.
   const [writing, setWriting] = useState<Partial<Record<PersonaKey, boolean>>>({});
@@ -48,28 +50,28 @@ export function PersonalityFields({
         const captionId = `${baseId}-${key}`;
         const groups: PickerGroup[] = [
           {
-            label: suggestions.fromBackground && backgroundName ? `Suggested for ${backgroundName}` : "Suggestions",
-            options: list.map((line) => ({ id: line, name: line })),
+            label: suggestions.fromBackground && backgroundName ? t("Suggested for {background}", { background: backgroundName }) : t("Suggestions"),
+            options: list.map((line) => ({ id: line, name: t(line) })),
           },
           {
             label: null,
             options: [
-              { id: OWN, name: "Write my own" },
-              ...(current || own ? [{ id: NONE, name: "Leave it blank" }] : []),
+              { id: OWN, name: t("Write my own") },
+              ...(current || own ? [{ id: NONE, name: t("Leave it blank") }] : []),
             ],
           },
         ];
         return (
           <div key={key} role="group" aria-labelledby={captionId} className="min-w-0">
             <span id={captionId} className="block text-sm font-medium text-stone-200">
-              {PERSONA_LABELS[key]}
+              {t(PERSONA_LABELS[key])}
             </span>
-            <span className="mb-1.5 block text-xs text-stone-500">{PERSONA_HINTS[key]}</span>
+            <span className="mb-1.5 block text-xs text-stone-500">{t(PERSONA_HINTS[key])}</span>
             <OptionPicker
               value={own ? OWN : current}
               groups={groups}
               labelledBy={captionId}
-              placeholder="Pick one, or write your own"
+              placeholder={t("Pick one, or write your own")}
               className={cn(ui.input, "min-h-10")}
               onChange={(picked) => {
                 if (picked === OWN) {
@@ -87,8 +89,8 @@ export function PersonalityFields({
                 maxLength={PERSONA_ENTRY_MAX}
                 // eslint-disable-next-line jsx-a11y/no-autofocus -- the focus moves in only when the player just picked writing their own and the box is still empty
                 autoFocus={writing[key] && current === ""}
-                placeholder={list[0] ?? ""}
-                aria-label={`${PERSONA_LABELS[key]}, in your own words`}
+                placeholder={t(list[0] ?? "")}
+                aria-label={t("{field}, in your own words", { field: t(PERSONA_LABELS[key]) })}
                 className={cn(ui.input, "reveal mt-2 min-h-10 w-full")}
               />
             ) : null}
@@ -102,6 +104,7 @@ export function PersonalityFields({
 // The four lines as the sheet shows them, read-only; nothing when none was
 // given.
 export function PersonaLines({ persona }: { persona?: Partial<Persona> | null }) {
+  const t = useT();
   const given = PERSONA_KEYS.filter((key) => (persona?.[key] ?? "").trim());
   if (!given.length) {
     return null;
@@ -110,8 +113,8 @@ export function PersonaLines({ persona }: { persona?: Partial<Persona> | null })
     <dl className="space-y-1.5 text-sm">
       {given.map((key) => (
         <div key={key}>
-          <dt className="text-xs uppercase tracking-wide text-stone-500">{PERSONA_LABELS[key]}</dt>
-          <dd className="font-serif leading-relaxed text-stone-300">{persona?.[key]}</dd>
+          <dt className="text-xs uppercase tracking-wide text-stone-500">{t(PERSONA_LABELS[key])}</dt>
+          <dd className="font-serif leading-relaxed text-stone-300">{t(persona?.[key] ?? "")}</dd>
         </div>
       ))}
     </dl>
