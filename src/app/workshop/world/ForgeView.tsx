@@ -9,7 +9,8 @@ import { KitButton, PanelError } from "@/app/campaigns/[campaignId]/PanelKit";
 import { forgeReport, type ForgeApplied, type ForgeEntity, type ForgeLink, type ForgePreview } from "@/lib/worldforge/forge";
 import type { WorldApi, WorldState } from "./useWorld";
 import { TypeChip, typeOf } from "./world-ui";
-import { useT } from "@/lib/locale";
+import { useLocale, useT } from "@/lib/locale";
+import { worldTypeLabel } from "@/lib/worldforge/display-labels";
 
 // The forge, after WorldForge's: paste notes (a session recap, a page of a
 // setting, another tool's brainstorm) and the model lists what in them
@@ -27,6 +28,7 @@ type LinkRow = ForgeLink & { keep: boolean };
 
 export function ForgeView({ api, world, onOpen }: { api: WorldApi; world: WorldState; onOpen: (ref: string) => void }) {
   const t = useT();
+  const locale = useLocale();
   const { doc, entities } = world;
   const [text, setText] = useState("");
   const [hint, setHint] = useState("");
@@ -101,7 +103,7 @@ export function ForgeView({ api, world, onOpen }: { api: WorldApi; world: WorldS
                     <button type="button" onClick={() => onOpen(row.existing)} className="pk-chip text-[11px] text-stone-400">already in the world</button>
                   ) : (
                     <div className="w-44">
-                      <Select label="Type" size="sm" value={row.typeId} onChange={(typeId) => set(row.key, { typeId })} options={doc.types.map((type) => ({ value: type.id, label: type.name }))} />
+                      <Select label="Type" size="sm" value={row.typeId} onChange={(typeId) => set(row.key, { typeId })} options={doc.types.map((type) => ({ value: type.id, label: worldTypeLabel(type, locale) }))} />
                     </div>
                   )}
                   {row.existing ? <TypeChip type={typeOf(doc, entities.find((entity) => entity.ref === row.existing)!)} /> : null}
