@@ -10,6 +10,7 @@ import { ModelPicker } from "@/app/setup/SetupParts";
 import { blanks } from "@/app/admin/model-blanks";
 import { useRecheckOnReturn } from "@/app/admin/recheck-on-return";
 import { useT } from "@/lib/locale";
+import { localizeAgentDiagnostic } from "@/lib/i18n/agent-diagnostics";
 import type { MessageKey } from "@/lib/messages-logic";
 import type { HarnessId, HarnessStatus } from "@/lib/harness/types";
 
@@ -95,7 +96,7 @@ export function AgentPanel({ draft, update }: { draft: Draft; update: Update }) 
 
   return (
     <div className="space-y-3">
-      {unavailable && statuses[0]?.message ? <p className="su-note">{statuses[0].message}</p> : null}
+      {unavailable && statuses[0]?.message ? <p className="su-note">{localizeAgentDiagnostic(statuses[0].message, t)}</p> : null}
       <div className="flex items-center justify-between gap-2">
         <span className="text-xs font-medium text-stone-400">{t("Choose the program")}</span>
         <button type="button" onClick={refresh} disabled={refreshing} aria-busy={refreshing} className={ui.btnSmall}>
@@ -154,7 +155,7 @@ export function AgentPanel({ draft, update }: { draft: Draft; update: Update }) 
               <span className="text-xs text-stone-500">{t("It opens a browser to sign in with your own plan. Then press Check again.")}</span>
             </div>
           ) : chosen.message ? (
-            <p className="su-note">{chosen.message}</p>
+            <p className="su-note">{localizeAgentDiagnostic(chosen.message, t)}</p>
           ) : null}
           {chosen.installed ? (
             <p className="text-xs text-stone-500">
