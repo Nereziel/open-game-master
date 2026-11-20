@@ -16,9 +16,11 @@ import {
   LEAD_NOTE_PREFIX,
   RECAP_PREFIX,
   systemNoteWords,
+  haltedTurnPrefix,
   type CampaignMember,
 } from "@/lib/campaign-types";
-import { useT } from "@/lib/locale";
+import { useLocale, useT } from "@/lib/locale";
+import { translateWeatherNote } from "@/lib/srd/weather";
 import type { CampaignMessage } from "@/lib/db/messages";
 import type { CharacterSheet } from "@/lib/schemas/sheet";
 import type { TranscriptSheet } from "@/app/campaigns/[campaignId]/departing";
@@ -91,7 +93,14 @@ export function reportAction(t: T, message: CampaignMessage, onReport: (message:
 // translated here, at display, only when the content is exactly the note.
 const ADVENTURE_BEGINS_DM_LINE = `${ADVENTURE_BEGINS_NOTE} The Game Master opens the scene.`;
 
-function translateSystemNote(t: (key: string, vars?: Record<string, string | number>) => string, raw: string): string {
+function translateSystemNote(t: (key: string, vars?: Record<string, string | number>) => string, raw: string, locale: string): string {
+  if (locale === "cs") {
+    const haltedPrefix = haltedTurnPrefix(raw);
+    if (haltedPrefix && raw.slice(haltedPrefix.length) === "The server restarted while the Game Master was working on this turn.") {
+      return "Pán jeskyně narazil na problém: Server se restartoval, zatímco Pán jeskyně zpracovával tento tah.";
+    }
+    raw = translateWeatherNote(raw, locale);
+  }
   if (raw === "The fight is over.") return t("The fight is over.");
   let m = /^Chapter (\d+)(?:, "([^"]+)",)? comes to a close\.(.*)$/.exec(raw);
   if (m) {
@@ -158,6 +167,7 @@ function translateSystemNote(t: (key: string, vars?: Record<string, string | num
 
 export function SystemMessage({ content, glyph }: { content: string; glyph?: SystemGlyph }) {
   const t = useT();
+  const locale = useLocale();
   if (content.startsWith(LEAD_NOTE_PREFIX)) {
     return (
       <div data-tone="ember" className="panel session-banner-card rounded-xl border-ember-500/40">
@@ -198,7 +208,7 @@ export function SystemMessage({ content, glyph }: { content: string; glyph?: Sys
       ? t("The party is assembled and the adventure begins.")
       : content === ADVENTURE_BEGINS_DM_LINE
         ? t("The party is assembled and the adventure begins. The Game Master opens the scene.")
-        : translateSystemNote(t, systemNoteWords(content));
+        : translateSystemNote(t, systemNoteWords(content), locale);
   return (
     <p className="session-sysline">
       <GameIcon icon={{ kind: "glyph", key: join ? "system-party" : (glyph ?? "cue-bell") }} size="size-6" />
