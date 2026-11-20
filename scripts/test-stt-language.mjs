@@ -158,7 +158,10 @@ await test("the voice-chat transcript sends its ring in the table's language", a
 await test("OpenAI hears a member's clip in the table's language too", async () => {
   process.env.STT_URL = "off";
   delete process.env.STT_MODEL;
-  process.env.OPENAI_API_KEY = "sk-test";
+  // The fake OpenAI-compatible endpoint is a custom local host, not
+  // api.openai.com. Only the image-endpoint-specific key can be sent there;
+  // the generic OPENAI_API_KEY must never leak to a different host.
+  process.env.OPENAI_IMAGE_API_KEY = "sk-test";
   process.env.OPENAI_IMAGE_BASE_URL = "http://127.0.0.1:9/v1";
   process.env.STT_OPENAI_MODEL = "whisper-1";
   as(lead);
