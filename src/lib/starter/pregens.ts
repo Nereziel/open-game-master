@@ -232,22 +232,22 @@ const PREGEN_TEXT_FR: Record<string, { tagline: string; blurb: string; backstory
 // equipment, statistics and the original English pregens remain unchanged.
 const PREGEN_TEXT_CS: Record<string, { tagline: string; blurb: string; backstory: string }> = {
   brakk: {
-    tagline: "Brakk, člověk barbar",
+    tagline: "Brakk, lidský barbar",
     blurb: "Nejdřív udeří, potom se ptá. Rozmáchni se obouruční sekerou, vydrž nepřátelské údery a chraň ostatní tím, že budeš stát v první linii.",
     backstory: "Brakk vyrůstal ve vysokohorských průsmycích. Když stáda uhynula, sestoupil do nížin a dosud nenašel důvod se vrátit.",
   },
   kara: {
-    tagline: "Kara, člověk bojovnice",
+    tagline: "Kara, lidská bojovnice",
     blurb: "Štít, meč a kroužková zbroj. Nejspolehlivější opora družiny: těžko ji zasáhnout, ještě těžší je s ní pohnout a na každé zavřené dveře má plán.",
     backstory: "Deset let sloužila ve stráži říčního barona. Propustili ji, když baronovi došly peníze. Ze zvyku stále salutuje.",
   },
   vex: {
-    tagline: "Vex, člověk tulák",
+    tagline: "Vex, lidský tulák",
     blurb: "Zámky, stíny a rapír. Prozkoumej cestu před družinou, objev pasti dřív, než objeví ony tebe, a zasáhni nepřítele na nejcitlivějším místě.",
     backstory: "Vex opustil městský cech těsně předtím, než ho dostihl dluh. Vede si seznam lidí, kterým někdo něco dluží, a kratší seznam těch, kterým dluží sám.",
   },
   sera: {
-    tagline: "Sera, člověk klerička Domény života",
+    tagline: "Sera, lidská klerička Domény života",
     blurb: "Palcát, štít a ruce léčitelky. Udržuje družinu na nohou pomocí kouzel Léčení zranění a Požehnání a sama dokáže udržet bojovou linii.",
     backstory: "Sera vyrůstala jako sirotek při kapli. Naučila se, že klidný hlas a ještě jistější ruka vykonají víc dobra než celé kázání.",
   },
