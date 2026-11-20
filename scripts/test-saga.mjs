@@ -9,6 +9,7 @@ import {
   applySagaChain,
   arcExhausted,
   completeBeat,
+  deferConflictingSagaBosses,
   extractPreviousResolution,
   lengthProfile,
   needsSagaUpgrade,
@@ -17,6 +18,9 @@ import {
   parseActDetailJson,
   parseArcDeltaJson,
   parseSagaJson,
+  parseSagaPlanJson,
+  sagaPlanProblems,
+  sagaWithOpeningAct,
   parseSagaUpgradeJson,
   renderArcForPrompt,
   sagaComplete,
@@ -124,6 +128,33 @@ test("a clean saga parses: act-1 beats only, later acts stay sketches", () => {
   assert.equal(needsSagaUpgrade(arc), false);
   assert.equal(sagaComplete(arc), false);
   assert.equal(nextSketchAct(arc).act, 2);
+});
+
+test("a duplicated Aldo Merrin boss is deferred from act 2, not the finale", () => {
+  const record = JSON.parse(validSagaJson);
+  record.antagonist = "Aldo Merrin, ghúl";
+  record.actPlan[1].boss = { name: "Aldo Merrin, ghúl – poslední střet", detail: "Stejný finální protivník o dvě dějství dříve" };
+  record.actPlan[3].boss = { name: "Aldo Merrin, ghúl – poslední střet", detail: "Závěrečný střet v kapli" };
+  record.finaleBoss = { ...record.actPlan[3].boss };
+  const plan = parseSagaPlanJson(JSON.stringify(record), standard);
+  assert.ok(plan);
+  assert.ok(sagaPlanProblems(plan).some((problem) => problem.includes("Act 2")));
+  const fixed = deferConflictingSagaBosses(plan);
+  assert.deepEqual(fixed.deferredActs, [2]);
+  assert.equal(fixed.plan.sketches[1].boss, null);
+  assert.equal(fixed.plan.sketches[3].boss.name, record.finaleBoss.name);
+  assert.deepEqual(sagaPlanProblems(fixed.plan), []);
+  assert.equal(plan.sketches[1].boss.name, record.finaleBoss.name, "input remains unchanged");
+  const opening = { beats: [
+    { text: "Přijet do vesnice", waypoints: [] },
+    { text: "Nalézt stopy", waypoints: [] },
+    { text: "Čelit hlídači kaple", waypoints: [] },
+  ], events: [] };
+  const saved = sagaWithOpeningAct(fixed.plan, opening, standard);
+  assert.ok(saved?.saga);
+  assert.equal(saved.saga.sketches[1].boss, null, "boss must not return when raw record is parsed for storage");
+  assert.equal(saved.saga.finaleBoss.name, record.finaleBoss.name);
+  assert.deepEqual(deferConflictingSagaBosses(fixed.plan).deferredActs, [], "repair is idempotent");
 });
 
 test("garbage actPlan degrades to a saga-less arc instead of failing", () => {
