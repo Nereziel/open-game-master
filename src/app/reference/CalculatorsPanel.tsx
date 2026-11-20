@@ -6,6 +6,7 @@ import { NumberStepper } from "@/components/ui/NumberStepper";
 import { Select } from "@/components/ui/Select";
 import { CALCULATORS, type CalcInput } from "@/lib/reference/calculators";
 import { useT } from "@/lib/locale";
+import { calculatorDisplayText } from "@/lib/reference/calculator-display";
 
 // Every table calculation on one screen.
 //
@@ -16,6 +17,7 @@ import { useT } from "@/lib/locale";
 
 export function CalculatorsPanel() {
   const t = useT();
+  const display = (value: string) => calculatorDisplayText(value, t);
   const [openId, setOpenId] = useState(CALCULATORS[0]?.id ?? "");
   const [inputs, setInputs] = useState<Record<string, CalcInput>>(() =>
     Object.fromEntries(CALCULATORS.map((calculator) => [calculator.id, { ...calculator.defaults }])),
@@ -77,7 +79,7 @@ export function CalculatorsPanel() {
                 label={t(field.label)}
                 value={String(input[field.key] ?? "")}
                 onChange={(next) => set(field.key, next)}
-                options={field.options.map((option) => ({ value: option.value, label: t(option.label) }))}
+                options={field.options.map((option) => ({ value: option.value, label: display(option.label) }))}
                 className="w-full"
               />
             )}
@@ -86,22 +88,22 @@ export function CalculatorsPanel() {
       </div>
 
       <div className="panel ornate rounded-xl p-4">
-        <p key={result.headline} className="gold-title count-pop font-display text-2xl">{t(result.headline)}</p>
+        <p key={result.headline} className="gold-title count-pop font-display text-2xl">{display(result.headline)}</p>
         <ul className="stagger mt-3 space-y-2">
           {result.parts.map((part) => (
             <li key={part.label} className="flex items-baseline justify-between gap-3">
-              <span className="text-sm text-stone-400">{t(part.label)}</span>
+              <span className="text-sm text-stone-400">{display(part.label)}</span>
               <span className="text-right">
-                <span className="block text-sm text-stone-200">{t(part.value)}</span>
+                <span className="block text-sm text-stone-200">{display(part.value)}</span>
                 {part.detail ? (
-                  <span className="block text-xs text-stone-500">{t(part.detail)}</span>
+                  <span className="block text-xs text-stone-500">{display(part.detail)}</span>
                 ) : null}
               </span>
             </li>
           ))}
         </ul>
         {result.note ? (
-          <p className="reveal mt-3 border-t border-amber-500/15 pt-3 text-xs text-stone-500">{t(result.note)}</p>
+          <p className="reveal mt-3 border-t border-amber-500/15 pt-3 text-xs text-stone-500">{display(result.note)}</p>
         ) : null}
       </div>
     </div>
