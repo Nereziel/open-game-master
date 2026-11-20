@@ -139,6 +139,46 @@ const BANKS_FR: Record<string, Bank> = {
   },
 };
 
+// Czech titles use preposition phrases instead of gendered adjectives;
+// any noun and place can combine without broken agreement.
+const BANKS_CS: Record<string, Bank> = {
+  high_fantasy: {
+    things: ["Koruna", "Přísaha", "Trůn", "Jiskra", "Čepel", "Propast", "Příliv", "Píseň", "Drak", "Lucerna"],
+    places: ["z Popelavého království", "od Šedé řeky", "z Potopené pevnosti", "z Trnové tvrze", "ze Stříbrného pohraničí", "z Vaelu", "ze Staré stezky", "z Údolí žáru"],
+    marks: ["bez dědice", "v plamenech", "beze jména", "ve stínu", "z dávných věků", "beze svědků", "ztracená v čase"],
+  },
+  dark_fantasy: {
+    things: ["Hniloba", "Hlad", "Hranice", "Zvon", "Koruna", "Rána", "Závoj", "Hrob"],
+    places: ["ze Zkaženého údolí", "z Havraních blat", "z Popelavého opatství", "od Konce zítřka", "od Utopeného chóru"],
+    marks: ["bez naděje", "v slzách", "ve tmě", "z krve", "beze svědků", "v popelu"],
+  },
+  mystery: {
+    things: ["Dopis", "Klíč", "Medailon", "Zápisník", "Portrét", "Hodiny", "Maškarní ples", "Závěť"],
+    places: ["z Panství Černoles", "z Harrowovy ulice", "ze Zlatého divadla", "z Fenwickova sídla", "z Nočního vlaku"],
+    marks: ["beze stopy", "o půlnoci", "bez podpisu", "v šarlatu", "z poslední noci", "za zavřenými dveřmi"],
+  },
+  horror: {
+    things: ["Hlad", "Šepot", "Zvon", "Temnota", "Dveře", "Ukolébavka", "Návštěvník", "Žně"],
+    places: ["od Dutého potoka", "z Ústavu", "ze Slaných močálů", "od Majáku", "z Vdovina odpočinku"],
+    marks: ["bez konce", "z hlubin", "za stěnou", "bez hlasu", "z posledního dechu", "z popela"],
+  },
+  cyberpunk: {
+    things: ["Signál", "Přízrak", "Protokol", "Šum", "Kontrakt", "Obvod", "Zkrat", "Neon"],
+    places: ["ze Sektoru devět", "z Podměstí", "z Kowloonských věží", "ze Skleněné špice", "z Nočního trhu"],
+    marks: ["bez spojení", "z chromu", "po výpadku", "ve tmě", "na nule", "bez odezvy"],
+  },
+  steampunk: {
+    things: ["Stroj", "Ozubené kolo", "Vzducholoď", "Automat", "Výheň", "Kompas", "Výprava", "Patent"],
+    places: ["z Mosazného přístavu", "ze Železné čtvrti", "z Oblačných doků", "z Ozubeného města", "z Měděné trati"],
+    marks: ["z mosazi", "bez návratu", "ze ztraceného věku", "v tichu", "na pružinách", "ve zlatě"],
+  },
+  post_apocalyptic: {
+    things: ["Pustina", "Signál", "Konvoj", "Voda", "Spad", "Rádio", "Bunkr", "Prach"],
+    places: ["ze Suchého moře", "ze Silnice 66", "ze Skleněné pouště", "z Rezavého města", "z Mrtvé zóny"],
+    marks: ["posledních dnů", "v plamenech", "beze stopy", "v rzi", "bez frekvence", "po Pádu"],
+  },
+};
+
 const pickOne = <T,>(list: T[], random: () => number) => list[Math.floor(random() * list.length) % list.length];
 
 // Titles start the sentence they are, so the thing's article is capitalised
@@ -147,12 +187,21 @@ const cap = (title: string) => title.charAt(0).toUpperCase() + title.slice(1);
 
 export function rollCampaignTitle(genre: string, current = "", random: () => number = Math.random, locale: Locale = "en"): string {
   const french = locale === "fr";
-  const bank = french ? BANKS_FR[genre] ?? FANTASY_FR : BANKS[genre] ?? FANTASY;
+  const czech = locale === "cs";
+  const bank = czech ? BANKS_CS[genre] ?? BANKS_CS.high_fantasy : french ? BANKS_FR[genre] ?? FANTASY_FR : BANKS[genre] ?? FANTASY;
   for (let attempt = 0; attempt < 8; attempt += 1) {
     const shape = Math.floor(random() * 3);
     // The three shapes: « Le X Y », « Le X de Z », « Le X Y de Z » in
     // French; "The X Y", "X of Z", "The X Y of Z" in English.
-    const title = french
+    const title = czech
+      ? cap(
+          shape === 0
+            ? `${pickOne(bank.things, random)} ${pickOne(bank.marks, random)}`
+            : shape === 1
+              ? `${pickOne(bank.things, random)} ${pickOne(bank.places, random)}`
+              : `${pickOne(bank.things, random)} ${pickOne(bank.marks, random)} ${pickOne(bank.places, random)}`,
+        )
+      : french
       ? cap(
           shape === 0
             ? `${pickOne(bank.things, random)} ${pickOne(bank.marks, random)}`
@@ -167,7 +216,7 @@ export function rollCampaignTitle(genre: string, current = "", random: () => num
           : `The ${pickOne(bank.marks, random)} ${pickOne(bank.things, random)} of ${pickOne(bank.places, random)}`;
     if (title !== current) return title;
   }
-  return french
+  return czech || french
     ? cap(`${pickOne(bank.things, random)} ${pickOne(bank.places, random)}`)
     : `${pickOne(bank.things, random)} of ${pickOne(bank.places, random)}`;
 }
