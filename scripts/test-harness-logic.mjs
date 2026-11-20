@@ -103,6 +103,36 @@ test("a turn is rendered as the DM's own rules plus a transcript, with the pream
   assert.ok(!prompt.includes("RULES:"), "the rules stay in the system prompt, not the transcript");
 });
 
+test("a Czech table repeats the language contract at the end of an agent's turn, but an English table does not", () => {
+  const czech = renderTurn([
+    { role: "system", content: "RULES\n\nTABLE LANGUAGE: The players read Czech. Write everything they read in Czech." },
+    { role: "user", content: "[Nerez] Jdu ke kapli." },
+  ]);
+  assert.match(czech.system, /TABLE LANGUAGE: The players read Czech/);
+  assert.match(czech.prompt, /CURRENT TABLE LANGUAGE: Czech/);
+  assert.match(czech.prompt, /descriptions in new tool arguments in Czech/);
+  assert.ok(czech.prompt.indexOf("Jdu ke kapli") < czech.prompt.indexOf("CURRENT TABLE LANGUAGE"));
+  const english = renderTurn([
+    { role: "system", content: "RULES" },
+    { role: "user", content: "[Nerez] I go to the chapel." },
+  ]);
+  assert.doesNotMatch(english.prompt, /CURRENT TABLE LANGUAGE/);
+});
+
+test("a structured CLI completion ends with a JSON-only contract, unlike an ordinary summary", () => {
+  const json = renderCompletion([
+    { role: "system", content: 'Answer with exactly one JSON object: {"claims":[]}' },
+    { role: "user", content: "The scene did not trigger a roll." },
+  ]);
+  assert.match(json.prompt, /OUTPUT CONTRACT: This is a data task/);
+  assert.match(json.prompt, /No prose, scene, Markdown/);
+  const ordinary = renderCompletion([
+    { role: "system", content: "Write one paragraph of prose." },
+    { role: "user", content: "Summarise the chapter." },
+  ]);
+  assert.equal(ordinary.prompt, "Summarise the chapter.");
+});
+
 test("a turn resumed after dice shows the calls and results as engine lines", () => {
   const { prompt } = renderTurn([
     { role: "system", content: "rules" },
