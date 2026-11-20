@@ -3650,7 +3650,7 @@
     "lib/locale.tsx#str-eq": [
       [
         "key",
-        4,
+        6,
         "locale code comparisons"
       ]
     ],
