@@ -1,5 +1,5 @@
 import { generateStoryImage, imageProducerReady } from "@/lib/image-generate";
-import { recordDmTrace } from "@/lib/dm/trace";
+import { recordDmTrace, withDmTrace } from "@/lib/dm/trace";
 import { imagesAvailable } from "@/lib/capabilities";
 import {
   getCampaignMessage,
@@ -64,7 +64,7 @@ export function fulfillMessageImage(
     return Promise.resolve();
   }
   publishMediaStatus(campaignId, "image", messageId, "queued");
-  return enqueueMediaJob(`image ${messageId}`, async () => {
+  return enqueueMediaJob(`image ${messageId}`, async () => withDmTrace({ flow: "scene_image", campaignId }, async () => {
     publishMediaStatus(campaignId, "image", messageId, "generating");
     try {
       const campaign = getCampaignById(campaignId);
@@ -104,7 +104,7 @@ export function fulfillMessageImage(
       recordImageFailure(campaignId, messageId, reason);
       throw error;
     }
-  });
+  }));
 }
 
 // The failure above is an ephemeral event, and the placeholder reads the
