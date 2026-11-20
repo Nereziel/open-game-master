@@ -4,6 +4,7 @@ import { useCallback, useMemo, useState } from "react";
 import { SessionBanner, bannerButtonClass } from "@/app/campaigns/[campaignId]/SessionBanner";
 import { appNotice } from "@/components/ui/ConfirmDialog";
 import type { NarrationAudio } from "@/app/campaigns/[campaignId]/useNarrationAudio";
+import type { CampaignMessage } from "@/lib/db/messages";
 import type { NarrationStatus } from "@/app/campaigns/[campaignId]/useCampaignStream";
 import { useT } from "@/lib/locale";
 
@@ -18,11 +19,11 @@ import { useT } from "@/lib/locale";
 // What each seat should be told. A seat with narration muted is not waiting
 // for a voice and is told nothing.
 export function useNarrationStatus(
-  narration: Pick<NarrationAudio, "muted" | "playbackFailure">,
+  narration: Pick<NarrationAudio, "muted" | "playbackFailure" | "mode">,
   status: Record<string, NarrationStatus>,
 ): Record<string, NarrationStatus> | undefined {
   const t = useT();
-  const { muted, playbackFailure } = narration;
+  const { muted, playbackFailure, mode } = narration;
   return useMemo(() => {
     if (muted) {
       return undefined;
@@ -30,23 +31,29 @@ export function useNarrationStatus(
     return playbackFailure
       ? {
           ...status,
-          [playbackFailure]: { state: "failed" as const, reason: t("The audio was made, but this device could not play it.") },
+          [playbackFailure]: { state: "failed" as const, reason: mode === "browser" ? t("The browser could not read this passage aloud.") : t("The audio was made, but this device could not play it.") },
         }
       : status;
-  }, [muted, playbackFailure, status, t]);
+  }, [muted, playbackFailure, mode, status, t]);
 }
 
 // Plays the stored narration, rendering it first when this passage has never
 // been voiced. Resolves to an error string on failure, null on success.
 export function useNarrationReplay(
   campaignId: string,
-  narration: Pick<NarrationAudio, "unlock" | "play">,
+  narration: Pick<NarrationAudio, "unlock" | "play" | "mode" | "speak">,
   known: Record<string, string>,
+  messages: CampaignMessage[],
 ) {
-  const { unlock, play } = narration;
+  const { unlock, play, mode, speak } = narration;
   const t = useT();
   return useCallback(
     async (messageId: string): Promise<string | null> => {
+      if (mode === "browser") {
+        const message = messages.find((entry) => entry.id === messageId);
+        if (!message) return t("This passage is no longer available.");
+        return speak?.(messageId, message.content) ? null : t("Web Speech is unavailable in this browser.");
+      }
       // The click doubles as the gesture that gets us past the browser's
       // autoplay block.
       unlock();
@@ -67,7 +74,7 @@ export function useNarrationReplay(
       play(messageId, data.url);
       return null;
     },
-    [campaignId, unlock, play, known, t],
+    [campaignId, unlock, play, known, messages, mode, speak, t],
   );
 }
 

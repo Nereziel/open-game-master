@@ -408,15 +408,15 @@ export function SessionView({
   // Narration that was not read aloud, and the way to ask for it again
   // (issue 88): under the passage in the transcript, and above the composer
   // where a staged fight still shows it.
-  const narrationStatus = useNarrationStatus(narration, state.narrationStatus);
-  const replayNarration = useNarrationReplay(campaign?.id ?? "", narration, state.narrationAudio);
+  const narrationStatus = useNarrationStatus(narration, narration.mode === "browser" ? {} : state.narrationStatus);
+  const replayNarration = useNarrationReplay(campaign?.id ?? "", narration, state.narrationAudio, state.messages);
   const messageIds = useMemo(() => state.messages.map((message) => message.id), [state.messages]);
   // Sound the browser is holding until this tab is clicked, named above the
   // composer so a seat that only watches knows to click (AudioWaitingBanner).
   // A phone on another view has no composer on screen; it gets the same
   // banner over the bottom tabs.
   const ttsOn = Boolean(campaign?.gameSettings?.ttsEnabled);
-  const narrationHeld = ttsOn && !narration.muted ? narration.held : 0;
+  const narrationHeld = (ttsOn || narration.mode === "browser") && !narration.muted ? narration.held : 0;
   const { unlock: unlockNarration } = narration;
   const { unlock: unlockAmbience, waiting: ambienceWaiting } = ambience;
   const audioWaiting = useMemo(

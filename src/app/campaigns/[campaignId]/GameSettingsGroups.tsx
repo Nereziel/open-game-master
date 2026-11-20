@@ -281,7 +281,7 @@ export function NarrationGroup({
       {narrating ? <NarratorLanguageNote language={settings.tableLanguage} /> : null}
       {narrating ? <CharacterVoices campaignId={campaignId} settings={settings} steersStory patch={patch} /> : null}
       {narrating || narrationOff ? <NarrationNote /> : null}
-      <p className="text-stone-500">{t("Whether the story is read aloud is the whole table's setting. How loud it plays, or muting it, is each person's own, from the speaker button at the table.")}</p>
+      <p className="text-stone-500">{t("This switch controls server-generated narration for the table. Each player can separately choose free browser speech under Settings > Playback, even when server narration is off.")}</p>
     </>
   );
 }

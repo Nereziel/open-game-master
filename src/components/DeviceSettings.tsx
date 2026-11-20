@@ -26,6 +26,7 @@ import {
 import { AUDIO_PREF_FIELDS, writeAudioPref, type AudioPrefField } from "@/lib/audio-prefs";
 import { cn } from "@/lib/cn";
 import { DiceLookButton } from "@/components/DiceLookEditor";
+import { BrowserSpeechSettings } from "@/components/BrowserSpeechSettings";
 import { DictationShortcutField } from "@/components/DictationShortcutField";
 import {
   requestMotionAccess,
@@ -427,7 +428,7 @@ function PlaybackSection({ devices }: { devices: ReturnType<typeof useDevices> }
     <section>
       <SectionHead title={t("Playback")} glyph="tab-ambience" />
       <p className="-mt-1 mb-2 text-xs text-stone-500">
-        {t("Only on this device: how loud each part of the table plays for you. Whether the story is read aloud at all is the table's own Narration setting.")}
+        {t("Adjust what you hear on this device. Choose server or browser speech below; the campaign's Narration setting controls server speech only.")}
       </p>
       <div className="space-y-3">
         <div>
@@ -470,6 +471,7 @@ function PlaybackSection({ devices }: { devices: ReturnType<typeof useDevices> }
           on={!narrationMuted}
           onChange={(on) => writeAudioPref("narrationMuted", !on)}
         />
+        <BrowserSpeechSettings />
         <Slider
           label={t("Ambience")}
           value={ambienceVolume}
