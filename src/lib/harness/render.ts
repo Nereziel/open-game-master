@@ -297,8 +297,13 @@ export function renderCompletion(messages: readonly RenderMessage[]): RenderedTu
   // read. For the latter, make the final instruction a data-only contract:
   // otherwise the agent may continue narrating after its JSON fence.
   const wantsJson = systemParts.some((part) => /JSON (?:object|array)|strict JSON|valid JSON/i.test(part));
+  // A strict array task (off-screen world arcs) must not inherit the generic
+  // object-or-array hint: some CLI models return a full saga object instead.
+  const wantsArray = systemParts.some((part) =>
+    /Reply with ONLY a strict JSON array|outermost value MUST start with \[|Begin with \[ and end with \]/i.test(part),
+  );
   const jsonContract = wantsJson
-    ? "OUTPUT CONTRACT: This is a data task, NOT a Game Master turn. Return exactly the requested JSON value and NOTHING else. No prose, scene, Markdown, code fences, explanation, or extra fields. Start with { or [; end with } or ]."
+    ? `OUTPUT CONTRACT: This is a data task, NOT a Game Master turn. Return exactly the requested JSON value and NOTHING else. No prose, scene, Markdown, code fences, explanation, or extra fields. ${wantsArray ? "Start with [ and end with ]. Do NOT return an object." : "Start with { or [; end with } or ]."}`
     : "";
   return { system, prompt: [prompt, jsonContract].filter(Boolean).join("\n\n") };
 }
