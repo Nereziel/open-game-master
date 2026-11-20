@@ -103,6 +103,10 @@ export function VoicePanel({
   // promise chain rather than an awaited helper so the state update plainly
   // happens in a callback rather than in the effect body.
   useEffect(() => {
+    // The channels endpoint is SFU-only and deliberately returns 403 when
+    // voice chat is disabled. Do not probe it until voice availability is
+    // known, or when the active transport is browser-to-browser mesh.
+    if (!voice.available || voice.transport !== "sfu") return;
     let cancelled = false;
     fetch(`/api/campaigns/${campaignId}/voice/channels`)
       .then((response) => (response.ok ? response.json() : null))
@@ -117,7 +121,7 @@ export function VoicePanel({
     return () => {
       cancelled = true;
     };
-  }, [campaignId, roster]);
+  }, [campaignId, roster, voice.available, voice.transport]);
 
   const channelAction = useCallback(
     async (body: Record<string, unknown>) => {
