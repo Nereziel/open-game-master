@@ -416,7 +416,7 @@ export async function readClaims(
         input.text,
         input.heading,
         bonds?.words ?? "",
-      ),
+      ) + "\n\nREQUIRED JSON RESPONSE SHAPE: {\\\"claims\\\":[{\\\"kind\\\":\\\"one of the requested kinds\\\",\\\"quote\\\":\\\"exact quotation from the passage\\\"}]}. If nothing qualifies, return {\\\"claims\\\":[]}. Do NOT return amount, cast, fight_start, roll_ask, aside, speaker or bond directly as top-level fields. Output a single JSON object containing ONLY claims.",
     },
   ];
   // The same passage read for the same things against the same grounding is
