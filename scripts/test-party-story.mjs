@@ -72,6 +72,15 @@ await test("Stored shapes default to blank and keep what was written, and the ta
   assert.equal(kept.backstoryBy, "mira");
 });
 
+await test("Drafts follow Czech/French UI on an English table, but respect an explicitly non-English table", () => {
+  assert.equal(story.partyDraftLanguage("english", "cs"), "czech");
+  assert.equal(story.partyDraftLanguage("english", "fr"), "french");
+  assert.equal(story.partyDraftLanguage("english", "en"), "english");
+  assert.equal(story.partyDraftLanguage("english"), "english");
+  assert.equal(story.partyDraftLanguage("german", "cs"), "german");
+  assert.equal(story.partyDraftLanguage("czech", "en"), "czech");
+});
+
 await test("A draft reply is cleaned for the field", async () => {
   assert.equal(story.cleanPartyDraft('  "They met at the ford."  '), "They met at the ford.");
   assert.equal(story.cleanPartyDraft("```\nThey met.\n```"), "They met.");
@@ -235,6 +244,14 @@ await test("The draft asks the model from the characters' backstories and saves 
   assert.ok(asked.includes("A river pilot who lost her boat."), asked);
   assert.ok(asked.includes("A smith's son who cannot swim."), asked);
   assert.ok(asked.includes("A war is ending badly."), "the premise is what the setup said of the group");
+  model.script([reply({ text: "Míra a Brann se setkali u řeky." })]);
+  const czechDraft = await call(route, "POST", { do: "draft", readerLocale: "cs" }, params);
+  assert.equal(czechDraft.status, 200, JSON.stringify(czechDraft.json));
+  assert.equal(czechDraft.json.text, "Míra a Brann se setkali u řeky.");
+  const systemForCzech = model.requests.at(-1).messages.find((message) => message.role === "system").content;
+  assert.match(systemForCzech, /TABLE LANGUAGE: The players read Czech/);
+  const invalidLocale = await call(route, "POST", { do: "draft", readerLocale: "invalid" }, params);
+  assert.equal(invalidLocale.status, 400);
   assert.equal(getParty(world.campaignId).backstory, "");
   world.close();
   model.close();
