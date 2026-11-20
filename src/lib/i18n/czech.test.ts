@@ -69,6 +69,8 @@ describe("Czech localization", () => {
     expect(calculatorDisplayText("19 miles in a full 8-hour day", cs))
       .toBe("Za celý osmihodinový den 19 mil");
     expect(calculatorDisplayText("CR 3", cs)).toBe("NB 3");
+    expect(calculatorDisplayText("A large body carries x2 what a Medium one does.", cs))
+      .toBe("Postava velikosti velká unese 2× tolik co středně velká postava.");
     expect(calculatorDisplayText("An unfamiliar pack-specific result", cs))
       .toBe("An unfamiliar pack-specific result");
     expect(calculatorDisplayText("2 monsters against 4 players", en))
