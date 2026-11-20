@@ -15,6 +15,7 @@ import {
   endpointUnreachable,
 } from "@/lib/model-client";
 import { requestHarnessMessage } from "@/lib/harness/bridge";
+import { dmTraceEnabled, newDmTraceId, recordDmTrace } from "@/lib/dm/trace";
 import { harnessConfig, harnessContextTokens } from "@/lib/harness/status";
 import { raceJobStop, withJobStage } from "@/lib/dm/job-control";
 import { MODEL_STAGE_GRACE_MS } from "@/lib/dm/job-stage-logic";
@@ -248,6 +249,7 @@ async function attempt(
 ): Promise<DmCallResult> {
   const scope = currentModelTask();
   const task = options.meta?.task ?? scope?.task ?? ledgerRole;
+  const traceId = dmTraceEnabled() ? newDmTraceId() : null;
   const toolTokens = toolDefinitionTokens(options.tools);
   const calibration = calibrationFor(route.key);
   let sent = messages;
@@ -305,6 +307,13 @@ async function attempt(
         outcome: "capacity",
         fallback,
       });
+      if (traceId) {
+        recordDmTrace("model_blocked", {
+          traceId, task, reason: "context_capacity", detail: fit.reason,
+          model: route.model, backend: route.provider, role: ledgerRole,
+          fallback, messages, toolCount: options.tools?.length ?? 0,
+        });
+      }
       return { error: capacityResponse(route, fit.reason) };
     }
     if (fit.ok && (fit.dropped || fit.clipped)) {
@@ -374,8 +383,38 @@ async function attempt(
   if (background) {
     waited = await waitForInteractive(route.key);
   }
-  const result = background ? await call() : await asInteractive(route.key, call);
+  if (traceId) {
+    recordDmTrace("model_request", {
+      traceId, task, role: ledgerRole, backend: route.provider, model: route.model,
+      fallback, messages: sent, tools: options.tools,
+      options: {
+        toolChoice: options.toolChoice, thinking: options.thinking,
+        temperature: options.temperature, timeoutMs: options.timeoutMs,
+        callIndex: options.meta?.callIndex, turnId: options.meta?.turnId,
+        maxOutputTokens: sizing?.outputTokens,
+        fitDropped: sizing?.dropped, fitClipped: sizing?.clipped,
+      },
+    });
+  }
+  let result: UpstreamResult;
+  try {
+    result = background ? await call() : await asInteractive(route.key, call);
+  } catch (error) {
+    if (traceId) recordDmTrace("model_exception", {
+      traceId, task, message: error instanceof Error ? error.message : String(error),
+    });
+    throw error;
+  }
   const durationMs = Date.now() - started - waited;
+  if (traceId) {
+    recordDmTrace("model_response", {
+      traceId, task, durationMs, role: ledgerRole, backend: route.provider,
+      model: route.model, fallback, finishReason: result.finishReason,
+      message: result.message ?? null,
+      error: result.error ? { status: result.error.status, statusText: result.error.statusText } : null,
+      toolsDropped: result.toolsDropped ?? false, usage: result.usage ?? null,
+    });
+  }
   const firstTokenMs = firstTokenAt ? firstTokenAt - started - waited : undefined;
 
   if (result.usage) {
