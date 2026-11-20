@@ -3555,11 +3555,11 @@
         "locale tag normalization"
       ]
     ],
-    "lib/i18n/locale.ts#str-eq": [["key",5,"locale code comparisons, and the server's language code (global config serverLanguage)"]],
+    "lib/i18n/locale.ts#str-eq": [["key",8,"locale code comparisons, and the server's language code (global config serverLanguage)"]],
     "lib/i18n/locale.ts#str-startsWith": [
       [
         "key",
-        2,
+        3,
         "locale tag prefix checks"
       ]
     ],
