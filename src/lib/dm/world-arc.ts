@@ -5,8 +5,8 @@ import { listChapters } from "@/lib/db/chapters";
 import { arcTextTimeoutMs } from "@/lib/model-client";
 import { requestUtilityMessage } from "@/lib/dm/model";
 import { trackUtilityCall } from "@/lib/dm/call-tracker";
-import { renderArcForPrompt, type StoryArc } from "@/lib/dm/arc-logic";
-import { parseWorldArcsJson, type WorldArc } from "@/lib/dm/world-arc-logic";
+import { type StoryArc } from "@/lib/dm/arc-logic";
+import { parseWorldArcsJson, worldArcPlanningContext, type WorldArc } from "@/lib/dm/world-arc-logic";
 
 // World-arc generation: the one model call the world-simulation engine ever
 // makes. It runs when a campaign has no unresolved world arcs (at arc
@@ -16,11 +16,11 @@ import { parseWorldArcsJson, type WorldArc } from "@/lib/dm/world-arc-logic";
 
 const GENERATE_SYSTEM = `You are planning the OFF-SCREEN side of an AI GM's secret story arc for a D&D 5e campaign: 1 or 2 world arcs, storylines that advance on their own whether or not the party engages (a cult's summoning nearing completion, a warlord's march, a plague's spread, a rival expedition closing in). Keep it brief and answer quickly.
 
-Reply with ONLY a strict JSON array, no code fences, shaped exactly: [{"name": string, "driver": string, "rungs": string[]}]
+Reply with ONLY a strict JSON array (the outermost value MUST start with [ and end with ]), no code fences, shaped exactly: [{"name": string, "driver": string, "rungs": string[]}]. This is NOT the main campaign story plan. Do NOT return a JSON object with premise, acts, beats, finale, or storyArc, even if those appear in the input. The input is story BACKGROUND, not an output template.
 
 name: the arc's short name. driver: who or what pushes it forward (a faction or figure, not the party). rungs: 5 to 7 ordered escalation stages, each ONE sentence describing a world change observable in play (rumors, prices, refugees, omens, troop movements), from first whisper to full catastrophe or triumph. The last rung is what happens if nobody ever stops it.
 
-Rules: grow the arcs out of the campaign's own antagonist, factions, and unfinished threads rather than inventing an unrelated world; at most one arc may belong to the main antagonist. Do not include the party in any rung; these are what the WORLD does. Every string under 220 characters. Players never see this.`;
+Rules: grow the arcs out of the campaign's own antagonist, factions, and unfinished threads rather than inventing an unrelated world; at most one arc may belong to the main antagonist. Do not include the party in any rung; these are what the WORLD does. Every string under 220 characters. Players never see this.\n\nJSON SHAPE EXAMPLE (replace every placeholder with your own text): [{"name":"...","driver":"...","rungs":["...","...","...","...","..."]}].`;
 
 export async function generateWorldArcs(
   campaignId: string,
@@ -37,6 +37,14 @@ export async function generateWorldArcs(
     .slice(-4)
     .map((chapter) => `${chapter.index}. "${chapter.title}"`)
     .join("\n");
+  const storyFacts = worldArcPlanningContext(arc);
+  const worldClockRequest = [
+    "Create 1 or 2 independent, OFF-SCREEN world-clock storylines from these campaign facts. These advance without the party. Do NOT rewrite the main story arc.",
+    storyFacts,
+    chapters ? `Chapters played so far:\n${chapters}` : "",
+    "Return ONLY the JSON ARRAY [{\"name\":\"...\",\"driver\":\"...\",\"rungs\":[\"...\",\"...\",\"...\",\"...\",\"...\"]}]. No premise, acts, beats or finale keys.",
+  ].filter(Boolean).join("\n\n");
+  recordDmTrace("world_arc_prompt", { sourceChars: storyFacts.length, chapterCount: chapters ? chapters.split("\n").length : 0 });
   const { message, error } = await trackUtilityCall(campaignId, "world", () =>
     requestUtilityMessage(
       campaign.settings,
@@ -44,15 +52,10 @@ export async function generateWorldArcs(
         { role: "system", content: withLanguage(GENERATE_SYSTEM, campaign.gameSettings.tableLanguage) },
         {
           role: "user",
-          content: [
-            `The story arc these world arcs orbit:\n${renderArcForPrompt(arc)}`,
-            chapters ? `Chapters played so far:\n${chapters}` : "",
-          ]
-            .filter(Boolean)
-            .join("\n\n"),
+          content: worldClockRequest,
         },
       ],
-      { timeoutMs: arcTextTimeoutMs() },
+      { meta: { task: "world_arc_generate" }, timeoutMs: arcTextTimeoutMs(), thinking: false, temperature: 0 },
     ),
   );
   if (error) {
@@ -65,6 +68,7 @@ export async function generateWorldArcs(
   recordDmTrace("json_validation", {
     stage: "world_arcs", attempt: "first", accepted: arcs.length > 0,
     arcCount: arcs.length, responseChars: String(message?.content ?? "").length,
+    ...(!arcs.length ? { reason: "expected-array-of-world-arcs" } : {}),
   });
   if (!arcs.length) {
     // An agent CLI serving utility tasks sometimes continues the GM's scene
@@ -80,13 +84,13 @@ export async function generateWorldArcs(
           {
             role: "system",
             content: withLanguage(
-              `${GENERATE_SYSTEM}\n\nFORMAT RECOVERY: This is a DATA PLANNING task, not an RPG turn. Do not narrate or address players. Output ONLY a JSON array of 1 or 2 objects with name, driver and rungs (5 to 7 short strings each). Begin with [ and end with ]. No fences, commentary or extra text.`,
+              `${GENERATE_SYSTEM}\n\nFORMAT RECOVERY: The previous reply was NOT a world-clock array (it may have copied the main story with premise, acts, beats and finale). Discard that format. This is a DATA PLANNING task, not an RPG turn. Do not narrate or address players. Output ONLY a JSON array of 1 or 2 objects with name, driver and rungs (5 to 7 short strings each). Begin with [ and end with ]. No fences, commentary or extra text.`,
               campaign.gameSettings.tableLanguage,
             ),
           },
           {
             role: "user",
-            content: `Convert this story arc into world-clock DATA (not a scene):\n${renderArcForPrompt(arc)}\n\nRETURN THE JSON ARRAY ONLY.`,
+            content: `${worldClockRequest}\n\nThe prior model reply had the wrong JSON shape. Generate new OFF-SCREEN escalation clocks; never return the main plot again. RETURN THE JSON ARRAY ONLY.`,
           },
         ],
         { meta: { task: "world_arc_json_recovery" }, timeoutMs: arcTextTimeoutMs(), thinking: false, temperature: 0 },
@@ -97,6 +101,7 @@ export async function generateWorldArcs(
       recordDmTrace("json_validation", {
         stage: "world_arcs", attempt: "format_recovery", accepted: arcs.length > 0,
         arcCount: arcs.length, responseChars: String(recovery.message?.content ?? "").length,
+        ...(!arcs.length ? { reason: "expected-array-of-world-arcs" } : {}),
       });
     }
     if (!arcs.length && process.env.DM_DEBUG) {
