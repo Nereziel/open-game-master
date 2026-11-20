@@ -1,7 +1,7 @@
 import { withLanguage } from "@/lib/dm/table-language-logic";
 import { arcPlanningLanguageRequest, englishArcPlanningAtCzechTable } from "@/lib/dm/arc-language-logic";
 import { recordDmTrace, withDmTrace } from "@/lib/dm/trace";
-import { openingActFormatRecovery, arcReplyPreview } from "@/lib/dm/arc-format-recovery";
+import { openingActFormatRecovery, arcReplyPreview, arcReplyRootKeys } from "@/lib/dm/arc-format-recovery";
 import { campaignSeats, getCampaignById, latestSeq, setStoryArc } from "@/lib/db/campaigns";
 import { listChapters } from "@/lib/db/chapters";
 import { slainFoeNames } from "@/lib/db/encounters";
@@ -350,7 +350,7 @@ async function sagaFromPlan(
   let plan = parseSagaPlanJson(raw, profile);
   recordDmTrace("json_validation", {
     stage: "saga_plan", attempt: "first", accepted: Boolean(plan) && !languageProblem(plan?.record).length,
-    responseChars: raw.length, problems: plan ? [...sagaPlanProblems(plan), ...languageProblem(plan.record)] : ["invalid-json-or-saga-shape"],
+    responseChars: raw.length, receivedKeys: arcReplyRootKeys(raw), problems: plan ? [...sagaPlanProblems(plan), ...languageProblem(plan.record)] : [arcReplyRootKeys(raw).length ? "unexpected-saga-shape" : "invalid-json"],
   });
   if (!plan) {
     // A model that ignored the plan's shape and answered with a whole arc,
@@ -364,7 +364,7 @@ async function sagaFromPlan(
     // once more before the campaign goes without a spine until its first
     // chapter closes.
     if (process.env.DM_DEBUG) {
-      console.debug(`[dm-debug] saga plan: unreadable reply, retrying (${raw.length} chars): ${arcReplyPreview(raw)}`);
+      console.debug(`[dm-debug] saga plan: ${arcReplyRootKeys(raw).length ? "unexpected JSON structure" : "unreadable JSON"}, retrying (${raw.length} chars; keys=${arcReplyRootKeys(raw).join(",")}): ${arcReplyPreview(raw)}`);
     }
     const retryContext = `${context}\n\nFORMAT CORRECTION: The previous answer was not a usable story plan in the required JSON shape or table language. This call is NOT a game turn. Do not continue the story or address the players. Return ONLY one JSON object with title, premise, stakes, antagonist, actPlan (at least two acts with their own places and bosses), finale, finaleBoss, cast and subArcs. Every actPlan entry has title, place, milestone, boss {name, detail}, allies and hooks. Begin with { and end with }. No prose outside JSON.`;
     // A separate utility/completion route can recover when an agent's
@@ -376,7 +376,7 @@ async function sagaFromPlan(
     plan = parseSagaPlanJson(again, profile);
     recordDmTrace("json_validation", {
       stage: "saga_plan", attempt: "format_recovery", accepted: Boolean(plan) && !languageProblem(plan?.record).length,
-      responseChars: again.length, problems: plan ? [...sagaPlanProblems(plan), ...languageProblem(plan.record)] : ["invalid-json-or-saga-shape"],
+      responseChars: again.length, receivedKeys: arcReplyRootKeys(again), problems: plan ? [...sagaPlanProblems(plan), ...languageProblem(plan.record)] : [arcReplyRootKeys(again).length ? "unexpected-saga-shape" : "invalid-json"],
     });
     if (!plan) {
       const wholeAgain = parseSagaJson(again, profile);
@@ -431,10 +431,10 @@ async function sagaFromPlan(
     recordDmTrace("json_validation", {
       stage: "opening_act", attempt: recoverFormat ? "format_recovery" : extra ? "rewrite" : "first",
       accepted: Boolean(parsed) && !lastOpeningWasEnglish, beatCount: parsed?.beats.length ?? 0,
-      responseChars: reply.length, problems: parsed ? [...openingActProblems(plan, parsed.beats), ...(lastOpeningWasEnglish ? ["English prose at Czech table"] : [])] : ["invalid-json-or-opening-act-shape"],
+      responseChars: reply.length, receivedKeys: arcReplyRootKeys(reply), problems: parsed ? [...openingActProblems(plan, parsed.beats), ...(lastOpeningWasEnglish ? ["English prose at Czech table"] : [])] : [arcReplyRootKeys(reply).length ? "unexpected-opening-act-shape" : "invalid-json"],
     });
     if (!parsed && process.env.DM_DEBUG) {
-      console.debug(`[dm-debug] opening act: unreadable reply (${reply.length} chars): ${arcReplyPreview(reply)}`);
+      console.debug(`[dm-debug] opening act: ${arcReplyRootKeys(reply).length ? "unexpected JSON structure" : "unreadable JSON"} (${reply.length} chars; keys=${arcReplyRootKeys(reply).join(",")}): ${arcReplyPreview(reply)}`);
     }
     return lastOpeningWasEnglish ? null : parsed;
   };
