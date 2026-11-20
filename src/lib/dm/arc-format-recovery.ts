@@ -11,3 +11,18 @@ export function arcReplyPreview(raw: string, maxChars = 500): string {
   const omitted = raw.length - clipped.length;
   return `${JSON.stringify(clipped)}${omitted ? ` [truncated; ${omitted} more chars]` : ""}`;
 }
+
+// A valid JSON object with the wrong keys is not an unreadable JSON reply.
+// Logs include only the key names, never the secret story text, so it is
+// possible to diagnose a planner returning "acts" or "act.milestones"
+// without exposing the plan in ordinary logs.
+export function arcReplyRootKeys(raw: string): string[] {
+  try {
+    const parsed: unknown = JSON.parse(raw.trim());
+    return parsed && typeof parsed === "object" && !Array.isArray(parsed)
+      ? Object.keys(parsed).slice(0, 25)
+      : [];
+  } catch {
+    return [];
+  }
+}
