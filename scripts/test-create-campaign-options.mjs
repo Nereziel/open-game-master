@@ -23,6 +23,10 @@ const payload = read("../src/app/create-campaign/payload.ts");
 const worldSetup = read("../src/app/WorldSetupFields.tsx");
 const rulesPanel = read("../src/app/campaigns/[campaignId]/RulesPanel.tsx");
 const creationSurface = `${payload}\n${worldSetup}\n${rulesPanel}`;
+const creatorDraft = read("../src/app/create-campaign/draft.ts");
+const experience = read("../src/app/create-campaign/ExperienceStep.tsx");
+const essentials = read("../src/app/create-campaign/EssentialsStep.tsx");
+const narratorFields = read("../src/app/create-campaign/NarratorFields.tsx");
 
 // `stages` is deliberately absent: it tunes the turn pipeline for a slow local
 // model, which is an operator decision made in the lobby, not a table decision
@@ -43,11 +47,9 @@ const creationSurface = `${payload}\n${worldSetup}\n${rulesPanel}`;
 // character sheets to read instead (docs/workshop-plan.md section 1.1). It
 // lives in gameSettingsSchema because a workshop is a campaigns row.
 //
-// `narrationLength` and `styleNotes` are absent because they answer a table's
-// first sessions, not its creation (issue 383): how long the AI DM runs and
-// what its prose needs is learned by hearing it on this model. Both start
-// as no change at all, and the AI group of GameSettingsPanel owns them.
-// `combatPace` (issue #432) is the same kind of choice: how often fights come
+// `narrationLength` is now offered with `campaignLength` in the AI group.
+// `styleNotes` stays omitted: writing preferences are easier to choose
+// after hearing the AI. `combatPace` (issue #432) is the same kind of choice: how often fights come
 // is learned in play, starts balanced, and sits beside them.
 //
 // `waitForTable` and `waitForTableSeconds` (PR #438) are too: whether the AI
@@ -66,7 +68,6 @@ const DELIBERATELY_OMITTED = new Set([
   "beatReminder",
   "dmAssist",
   "targetParty",
-  "narrationLength",
   "styleNotes",
   "combatPace",
   "waitForTable",
@@ -119,7 +120,7 @@ test("every intentional omission is documented where the payload is built", () =
 });
 
 test("the payload sends the settings the dialog collects", () => {
-  for (const key of ["relationships", "romance", "narrationGuard", "variantRules", "worldPack"]) {
+  for (const key of ["relationships", "romance", "narrationGuard", "variantRules", "worldPack", "narrationLength"]) {
     assert.ok(
       new RegExp(`\\b${key}\\b`).test(payload),
       `${key} is never referenced in campaignPayload`,
@@ -134,6 +135,16 @@ test("romance cannot be sent on while bonds are off", () => {
     /romance:\s*relationships === "off" \? "off" : romance/,
     "the dialog can post romance on with relationships off",
   );
+});
+
+test("both AI lengths are selectable at creation and start short", () => {
+  assert.match(creatorDraft, /campaignLength:\s*"short"/);
+  assert.match(creatorDraft, /narrationLength:\s*"short"/);
+  assert.match(experience, /<CampaignLengthField\s+\{\.\.\.props\}\s*\/>/);
+  assert.match(experience, /<NarrationLengthField\s+\{\.\.\.props\}\s*\/>/);
+  assert.match(narratorFields, /onChange=\{\(narrationLength\) => patch\(\{ narrationLength \}\)\}/);
+  assert.ok(!essentials.includes("<CampaignLengthField"), "campaign length belongs beside narration length");
+  assert.match(payload, /\bnarrationLength,/);
 });
 
 console.log(`test-create-campaign-options: ${passed} passed`);
