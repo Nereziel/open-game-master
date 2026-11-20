@@ -300,6 +300,7 @@ export function SetupWizard({ config: initialConfig, env, info }: { config: Mask
     savedImageBaseUrl: config.images.openaiBaseUrl,
     envImageBaseUrl: env.openaiImageBaseUrl,
     envHasImageKey: env.hasOpenaiImageApiKey,
+    envHasDedicatedImageKey: env.hasDedicatedImageApiKey,
     envImageModel: env.openaiImageModel,
     comfyOffers,
   });
