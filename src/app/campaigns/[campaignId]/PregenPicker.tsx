@@ -1,7 +1,7 @@
 "use client";
 
 import { useEffect, useState } from "react";
-import { odmLocaleHeaders } from "@/lib/locale";
+import { odmLocaleHeaders, useLocale, useT } from "@/lib/locale";
 import { cn } from "@/lib/cn";
 import { ui } from "@/lib/ui";
 import { JoinConfirmDialog, type JoinHero } from "@/app/campaigns/[campaignId]/JoinConfirmDialog";
@@ -25,22 +25,27 @@ export function PregenPicker({
   // Called once the hero has its seat (the join page goes back to the table).
   onSeated?: () => void;
 }) {
+  const locale = useLocale();
+  const t = useT();
   const [heroes, setHeroes] = useState<Hero[] | null>(null);
   const [picked, setPicked] = useState<JoinHero | null>(null);
 
   useEffect(() => {
+    let active = true;
+    setHeroes(null);
     fetch("/api/starter", { headers: odmLocaleHeaders() })
       .then((response) => (response.ok ? response.json() : null))
-      .then((data: { pregens?: Hero[] } | null) => setHeroes(data?.pregens ?? []))
-      .catch(() => setHeroes([]));
-  }, []);
+      .then((data: { pregens?: Hero[] } | null) => { if (active) setHeroes(data?.pregens ?? []); })
+      .catch(() => { if (active) setHeroes([]); });
+    return () => { active = false; };
+  }, [locale]);
 
   if (!heroes?.length) {
     return null;
   }
   return (
     <div className={cn(ui.card, "space-y-2 px-4 py-3")} data-tour="pregen-picker">
-      {heading ? <p className="text-xs uppercase tracking-wide text-stone-500">{heading}</p> : null}
+      {heading ? <p className="text-xs uppercase tracking-wide text-stone-500">{t(heading)}</p> : null}
       <ul className="grid grid-cols-1 gap-1.5 sm:grid-cols-2">
         {heroes.map((hero) => (
           <li key={hero.id}>
