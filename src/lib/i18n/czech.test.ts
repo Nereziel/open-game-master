@@ -1,4 +1,5 @@
 import { describe, expect, it } from "vitest";
+import { calculatorDisplayText } from "../reference/calculator-display";
 import { APPEARANCE_THEMES } from "../appearance-themes";
 import catalog from "./cs.json";
 import { installCatalog, translate, translatePlural } from "./translate";
@@ -54,6 +55,24 @@ describe("Czech localization", () => {
     expect(translate("cs", "Could not reach GitHub to look for a newer release.")).toContain("GitHubem");
     expect(translate("cs", "Changes since the {tag} release: {count}.", { tag: "v1", count: 4 }))
       .toBe("Počet změn od vydání v1: 4.");
+  });
+
+  it("localizes computed calculator results without altering the rule engine's English output", () => {
+    const cs = (key: string, vars?: Record<string, string | number>) => translate("cs", key, vars);
+    const en = (key: string, vars?: Record<string, string | number>) => translate("en", key, vars);
+    expect(calculatorDisplayText("2 monsters against 4 players", cs))
+      .toBe("Nestvůry: 2, hráči: 4");
+    expect(calculatorDisplayText("300 gp on average", cs)).toBe("Průměrně 300 zl.");
+    expect(calculatorDisplayText("1 day", cs)).toBe("1 den");
+    expect(calculatorDisplayText("3 days", cs)).toBe("3 dny");
+    expect(calculatorDisplayText("5 days", cs)).toBe("5 dnů");
+    expect(calculatorDisplayText("19 miles in a full 8-hour day", cs))
+      .toBe("Za celý osmihodinový den 19 mil");
+    expect(calculatorDisplayText("CR 3", cs)).toBe("NB 3");
+    expect(calculatorDisplayText("An unfamiliar pack-specific result", cs))
+      .toBe("An unfamiliar pack-specific result");
+    expect(calculatorDisplayText("2 monsters against 4 players", en))
+      .toBe("2 monsters against 4 players");
   });
 
   it("uses three Czech plural forms", () => {
