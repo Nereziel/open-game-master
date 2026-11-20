@@ -9,7 +9,10 @@
       "shortFr": "L'un des six nombres décrivant ce pour quoi ton personnage est doué naturellement.",
       "long": "The six are Strength, Dexterity, Constitution, Intelligence, Wisdom and Charisma. Most scores land between 8 and 18 at first level. What actually gets added to your rolls is the modifier derived from the score: 10 or 11 gives +0, every 2 points above that adds +1, every 2 below subtracts 1.",
       "longFr": "Les six sont Force, Dextérité, Constitution, Intelligence, Sagesse et Charisme. Au niveau 1, la plupart se situent entre 8 et 18. Ce qui s'ajoute vraiment à tes jets, c'est le modificateur dérivé de la valeur : 10 ou 11 donne +0, chaque 2 points au-dessus ajoute +1, chaque 2 en dessous retranche 1.",
-      "fr": "Valeur de caractéristique"
+      "fr": "Valeur de caractéristique",
+      "cs": "Hodnota vlastnosti",
+      "shortCs": "Jedno ze šesti čísel, která popisují přirozené schopnosti tvé postavy.",
+      "longCs": "Šest vlastností je Síla, Obratnost, Odolnost, Inteligence, Moudrost a Charisma. Na první úrovni mívají hodnotu 8 až 18. K hodům se nepřičítá celá hodnota, ale její oprava: hodnota 10 nebo 11 dává +0, za každé dva body navíc získáš +1 a za každé dva body méně −1."
     },
     {
       "id": "modifier",
@@ -18,7 +21,10 @@
       "shortFr": "Le bonus ou le malus qu'une valeur de caractéristique ajoute à tes jets.",
       "long": "Work it out by subtracting 10 from the score and halving the result, rounding down. A score of 16 gives +3, a score of 8 gives -1. You will see modifiers written with a sign, like +3, everywhere on your sheet.",
       "longFr": "Calcule-le en retranchant 10 de la valeur et en divisant le résultat par deux, arrondi à la baisse. Une valeur de 16 donne +3, une valeur de 8 donne -1. Tu verras les modificateurs écrits avec un signe, comme +3, partout sur ta fiche.",
-      "fr": "Modificateur"
+      "fr": "Modificateur",
+      "cs": "Oprava vlastnosti",
+      "shortCs": "Bonus nebo postih, který hodnota vlastnosti přidává k tvým hodům.",
+      "longCs": "Od hodnoty vlastnosti odečti 10, výsledek vyděl dvěma a zaokrouhli dolů. Hodnota 16 znamená +3, hodnota 8 znamená −1. Opravy se na deníku uvádějí se znaménkem, například +3."
     },
     {
       "id": "str",
@@ -27,7 +33,10 @@
       "shortFr": "La puissance physique brute : frapper avec des armes lourdes, bousculer, grimper, soulever.",
       "long": "Most melee weapons use Strength for their attack and damage rolls. It also covers the Athletics skill, and the saving throw against being pushed or restrained.",
       "longFr": "La plupart des armes de corps à corps utilisent la Force pour leurs jets d'attaque et de dégâts. Elle couvre aussi la compétence Athlétisme, et le jet de sauvegarde contre être bousculé ou entravé.",
-      "fr": "Force"
+      "fr": "Force",
+      "cs": "Síla",
+      "shortCs": "Hrubá fyzická síla: těžké zbraně, strkání, šplhání a zvedání břemen.",
+      "longCs": "Většina zbraní na blízko používá Sílu k hodům na útok a zranění. Patří pod ni také Atletika a záchranné hody proti odstrčení nebo znehybnění."
     },
     {
       "id": "dex",
@@ -36,7 +45,10 @@
       "shortFr": "L'agilité et la précision : armes légères, arcs, classe d'armure, esquive.",
       "long": "Dexterity adds to your armor class in light and medium armor, decides your initiative, and powers finesse and ranged weapons. Its saving throw is the one you make to dodge fireballs and traps.",
       "longFr": "La Dextérité s'ajoute à ta classe d'armure en armure légère et intermédiaire, décide ton initiative et alimente les armes de finesse et à distance. Son jet de sauvegarde est celui que tu tente pour esquiver boules de feu et pièges.",
-      "fr": "Dextérité"
+      "fr": "Dextérité",
+      "cs": "Obratnost",
+      "shortCs": "Hbitost a přesnost: lehké zbraně, luky, třída zbroje a uhýbání.",
+      "longCs": "Obratnost se přičítá ke třídě zbroje v lehké a střední zbroji, ovlivňuje iniciativu a útoky obratnými nebo střelnými zbraněmi. Záchranným hodem na Obratnost se vyhýbáš ohnivým koulím a pastem."
     },
     {
       "id": "con",
@@ -45,7 +57,10 @@
       "shortFr": "La robustesse et l'endurance. Elle augmente tes points de vie à chaque niveau.",
       "long": "You never roll a Constitution check, but its saving throw comes up constantly: resisting poison, surviving exhaustion, and holding concentration on a spell when you take damage.",
       "longFr": "Tu ne lance jamais un test de Constitution, mais son jet de sauvegarde revient sans arrêt : résister au poison, survivre à l'épuisement, et garder la concentration sur un sort quand tu prends des dégâts.",
-      "fr": "Constitution"
+      "fr": "Constitution",
+      "cs": "Odolnost",
+      "shortCs": "Houževnatost a výdrž. Zvyšuje počet životů při každé úrovni.",
+      "longCs": "Odolnost pomáhá odolávat jedu, vyčerpání a udržet soustředění na kouzlo po utrženém zranění. Její oprava také přidává životy při získání úrovně."
     },
     {
       "id": "int",
@@ -54,7 +69,10 @@
       "shortFr": "Le raisonnement et la mémoire. La caractéristique d'incantation des mages.",
       "long": "It covers Arcana, History, Investigation, Nature and Religion. Its saving throw resists illusions and effects that attack the mind directly.",
       "longFr": "Elle couvre Arcanes, Histoire, Investigation, Nature et Religion. Son jet de sauvegarde résiste aux illusions et aux effets qui s'attaquent directement à l'esprit.",
-      "fr": "Intelligence"
+      "fr": "Intelligence",
+      "cs": "Inteligence",
+      "shortCs": "Uvažování a znalosti. Klíčová vlastnost čarodějů používajících učenou magii.",
+      "longCs": "Ovlivňuje dovednosti Mystika, Historie, Pátrání, Příroda a Náboženství. Záchranný hod na Inteligenci brání proti iluzím a účinkům, které přímo napadají mysl."
     },
     {
       "id": "wis",
@@ -63,7 +81,10 @@
       "shortFr": "Le sens de l'observation et le jugement. La caractéristique d'incantation des clercs, druides et rôdeurs.",
       "long": "It covers Perception, Insight, Medicine, Survival and Animal Handling, and sets your passive Perception. Its saving throw resists charms, fear and mind control, which makes it one of the most valuable saves in the game.",
       "longFr": "Elle couvre Perception, Intuition, Médecine, Survie et Dressage, et fixe ta Perception passive. Son jet de sauvegarde résiste aux charmes, à la peur et au contrôle mental, ce qui en fait l'un des jets de sauvegarde les plus précieux du jeu.",
-      "fr": "Sagesse"
+      "fr": "Sagesse",
+      "cs": "Moudrost",
+      "shortCs": "Vnímavost a úsudek. Důležitá pro kleriky, druidy a hraničáře.",
+      "longCs": "Ovlivňuje Vnímání, Vhled, Lékařství, Přežití a Zacházení se zvířaty a určuje pasivní vnímání. Záchranné hody na Moudrost pomáhají odolávat okouzlení, strachu a ovládnutí mysli."
     },
     {
       "id": "cha",
@@ -72,7 +93,10 @@
       "shortFr": "La force de personnalité. La caractéristique d'incantation des bardes, sorciers, occultistes et paladins.",
       "long": "It covers Persuasion, Deception, Intimidation and Performance. Its saving throw resists banishment and possession.",
       "longFr": "Il couvre Persuasion, Tromperie, Intimidation et Représentation. Son jet de sauvegarde résiste au bannissement et à la possession.",
-      "fr": "Charisme"
+      "fr": "Charisme",
+      "cs": "Charisma",
+      "shortCs": "Síla osobnosti. Důležitá pro bardy, černokněžníky, zaklínače a paladiny.",
+      "longCs": "Ovlivňuje Přesvědčování, Klamání, Zastrašování a Vystupování. Záchranným hodem na Charisma odoláváš například vypovězení do jiné sféry nebo posednutí."
     },
     {
       "id": "armor_class",
@@ -81,7 +105,10 @@
       "shortFr": "À quel point tu es difficile à toucher. Un attaquant doit faire ce nombre ou plus pour t'atteindre.",
       "long": "Your AC comes from your armor, your shield, your Dexterity, and any magic or class feature that adds to it. The app works it out for you from what you are wearing. Higher is better, and most characters sit between 12 and 20.",
       "longFr": "Ta CA vient de ton armure, de ton bouclier, de ta Dextérité et de toute magie ou trait de classe qui s'y ajoute. L'appli la calcule pour toi d'après ce que tu portes. Plus elle est haute, mieux c'est, et la plupart des personnages se tiennent entre 12 et 20.",
-      "fr": "Classe d'armure (CA)"
+      "fr": "Classe d'armure (CA)",
+      "cs": "Třída zbroje (TZ)",
+      "shortCs": "Ukazuje, jak těžké je tě zasáhnout. Útočník musí hodem dosáhnout alespoň této hodnoty.",
+      "longCs": "Třídu zbroje ovlivňuje zbroj, štít, Obratnost a případná magie nebo schopnosti povolání. Aplikace ji vypočítá podle toho, co máš oblečené a vybavené. Vyšší hodnota je lepší; mnoho postav má TZ přibližně mezi 12 a 20."
     },
     {
       "id": "hit_points",
@@ -90,7 +117,10 @@
       "shortFr": "Combien de dégâts tu peux encaisser avant de t'effondrer.",
       "long": "At 0 hit points you fall unconscious and start making death saving throws. Healing brings you back. Your maximum grows every level, based on your class's hit die and your Constitution modifier.",
       "longFr": "À 0 point de vie, tu tombes inconscient et commences à faire des jets de sauvegarde contre la mort. Les soins te remettent debout. Ton maximum grandit à chaque niveau, selon le dé de vie de ta classe et ton modificateur de Constitution.",
-      "fr": "Points de vie (PV)"
+      "fr": "Points de vie (PV)",
+      "cs": "Životy (ŽT)",
+      "shortCs": "Kolik zranění vydržíš, než padneš k zemi.",
+      "longCs": "Při poklesu na 0 životů upadneš do bezvědomí a začneš házet záchranné hody proti smrti. Léčení tě může vrátit do boje. Maximum životů roste s úrovní podle kostky životů povolání a opravy Odolnosti."
     },
     {
       "id": "temp_hp",
@@ -99,7 +129,10 @@
       "shortFr": "Un tampon qui absorbe les dégâts avant tes vrais points de vie.",
       "long": "They are not healing and do not stack: a new source replaces the old one rather than adding to it. They vanish on a long rest, and any left over when the effect ends are simply lost.",
       "longFr": "Ce ne sont pas des soins et ça ne se cumule pas : une nouvelle source remplace l'ancienne au lieu de s'y ajouter. Ils disparaissent lors d'un repos long, et tout reste quand l'effet se termine est simplement perdu.",
-      "fr": "Points de vie temporaires"
+      "fr": "Points de vie temporaires",
+      "cs": "Dočasné životy",
+      "shortCs": "Ochranná zásoba, která pohlcuje zranění před skutečnými životy.",
+      "longCs": "Nejsou to vyléčené životy a nesčítají se: nová zásoba nahradí předchozí, pokud si ji zvolíš. Po dlouhém odpočinku dočasné životy obvykle mizí a nevyužité životy po skončení účinku propadají."
     },
     {
       "id": "hit_dice",
@@ -108,7 +141,10 @@
       "shortFr": "Une réserve de dés que tu dépenses pendant un repos court pour te soigner.",
       "long": "You have one per character level, of the size your class uses. Spend one on a short rest to roll it and regain that many hit points plus your Constitution modifier. You get half of them back on a long rest, so they are a resource to ration across a day of adventuring.",
       "longFr": "Tu en as un par niveau de personnage, de la taille que ta classe utilise. Dépense-en un pendant un repos court pour le lancer et regagner autant de points de vie, plus ton modificateur de Constitution. Tu en récupères la moitié lors d'un repos long : c'est une ressource à doser sur une journée d'aventure.",
-      "fr": "Dés de vie"
+      "fr": "Dés de vie",
+      "cs": "Kostky životů",
+      "shortCs": "Zásoba kostek, které při krátkém odpočinku utrácíš za léčení.",
+      "longCs": "Za každou úroveň postavy máš jednu kostku životů velikosti podle povolání. Při krátkém odpočinku můžeš kostku utratit, hodit jí a získat tolik životů plus opravu Odolnosti. Po dlouhém odpočinku obnovíš polovinu celkové zásoby, takže je dobré s nimi hospodařit."
     },
     {
       "id": "ability_check",
@@ -117,7 +153,10 @@
       "shortFr": "Un jet de d20 plus un modificateur, tenté quand l'issue de quelque chose est incertaine.",
       "long": "The GM sets a difficulty number and you try to meet or beat it. Climbing a wall is a Strength check, spotting an ambush is a Wisdom check. If you are proficient in a relevant skill you add your proficiency bonus too.",
       "longFr": "Le MJ fixe un nombre de difficulté et tu essaies de l'atteindre ou de le dépasser. Grimper un mur est un test de Force, repérer une embuscade un test de Sagesse. Si tu maîtrises une compétence pertinente, tu ajoutes aussi ton bonus de maîtrise.",
-      "fr": "Test de caractéristique"
+      "fr": "Test de caractéristique",
+      "cs": "Ověření vlastnosti",
+      "shortCs": "Hod k20 plus oprava vlastnosti, když není jisté, jak něco dopadne.",
+      "longCs": "PJ stanoví obtížnost, které musíš hodem dosáhnout nebo ji překonat. Šplhání po zdi je ověření Síly, odhalení léčky ověření Moudrosti. Pokud ovládáš příslušnou dovednost, přidáš i bonus zdatnosti."
     },
     {
       "id": "saving_throw",
@@ -126,7 +165,10 @@
       "shortFr": "Un jet de d20 pour résister à quelque chose qui t'arrive, plutôt que pour faire arriver quelque chose.",
       "long": "A dragon breathes fire and you make a Dexterity save to take half damage. A vampire tries to charm you and you make a Wisdom save to shrug it off. Each class is proficient in two of the six saves, adding its proficiency bonus to those.",
       "longFr": "Un dragon crache du feu et tu fais un jet de sauvegarde de Dextérité pour n'en prendre que la moitié. Un vampire tente de te charmer et tu fais un jet de sauvegarde de Sagesse pour t'en affranchir. Chaque classe maîtrise deux des six jets de sauvegarde, et ajoute son bonus de maîtrise à ceux-là.",
-      "fr": "Jet de sauvegarde"
+      "fr": "Jet de sauvegarde",
+      "cs": "Záchranný hod",
+      "shortCs": "Hod k20, kterým odoláváš nebezpečí, místo abys něco sám prováděl.",
+      "longCs": "Drak chrlí oheň a ty házíš záchranný hod na Obratnost, abys utrpěl méně zranění. Upír tě chce okouzlit a ty odoláváš Moudrostí. Každé povolání ovládá dva z šesti typů záchranných hodů a přidává k nim bonus zdatnosti."
     },
     {
       "id": "proficiency_bonus",
@@ -135,7 +177,10 @@
       "shortFr": "Un bonus que tu ajoutes à tout ce en quoi tu es entraîné. Il passe de +2 à +6 en montant de niveau.",
       "long": "It applies to attacks with weapons you are proficient with, skills you are proficient in, your two saving throw proficiencies, and your spell save DC. It is +2 at levels 1 to 4 and rises by 1 every four levels after that.",
       "longFr": "Il s'applique aux attaques avec les armes que tu maîtrises, aux compétences que tu maîtrises, à tes deux maîtrises de jets de sauvegarde et à ton DD de sauvegarde des sorts. Il vaut +2 aux niveaux 1 à 4 et monte de 1 tous les quatre niveaux ensuite.",
-      "fr": "Bonus de maîtrise"
+      "fr": "Bonus de maîtrise",
+      "cs": "Bonus zdatnosti",
+      "shortCs": "Bonus k činnostem, které ovládáš. S úrovní roste od +2 do +6.",
+      "longCs": "Přičítá se k útokům zbraněmi, které ovládáš, k ovládaným dovednostem, příslušným záchranným hodům a k obtížnosti záchrany před tvými kouzly. Na úrovních 1 až 4 je +2 a každé další čtyři úrovně se zvýší o 1."
     },
     {
       "id": "advantage",
@@ -144,7 +189,10 @@
       "shortFr": "Lance deux d20 et garde le plus haut.",
       "long": "You get it when circumstances favour you: attacking an unaware enemy, or acting on information an ally gave you. Advantage and disadvantage cancel out exactly, no matter how many sources of each you have, and they never stack with themselves.",
       "longFr": "Tu l'obtiens quand les circonstances te favorisent : attaquer un ennemi qui ne t'a pas remarqué, ou agir sur une information qu'un allié t'a donnée. Avantage et désavantage s'annulent exactement, peu importe combien de sources de chacun tu as, et ils ne se cumulent jamais entre eux.",
-      "fr": "Avantage"
+      "fr": "Avantage",
+      "cs": "Výhoda",
+      "shortCs": "Hoď dvěma k20 a použij vyšší výsledek.",
+      "longCs": "Výhodu získáš v příznivých podmínkách, například když útočíš na nepřítele, který tě nečeká. Výhoda a nevýhoda se navzájem ruší bez ohledu na počet zdrojů. Více výhod se nesčítá."
     },
     {
       "id": "disadvantage",
@@ -153,7 +201,10 @@
       "shortFr": "Lance deux d20 et garde le plus bas.",
       "long": "You get it when circumstances work against you: attacking at long range, fighting blind, or acting while poisoned or frightened. It cancels out with advantage exactly.",
       "longFr": "Tu l'obtiens quand les circonstances te contrarient : attaquer à longue portée, se battre aveugle, ou agir empoisonné ou effrayé. Il s'annule exactement avec l'avantage.",
-      "fr": "Désavantage"
+      "fr": "Désavantage",
+      "cs": "Nevýhoda",
+      "shortCs": "Hoď dvěma k20 a použij nižší výsledek.",
+      "longCs": "Nevýhodu máš například při útoku na velkou vzdálenost, boji poslepu nebo když jsi otrávený či vystrašený. Jedna výhoda nevýhodu zruší a naopak."
     },
     {
       "id": "initiative",
@@ -162,7 +213,10 @@
       "shortFr": "Un jet de Dextérité au début d'un combat qui fixe l'ordre des tours.",
       "long": "Everyone rolls once, and the round then runs from highest to lowest. The order holds until the fight ends.",
       "longFr": "Tout le monde lance une fois, et le tour se déroule ensuite du plus haut au plus bas. L'ordre tient jusqu'à la fin du combat.",
-      "fr": "Initiative"
+      "fr": "Initiative",
+      "cs": "Iniciativa",
+      "shortCs": "Hod na Obratnost na začátku boje, který určí pořadí tahů.",
+      "longCs": "Každý hodí jednou. Kola pak probíhají od nejvyšší iniciativy k nejnižší a pořadí zůstává stejné, dokud boj neskončí."
     },
     {
       "id": "action",
@@ -171,7 +225,10 @@
       "shortFr": "La principale chose que tu fais à ton tour : attaquer, lancer un sort, courir, te cacher, aider un allié.",
       "long": "Each turn you get one action, one bonus action, your movement, and one reaction that you can use before your next turn. Most turns are an action plus movement; bonus actions only exist when a feature or spell specifically grants one.",
       "longFr": "À chaque tour, tu as une action, une action bonus, ton déplacement et une réaction utilisable avant ton prochain tour. La plupart des tours sont une action plus un déplacement ; les actions bonus n'existent que si un trait ou un sort en accorde une expressément.",
-      "fr": "Action"
+      "fr": "Action",
+      "cs": "Akce",
+      "shortCs": "Hlavní činnost ve tvém tahu: útok, seslání kouzla, sprint, skrývání nebo pomoc.",
+      "longCs": "Ve svém tahu máš obvykle jednu akci, jednu bonusovou akci, pohyb a jednu reakci, kterou můžeš použít do začátku dalšího tahu. Většina tahů kombinuje akci a pohyb. Bonusovou akci můžeš použít jen tehdy, když ti ji umožňuje konkrétní schopnost nebo kouzlo."
     },
     {
       "id": "bonus_action",
@@ -180,7 +237,10 @@
       "shortFr": "Une rapide chose en plus à ton tour, mais seulement si quelque chose en accorde une expressément.",
       "long": "You cannot invent a bonus action: a class feature, a spell or a weapon has to say it uses one. You get at most one per turn, so features that compete for it force a real choice.",
       "longFr": "Tu ne peux pas inventer une action bonus : un trait de classe, un sort ou une arme doit dire qu'elle en utilise une. Tu en as au plus une par tour, donc les traits qui se la disputent imposent un vrai choix.",
-      "fr": "Action bonus"
+      "fr": "Action bonus",
+      "cs": "Bonusová akce",
+      "shortCs": "Rychlá doplňková činnost ve tvém tahu, pokud ti ji pravidla umožňují.",
+      "longCs": "Bonusovou akci si nemůžeš libovolně vymyslet: musí ji umožňovat schopnost povolání, kouzlo nebo zbraň. V jednom tahu ji máš nanejvýš jednu, takže mezi různými možnostmi musíš vybírat."
     },
     {
       "id": "reaction",
@@ -189,7 +249,10 @@
       "shortFr": "Une réponse que tu peux faire entre tes tours, déclenchée par quelque chose de précis.",
       "long": "The most common one is an opportunity attack when an enemy walks out of your reach. Spells like shield and features like Uncanny Dodge also use it. You get one and it comes back at the start of your turn.",
       "longFr": "La plus courante est l'attaque d'opportunité quand un ennemi sort de ta portée. Des sorts comme shield et des traits comme Uncanny Dodge s'en servent aussi. Tu en as une, et elle revient au début de ton tour.",
-      "fr": "Réaction"
+      "fr": "Réaction",
+      "cs": "Reakce",
+      "shortCs": "Odpověď na určitou událost, kterou můžeš provést i mezi svými tahy.",
+      "longCs": "Nejčastější reakcí je příležitostný útok na nepřítele, který opustí tvůj dosah. Reakci používají i některá kouzla a schopnosti. Máš jednu a obnoví se na začátku tvého dalšího tahu."
     },
     {
       "id": "attack_roll",
@@ -198,7 +261,10 @@
       "shortFr": "Un d20 plus ton modificateur de caractéristique et ton bonus de maîtrise, contre la CA de la cible.",
       "long": "Meet or beat the AC and you hit, then roll the weapon or spell's damage. A natural 20 always hits and doubles the damage dice, and a natural 1 always misses.",
       "longFr": "Fais au moins la CA et tu touches ; lance ensuite les dégâts de l'arme ou du sort. Un 20 naturel touche toujours et double les dés de dégâts, et un 1 naturel échoue toujours.",
-      "fr": "Jet d'attaque"
+      "fr": "Jet d'attaque",
+      "cs": "Hod na útok",
+      "shortCs": "Hod k20 plus oprava vlastnosti a případný bonus zdatnosti proti třídě zbroje cíle.",
+      "longCs": "Pokud hod dosáhne třídy zbroje cíle nebo ji překročí, zasáhneš a házíš na zranění zbraně nebo kouzla. Přirozená 20 vždy zasáhne a zdvojnásobí kostky zranění; přirozená 1 vždy mine."
     },
     {
       "id": "critical_hit",
