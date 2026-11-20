@@ -1,5 +1,6 @@
 import { withLanguage } from "@/lib/dm/table-language-logic";
 import { recordDmTrace, withDmTrace } from "@/lib/dm/trace";
+import { arcReplyPreview, arcReplyRootKeys } from "@/lib/dm/arc-format-recovery";
 import { getCampaignById } from "@/lib/db/campaigns";
 import { listChapters } from "@/lib/db/chapters";
 import { arcTextTimeoutMs } from "@/lib/model-client";
@@ -65,10 +66,11 @@ export async function generateWorldArcs(
     }
     return [];
   }
-  let arcs = parseWorldArcsJson(typeof message?.content === "string" ? message.content : "");
+  const firstReply = typeof message?.content === "string" ? message.content : "";
+  let arcs = parseWorldArcsJson(firstReply);
   recordDmTrace("json_validation", {
     stage: "world_arcs", attempt: "first", accepted: arcs.length > 0,
-    arcCount: arcs.length, responseChars: String(message?.content ?? "").length,
+    arcCount: arcs.length, responseChars: firstReply.length, receivedKeys: arcReplyRootKeys(firstReply),
     ...(!arcs.length ? { reason: "expected-array-of-world-arcs" } : {}),
   });
   if (!arcs.length) {
@@ -76,7 +78,7 @@ export async function generateWorldArcs(
     // instead of returning world-clock JSON. Retry once as a fresh, strict
     // data completion; never store that prose as a world arc.
     if (process.env.DM_DEBUG) {
-      console.debug("[dm-debug] world arc generation: unreadable JSON; retrying strict utility completion");
+      console.debug(`[dm-debug] world arc generation: ${arcReplyRootKeys(firstReply).length ? "unexpected JSON structure" : "unreadable JSON"}; retrying strict utility completion (chars=${firstReply.length}, keys=${arcReplyRootKeys(firstReply).join(",")}) ${arcReplyPreview(firstReply)}`);
     }
     const recovery = await trackUtilityCall(campaignId, "world", () =>
       requestUtilityMessage(
@@ -91,22 +93,28 @@ export async function generateWorldArcs(
           },
           {
             role: "user",
-            content: `${worldClockRequest}\n\nThe prior model reply had the wrong JSON shape. Generate new OFF-SCREEN escalation clocks; never return the main plot again. RETURN THE JSON ARRAY ONLY.`,
+            content: `Write exactly ONE off-screen world clock from these campaign facts (NOT main story acts):\n${storyFacts.slice(0, 1200)}\n\nUse ONLY: [{"name":"short Czech title","driver":"the responsible faction or creature","rungs":["early rumor","early consequence","growing danger","major change","final outcome"]}]. Replace all placeholders with story-specific Czech text; do not describe what the heroes do. RETURN THE JSON ARRAY ONLY.`,
           },
         ],
         { meta: { task: "world_arc_json_recovery" }, timeoutMs: arcTextTimeoutMs(), thinking: false, temperature: 0 },
       ),
     );
     if (!recovery.error) {
-      arcs = parseWorldArcsJson(typeof recovery.message?.content === "string" ? recovery.message.content : "");
+      const recoveryReply = typeof recovery.message?.content === "string" ? recovery.message.content : "";
+      arcs = parseWorldArcsJson(recoveryReply);
       recordDmTrace("json_validation", {
         stage: "world_arcs", attempt: "format_recovery", accepted: arcs.length > 0,
-        arcCount: arcs.length, responseChars: String(recovery.message?.content ?? "").length,
+        arcCount: arcs.length, responseChars: recoveryReply.length, receivedKeys: arcReplyRootKeys(recoveryReply),
         ...(!arcs.length ? { reason: "expected-array-of-world-arcs" } : {}),
       });
+      if (!arcs.length && process.env.DM_DEBUG) {
+        console.debug(`[dm-debug] world arc generation: recovery returned no world clocks (chars=${recoveryReply.length}, keys=${arcReplyRootKeys(recoveryReply).join(",")}) ${arcReplyPreview(recoveryReply)}`);
+      }
+    } else {
+      recordDmTrace("json_validation", { stage: "world_arcs", attempt: "format_recovery", accepted: false, reason: "backend-error", httpStatus: recovery.error.status });
     }
     if (!arcs.length && process.env.DM_DEBUG) {
-      console.debug("[dm-debug] world arc generation: no readable JSON after recovery");
+      console.debug("[dm-debug] world arc generation: no readable world-clock JSON after recovery");
     }
   }
   recordDmTrace("world_arcs_result", { arcCount: arcs.length });
