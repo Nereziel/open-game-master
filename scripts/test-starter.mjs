@@ -27,7 +27,7 @@ const { createSheet, listSheets } = await import("../src/lib/db/sheets.ts");
 const { createCharacter, listCharactersForUser } = await import("../src/lib/db/characters.ts");
 const { PREGENS, pregenById, pregenSummaries } = await import("../src/lib/starter/pregens.ts");
 const { findBackground, findClass, findRace } = await import("../src/lib/srd/index.ts");
-const { STARTER_ONE_SHOT, createStarterCampaign } = await import("../src/lib/starter/one-shot.ts");
+const { STARTER_ONE_SHOT, STARTER_ONE_SHOT_CS, STARTER_ONE_SHOT_FR, starterSeedFor, createStarterCampaign } = await import("../src/lib/starter/one-shot.ts");
 const { CALENDAR_PRESETS, MINUTES_PER_DAY, breakDown, dayPart, defaultClock, describeInstant, toInstant } = await import("../src/lib/dm/calendar.ts");
 
 let failed = 0;
@@ -60,6 +60,71 @@ test("the one-shot campaign carries its premise, its secret outline and a short 
   assert.equal(solo.maxPlayers, 1);
   // POST /api/starter passes this to the creator, who owns the table.
   assert.equal(solo.role, "owner");
+});
+
+test("the Czech quick start includes a translated public introduction and a secret Czech GM outline", () => {
+  const english = starterSeedFor("en");
+  const french = starterSeedFor("fr");
+  const czech = starterSeedFor("cs");
+  assert.equal(english.title, STARTER_ONE_SHOT.title);
+  assert.equal(french.title, STARTER_ONE_SHOT_FR.title);
+  assert.equal(czech.title, STARTER_ONE_SHOT_CS.title);
+  assert.equal(czech.id, "silent-bell");
+  assert.match(czech.title, /Umlklý zvon/);
+  assert.match(czech.description, /dvacet zlatých/);
+  assert.match(czech.description, /za soumraku/);
+  assert.match(czech.outline, /PRAVDA PRO PJ/);
+  assert.match(czech.outline, /Aldo Merrin/);
+  assert.match(czech.outline, /Tam Rill/);
+  assert.match(czech.outline, /zvukem, který se rozléhá/);
+  assert.ok(!czech.description.includes("ghúl"), "the public Czech premise must not spoil the secret");
+  assert.ok(!czech.description.includes("Marrow's Crossing"), "the Czech intro is not the English original");
+  assert.equal(STARTER_ONE_SHOT.description, english.description, "the English original stays unchanged");
+});
+
+test("a Czech starter stores its Czech premise and Czech GM guidance without changing game rules", () => {
+  const table = createStarterCampaign(host.id, { solo: true, locale: "cs" });
+  const stored = getCampaignById(table.id);
+  const seed = starterSeedFor("cs");
+  assert.equal(stored.title, seed.title);
+  assert.equal(stored.description, seed.description);
+  assert.equal(stored.dmOutline, seed.outline);
+  assert.equal(stored.theme, seed.theme);
+  assert.equal(stored.startingLevel, 1);
+  assert.equal(stored.gameSettings.genre, "high_fantasy");
+  assert.equal(stored.maxPlayers, 1);
+  assert.equal(breakDown(stored.clock.calendar, stored.clock.instant).hour, 18);
+});
+
+test("Czech starter hero cards and seated backstories are translated, game mechanics stay English", () => {
+  const czech = pregenSummaries("cs");
+  const french = pregenSummaries("fr");
+  const english = pregenSummaries("en");
+  assert.equal(czech.length, 4);
+  assert.equal(french.length, 4);
+  assert.equal(english.length, 4);
+  assert.deepEqual(czech.map((hero) => hero.name), english.map((hero) => hero.name));
+  assert.deepEqual(czech.map((hero) => hero.id), ["brakk", "kara", "vex", "sera"]);
+  assert.match(czech[0].tagline, /lidský barbar/);
+  assert.match(czech[1].tagline, /lidská bojovnice/);
+  assert.match(czech[2].blurb, /pasti/);
+  assert.match(czech[3].blurb, /Požehnání/);
+  for (const hero of czech) {
+    const original = pregenById(hero.id, "en");
+    const translated = pregenById(hero.id, "cs");
+    assert.ok(original && translated);
+    assert.notEqual(hero.blurb, original.blurb);
+    assert.notEqual(hero.tagline, original.tagline);
+    assert.notEqual(translated.sheet.backstory, original.sheet.backstory);
+    assert.equal(translated.sheet.name, original.sheet.name);
+    assert.equal(translated.sheet.class, original.sheet.class);
+    assert.equal(translated.sheet.race, original.sheet.race);
+    assert.deepEqual(translated.sheet.abilities, original.sheet.abilities);
+    assert.deepEqual(translated.sheet.equipment, original.sheet.equipment);
+    assert.deepEqual(translated.sheet.spellcasting, original.sheet.spellcasting);
+    assert.deepEqual(translated.sheet.proficiencies, original.sheet.proficiencies);
+    assert.equal(pregenById(hero.id, "fr")?.tagline, french.find((row) => row.id === hero.id)?.tagline);
+  }
 });
 
 // The premise says "you arrive at dusk", and the DM narrates the hour the
