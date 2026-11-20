@@ -1,5 +1,11 @@
 {
   "messages": {
+    "Edit campaign": "Upravit kampaň",
+    "The story": "Příběh",
+    "Could not change the cover.": "Nepodařilo se změnit titulní obrázek.",
+    "Could not save the campaign settings.": "Nepodařilo se uložit nastavení kampaně.",
+    "The cover did not paint. Try again, or upload one.": "Titulní obrázek se nepodařilo vytvořit. Zkus to znovu nebo nahraj vlastní.",
+    "Could not check cover generation status.": "Nepodařilo se zjistit stav vytváření titulního obrázku.",
     "The workshop shelf": "Polička dílny",
     "A workshop is a prep space with no players and no story running: maps, people, monsters, fights, tables and rules built on your own time, then brought into a campaign when the table sits down. Each one on this shelf stands alone.": "Dílna slouží k přípravě hry bez hráčů a bez probíhajícího příběhu. Ve vlastním tempu tu vytváříš mapy, postavy, nestvůry, souboje, tabulky a pravidla, které později přeneseš do kampaně. Každá dílna na této poličce je samostatná.",
     "Start a workshop": "Založit dílnu",
@@ -10821,6 +10827,12 @@
     "Each lasting AI companion holds a few values from its class and alignment, some of them red lines it will not see crossed.\n\nDeeds the party commits in front of them move a ladder the server keeps: content, uneasy, warning, ultimatum, breaking point. Their Bonds row shows where they stand and any ultimatum they set, with the time left on the campaign's clock. Making amends, or doing what they hold dear, climbs it back, a rung a day at most. A character who stands by while another does it bears a little of it; one who speaks against it bears none.\n\nOff: companions judge by standing alone. Talk: they object, warn and set ultimatums, and stay whatever happens. Leave (the default): past their breaking point they walk out, slip away or report the party. Turn: as Leave, and they may turn on the party in a fight, at their full strength whatever the table's difficulty; a player's command over a companion ends once it warns the party.": "Každý stálý AI společník má zásady podle povolání a přesvědčení, včetně hranic, které nepřekročí.\n\nČiny družiny před jeho očima mění stupnici: spokojenost, neklid, varování, ultimátum, bod zlomu. Karta Vazby ukazuje stav, ultimáta i zbývající čas. Náprava a skutky odpovídající hodnotám mohou vztah obnovit, nejvýše o stupeň denně. Mlčící přihlížející nese díl odpovědnosti, kdo protestuje, nikoli.\n\nVypnuto: rozhodují jen vztahy. Mluvit: společníci protestují a varují, ale zůstanou. Odejít (výchozí): za bodem zlomu odejdou nebo družinu udají. Obrátit se: navíc mohou v boji zaútočit na družinu v plné síle bez ohledu na obtížnost. Hráč ztratí nad společníkem kontrolu, jakmile družinu varuje."
   },
   "contexts": {
+    "Paint one": {
+      "campaign.cover.paint": "Vytvořit obrázek"
+    },
+    "The table": {
+      "campaign.edit.table": "Herní stůl"
+    },
     "Light": {
       "appearance.brightness": "Světlý"
     },
