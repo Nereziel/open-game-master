@@ -103,8 +103,8 @@ describe("Czech localization", () => {
     expect(translate("en", "Welcome to the table")).toBe("Welcome to the table");
   });
 
-  it("localizes every WorldForge and Storyboard walkthrough heading and explanation", () => {
-    for (const step of [...SYSTEM_TOURS.world, ...SYSTEM_TOURS.storyboard]) {
+  it("localizes all workshop tool tour headings and explanations", () => {
+    for (const step of Object.values(SYSTEM_TOURS).flat()) {
       expect(translate("cs", step.title), step.title).not.toBe(step.title);
       expect(translate("cs", step.body), step.id).not.toBe(step.body);
       expect(translate("en", step.title)).toBe(step.title);
@@ -112,6 +112,9 @@ describe("Czech localization", () => {
     }
     expect(translate("cs", "The world's history")).toBe("Historie světa");
     expect(translate("cs", "What the board is missing")).toBe("Co v plánu chybí");
+    expect(translate("cs", "The pregens")).toBe("Předpřipravené postavy");
+    expect(translate("cs", "Saved rulesets")).toBe("Uložené sady pravidel");
+    expect(translate("cs", "Download or compile")).toBe("Stáhnout nebo sestavit");
   });
 
   it("uses three Czech plural forms", () => {
