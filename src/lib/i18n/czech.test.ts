@@ -11,6 +11,10 @@ import { CS_NAMES_BY_TABLE } from "../content/names-cs";
 import { RESOURCE_CS_GUIDANCE } from "../srd/class-resources-cs-data";
 import { resourceDisplayName, resourceGuidance } from "../srd/class-resources-fr";
 import { resourceName } from "../srd/class-resources";
+import { RESOURCE_CS_EXTRA_NAMES } from "../srd/resource-names-cs-extra";
+import { RESOURCE_CS_FEATURE_NAME_LOOKUP } from "../srd/resource-feature-names-cs";
+import authoredResources from "../srd/authored-resources.json";
+import genreResources from "../classes/resources.json";
 import { FR_NAMES_BY_TABLE } from "../content/names-fr";
 import { installCsTables } from "./cs-tables";
 import { contentName, classFeatureName, subclassName } from "../content/names";
@@ -36,6 +40,22 @@ describe("Czech localization", () => {
     expect(resourceGuidance("race_healing_hands", "en")).toBeNull();
     expect(resourceDisplayName("unknown_resource", "cs")).toBeNull();
     expect(Object.keys(CS_NAMES_BY_TABLE.resources).length).toBeGreaterThanOrEqual(35);
+  });
+
+  it("translates every authored and thematic ability counter, with known-class feature name fallback", () => {
+    const all = [...authoredResources.resources, ...genreResources.resources];
+    expect(all).toHaveLength(418);
+    expect(Object.keys(RESOURCE_CS_EXTRA_NAMES)).toHaveLength(418);
+    for (const resource of all) {
+      const shown = resourceDisplayName(resource.id, "cs");
+      expect(shown, `Missing Czech resource name: ${resource.id}`).toBeTruthy();
+      expect(shown, `Untranslated resource name: ${resource.id}`).not.toBe(resource.displayName);
+    }
+    expect(Object.keys(RESOURCE_CS_FEATURE_NAME_LOOKUP).length).toBe(417);
+    expect(classFeatureName("street_samurai", "Bullet Time", "cs")).toBe("Zpomalený čas");
+    expect(classFeatureName("warlock", "Healing Light", "cs")).toBe("Léčivé světlo");
+    expect(classFeatureName("homebrew:my-class", "Bullet Time", "cs")).toBe("Bullet Time");
+    expect(classFeatureName("street_samurai", "Bullet Time", "en")).toBe("Bullet Time");
   });
 
   it("selects Czech in settings and HTTP requests", () => {
