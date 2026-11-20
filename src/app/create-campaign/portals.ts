@@ -92,9 +92,11 @@ export function presetTheme<T extends ThemeSlice>(draft: T, locale: Locale = "en
 // content from a world pack. Handles switching between any UI languages.
 export function relocalizePresetTheme<T extends ThemeSlice>(draft: T, locale: Locale): T {
   if (draft.themeTouched || draft.worldPack) return draft;
-  if (!(["en", "fr", "cs"] as const).some((language) => genrePresetFor(draft.genre, language).defaultTheme === draft.theme)) {
-    return draft;
-  }
+  const isPresetText =
+    genrePresetFor(draft.genre, "en").defaultTheme === draft.theme ||
+    genrePresetFor(draft.genre, "fr").defaultTheme === draft.theme ||
+    genrePresetFor(draft.genre, "cs").defaultTheme === draft.theme;
+  if (!isPresetText) return draft;
   const next = presetTheme(draft, locale);
   return next.theme === draft.theme ? draft : next;
 }
