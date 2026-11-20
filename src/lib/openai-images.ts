@@ -2,6 +2,7 @@ import { mkdirSync, writeFileSync } from "node:fs";
 import { isPrivateBackendHost } from "@/lib/backend-host";
 import path from "node:path";
 import { configValue, getGlobalConfig } from "@/lib/app-config";
+import { resolveImageApiConnection, type CampaignImageApi } from "@/lib/image-api-config";
 import { endpointKind } from "@/lib/dm/sampling-logic";
 import { sniffImage } from "@/lib/image-format";
 import { scheduleImageVariants } from "@/lib/image-variants";
@@ -30,7 +31,7 @@ const GENERATE_TIMEOUT_MS = 4 * 60 * 1000;
 // DM should not have to paste the key twice; the host gate is what makes that
 // safe, since a llama.cpp, LM Studio or OpenRouter key must never be posted
 // to api.openai.com. Campaign settings first, then the server-wide backend.
-export type TextBackendKey = Pick<StorySettings, "customBaseUrl" | "customApiKey">;
+export type TextBackendKey = Pick<StorySettings, "customBaseUrl" | "customApiKey"> & Partial<CampaignImageApi>;
 
 function borrowedTextKey(story?: TextBackendKey): string {
   const text = getGlobalConfig().text;
@@ -53,21 +54,18 @@ function borrowedTextKey(story?: TextBackendKey): string {
 
 function resolveConfig(story?: TextBackendKey) {
   const images = getGlobalConfig().images;
-  return {
-    baseUrl: configValue(images.openaiBaseUrl, "OPENAI_IMAGE_BASE_URL", DEFAULT_BASE_URL).replace(
-      /\/+$/,
-      "",
-    ),
+  const server = {
+    baseUrl: configValue(images.openaiBaseUrl, "OPENAI_IMAGE_BASE_URL", DEFAULT_BASE_URL),
     model: configValue(images.openaiModel, "OPENAI_IMAGE_MODEL"),
-    // OPENAI_API_KEY before the borrowed text key because it is the name
-    // every other tool trains people to set, and an image-specific setting
-    // is a deliberate choice that must beat an inferred one.
+    // Only the image-specific or server's own compatible API key is used by
+    // default. The campaign's custom endpoint may never borrow this key.
     apiKey:
       images.openaiApiKey.trim() ||
       serverEnv("OPENAI_IMAGE_API_KEY") ||
       serverEnv("OPENAI_API_KEY") ||
       borrowedTextKey(story),
   };
+  return resolveImageApiConnection(server, story);
 }
 
 // Whether the "openai" picture backend bills the host: a key to a public
