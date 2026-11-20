@@ -126,6 +126,40 @@ test("an explicit image key beats the borrowed one", () => {
   assert.equal(openAiImagesConfigured(), false);
 });
 
+test("custom image endpoints cannot borrow default OpenAI API credentials", () => {
+  const custom = "https://images.example/v1";
+  // Deliberately configure credentials on the ordinary image and text
+  // backends. Neither is authorized for a different image service.
+  process.env.OPENAI_API_KEY = "generic-openai-secret";
+  process.env.OPENAI_IMAGE_API_KEY = "default-image-secret";
+  saveGlobalConfig({ images: { openaiBaseUrl: custom, openaiApiKey: "", openaiModel: "my-painter" } });
+  saveGlobalConfig({ text: { customBaseUrl: "https://api.openai.com/v1", customApiKey: "story-secret" } });
+  assert.equal(openAiImagesConfigured(), false, "third-party image endpoint incorrectly inherited another provider's key");
+
+  saveGlobalConfig({ images: { openaiApiKey: "explicit-custom-key" } });
+  assert.equal(openAiImagesConfigured(), true, "a deliberately assigned image key works");
+
+  saveGlobalConfig({ images: { openaiBaseUrl: "", openaiApiKey: "" } });
+  assert.equal(openAiImagesConfigured(), true, "the default API can still reuse the generic key");
+  delete process.env.OPENAI_IMAGE_API_KEY;
+  delete process.env.OPENAI_API_KEY;
+  saveGlobalConfig({ text: { customBaseUrl: "", customApiKey: "" } });
+  assert.equal(openAiImagesConfigured(), false);
+});
+
+test("the image-only environment key applies to its own configured endpoint", () => {
+  process.env.OPENAI_IMAGE_BASE_URL = "https://images.example/v1";
+  process.env.OPENAI_IMAGE_API_KEY = "image-service-key";
+  saveGlobalConfig({ images: { openaiBaseUrl: "", openaiApiKey: "", openaiModel: "my-painter" } });
+  assert.equal(openAiImagesConfigured(), true);
+  saveGlobalConfig({ images: { openaiBaseUrl: "https://other-images.example/v1" } });
+  assert.equal(openAiImagesConfigured(), false, "env image key was sent to a different endpoint");
+  saveGlobalConfig({ images: { openaiBaseUrl: "" } });
+  delete process.env.OPENAI_IMAGE_BASE_URL;
+  delete process.env.OPENAI_IMAGE_API_KEY;
+});
+
+
 // The producer-side gate the map and portrait routes ask before promising a
 // picture. It normally describes the SERVER's default backend; a campaign on
 // its own OpenAI key has to be able to answer for itself, or a

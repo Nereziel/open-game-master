@@ -76,6 +76,7 @@ export type EnvDefaults = {
   fluxWorkerUrl: string;
   imageBackend: string;
   hasOpenaiImageApiKey: boolean;
+  hasDedicatedImageApiKey?: boolean;
   openaiImageModel: string;
   openaiImageBaseUrl: string;
   kokoroUrl: string;

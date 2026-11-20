@@ -44,6 +44,7 @@ export type Draft = {
   // paints every picture.
   comfy: { url: string; checkpoint: string; preset: string };
   picturesKey: string;
+  picturesBaseUrl: string;
   picturesModel: string;
   narration: "kokoro" | "openai" | "off" | "";
   kokoro: { url: string; voice: string };
@@ -126,6 +127,7 @@ export function draftFromConfig(config: MaskedConfig, firstRun: boolean): Draft 
               : "none",
     comfy: { url: images.comfyUrl, checkpoint: images.comfyCheckpoint, preset: images.comfyWorkflowPreset },
     picturesKey: "",
+    picturesBaseUrl: images.openaiBaseUrl,
     picturesModel: images.openaiModel,
     narration:
       config.speech.ttsProvider === "kokoro" && config.speech.kokoroUrl
@@ -169,7 +171,7 @@ export function comfyFromScan(current: Draft["comfy"], found: NonNullable<ScanRe
 export function picturesBlocker(
   t: (key: string) => string,
   draft: Draft,
-  input: { agentVerified: boolean; storyIsOpenAi: boolean; openaiKeySaved: boolean; envImageModel: string; comfyOffers: boolean },
+  input: { agentVerified: boolean; storyIsOpenAi: boolean; openaiKeySaved: boolean; envImageModel: string; comfyOffers: boolean; savedImageBaseUrl?: string; envImageBaseUrl?: string; envHasImageKey?: boolean; envHasDedicatedImageKey?: boolean },
 ): string | null {
   if (draft.pictures === "agent" && !input.agentVerified) {
     return t("Paint a test map first: the tables only get a painter that works.");
@@ -181,8 +183,31 @@ export function picturesBlocker(
     }
   }
   if (draft.pictures === "openai") {
-    if (!input.storyIsOpenAi && !draft.picturesKey.trim() && !input.openaiKeySaved) return t("Paste an OpenAI key, or choose another answer.");
-    if (!draft.picturesModel.trim() && !input.envImageModel) return t("Pick the picture model, or choose another answer.");
+    const rawUrl = draft.picturesBaseUrl || input.envImageBaseUrl || "https://api.openai.com/v1";
+    // A custom picture service must be an HTTP(S) API, not a URL with
+    // embedded credentials, a query, or a fragment.
+    let url: URL;
+    try {
+      url = new URL(rawUrl);
+    } catch {
+      return t("Enter a valid picture API base URL.");
+    }
+    if (!["https:", "http:"].includes(url.protocol) || !url.hostname || url.username || url.password || url.search || url.hash) {
+      return t("Enter a valid picture API base URL.");
+    }
+    const target = normalizeBaseUrl(rawUrl);
+    const saved = normalizeBaseUrl(input.savedImageBaseUrl || input.envImageBaseUrl || "https://api.openai.com/v1");
+    const env = normalizeBaseUrl(input.envImageBaseUrl || "https://api.openai.com/v1");
+    const official = normalizeBaseUrl("https://api.openai.com/v1");
+    const keyAvailable = Boolean(draft.picturesKey?.trim()) ||
+      (input.openaiKeySaved && target === saved) ||
+      (input.envHasDedicatedImageKey && target === env) ||
+      (input.envHasImageKey && target === official) ||
+      (input.storyIsOpenAi && target === official);
+    if (!keyAvailable) return t("Paste an API key for this picture service, or choose another answer.");
+    if (!draft.picturesModel.trim() && !(input.envImageModel && target === env)) {
+      return t("Pick the picture model, or choose another answer.");
+    }
   }
   return null;
 }

@@ -53,20 +53,19 @@ function borrowedTextKey(story?: TextBackendKey): string {
 
 function resolveConfig(story?: TextBackendKey) {
   const images = getGlobalConfig().images;
+  const baseUrl = configValue(images.openaiBaseUrl, "OPENAI_IMAGE_BASE_URL", DEFAULT_BASE_URL).replace(/\/+$/, "");
+  const envBaseUrl = serverEnv("OPENAI_IMAGE_BASE_URL", DEFAULT_BASE_URL).replace(/\/+$/, "");
+  // An image-specific environment key belongs only to its configured host.
+  // Generic OpenAI and borrowed storyteller keys must never be sent to a
+  // different image endpoint, even if that endpoint is OpenAI-compatible.
+  const envImageKey = baseUrl === envBaseUrl ? serverEnv("OPENAI_IMAGE_API_KEY") : "";
+  const openAiKey = endpointKind(baseUrl) === "openai"
+    ? serverEnv("OPENAI_API_KEY") || borrowedTextKey(story)
+    : "";
   return {
-    baseUrl: configValue(images.openaiBaseUrl, "OPENAI_IMAGE_BASE_URL", DEFAULT_BASE_URL).replace(
-      /\/+$/,
-      "",
-    ),
+    baseUrl,
     model: configValue(images.openaiModel, "OPENAI_IMAGE_MODEL"),
-    // OPENAI_API_KEY before the borrowed text key because it is the name
-    // every other tool trains people to set, and an image-specific setting
-    // is a deliberate choice that must beat an inferred one.
-    apiKey:
-      images.openaiApiKey.trim() ||
-      serverEnv("OPENAI_IMAGE_API_KEY") ||
-      serverEnv("OPENAI_API_KEY") ||
-      borrowedTextKey(story),
+    apiKey: images.openaiApiKey.trim() || envImageKey || openAiKey,
   };
 }
 

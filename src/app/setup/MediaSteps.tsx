@@ -20,6 +20,7 @@ import { ChoiceCard, ChoiceCards, Lamp, SuggestionNote, host, type ScanResult } 
 import { CopyLine } from "@/components/CopyLine";
 import { cn } from "@/lib/cn";
 import { fillsStep, type NarrationSuggestion, type PicturesSuggestion } from "@/lib/setup/suggest";
+import { normalizeBaseUrl } from "@/lib/setup/discovery-logic";
 
 const OPENAI_V1 = "https://api.openai.com/v1";
 
@@ -204,6 +205,7 @@ export function PicturesStep({
   agentLabel,
   onAgentVerified,
   openaiKeySaved,
+  savedImageBaseUrl,
   env,
   onComfyOffers,
   suggestion,
@@ -224,6 +226,7 @@ export function PicturesStep({
   agentLabel: string;
   onAgentVerified: () => void;
   openaiKeySaved: boolean;
+  savedImageBaseUrl: string;
   env: EnvDefaults;
   // Told whether the ComfyUI at the draft's address offers a model or a
   // checkpoint to pick, which holds Continue until one is picked.
@@ -231,6 +234,14 @@ export function PicturesStep({
 }) {
   const t = useT();
   const BLANK = blanks(t);
+  const imageBaseUrl = draft.picturesBaseUrl || env.openaiImageBaseUrl || OPENAI_V1;
+  const imageHost = normalizeBaseUrl(imageBaseUrl);
+  const savedImageHost = normalizeBaseUrl(savedImageBaseUrl || env.openaiImageBaseUrl || OPENAI_V1);
+  const imageKeySavedForHost = openaiKeySaved && imageHost === savedImageHost;
+  const envImageKeyForHost =
+    (env.hasDedicatedImageApiKey && imageHost === normalizeBaseUrl(env.openaiImageBaseUrl || OPENAI_V1)) ||
+    (env.hasOpenaiImageApiKey && imageHost === normalizeBaseUrl(OPENAI_V1));
+  const storytellerImageKey = storyIsOpenAi && imageHost === normalizeBaseUrl(OPENAI_V1);
   const scannedComfy = scan?.comfyui ?? null;
   const address = draft.comfy.url.trim();
   const scanMatches = Boolean(scannedComfy && sameComfyAddress(address, scannedComfy.url));
@@ -298,8 +309,8 @@ export function PicturesStep({
           onPick={() => pick("openai")}
           suggested={suggestion?.pick === "openai"}
           glyph="tab-admin"
-          title={t("OpenAI's image model")}
-          sub={storyIsOpenAi ? t("On the key from the last step. Each picture is billed to it.") : t("Billed to an OpenAI key, per picture. No GPU needed.")}
+          title={t("OpenAI-compatible images API")}
+          sub={storyIsOpenAi ? t("A remote image service, optionally using the storyteller's key.") : t("A remote image service with your own model and API key. No GPU needed.")}
         />
         {agentPaints ? (
           <ChoiceCard
@@ -395,15 +406,29 @@ export function PicturesStep({
         </div>
       ) : draft.pictures === "openai" ? (
         <div key="openai" className="reveal-height space-y-3">
-          {storyIsOpenAi ? (
-            <p className="su-note">{t("Pictures go to OpenAI on the storyteller's key. Nothing more to paste.")}</p>
+          <label className="block">
+            <span className="mb-1 block text-xs font-medium text-stone-400">{t("Image API base URL")}</span>
+            <input
+              type="url"
+              className={ui.input}
+              value={draft.picturesBaseUrl}
+              onChange={(event) => update((current) => ({ ...current, picturesBaseUrl: event.target.value }))}
+              placeholder={env.openaiImageBaseUrl || OPENAI_V1}
+              autoComplete="url"
+            />
+            <span className="mt-1 block text-[11px] text-stone-500">
+              {t("Use an OpenAI-compatible image API base URL, normally ending in /v1. Leave blank for the server default.")}
+            </span>
+          </label>
+          {storytellerImageKey ? (
+            <p className="su-note">{t("Pictures can use the storyteller's key for the default image service.")}</p>
           ) : (
             <KeyField
-              label={t("OpenAI API key")}
+              label={t("API key", { context: "ai.apiKey" })}
               value={draft.picturesKey}
               onChange={(picturesKey) => update((current) => ({ ...current, picturesKey }))}
-              saved={openaiKeySaved}
-              hint={t("Used only for pictures. Each portrait, scene and map is billed to it.")}
+              saved={imageKeySavedForHost || envImageKeyForHost}
+              hint={t("Used only for pictures. Changing the API URL requires a key for that service.")}
             />
           )}
           <ModelChoiceField
@@ -411,6 +436,7 @@ export function PicturesStep({
             hint={t("The picture models the key lists.")}
             role="image"
             provider="images"
+            baseUrl={imageBaseUrl}
             apiKey={draft.picturesKey}
             value={draft.picturesModel}
             onChange={(picturesModel) => update((current) => ({ ...current, picturesModel, answered: answer(current, "pictures") }))}

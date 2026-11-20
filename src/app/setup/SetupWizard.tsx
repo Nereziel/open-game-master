@@ -171,7 +171,7 @@ export function SetupWizard({ config: initialConfig, env, info }: { config: Mask
       // for now" saves the switch off.
       if (draft.pictures === "") return null;
       if (draft.pictures === "comfyui") return picturesPatch({ kind: "comfyui", url: draft.comfy.url, checkpoint: draft.comfy.checkpoint, preset: draft.comfy.preset });
-      if (draft.pictures === "openai") return picturesPatch({ kind: "openai", apiKey: draft.picturesKey, model: draft.picturesModel });
+      if (draft.pictures === "openai") return picturesPatch({ kind: "openai", baseUrl: draft.picturesBaseUrl, apiKey: draft.picturesKey, model: draft.picturesModel }, config.images.openaiBaseUrl, env.openaiImageBaseUrl);
       if (draft.pictures === "agent") return picturesPatch({ kind: "agent" });
       return picturesPatch({ kind: "none" });
     }
@@ -242,7 +242,7 @@ export function SetupWizard({ config: initialConfig, env, info }: { config: Mask
     setSaveError("");
     setDraft((current) =>
       key === "pictures"
-        ? { ...current, pictures: saved.pictures, comfy: saved.comfy, picturesKey: "", picturesModel: saved.picturesModel }
+        ? { ...current, pictures: saved.pictures, comfy: saved.comfy, picturesKey: "", picturesBaseUrl: saved.picturesBaseUrl, picturesModel: saved.picturesModel }
         : key === "voice"
           ? { ...current, narration: saved.narration, kokoro: saved.kokoro, narrationKey: "", narrationModel: saved.narrationModel, dictation: saved.dictation }
           : key === "players"
@@ -297,6 +297,10 @@ export function SetupWizard({ config: initialConfig, env, info }: { config: Mask
     agentVerified: Boolean(config.harness.imagesVerifiedAt),
     storyIsOpenAi,
     openaiKeySaved: config.images.hasOpenaiApiKey,
+    savedImageBaseUrl: config.images.openaiBaseUrl,
+    envImageBaseUrl: env.openaiImageBaseUrl,
+    envHasImageKey: env.hasOpenaiImageApiKey,
+    envHasDedicatedImageKey: env.hasDedicatedImageApiKey,
     envImageModel: env.openaiImageModel,
     comfyOffers,
   });
@@ -378,6 +382,7 @@ export function SetupWizard({ config: initialConfig, env, info }: { config: Mask
           agentLabel={draft.agent.id === "grok" ? t("Grok Build") : t("Codex")}
           onAgentVerified={() => void refreshConfig()}
           openaiKeySaved={config.images.hasOpenaiApiKey}
+          savedImageBaseUrl={config.images.openaiBaseUrl}
           env={env}
           onComfyOffers={setComfyOffers}
           suggestion={picturesSuggestion}
