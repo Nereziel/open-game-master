@@ -3,6 +3,7 @@ import { requestUtilityMessage } from "@/lib/dm/model";
 import { IMAGE_ENGLISH_SYSTEM, parseImageEnglish } from "@/lib/image-english-logic";
 import { arcTextTimeoutMs } from "@/lib/model-client";
 import { stripReasoningArtifacts } from "@/lib/story-prompt";
+import { recordDmTrace, withDmTrace } from "@/lib/dm/trace";
 
 // Story text headed for an image model is ideally rewritten into English.
 // If a utility model returns story narration instead of JSON, retry once
@@ -14,6 +15,7 @@ export async function toEnglishForImage<K extends string>(
   campaign: Pick<Campaign, "settings" | "gameSettings">,
   fields: Record<K, string>,
 ): Promise<Record<K, string>> {
+  return withDmTrace({ flow: "image_prompt_translation" }, async () => {
   if (campaign.gameSettings.tableLanguage === "english") return fields;
   const keys = (Object.keys(fields) as K[]).filter((key) => fields[key].trim());
   if (!keys.length) return fields;
@@ -36,16 +38,26 @@ export async function toEnglishForImage<K extends string>(
   const first = await call(false);
   if (!first.error) {
     const english = parseImageEnglish(stripReasoningArtifacts(String(first.message?.content ?? "")), keys);
+    recordDmTrace("json_validation", {
+      stage: "image_english", attempt: "first", accepted: Boolean(english),
+      expectedKeys: keys, returnedKeys: Object.keys(english ?? {}),
+    });
     if (english) return { ...fields, ...english };
     console.warn("[image-english] Unreadable translation response; retrying with strict JSON instructions.");
     const again = await call(true);
     if (!again.error) {
       const corrected = parseImageEnglish(stripReasoningArtifacts(String(again.message?.content ?? "")), keys);
+      recordDmTrace("json_validation", {
+        stage: "image_english", attempt: "format_recovery", accepted: Boolean(corrected),
+        expectedKeys: keys, returnedKeys: Object.keys(corrected ?? {}),
+      });
       if (corrected) return { ...fields, ...corrected };
     }
   }
   // Do not fail map/portrait generation because a separate text model could
   // not translate the prompt. Images may be less precise on such backends.
   console.warn("[image-english] Could not translate image prompt; using the original story text as fallback.");
+  recordDmTrace("image_prompt_fallback", { reason: "unreadable_or_failed_translation", expectedKeys: keys });
   return fields;
+  });
 }

@@ -12,6 +12,7 @@ import type { DmTurn } from "@/lib/db/dm-turns";
 import type { CharacterSheet } from "@/lib/schemas/sheet";
 import { arcTextTimeoutMs } from "@/lib/model-client";
 import { requestUtilityMessage } from "@/lib/dm/model";
+import { recordDmTrace, withDmTrace } from "@/lib/dm/trace";
 import { stripReasoningArtifacts } from "@/lib/story-prompt";
 import { replyJsonObject } from "@/lib/reply-json-logic";
 import { SRD_SKILLS } from "@/lib/srd";
@@ -354,6 +355,8 @@ export async function readClaims(
     words?: readonly ExchangeWords[];
   },
 ): Promise<NarrationClaim[]> {
+  return withDmTrace({ flow: "claims_reader", campaignId: campaign.id }, async () => {
+  recordDmTrace("flow_start", { stage: "claims", label: input.label, requestedKinds: input.kinds, passageChars: input.text.length });
   if (!input.kinds.length || !input.text.trim()) {
     return [];
   }
@@ -439,6 +442,13 @@ export async function readClaims(
     .digest("hex");
   let reply = rememberedReading(key);
   let raw = reply === null ? null : parseReaderReply(stripReasoningArtifacts(reply));
+  if (reply !== null) {
+    recordDmTrace("json_validation", {
+      stage: "claims", label: input.label, attempt: "cached",
+      accepted: raw !== null, reason: raw !== null ? null : readerReplyFailure(reply),
+      claimCount: raw?.length ?? 0,
+    });
+  }
   if (reply === null) {
     // Utility providers can answer HTTP 200 but return an empty response,
     // prose instead of JSON, or truncated JSON. Unlike a transport error,
@@ -479,6 +489,12 @@ export async function readClaims(
       }
       reply = String(message?.content ?? "");
       raw = parseReaderReply(stripReasoningArtifacts(reply));
+      recordDmTrace("json_validation", {
+        stage: "claims", label: input.label, attempt: attempt + 1,
+        accepted: raw !== null,
+        reason: raw !== null ? null : readerReplyFailure(reply),
+        responseChars: reply.length, claimCount: raw?.length ?? 0,
+      });
       if (raw) {
         rememberReading(key, reply);
         break;
@@ -514,7 +530,12 @@ export async function readClaims(
   if (process.env.DM_DEBUG) {
     console.log(`[dm-debug] claims ${input.label}: asked ${kinds.join(",")}; ${JSON.stringify(claims)}`);
   }
+  recordDmTrace("claims_result", {
+    label: input.label, requestedKinds: kinds, validClaims: claims.length,
+    acceptedKinds: claims.map((claim) => claim.kind),
+  });
   return claims;
+  });
 }
 
 const namedSchema = z.object({ name: z.string().trim().min(1).max(80) });

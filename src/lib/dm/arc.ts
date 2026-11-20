@@ -1,4 +1,5 @@
 import { withLanguage } from "@/lib/dm/table-language-logic";
+import { recordDmTrace, withDmTrace } from "@/lib/dm/trace";
 import { openingActFormatRecovery, arcReplyPreview } from "@/lib/dm/arc-format-recovery";
 import { campaignSeats, getCampaignById, latestSeq, setStoryArc } from "@/lib/db/campaigns";
 import { listChapters } from "@/lib/db/chapters";
@@ -329,6 +330,10 @@ async function sagaFromPlan(
 ): Promise<{ arc: StoryArc; raw: string } | null> {
   let raw = planRaw;
   let plan = parseSagaPlanJson(raw, profile);
+  recordDmTrace("json_validation", {
+    stage: "saga_plan", attempt: "first", accepted: Boolean(plan),
+    responseChars: raw.length, problems: plan ? sagaPlanProblems(plan) : ["invalid-json-or-saga-shape"],
+  });
   if (!plan) {
     // A model that ignored the plan's shape and answered with a whole arc,
     // beats and all (nested acts, a flat list of beats), still yields a
@@ -351,6 +356,10 @@ async function sagaFromPlan(
       return null;
     }
     plan = parseSagaPlanJson(again, profile);
+    recordDmTrace("json_validation", {
+      stage: "saga_plan", attempt: "format_recovery", accepted: Boolean(plan),
+      responseChars: again.length, problems: plan ? sagaPlanProblems(plan) : ["invalid-json-or-saga-shape"],
+    });
     if (!plan) {
       const wholeAgain = parseSagaJson(again, profile);
       if (!wholeAgain && process.env.DM_DEBUG) {
@@ -369,6 +378,10 @@ async function sagaFromPlan(
     }
     const again = await arcModelCall(campaignId, planSystem, `${context}\n\n${feedback(planProblems, "plan")}`, "saga replan");
     const second = again === null ? null : parseSagaPlanJson(again, profile);
+    recordDmTrace("json_validation", {
+      stage: "saga_plan", attempt: "replot", accepted: Boolean(second),
+      problems: second ? sagaPlanProblems(second) : ["invalid-json-or-saga-shape"],
+    });
     if (again !== null && second && sagaPlanProblems(second).length < planProblems.length) {
       plan = second;
       raw = again;
@@ -386,6 +399,11 @@ async function sagaFromPlan(
     );
     if (reply === null) return null;
     const parsed = parseOpeningActJson(reply);
+    recordDmTrace("json_validation", {
+      stage: "opening_act", attempt: recoverFormat ? "format_recovery" : extra ? "rewrite" : "first",
+      accepted: Boolean(parsed), beatCount: parsed?.beats.length ?? 0,
+      responseChars: reply.length, problems: parsed ? openingActProblems(plan, parsed.beats) : ["invalid-json-or-opening-act-shape"],
+    });
     if (!parsed && process.env.DM_DEBUG) {
       console.debug(`[dm-debug] opening act: unreadable reply (${reply.length} chars): ${arcReplyPreview(reply)}`);
     }
@@ -417,6 +435,8 @@ export async function generateStoryArc(
   campaignId: string,
   opts?: { force?: boolean },
 ) {
+  return withDmTrace({ flow: "saga_generation", campaignId }, async () => {
+  recordDmTrace("flow_start", { stage: "saga_generation", force: Boolean(opts?.force) });
   try {
     const campaign = getCampaignById(campaignId);
     if (!campaign || (campaign.storyArc && !opts?.force)) {
@@ -459,6 +479,7 @@ export async function generateStoryArc(
     }
     const raw = typeof message?.content === "string" ? message.content : "";
     const plotted = await sagaFromPlan(campaignId, sagaGenerateSystem(profile), context, profile, raw);
+    recordDmTrace("arc_plan_result", { accepted: Boolean(plotted), responseChars: raw.length });
     if (!plotted) {
       console.warn(`[arc] campaign ${campaignId}: the story arc was not planned; the model's reply was not a readable plan`);
       if (process.env.DM_DEBUG) {
@@ -484,7 +505,9 @@ export async function generateStoryArc(
     console.error(`[arc] campaign ${campaignId}: the story arc could not be planned`, error);
   } finally {
     setDmStatus(campaignId, "idle");
+    recordDmTrace("flow_end", { stage: "saga_generation" });
   }
+  });
 }
 
 // complete_beat: the DM reports that the story actually reached the [NOW]

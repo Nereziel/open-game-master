@@ -1,4 +1,5 @@
 import { generateStoryImage, imageProducerReady } from "@/lib/image-generate";
+import { recordDmTrace, withDmTrace } from "@/lib/dm/trace";
 import { imagesAvailable } from "@/lib/capabilities";
 import {
   getCampaignMessage,
@@ -63,7 +64,7 @@ export function fulfillMessageImage(
     return Promise.resolve();
   }
   publishMediaStatus(campaignId, "image", messageId, "queued");
-  return enqueueMediaJob(`image ${messageId}`, async () => {
+  return enqueueMediaJob(`image ${messageId}`, async () => withDmTrace({ flow: "scene_image", campaignId }, async () => {
     publishMediaStatus(campaignId, "image", messageId, "generating");
     try {
       const campaign = getCampaignById(campaignId);
@@ -79,23 +80,31 @@ export function fulfillMessageImage(
       const typed = typedStyle(campaign.settings, "scene");
       // The AI DM writes its prompt in English, a human DM may not.
       const english = await toEnglishForImage(campaign, { prompt, style: typed });
+      const imagePrompt = scenePrompt(typed ? english.style : look.scene, english.prompt);
+      recordDmTrace("image_generation_request", {
+        campaignId, kind: "scene", messageId, backend: settings.imageBackend,
+        prompt: imagePrompt, mode: request.mode ?? settings.imageMode,
+        aspect: request.aspect ?? settings.aspect,
+      });
       const image = await generateStoryImage(settings, {
-        prompt: scenePrompt(typed ? english.style : look.scene, english.prompt),
+        prompt: imagePrompt,
         mode: request.mode ?? settings.imageMode,
         aspect: request.aspect ?? settings.aspect,
         negative: boundaryNegativeTerms(boundaries),
       });
+      recordDmTrace("image_generation_result", { campaignId, kind: "scene", messageId, success: true });
       if (!setMessageGeneratedImage(messageId, image)) {
         return;
       }
       publishPersisted(campaignId, "image_ready", { messageId, image });
     } catch (error) {
       const reason = pictureFailureReason(error);
+      recordDmTrace("image_generation_result", { campaignId, kind: "scene", messageId, success: false, reason });
       publishMediaStatus(campaignId, "image", messageId, "failed", reason);
       recordImageFailure(campaignId, messageId, reason);
       throw error;
     }
-  });
+  }));
 }
 
 // The failure above is an ephemeral event, and the placeholder reads the

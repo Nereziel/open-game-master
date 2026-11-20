@@ -1,4 +1,5 @@
 import { withLanguage } from "@/lib/dm/table-language-logic";
+import { recordDmTrace, withDmTrace } from "@/lib/dm/trace";
 import { getCampaignById } from "@/lib/db/campaigns";
 import { listChapters } from "@/lib/db/chapters";
 import { arcTextTimeoutMs } from "@/lib/model-client";
@@ -25,6 +26,8 @@ export async function generateWorldArcs(
   campaignId: string,
   arc: StoryArc,
 ): Promise<WorldArc[]> {
+  return withDmTrace({ flow: "world_arc_generation", campaignId }, async () => {
+  recordDmTrace("flow_start", { stage: "world_arc_generation" });
   const campaign = getCampaignById(campaignId);
   if (!campaign) {
     return [];
@@ -59,6 +62,10 @@ export async function generateWorldArcs(
     return [];
   }
   let arcs = parseWorldArcsJson(typeof message?.content === "string" ? message.content : "");
+  recordDmTrace("json_validation", {
+    stage: "world_arcs", attempt: "first", accepted: arcs.length > 0,
+    arcCount: arcs.length, responseChars: String(message?.content ?? "").length,
+  });
   if (!arcs.length) {
     // An agent CLI serving utility tasks sometimes continues the GM's scene
     // instead of returning world-clock JSON. Retry once as a fresh, strict
@@ -87,12 +94,18 @@ export async function generateWorldArcs(
     );
     if (!recovery.error) {
       arcs = parseWorldArcsJson(typeof recovery.message?.content === "string" ? recovery.message.content : "");
+      recordDmTrace("json_validation", {
+        stage: "world_arcs", attempt: "format_recovery", accepted: arcs.length > 0,
+        arcCount: arcs.length, responseChars: String(recovery.message?.content ?? "").length,
+      });
     }
     if (!arcs.length && process.env.DM_DEBUG) {
       console.debug("[dm-debug] world arc generation: no readable JSON after recovery");
     }
   }
+  recordDmTrace("world_arcs_result", { arcCount: arcs.length });
   return arcs;
+  });
 }
 
 // Tops up a story arc that has no live off-screen clocks. Failure returns
