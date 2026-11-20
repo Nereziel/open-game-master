@@ -5,6 +5,8 @@ import {
   PARTY_BACKSTORY_MAX,
   PARTY_DRAFT_SYSTEM,
   partyDraftRequest,
+  partyDraftLanguage,
+  type PartyDraftReaderLocale,
   type DraftCharacter,
 } from "@/lib/dm/party-story";
 import { withLanguage } from "@/lib/dm/table-language-logic";
@@ -21,11 +23,12 @@ export async function draftPartyBackstory(
   campaign: Campaign,
   characters: DraftCharacter[],
   current: string,
+  readerLocale?: PartyDraftReaderLocale,
 ): Promise<{ text: string; error?: string }> {
   const { message, error } = await requestDmMessage(
     campaign.settings,
     [
-      { role: "system", content: withLanguage(PARTY_DRAFT_SYSTEM, campaign.gameSettings.tableLanguage) },
+      { role: "system", content: withLanguage(PARTY_DRAFT_SYSTEM, partyDraftLanguage(campaign.gameSettings.tableLanguage, readerLocale)) },
       {
         role: "user",
         content: partyDraftRequest({
