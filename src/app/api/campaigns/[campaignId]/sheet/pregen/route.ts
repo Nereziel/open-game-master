@@ -11,7 +11,7 @@ import { publishPersisted } from "@/lib/events";
 import { queueLibraryPortrait } from "@/lib/portrait";
 import { pregenById } from "@/lib/starter/pregens";
 import { seatPicksSchema } from "@/lib/characters/seat-picks";
-import { bookLocaleOf } from "@/lib/rulebook/book";
+import { bookLocaleOf } from "@/lib/request-locale";
 import { translate } from "@/lib/messages-logic";
 
 export const runtime = "nodejs";
