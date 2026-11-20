@@ -35,6 +35,7 @@ import {
   openingActProblems,
   renderSagaPlan,
   sagaPlanProblems,
+  deferConflictingSagaBosses,
   sagaWithOpeningAct,
   applyArcEnrichment,
   applyArcExtension,
@@ -404,6 +405,23 @@ async function sagaFromPlan(
     if (again !== null && second && [...sagaPlanProblems(second), ...languageProblem(second.record)].length < planProblems.length) {
       plan = second;
       raw = again;
+    }
+  }
+  // If a second model attempt cannot separate act bosses, defer only the
+  // conflicting earlier bosses. The next act-detail pass can pick a fresh
+  // local opponent; a repeated finale boss must never be kept in act 2.
+  // This also updates plan.record, which sagaWithOpeningAct re-parses.
+  const protectedBosses = deferConflictingSagaBosses(plan);
+  plan = protectedBosses.plan;
+  if (protectedBosses.deferredActs.length || protectedBosses.synchronizedLastAct) {
+    recordDmTrace("saga_boss_protection", {
+      campaignId,
+      deferredActs: protectedBosses.deferredActs,
+      synchronizedLastAct: protectedBosses.synchronizedLastAct,
+      remainingProblems: sagaPlanProblems(plan),
+    });
+    if (process.env.DM_DEBUG) {
+      console.log(`[dm-debug] saga plan: protected final boss; replacement needed in acts ${protectedBosses.deferredActs.join(",") || "none"}`);
     }
   }
   // A structurally valid English plan must not become a Czech campaign arc.
