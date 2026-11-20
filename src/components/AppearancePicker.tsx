@@ -1,6 +1,7 @@
 "use client";
 
 import { Check } from "lucide-react";
+import { useT } from "@/lib/locale";
 import { ThemeIcon } from "@/components/ThemeIcon";
 import { APPEARANCE_THEMES, appearanceDefinition, themeArtStyle, type AppearanceChoice } from "@/lib/appearance-themes";
 import { useThemePrefs, writeAppearanceChoice, writeThemeChoice, type ThemeChoice } from "@/lib/theme-mode";
@@ -11,36 +12,37 @@ const BRIGHTNESS: Array<{ id: ThemeChoice; label: string }> = [
 
 export function AppearancePicker() {
   const { choice, mode, appearanceChoice, appearance } = useThemePrefs();
+  const t = useT();
   const pick = (value: AppearanceChoice) => writeAppearanceChoice(value);
   return (
     <div className="appearance-picker">
       <div className="mb-4 flex flex-wrap items-center justify-between gap-3">
         <button type="button" className="appearance-follow" aria-pressed={appearanceChoice === "campaign"} onClick={() => pick("campaign")}>
           <span className="appearance-check" aria-hidden="true">{appearanceChoice === "campaign" ? <Check size={14} /> : null}</span>
-          Follow campaign
+          {t("Follow campaign")}
         </button>
-        <div className="appearance-brightness" role="group" aria-label="Brightness">
+        <div className="appearance-brightness" role="group" aria-label={t("Brightness")}>
           {BRIGHTNESS.map((entry) => (
-            <button type="button" key={entry.id} aria-pressed={choice === entry.id} onClick={() => writeThemeChoice(entry.id)}>{entry.label}</button>
+            <button type="button" key={entry.id} aria-pressed={choice === entry.id} onClick={() => writeThemeChoice(entry.id)}>{t(entry.label)}</button>
           ))}
         </div>
       </div>
-      <div className="appearance-grid" role="group" aria-label="Visual theme">
+      <div className="appearance-grid" role="group" aria-label={t("Visual theme")}>
         {APPEARANCE_THEMES.map((entry) => {
           const selected = appearanceChoice === entry.id;
           const art = appearanceDefinition(entry.id).art;
           return (
             <button type="button" key={entry.id} aria-pressed={selected} onClick={() => pick(entry.id)} className="appearance-option">
               <span className="appearance-preview" data-appearance={entry.id} data-theme={mode} data-theme-ornaments={Boolean(art?.frame || art?.corner)} style={themeArtStyle(entry.id)} aria-hidden="true">
-                <span className="appearance-preview-frame"><ThemeIcon icon={entry.icon} size={28} strokeWidth={1.2} /><span className="appearance-preview-title">The adventure awaits</span><span className="appearance-preview-line" /><span className="appearance-preview-line appearance-preview-line-short" /></span>
+                <span className="appearance-preview-frame"><ThemeIcon icon={entry.icon} size={28} strokeWidth={1.2} /><span className="appearance-preview-title">{t("The adventure awaits")}</span><span className="appearance-preview-line" /><span className="appearance-preview-line appearance-preview-line-short" /></span>
               </span>
-              <span className="appearance-option-copy"><span className="appearance-option-title">{entry.name}{selected ? <Check size={16} aria-hidden="true" /> : null}</span><span className="appearance-option-description">{entry.description}</span></span>
+              <span className="appearance-option-copy"><span className="appearance-option-title">{t(entry.name)}{selected ? <Check size={16} aria-hidden="true" /> : null}</span><span className="appearance-option-description">{t(entry.description)}</span></span>
             </button>
           );
         })}
       </div>
-      <p className="mt-3 text-xs leading-relaxed text-stone-400" aria-live="polite">Using {APPEARANCE_THEMES.find((entry) => entry.id === appearance)?.name}{appearanceChoice === "campaign" ? " · following campaign" : " · personal choice"}.</p>
-      <p className="mt-1 text-xs leading-relaxed text-stone-400">Follow campaign uses the table’s chosen theme, with Arcane elsewhere. Pick a theme to use it everywhere on this device. Brightness always stays your choice.</p>
+      <p className="mt-3 text-xs leading-relaxed text-stone-400" aria-live="polite">{t("Using {theme} · {choice}.", { theme: t(APPEARANCE_THEMES.find((entry) => entry.id === appearance)?.name ?? "Arcane"), choice: appearanceChoice === "campaign" ? t("following campaign") : t("personal choice") })}</p>
+      <p className="mt-1 text-xs leading-relaxed text-stone-400">{t("Follow campaign uses the table’s chosen theme, with Arcane elsewhere. Pick a theme to use it everywhere on this device. Brightness always stays your choice.")}</p>
     </div>
   );
 }
