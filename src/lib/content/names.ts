@@ -165,6 +165,60 @@ export function contentName(
   return row.name;
 }
 
+// Only known game-system classes use the cross-class feature-name fallback.
+// Homebrew class names must remain exactly as their author wrote them.
+const CS_FEATURE_CLASS_IDS = new Set([
+  "barbarian",
+  "bard",
+  "cleric",
+  "druid",
+  "fighter",
+  "monk",
+  "paladin",
+  "ranger",
+  "rogue",
+  "sorcerer",
+  "warlock",
+  "wizard",
+  "artificer",
+  "netrunner",
+  "street_samurai",
+  "rigger",
+  "fixer",
+  "esper",
+  "trauma_doc",
+  "witch_hunter",
+  "plague_doctor",
+  "grave_knight",
+  "penitent",
+  "dirgesinger",
+  "vermin_lord",
+  "exorcist",
+  "occultist",
+  "survivor",
+  "slayer",
+  "parapsychologist",
+  "apostate",
+  "detective",
+  "alienist",
+  "grifter",
+  "enforcer",
+  "muckraker",
+  "spirit_medium",
+  "scavenger",
+  "road_warrior",
+  "aberrant",
+  "salvage_tech",
+  "waste_preacher",
+  "packmaster",
+  "machinist",
+  "aeronaut",
+  "alchemist",
+  "gadgeteer",
+  "aether_channeler",
+  "steam_knight"
+]);
+
 // A class feature's name ("Channel Divinity: Turn Undead", "Bonus
 // Proficiency (heavy armor)") in the reader's language: the maps key a
 // feature by its class and the feature's display name in the canonical form
@@ -176,7 +230,15 @@ export function classFeatureName(classId: string, featureName: string, locale: L
     return featureName;
   }
   const key = `${classId.trim().toLowerCase()}:${canonicalKey(featureName)}`;
-  return (locale === "cs" ? csNames() : frNames()).classFeatures?.[key] ?? featureName;
+  if (locale === "cs") {
+    const names = csNames();
+    return names.classFeatures?.[key]
+      ?? (CS_FEATURE_CLASS_IDS.has(classId.trim().toLowerCase().replace(/-/g, "_"))
+        ? names.resourceFeatureNames?.[canonicalKey(featureName)]
+        : undefined)
+      ?? featureName;
+  }
+  return frNames().classFeatures?.[key] ?? featureName;
 }
 
 // A species trait line ("Darkvision 60 ft", "Perception proficiency (Keen
