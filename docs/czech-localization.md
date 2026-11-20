@@ -6,6 +6,24 @@ Czech uses the `cs-CZ` locale, three plural forms, Czech stop words, the Snowbal
 
 **Coverage:** This is an initial translation, *not* a complete Czech edition. Untranslated UI strings, rulebook passages, monster descriptions, and unsupported content names fall back to English. The Czech names are community translations rather than official D&D terminology. Additional translations can be contributed to the catalog and names table without changing game state.
 
+## Czech typography and localized status lines
+
+The bundled display and interface WOFF2 faces are Latin-only subsets. Mixing
+their letters with fallback Czech accents caused visually inconsistent
+headings and menu text. For `cs-CZ`, `src/app/globals.css` uses coherent
+system families with Central European character coverage: **Palatino /
+Noto Serif / Georgia** for fantasy-style titles and rulebook text, and
+**Trebuchet MS / Noto Sans / DejaVu Sans** for the interface. These families
+require no network access or font downloads and switch with the UI language.
+English and French retain the original fonts.
+
+Not every user-facing text comes from the JSON catalogs. The atmospheric
+messages shown while the game master thinks or rolls are maintained in
+`src/app/campaigns/[campaignId]/dmStatusPhrases.ts`; Czech now uses the
+translation catalog for those messages. The associated regression test
+requires Czech entries for every source phrase, so adding a new English
+variant cannot silently leave the Czech interface in English.
+
 ## Completing the translation catalog
 
 The full UI manifest contains over 10,000 English strings, plus context-specific
