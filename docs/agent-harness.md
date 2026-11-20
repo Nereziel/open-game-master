@@ -25,11 +25,13 @@ agent" in a campaign's Setup tab.
 
 ### What it can and cannot do
 
-The program is started with **none of its own tools**. No shell, no files,
-no web, none of your own MCP servers, settings, hooks or CLAUDE.md. Its only
-tools are the GM's tools for the turn it is narrating, served by the
-server's own MCP endpoint on a token that works from this computer only and
-dies with the turn. Every call goes through the same GM loop as the built-in
+The supported programs are configured to use **only the game engine's
+tools**. No shell, files, web, or personal MCP servers should be available.
+Antigravity is an exception to verifiable isolation: its CLI does not expose
+a trustworthy model-facing tool list, so the adapter cannot prove all
+native tools have been removed (see below). The game engine's tools are
+served by the server's own MCP endpoint on a token that works from this
+computer only and dies with the turn. Every call goes through the same GM loop as the built-in
 storyteller, so the server rolls the dice, the per-turn caps apply, a
 physical-dice roll parks the turn, and the narration guard checks its prose.
 The program never sees the server's database key or any provider key.
