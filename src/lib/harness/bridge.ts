@@ -115,7 +115,9 @@ export class BridgeSession {
   closed = false;
   private callCounter = 0;
   lastUsage: { inputTokens?: number; outputTokens?: number; costUsd?: number } | undefined;
-  // The tool list the program reported when it started, for the admin test.
+  // Tools reported by the adapter as available for this run. For
+  // Antigravity this is the configured MCP allowlist, not init.tools (which
+  // can contain the CLI's entire global tool catalogue).
   readyTools: string[] | null = null;
 
   readonly cwd: string;
