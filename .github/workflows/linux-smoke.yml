@@ -3,7 +3,6 @@ name: Linux smoke
 on:
   push:
     branches: [main]
-  pull_request:
   workflow_dispatch:
 
 permissions:
@@ -16,11 +15,10 @@ permissions:
 env:
   ONNXRUNTIME_NODE_INSTALL: skip
 
-# A newer push to a pull request replaces its run still going; every commit
-# on main keeps its own.
+# Run checks only for commits on main or when explicitly requested.
 concurrency:
-  group: ${{ github.workflow }}-${{ github.event.pull_request.number || github.sha }}
-  cancel-in-progress: ${{ github.event_name == 'pull_request' }}
+  group: ${{ github.workflow }}-${{ github.sha }}
+  cancel-in-progress: false
 
 # One job doing all of this took 60 minutes by 0.30.0 (213 scenario runs,
 # 770-odd test files one at a time): the work is split across runners
@@ -85,7 +83,7 @@ jobs:
 
   # Full Chromium scenarios are slower and build the app six more times.
   # Run these after code reaches main or by manual request, not on every PR.
-  # Pull requests retain lint, build and all unit/integration test shards.
+  # Only commits on main or explicit manual runs are checked.
   browser:
     if: ${{ github.event_name == 'push' || github.event_name == 'workflow_dispatch' }}
     name: browser (${{ matrix.shard }}/6)
