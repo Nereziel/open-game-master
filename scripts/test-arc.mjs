@@ -753,7 +753,7 @@ test("an unreadable opening act gets strict JSON-only instructions with act 1 bo
 test("arc debug previews are bounded and escape multiline model text", () => {
   const preview = arcReplyPreview("line one\nline two\r" + "x".repeat(50), 18);
   assert.ok(!preview.includes("\n"), "the preview must be on one log line");
-  assert.match(preview, /\\\\n/);
+  assert.ok(preview.includes("\\n"), "line breaks must be escaped as text");
   assert.match(preview, /\[truncated; \d+ more chars\]/);
   assert.equal(arcReplyPreview("{}", 500), '"{}"');
 });
