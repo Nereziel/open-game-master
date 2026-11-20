@@ -1,6 +1,6 @@
 import { createCampaign, getCampaignForUser, setDmOutline, type Campaign } from "@/lib/db/campaigns";
 import { getClock, setClockInstant } from "@/lib/db/clock";
-type Locale = "en" | "fr";
+import type { Locale } from "@/lib/messages-logic";
 import { MINUTES_PER_DAY, MINUTES_PER_HOUR } from "@/lib/dm/calendar";
 
 // The starter one-shot: a table that opens in ten minutes for people who
@@ -52,10 +52,30 @@ export const STARTER_ONE_SHOT_FR = {
   ].join("\n\n"),
 };
 
+// The same complete adventure in Czech: players see the premise in Czech
+// and the AI storyteller receives its secret outline in Czech too.
+export const STARTER_ONE_SHOT_CS = {
+  title: "Umlklý zvon Marrowova Brodu",
+  tagline: "Jednodenní dobrodružství pro začátečníky s připravenými hrdiny.",
+  description:
+    "Marrowův Brod je vesnice na řece se čtyřiceti obyvateli. Zvon zdejší kaple odbíjel hodiny celých dvě stě let. Před třemi nocemi ale umlkl. Po kostelníkovi se slehla zem, přívoz po setmění nevyplouvá a vesnická rada nabízí dvacet zlatých na hlavu tomu, kdo zjistí proč. Přicházíte za soumraku, právě když se nad hladinou zvedá mlha.",
+  theme: "Říční vesnice zahalená mlhou, kaple na kopci a krypta pod ní",
+  outline: [
+    "JEDNORÁZOVÉ DOBRODRUŽSTVÍ: tři části, jeden večer. Udržuj scény krátké, každých několik odstavců dej družině možnost rozhodnout se a příběh uzavři ve třetí části. Hrdinové zůstávají po celou dobu na 1. úrovni, bez postupu na další úroveň.",
+    "PRAVDA PRO PJ: Kostelník Aldo Merrin sám ukradl zvon kaple, aby splatil dluh pašerákům. Jeho švagr Tam Rill, místní převozník, mu pomohl spustit zvon do zatopené krypty pod kaplí. Chtěli ho prodat po proudu řeky. Aldo se následující noci vrátil zvon přemístit, vyrušil dávné mrtvé a zemřel. Nyní se v kryptě potuluje jako ghúl. Tam má strach, lže a nese vinu. Tuto pravdu neprozrazuj předčasně.",
+    "ČÁST 1 – VESNICE ZA SOUMRAKU: Rada nabízí odměnu, mluví za ni matka Hesková, bystrá a vyčerpaná žena. V prázdném kostelníkově domku leží účetní kniha s přeškrtnutými dluhy a značkou pašeráků v podobě rybářského háčku. Převozník Tam se nikomu nepodívá do očí. Úspěch při Přesvědčování nebo Odhadu úmyslů odhalí jeho dluh; neúspěch družinu nasměruje ke kapli pouze s účetní knihou. Odměňuj zvídavost a nikdy nezablokuj další cestu.",
+    "ČÁST 2 – KAPLE A KRYPTA: Provaz zvonu ve zvonici byl čistě přeříznut, k sestupnému schodišti vedou stopy po vlečení těžkého nákladu a spodní část krypty zaplavuje černá voda až po kolena. Hrozby v pořadí: hejno obřích krys v kostnici, smyčková past na schodišti (SO 12 pro Vnímání při odhalování, při spuštění 1k6 zranění) a nakonec ghúl, kterým se stal Aldo, v místnosti se zvonem. Čtyři hrdinové 1. úrovně jej mohou porazit v boji; dvěma až třem umožni nalákat ho do vody či zabarikádovat dveře. Aldo má na šňůrce stále kostelníkův klíč. Hráče předem varuj, že ghúl dokáže ochromit.",
+    "ČÁST 3 – ZÚČTOVÁNÍ: Družina najde zvon a rozhodne, co prozradí. Pokud Tama usvědčí, rada ho vyžene a vesnice musí najít nového převozníka. Pokud ho ochrání, zvon se znovu rozezní, ale pašerácký dluh bude hrdiny pronásledovat po proudu řeky jako zápletka pro další dobrodružství. V každém případě zvon zazní za úsvitu. Zakonči vyprávění zvukem, který se rozléhá nad řekou, a zeptej se každého hráče, co jeho hrdina udělá s dvaceti zlatými.",
+    "ATMOSFÉRA: Jemný gotický horor u řeky, mlha a světlo luceren, bez naturalistického násilí. Postavy: matka Hesková (vesnická rada), Tam Rill (převozník), Aldo Merrin (kostelník) a vdova Pellová (hostinská; zná všechny místní a vyměňuje drby za pomoc u kamen). Celé dobrodružství vyprávěj česky.",
+  ].join("\n\n"),
+};
+
 // The seed the creator reads: the request’s language, English by default,
 // so an English table’s stored premise and spine stay English.
 export function starterSeedFor(locale: Locale) {
-  return locale === "fr" ? { ...STARTER_ONE_SHOT, ...STARTER_ONE_SHOT_FR } : STARTER_ONE_SHOT;
+  return locale === "fr" ? { ...STARTER_ONE_SHOT, ...STARTER_ONE_SHOT_FR }
+    : locale === "cs" ? { ...STARTER_ONE_SHOT, ...STARTER_ONE_SHOT_CS }
+    : STARTER_ONE_SHOT;
 }
 
 // narration: whether the server can read aloud (narrationAvailable in
