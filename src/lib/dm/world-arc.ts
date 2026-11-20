@@ -4,6 +4,7 @@ import { arcReplyPreview, arcReplyRootKeys } from "@/lib/dm/arc-format-recovery"
 import { getCampaignById } from "@/lib/db/campaigns";
 import { listChapters } from "@/lib/db/chapters";
 import { arcTextTimeoutMs } from "@/lib/model-client";
+import { TABLE_LANGUAGE_NAMES } from "@/lib/schemas/game-settings-options";
 import { requestUtilityMessage } from "@/lib/dm/model";
 import { trackUtilityCall } from "@/lib/dm/call-tracker";
 import { type StoryArc } from "@/lib/dm/arc-logic";
@@ -40,6 +41,7 @@ export async function generateWorldArcs(
     .map((chapter) => `${chapter.index}. "${chapter.title}"`)
     .join("\n");
   const storyFacts = worldArcPlanningContext(arc);
+  const languageName = TABLE_LANGUAGE_NAMES[campaign.gameSettings.tableLanguage].english;
   const worldClockRequest = [
     "Create 1 or 2 independent, OFF-SCREEN world-clock storylines from these campaign facts. These advance without the party. Do NOT rewrite the main story arc.",
     storyFacts,
@@ -93,7 +95,7 @@ export async function generateWorldArcs(
           },
           {
             role: "user",
-            content: `Write exactly ONE off-screen world clock from these campaign facts (NOT main story acts):\n${storyFacts.slice(0, 1200)}\n\nUse ONLY: [{"name":"short Czech title","driver":"the responsible faction or creature","rungs":["early rumor","early consequence","growing danger","major change","final outcome"]}]. Replace all placeholders with story-specific Czech text; do not describe what the heroes do. RETURN THE JSON ARRAY ONLY.`,
+            content: `Write exactly ONE off-screen world clock from these campaign facts (NOT main story acts):\n${storyFacts.slice(0, 1200)}\n\nUse ONLY: [{"name":"short title","driver":"the responsible faction or creature","rungs":["early rumor","early consequence","growing danger","major change","final outcome"]}]. Replace all placeholders with story-specific ${languageName} text; do not describe what the heroes do. RETURN THE JSON ARRAY ONLY.`,
           },
         ],
         { meta: { task: "world_arc_json_recovery" }, timeoutMs: arcTextTimeoutMs(), thinking: false, temperature: 0 },
