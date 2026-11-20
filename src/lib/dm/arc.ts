@@ -286,6 +286,14 @@ ${SOLVABLE_RULE}
 
 Name people and places exactly as the plan names them, carry any twists a premise or outline you are given already names into events, and keep every promise in the party composition notes when they are given. Every string under 200 characters. Players never see any of this.`;
 
+// The CLI harness gets a flattened final user ask. A model can follow the
+// whole story context yet ignore the schema buried earlier in the system
+// prompt (see DM_TRACE: valid Czech JSON with "acts"/"milestones" or
+// "saga"/"act", instead of the two expected planning shapes).
+// Repeat the distinct contract at the END of that final ask, after the
+// language directive; this avoids spending a retry on readable wrong JSON.
+const SAGA_FINAL_SHAPE = "FINAL JSON CONTRACT: Return one JSON OBJECT with top-level keys title, premise, stakes (one string), antagonist (one string), actPlan (array of 2 or more act SKETCH objects), finale, finaleBoss, cast and subArcs. Each actPlan entry has title, place, milestone (one string), boss {name, detail}, allies (array), hooks (array). Do NOT return acts, milestones, beats, waypoints, language, level, partySize or reward at the top level. Do NOT write the detailed scenes yet. Start with { and end with }.";
+const OPENING_ACT_FINAL_SHAPE = "FINAL JSON CONTRACT: Return one JSON OBJECT with exactly two top-level keys: beats and events. beats is a FLAT array of 3 to 5 objects {text: string, waypoints: [{kind: place|npc|item|objective|fight|narrative, text: string}]}; events is an array. Do NOT return saga, act, milestones, chapters, premise, npcs, hooks or a detailed scenario. No nested act object and no scene-by-scene script. Start with { and end with }.";
 const SAGA_STYLE_RULES = `Name concrete people, factions, and places instead of roles ("Vicar Osseth", "the Ashen Concord", "the drowned undercroft"), and stay consistent with any premise or outline you are given. Hook at least one boss or cast member to each party member's own background, abilities, or backstory, and keep every promise in the party composition notes when they are given. Every string under 200 characters. Players never see any of this.`;
 
 function sagaGenerateSystem(profile: LengthProfile): string {
@@ -491,7 +499,7 @@ export async function generateStoryArc(
       campaign.settings,
       [
         { role: "system", content: withLanguage(sagaGenerateSystem(profile), campaign.gameSettings.tableLanguage) },
-        { role: "user", content: arcPlanningLanguageRequest(context, campaign.gameSettings.tableLanguage) },
+        { role: "user", content: `${arcPlanningLanguageRequest(context, campaign.gameSettings.tableLanguage)}\n\n${SAGA_FINAL_SHAPE}` },
       ],
       { meta: { task: "arc_generate" }, timeoutMs: arcTextTimeoutMs(), thinking: false, temperature: 0 },
     );
@@ -870,7 +878,7 @@ async function arcModelCall(
     campaign.settings,
     [
       { role: "system", content: withLanguage(system, campaign.gameSettings.tableLanguage) },
-      { role: "user", content: arcPlanningLanguageRequest(user, campaign.gameSettings.tableLanguage) },
+      { role: "user", content: [arcPlanningLanguageRequest(user, campaign.gameSettings.tableLanguage), label.startsWith("opening act") ? OPENING_ACT_FINAL_SHAPE : label.startsWith("saga plan") || label === "saga replan" ? SAGA_FINAL_SHAPE : ""].filter(Boolean).join("\n\n") },
     ],
     { meta: { task: utilityTask ?? "arc_plan" }, timeoutMs: arcTextTimeoutMs(), thinking: false, temperature: 0 },
   );
