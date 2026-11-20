@@ -27,6 +27,7 @@ const DRAFT_KEYS = [
   "startingLevel",
   "difficulty",
   "campaignLength",
+  "narrationLength",
   "aiStorySetup",
   "dicePolicy",
   "hpMethod",
