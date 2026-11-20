@@ -2531,6 +2531,74 @@ function antagonistName(antagonist: string): string {
 
 type PlanShape = Pick<SagaPlan, "antagonist" | "sketches" | "finaleBoss">;
 
+/**
+ * Last-resort safety net when the model replot still reserves the SAME boss
+ * for both a middle act and the finale. A missing early boss is safer than
+ * defeating the final villain before the saga can reach its last act: the
+ * later act-detail pass explicitly knows how to invent a replacement boss.
+ *
+ * Rebuild both sketches AND the raw plan record. The opening-act merger
+ * parses plan.record, not plan.sketches, so editing just the latter would
+ * silently put the forbidden boss back into the stored saga.
+ */
+export function deferConflictingSagaBosses(plan: SagaPlan): {
+  plan: SagaPlan;
+  deferredActs: number[];
+  synchronizedLastAct: boolean;
+} {
+  if (plan.sketches.length < 2) {
+    return { plan, deferredActs: [], synchronizedLastAct: false };
+  }
+  const finalBoss = plan.finaleBoss ?? plan.sketches[plan.sketches.length - 1].boss;
+  const finalName = finalBoss?.name ?? "";
+  const villain = antagonistName(plan.antagonist);
+  const seen: string[] = [];
+  const deferredActs: number[] = [];
+  const sketches = plan.sketches.map((sketch, index) => {
+    if (index === plan.sketches.length - 1) {
+      return sketch;
+    }
+    const name = sketch.boss?.name ?? "";
+    if (name && ((finalName && sameName(name, finalName)) ||
+      (villain && sameName(name, villain)) ||
+      seen.some((earlier) => sameName(name, earlier)))) {
+      deferredActs.push(sketch.act);
+      return { ...sketch, boss: null };
+    }
+    if (name) seen.push(name);
+    return sketch;
+  });
+  const lastIndex = sketches.length - 1;
+  const last = sketches[lastIndex];
+  const synchronizedLastAct = Boolean(finalBoss && (!last.boss || !sameName(last.boss.name, finalBoss.name)));
+  if (synchronizedLastAct && finalBoss) {
+    sketches[lastIndex] = { ...last, boss: { ...finalBoss } };
+  }
+  if (!deferredActs.length && !synchronizedLastAct) {
+    return { plan, deferredActs, synchronizedLastAct };
+  }
+  // Preserve cast, sub-quests, names, places and the rest of the model data.
+  // Only the conflicting boss fields are changed.
+  const actPlan = (Array.isArray(plan.record.actPlan) ? plan.record.actPlan : []).map((entry, index) => ({
+    ...(entry && typeof entry === "object" ? entry as Record<string, unknown> : {}),
+    boss: sketches[index]?.boss ?? null,
+  }));
+  return {
+    plan: {
+      ...plan,
+      sketches,
+      finaleBoss,
+      record: {
+        ...plan.record,
+        actPlan,
+        ...(finalBoss ? { finaleBoss: { ...finalBoss } } : {}),
+      },
+    },
+    deferredActs,
+    synchronizedLastAct,
+  };
+}
+
 // What is wrong with the shape of a freshly plotted saga's acts, in words
 // its planner can act on (arc.ts asks for one more plot when there is
 // any). These are the marks of the saga that was one errand cut in four:
