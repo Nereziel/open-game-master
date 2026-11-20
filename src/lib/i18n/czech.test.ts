@@ -9,6 +9,9 @@ import { localeFromAcceptLanguage, localeOfServerLanguage, parseLocale, resolveL
 import { localeTag, pluralCategory } from "../messages-logic";
 import { CS_NAMES_BY_TABLE } from "../content/names-cs";
 import { RESOURCE_CS_GUIDANCE } from "../srd/class-resources-cs-data";
+import { RESOURCE_CS_EXTRA_GUIDANCE } from "../srd/resource-guidance-cs-extra";
+import { RESOURCE_CS_AUTHORED_GUIDANCE } from "../srd/resource-guidance-cs-authored";
+import { describeFeature } from "../help";
 import { resourceDisplayName, resourceGuidance } from "../srd/class-resources-fr";
 import { resourceName } from "../srd/class-resources";
 import { RESOURCE_CS_EXTRA_NAMES } from "../srd/resource-names-cs-extra";
@@ -58,6 +61,31 @@ describe("Czech localization", () => {
     expect(speciesTraitName("homebrew-custom", "Healing Hands", "cs")).toBe("Healing Hands");
     expect(classFeatureName("homebrew:my-class", "Bullet Time", "cs")).toBe("Bullet Time");
     expect(classFeatureName("street_samurai", "Bullet Time", "en")).toBe("Bullet Time");
+  });
+
+  it("translates 236 thematic and 40 authored resource descriptions without altering English rules", () => {
+    expect(Object.keys(RESOURCE_CS_EXTRA_GUIDANCE)).toHaveLength(236);
+    expect(Object.keys(RESOURCE_CS_AUTHORED_GUIDANCE)).toHaveLength(40);
+    for (const resource of genreResources.resources) {
+      const shown = resourceGuidance(resource.id, "cs");
+      expect(shown?.trim(), `Missing Czech help: ${resource.id}`).toBeTruthy();
+      expect(shown, `Untranslated Czech help: ${resource.id}`).not.toBe(resource.guidance);
+      expect(resourceGuidance(resource.id, "en")).toBeNull();
+    }
+    for (const resource of authoredResources.resources.slice(0, 40)) {
+      expect(resourceGuidance(resource.id, "cs"), `Missing authored Czech help: ${resource.id}`).toBeTruthy();
+    }
+    expect(resourceGuidance("cyberpunk_bullet_time", "cs")).toContain("+3 k OČ");
+    expect(resourceGuidance("sub_psionic_energy", "cs")).toContain("k6");
+    expect(resourceGuidance("lay_on_hands", "cs")).toContain("životů");
+    expect(resourceGuidance("sub_psionic_energy", "en")).toBeNull();
+    expect(resourceGuidance("unknown_resource", "cs")).toBeNull();
+    expect(describeFeature("street_samurai", "", "Bullet Time", "cs"))
+      .toBe(resourceGuidance("cyberpunk_bullet_time", "cs"));
+    expect(describeFeature("street_samurai", "", "Bullet Time", "en"))
+      .not.toBe(resourceGuidance("cyberpunk_bullet_time", "cs"));
+    expect(describeFeature("homebrew:unknown", "", "Bullet Time", "cs"))
+      .not.toBe(resourceGuidance("cyberpunk_bullet_time", "cs"));
   });
 
   it("selects Czech in settings and HTTP requests", () => {

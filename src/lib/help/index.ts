@@ -122,8 +122,18 @@ export function describeFeature(classId: string, subclass: string, name: string,
   if (element) {
     return `The element of the ${element.label} chosen: ${element.type}. Elemental Affinity, where the subclass has it, adds to spells of this damage type and resists it.`;
   }
+  // Czech counter guidance is player-facing text keyed by the same stable
+  // resource id. Prefer it for matching known features; otherwise the genre
+  // class text below would override the translated help with English prose.
+  // Keep subclass-specific English rules and all other locales' precedence
+  // unchanged when there is no Czech resource translation.
   const resource = matchResource(name);
+  const czechResource = locale === "cs" ? matchResource(name, [classId]) : null;
+  const localizedResource = czechResource
+    ? resourceGuidance(czechResource.id, locale)
+    : null;
   const found =
+    localizedResource ??
     subclassFeatureDescription(classId, subclass, name) ??
     classFeatureDescription(classId, name) ??
     exactSrdText(classId, name) ??
