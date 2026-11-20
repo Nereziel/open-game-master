@@ -101,6 +101,12 @@ export type StorySettings = {
   utilityApiKey: string;
   imageMode: ImageMode;
   imageBackend: ImageBackend;
+  // Optional image-only OpenAI-compatible connection for this campaign.
+  // Empty fields inherit the admin's image API; a custom URL never borrows
+  // the admin's API key. The key is server-side and scrubbed from snapshots.
+  imageApiBaseUrl: string;
+  imageApiModel: string;
+  imageApiKey: string;
   // ComfyUI backend: server URL and checkpoint filename. Both optional —
   // URL falls back to COMFYUI_URL env then http://127.0.0.1:8188, and an
   // empty checkpoint uses the first one ComfyUI reports.
