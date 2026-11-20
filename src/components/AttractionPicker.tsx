@@ -20,6 +20,12 @@ const CHOICE_LABELS_FR: Record<string, string> = {
   "Nonbinary people": "Personnes non binaires",
 };
 
+const CHOICE_LABELS_CS: Record<string, string> = {
+  Women: "Ženy",
+  Men: "Muži",
+  "Nonbinary people": "Nebinární osoby",
+};
+
 // "Drawn to" (issue 501): who a character or an NPC could fall for, as
 // chips beside their gender and a short note. One tap picks or drops a
 // chip; nothing picked means unspecified. A real group with a visible label,
@@ -72,7 +78,7 @@ export function AttractionPicker({
               }
               className={CHIP}
             >
-              {locale === "fr" ? (CHOICE_LABELS_FR[choice.label] ?? choice.label) : choice.label}
+              {locale === "cs" ? (CHOICE_LABELS_CS[choice.label] ?? choice.label) : locale === "fr" ? (CHOICE_LABELS_FR[choice.label] ?? choice.label) : choice.label}
             </button>
           );
         })}

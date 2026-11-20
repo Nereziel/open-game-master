@@ -10556,7 +10556,24 @@
     ", the least that plays the full rules.": ", le minimum qui joue les règles complètes.",
     "{name} cannot play the full rules: it holds fewer tools than the table's full set, so it plays on a reduced tool set and rules. Open Game Master does not support or test this, and fights and other rules may not run properly. For real play, choose another program.": "{name} ne peut pas jouer les règles complètes : il retient moins d’outils que le jeu complet de la table, il joue donc avec un jeu d’outils et des règles réduits. Open Game Master ne prend pas cela en charge et ne le teste pas, et les combats et d’autres règles peuvent mal fonctionner. Pour jouer pour de bon, choisis un autre programme.",
     "Let an agent you already have, Claude Code, Codex, opencode, Grok Build or Pi, narrate the tables on its own sign-in. It is started with none of its own tools: the only thing it can touch is the table's rules engine, turn by turn, under the same rules and caps as the built-in storyteller. ODM never asks for or stores its password or key.": "Permets à un agent externe que tu possèdes déjà (Claude Code, Codex, opencode, Grok Build ou Pi) d’animer les tables avec ses propres identifiants. Il démarre sans aucun de ses outils habituels : la seule chose avec laquelle il peut interagir est le moteur de règles de la table, tour par tour, selon les mêmes contraintes et limites que le narrateur intégré. OGM ne demande ni ne conserve jamais son mot de passe ou sa clé.",
-    "Claude Code, Codex, opencode, Grok Build or Pi, signed in on this computer, narrating on its own plan.": "Claude Code, Codex, opencode, Grok Build ou Pi, connecté sur cet ordinateur, qui raconte sur son propre forfait."
+    "Claude Code, Codex, opencode, Grok Build or Pi, signed in on this computer, narrating on its own plan.": "Claude Code, Codex, opencode, Grok Build ou Pi, connecté sur cet ordinateur, qui raconte sur son propre forfait.",
+    "Personality (optional)": "Personnalité (facultatif)",
+    "A trait, an ideal, a bond and a flaw: four short lines the GM plays your hero by. Pick from {source} or write your own. Leave any of them blank. The party can read these, and you can change them later from your character sheet.": "Un trait de personnalité, un idéal, un lien et un défaut : quatre courtes descriptions dont le MJ se sert pour interpréter ton personnage. Choisis parmi {source} ou rédige les tiennes. Tu peux laisser des champs vides. Le groupe peut les lire et tu peux les modifier plus tard sur ta fiche.",
+    "the suggestions for {background}": "les suggestions de l'historique {background}",
+    "the suggestions": "les suggestions",
+    "Personality trait": "Trait de personnalité",
+    "A habit or manner people notice about them.": "Une habitude ou une manière d'être que les autres remarquent.",
+    "Pick one, or write your own": "Choisir ou écrire sa propre réponse",
+    "Ideal": "Idéal",
+    "What they believe in and strive for.": "Ce en quoi le personnage croit et ce qu'il poursuit.",
+    "A person, place or promise they hold dear.": "Une personne, un lieu ou une promesse qui lui tient à cœur.",
+    "Flaw": "Défaut",
+    "A weakness others could use against them.": "Une faiblesse que d'autres pourraient exploiter.",
+    "Suggestions": "Suggestions",
+    "Suggested for {background}": "Suggestions pour l'historique {background}",
+    "Write my own": "Écrire ma réponse",
+    "Leave it blank": "Laisser vide",
+    "{field}, in your own words": "{field}, avec vos propres mots"
   },
   "contexts": {
     "Remove": {
