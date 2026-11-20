@@ -6,6 +6,8 @@ import { cn } from "@/lib/cn";
 import type { WorldDoc } from "@/lib/worldforge/model";
 import type { WorldEntity } from "@/lib/db/world-forge";
 import { EntityAvatar, typeOf } from "./world-ui";
+import { useLocale } from "@/lib/locale";
+import { worldTypeLabel } from "@/lib/worldforge/display-labels";
 
 // The wiki's list of entries (audit WF-24). A 4,000-entry world drew 4,000
 // rows: the list took a second or two to appear and to come back after a
@@ -45,6 +47,7 @@ export function EntryList({
   // Raised by the search box's Down arrow: the first row takes the focus.
   toList?: number;
 }) {
+  const locale = useLocale();
   const box = useRef<HTMLDivElement>(null);
   const [top, setTop] = useState(0);
   const [height, setHeight] = useState(600);
@@ -158,7 +161,7 @@ export function EntryList({
             <span className="min-w-0 flex-1">
               <span className={cn("block truncate text-sm", entity.ref === focus ? "text-amber-100" : "text-stone-200")}>{entity.name}</span>
               <span className="block truncate text-[11px]">
-                <span style={{ color: type.color }}>{type.name}</span>
+                <span style={{ color: type.color }}>{worldTypeLabel(type, locale)}</span>
                 {excerpt ? <span className="text-stone-400"> · {excerpt}</span> : null}
               </span>
             </span>
