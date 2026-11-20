@@ -73,6 +73,8 @@ await test("The chronicle card puts the attacker in front and names each creatur
 
 await test("Czech UI translates reaction rolls in console labels, stored cards and cinematic narration.", () => {
   assert.equal(csT("Reaction roll"), "Hod na reakci");
+  assert.equal(csT("Cancel"), "Zrušit");
+  assert.equal(enT("Cancel"), "Cancel");
   assert.match(csT("Rolls how an NPC takes the party on the DMG reaction table."), /počáteční postoj/);
   const reaction = { kind: "custom", detail: "Reaction roll for Tam Rill", attacker: null, requestedBy: "dm" };
   assert.match(rollCardLabel(csT, reaction, undefined), /Reakce při setkání: Tam Rill/);
