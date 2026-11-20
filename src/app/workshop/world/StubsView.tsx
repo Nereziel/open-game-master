@@ -9,7 +9,8 @@ import { newId, type Stub } from "@/lib/worldforge/model";
 import { stubResolved, stubScan } from "@/lib/worldforge/text";
 import type { WorldApi, WorldState } from "./useWorld";
 import { tint } from "./world-ui";
-import { useT, useTp } from "@/lib/locale";
+import { useLocale, useT, useTp } from "@/lib/locale";
+import { worldTypeLabel } from "@/lib/worldforge/display-labels";
 
 // Names still to be written, after WorldForge's stubs: a name the world's
 // text keeps using that has no entry yet. The scan only suggests; a name is
@@ -20,6 +21,7 @@ import { useT, useTp } from "@/lib/locale";
 export function StubsView({ api, world, onOpen }: { api: WorldApi; world: WorldState; onOpen: (ref: string) => void }) {
   const t = useT();
   const tp = useTp();
+  const locale = useLocale();
   const { doc, entities } = world;
   const [found, setFound] = useState<Array<{ name: string; count: number }> | null>(null);
   const [writing, setWriting] = useState<string | null>(null);
@@ -55,7 +57,7 @@ export function StubsView({ api, world, onOpen }: { api: WorldApi; world: WorldS
       <span className="text-[11px] text-stone-500">{t("Write {name} as", { name })}</span>
       {doc.types.map((type) => (
         <button key={type.id} type="button" onClick={() => write(name, type.id, stub)} className="rounded-md border px-1.5 py-0.5 text-[11px] motion-press" style={{ borderColor: tint(type.color, 0.45), color: type.color }}>
-          {t(type.name)}
+          {worldTypeLabel(type, locale)}
         </button>
       ))}
     </div>
