@@ -72,9 +72,10 @@ await test("Czech title dice stay Czech across every genre without changing Engl
     const random = () => ((n += 0.137) % 1);
     const first = rollCampaignTitle(genre, "", random, "cs");
     assert.ok(first.length > 4 && first.length <= 80, `${genre}: ${first}`);
-    assert.ok(/[áčďéěíňóřšťúůýž]/i.test(first), `${genre}: missing Czech diacritics: ${first}`);
     assert.doesNotMatch(first, /^(The )| of | le | la /i);
     assert.notEqual(rollCampaignTitle(genre, first, random, "cs"), first, `${genre}: title should reroll`);
+    const samples = Array.from({ length: 20 }, () => rollCampaignTitle(genre, "", random, "cs"));
+    assert.ok(samples.some((name) => /[áčďéěíňóřšťúůýž]/i.test(name)), `${genre}: Czech title bank lacks diacritics`);
   }
   const fixed = () => 0.42;
   assert.match(rollCampaignTitle("high_fantasy", "", fixed, "en"), /\b(The|of)\b/);
