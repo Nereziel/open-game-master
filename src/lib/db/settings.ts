@@ -48,6 +48,13 @@ export function normalizeSettings(
     merged.imageBackend = defaultSettings.imageBackend;
   }
 
+  merged.imageApiBaseUrl =
+    typeof merged.imageApiBaseUrl === "string" ? merged.imageApiBaseUrl.trim().slice(0, 500) : "";
+  merged.imageApiModel =
+    typeof merged.imageApiModel === "string" ? merged.imageApiModel.trim().slice(0, 200) : "";
+  merged.imageApiKey =
+    typeof merged.imageApiKey === "string" ? merged.imageApiKey.trim().slice(0, 400) : "";
+
   merged.comfyUrl =
     typeof merged.comfyUrl === "string" ? merged.comfyUrl.trim().slice(0, 500) : "";
   merged.comfyCheckpoint =
@@ -136,6 +143,8 @@ function serverBackend(server: StorySettings): Partial<StorySettings> {
     customApiKey: "",
     utilityBaseUrl: server.utilityBaseUrl,
     utilityApiKey: "",
+    imageApiBaseUrl: "",
+    imageApiKey: "",
     comfyUrl: server.comfyUrl,
   };
 }
@@ -148,6 +157,8 @@ export const ADMIN_ONLY_BACKEND_FIELDS = [
   "customApiKey",
   "utilityBaseUrl",
   "utilityApiKey",
+  "imageApiBaseUrl",
+  "imageApiKey",
   "comfyUrl",
 ] as const satisfies ReadonlyArray<keyof StorySettings>;
 
@@ -179,6 +190,9 @@ function deviceBackend(device: StorySettings): Partial<StorySettings> {
     utilityBaseUrl: device.utilityBaseUrl,
     utilityApiKey: "",
     imageBackend: device.imageBackend,
+    imageApiBaseUrl: "",
+    imageApiModel: "",
+    imageApiKey: "",
     comfyUrl: device.comfyUrl,
     comfyCheckpoint: device.comfyCheckpoint,
   };
@@ -189,12 +203,13 @@ function deviceBackend(device: StorySettings): Partial<StorySettings> {
 // and belong to nobody else. Blanked at this boundary rather than in the UI,
 // so no future payload can carry them by forgetting to.
 export function scrubStorySettings(settings: StorySettings): StorySettings {
-  return { ...settings, customApiKey: "", utilityApiKey: "" };
+  return { ...settings, customApiKey: "", utilityApiKey: "", imageApiKey: "" };
 }
 
-export type MaskedStorySettings = Omit<StorySettings, "customApiKey" | "utilityApiKey"> & {
+export type MaskedStorySettings = Omit<StorySettings, "customApiKey" | "utilityApiKey" | "imageApiKey"> & {
   hasCustomApiKey: boolean;
   hasUtilityApiKey: boolean;
+  hasImageApiKey: boolean;
   // Whether THIS campaign's image backend can render, which /api/capabilities
   // cannot answer: that snapshot describes the server's own default backend,
   // and a table on its own OpenAI key is exactly the case the two disagree
@@ -220,11 +235,12 @@ export function maskStorySettings(
   settings: StorySettings,
   viewer: { isAdmin: boolean } = { isAdmin: true },
 ): MaskedStorySettings {
-  const { customApiKey, utilityApiKey, ...rest } = settings;
+  const { customApiKey, utilityApiKey, imageApiKey, ...rest } = settings;
   return {
     ...rest,
     hasCustomApiKey: customApiKey !== "",
     hasUtilityApiKey: utilityApiKey !== "",
+    hasImageApiKey: imageApiKey !== "",
     imagesReady: settings.imageBackend === "openai" ? openAiImagesConfigured(settings) : true,
     imagesNeedModel:
       settings.imageBackend === "openai"
