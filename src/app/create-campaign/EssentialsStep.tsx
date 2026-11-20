@@ -10,7 +10,7 @@ import { StorySetupNotice } from "@/components/StorySetupNotice";
 import { storySetupWarningComing } from "@/lib/dm/story-setup-logic";
 import { DetailGroup } from "@/app/create-campaign/fields";
 import { DmModeField, TitleField, WorldPackField } from "@/app/create-campaign/IdentityFields";
-import { CampaignLengthField, CharacterRulesFields, PartyBasics } from "@/app/create-campaign/PartyFields";
+import { CharacterRulesFields, PartyBasics } from "@/app/create-campaign/PartyFields";
 import { SheetRows } from "@/app/create-campaign/SheetRows";
 import { WorldDetailsFields, WorldFields } from "@/app/create-campaign/WorldFields";
 import type { StepProps } from "@/app/create-campaign/draft";
@@ -70,7 +70,6 @@ export function EssentialsStep(
             onChoosePack={props.onChoosePack}
             onClearPack={props.onClearPack}
           />
-          <CampaignLengthField draft={draft} patch={patch} gates={gates} />
           <WorldDetailsFields draft={draft} patch={patch} selectedPack={selectedPack} />
         </DetailGroup>
 
