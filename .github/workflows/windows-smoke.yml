@@ -1,23 +1,22 @@
 name: Windows smoke
 
-# Catches Windows-specific breakage in the install, lint and build path.
-# The Python setup, the setup-windows.ps1 validation and the two check:image-*
-# steps were dropped: none of those scripts exist any more, so every run since
-# the fork has failed on them.
-
+# Windows compatibility checks are useful for native Node dependencies,
+# filesystem paths and external process handling, but do not need to duplicate
+# the Linux test suite for every PR and every push.
+# Run the complete Windows matrix on published releases or manually when
+# changing native dependencies, installers or Windows-specific code.
 on:
-  push:
-    branches: [main]
-  pull_request:
+  workflow_dispatch:
+  release:
+    types: [published]
 
 permissions:
   contents: read
 
-# A newer push to a pull request replaces its run still going; every commit
-# on main keeps its own.
+# A release and a manual run are independent; do not cancel either.
 concurrency:
-  group: ${{ github.workflow }}-${{ github.event.pull_request.number || github.sha }}
-  cancel-in-progress: ${{ github.event_name == 'pull_request' }}
+  group: ${{ github.workflow }}-${{ github.run_id }}
+  cancel-in-progress: false
 
 jobs:
   build:

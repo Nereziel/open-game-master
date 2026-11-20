@@ -5,6 +5,7 @@ import { useState } from "react";
 import { ui } from "@/lib/ui";
 import { HarnessPictureTest } from "@/app/admin/HarnessPictureTest";
 import { useT } from "@/lib/locale";
+import { localizeAgentDiagnostic } from "@/lib/i18n/agent-diagnostics";
 import type { MessageKey } from "@/lib/messages-logic";
 
 type Stage = { id: string; ok: boolean | null; detail?: string };
@@ -121,7 +122,7 @@ export function HarnessTestPanel({
                     {STAGE_KEYS[stage.id] ? t(STAGE_KEYS[stage.id]) : stage.id}
                   </span>
                   {stage.detail ? (
-                    <span className="block text-xs text-stone-500">{stage.detail}</span>
+                    <span className="block text-xs text-stone-500">{localizeAgentDiagnostic(stage.detail, t)}</span>
                   ) : null}
                 </span>
               </li>
@@ -135,12 +136,12 @@ export function HarnessTestPanel({
         </p>
       ) : failed && !testing ? (
         <p role="alert" className="motion-shake text-sm text-red-400">
-          {failed.detail ?? t("The test stopped at the step marked above.")}
+          {failed.detail ? localizeAgentDiagnostic(failed.detail, t) : t("The test stopped at the step marked above.")}
         </p>
       ) : null}
       {error ? (
         <p role="alert" className="motion-shake text-sm text-red-400">
-          {error}
+          {localizeAgentDiagnostic(error, t)}
         </p>
       ) : null}
 

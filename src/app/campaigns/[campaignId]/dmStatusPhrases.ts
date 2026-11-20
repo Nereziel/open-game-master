@@ -1,4 +1,4 @@
-import type { Locale } from "@/lib/messages-logic";
+import { translate, type Locale } from "@/lib/messages-logic";
 import type { DmStatus } from "./useCampaignStream";
 
 // 6+ variants per active DM status. The first entry in each pool is the
@@ -7,7 +7,8 @@ import type { DmStatus } from "./useCampaignStream";
 // stays the source; DM_STATUS_PHRASES_FR below is its parallel, and
 // dmStatusPhrase picks between the two by the interface's language. One
 // line is chosen per status transition (see MessageList.tsx, the only
-// consumer).
+// consumer). Czech uses the central catalog, so future phrases cannot quietly
+// skip translation: the regression test requires a Czech entry for each key.
 export const DM_STATUS_PHRASES: Record<Exclude<DmStatus, "idle">, string[]> = {
   thinking: [
     "The GM weighs the outcome…",
@@ -145,5 +146,6 @@ export function dmStatusPhrase(locale: Locale, status: DmStatus, turnKey: string
     return "";
   }
   const pool = (locale === "fr" ? DM_STATUS_PHRASES_FR : DM_STATUS_PHRASES)[status];
-  return pool[hashString(turnKey + status) % pool.length];
+  const phrase = pool[hashString(turnKey + status) % pool.length];
+  return locale === "cs" ? translate("cs", phrase) : phrase;
 }

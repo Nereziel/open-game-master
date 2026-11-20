@@ -5,6 +5,7 @@
 import { downloadBlob } from "@/lib/download";
 import type { PdfCharacter } from "./character-sheet-pdf";
 import { slugOf } from "@/lib/language/text-logic";
+import { parseLocale } from "@/lib/i18n/locale";
 
 function isPng(bytes: Uint8Array): boolean {
   return bytes[0] === 0x89 && bytes[1] === 0x50 && bytes[2] === 0x4e && bytes[3] === 0x47;
@@ -64,12 +65,31 @@ async function portraitBytes(url: string | null | undefined): Promise<Uint8Array
   }
 }
 
+// The already-shipped PDF.js Liberation Sans files contain Czech/Latin
+// Extended glyphs; fetch them only when an export is requested.
+async function pdfFontBytes(file: "LiberationSans-Regular.ttf" | "LiberationSans-Bold.ttf"): Promise<Uint8Array> {
+  const response = await fetch(`/pdfjs/standard_fonts/${file}`);
+  if (!response.ok) {
+    throw new Error(`Unable to load bundled PDF font ${file} (${response.status})`);
+  }
+  return new Uint8Array(await response.arrayBuffer());
+}
+
 export async function downloadCharacterSheetPdf(character: PdfCharacter): Promise<void> {
   // pdf-lib and its fonts only load when someone asks for the sheet, so
   // the table and the character page do not carry them up front.
   const { buildCharacterSheetPdf } = await import("./character-sheet-pdf");
+  const locale = parseLocale(document.documentElement.lang.split("-")[0]) ?? "en";
+  const [fontBytes, boldFontBytes, imageBytes] = await Promise.all([
+    pdfFontBytes("LiberationSans-Regular.ttf"),
+    pdfFontBytes("LiberationSans-Bold.ttf"),
+    portraitBytes(character.portrait?.url),
+  ]);
   const bytes = await buildCharacterSheetPdf(character, {
-    portraitBytes: await portraitBytes(character.portrait?.url),
+    fontBytes,
+    boldFontBytes,
+    locale,
+    portraitBytes: imageBytes,
   });
   // Copy into a fresh ArrayBuffer so the Blob never sees a SharedArrayBuffer-backed view.
   const blob = new Blob([bytes.slice()], { type: "application/pdf" });

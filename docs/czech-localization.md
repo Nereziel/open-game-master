@@ -4,7 +4,45 @@ The UI language is selected under **Settings → Language → Čeština** or det
 
 Czech uses the `cs-CZ` locale, three plural forms, Czech stop words, the Snowball Czech stemmer, and multilingual embeddings for campaign memory. `src/lib/i18n/cs.json` contains the first set of UI translations. Common classes, spells, conditions, equipment, and other D&D terms are display-only translations in `src/lib/content/names-cs.ts`; underlying English keys, SRD content and rules are unchanged.
 
-**Coverage:** This is an initial translation, *not* a complete Czech edition. Untranslated UI strings, rulebook passages, monster descriptions, and unsupported content names fall back to English. The Czech names are community translations rather than official D&D terminology. Additional translations can be contributed to the catalog and names table without changing game state.
+**Coverage:** The Czech UI catalog has been expanded over multiple manual translation batches. Catalog completeness is now checked against the source keys by `src/lib/i18n/czech-catalog-coverage.test.ts`; historical per-batch figures below are **not** the current coverage. Full rulebook passages, monster descriptions and unsupported content names are a separate localization task and may still fall back to English. Czech display names are community translations rather than official D&D terminology.
+
+## Czech typography and localized status lines
+
+The bundled display and interface WOFF2 faces are Latin-only subsets. Mixing
+their letters with fallback Czech accents caused visually inconsistent
+headings and menu text. For `cs-CZ`, `src/app/globals.css` uses coherent
+system families with Central European character coverage: **Palatino /
+Noto Serif / Georgia** for fantasy-style titles and rulebook text, and
+**Trebuchet MS / Noto Sans / DejaVu Sans** for the interface. These families
+require no network access or font downloads and switch with the UI language.
+English and French retain the original fonts.
+
+### Czech and French character-sheet PDF export
+
+The fillable character-sheet exporter now embeds the existing local
+`public/pdfjs/standard_fonts/LiberationSans-{Regular,Bold}.ttf` assets with
+`@pdf-lib/fontkit`. It no longer removes Czech Unicode characters from names,
+notes, equipment, backstories or other editable PDF fields. Both TTF faces are
+embedded **without subsetting** so the character sheet retains Czech glyphs
+when a player edits a field in a PDF viewer later. PDF field captions, skills
+and ability abbreviations are translated to Czech or French according to the
+current interface locale; English remains the default.
+
+This is separate from browser CSS font fallback: web typography still uses
+system fonts for `cs-CZ`. Existing D&D names stored in characters are not
+automatically rewritten or translated during export. The browser fetches
+these already-bundled font files on demand when exporting, and the Node
+tests supply the same font bytes directly, without external font downloads.
+Run `node scripts/test-character-pdf.mjs` and the PDF Vitest case to check
+Unicode data and editable AcroForm fields; visually inspect an exported
+PDF with Czech names in a desktop reader before release.
+
+Not every user-facing text comes from the JSON catalogs. The atmospheric
+messages shown while the game master thinks or rolls are maintained in
+`src/app/campaigns/[campaignId]/dmStatusPhrases.ts`; Czech now uses the
+translation catalog for those messages. The associated regression test
+requires Czech entries for every source phrase, so adding a new English
+variant cannot silently leave the Czech interface in English.
 
 ## Completing the translation catalog
 
@@ -59,19 +97,24 @@ covered by this UI catalog.
 The rulebook and long-form SRD text need a separate content localization,
 not just UI catalog coverage.
 
-## Verified coverage on this branch
+## Current coverage validation
 
-- **Interface:** 5,049 of 10,549 source UI message keys translated (47.9%).
-- **Context-specific variants:** 304 of 304 translated.
-- **Plural keys:** 239 of 239 translated with Czech one/few/many forms.
-- **Core SRD display names:** 1,463 of 1,463 keys translated (spells, monsters, items, classes, class features, equipment and other name tables).
+Do not use the historical translation-batch numbers below as the current
+coverage. The current Czech file already has **10,634 message entries**,
+including some keys not present in the French source-key manifest. This raw
+count alone does not prove completeness.
 
-These figures measure catalog keys, not the percent of the user experience that
-appears in Czech. Some longer UI screens and the full SRD/rulebook descriptions
-remain in English, so **this is still a partial localization**. The main branch
-does not gain these changes until the pull request is merged. Changes should be
-tested with `npm run lint`, `npm test` and `npm run build` before merging.
+```bash
+npm run i18n:cs:report
+npm run i18n:cs:check -- --require-complete
+npx vitest run src/lib/i18n/czech-catalog-coverage.test.ts
+```
 
+The coverage regression test compares exact English source keys for messages,
+context variants, and plural forms. If any source key is missing, it reports
+the mismatch rather than trusting an outdated count. The separate SRD display
+name maps cover **1,463** reference entries; long-form rulebook and SRD
+descriptions are not part of that catalog.
 
 ## Manual translation batches
 
@@ -101,4 +144,4 @@ Current source catalog: **3049 / 10549 messages translated**, **7500 missing**. 
 
 - **Batch 7 (+500 strings, Nov 2026):** Manually translated 500 new UI source messages in five 100-key commits. Areas: workshop content and world creation, monster and encounter mechanics (recharge, resistances, attacks and CR), bestiary and NPC editors, spell lists, tabletop and Bluetooth dice, test fights, rulebook browsing, legal section headings, server onboarding, AI provider configuration and image generation via ComfyUI/OpenAI. No third-party translation API was used. All Czech UI source keys were checked against source placeholders and HTML tags: **zero mismatches**.
 
-**After batch 7 (current):** **5,049 / 10,549** UI source messages translated (**47.9%**); **5,500 remain**. Full `npm run lint`, `npm test`, `npm run build` are still pending. PR is open and unmerged.
+**After batch 7 (historical snapshot):** **5,049 / 10,549** UI source messages translated (**47.9%**); **5,500 remain**. Full `npm run lint`, `npm test`, `npm run build` are still pending. PR is open and unmerged.

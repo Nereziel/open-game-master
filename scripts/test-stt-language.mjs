@@ -72,11 +72,12 @@ const dictate = async (campaignId) => {
   return sent.at(-1).language;
 };
 
-await test("each of the 15 table languages has Whisper's code; Irish, which Whisper does not know, has none", () => {
+await test("all table languages including Czech has Whisper's code; Irish, which Whisper does not know, has none", () => {
   const codes = Object.fromEntries(TABLE_LANGUAGES.map((language) => [language, whisperLanguageCode(language)]));
   assert.deepEqual(codes, {
     danish: "da",
     dutch: "nl",
+    czech: "cs",
     english: "en",
     finnish: "fi",
     french: "fr",
@@ -110,6 +111,7 @@ await test("an English-only built-in model is never handed a table's language, w
 
 await test("the phone's own recognizer is asked for every table language as Android names it, Irish and Norwegian included; outside a campaign, for none", () => {
   const tags = Object.fromEntries(TABLE_LANGUAGES.map((language) => [language, deviceSpeechLanguage(language)]));
+  assert.equal(tags.czech, "cs", "Czech dictation uses the correct language tag");
   assert.equal(tags.irish, "ga", "the phone may know Irish where Whisper does not");
   assert.equal(tags.norwegian, "nb", "Android's Norwegian is Bokmal");
   for (const language of TABLE_LANGUAGES) {
@@ -156,7 +158,10 @@ await test("the voice-chat transcript sends its ring in the table's language", a
 await test("OpenAI hears a member's clip in the table's language too", async () => {
   process.env.STT_URL = "off";
   delete process.env.STT_MODEL;
-  process.env.OPENAI_API_KEY = "sk-test";
+  // The fake OpenAI-compatible endpoint is a custom local host, not
+  // api.openai.com. Only the image-endpoint-specific key can be sent there;
+  // the generic OPENAI_API_KEY must never leak to a different host.
+  process.env.OPENAI_IMAGE_API_KEY = "sk-test";
   process.env.OPENAI_IMAGE_BASE_URL = "http://127.0.0.1:9/v1";
   process.env.STT_OPENAI_MODEL = "whisper-1";
   as(lead);
