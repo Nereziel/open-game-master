@@ -18,6 +18,7 @@ import type { EntryInput, UpdateOutcome } from "./useWorld";
 import { typeOf } from "./world-ui";
 import { KeptValueText } from "./ImportKept";
 import { useLocale, useT } from "@/lib/locale";
+import { worldFolderLabel, worldTypeLabel } from "@/lib/worldforge/display-labels";
 
 // Editing one entry: what its own record holds (name, its line or its text,
 // aliases, tags, picture) and what WorldForge adds (type, folder, canon, the
@@ -259,7 +260,7 @@ export function EntityEditor({
             label={t("Type name")}
             value={draft.typeId}
             onChange={(value) => set("typeId", value)}
-            options={sameShelf.map((entry) => ({ value: entry.id, label: entry.name }))}
+            options={sameShelf.map((entry) => ({ value: entry.id, label: worldTypeLabel(entry, locale) }))}
           />,
           sameShelf.length > 1 ? undefined : t("Other types live on other shelves: this one stays where it is."),
         )}
@@ -269,7 +270,7 @@ export function EntityEditor({
             label={t("Folders")}
             value={draft.folderId || "__none"}
             onChange={(value) => set("folderId", value === "__none" ? "" : value)}
-            options={[{ value: "__none", label: t("No folder") }, ...folderTree(doc.folders).map(({ folder, depth }) => ({ value: folder.id, label: `${"  ".repeat(depth)}${folder.name}` }))]}
+            options={[{ value: "__none", label: t("No folder") }, ...folderTree(doc.folders).map(({ folder, depth }) => ({ value: folder.id, label: `${"  ".repeat(depth)}${worldFolderLabel(folder.name, locale)}` }))]}
           />,
         )}
         {field(
