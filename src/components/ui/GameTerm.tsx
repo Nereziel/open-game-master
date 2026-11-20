@@ -10,11 +10,9 @@ import { useLocale } from "@/lib/locale";
 // "Concentration". Renders as the label with a dotted underline, so the page
 // stays readable and the help is there when it is wanted.
 //
-// The label follows the reader's language: in French the glossary's official
-// name wins (WotC's own French SRD 5.1 wording), over both the glossary's
-// English term and the caller's inline children, which are English by
-// convention. The tapped explanation follows too: the glossary's own French
-// bodies when it has them, the English ones otherwise.
+// Labels and help paragraphs follow the reader's language. The source
+// remains English for the rules engine; translated names come from the glossary
+// rather than from the caller's English inline children.
 //
 // An unknown id renders as plain text rather than throwing, so a typo
 // degrades to the label it was already showing. scripts/test-help-coverage.mjs
@@ -35,11 +33,13 @@ export function GameTerm({
   if (!entry) {
     return <>{children}</>;
   }
-  const label = locale === "fr" && entry.fr ? entry.fr : (children ?? entry.term);
-  const french = locale === "fr";
+  const translatedLabel = locale === "cs" ? entry.cs : locale === "fr" ? entry.fr : undefined;
+  const label = translatedLabel || (children ?? entry.term);
+  const shortText = locale === "cs" ? entry.shortCs : locale === "fr" ? entry.shortFr : undefined;
+  const longText = locale === "cs" ? entry.longCs : locale === "fr" ? entry.longFr : undefined;
   const body = [
-    french && entry.shortFr ? entry.shortFr : entry.short,
-    french && entry.longFr ? entry.longFr : entry.long,
+    shortText || entry.short,
+    longText || entry.long,
   ]
     .filter(Boolean)
     .join("\n\n");
