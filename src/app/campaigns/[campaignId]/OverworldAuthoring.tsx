@@ -78,7 +78,7 @@ export function OverworldAuthoring({
       });
       const payload = await response.json().catch(() => ({}));
       if (!response.ok) {
-        setError((payload as { error?: string }).error ?? "That did not work.");
+        setError(t((payload as { error?: string }).error ?? "That did not work."));
         return false;
       }
       onData(payload as OverworldData);
@@ -115,7 +115,7 @@ export function OverworldAuthoring({
       });
       const payload = await response.json().catch(() => ({}));
       if (!response.ok) {
-        setError((payload as { error?: string }).error ?? "The model had nothing for that.");
+        setError(t((payload as { error?: string }).error ?? "The model had nothing for that."));
         return;
       }
       const described = (payload as { plan: Plan }).plan;
@@ -148,7 +148,7 @@ export function OverworldAuthoring({
                 value={description}
                 onChange={(event) => setDescription(event.target.value)}
                 rows={2}
-                placeholder="A chain of islands off a storm coast, pine forest inland."
+                placeholder={t("A chain of islands off a storm coast, pine forest inland.")}
                 className="w-full rounded-md border border-stone-700 bg-stone-950 px-2 py-1 text-sm text-stone-200"
               />
               <button
@@ -158,11 +158,11 @@ export function OverworldAuthoring({
                 className="flex items-center gap-1 rounded-md border border-stone-700 px-2 py-1 text-xs text-stone-300 hover:bg-stone-900 disabled:opacity-40"
               >
                 {busy ? <Loader2 className="size-3 animate-spin" /> : <Sparkles className="size-3" />}
-                Read it into the dials
+                {t("Read it into the dials")}
               </button>
               {plan ? (
                 <p className="reveal text-[11px] text-stone-500">
-                  {plan.note || "Dials set."} Reroll below until the coastline falls where you want it.
+                  {plan.note || t("Dials set.")} {t("Reroll below until the coastline falls where you want it.")}
                 </p>
               ) : null}
             </>
@@ -170,13 +170,13 @@ export function OverworldAuthoring({
 
           {(Object.keys(OVERWORLD_PARAM_LABELS) as Array<keyof OverworldParams>).map((key) => (
             <label key={key} className="flex items-center gap-2 text-[11px] text-stone-500">
-              <span className="w-20 shrink-0">{OVERWORLD_PARAM_LABELS[key]}</span>
+              <span className="w-20 shrink-0">{t(OVERWORLD_PARAM_LABELS[key])}</span>
               <Slider
                 min={0}
                 max={100}
                 value={Math.round(params[key] * 100)}
                 onChange={(next) => setParams({ ...params, [key]: next / 100 })}
-                label={OVERWORLD_PARAM_LABELS[key]}
+                label={t(OVERWORLD_PARAM_LABELS[key])}
                 bubble={(percent) => `${percent}%`}
                 className="min-w-0 flex-1"
               />
@@ -188,14 +188,14 @@ export function OverworldAuthoring({
               type="button"
               disabled={busy} aria-busy={busy}
               onClick={() => void patch({ regenerate: true, params, ...size })}
-              title="Reroll the terrain under these dials, at this size. Places, pins, lines and notes stay."
+              title={t("Reroll the terrain under these dials, at this size. Places, pins, lines and notes stay.")}
               className="rounded-md border border-amber-700 bg-amber-950/50 px-2 py-1 text-xs text-amber-100 disabled:opacity-40"
             >
-              Roll a world
+              {t("Roll a world")}
             </button>
             <Select
               value={sizeId as string}
-              label="Size of the next roll"
+              label={t("Size of the next roll")}
               size="sm"
               onChange={(next) => {
                 const preset = OVERWORLD_SIZES.find((entry) => entry.id === next);
@@ -221,7 +221,7 @@ export function OverworldAuthoring({
                   "hover:bg-stone-900 disabled:opacity-40",
                 )}
               >
-                Add {plan.places.length} place{plan.places.length === 1 ? "" : "s"}
+                {plan.places.length === 1 ? t("Add {count} place", { count: plan.places.length }) : t("Add {count} places", { count: plan.places.length })}
               </button>
             ) : null}
           </div>
@@ -237,20 +237,20 @@ export function OverworldAuthoring({
           ) : null}
 
           <div className="space-y-1">
-            <span className="text-[11px] uppercase tracking-wide text-stone-500">Add a place</span>
+            <span className="text-[11px] uppercase tracking-wide text-stone-500">{t("Add a place")}</span>
             <input
               value={placeName}
               maxLength={80}
               onChange={(event) => setPlaceName(event.target.value)}
-              placeholder="The Salt Wharf"
+              placeholder={t("The Salt Wharf")}
               className="w-full rounded-md border border-stone-700 bg-stone-950 px-2 py-1 text-sm text-stone-200"
             />
-            <DictateField single label="What a traveller would say" onTranscript={(text) => setPlaceBlurb((current) => appendDictation(current, text, 300))}>
+            <DictateField single label={t("What a traveller would say")} onTranscript={(text) => setPlaceBlurb((current) => appendDictation(current, text, 300))}>
               <input
                 value={placeBlurb}
                 maxLength={300}
                 onChange={(event) => setPlaceBlurb(event.target.value)}
-                placeholder="What a traveller would say about it (optional)"
+                placeholder={t("What a traveller would say about it (optional)")}
                 className="w-full rounded-md border border-stone-700 bg-stone-950 px-2 py-1 text-sm text-stone-200"
               />
             </DictateField>
@@ -260,18 +260,18 @@ export function OverworldAuthoring({
               onClick={() => void addPlace()}
               className="rounded-md border border-stone-700 px-2 py-1 text-xs text-stone-300 hover:bg-stone-900 disabled:opacity-40"
             >
-              Put it on the map
+              {t("Put it on the map")}
             </button>
           </div>
 
           <div>
             <label htmlFor="region-notes" className="text-[11px] uppercase tracking-wide text-stone-500">
-              Notes on the region
+              {t("Notes on the region")}
             </label>
             {/* Typed notes save when the field lets go of focus; spoken ones
                 save as they land, since no blur follows them. */}
             <DictateField
-              label="Notes on the region"
+              label={t("Notes on the region")}
               className="mt-0.5"
               onTranscript={(text) => {
                 const next = appendDictation(notes, text);
@@ -289,11 +289,11 @@ export function OverworldAuthoring({
                   }
                 }}
                 rows={2}
-                placeholder="What lies past the edge. Which roads are watched."
+                placeholder={t("What lies past the edge. Which roads are watched.")}
                 className="w-full rounded-md border border-stone-700 bg-stone-950 px-2 py-1 text-sm text-stone-200"
               />
             </DictateField>
-            <span className="text-[10px] text-stone-600">Yours alone; players never see this.</span>
+            <span className="text-[10px] text-stone-600">{t("Yours alone; players never see this.")}</span>
           </div>
 
           {error ? <p className="motion-shake text-[11px] text-red-400">{error}</p> : null}
