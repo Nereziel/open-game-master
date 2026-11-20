@@ -342,7 +342,10 @@ async function sagaFromPlan(
     if (process.env.DM_DEBUG) {
       console.log("[dm-debug] saga plan: unreadable reply, asking once more:", raw.slice(0, 200));
     }
-    const again = await arcModelCall(campaignId, planSystem, context, "saga plan retry");
+    const retryContext = `${context}\n\nFORMAT CORRECTION: The previous answer was a scene of narration, not a story plan. This call is NOT a game turn. Do not continue the story or address the players. Return ONLY one JSON object with title, premise, stakes, antagonist, actPlan (at least two acts with their own places and bosses), finale, finaleBoss, cast and subArcs. Every actPlan entry has title, place, milestone, boss {name, detail}, allies and hooks. Begin with { and end with }. No prose outside JSON.`;
+    // A separate utility/completion route can recover when an agent's
+    // storytelling persona keeps replying with narration to planning tasks.
+    const again = await arcModelCall(campaignId, planSystem, retryContext, "saga plan retry", true);
     if (again === null) {
       return null;
     }
@@ -785,18 +788,19 @@ async function arcModelCall(
   system: string,
   user: string,
   label: string,
+  utility = false,
 ): Promise<string | null> {
   const campaign = getCampaignById(campaignId);
   if (!campaign) {
     return null;
   }
-  const { message, error } = await requestDmMessage(
+  const { message, error } = await (utility ? requestUtilityMessage : requestDmMessage)(
     campaign.settings,
     [
       { role: "system", content: withLanguage(system, campaign.gameSettings.tableLanguage) },
       { role: "user", content: user },
     ],
-    { meta: { task: "arc_plan" }, timeoutMs: arcTextTimeoutMs() },
+    { meta: { task: utility ? "arc_plan_recovery" : "arc_plan" }, timeoutMs: arcTextTimeoutMs(), ...(utility ? { thinking: false } : {}) },
   );
   if (error) {
     if (process.env.DM_DEBUG) {
