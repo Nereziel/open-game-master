@@ -260,7 +260,7 @@ export function EditCampaignDialog({
           </label>
         </Group>
 
-        <Group glyph="tab-party" title={t("The table")}>
+        <Group glyph="tab-party" title={t("The table", { context: "campaign.edit.table" })}>
           <div className="grid grid-cols-2 gap-3">
             <NumberStepper label={t("Players")} value={maxPlayers} min={1} max={8} onChange={setMaxPlayers} />
             <NumberStepper label={t("Start level")} value={startingLevel} min={1} max={20} onChange={setStartingLevel} />
@@ -319,7 +319,7 @@ export function EditCampaignDialog({
                 className={ui.btnSmall}
               >
                 {coverPending ? <Loader2 className="size-3.5 animate-spin" /> : null}
-                {coverPending ? t("Painting") : t("Paint one")}
+                {coverPending ? t("Painting") : t("Paint one", { context: "campaign.cover.paint" })}
               </button>
             ) : null}
             {cover ? (
