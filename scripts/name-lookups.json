@@ -9,6 +9,8 @@
     "authoring": "the workshop's and WorldForge's authoring tools, which read what an author writes as they go"
   },
   "sites": {
+    "lib/i18n/agent-diagnostics.ts#partial": [["parse",4,"agent diagnostic text delimiters and anchored regexes used to preserve and translate known errors, not to identify a game record"]],
+    "app/api/admin/settings/route.ts#whole-single": [["key",1,"compare the administrator-selected agent program identifier with the configured program ID to invalidate a prior image test on a switch"]],
     "lib/srd/barding.ts#whole": [["key",1,"the one word barding against each word of a carried row, both through textKey, to tell a suit made for a mount; the suit itself is then found by its whole name (armorNamed)"]],
     "lib/dm/party-npcs-fight.ts#whole": [["key",1,"an NPC's stored place against the party's current place, both written by the server, to field only who is where the fight is: no record a person named"]],
     "lib/dm/party-npcs-fight.ts#fallback": [["key",1,"an NPC's last fight row by id, else the row it was carried from: no record a person named"]],
@@ -337,7 +339,6 @@
     "app/admin/AdminServerLogPanel.tsx#partial": [["search",1,"the log's filter box"]],
     "app/admin/model-blanks.ts#first": [["key",1,"the server's only model, when there is one (no text names it)"]],
     "app/api/addons/uploads/[uploadId]/route.ts#number": [["key",1,"digits a regex already captured, ids, headers, stored and form numbers (number inputs), dice parts, the pack's English text (\"1,000 feet\", a purse); src/: every site read"]],
-    "app/api/admin/settings/route.ts#whole-single": [["key",1,"compare the administrator-selected agent program identifier with the configured program ID to invalidate a prior image test on a switch"]],
     "app/api/admin/addons/route.ts#partial": [["pattern",1,"a fixed pattern over text that reads no record's name: its English words are scripts/text-comparisons.json's to classify"]],
     "app/api/admin/addons/upload/route.ts#number": [["key",1,"digits a regex already captured, ids, headers, stored and form numbers (number inputs), dice parts, the pack's English text (\"1,000 feet\", a purse); src/: every site read"]],
     "app/api/admin/ambience/route.ts#partial": [["pattern",1,"a fixed pattern over text that reads no record's name: its English words are scripts/text-comparisons.json's to classify"]],
@@ -1358,7 +1359,6 @@
     "lib/classes/class-spell-list.ts#whole": [["key",1,"a spell's class lists against a list key, by textKey"],["identity",1,"a spell on a workshop class's own list by whole name"]],
     "lib/comfyui.ts#fallback": [["key",1,"a ComfyUI rejection's model inputs (ckpt_name, unet_name, vae_name) are protocol keys; a rejection naming none keeps ComfyUI's own words"]],
     "lib/comfyui.ts#partial": [["key",2,"checkpoint file names"],["pattern",1,"a fixed pattern over text that reads no record's name: its English words are scripts/text-comparisons.json's to classify"]],
-    "lib/compressed-json.ts#partial": [["key",2,"the Accept-Encoding header's content codings (protocol)"]],
     "lib/content/authored-feats.ts#normalizer": [["key",1,"slugs, hosts, file names, ids, env values, display text, throttle keys, model ids (src/: every site read)"]],
     "lib/content/authored-feats.ts#partial": [["search",1,"authoredFeatEntries: the feat search's query"],["identity",1,"a feat by whole name or slug"]],
     "lib/content/authored-feats.ts#whole": [["identity",1,"a feat by whole name or slug"]],
@@ -1374,7 +1374,6 @@
     "lib/content/item-weights.ts#partial": [["key",3,"the weight index by row name, its \"(20)\" count dropped"],["pattern",1,"a fixed pattern over text that reads no record's name: its English words are scripts/text-comparisons.json's to classify"]],
     "lib/content/levelup-logic.ts#first": [["key",1,"the one label of a one-entry list, shown, never a record"]],
     "lib/content/levelup-logic.ts#keyed": [["key",2,"slugs, document slugs and needs as stored"]],
-    "lib/content/levelup.ts#keyed": [["key",1,"slugs, document slugs and needs as stored"]],
     "lib/content/levelup.ts#partial": [["identity",2,"a Level Up row against the SRD's names by textKey, the whole name (a twin is the same name)"]],
     "lib/content/mechanics.ts#fallback": [["key",1,"the pack's English race, class and background text parsed (the pack's own rows)"]],
     "lib/content/mechanics.ts#keyed": [["key",15,"the pack's English ability and proficiency labels; baked spells by textKey"]],
@@ -1490,7 +1489,6 @@
     "lib/db/overworld.ts#partial": [["identity",1,"an anchor by whole name"]],
     "lib/db/pacts.ts#whole": [["key",1,"the names the pact's own record keeps of who refused it, compared as stored"]],
     "lib/db/prep-refs.ts#keyed": [["identity",1,"a renamed monster or item found by textKey of its whole name"]],
-    "lib/db/prep-refs.ts#whole": [["key",1,"the rows an import wrote, by row id"]],
     "lib/db/prepared-maps.ts#partial": [["key",1,"tag dedupe"]],
     "lib/db/prepared-maps.ts#whole-single": [["key",1,"change detection on an update, binding slugs"]],
     "lib/db/quest-arc.ts#whole": [["key",1,"a sub-arc by the id its quest row keeps (source ref)"]],
@@ -2499,8 +2497,12 @@
     "lib/export/odt.ts#partial": [["parse",1,"story text cut into paragraphs; act keys"]],
     "lib/export/story-document.ts#whole": [["parse",1,"story text cut into paragraphs; act keys"]],
     "lib/genres.ts#fallback": [["key",1,"a genre preset id, its documented default"]],
+    "lib/harness/adapters/antigravity.ts#fallback": [["key",2,"newest generated image file in agy's brain dir when ImageName prefix is absent or unmatched (protocol)"]],
+    "lib/harness/adapters/antigravity.ts#first": [["key",2,"newest generated image file in agy's brain dir sorted by mtime (protocol)"]],
     "lib/harness/adapters/antigravity.ts#keyed": [["key",5,"stream-json event payload keys and the exact run-granted MCP tool name lookup; neither guesses a game record"]],
-    "lib/harness/adapters/antigravity.ts#partial": [["key",11,"CLI output, tool names, model slugs, env names, file names"]],
+    "lib/harness/adapters/antigravity.ts#normalizer": [["key",1,"generated image file extension normalization (protocol)"]],
+    "lib/harness/adapters/antigravity.ts#whole": [["key",1,"a tool name agy reports at init, matched whole against its known built-ins (protocol)"]],
+    "lib/harness/adapters/antigravity.ts#partial": [["key",23,"CLI output, tool names, model slugs, env names, file names, a plain conversation id, and the built-ins a run keeps out of the deny list"]],
     "lib/harness/adapters/claude.ts#partial": [["key",5,"CLI output, tool names, model slugs, env names, file names"],["pattern",4,"a fixed pattern over text that reads no record's name: its English words are scripts/text-comparisons.json's to classify"]],
     "lib/harness/adapters/codex.ts#keyed": [["key",2,"ids, refs, slugs, tool names, field names, env names, event kinds, UI keys, caches, door and map keys; a sheet's conditionMeta by the condition key it was written under; the usage route's gear map by the sheet's own stored item names (src/: every site read)"]],
     "lib/harness/adapters/codex.ts#partial": [["pattern",6,"a fixed pattern over text that reads no record's name: its English words are scripts/text-comparisons.json's to classify"],["key",3,"CLI output, tool names, model slugs, env names, file names"]],
@@ -2514,13 +2516,13 @@
     "lib/harness/adapters/opencode.ts#first": [["key",1,"CLI output, tool names, model slugs, env names, file names"]],
     "lib/harness/adapters/opencode.ts#number": [["key",1,"digits a regex already captured, ids, headers, stored and form numbers (number inputs), dice parts, the pack's English text (\"1,000 feet\", a purse); src/: every site read"]],
     "lib/harness/adapters/opencode.ts#partial": [["pattern",11,"a fixed pattern over text that reads no record's name: its English words are scripts/text-comparisons.json's to classify"],["key",6,"CLI output, tool names, model slugs, env names, file names"]],
-    "lib/harness/bridge.ts#partial": [["pattern",1,"a fixed pattern over text that reads no record's name: its English words are scripts/text-comparisons.json's to classify"]],
+    "lib/harness/bridge.ts#partial": [["pattern",1,"a fixed pattern over text that reads no record's name: its English words are scripts/text-comparisons.json's to classify"],["key",1,"two tool lists compared by their exact tool names (protocol)"]],
     "lib/harness/child-env.ts#keyed": [["key",4,"ids, refs, slugs, tool names, field names, env names, event kinds, UI keys, caches, door and map keys; a sheet's conditionMeta by the condition key it was written under; the usage route's gear map by the sheet's own stored item names (src/: every site read)"]],
     "lib/harness/child-env.ts#partial": [["key",4,"CLI output, tool names, model slugs, env names, file names"]],
     "lib/harness/discover.ts#partial": [["pattern",6,"a fixed pattern over text that reads no record's name: its English words are scripts/text-comparisons.json's to classify"],["key",4,"CLI output, tool names, model slugs, env names, file names"]],
     "lib/harness/images.ts#partial": [["key",1,"CLI output, tool names, model slugs, env names, file names"],["pattern",1,"a fixed pattern over text that reads no record's name: its English words are scripts/text-comparisons.json's to classify"]],
     "lib/harness/process.ts#partial": [["pattern",3,"a fixed pattern over text that reads no record's name: its English words are scripts/text-comparisons.json's to classify"]],
-    "lib/harness/render.ts#partial": [["key",1,"CLI output, tool names, model slugs, env names, file names"]],
+    "lib/harness/render.ts#partial": [["key",2,"CLI output, tool names, model slugs, env names, file names, and the server's own [System] tag on a turn instruction"]],
     "lib/harness/run-dir-logic.ts#partial": [["key",2,"CLI output, tool names, model slugs, env names, file names"]],
     "lib/harness/run-dir.ts#whole": [["key",1,"folder paths compared with the temp folder"]],
     "lib/harness/status.ts#partial": [["pattern",1,"a fixed pattern over text that reads no record's name: its English words are scripts/text-comparisons.json's to classify"]],
@@ -3480,13 +3482,7 @@
       ]
     ],
     "lib/content/names.ts#normalizer": [["key",4,"official SRD name table key normalizers (gearKey, slugKey, canonicalKey) for FR_NAMES_BY_TABLE lookup"]],
-    "lib/content/names.ts#keyed": [
-      [
-        "key",
-        13,
-        "official SRD table lookups into FR_NAMES_BY_TABLE using normalized keys"
-      ]
-    ],
+    "lib/content/names.ts#keyed": [["key",13,"official SRD table lookups into FR_NAMES_BY_TABLE using normalized keys"]],
     "lib/content/names.ts#partial": [["key",3,"parenthetical and measurement suffix stripping for speciesTraitName and backgroundFeatureName"]],
     "lib/dm/charge-logic.ts#partial": [["pattern",12,"a fixed pattern over text that reads no record's name: its English words are scripts/text-comparisons.json's to classify"],["parse",1,"the attacks a Charge or Pounce line names, split on its \"or\""]],
     "lib/dm/charge-logic.ts#number": [["key",3,"digits a regex already captured, ids, headers, stored and form numbers (number inputs), dice parts, the pack's English text (\"1,000 feet\", a purse); src/: every site read"]],
@@ -3526,20 +3522,7 @@
     "lib/inventory-art-logic.ts#whole": [["key",1,"a normalized illustration slug matched to an authored special painting key; this selects art, never a rules record"]],
     "lib/inventory-art-logic.ts#partial": [["key",3,"illustration slug prefixes and leading or trailing physical-form tokens select decorative categories after canonical equipment matching"],["pattern",6,"fixed focus, wooden-shield, potion, scroll and rope patterns and the head-word test (a leading form word alone or before of, de, a comma or a bracket) select artwork only; unknown names retain their category icon and no equipment rules depend on the painting"]],
     "lib/inventory-art-logic.ts#keyed": [["key",3,"approved painting ids, physical-form slug keys and shared gear paintings select illustrative assets; a miss keeps the category icon and changes no item identity"]],
-    "lib/i18n/agent-diagnostics.ts#partial": [
-      [
-        "parse",
-        4,
-        "agent diagnostic text delimiters and anchored regexes used to preserve and translate known errors, not to identify a game record"
-      ]
-    ],
-    "lib/i18n/locale.ts#partial": [
-      [
-        "parse",
-        8,
-        "Accept-Language BCP 47 tag/q-weight parsing and cookie header splitting (protocol), never a record's name"
-      ]
-    ],
+    "lib/i18n/locale.ts#partial": [["parse",8,"Accept-Language BCP 47 tag/q-weight parsing and cookie header splitting (protocol), never a record's name"]],
     "lib/i18n/locale.ts#number": [
       [
         "parse",
