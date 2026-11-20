@@ -235,7 +235,7 @@ export function translateTrackerSystemNote(t: TrackerNoteTranslator, raw: string
   let m = /^(Exploration|Negotiation|Chase|Ritual or task) in progress, "(.*)", round (\d+): (\d+) of (\d+) successes, (\d+) of (\d+) failures\.$/.exec(raw);
   if (m) {
     return t('{kind} in progress, "{title}", round {round}: {successes} of {successesNeeded} successes, {failures} of {failuresAllowed} failures.', {
-      kind: t(m[1]),
+      kind: t(m[1]).toLocaleLowerCase(),
       title: m[2],
       round: m[3],
       successes: m[4],
