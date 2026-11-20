@@ -56,6 +56,7 @@ await test("a reply is read once: fences are tolerated, a missing or empty key i
 
 // What the text model answers next: a reply body, or a status to fail with.
 let answer = { content: "{}" };
+let answerQueue = [];
 const chatRequests = [];
 const comfyPrompts = [];
 const server = http.createServer((req, res) => {
@@ -64,13 +65,14 @@ const server = http.createServer((req, res) => {
   req.on("end", () => {
     if (req.url?.endsWith("/chat/completions")) {
       chatRequests.push(JSON.parse(body));
-      if (answer.status) {
-        res.writeHead(answer.status, { "Content-Type": "application/json" });
+      const served = answerQueue.shift() ?? answer;
+      if (served.status) {
+        res.writeHead(served.status, { "Content-Type": "application/json" });
         res.end(JSON.stringify({ error: { message: "down" } }));
         return;
       }
       res.writeHead(200, { "Content-Type": "application/json" });
-      res.end(JSON.stringify({ choices: [{ index: 0, finish_reason: "stop", message: { role: "assistant", content: answer.content } }] }));
+      res.end(JSON.stringify({ choices: [{ index: 0, finish_reason: "stop", message: { role: "assistant", content: served.content } }] }));
       return;
     }
     // ComfyUI: the prompt is recorded and the render refused, which is all
@@ -131,6 +133,26 @@ await test("another table sends the non-empty fields once, under the image instr
   const [system, user] = chatRequests.at(-1).messages;
   assert.match(system.content, /image generator that reads only English/);
   assert.deepEqual(JSON.parse(user.content), PLACE);
+});
+
+await test("an unreadable image translation can recover on the second strict JSON attempt", async () => {
+  answerQueue = [
+    { content: "The hero enters a dark crypt." },
+    { content: '{"name":"The Crypt of Vael","layout":"A flooded crypt, lit by torches."}' },
+  ];
+  const before = chatRequests.length;
+  const originalWarn = console.warn;
+  console.warn = () => {};
+  try {
+    assert.deepEqual(await toEnglishForImage(table("italian"), PLACE), {
+      name: "The Crypt of Vael",
+      layout: "A flooded crypt, lit by torches.",
+    });
+  } finally {
+    console.warn = originalWarn;
+  }
+  assert.equal(chatRequests.length, before + 2);
+  assert.equal(answerQueue.length, 0);
 });
 
 await test("failed image translation falls back without throwing or leaking story text", async () => {
