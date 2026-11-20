@@ -124,6 +124,10 @@ await test("English has no directive; every other language names itself", () => 
   assert.match(italian, /every listed value and JSON key, written exactly as listed/);
   assert.match(italian, /English rules name/);
   assert.ok(!italian.includes("GAME STATE"));
+  const czech = languageDirective("czech");
+  assert.match(czech, /new NPC or place names/);
+  assert.match(czech, /MUST be in Czech/);
+  assert.match(czech, /Do not switch back to English/);
 });
 
 await test("the DM's system prompt carries the directive, and an English one reads as before", async () => {
