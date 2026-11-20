@@ -334,7 +334,6 @@ export default function SettingsPage() {
         id="settings-playback"
         heading={t("Playback")}
         glyph="tab-ambience"
-        intro={t("Adjust what you hear on this device. Choose server or browser speech below; the campaign's Narration setting controls server speech only.")}
       >
         <DevicePlaybackSettings />
       </PageSection>
