@@ -58,12 +58,39 @@ export async function generateWorldArcs(
     }
     return [];
   }
-  const arcs = parseWorldArcsJson(typeof message?.content === "string" ? message.content : "");
-  if (!arcs.length && process.env.DM_DEBUG) {
-    console.log(
-      "[dm-debug] world arc generation: unparseable reply:",
-      String(message?.content ?? "").slice(0, 400),
+  let arcs = parseWorldArcsJson(typeof message?.content === "string" ? message.content : "");
+  if (!arcs.length) {
+    // An agent CLI serving utility tasks sometimes continues the GM's scene
+    // instead of returning world-clock JSON. Retry once as a fresh, strict
+    // data completion; never store that prose as a world arc.
+    if (process.env.DM_DEBUG) {
+      console.debug("[dm-debug] world arc generation: unreadable JSON; retrying strict utility completion");
+    }
+    const recovery = await trackUtilityCall(campaignId, "world", () =>
+      requestUtilityMessage(
+        campaign.settings,
+        [
+          {
+            role: "system",
+            content: withLanguage(
+              `${GENERATE_SYSTEM}\n\nFORMAT RECOVERY: This is a DATA PLANNING task, not an RPG turn. Do not narrate or address players. Output ONLY a JSON array of 1 or 2 objects with name, driver and rungs (5 to 7 short strings each). Begin with [ and end with ]. No fences, commentary or extra text.`,
+              campaign.gameSettings.tableLanguage,
+            ),
+          },
+          {
+            role: "user",
+            content: `Convert this story arc into world-clock DATA (not a scene):\n${renderArcForPrompt(arc)}\n\nRETURN THE JSON ARRAY ONLY.`,
+          },
+        ],
+        { meta: { task: "world_arc_json_recovery" }, timeoutMs: arcTextTimeoutMs(), thinking: false, temperature: 0 },
+      ),
     );
+    if (!recovery.error) {
+      arcs = parseWorldArcsJson(typeof recovery.message?.content === "string" ? recovery.message.content : "");
+    }
+    if (!arcs.length && process.env.DM_DEBUG) {
+      console.debug("[dm-debug] world arc generation: no readable JSON after recovery");
+    }
   }
   return arcs;
 }

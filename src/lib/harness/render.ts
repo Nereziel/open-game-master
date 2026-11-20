@@ -135,6 +135,22 @@ export type RenderTurnOptions = {
 // where the state that follows buries them.
 const TURN_DIRECTIVE = /^\[System\]/;
 
+// Agent CLIs often follow the last natural-language turn instruction more
+// strongly than the static rules. The table-language directive lives in the
+// system prompt, but repeat its output contract beside the CURRENT turn.
+// This never takes a language from the player's untrusted transcript.
+function languageReminder(systemParts: readonly string[]): string {
+  const marker = "TABLE LANGUAGE: The players read ";
+  const system = systemParts.join("\n");
+  const at = system.indexOf(marker);
+  if (at < 0) return "";
+  const name = system.slice(at + marker.length).split(".")[0].trim();
+  // The directive is built from the server's fixed TableLanguage enum.
+  if (!name || name.length > 32 || !/^[A-Za-z]+$/.test(name)) return "";
+  return `CURRENT TABLE LANGUAGE: ${name}. Write the entire player-visible narration, dialogue, headings, invented place/NPC names, and descriptions in new tool arguments in ${name}, not English. Only preserve exact existing game-record names and engine/tool/JSON keys. English story context is NOT permission to answer in English.`;
+}
+
+
 function trailingDirectives(messages: readonly RenderMessage[]): number {
   let start = messages.length;
   while (start > 0) {
@@ -226,7 +242,7 @@ export function renderTurn(messages: readonly RenderMessage[], options: RenderTu
     : lastUser
       ? "It is your turn as the Game Master. Resolve what the players just did with your tools, then write the narration."
       : "It is your turn as the Game Master. Open the scene: use your tools for anything mechanical, then write the narration.";
-  return { system: `${standing}${earlier}`, prompt: [transcript, moment, instruction, ...directives].filter(Boolean).join("\n\n") };
+  return { system: `${standing}${earlier}`, prompt: [transcript, moment, instruction, languageReminder(systemParts), ...directives].filter(Boolean).join("\n\n") };
 }
 
 // Messages that arrived after a program started, rendered as the follow-up
@@ -277,5 +293,12 @@ export function renderCompletion(messages: readonly RenderMessage[]): RenderedTu
   const prompt = lines.length
     ? `<conversation>\n${lines.join("\n\n")}\n</conversation>\n\n${finalAsk}`
     : finalAsk;
-  return { system, prompt };
+  // The same CLI program can play the GM and perform a mechanical JSON
+  // read. For the latter, make the final instruction a data-only contract:
+  // otherwise the agent may continue narrating after its JSON fence.
+  const wantsJson = systemParts.some((part) => /JSON (?:object|array)|strict JSON|valid JSON/i.test(part));
+  const jsonContract = wantsJson
+    ? "OUTPUT CONTRACT: This is a data task, NOT a Game Master turn. Return exactly the requested JSON value and NOTHING else. No prose, scene, Markdown, code fences, explanation, or extra fields. Start with { or [; end with } or ]."
+    : "";
+  return { system, prompt: [prompt, jsonContract].filter(Boolean).join("\n\n") };
 }

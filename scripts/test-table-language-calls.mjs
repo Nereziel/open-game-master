@@ -243,7 +243,7 @@ const CLASSIFIED = {
   // The AI-drafted pregens: names, concepts and backstories the players read,
   // in a JSON shape the engine reads (src/lib/dm/pregen-draft.ts).
   "src/lib/dm/pregen-draft.ts": { prose: 1, machine: 0 },
-  "src/lib/dm/world-arc.ts": { prose: 1, machine: 0 },
+  "src/lib/dm/world-arc.ts": { prose: 2, machine: 0 },
   // WorldForge's forge, ask and draft, through one helper.
   "src/lib/dm/world-ai.ts": { prose: 1, machine: 0 },
   // The claims reader and the waypoint judge: a JSON claim list, a list of

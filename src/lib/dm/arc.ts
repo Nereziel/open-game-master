@@ -441,13 +441,13 @@ export async function generateStoryArc(
       .filter(Boolean)
       .join("\n\n");
 
-    const { message, error } = await requestDmMessage(
+    const { message, error } = await requestUtilityMessage(
       campaign.settings,
       [
         { role: "system", content: withLanguage(sagaGenerateSystem(profile), campaign.gameSettings.tableLanguage) },
         { role: "user", content: context },
       ],
-      { meta: { task: "arc_generate" }, timeoutMs: arcTextTimeoutMs() },
+      { meta: { task: "arc_generate" }, timeoutMs: arcTextTimeoutMs(), thinking: false, temperature: 0 },
     );
     if (error) {
       const payload = (await error
@@ -811,13 +811,15 @@ async function arcModelCall(
   if (!campaign) {
     return null;
   }
-  const { message, error } = await (utilityTask ? requestUtilityMessage : requestDmMessage)(
+  // Every arc call expects structured planning data, never narration.
+  // Use the utility route (a separate model when configured), even for replots.
+  const { message, error } = await requestUtilityMessage(
     campaign.settings,
     [
       { role: "system", content: withLanguage(system, campaign.gameSettings.tableLanguage) },
       { role: "user", content: user },
     ],
-    { meta: { task: utilityTask ?? "arc_plan" }, timeoutMs: arcTextTimeoutMs(), ...(utilityTask ? { thinking: false } : {}) },
+    { meta: { task: utilityTask ?? "arc_plan" }, timeoutMs: arcTextTimeoutMs(), thinking: false, temperature: 0 },
   );
   if (error) {
     if (process.env.DM_DEBUG) {

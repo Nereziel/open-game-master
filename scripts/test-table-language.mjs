@@ -30,7 +30,7 @@ const { createUser } = await import("../src/lib/db/users.ts");
 const { mintSession } = await import("../src/lib/auth.ts");
 const { getCampaignById } = await import("../src/lib/db/campaigns.ts");
 const { buildDmSystem } = await import("../src/lib/dm/prompt.ts");
-const { languageDirective } = await import("../src/lib/dm/table-language-logic.ts");
+const { languageDirective, englishNarrationAtCzechTable } = await import("../src/lib/dm/table-language-logic.ts");
 const { TABLE_LANGUAGES } = await import("../src/lib/schemas/game-settings-options.ts");
 const { THIS_TURN_HEADING } = await import("../src/lib/prompt-boundary.ts");
 
@@ -124,6 +124,19 @@ await test("English has no directive; every other language names itself", () => 
   assert.match(italian, /every listed value and JSON key, written exactly as listed/);
   assert.match(italian, /English rules name/);
   assert.ok(!italian.includes("GAME STATE"));
+  const czech = languageDirective("czech");
+  assert.match(czech, /new NPC or place names/);
+  assert.match(czech, /MUST be in Czech/);
+  assert.match(czech, /Do not switch back to English/);
+});
+
+await test("a long English GM reply at a Czech table is detected without flagging Czech prose or short labels", () => {
+  const english = "The rain has stopped, but the wind has not, and it comes off the moor sharp enough to make your eyes water. You have been walking since dawn. Ahead, two cart tracks cross at a sunken stone cross, and beyond it the gibbet leans over the north road like a man listening.";
+  const czech = "Mlha se zvedá z hladiny v pomalých pruzích, jako by řeka dýchala. Poslední světlo se ztrácí za střechami a na návsi se rozsvěcí lucerny, ne všechny, jen každá třetí. Zbytek vsi zůstává potemnělý a okna hledí jako zavřené oči.";
+  assert.equal(englishNarrationAtCzechTable(english, "czech"), true);
+  assert.equal(englishNarrationAtCzechTable(czech, "czech"), false);
+  assert.equal(englishNarrationAtCzechTable(english, "english"), false);
+  assert.equal(englishNarrationAtCzechTable("The Bell of Ashmoor", "czech"), false);
 });
 
 await test("the DM's system prompt carries the directive, and an English one reads as before", async () => {

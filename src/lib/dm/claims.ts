@@ -453,7 +453,10 @@ export async function readClaims(
               ...reading[0],
               content: `${reading[0].content}\n\nYour previous reply was not valid JSON. Try once more. Return only one JSON object with a "claims" array; use {"claims":[]} if nothing applies.`,
             },
-            reading[1],
+            {
+              ...reading[1],
+              content: `${reading[1].content}\n\nFINAL FORMAT REQUIREMENT: Return a single JSON object containing ONLY a "claims" array. Each claim must have its valid "kind" and an exact "quote" from this passage. When no applicable exact quotation exists, return {"claims":[]}. Do not answer the scene, continue narration, list speaker/cast fields, or append Markdown. End with }.`,
+            },
           ]
         : reading;
       const { message, error, finishReason } = await requestUtilityMessage(campaign.settings, messages, {
