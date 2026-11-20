@@ -10645,6 +10645,9 @@
     "Each lasting AI companion holds a few values from its class and alignment, some of them red lines it will not see crossed.\n\nDeeds the party commits in front of them move a ladder the server keeps: content, uneasy, warning, ultimatum, breaking point. Their Bonds row shows where they stand and any ultimatum they set, with the time left on the campaign's clock. Making amends, or doing what they hold dear, climbs it back, a rung a day at most. A character who stands by while another does it bears a little of it; one who speaks against it bears none.\n\nOff: companions judge by standing alone. Talk: they object, warn and set ultimatums, and stay whatever happens. Leave (the default): past their breaking point they walk out, slip away or report the party. Turn: as Leave, and they may turn on the party in a fight, at their full strength whatever the table's difficulty; a player's command over a companion ends once it warns the party.": "Každý stálý AI společník má zásady podle povolání a přesvědčení, včetně hranic, které nepřekročí.\n\nČiny družiny před jeho očima mění stupnici: spokojenost, neklid, varování, ultimátum, bod zlomu. Karta Vazby ukazuje stav, ultimáta i zbývající čas. Náprava a skutky odpovídající hodnotám mohou vztah obnovit, nejvýše o stupeň denně. Mlčící přihlížející nese díl odpovědnosti, kdo protestuje, nikoli.\n\nVypnuto: rozhodují jen vztahy. Mluvit: společníci protestují a varují, ale zůstanou. Odejít (výchozí): za bodem zlomu odejdou nebo družinu udají. Obrátit se: navíc mohou v boji zaútočit na družinu v plné síle bez ohledu na obtížnost. Hráč ztratí nad společníkem kontrolu, jakmile družinu varuje."
   },
   "contexts": {
+    "Add it anyway": {
+      "admin.harness.addReduced": "Přidat i tak"
+    },
     "Remove": {
       "creator.defaults.remove": "Odebrat"
     },
