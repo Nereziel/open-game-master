@@ -1,7 +1,9 @@
 "use client";
 
-import { useEffect, useRef } from "react";
+import { useEffect, useMemo, useRef } from "react";
 import { useNarrationAudio } from "@/app/campaigns/[campaignId]/useNarrationAudio";
+import { useBrowserNarration } from "@/app/campaigns/[campaignId]/useBrowserNarration";
+import { useBrowserNarrationMode } from "@/lib/browser-speech-prefs";
 import { useAmbienceAudio } from "@/app/campaigns/[campaignId]/useAmbienceAudio";
 import type { CampaignState } from "@/app/campaigns/[campaignId]/useCampaignStream";
 
@@ -13,7 +15,31 @@ import type { CampaignState } from "@/app/campaigns/[campaignId]/useCampaignStre
 export function useTableAudio(state: CampaignState) {
   // A table break holds the DM's voice until Resume (useNarrationAudio.ts).
   // The room keeps its bed: a quiet table under a break is no worse for it.
-  const narration = useNarrationAudio(state.tableBreak !== null);
+  const mode = useBrowserNarrationMode();
+  const serverNarration = useNarrationAudio(state.tableBreak !== null, mode === "server");
+  const browser = useBrowserNarration({
+    messages: state.messages,
+    loading: state.loading,
+    onBreak: state.tableBreak !== null,
+    enabled: mode === "browser",
+    muted: serverNarration.muted,
+    volume: serverNarration.volume,
+    language: state.campaign?.gameSettings?.tableLanguage ?? "english",
+  });
+  const { playingMessageId, playbackFailure, held, unlocked, unlock, speak } = browser;
+  const narration = useMemo(
+    () => ({
+      ...serverNarration,
+      mode,
+      speak,
+      playingMessageId: mode === "browser" ? playingMessageId : serverNarration.playingMessageId,
+      playbackFailure: mode === "browser" ? playbackFailure : serverNarration.playbackFailure,
+      held: mode === "browser" ? held : serverNarration.held,
+      unlocked: mode === "browser" ? unlocked : serverNarration.unlocked,
+      unlock: mode === "browser" ? unlock : serverNarration.unlock,
+    }),
+    [serverNarration, mode, speak, playingMessageId, playbackFailure, held, unlocked, unlock],
+  );
   const ambience = useAmbienceAudio(
     state.ambience,
     state.ambienceSting,
@@ -31,7 +57,7 @@ export function useTableAudio(state: CampaignState) {
   const mountSeqRef = useRef<number | null>(null);
   const handedTtsRef = useRef<string | null>(null);
   const { latestTts, loading, lastSeq } = state;
-  const { onTtsReady } = narration;
+  const { onTtsReady } = serverNarration;
   useEffect(() => {
     if (mountSeqRef.current === null) {
       if (!loading) {

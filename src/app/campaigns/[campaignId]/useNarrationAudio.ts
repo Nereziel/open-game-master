@@ -3,6 +3,7 @@
 import { useCallback, useEffect, useMemo, useRef, useState, useSyncExternalStore } from "react";
 import { registerOutput, releaseOutput } from "@/lib/audio-devices";
 import { AUDIO_PREF_FIELDS, hydrateAudioPrefs, writeAudioPref } from "@/lib/audio-prefs";
+import type { BrowserNarrationMode } from "@/lib/browser-speech-prefs";
 
 // Plays DM narration audio (tts_ready events). Only events that arrive
 // AFTER mount autoplay; reconnect backlog never replays old narration.
@@ -49,6 +50,9 @@ export function readVolume() {
 }
 
 export type NarrationAudio = {
+  // Present on the combined server/browser narration hook at the table.
+  mode?: BrowserNarrationMode;
+  speak?: (messageId: string, text: string) => boolean;
   muted: boolean;
   volume: number;
   unlocked: boolean;
@@ -68,7 +72,7 @@ export type NarrationAudio = {
   onTtsReady: (messageId: string, url: string, live: boolean) => void;
 };
 
-export function useNarrationAudio(onBreak = false): NarrationAudio {
+export function useNarrationAudio(onBreak = false, serverActive = true): NarrationAudio {
   const muted = useSyncExternalStore(subscribePrefs, readMuted, () => true);
   const volume = useSyncExternalStore(subscribePrefs, readVolume, () => 0.8);
   const [unlocked, setUnlocked] = useState(false);
@@ -133,6 +137,12 @@ export function useNarrationAudio(onBreak = false): NarrationAudio {
       setPlayingMessageId(null);
     }
   }, [setPending]);
+
+  // Switching to browser narration must stop server audio immediately, or
+  // both engines could speak the same passage after changing the preference.
+  useEffect(() => {
+    if (!serverActive) silence();
+  }, [serverActive, silence]);
 
   // The prefs reach what is already playing, whoever wrote them: the
   // header's own controls, the apps' Settings screen while the table stays
@@ -348,7 +358,7 @@ export function useNarrationAudio(onBreak = false): NarrationAudio {
   const onTtsReady = useCallback(
     (messageId: string, url: string, live: boolean) => {
       audioByMessage.set(messageId, url);
-      if (!live || readMuted() || handledRef.current.has(messageId)) {
+      if (!serverActive || !live || readMuted() || handledRef.current.has(messageId)) {
         return;
       }
       handledRef.current.add(messageId);
@@ -364,7 +374,7 @@ export function useNarrationAudio(onBreak = false): NarrationAudio {
         startPlayback(messageId, url);
       }
     },
-    [audioByMessage, setPending, startPlayback],
+    [audioByMessage, serverActive, setPending, startPlayback],
   );
 
   // One object per real change, so the memoized header and the chat column
