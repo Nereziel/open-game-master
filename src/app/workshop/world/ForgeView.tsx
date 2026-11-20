@@ -91,37 +91,37 @@ export function ForgeView({ api, world, onOpen }: { api: WorldApi; world: WorldS
       ) : null}
 
       {rows ? (
-        <section className="flex flex-col gap-2 animate-fade-up" aria-label="What the forge found">
-          <h3 className="eyebrow text-[10px] text-amber-400/80">Found {rows.length}: tick what to keep</h3>
+        <section className="flex flex-col gap-2 animate-fade-up" aria-label={t("What the forge found")}>
+          <h3 className="eyebrow text-[10px] text-amber-400/80">{t("Found {count}: tick what to keep", { count: rows.length })}</h3>
           <ul className="flex flex-col gap-1.5">
             {rows.map((row, index) => (
               <li key={row.key} className={cn("panel wf-rise flex flex-col gap-1.5 rounded-lg p-2.5", !row.keep && "opacity-60")} style={{ "--i": index } as React.CSSProperties}>
                 <div className="flex flex-wrap items-center gap-2">
-                  <input type="checkbox" className="accent-amber-400" aria-label={`Keep ${row.name}`} checked={row.keep} disabled={Boolean(row.existing)} onChange={(event) => set(row.key, { keep: event.target.checked })} />
-                  <input className={cn(ui.input, "w-48 py-1 text-sm")} aria-label="Name" maxLength={80} value={row.name} disabled={Boolean(row.existing)} onChange={(event) => set(row.key, { name: event.target.value })} />
+                  <input type="checkbox" className="accent-amber-400" aria-label={t("Keep {name}", { name: row.name })} checked={row.keep} disabled={Boolean(row.existing)} onChange={(event) => set(row.key, { keep: event.target.checked })} />
+                  <input className={cn(ui.input, "w-48 py-1 text-sm")} aria-label={t("Name")} maxLength={80} value={row.name} disabled={Boolean(row.existing)} onChange={(event) => set(row.key, { name: event.target.value })} />
                   {row.existing ? (
-                    <button type="button" onClick={() => onOpen(row.existing)} className="pk-chip text-[11px] text-stone-400">already in the world</button>
+                    <button type="button" onClick={() => onOpen(row.existing)} className="pk-chip text-[11px] text-stone-400">{t("already in the world")}</button>
                   ) : (
                     <div className="w-44">
-                      <Select label="Type" size="sm" value={row.typeId} onChange={(typeId) => set(row.key, { typeId })} options={doc.types.map((type) => ({ value: type.id, label: worldTypeLabel(type, locale) }))} />
+                      <Select label={t("Type")} size="sm" value={row.typeId} onChange={(typeId) => set(row.key, { typeId })} options={doc.types.map((type) => ({ value: type.id, label: worldTypeLabel(type, locale) }))} />
                     </div>
                   )}
                   {row.existing ? <TypeChip type={typeOf(doc, entities.find((entity) => entity.ref === row.existing)!)} /> : null}
                 </div>
                 {!row.existing ? (
-                  <textarea className={cn(ui.input, "min-h-12 text-xs")} aria-label={`${row.name}, summary`} maxLength={2_000} value={row.summary} onChange={(event) => set(row.key, { summary: event.target.value })} />
+                  <textarea className={cn(ui.input, "min-h-12 text-xs")} aria-label={t("{name}, summary", { name: row.name })} maxLength={2_000} value={row.summary} onChange={(event) => set(row.key, { summary: event.target.value })} />
                 ) : null}
-                {row.hiddenTruth && !row.existing ? <p className="text-xs text-red-300">Hidden truth: {row.hiddenTruth}</p> : null}
+                {row.hiddenTruth && !row.existing ? <p className="text-xs text-red-300">{t("Hidden truth")}: {row.hiddenTruth}</p> : null}
               </li>
             ))}
           </ul>
           {links.length ? (
             <>
-              <h3 className="eyebrow mt-1 text-[10px] text-amber-400/80">Links</h3>
+              <h3 className="eyebrow mt-1 text-[10px] text-amber-400/80">{t("Links")}</h3>
               <ul className="flex flex-col gap-1">
                 {links.map((link, index) => (
                   <li key={`${link.from}-${link.to}-${link.label}`} className="wf-rise flex items-center gap-2 text-sm text-stone-300" style={{ "--i": index } as React.CSSProperties}>
-                    <input type="checkbox" className="accent-amber-400" aria-label={`Keep ${nameOf(link.from)} ${link.label} ${nameOf(link.to)}`} checked={link.keep} onChange={(event) => setLinks((current) => current.map((entry, at) => (at === index ? { ...entry, keep: event.target.checked } : entry)))} />
+                    <input type="checkbox" className="accent-amber-400" aria-label={t("Keep {from} {label} {to}", { from: nameOf(link.from), label: link.label, to: nameOf(link.to) })} checked={link.keep} onChange={(event) => setLinks((current) => current.map((entry, at) => (at === index ? { ...entry, keep: event.target.checked } : entry)))} />
                     {nameOf(link.from)} <span className="text-stone-500">{link.label}</span> {nameOf(link.to)}
                   </li>
                 ))}
@@ -130,12 +130,12 @@ export function ForgeView({ api, world, onOpen }: { api: WorldApi; world: WorldS
           ) : null}
           <label className="flex items-center gap-2 text-xs text-stone-400">
             <input type="checkbox" className="accent-amber-400" checked={stubTheRest} onChange={(event) => setStubTheRest(event.target.checked)} />
-            Keep the unticked names in To write
+            {t("Keep the unticked names in To write")}
           </label>
           <div className="flex justify-end gap-2">
-            <KitButton tone="small" onClick={() => { setRows(null); setLinks([]); }}>Throw it away</KitButton>
+            <KitButton tone="small" onClick={() => { setRows(null); setLinks([]); }}>{t("Throw it away")}</KitButton>
             <KitButton tone="primary" busy={busy} disabled={busy || !(rows.some((row) => row.keep && !row.existing) || links.some((link) => link.keep))} onClick={keep}>
-              {busy ? null : <Check className="size-3.5" />} Add the ticked
+              {busy ? null : <Check className="size-3.5" />} {t("Add the ticked")}
             </KitButton>
           </div>
         </section>
