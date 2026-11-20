@@ -1,5 +1,10 @@
 {
   "messages": {
+    "tiny": "drobná",
+    "small": "malá",
+    "large": "velká",
+    "huge": "obrovská",
+    "gargantuan": "gigantická",
     "{monsters} x {xp} XP for CR {cr}": "{monsters} × {xp} ZK za nebezpečnost {cr}",
     "{monsters} monsters against {players} players": "Nestvůry: {monsters}, hráči: {players}",
     "easy, medium, hard, deadly for {players} at level {level}": "Prahy pro {players} postav na úrovni {level}: snadné, střední, těžké, smrtící",
