@@ -7,7 +7,7 @@ import type { PartyState } from "@/lib/dm/party-logic";
 import { PARTY_BACKSTORY_MAX } from "@/lib/dm/party-story";
 import { offersStoryModel, useCapabilities } from "@/lib/use-capabilities";
 import { ui } from "@/lib/ui";
-import { useT } from "@/lib/locale";
+import { useLocale, useT } from "@/lib/locale";
 
 // Why this party is together (src/lib/dm/party-story.ts), in the lobby and
 // on the table's Party tab. The backstory is optional, and an empty card asks
@@ -38,6 +38,7 @@ export function PartyStory({
   const saved = party?.backstory ?? "";
   const capabilities = useCapabilities();
   const t = useT();
+  const locale = useLocale();
   const [text, setText] = useState(saved);
   // The stored text this edit started from. When the server's copy moves
   // and the field still holds the old one, the field follows; when it holds
@@ -111,7 +112,7 @@ export function PartyStory({
     setError("");
     setNote("");
     try {
-      const data = await post({ do: "draft", current: text });
+      const data = await post({ do: "draft", current: text, readerLocale: locale });
       if (data && typeof data.text === "string") {
         setText(data.text);
         setNote(t("A draft from your characters' backstories. Edit it, then save; nothing is kept until you do."));
