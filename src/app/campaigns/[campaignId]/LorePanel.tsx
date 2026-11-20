@@ -12,7 +12,8 @@ import { KitButton, LoadFailed, PanelError, PanelLoading } from "./PanelKit";
 import { WorldEntryLink, useOpenOnArrival } from "@/app/workshop/world/WorldEntryLink";
 import { useUnsavedDraft } from "@/app/workshop/unsaved";
 import { findLostCreate, readLoad, readWrite, useLoadStatus } from "@/lib/load-state";
-import { useT } from "@/lib/locale";
+import { useLocale, useT } from "@/lib/locale";
+import { worldFolderLabel } from "@/lib/worldforge/display-labels";
 import { LoreEntryActions } from "@/app/workshop/lore/LoreEntryActions";
 import { LoreEditorForm } from "@/app/workshop/lore/LoreEditorForm";
 import { LoreEntryRow, MentionedIn } from "@/app/workshop/lore/LoreEntryRow";
@@ -56,6 +57,7 @@ export function LorePanel({
 }) {
   const [loading, setLoading] = useState(true);
   const t = useT();
+  const locale = useLocale();
   // Whether a load has landed and what the last one said (issue 140): a
   // refused list is shown in the server's words, never as "no lore yet".
   const { loaded, loadError, settle } = useLoadStatus();
@@ -492,7 +494,7 @@ export function LorePanel({
       ) : null}
       {categories.map((category) => (
         <div key={category} className="mb-2">
-          <SectionHead title={CATEGORY_LABELS[category]} glyph="tab-journal" level="h4" aside={entries.filter((entry) => entry.category === category).length} />
+          <SectionHead title={worldFolderLabel(CATEGORY_LABELS[category], locale)} glyph="tab-journal" level="h4" aside={entries.filter((entry) => entry.category === category).length} />
           <ul className="stagger space-y-1">
             {entries
               .filter((entry) => entry.category === category)

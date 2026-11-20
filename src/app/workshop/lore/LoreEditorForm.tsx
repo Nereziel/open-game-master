@@ -17,7 +17,8 @@ import { CATEGORY_LABELS, type LoreDraft } from "@/app/workshop/lore/types";
 import { DictateField } from "@/components/DictateField";
 import { appendDictation } from "@/lib/dictation";
 import { textKey } from "@/lib/language/text-logic";
-import { useT } from "@/lib/locale";
+import { useLocale, useT } from "@/lib/locale";
+import { worldFolderLabel } from "@/lib/worldforge/display-labels";
 import { readBookText } from "@/lib/pdf-import/book-text";
 
 // The binder's author form (docs/vtt-parity-implementation-plan.md
@@ -66,6 +67,7 @@ export function LoreEditorForm({
   const [pdfError, setPdfError] = useState("");
   const pdfRef = useRef<HTMLInputElement>(null);
   const t = useT();
+  const locale = useLocale();
   const [rereading, setRereading] = useState(false);
   // A rules PDF read only by the server's old reader (glyph codes for most
   // published books) is read once more by pdf.js the first time its entry
@@ -255,7 +257,7 @@ export function LoreEditorForm({
             label={t("Category")}
             value={draft.category}
             onChange={(category) => onChange({ ...draft, category })}
-            options={CATEGORY_OPTIONS}
+            options={CATEGORY_OPTIONS.map((option) => ({ ...option, label: worldFolderLabel(option.label, locale) }))}
           />
         </span>
         <input

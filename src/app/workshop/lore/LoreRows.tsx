@@ -10,7 +10,8 @@ import { ui } from "@/lib/ui";
 import { ListTally, sortRows, type RowSort } from "@/app/workshop/ListHead";
 import { CATEGORY_LABELS, type LoreEntryView } from "@/app/workshop/lore/types";
 import { textKey } from "@/lib/language/text-logic";
-import { useT } from "@/lib/locale";
+import { useLocale, useT } from "@/lib/locale";
+import { worldFolderLabel } from "@/lib/worldforge/display-labels";
 
 // The workshop's world lore as full-width rows: the title, whether it is
 // pinned into every DM turn, its category, its tags, and the first line of
@@ -50,6 +51,7 @@ export function LoreRows({
   const [query, setQuery] = useState("");
   const [sort, setSort] = useState<RowSort>("made");
   const t = useT();
+  const locale = useLocale();
   const shown = sortRows(entries.filter((entry) => matches(entry, query)), sort, (entry) => entry.title);
 
   return (
@@ -95,7 +97,7 @@ export function LoreRows({
                   ) : null}
                   <span className="font-display tracking-wide text-amber-50">{entry.title}</span>
                   <span className="rounded-sm border border-stone-600/60 px-1.5 py-0.5 font-display text-[10px] tracking-wider text-stone-400">
-                    {CATEGORY_LABELS[entry.category]}
+                    {worldFolderLabel(CATEGORY_LABELS[entry.category], locale)}
                   </span>
                   {entry.visibility === "dm" ? (
                     <span className="flex items-center gap-1 rounded-sm border border-violet-500/40 bg-violet-500/10 px-1.5 py-0.5 font-display text-[10px] tracking-wider text-violet-300">

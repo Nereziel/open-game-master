@@ -18,7 +18,8 @@ import type { OpenSystem } from "./WorldForgePanel";
 import type { OpenPrep } from "./PlaceBattleMaps";
 import { CreateButton } from "@/app/workshop/[workshopId]/CreateChooser";
 import { textKey } from "@/lib/language/text-logic";
-import { useT } from "@/lib/locale";
+import { useLocale, useT } from "@/lib/locale";
+import { worldFolderLabel, worldTypeLabel } from "@/lib/worldforge/display-labels";
 
 // The wiki: every entry of the world, which is every Cast member, place,
 // faction and lore entry of the workshop, filtered by type and folder and
@@ -62,6 +63,7 @@ export function WikiView({
 }) {
   const { doc, entities } = world;
   const t = useT();
+  const locale = useLocale();
   const [query, setQuery] = useState("");
   const [typeFilter, setTypeFilter] = useState("");
   const [folder, setFolder] = useState("");
@@ -122,7 +124,7 @@ export function WikiView({
 
   async function dropFolder(id: string) {
     const target = doc.folders.find((entry) => entry.id === id);
-    if (!target || !(await appConfirm(t("Its entries and folders move up a level; nothing in it is deleted."), { title: t("Remove the folder {name}?", { name: target.name }), actionLabel: t("Remove", { context: "action.remove" }) }))) return;
+    if (!target || !(await appConfirm(t("Its entries and folders move up a level; nothing in it is deleted."), { title: t("Remove the folder {name}?", { name: worldFolderLabel(target.name, locale) }), actionLabel: t("Remove", { context: "action.remove" }) }))) return;
     const { folders, heir } = removeFolder(doc.folders, id);
     await api.patch({ folders, moveFolder: { from: id, to: heir } });
     if (folder === id) setFolder("");
@@ -145,13 +147,13 @@ export function WikiView({
             <div className="flex flex-wrap gap-1" role="radiogroup" aria-label={t("Type name")}>
               {doc.types.map((type) => (
                 <button key={type.id} type="button" role="radio" aria-checked={newType === type.id} onClick={() => setNewType(type.id)} className={cn("rounded-md border px-1.5 py-0.5 text-[11px] motion-press", newType === type.id ? "text-stone-950" : "text-stone-300")} style={newType === type.id ? { background: type.color, borderColor: type.color } : { borderColor: tint(type.color, 0.4) }}>
-                  {type.name}
+                  {worldTypeLabel(type, locale)}
                 </button>
               ))}
             </div>
-            <p className="text-[11px] text-stone-500">{t("Lands in {shelf}{category}.", { shelf: SHELF_LABELS[chosenType.shelf], category: chosenType.shelf === "lore" ? ` (${chosenType.loreCategory})` : "" })}</p>
+            <p className="text-[11px] text-stone-500">{t("Lands in {shelf}{category}.", { shelf: t(SHELF_LABELS[chosenType.shelf]), category: chosenType.shelf === "lore" ? ` (${t(chosenType.loreCategory)})` : "" })}</p>
             {/* eslint-disable-next-line jsx-a11y/no-autofocus -- the form opens because the author just pressed New entry */}
-            <input className={cn(ui.input, "text-sm")} placeholder={t("A {type}'s name", { type: chosenType.name.toLowerCase() })} aria-label={t("Name")} maxLength={80} value={newName} onChange={(event) => setNewName(event.target.value)} autoFocus />
+            <input className={cn(ui.input, "text-sm")} placeholder={t("A {type}'s name", { type: worldTypeLabel(chosenType, locale).toLowerCase() })} aria-label={t("Name")} maxLength={80} value={newName} onChange={(event) => setNewName(event.target.value)} autoFocus />
             {api.error ? <PanelError>{api.error}</PanelError> : null}
             <div className="flex justify-end gap-1.5">
               <KitButton tone="small" onClick={() => setMaking(false)}>
@@ -188,7 +190,7 @@ export function WikiView({
             const count = typeCounts.get(type.id) ?? 0;
             return count ? (
               <button key={type.id} type="button" onClick={() => setTypeFilter(typeFilter === type.id ? "" : type.id)} className="rounded-md border px-1.5 py-0.5 text-[11px] motion-press" style={typeFilter === type.id ? { background: tint(type.color, 0.25), borderColor: type.color, color: "#f5f0e6" } : { borderColor: tint(type.color, 0.35), color: type.color }}>
-                {type.name} {count}
+                {worldTypeLabel(type, locale)} {count}
               </button>
             ) : null;
           })}
@@ -211,7 +213,7 @@ export function WikiView({
           {/* A big world's folders scroll on their own, so the entry list
               below them stays in sight (audit WF-24). */}
           <div className="flex max-h-48 flex-col gap-0.5 overflow-y-auto pr-1" data-testid="world-folders">
-            {[{ id: "", name: t("Everything"), depth: 0 }, ...folderTree(doc.folders).map(({ folder: entry, depth }) => ({ id: entry.id, name: entry.name, depth })), ...(doc.folders.length ? [{ id: "__none", name: t("In no folder"), depth: 0 }] : [])].map((entry) => (
+            {[{ id: "", name: t("Everything"), depth: 0 }, ...folderTree(doc.folders).map(({ folder: entry, depth }) => ({ id: entry.id, name: worldFolderLabel(entry.name, locale), depth })), ...(doc.folders.length ? [{ id: "__none", name: t("In no folder"), depth: 0 }] : [])].map((entry) => (
               <div key={entry.id || "all"} className="group flex shrink-0 items-center">
                 <button type="button" onClick={() => setFolder(entry.id)} className={cn("flex flex-1 items-center gap-1.5 rounded-md px-1.5 py-1 text-left text-xs motion-press", folder === entry.id ? "bg-amber-400/10 text-amber-100" : "text-stone-400 hover:text-stone-200")} style={{ paddingLeft: `${0.375 + entry.depth * 0.75}rem` }}>
                   <FolderOpen className="size-3.5 shrink-0" /> {entry.name}

@@ -21,7 +21,8 @@ import type { OpenSystem } from "./WorldForgePanel";
 import { LinkEditor } from "./LinkEditor";
 import { EntityAvatar, SHELF_SYSTEMS, TypeChip, typeOf } from "./world-ui";
 import { PaintPanel, usePaintJobs } from "./PaintJobs";
-import { useT } from "@/lib/locale";
+import { useLocale, useT } from "@/lib/locale";
+import { worldFieldLabel, worldFolderLabel } from "@/lib/worldforge/display-labels";
 
 // One entry, read: its picture and names, what the table plays with, its
 // article with every other entry it names linked, its type's fields, its
@@ -78,6 +79,7 @@ export function EntityPage({
 }) {
   const { doc, entities } = world;
   const t = useT();
+  const locale = useLocale();
   const [editing, setEditing] = useState(false);
   // Paint's jobs for this entry, kept on the server (PaintJobs.tsx): a
   // picture on its way, waiting for a decision or failed is still there
@@ -109,7 +111,7 @@ export function EntityPage({
   }
 
   async function remove() {
-    const ok = await appConfirm(t("{name} is {where}: deleting it here deletes it there too, with every link to it.", { name: entity.name, where: entity.shelf === "lore" ? t("a lore entry") : t("in {shelf}", { shelf: SHELF_LABELS[entity.shelf] }) }), {
+    const ok = await appConfirm(t("{name} is {where}: deleting it here deletes it there too, with every link to it.", { name: entity.name, where: entity.shelf === "lore" ? t("a lore entry") : t("in {shelf}", { shelf: t(SHELF_LABELS[entity.shelf]) }) }), {
       title: t("Remove the folder {name}?", { name: entity.name }),
       actionLabel: t("Delete"),
       tone: "danger",
@@ -200,7 +202,7 @@ export function EntityPage({
             {entity.entry.canon !== "canon" ? <span className="rounded-md border border-stone-600 px-1.5 py-0.5 text-[10px] uppercase tracking-[0.12em] text-stone-400">{entity.entry.canon}</span> : null}
           </div>
           {entity.aliases.length ? <p className="text-xs text-stone-400">{t("Also called {list}", { list: entity.aliases.join(", ") })}</p> : null}
-          {folders.length ? <p className="text-[11px] text-stone-500">{folders.map((folder) => folder.name).join(" / ")}</p> : null}
+          {folders.length ? <p className="text-[11px] text-stone-500">{folders.map((folder) => worldFolderLabel(folder.name, locale)).join(" / ")}</p> : null}
           {lifeLine ? <p className="text-xs text-stone-400">{lifeLine}</p> : null}
         </div>
         <div className="flex basis-full flex-wrap gap-1.5 @lg:basis-auto">
@@ -220,7 +222,7 @@ export function EntityPage({
           ) : null}
           {onOpenSystem ? (
             <KitButton tone="small" onClick={() => onOpenSystem(home.system, { id: entity.id, from: entity.ref })} title={t("Open {name}'s own tool", { name: entity.name })}>
-              <ExternalLink className="size-3.5" /> {home.label}
+              <ExternalLink className="size-3.5" /> {t(home.label)}
             </KitButton>
           ) : null}
           <KitButton tone="iconDanger" always aria-label={t("Delete {name}", { name: entity.name })} onClick={remove}>
@@ -283,7 +285,7 @@ export function EntityPage({
         <dl className="grid gap-x-4 gap-y-1 text-sm @lg:grid-cols-2">
           {fieldLines(type, entity.entry, doc.calendars, true).map(({ def, text }) => (
             <div key={def.id} className={cn("flex gap-2", def.authorOnly && "text-red-300")}>
-              <dt className="text-stone-500">{def.name}</dt>
+              <dt className="text-stone-500">{worldFieldLabel(def, locale)}</dt>
               <dd>{text}</dd>
               {def.authorOnly ? <EyeOff className="size-3.5 self-center" aria-label={t("Author only")} /> : null}
             </div>
