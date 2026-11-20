@@ -901,6 +901,30 @@ async function enrichStoryArc(campaignId: string, arc: StoryArc): Promise<StoryA
 
 // The party outlasted the plot: append a whole new act rather than leaving
 // the arc with no [NOW] beat to steer by.
+// The JSON parser checks shape, not prose language. The same story-planning
+// contract applies to future-act detail and saga upgrades, not only act 1.
+// Retry once with the actual rejected JSON so names and events survive.
+async function parseCzechArcResult<T>(
+  campaignId: string, system: string, context: string, raw: string,
+  parse: (reply: string) => T | null, label: string,
+): Promise<T | null> {
+  const first = parse(raw);
+  const language = getCampaignById(campaignId)?.gameSettings.tableLanguage ?? "english";
+  if (!first || !englishArcPlanningAtCzechTable(first, language)) return first;
+  recordDmTrace("json_validation", { stage: label, attempt: "language_first", accepted: false, problems: ["English prose at Czech table"] });
+  if (process.env.DM_DEBUG) console.log(`[dm-debug] ${label}: English plan at Czech table; retrying in Czech`);
+  const correction = [
+    context,
+    "LANGUAGE CORRECTION: The following JSON is structurally readable but its story descriptions are in English. Rewrite ALL story prose in natural Czech, while keeping the same plot, event order, established names, JSON keys, enum values and object structure.",
+    raw,
+    "Return only the corrected JSON object. No Markdown or explanation.",
+  ].join("\n\n");
+  const reply = await arcModelCall(campaignId, system, correction, `${label} Czech retry`);
+  const second = reply === null ? null : parse(reply);
+  const accepted = Boolean(second && !englishArcPlanningAtCzechTable(second, language));
+  recordDmTrace("json_validation", { stage: label, attempt: "language_rewrite", accepted, problems: accepted ? [] : ["invalid-json-or-English-prose"] });
+  return accepted ? second : null;
+}
 async function extendStoryArc(campaignId: string, arc: StoryArc): Promise<StoryArc> {
   const chapters = recentChapterLines(campaignId);
   const raw = await arcModelCall(
@@ -918,7 +942,7 @@ async function extendStoryArc(campaignId: string, arc: StoryArc): Promise<StoryA
   if (raw === null) {
     return arc;
   }
-  const extension = parseArcExtensionJson(raw);
+  const extension = await parseCzechArcResult(campaignId, EXTEND_SYSTEM, `Completed arc:\n${renderArcForPrompt(arc)}`, raw, parseArcExtensionJson, "arc_extension");
   if (!extension) {
     if (process.env.DM_DEBUG) {
       console.log("[dm-debug] arc extension: unparseable reply:", raw.slice(0, 500));
@@ -959,7 +983,7 @@ async function upgradeToSaga(campaignId: string, arc: StoryArc): Promise<StoryAr
   if (raw === null) {
     return arc;
   }
-  const upgrade = parseSagaUpgradeJson(raw);
+  const upgrade = await parseCzechArcResult(campaignId, UPGRADE_SYSTEM, `Current arc:\n${renderArcForPrompt(arc)}`, raw, parseSagaUpgradeJson, "saga_upgrade");
   if (!upgrade) {
     if (process.env.DM_DEBUG) {
       console.log("[dm-debug] saga upgrade: unparseable reply:", raw.slice(0, 500));
@@ -1005,7 +1029,7 @@ async function detailNextAct(campaignId: string, arc: StoryArc): Promise<StoryAr
   if (raw === null) {
     return arc;
   }
-  const detail = parseActDetailJson(raw);
+  const detail = await parseCzechArcResult(campaignId, ACT_DETAIL_SYSTEM, `Current arc:\n${renderArcForPrompt(arc)}\n\nNext act sketch:\n${sketchLines}`, raw, parseActDetailJson, "act_detail");
   if (!detail) {
     if (process.env.DM_DEBUG) {
       console.log("[dm-debug] act detail: unparseable reply:", raw.slice(0, 500));
@@ -1096,7 +1120,7 @@ async function replotSaga(
   if (raw === null) {
     return arc;
   }
-  let replot = parseReplotJson(raw, acts);
+  let replot = await parseCzechArcResult(campaignId, REPLOT_SYSTEM, user, raw, (reply) => parseReplotJson(reply, acts), "saga_replot");
   if (!replot) {
     if (process.env.DM_DEBUG) {
       console.log("[dm-debug] saga replot: unparseable reply:", raw.slice(0, 500));
@@ -1123,7 +1147,7 @@ async function replotSaga(
       "saga replot retry",
     );
     const second = again === null ? null : parseReplotJson(again, acts);
-    if (second && problemsOf(second).length < problems.length) {
+    if (second && !englishArcPlanningAtCzechTable(second, getCampaignById(campaignId)?.gameSettings.tableLanguage ?? "english") && problemsOf(second).length < problems.length) {
       replot = second;
     }
   }
