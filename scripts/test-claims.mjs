@@ -437,10 +437,12 @@ await test("Nothing to ask, or no text, makes no call.", async () => {
 });
 
 await test("A reader that fails or answers nonsense counts as claiming nothing, and says so in the log without the text.", async () => {
-  // An answer that is no JSON at all.
+  // An answer that is no JSON at all, including after one bounded retry.
+  let responses = 0;
   const server = http.createServer((req, res) => {
     req.resume();
     req.on("end", () => {
+      if (req.url?.includes("/chat/completions")) responses += 1;
       res.writeHead(200, { "Content-Type": "application/json" });
       res.end(JSON.stringify({ choices: [{ index: 0, finish_reason: "stop", message: { role: "assistant", content: "I would rather not." } }] }));
     });
@@ -452,6 +454,7 @@ await test("A reader that fails or answers nonsense counts as claiming nothing, 
   const secret = "Mira whispers the secret name of the Lich Queen.";
   const unreadable = await errorsDuring(() => read(["fight_start"], secret));
   assert.deepEqual(unreadable.result, []);
+  assert.equal(responses, 2, "only one JSON retry before fail-open");
   assert.ok(unreadable.lines.some((line) => line.includes("[claims] turn test") && line.includes("unreadable")), unreadable.lines.join("\n"));
   assert.ok(!unreadable.lines.some((line) => line.includes("Lich Queen")), "the narration reached the log");
   server.close();
