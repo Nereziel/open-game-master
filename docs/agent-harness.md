@@ -40,11 +40,23 @@ The program never sees the server's database key or any provider key.
 | opencode 2.x | `opencode serve`, HTTP | removed (deny-all agent, checked before every run); its own config folder, with only your providers and default model carried over; each run's session deleted from opencode's session list (below); checked on 2.0.27 |
 | Codex | `codex app-server`, JSON-RPC | boxed in: shell, web search, image viewer, sub-agents, goals, clock, plugins and skills off, read-only, approvals refused; ODM's tools offered directly rather than through its code runner; its patch tool, an ask-the-user tool (answered empty) and three readers of ODM's own MCP resources have no switch. Each run gets its own Codex home linking only your sign-in and config, so your `AGENTS.md` and skills stay out, and Codex's stores go with the run; checked on 0.162.1. A setting the installed Codex no longer recognises is named on the admin card |
 | Grok Build | `grok agent stdio`, ACP | boxed in: dontAsk, only ODM tools allowed |
-| Antigravity CLI | `agy -p`, stream JSON | removed: each run brings its own custom agent with Antigravity's default prompt and built-in tools excluded (`excludeDefaultComponents`), none of your skills, rules, plugins, subagents or MCP servers (`inheritCustomizations: false`), and ODM's server as its only one; settings for that run alone deny commands, files and web reads and allow only ODM's tools; a run that reports any other tool is stopped; built against 1.5.12, not yet run signed in |
+| Antigravity CLI | `agy -p`, stream JSON | removed (must be verified with a signed-in run): an isolated custom agent excludes defaults and specifies an explicit `tools` allowlist containing only this turn's ODM MCP tools; inherited customizations are disabled, per-run permissions deny commands, files and web reads, and any unexpected tool reported at startup or used later stops the turn; not yet verified against a signed-in CLI |
 | Pi | `pi --mode rpc`, JSON lines | removed: an allowlist of ODM's tools only (`--tools mcp__odm__*`), extensions but its MCP support, skills, prompt templates, themes, context files and your own MCP servers off; a run whose tool list holds anything else is stopped; the token reaches it by environment variable only; checked on 1.5.2 |
 
 Codex, Grok Build, Pi and the Antigravity CLI show **(untested)** until a Test
 the table run passes on your machine.
+
+If **Test the table** refuses an Antigravity turn with `ask_permission`,
+`ask_custom_permission`, `ask_question` or `browser_click_element`,
+the CLI advertised native tools to a session that should expose only the
+game's MCP tools. Update the Antigravity CLI and the Open Game Master
+adapter. The adapter now writes the explicit `tools` frontmatter
+allowlist in addition to `excludeDefaultComponents` and per-session
+permission denials. Test again before narrating any campaign. If the
+installed CLI still reports native tools, keep Antigravity disabled and
+use another supported agent or a regular model API. **Do not** disable the
+tool-list check, remove deny rules, or add the native tools to the
+allowlist; those changes would let the AI bypass the game's rules engine.
 
 The Antigravity CLI (`agy`) signs in with a Google account: run `agy` once as
 the user the server runs as (on a machine with no browser it prints a link and
