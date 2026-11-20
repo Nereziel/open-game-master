@@ -266,13 +266,67 @@ function localizeTraitTail(tail: string): string {
     .replace(/\brapier\b/gi, "rapière");
 }
 
+// Known species only: homebrew trait names retain their authored wording.
+const CS_SPECIES_IDS = new Set([
+  "hill-dwarf",
+  "mountain-dwarf",
+  "duergar",
+  "high-elf",
+  "wood-elf",
+  "drow",
+  "eladrin",
+  "sea-elf",
+  "lightfoot-halfling",
+  "stout-halfling",
+  "human",
+  "variant-human",
+  "dragonborn",
+  "rock-gnome",
+  "forest-gnome",
+  "deep-gnome",
+  "half-elf",
+  "half-orc",
+  "tiefling",
+  "aasimar",
+  "goliath",
+  "firbolg",
+  "tabaxi",
+  "kenku",
+  "tortle",
+  "fire-genasi",
+  "water-genasi",
+  "air-genasi",
+  "earth-genasi",
+  "changeling",
+  "warforged",
+  "goblin",
+  "bugbear",
+  "lizardfolk",
+  "orc",
+  "triton",
+  "serpentfolk",
+  "kobold",
+  "aarakocra",
+  "hobgoblin",
+  "satyr",
+  "fairy",
+  "owlfolk",
+  "centaur",
+  "rabbitfolk",
+  "shifter"
+]);
+
 export function speciesTraitName(raceId: string, traitLine: string, locale: Locale): string {
   if (locale === "en" || !traitLine) {
     return traitLine;
   }
   if (locale === "cs") {
-    const key = `${canonicalKey(srdRaceId(raceId))}:${canonicalKey(traitLine)}`;
-    return csNames().speciesTraits?.[key] ?? traitLine;
+    const species = canonicalKey(srdRaceId(raceId));
+    const key = `${species}:${canonicalKey(traitLine)}`;
+    const names = csNames();
+    return names.speciesTraits?.[key]
+      ?? (CS_SPECIES_IDS.has(species) ? names.resourceFeatureNames?.[canonicalKey(traitLine)] : undefined)
+      ?? traitLine;
   }
   const traits = (frNames().speciesTraits ?? {});
   const extraTraits = frTranslated().speciesTraits ?? {};
