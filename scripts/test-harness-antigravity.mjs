@@ -8,8 +8,9 @@
 //     turn's tools loaded up front, and carries the system prompt as its body.
 //   - Its models come from `agy models`; the signed-out answer agy 1.5.12
 //     gives is read as signed out.
-//   - A run that reports any tool but ODM's, at start or mid-turn, is stopped;
-//     one that starts without ODM's tools says so.
+//   - The init.tools catalog is not an authorization list. The selected agent
+//     is verified, and native or ungranted tools used in a step are stopped.
+//     Only the MCP tools actually granted to the run appear as ready tools.
 //   - Its stream-json events become the bridge's: text, tool rounds, the
 //     turn's end with usage, and a sign-in error.
 import assert from "node:assert/strict";
@@ -90,6 +91,8 @@ await test("the agent drops the defaults and the admin's customizations, and ser
   assert.equal(fields.inheritMcp, false);
   assert.equal(fields.subagent, false);
   assert.equal(fields.commandExecutionPolicy, "off");
+  assert.deepEqual(fields.tools, ["mcp_odm_odm_roll", "mcp_odm_odm_move"], "custom agent must not expose built-in CLI tools");
+  assert.ok(!fields.tools.includes("ask_permission") && !fields.tools.includes("browser_click_element"));
   assert.equal(fields.mcpServers.length, 1);
   const [server] = fields.mcpServers;
   assert.equal(server.name, "odm");
@@ -102,13 +105,17 @@ await test("the agent drops the defaults and the admin's customizations, and ser
   const plain = frontMatter(antigravityAgentFile({ system: "Summarise.", mcp: null }));
   assert.equal(plain.fields.mcpServers, undefined);
   assert.equal(plain.fields.excludeDefaultComponents, true);
+  assert.deepEqual(plain.fields.tools, [], "no MCP connection must mean no usable tools");
 });
 
-await test("only ODM's tools pass", async () => {
-  assert.ok(antigravityToolAllowed("mcp_odm_roll"));
-  assert.ok(antigravityToolAllowed("call_mcp_tool"));
-  for (const tool of ["run_command", "view_file", "write_to_file", "search_web", "read_url_content", "generate_image", "invoke_subagent", "mcp_github_search"]) {
-    assert.ok(!antigravityToolAllowed(tool), tool);
+await test("only this turn's ODM tools pass", async () => {
+  const granted = new Set(["odm_roll", "odm_move"]);
+  assert.ok(antigravityToolAllowed("mcp_odm_odm_roll", granted));
+  assert.ok(antigravityToolAllowed("mcp_odm_odm_move", granted));
+  assert.ok(antigravityToolAllowed("call_mcp_tool", granted));
+  assert.ok(!antigravityToolAllowed("call_mcp_tool", new Set()));
+  for (const tool of ["mcp_odm_roll", "mcp_odm_odm_delete_campaign", "mcp_other_odm_roll", "ask_custom_permission", "ask_permission", "ask_question", "browser_click_element", "run_command", "view_file", "write_to_file", "search_web", "read_url_content", "generate_image", "invoke_subagent", "mcp_github_search"]) {
+    assert.ok(!antigravityToolAllowed(tool, granted), tool);
   }
 });
 
@@ -183,46 +190,84 @@ if (unix) {
           value.send("Go.");
         });
     });
-  const init = (tools) => ({ event: "init", init: { cwd: "/run", tools, permission_mode: "request-review", agent: "odm-dm" } });
+  const init = (tools, agent = "odm-dm") => ({ event: "init", init: { cwd: "/run", tools, permission_mode: "request-review", agent } });
   const step = (fields) => ({ event: "step_update", step_update: { conversation_id: "c1", state: "ACTIVE", ...fields } });
   const result = (fields) => ({
     event: "result",
     result: { conversation_id: "c1", status: "SUCCESS", response: "", num_turns: 1, usage: { input_tokens: 70, output_tokens: 6, total_tokens: 76 }, ...fields },
   });
 
-  await test("a run that starts with any tool but ODM's is stopped", async () => {
-    const { seen } = await run(session("agy-stray", [init(["mcp_odm_roll", "run_command"])]));
-    const error = seen.find((event) => event.type === "error");
-    assert.equal(error?.kind, "lockdown");
-    assert.match(error.message, /run_command/);
-    assert.ok(!seen.some((event) => event.type === "ready"));
+  await test("the full init.tools catalog is ignored, not mistaken for model permissions", async () => {
+    const { seen } = await run(session("agy-noisy-init", [
+      init(["mcp_odm_odm_roll", "run_command", "ask_custom_permission", "ask_permission", "ask_question", "browser_click_element"]),
+      result({ response: "The turn went through." }),
+    ]));
+    assert.ok(!seen.some((event) => event.type === "error"));
+    assert.deepEqual(seen.find((event) => event.type === "ready")?.tools, ["mcp_odm_odm_roll"]);
+    assert.equal(seen.find((event) => event.type === "turn_end")?.text, "The turn went through.");
   });
 
-  await test("a run that starts without ODM's tools says so", async () => {
-    const { seen } = await run(session("agy-bare", [init([])]));
-    const error = seen.find((event) => event.type === "error");
-    assert.equal(error?.kind, "crash");
-    assert.match(error.message, /game engine's tools/);
+  await test("an init.tools catalog without MCP tools is not proof the MCP tools are unavailable", async () => {
+    const { seen } = await run(session("agy-catalog-only", [
+      init(["ask_question", "browser_click_element"]),
+      result({ response: "Ready." }),
+    ]));
+    assert.deepEqual(seen.find((event) => event.type === "ready")?.tools, ["mcp_odm_odm_roll"]);
+    assert.ok(!seen.some((event) => event.type === "error"));
   });
 
-  await test("a tool of its own mid-turn stops the run", async () => {
-    const { seen } = await run(session("agy-midturn", [init(["mcp_odm_roll"]), step({ step_index: 2, step_type: "tool", tool_name: "run_command" })]));
+  await test("a different or unconfirmed agent is stopped even if the catalog has ODM tools", async () => {
+    for (const agent of ["default", ""]) {
+      const { seen } = await run(session("agy-agent-" + (agent || "missing"), [init(["mcp_odm_odm_roll"], agent)]));
+      const error = seen.find((event) => event.type === "error");
+      assert.equal(error?.kind, "lockdown");
+      assert.match(error.message, /isolated ODM agent/);
+      assert.ok(!seen.some((event) => event.type === "ready"));
+    }
+  });
+
+  await test("native tools remain forbidden when actually invoked", async () => {
+    for (const tool of ["run_command", "ask_permission", "ask_custom_permission", "ask_question", "browser_click_element", "manage_task", "mcp_odm_odm_delete_campaign", "mcp_other_odm_roll"]) {
+      const { seen } = await run(session("agy-midturn-" + tool, [
+        init(["mcp_odm_odm_roll", tool]),
+        step({ step_index: 2, step_type: "tool", tool_name: tool }),
+      ]));
+      assert.equal(seen.find((event) => event.type === "error")?.kind, "lockdown", tool);
+      assert.ok(!seen.some((event) => event.type === "turn_end"), tool);
+    }
+  });
+
+  await test("unidentifiable tool steps fail closed", async () => {
+    const { seen } = await run(session("agy-unnamed", [
+      init(["mcp_odm_odm_roll"]),
+      step({ step_index: 2, step_type: "tool" }),
+    ]));
     assert.equal(seen.find((event) => event.type === "error")?.kind, "lockdown");
+  });
+
+  await test("steps or successful results before verified init are refused", async () => {
+    for (const events of [
+      [step({ step_index: 1, step_type: "tool", tool_name: "mcp_odm_odm_roll" })],
+      [result({ response: "Unsafe success." })],
+    ]) {
+      const { seen } = await run(session("agy-no-init", events));
+      assert.equal(seen.find((event) => event.type === "error")?.kind, "lockdown");
+    }
   });
 
   await test("its events become the bridge's: text, a tool round, the turn's end with usage", async () => {
     const { seen, cwd } = await run(
       session("agy-turn", [
-        init([{ name: "mcp_odm_roll" }]),
+        init([{ name: "mcp_odm_odm_roll" }]),
         step({ step_index: 1, step_type: "agent_response", text_delta: "Let me roll. " }),
-        step({ step_index: 2, step_type: "tool", tool_name: "mcp_odm_roll" }),
-        step({ step_index: 2, step_type: "tool", state: "DONE", tool_name: "mcp_odm_roll" }),
+        step({ step_index: 2, step_type: "tool", tool_name: "mcp_odm_odm_roll" }),
+        step({ step_index: 2, step_type: "tool", state: "DONE", tool_name: "mcp_odm_odm_roll" }),
         step({ step_index: 3, step_type: "agent_response", text_delta: "The door " }),
         step({ step_index: 3, step_type: "agent_response", text_delta: "creaks." }),
         result({ response: "Let me roll. The door creaks." }),
       ]),
     );
-    assert.deepEqual(seen.find((event) => event.type === "ready")?.tools, ["mcp_odm_roll"]);
+    assert.deepEqual(seen.find((event) => event.type === "ready")?.tools, ["mcp_odm_odm_roll"]);
     assert.equal(seen.filter((event) => event.type === "tool_round").length, 1);
     const end = seen.find((event) => event.type === "turn_end");
     assert.equal(end?.text, "The door creaks.");

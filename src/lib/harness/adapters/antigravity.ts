@@ -19,8 +19,11 @@
 // only one. --settings, for this run alone and never saved, denies commands,
 // file access and web reads, allows only ODM's MCP tools, and starts in the
 // Default mode, where no reviewer approves a command on the admin's behalf.
-// The init event's tool list is checked on every run, and so is every tool
-// step: anything but ODM's tools stops the turn.
+// Note: the CLI's init.tools is a global diagnostic catalogue on affected
+// versions, NOT a list of tools the model can invoke (upstream #1614/#1615).
+// We require the selected isolated agent, publish our configured MCP tools
+// as the ready list, and fail closed when an actual tool step is not one
+// of the MCP tools granted to this run.
 
 import { writeFileSync, mkdirSync } from "node:fs";
 import path from "node:path";
@@ -101,6 +104,14 @@ export function antigravityAgentFile(options: {
     "inheritCustomizations: false",
     "inheritMcp: false",
     `commandExecutionPolicy: ${JSON.stringify("off")}`,
+    // Excluding default components removes their prompt sections, but on
+    // some agy versions native tools are still registered. The custom
+    // agent's explicit tools allowlist is a second, independent boundary.
+    // Antigravity registers MCP tools as mcp_<server>_<tool>, where this
+    // session's only server is named "odm".
+    `tools: ${JSON.stringify(options.mcp
+      ? [...new Set((options.toolNames ?? []).map((name) => `${ANTIGRAVITY_MCP_PREFIX}${name}`))]
+      : [])}`,
   ];
   if (options.mcp) {
     // Loaded up front by name where the run says which tools it serves: a
@@ -153,9 +164,13 @@ function toolName(entry: unknown): string {
   return textOf((entry as { name?: unknown } | null)?.name);
 }
 
-// Whether a tool a run reports is one ODM allows.
-export function antigravityToolAllowed(name: string): boolean {
-  return name.startsWith(ANTIGRAVITY_MCP_PREFIX) || ANTIGRAVITY_DOORS.has(name);
+// Enforce the exact tools granted to this run, not just the MCP server
+// prefix: a different ODM tool may not be legal for this DM turn. The MCP
+// dispatcher is allowed only when the isolated agent has ODM tools to call.
+export function antigravityToolAllowed(name: string, allowedTools: ReadonlySet<string>): boolean {
+  if (ANTIGRAVITY_DOORS.has(name)) return allowedTools.size > 0;
+  if (!name.startsWith(ANTIGRAVITY_MCP_PREFIX)) return false;
+  return allowedTools.has(name.slice(ANTIGRAVITY_MCP_PREFIX.length));
 }
 
 function errorKind(message: string): "signed-out" | "limit" | "crash" {
@@ -181,8 +196,13 @@ async function start(options: HarnessStartOptions) {
   );
   let turnText = "";
   let closed = false;
+  let refused = false;
+  let initAccepted = false;
+  const allowedTools = new Set(options.mcp ? options.toolNames ?? [] : []);
   const toolSteps = new Set<string>();
   const stop = (message: string) => {
+    if (refused) return;
+    refused = true;
     options.onEvent({ type: "error", kind: "lockdown", message });
     program.kill();
   };
@@ -190,6 +210,7 @@ async function start(options: HarnessStartOptions) {
     cwd: options.cwd,
     env: { ...options.env, ...ANTIGRAVITY_ENV },
     onLine: (line) => {
+      if (refused) return;
       const event = parseJsonLine(line);
       if (!event) {
         return;
@@ -199,30 +220,34 @@ async function start(options: HarnessStartOptions) {
       const kind = textOf(event.event);
       const body = (event[kind] && typeof event[kind] === "object" ? event[kind] : event) as Record<string, unknown>;
       if (kind === "init") {
-        const tools = Array.isArray(body.tools) ? body.tools.map(toolName).filter(Boolean) : [];
-        const stray = tools.filter((tool) => !antigravityToolAllowed(tool));
-        if (stray.length) {
-          stop(`Antigravity started with its own tools still on (${stray.slice(0, 4).join(", ")}), so the turn was stopped.`);
+        // init.tools is the CLI's global inventory, even with an explicit
+        // custom-agent tools allowlist: it cannot establish permissions.
+        // Check the selected agent, not the unrelated catalog entries.
+        if (textOf(body.agent) !== ANTIGRAVITY_AGENT) {
+          stop("Antigravity did not confirm the isolated ODM agent, so the turn was stopped.");
           return;
         }
-        if (options.mcp && !tools.length) {
-          options.onEvent({
-            type: "error",
-            kind: "crash",
-            message: "Antigravity started without the game engine's tools, so it could not run the table.",
-          });
-          program.kill();
+        if (options.mcp && !allowedTools.size) {
+          stop("Antigravity was not granted any game engine tools for this turn.");
           return;
         }
-        options.onEvent({ type: "ready", tools });
+        initAccepted = true;
+        options.onEvent({
+          type: "ready",
+          tools: [...allowedTools].map((name) => `${ANTIGRAVITY_MCP_PREFIX}${name}`),
+        });
         return;
       }
       if (kind === "step_update") {
+        if (!initAccepted) {
+          stop("Antigravity sent a step before confirming the isolated ODM agent.");
+          return;
+        }
         const stepType = textOf(body.step_type);
         const name = textOf(body.tool_name) || toolName((body.tool_info as Record<string, unknown> | undefined) ?? null);
         if (stepType === "tool" || name) {
-          if (name && !antigravityToolAllowed(name)) {
-            stop(`Antigravity reached for its own tool ${name}, so the turn was stopped.`);
+          if (!name || !antigravityToolAllowed(name, allowedTools)) {
+            stop(`Antigravity attempted a tool outside this turn's game permissions (${name || "unnamed tool"}), so the turn was stopped.`);
             return;
           }
           // A new tool round: what it wrote before was not the narration.
@@ -242,6 +267,10 @@ async function start(options: HarnessStartOptions) {
         return;
       }
       if (kind === "result") {
+        if (!initAccepted && body.status === "SUCCESS") {
+          stop("Antigravity finished without confirming the isolated ODM agent.");
+          return;
+        }
         const text = turnText.trim() || textOf(body.response).trim();
         turnText = "";
         toolSteps.clear();

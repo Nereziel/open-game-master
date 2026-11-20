@@ -117,18 +117,20 @@ export async function testHarness(idOverride?: HarnessId): Promise<{ stages: Tes
   const reply = String(second.message?.content ?? "");
   const heard = reply.toLowerCase().includes(SECRET);
   set("toolCall", heard, heard ? undefined : `It replied "${reply.slice(0, 80)}" instead of the tool's answer.`);
-  // Every adapter stops a run that reaches for its own tools (a stray tool on
-  // Claude's list, a command or file change from Codex), so a run that got
-  // this far held its lockdown. That is what proves an adapter on this
-  // machine, and the card says so from now on.
+  // This probe proves the game MCP call worked and that no forbidden tool
+  // invocation was OBSERVED. For Antigravity, init.tools is the CLI's full
+  // catalogue (upstream #1614/#1615), not the model-facing declarations.
+  // A successful turn therefore cannot prove all native tools were removed.
   set(
     "lockdown",
     true,
-    ADAPTERS[id].lockdown === "removed"
-      ? "Its own tools are removed; only the table's tools are offered."
-      : "Its own tools are contained: read-only, an empty folder, every approval refused.",
+    id === "antigravity"
+      ? "Observed only the game's MCP tools. Antigravity does not expose a trustworthy model-facing tool inventory; native tool isolation remains unverified."
+      : ADAPTERS[id].lockdown === "removed"
+        ? "Its own tools are removed; only the table's tools are offered."
+        : "Its own tools are contained: read-only, an empty folder, every approval refused.",
   );
-  if (heard) {
+  if (heard && id !== "antigravity") {
     markLockdownProven(id);
   }
   set("streaming", streamed.length > 0, streamed.length > 0 ? undefined : "The reply arrived whole rather than streamed.");

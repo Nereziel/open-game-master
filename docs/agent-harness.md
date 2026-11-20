@@ -25,11 +25,13 @@ agent" in a campaign's Setup tab.
 
 ### What it can and cannot do
 
-The program is started with **none of its own tools**. No shell, no files,
-no web, none of your own MCP servers, settings, hooks or CLAUDE.md. Its only
-tools are the GM's tools for the turn it is narrating, served by the
-server's own MCP endpoint on a token that works from this computer only and
-dies with the turn. Every call goes through the same GM loop as the built-in
+The supported programs are configured to use **only the game engine's
+tools**. No shell, files, web, or personal MCP servers should be available.
+Antigravity is an exception to verifiable isolation: its CLI does not expose
+a trustworthy model-facing tool list, so the adapter cannot prove all
+native tools have been removed (see below). The game engine's tools are
+served by the server's own MCP endpoint on a token that works from this
+computer only and dies with the turn. Every call goes through the same GM loop as the built-in
 storyteller, so the server rolls the dice, the per-turn caps apply, a
 physical-dice roll parks the turn, and the narration guard checks its prose.
 The program never sees the server's database key or any provider key.
@@ -40,11 +42,38 @@ The program never sees the server's database key or any provider key.
 | opencode 2.x | `opencode serve`, HTTP | removed (deny-all agent, checked before every run); its own config folder, with only your providers and default model carried over; each run's session deleted from opencode's session list (below); checked on 2.0.27 |
 | Codex | `codex app-server`, JSON-RPC | boxed in: shell, web search, image viewer, sub-agents, goals, clock, plugins and skills off, read-only, approvals refused; ODM's tools offered directly rather than through its code runner; its patch tool, an ask-the-user tool (answered empty) and three readers of ODM's own MCP resources have no switch. Each run gets its own Codex home linking only your sign-in and config, so your `AGENTS.md` and skills stay out, and Codex's stores go with the run; checked on 0.162.1. A setting the installed Codex no longer recognises is named on the admin card |
 | Grok Build | `grok agent stdio`, ACP | boxed in: dontAsk, only ODM tools allowed |
-| Antigravity CLI | `agy -p`, stream JSON | removed: each run brings its own custom agent with Antigravity's default prompt and built-in tools excluded (`excludeDefaultComponents`), none of your skills, rules, plugins, subagents or MCP servers (`inheritCustomizations: false`), and ODM's server as its only one; settings for that run alone deny commands, files and web reads and allow only ODM's tools; a run that reports any other tool is stopped; built against 1.5.12, not yet run signed in |
+| Antigravity CLI | `agy -p`, stream JSON | an isolated custom agent uses an explicit `tools` allowlist for ODM's MCP tools and disables default and inherited customizations. Per-run permission denials remain active. The `init.tools` catalogue is not authorization evidence; the selected agent is checked, and a tool step not in the game's MCP allowlist stops the run. The CLI does not supply a trustworthy model-facing tool inventory, so removal of every native capability remains unverified |
 | Pi | `pi --mode rpc`, JSON lines | removed: an allowlist of ODM's tools only (`--tools mcp__odm__*`), extensions but its MCP support, skills, prompt templates, themes, context files and your own MCP servers off; a run whose tool list holds anything else is stopped; the token reaches it by environment variable only; checked on 1.5.2 |
 
-Codex, Grok Build, Pi and the Antigravity CLI show **(untested)** until a Test
-the table run passes on your machine.
+Codex, Grok Build and Pi show **(untested)** until a Test the table
+run passes on your machine. Antigravity's **model-facing native-tool
+isolation remains unverified**, even after a successful functional test.
+
+Antigravity CLI issues
+[#1614](https://github.com/google-antigravity/antigravity-cli/issues/1614)
+and [#1615](https://github.com/google-antigravity/antigravity-cli/issues/1615)
+show that `init.tools` can always include a global native-tool catalogue.
+It neither proves those tools are callable nor proves that unwanted tools
+were excluded. Issue
+[#1015](https://github.com/google-antigravity/antigravity-cli/issues/1015)
+also reports `manage_task` being declared despite default-component
+exclusion.
+
+Open Game Master does not trust `init.tools` for authorization. It
+requires the expected custom agent, restricts its configured tools to ODM
+MCP, keeps permission denials, and **stops a turn if any observed tool step
+uses an unauthorized name**. The game MCP server independently enforces
+the session's token and rules. A normal successful `Test the table` shows
+that the allowed MCP tool works and no forbidden call was observed; it
+**does not prove** that the CLI gave the model no other capabilities. An
+unauthorized native tool could already have side effects before its
+`step_update` reaches the adapter. Treat this as an unverified CLI
+isolation limit, not a security certification. For strict tool isolation
+use another verified adapter until the CLI exposes verifiable
+model-facing declarations or a strong sandbox.
+
+Do not remove the runtime tool check, disable permission denials, or
+add native tools to the allowlist.
 
 The Antigravity CLI (`agy`) signs in with a Google account: run `agy` once as
 the user the server runs as (on a machine with no browser it prints a link and
