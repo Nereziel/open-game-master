@@ -1919,6 +1919,92 @@ try {
     }
   });
 
+  await test("all 24 SRD 5.1 cantrips have full independent Czech texts without changing English content", async () => {
+    const { CZECH_FULL_SPELLS_1 } = await import("../src/lib/rulebook/czech-full-spells-1.ts");
+    const { CZECH_FULL_SPELLS_2 } = await import("../src/lib/rulebook/czech-full-spells-2.ts");
+    const translated = { ...CZECH_FULL_SPELLS_1, ...CZECH_FULL_SPELLS_2 };
+    const originalTricks = rulebookPages("en").filter(
+      (page) => page.kind === "spell" && page.meta?.toLowerCase().includes("cantrip"),
+    );
+    assert.equal(originalTricks.length, 24, "Unexpected SRD 5.1 cantrip count");
+    assert.equal(Object.keys(translated).length, 24, "Incomplete cantrip translation batch");
+    assert.deepEqual(Object.keys(translated), originalTricks.map((page) => page.id),
+      "Canonical spell IDs or spell ordering changed");
+    assert.equal(Object.keys(CZECH_FULL_SPELLS_1).length, 12);
+    assert.equal(Object.keys(CZECH_FULL_SPELLS_2).length, 12);
+
+    for (const source of originalTricks) {
+      const id = source.id;
+      const csText = translated[id];
+      const czech = rulebookPage(id, "cs")?.page;
+      const english = rulebookPage(id, "en")?.page;
+      assert.ok(czech && english, "Missing canonical cantrip page: " + id);
+      assert.equal(czech.kind, "spell");
+      assert.equal(czech.id, source.id);
+      assert.equal(czech.title, CZECH_SPELLS[source.title],
+        "A translated spell must use the central Czech spell glossary: " + id);
+      assert.ok(csText.length >= 200, "Missing Czech rules text for cantrip: " + id);
+      assert.ok(czech.md.includes("## Úplné znění pravidel v češtině"));
+      assert.ok(czech.md.includes(csText), "Complete Czech spell text not in reader: " + id);
+      assert.ok(czech.md.endsWith(english.md), "English SRD spell body altered: " + id);
+      assert.equal(english.md, source.md, "Original SRD spell data altered: " + id);
+      assert.equal(czech.originalMeta, source.meta, "Original spell metadata not preserved: " + id);
+
+      for (const [field, translatedField] of [
+        ["Casting Time", "Doba sesílání"],
+        ["Range", "Dosah"],
+        ["Components", "Složky"],
+        ["Duration", "Trvání"],
+      ]) {
+        assert.ok(source.md.includes("**" + field + ":**"));
+        assert.ok(csText.includes("**" + translatedField + ":**"),
+          "Missing cantrip casting field " + translatedField + ": " + id);
+      }
+      const englishComponents = source.md.match(/\*\*Components:\*\* ([VSM, ]+)/)?.[1]?.trim();
+      const czechComponents = csText.match(/\*\*Složky:\*\* ([VSM, ]+)/)?.[1]?.trim();
+      assert.equal(czechComponents, englishComponents,
+        "Changed verbal, somatic or material components: " + id);
+      const sourceDice = [...new Set(source.md.match(/\b(?:\d+)?d\d+\b/g) ?? [])];
+      for (const die of sourceDice) {
+        assert.ok(csText.includes(die.replace("d", "k")),
+          "Wrong or omitted cantrip damage/bonus die " + die + " in " + id);
+      }
+      const bulletCount = (md) => md.split("\n").filter((line) => line.startsWith("- ")).length;
+      assert.equal(bulletCount(csText), bulletCount(source.md),
+        "Incomplete list of cantrip effects: " + id);
+    }
+
+    for (const [id, requirements] of Object.entries({
+      "acid-splash": ["2k6", "3k6", "4k6", "záchranném hodu na Obratnost"],
+      "chill-touch": ["nemůže si obnovovat životy", "nevýhodu k hodům na útok"],
+      "dancing-lights": ["**čtyři vznášející se světla**", "**bonusovou akcí**", "20 stop"],
+      "eldritch-blast": ["**dva na 5. úrovni**", "**tři na 11. úrovni**", "**čtyři na 17. úrovni**"],
+      "fire-bolt": ["**hořlavý předmět**", "**vznítí se**"],
+      guidance: ["**jednou hodit k4**", "**jednomu ověření vlastnosti"],
+      light: ["**jasné světlo v okruhu 20 stop", "**záchranném hodu na Obratnost**"],
+      "mage-hand": ["**10 liber**", "**nemůže útočit"],
+      mending: ["**nedokáže takovému předmětu vrátit ztracenou magii**"],
+      message: ["**magické ticho**", "**tenká vrstva olova**", "**3 stopy dřeva**"],
+      "minor-illusion": ["**ověření Inteligence (Pátrání)**", "**matný přelud**"],
+      prestidigitation: ["**nejvýše tři jeho účinky"],
+      "produce-flame": ["**kouzlo okamžitě skončí**", "**30 stop (6 sáhů)**"],
+      "ray-of-frost": ["**rychlost se sníží o 10 stop"],
+      resistance: ["**jednomu záchrannému hodu"],
+      "sacred-flame": ["**nemá žádnou výhodu z krytu**"],
+      shillelagh: ["**Kostka zranění této zbraně se změní na k8.**", "**zbraň pustíš**"],
+      "shocking-grasp": ["**nemůže provádět reakce"],
+      "spare-the-dying": ["**0 životů**", "**nepůsobí na nemrtvé ani na výtvory**"],
+      thaumaturgy: ["**nejvýše tři z jeho účinků"],
+      "true-strike": ["**Ve svém dalším tahu**", "**kouzlo neskončilo**"],
+      "vicious-mockery": ["**cíl slyší**", "**nevýhodu k dalšímu hodu na útok**"],
+    })) {
+      for (const requirement of requirements) {
+        assert.ok(translated[id].includes(requirement),
+          "A key SRD 5.1 cantrip limitation was omitted: " + id + " / " + requirement);
+      }
+    }
+  });
+
   await test("all nine SRD 5.1 races have full independent Czech traits with unchanged English pages", async () => {
     const { CZECH_FULL_RACES_1 } = await import("../src/lib/rulebook/czech-full-races-1.ts");
     const { CZECH_FULL_RACES_2 } = await import("../src/lib/rulebook/czech-full-races-2.ts");
