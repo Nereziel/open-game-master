@@ -26,7 +26,9 @@ const { crosswalkFor } = await import("../src/lib/rulebook/crosswalk.ts");
 const { CZECH_SKILLS, CZECH_ITEMS, CZECH_MONSTERS, CZECH_SPELLS, czechSrdTitle, czechSrdSpellGroup, czechSrdSpellMeta, czechSrdMonsterMeta, czechSrdItemMeta } =
   await import("../src/lib/rulebook/czech-terms.ts");
 const { CZECH_SPELL_NOTES } = await import("../src/lib/rulebook/czech-spell-notes.ts");
+const { CZECH_SPELL_NOTES_2 } = await import("../src/lib/rulebook/czech-spell-notes-2.ts");
 const { CZECH_MONSTER_NOTES, CZECH_ITEM_NOTES } = await import("../src/lib/rulebook/czech-bestiary-items.ts");
+const { CZECH_MONSTER_NOTES_2, CZECH_ITEM_NOTES_2 } = await import("../src/lib/rulebook/czech-bestiary-items-2.ts");
 const { anchorSlug, blockText, inlineText, parseBook, parseInline, stripInline } = await import(
   "../src/lib/rulebook/markdown.ts"
 );
@@ -396,6 +398,38 @@ try {
         assert.ok(czech.md.endsWith(original.md), `English stat block lost for ${name}`);
       }
     }
+  });
+
+  await test("second Czech batch: 42 spells, 26 monsters and 20 items resolve to unchanged canonical SRD pages", () => {
+    const originals = rulebookPages("en");
+    const check = (kind, mapping, expectedCount, heading, titles) => {
+      assert.equal(Object.keys(mapping).length, expectedCount, `${kind} new translation count`);
+      const byTitle = new Map(originals.filter((page) => page.kind === kind).map((page) => [page.title, page]));
+      for (const [englishName, summary] of Object.entries(mapping)) {
+        const source = byTitle.get(englishName);
+        assert.ok(source, `${kind} missing from canonical English 2014 SRD: ${englishName}`);
+        assert.ok(titles[englishName], `Missing Czech title for ${englishName}`);
+        assert.ok(summary.length >= 100, `Unexpectedly short summary for ${englishName}`);
+        const localized = rulebookPage(source.id, "cs").page;
+        assert.ok(localized.md.includes(heading), `Missing heading for ${englishName}`);
+        assert.ok(localized.md.includes(summary), `Missing Czech text for ${englishName}`);
+        assert.ok(localized.md.endsWith(source.md), `English canonical source was modified for ${englishName}`);
+        assert.equal(localized.id, source.id, `Page binding drift for ${englishName}`);
+      }
+    };
+    check("spell", CZECH_SPELL_NOTES_2, 42, "Český popis kouzla", CZECH_SPELLS);
+    check("monster", CZECH_MONSTER_NOTES_2, 26, "Český přehled nestvůry", CZECH_MONSTERS);
+    check("item", CZECH_ITEM_NOTES_2, 20, "Český přehled předmětu", CZECH_ITEMS);
+    for (const name of Object.keys(CZECH_SPELL_NOTES_2)) {
+      assert.ok(!Object.hasOwn(CZECH_SPELL_NOTES, name), `Duplicate spell summary in both batches: ${name}`);
+    }
+    for (const name of Object.keys(CZECH_MONSTER_NOTES_2)) {
+      assert.ok(!Object.hasOwn(CZECH_MONSTER_NOTES, name), `Duplicate creature in both batches: ${name}`);
+    }
+    for (const name of Object.keys(CZECH_ITEM_NOTES_2)) {
+      assert.ok(!Object.hasOwn(CZECH_ITEM_NOTES, name), `Duplicate item in both batches: ${name}`);
+    }
+    assert.ok(rulebookSearch("Lovcova marka", 10, "cs").hits.some((hit) => hit.page === "hunters-mark"), "Czech hunter mark lookup");
   });
 
   await test("Czech magic item and monster metadata are display-only and retain original metadata", () => {
