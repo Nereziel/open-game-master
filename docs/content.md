@@ -194,7 +194,14 @@ full original English text. `src/lib/rulebook/czech-companion.ts` adds
 original Czech summaries on **932 of the 933 canonical SRD pages**:
 35 of 36 core rules pages, all 319 SRD spells, all 318 monsters,
 all 239 magic items, all 12 classes and all nine playable races.
-Full Czech translations currently cover **30 of 35 nonlegal rules pages**.
+Full Czech translations currently cover **31 of 35 nonlegal rules pages**.
+The new `czech-full-rules-17.ts` adds the full **Adventuring** chapter:
+time scales, movement and travel pace with the source distance units,
+forced marches and exhaustion, terrain, climbing/swimming/jumping,
+falling and suffocation, vision and lighting, food and water,
+interacting with objects, short and long rests, and downtime activities
+including crafting, working, recuperating, research, and training.
+Original English rules remain below the Czech text in the reader.
 The new `czech-full-rules-16.ts` adds a complete **Spellcasting** chapter:
 spell levels, known and prepared spells, spell slots and upcasting,
 armor restrictions, cantrips, rituals, eight schools of magic,
@@ -268,7 +275,7 @@ were translated independently from the **English SRD 5.1 under CC BY 4.0**;
 they are **not** copied from the d20.cz/ShadoWWW fan translation.
 These 10 pages show the complete Czech text and tables after their brief
 Czech overview. The original English SRD content remains below for
-verification and exact reference. The remaining **5 nonlegal rules pages**
+verification and exact reference. The remaining **4 nonlegal rules pages**
 and the spells, monster stat blocks, classes, races and items still need
 full detailed translations even though they all have Czech summaries.
 Source and translation licensing are documented in `docs/srd-czech-translation.md`.
