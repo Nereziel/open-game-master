@@ -4,13 +4,13 @@ import { useId, useState } from "react";
 import { cn } from "@/lib/cn";
 import { useLocale, useT } from "@/lib/locale";
 import {
-  GENERAL_PERSONA,
   PERSONA_HINTS,
   PERSONA_KEYS,
   PERSONA_LABELS,
   type PersonaKey,
   type PersonaLists,
 } from "@/lib/backgrounds/persona-logic";
+import { GENERAL_PERSONA } from "@/lib/backgrounds/persona-data";
 import { PERSONA_ENTRY_MAX, type Persona } from "@/lib/schemas/sheet";
 import { ui } from "@/lib/ui";
 import OptionPicker, { type PickerGroup } from "./OptionPicker";
