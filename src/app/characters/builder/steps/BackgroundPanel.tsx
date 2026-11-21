@@ -96,15 +96,22 @@ export function BackgroundPanel({
                   {t("Feature: {feature}", { feature: backgroundFeatureLabel(background.name, background.feature, locale) })}
                   <InfoButton
                     label={backgroundFeatureLabel(background.name, background.feature, locale)}
-                    text={background.featureDesc || undefined}
+                    text={background.featureDesc ? t(background.featureDesc) : undefined}
                     reference={background.featureDesc ? undefined : { kind: "backgrounds", slug: background.id }}
                   />
                 </span>
               ) : null}
             </span>
             <InfoButton
-              label={contentName("backgrounds", background.name, locale)}
-              text={backgroundInfoText(background)}
+              label={t(contentName("backgrounds", background.name, locale))}
+              text={locale === "cs"
+                ? [
+                    background.blurb && t(background.blurb) !== background.blurb ? t(background.blurb) : null,
+                    background.feature
+                      ? `**Schopnost: ${backgroundFeatureLabel(background.name, background.feature, locale)}.** ${background.featureDesc ? t(background.featureDesc) : ""}`
+                      : null,
+                  ].filter(Boolean).join("\n\n")
+                : backgroundInfoText(background)}
               reference={{ kind: "backgrounds", slug: background.id }}
             />
           </span>

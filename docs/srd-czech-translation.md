@@ -984,3 +984,23 @@ Dle dohody **PR zůstává Draft**, bez sloučení;
 - **Další podtřídy mimo výchozí SRD 5.1** nejsou součástí rozsahu.
   Regresní testy a build je nutné ověřovat v CI; statické kontroly
   jednotlivých překladů byly provedeny jejich autory.
+
+
+## Osobnost postavy a schopnosti minulostí
+
+České rozhraní nyní nabízí české znění všech **234** předpřipravených
+osobnostních rysů, ideálů, pout a slabin: 208 návrhů pro 13 výchozích
+minulostí a 26 obecných návrhů. Překlad je uložen v českém katalogu;
+původní anglické hodnoty osobnosti v uložených postavách se nemění,
+takže zůstává zachována zpětná kompatibilita a anglické rozhraní.
+
+U externích obsahových balíčků mohou být jejich vlastní návrhy pouze
+anglicky. V takovém případě česká nabídka místo nepřeložených možností
+zobrazí obecné české návrhy. Vlastní, dříve zapsané texty postav zůstávají
+beze změny.
+
+Dále jsou přeloženy názvy, pravidlové popisy a krátká vysvětlení
+**54 vestavěných minulostí** (18 základních SRD a 36 tematických),
+včetně schopnosti **Vojenská hodnost (Voják)**. Rozhraní lokalizuje
+popisy při výběru minulosti i v seznamu schopností na deníku; původní
+anglické pravidlové zdroje a interní ID zůstávají nedotčené.

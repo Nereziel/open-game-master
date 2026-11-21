@@ -11,7 +11,7 @@
 // (src/lib/srd/index.ts) already works for skills.
 
 import { textKey } from "@/lib/language/text-logic";
-import type { Locale } from "@/lib/i18n/translate";
+import { translate, type Locale } from "@/lib/i18n/translate";
 import { csTables } from "@/lib/i18n/cs-tables";
 import { srdRaceId } from "@/lib/srd/race-id";
 import { frTables } from "@/lib/i18n/fr-tables";
@@ -162,7 +162,11 @@ export function contentName(
       }
     }
   }
-  return row.name;
+  // Original, bundled custom backgrounds also have Czech names in the UI
+  // catalog. Unrecognized content-pack and homebrew names stay unchanged.
+  return locale === "cs" && table === "backgrounds"
+    ? translate(locale, row.name)
+    : row.name;
 }
 
 // Only known game-system classes use the cross-class feature-name fallback.
@@ -384,10 +388,12 @@ export function backgroundFeatureName(featureName: string, locale: Locale): stri
   const hit = locale === "cs"
     ? csNames().backgroundFeatures?.[bgKey]
     : frNames().backgroundFeatures?.[bgKey] ?? frTranslated().backgroundFeatures?.[bgKey];
-  if (!hit) {
+  const translated = hit ?? (locale === "cs" ? translate(locale, feature) : feature);
+  if (translated === feature) {
     return featureName;
   }
-  return `${hit} (${contentName("backgrounds", background, locale)})`;
+  const localizedBackground = contentName("backgrounds", background, locale);
+  return `${translated} (${locale === "cs" ? translate(locale, localizedBackground) : localizedBackground})`;
 }
 
 // A background feature's translated name when the background is already known
@@ -398,7 +404,7 @@ export function backgroundFeatureLabel(backgroundName: string, feature: string, 
   }
   const bgKey = `${canonicalKey(backgroundName)}:${canonicalKey(feature)}`;
   return locale === "cs"
-    ? csNames().backgroundFeatures?.[bgKey] ?? feature
+    ? csNames().backgroundFeatures?.[bgKey] ?? translate(locale, feature)
     : frNames().backgroundFeatures?.[bgKey] ?? frTranslated().backgroundFeatures?.[bgKey] ?? feature;
 }
 

@@ -201,7 +201,7 @@ await test("the builder asks on the Identity step, the sheet shows them and its 
   assert.match(read("src/app/characters/[characterId]/SheetSections.tsx"), /<PersonaLines persona=\{sheet\.persona\}/);
   const fields = read("src/app/characters/builder/PersonalityFields.tsx");
   // Labelled for screen readers, finger-sized, a line of one's own.
-  assert.match(fields, /aria-label=\{`\$\{PERSONA_LABELS\[key\]\}, in your own words`\}/);
+  assert.match(fields, /aria-label=\{t\("\{field\}, in your own words"/);
   assert.match(fields, /min-h-10/);
   assert.match(fields, /Write my own/);
   const { SERVER_FEATURES } = await import("../src/lib/capabilities.ts");
