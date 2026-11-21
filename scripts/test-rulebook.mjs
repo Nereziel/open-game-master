@@ -69,6 +69,21 @@ try {
     assertCzechFullBestiary(rulebookPages);
   });
 
+  await test("Czech appendix headings show Gods and Planes in Czech while English originals remain", () => {
+    const expected = new Map([
+      ["Gods of the Multiverse", "Bohové multivesmíru"],
+      ["The Planes of Existence", "Sféry existence"],
+    ]);
+    const source = rulebookPages().filter((page) => expected.has(page.title));
+    assert.equal(source.length, expected.size, "Both appendix pages must exist in the SRD");
+    for (const page of source) {
+      assert.equal(rulebookPage(page.id, "en").page.title, page.title);
+      assert.equal(rulebookPage(page.id, "cs").page.title, expected.get(page.title));
+      const entries = rulebookContents("cs").chapters.find((chapter) => chapter.id === "appendix").entries;
+      assert.equal(entries.find((entry) => entry.id === page.id)?.title, expected.get(page.title));
+    }
+  });
+
   // ---- the book ----
   await test("the book holds every chapter of the SRD in order", () => {
     const { chapters, pageCount } = rulebookContents();
