@@ -98,7 +98,7 @@ export async function readUploadedPdfText(url: unknown, campaignId?: string): Pr
   for (const file of [campaignId ? pdfTextFile(url, campaignId) : null, pdfTextFile(url)]) {
     if (!file) continue;
     try {
-      return await readFile(file, "utf8");
+      return await readFile(/* turbopackIgnore: true */ file, "utf8");
     } catch {
       // not this one
     }
