@@ -13002,9 +13002,9 @@
       "To jsou základní hodnoty pro všechny úrovně. Získal(a) jsi {count} zvýšení vlastností; vyber je níže, aby se započítala do konečných hodnot."
     ],
     "Each level after the first adds {die} plus that modifier, so {levels} more level adds {total}. You begin on {begin}.\u0000Each level after the first adds {die} plus that modifier, so {levels} more levels add {total}. You begin on {begin}.": [
-      "Každá další úroveň přidává {die} a modifikátor, takže {levels} další úroveň přidává {total}. Začínáš na {begin}.",
-      "Každá další úroveň přidává {die} a modifikátor, takže {levels} další úrovně přidávají {total}. Začínáš na {begin}.",
-      "Každá další úroveň přidává {die} a modifikátor, takže {levels} dalších úrovní přidává {total}. Začínáš na {begin}."
+      "Každá další úroveň přidává {die} a opravu Odolnosti, takže {levels} další úroveň přidává {total}. Začínáš na {begin}.",
+      "Každá další úroveň přidává {die} a opravu Odolnosti, takže {levels} další úrovně přidávají {total}. Začínáš na {begin}.",
+      "Každá další úroveň přidává {die} a opravu Odolnosti, takže {levels} dalších úrovní přidává {total}. Začínáš na {begin}."
     ],
     "Level {level}: {count} ability score improvement earned\u0000Level {level}: {count} ability score improvements earned": [
       "Úroveň {level}: získáno {count} zvýšení vlastností",
