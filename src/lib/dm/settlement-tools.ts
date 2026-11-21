@@ -52,12 +52,25 @@ export function handleGenerateSettlement(campaign: Campaign, rawArguments: strin
     return outcome;
   }
   const { settlement } = outcome;
+  const czech = campaign.gameSettings.tableLanguage === "czech";
+  const roles: Record<string, string> = {
+    innkeeper: "hostinský", farmer: "sedlák", elder: "rychtář", smith: "kovář",
+    priest: "kněz", merchant: "obchodník", guard: "strážný", noble: "šlechtic",
+    scholar: "učenec", thief: "zloděj",
+  };
+  const attitudes: Record<string, string> = {
+    indifferent: "lhostejný", friendly: "přátelský", hostile: "nepřátelský",
+  };
+  const kinds: Record<string, string> = {
+    general: "smíšené zboží", smith: "kovárna", apothecary: "lékárna",
+    outfitter: "výstroj", curiosities: "kuriozity",
+  };
   return {
     ok: true,
     place: settlement.name,
     layout: settlement.layoutDescription,
-    people: settlement.npcs.map((npc) => `${npc.name} (${npc.role}, ${npc.attitude}): ${npc.trait}`),
-    shops: settlement.shops.map((shop) => `${shop.name} (${shop.kind}, kept by ${shop.keeper})`),
+    people: settlement.npcs.map((npc) => `${npc.name} (${czech ? roles[npc.role] ?? npc.role : npc.role}, ${czech ? attitudes[npc.attitude] ?? npc.attitude : npc.attitude}): ${npc.trait}`),
+    shops: settlement.shops.map((shop) => czech ? `${shop.name} (${kinds[shop.kind] ?? shop.kind}, provozuje ${shop.keeper})` : `${shop.name} (${shop.kind}, kept by ${shop.keeper})`),
     rumours: settlement.rumours.map((entry) => entry.text),
     hook: `${settlement.hook.title}: ${settlement.hook.body}`,
   };
