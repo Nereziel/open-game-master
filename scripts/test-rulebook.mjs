@@ -1049,6 +1049,53 @@ try {
     assert.match(CZECH_FULL_RULES_1["trade-goods"], /500 zl/);
   });
 
+  await test("four additional complete Czech SRD rule chapters retain their English source", async () => {
+    const { CZECH_FULL_RULES_3 } = await import("../src/lib/rulebook/czech-full-rules-3.ts");
+    assert.deepEqual(Object.keys(CZECH_FULL_RULES_3).sort(), ["artifacts", "conditions", "diseases", "objects"]);
+    const sourceById = new Map(rulebookPages("en").map((page) => [page.id, page]));
+    for (const [id, translated] of Object.entries(CZECH_FULL_RULES_3)) {
+      const original = sourceById.get(id);
+      const localized = rulebookPage(id, "cs")?.page;
+      assert.ok(original && localized, `Unknown SRD rules page: ${id}`);
+      assert.equal(localized.id, original.id);
+      assert.equal(localized.kind, original.kind);
+      assert.ok(localized.md.startsWith("## Český přehled pravidel"), `Missing Czech overview: ${id}`);
+      assert.ok(localized.md.includes("## Úplné znění pravidel v češtině"));
+      assert.ok(localized.md.includes(translated));
+      assert.ok(translated.length > 2500, `Incomplete rule chapter: ${id}`);
+      assert.ok(localized.md.endsWith(original.md), `English original changed: ${id}`);
+    }
+    assert.deepEqual(
+      [...new Set([...Object.keys((await import("../src/lib/rulebook/czech-full-rules-1.ts")).CZECH_FULL_RULES_1),
+        ...Object.keys((await import("../src/lib/rulebook/czech-full-rules-2.ts")).CZECH_FULL_RULES_2),
+        ...Object.keys(CZECH_FULL_RULES_3)])].length,
+      14,
+    );
+  });
+
+  await test("Czech conditions, diseases and objects retain their full numerical SRD rules", async () => {
+    const { CZECH_FULL_RULES_3 } = await import("../src/lib/rulebook/czech-full-rules-3.ts");
+    for (const name of ["Oslepený", "Okouzlený", "Ohlušený", "Vyčerpání", "Vystrašený",
+      "Uchvácený", "Neschopný", "Neviditelný", "Ochromený", "Zkamenělý",
+      "Otrávený", "Sražený", "Zadržený", "Omráčený", "V bezvědomí"]) {
+      assert.ok(CZECH_FULL_RULES_3.conditions.includes(`## ${name}`), name);
+    }
+    for (const n of ["| 1 |", "| 2 |", "| 3 |", "| 4 |", "| 5 |", "| 6 |"]) {
+      assert.ok(CZECH_FULL_RULES_3.conditions.includes(n));
+    }
+    for (const n of ["Záchvaty smíchu", "Stoková nákaza", "Hniloba zraku"]) {
+      assert.ok(CZECH_FULL_RULES_3.diseases.includes(n));
+    }
+    assert.match(CZECH_FULL_RULES_3.diseases, /SO 13/);
+    assert.match(CZECH_FULL_RULES_3.diseases, /SO 11/);
+    assert.match(CZECH_FULL_RULES_3.diseases, /SO 15/);
+    assert.match(CZECH_FULL_RULES_3.objects, /Práh zranění/);
+    assert.match(CZECH_FULL_RULES_3.objects, /\| Adamantin \| 23 \|/);
+    assert.match(CZECH_FULL_RULES_3.artifacts, /40 mil/);
+    assert.match(CZECH_FULL_RULES_3.artifacts, /1k4 \+ 3/);
+    assert.match(CZECH_FULL_RULES_3.artifacts, /Sledování/);
+  });
+
   // ---- the routes ----
   const { createUser } = await import("../src/lib/db/users.ts");
   const { mintSession } = await import("../src/lib/auth.ts");
