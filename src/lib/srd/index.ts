@@ -486,6 +486,16 @@ export function mathPartLabel(t: T, label: string): string {
   return key ? t(key) : label;
 }
 
+// In Czech, an explanation reads naturally with its label first:
+// "Oprava Moudrosti: +0, zdatnostní bonus: +2".
+export function formatMathParts(t: T, parts: DerivedPart[], locale: "en" | "fr" | "cs"): string {
+  return parts.map((part) => {
+    const label = mathPartLabel(t, part.label);
+    const value = formatModifier(part.value);
+    return locale === "cs" ? `${label}: ${value}` : `${value} ${label}`;
+  }).join(", ");
+}
+
 // Every derived number's working. Sums are guaranteed to match the totals
 // beside them because the totals are computed BY summing these.
 export type DerivedParts = {
