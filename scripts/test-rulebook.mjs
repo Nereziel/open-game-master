@@ -1096,6 +1096,70 @@ try {
     assert.match(CZECH_FULL_RULES_3.artifacts, /Sledování/);
   });
 
+  await test("five more SRD rule pages render complete Czech translations without altering original rules", async () => {
+    const { CZECH_FULL_RULES_4 } = await import("../src/lib/rulebook/czech-full-rules-4.ts");
+    const { CZECH_FULL_RULES_5 } = await import("../src/lib/rulebook/czech-full-rules-5.ts");
+    assert.deepEqual(Object.keys(CZECH_FULL_RULES_4).sort(), ["magic-items", "mounts-and-vehicles", "tools"]);
+    assert.deepEqual(Object.keys(CZECH_FULL_RULES_5).sort(), ["poisons", "sentient-magic-items"]);
+    for (const [id, translation] of Object.entries({ ...CZECH_FULL_RULES_4, ...CZECH_FULL_RULES_5 })) {
+      const original = rulebookPage(id, "en")?.page;
+      const localized = rulebookPage(id, "cs")?.page;
+      assert.ok(original && localized, `Missing canonical rules page: ${id}`);
+      assert.equal(original.id, localized.id);
+      assert.equal(original.kind, "rules");
+      assert.equal(localized.title, czechSrdTitle(original.title, "rules") === original.title
+        ? localized.title
+        : czechSrdTitle(original.title, "rules"));
+      assert.ok(translation.length > 3200, `Suspiciously short translation: ${id}`);
+      assert.ok(localized.md.startsWith("## Český přehled pravidel"), `Missing Czech summary: ${id}`);
+      assert.ok(localized.md.includes("## Úplné znění pravidel v češtině"));
+      assert.ok(localized.md.includes(translation), `Translation not wired into reader: ${id}`);
+      assert.ok(localized.md.endsWith(original.md), `Changed original English rules: ${id}`);
+    }
+    const { CZECH_FULL_RULES_1 } = await import("../src/lib/rulebook/czech-full-rules-1.ts");
+    const { CZECH_FULL_RULES_2 } = await import("../src/lib/rulebook/czech-full-rules-2.ts");
+    const { CZECH_FULL_RULES_3 } = await import("../src/lib/rulebook/czech-full-rules-3.ts");
+    const ids = [CZECH_FULL_RULES_1, CZECH_FULL_RULES_2, CZECH_FULL_RULES_3,
+      CZECH_FULL_RULES_4, CZECH_FULL_RULES_5].flatMap((batch) => Object.keys(batch));
+    assert.equal(ids.length, 19);
+    assert.equal(new Set(ids).size, 19, "Duplicated full Czech rule page");
+  });
+
+  await test("translated poison mechanics and magic item limits match canonical numbers", async () => {
+    const { CZECH_FULL_RULES_4 } = await import("../src/lib/rulebook/czech-full-rules-4.ts");
+    const { CZECH_FULL_RULES_5 } = await import("../src/lib/rulebook/czech-full-rules-5.ts");
+    const mounts = CZECH_FULL_RULES_4["mounts-and-vehicles"];
+    for (const name of ["Velbloud", "Osel nebo mezek", "Slon", "Tažný kůň",
+      "Jezdecký kůň", "Doga", "Poník", "Válečný kůň"]) {
+      assert.ok(mounts.includes(`| ${name} |`), `Missing mount table row: ${name}`);
+    }
+    assert.match(mounts, /pětinásobku své základní nosnosti/);
+    assert.match(mounts, /\| Galéra \| 30 000 zl \| 4 míle\/h \|/);
+    assert.match(CZECH_FULL_RULES_4.tools, /\| Zlodějské náčiní \| 25 zl \| 1 libra \|/);
+    assert.match(CZECH_FULL_RULES_4.tools, /zdatnost/i);
+    assert.match(CZECH_FULL_RULES_4["magic-items"], /nejvýše se třemi kouzelnými předměty/);
+    assert.match(CZECH_FULL_RULES_4["magic-items"], /více než 100 stop/);
+    assert.match(CZECH_FULL_RULES_4["magic-items"], /24 hodin/);
+    assert.match(CZECH_FULL_RULES_4["magic-items"], /nespotřebuje žádnou pozici kouzla uživatele/);
+    const poisons = CZECH_FULL_RULES_5.poisons;
+    for (const name of ["Vrahova krev", "Výpary spáleného othuru", "Hlen plíživce",
+      "Drowský jed", "Éterická esence", "Zlovůle", "Půlnoční slzy",
+      "Taggitův olej", "Bledá tinktura", "Jed purpurového červa",
+      "Hadí jed", "Malátnost", "Sérum pravdy", "Jed wyverny"]) {
+      assert.ok(poisons.includes(`***${name} (`), `Poison effect not translated: ${name}`);
+    }
+    for (const n of ["SO 10", "SO 11", "SO 13", "SO 15", "SO 16", "SO 17", "SO 19"]) {
+      assert.ok(poisons.includes(n), `Missing poison saving throw: ${n}`);
+    }
+    const sentient = CZECH_FULL_RULES_5["sentient-magic-items"];
+    assert.match(sentient, /4k6/);
+    assert.match(sentient, /1k12 hodin/);
+    assert.match(sentient, /SO 12 \+ oprava Charismatu předmětu/);
+    for (const n of ["| 01–15 |", "| 97–100 |", "| 10 | **Hledač tvůrce"]) {
+      assert.ok(sentient.includes(n), `Missing sentient-item table row: ${n}`);
+    }
+  });
+
   // ---- the routes ----
   const { createUser } = await import("../src/lib/db/users.ts");
   const { mintSession } = await import("../src/lib/auth.ts");
