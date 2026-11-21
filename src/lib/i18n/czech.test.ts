@@ -313,6 +313,10 @@ describe("Czech localization", () => {
     expect(contentName("spells", { slug: "fireball", name: "Fireball" }, "cs")).toBe("Ohnivá koule");
     expect(contentName("monsters", { slug: "goblin", name: "Goblin" }, "cs")).toBe("Goblin");
     expect(classFeatureName("fighter", "Second Wind", "cs")).toBe("Druhý dech");
+    expect(classFeatureName("paladin", "Divine Sense", "cs")).toBe("Božský smysl");
+    expect(classFeatureName("paladin", "Lay on Hands", "cs")).toBe("Vkládání rukou");
+    expect(classFeatureName("paladin", "Divine Sense", "en")).toBe("Divine Sense");
+    expect(classFeatureName("paladin", "Lay on Hands", "en")).toBe("Lay on Hands");
     expect(subclassName("cleric", "Life Domain", "cs")).toBe("Doména života");
     expect(contentName("spells", "Unknown Spell", "cs")).toBe("Unknown Spell");
   });
