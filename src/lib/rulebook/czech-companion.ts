@@ -4,6 +4,8 @@
 // All page ids and original English headings stay intact for deep links.
 import type { RulebookData } from "./types";
 import { CZECH_RULE_NOTES } from "./czech-rule-extensions";
+import { CZECH_FULL_RULES_1 } from "./czech-full-rules-1";
+import { CZECH_FULL_RULES_2 } from "./czech-full-rules-2";
 import { CZECH_SPELL_NOTES } from "./czech-spell-notes";
 import { CZECH_SPELL_NOTES_2 } from "./czech-spell-notes-2";
 import { CZECH_SPELL_NOTES_3 } from "./czech-spell-notes-3";
@@ -230,6 +232,10 @@ export function czechCompanionBook(english: RulebookData): RulebookData {
         : page.id === "beyond-1st-level"
           ? `${NOTES[page.id]}\n\n${CLASSES_REFERENCE}`
           : kindNote ?? NOTES[page.id] ?? CZECH_RULE_NOTES[page.id];
+      const fullTranslation = CZECH_FULL_RULES_1[page.id] ?? CZECH_FULL_RULES_2[page.id];
+      const czechText = fullTranslation
+        ? `${note ?? ""}\n\n## Úplné znění pravidel v češtině\n\n${fullTranslation}`
+        : note;
       const title = PAGES[page.id] ?? czechSrdTitle(page.title, page.kind);
       const meta = page.meta && page.kind === "spell" ? czechSrdSpellMeta(page.meta)
         : page.meta && page.kind === "monster" ? czechSrdMonsterMeta(page.meta)
@@ -240,11 +246,11 @@ export function czechCompanionBook(english: RulebookData): RulebookData {
         title,
         ...(meta && meta !== page.meta ? { meta, originalMeta: page.meta } : {}),
         ...(page.kind === "spell" && page.group ? { group: czechSrdSpellGroup(page.group) } : {}),
-        ...(note
+        ...(czechText
           ? {
               md: `## ${page.kind === "spell" ? "Český popis kouzla" : page.kind === "monster" ? "Český přehled nestvůry" : page.kind === "item" ? "Český přehled předmětu" : page.kind === "class" ? "Český přehled povolání" : page.kind === "race" ? "Český přehled rasy" : "Český přehled pravidel"}
 
-${note}
+${czechText}
 
 ---
 
