@@ -1215,6 +1215,7 @@ try {
     assert.ok(armor.includes("S pomocí dalšího tvora se zkrátí na polovinu"));
     const madness = batch7.madness;
     assert.ok(madness.includes("1k10 minut"));
+    assert.ok(madness.includes("*Mluva sfér*"), "Madness rules must use established Czech spell title");
     assert.ok(madness.includes("1k10 × 10 hodin"));
     for (const range of [
       "01–20", "21–30", "31–40", "41–50", "51–60", "61–70",
@@ -1390,6 +1391,16 @@ try {
       "Tree Stride": "Chůze stromy",
       Passwall: "Projdi zdí",
       "Insect Plague": "Hmyzí zhouba",
+      "Storm of Vengeance": "Bouře odplaty",
+      "Contact Other Plane": "Mluva sfér",
+      "Flesh to Stone": "Zkamenění",
+      "Mass Cure Wounds": "Hromadné zhojení zranění",
+      "Conjure Celestial": "Vyvolej nebešťana",
+      "Conjure Fey": "Vyvolej vílu",
+      "Create Undead": "Stvoř nemrtvé",
+      "Dispel Evil and Good": "Rozptyl zlo a dobro",
+      "Power Word Kill": "Slovo moci „ZABIJ“",
+      "Power Word Stun": "Slovo moci „OCHROM“",
     };
     for (const [englishName, czechName] of Object.entries(spellNames2014)) {
       assert.equal(CZECH_SPELLS[englishName], czechName,
