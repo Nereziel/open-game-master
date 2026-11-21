@@ -37,11 +37,13 @@ licence převzetí výslovně dovolí, a za příslušných podmínek s atribuc�
 ## Stav
 
 - Stručné české přehledy: 932/933 kanonických stránek (výjimkou je atribuce).
-- Úplné české znění pravidlových stránek: **22/35 obsahových pravidlových stránek**.
-- Nově kompletní kapitoly: **Stavy, Nemoci, Objekty, Artefakty**; celkem 22/35.
+- Úplné české znění pravidlových stránek: **24/35 obsahových pravidlových stránek**.
+- Nově kompletní kapitoly: **Stavy, Nemoci, Objekty, Artefakty**; celkem 24/35.
 - V další dávce jsou úplně přeloženy kapitoly **Jízdní zvířata a dopravní prostředky, Nástroje, Kouzelné předměty, Jedy a Inteligentní kouzelné předměty**.
 - Následující dávka přeložila celé kapitoly **Zbroje**, **Šílenství** a
   **Sféry existence**, včetně tabulek a konkrétních pravidlových omezení.
+- Aktuálně nově přeložené celé kapitoly **Kombinování povolání** a
+  **Zázemí**, včetně všech tabulek a všech 26 návrhů vlastností akolyty.
 - Úplné české texty kouzel, statistiky nestvůr, předmětů, ras a povolání:
   zbývá dopracovat; přehledy nejsou totéž co plné překlady.
 - Testy ověřují dostupnost úplných textů a zachování originálu, ale před
