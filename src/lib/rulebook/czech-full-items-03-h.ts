@@ -36,11 +36,11 @@ Hůlka si každý den za úsvitu obnoví 1k6+1 spotřebovaných nábojů. Pokud 
 | 34–36 | Na nejbližším neobsazeném místě od cíle se objeví zvíře. Není pod tvou kontrolou a jedná tak, jak by jednalo obvykle. Hodem k100 urči, jaké zvíře se objeví: při 01–25 nosorožec, při 26–50 slon a při 51–100 krysa. |
 | 37–46 | Sešleš kouzlo *blesk*. |
 | 47–49 | Oblast o poloměru 30 stop se středem v cíli vyplní oblak 600 nadměrně velkých motýlů. Oblast se stane silně zastřenou. Motýli zůstanou 10 minut. |
-| 50–53 | Zvětšíš vybraný cíl, jako bys seslal kouzlo *zvětši/zmenši*. Pokud cíl tímto kouzlem nelze ovlivnit nebo jsi jako cíl nevybral tvora, staneš se cílem ty. |
+| 50–53 | Zvětšíš vybraný cíl, jako bys seslal kouzlo *zvětšení nebo zmenšení*. Pokud cíl tímto kouzlem nelze ovlivnit nebo jsi jako cíl nevybral tvora, staneš se cílem ty. |
 | 54–58 | Sešleš kouzlo *temnota*. |
 | 59–62 | Na zemi v okruhu 60 stop se středem ve vybraném cíli vyroste tráva. Pokud tam tráva už roste, zvětší se na desetinásobek své běžné velikosti a zůstane přerostlá 1 minutu. |
 | 63–65 | Předmět, který zvolí PJ, zmizí do Éterické sféry. Předmět nesmí mít nikdo na sobě ani jej držet či nést, musí být do vzdálenosti 120 stop od cíle a nesmí mít v žádném rozměru více než 10 stop. |
-| 66–69 | Zmenšíš sám sebe, jako bys na sebe seslal kouzlo *zvětši/zmenši*. |
+| 66–69 | Zmenšíš sám sebe, jako bys na sebe seslal kouzlo *zvětšení nebo zmenšení*. |
 | 70–79 | Sešleš kouzlo *ohnivá koule*. |
 | 80–84 | Sešleš na sebe kouzlo *neviditelnost*. |
 | 85–87 | Na vybraném cíli vyrostou listy. Pokud jsi jako cíl zvolil bod v prostoru, vyrostou listy na tvorovi nejbližším k tomuto bodu. Pokud je nikdo neotrhá, po 24 hodinách zhnědnou a opadají. |
@@ -51,20 +51,20 @@ Hůlka si každý den za úsvitu obnoví 1k6+1 spotřebovaných nábojů. Pokud 
   "weapon-1-2-or-3": `*Zbraň (libovolná), neobvyklá (+1), vzácná (+2) nebo velmi vzácná (+3)*
 
 S touto magickou zbraní získáváš bonus k hodům na útok i zranění. Výše bonusu závisí na vzácnosti zbraně.`,
-  "well-of-many-worlds": `*Podivuhodný předmět, legendární*
+  "well-of-many-worlds": `*Divotvorný předmět, legendární*
 
 Tato jemná černá látka, hebká jako hedvábí, je složená do velikosti kapesníku. Rozložením vznikne kruhová plachta o průměru 6 stop.
 
 Jako akci můžeš *studnu mnoha světů* rozložit a položit na pevný povrch. Vytvoří tak obousměrný portál do jiného světa nebo sféry existence. Pokaždé, když předmět portál otevře, PJ rozhodne, kam vede. Otevřený portál můžeš zavřít akcí, při níž uchopíš okraje látky a znovu ji složíš. Poté, co *studna mnoha světů* otevře portál, to nemůže zopakovat po dobu 1k8 hodin.`,
-  "wind-fan": `*Podivuhodný předmět, neobvyklý*
+  "wind-fan": `*Divotvorný předmět, neobvyklý*
 
 Když držíš tento vějíř, můžeš z něj jako akci seslat kouzlo *poryv větru* (SO záchrany 13). Po použití bys vějíř neměl znovu použít před příštím úsvitem. Při každém dalším použití před úsvitem má kumulativní 20procentní šanci, že nebude fungovat a roztrhá se na bezcenné nemagické cáry.`,
-  "winged-boots": `*Podivuhodný předmět, neobvyklý (vyžaduje sladění)*
+  "winged-boots": `*Divotvorný předmět, neobvyklý (vyžaduje sladění)*
 
 Když nosíš tyto boty, máš rychlost létání stejnou jako svou rychlost chůze. Boty ti umožní létat celkem až 4 hodiny, buď nepřetržitě, nebo v několika kratších letech, z nichž každý spotřebuje nejméně 1 minutu dostupné doby. Pokud letíš v okamžiku, kdy doba vyprší, začneš klesat rychlostí 30 stop za kolo, dokud nepřistaneš.
 
 Za každých 12 hodin, kdy se boty nepoužívají, se jim obnoví 2 hodiny schopnosti létat.`,
-  "wings-of-flying": `*Podivuhodný předmět, vzácný (vyžaduje sladění)*
+  "wings-of-flying": `*Divotvorný předmět, vzácný (vyžaduje sladění)*
 
 Když nosíš tento plášť, můžeš jako akci vyslovit jeho příkazové slovo. Plášť se ti na zádech promění v pár netopýřích nebo ptačích křídel na 1 hodinu nebo do okamžiku, kdy pomocí akce příkazové slovo zopakuješ. Křídla ti poskytují rychlost létání 60 stop. Když zmizí, nemůžeš je znovu použít po dobu 1k12 hodin.`,
 };
