@@ -82,18 +82,96 @@ const PERSON_LAST: Record<string, string[]> = {
   modern: ["Whitlock", "Harlowe", "Pembury", "Fairweather", "Cole", "Ashby"],
 };
 
+
+type SettlementLanguage = "english" | "czech";
+// Original fantasy names remain the default for English-language tables.
+// Czech tables use a separate authored lexicon, never an external translator:
+// the same campaign seed still produces the same people and shops.
+const CS_PERSON_FIRST: Record<"fantasy" | "dark" | "modern", string[]> = {
+  fantasy: ["Radovan", "Jarmila", "Bohdan", "Milena", "Václav", "Drahomír", "Zdislava", "Jaromír", "Běla", "Ondřej", "Vlasta", "Hanuš"],
+  dark: ["Miloslav", "Růžena", "Vít", "Blažena", "Ctibor", "Dobromila", "Marek", "Zora", "Jindřich", "Věra"],
+  modern: ["Jan", "Anna", "Petr", "Kateřina", "Tomáš", "Alena", "Josef", "Barbora", "David", "Marie"],
+};
+const CS_PERSON_LAST: Record<"fantasy" | "dark" | "modern", string[]> = {
+  fantasy: ["Záleský", "Hvozd", "Kovář", "Brodský", "Zvoník", "Havran", "Horský", "Potocký", "Šedivý", "Rybář"],
+  dark: ["Havran", "Černý", "Popelec", "Hrobník", "Noc", "Trnový", "Vlk", "Havlíček"],
+  modern: ["Novák", "Svoboda", "Dvořák", "Černý", "Procházka", "Veselý", "Marek", "Pokorný"],
+};
+const CS_PLACE_NAMES: Record<"fantasy" | "dark" | "modern", string[]> = {
+  fantasy: ["Kamenný Brod", "Větrná Lhota", "Havraní Údolí", "Březový Háj", "Starý Mlýn", "Zlatý Důl", "Dubová Ves"],
+  dark: ["Černý Brod", "Havraní Hřbitov", "Mlžná Lhota", "Trnové Údolí", "Popelavá Ves", "Stínový Hvozd"],
+  modern: ["Nová Ves", "Dolní Lhota", "Horský Brod", "Bílé Pole", "Vrchovina", "Rybníky"],
+};
+const CS_ROLES: Record<string, string> = {
+  innkeeper: "hostinský", smith: "kovář", priest: "kněz", merchant: "obchodník",
+  elder: "rychtář", guard: "strážný", noble: "šlechtic", scholar: "učenec",
+  farmer: "sedlák", thief: "zloděj",
+};
+const CS_TRAITS: Record<string, string[]> = {
+  innkeeper: ["pamatuje si každého hosta", "zná drby z celého okolí", "ředí pivo, ale dobře vaří"],
+  smith: ["mluví raději s kovadlinou", "dluží peníze cechu", "na každého protivníka má jizvu"],
+  priest: ["chrání stará tajemství kaple", "vede seznam zpovědí", "pomáhá i těm, kdo ztratili víru"],
+  merchant: ["počítá každou minci dvakrát", "prodává podezřelé zboží", "raději obchoduje se sliby"],
+  elder: ["pamatuje staré hranice polí", "nerad rozhoduje bez svědků", "bojí se dávné přísahy"],
+  guard: ["střeží bránu sám", "zná všechny pašerácké stezky", "touží po lepší službě"],
+  noble: ["má pozemky, ale žádné peníze", "pořádá okázalé hostiny", "tajně hledá ztraceného dědice"],
+  scholar: ["pátrá po pohřbených ruinách", "zapisuje každou maličkost", "klade nebezpečné otázky"],
+  farmer: ["ztratil tři ovce", "mluví za okolní statky", "nevěří nikomu v naleštěných botách"],
+  thief: ["provozuje nenápadný stánek", "překupuje kradené věci", "zná tajné průchody"],
+};
+const CS_LANDMARKS = ["svatyně", "staré věže", "tržiště", "kaple", "památného dubu", "spálené síně", "menhiru", "panského dvora"];
+const CS_ROOFS: Record<SettlementSize, string> = {
+  thorp: "tucet stavení", hamlet: "třicet stavení", village: "sto střech",
+  town: "několik set domů", city: "nekonečné ulice domů",
+};
+const CS_LAYOUTS: Record<SettlementTerrain, string[]> = {
+  plains: ["{name} leží na křižovatce dvou cest. Kolem návsi a studny stojí {roofs}."],
+  forest: ["{name} leží na mýtině mezi stromy. {roofs} chrání polorozpadlá palisáda."],
+  hills: ["{name} se rozkládá na úbočí kopce. {roofs} se tiskne k sobě pod {landmark}."],
+  mountains: ["{name} se krčí v horském průsmyku. {roofs} má strmé střechy proti sněhu."],
+  coast: ["{name} stojí u oblázkového přístavu. {roofs} shlíží k rybářským lodím."],
+  river: ["{name} leží na obou březích řeky. {roofs} obklopuje brod a vodní mlýn."],
+  swamp: ["{name} stojí na kůlech nad mokřinami. {roofs} propojují vratké lávky."],
+  desert: ["{name} obklopuje studnu a několik palem. {roofs} poskytuje stín před žárem."],
+};
+const CS_RUMOURS = [
+  "Z pastvin mizí ovce a nalezené stopy nepatří vlkům.",
+  "U {landmark} se po setmění rozsvěcí světla, ačkoli tam už léta nikdo nežije.",
+  "V noci přijel jezdec a hledal člověka, jehož jméno se místní bojí vyslovit.",
+  "Podle {role2} skrývá {role} důležité tajemství.",
+  "U {landmark2} se našly staré mince.",
+  "Kupecká karavana má týden zpoždění a východní cesta je prázdná.",
+  "Loni měla studna železitou pachuť, ale nikdo o tom nechce mluvit.",
+  "Někdo vykoupil všechny svíčky z okolí.",
+];
+const CS_HOOKS = [
+  { title: "Zmizel člověk z {name}", body: "Místní {role} se už tři dny neukázal. Naposledy ho viděli poblíž {landmark}. Za vypátrání prý čeká odměna." },
+  { title: "Světla u {name}", body: "Po nocích se u {landmark} objevují podivná světla. {role} shání dobrovolníky, kteří místo prozkoumají." },
+  { title: "Dluhy v {name}", body: "Místní {role} dluží peníze nebezpečným lidem. S další karavanou dorazí vymahač a dlužník potřebuje pomoc." },
+];
+const CS_SHOP_PREFIXES = ["U {keeper}", "Křivá", "Poctivá", "Stará", "Zlatá", "Poslední"];
+const CS_SHOP_NOUNS: Record<SettlementShop["kind"], string[]> = {
+  general: ["Smíšené zboží", "Kupecký krám", "Zásoby", "Tržiště"],
+  smith: ["Kovárna", "Výheň", "Kovadlina", "Kovárna"],
+  apothecary: ["Lékárna", "Bylinkářství", "Léčivé lektvary", "Mastičkářství"],
+  outfitter: ["Výstroj", "Cestovní potřeby", "Batohy a lana", "Obchod pro pocestné"],
+  curiosities: ["Kuriozity", "Podivuhodnosti", "Staré vzácnosti", "Antikvariát"],
+};
+
 function feel(genre: string): "fantasy" | "dark" | "modern" {
   if (/dark|horror/.test(genre)) return "dark";
   if (/mystery|modern|cyber|noir/.test(genre)) return "modern";
   return "fantasy";
 }
 
-export function placeName(random: () => number, genre: string): string {
+export function placeName(random: () => number, genre: string, language: SettlementLanguage = "english"): string {
+  if (language === "czech") return pick(random, CS_PLACE_NAMES[feel(genre)]);
   const parts = PLACE_PARTS[feel(genre)];
   return `${pick(random, parts.first)}${pick(random, parts.last)}`;
 }
 
-export function personName(random: () => number, genre: string): string {
+export function personName(random: () => number, genre: string, language: SettlementLanguage = "english"): string {
+  if (language === "czech") { const key = feel(genre); return `${pick(random, CS_PERSON_FIRST[key])} ${pick(random, CS_PERSON_LAST[key])}`; }
   const key = feel(genre);
   return `${pick(random, PERSON_FIRST[key])} ${pick(random, PERSON_LAST[key])}`;
 }
@@ -197,22 +275,24 @@ const SHOP_KINDS_BY_SIZE: Record<SettlementSize, SettlementShop["kind"][]> = {
   city: ["general", "smith", "apothecary", "outfitter", "curiosities"],
 };
 
-export function generateSettlement(input: { name?: string; size?: unknown; terrain?: unknown; genre?: string; seed?: number }): Settlement {
+export function generateSettlement(input: { name?: string; size?: unknown; terrain?: unknown; genre?: string; seed?: number; language?: SettlementLanguage }): Settlement {
   const size = normalizeSettlementSize(input.size);
   const terrain = normalizeSettlementTerrain(input.terrain);
   const genre = input.genre ?? "high_fantasy";
+  const czech = input.language === "czech";
   const random = seededRandom(input.seed ?? seedFromText(`${input.name ?? ""}|${size}|${terrain}`));
-  const name = (input.name ?? "").trim() || placeName(random, genre);
-  const landmark = pick(random, LANDMARKS);
-  const landmark2 = pick(random, LANDMARKS.filter((entry) => entry !== landmark));
+  const name = (input.name ?? "").trim() || placeName(random, genre, input.language);
+  const landmarks = czech ? CS_LANDMARKS : LANDMARKS;
+  const landmark = pick(random, landmarks);
+  const landmark2 = pick(random, landmarks.filter((entry) => entry !== landmark));
   const roles = ROLES_BY_SIZE[size];
   const npcs: NpcDraft[] = roles.map((role) => ({
-    name: personName(random, genre),
+    name: personName(random, genre, input.language),
     voice: null,
     factionId: "",
     aliases: [],
     attitude: pick(random, ATTITUDES),
-    trait: pick(random, TRAITS[role] ?? TRAITS.farmer),
+    trait: pick(random, (czech ? CS_TRAITS : TRAITS)[role] ?? (czech ? CS_TRAITS : TRAITS).farmer),
     location: name,
     role,
     gender: "",
@@ -226,37 +306,39 @@ export function generateSettlement(input: { name?: string; size?: unknown; terra
   const seen = new Set<string>();
   for (const npc of npcs) {
     while (seen.has(npc.name)) {
-      npc.name = personName(random, genre);
+      npc.name = personName(random, genre, input.language);
     }
     seen.add(npc.name);
   }
   const shopSize: SettlementShop["size"] = size === "thorp" ? "hamlet" : size;
   const shops: SettlementShop[] = SHOP_KINDS_BY_SIZE[size].map((kind) => {
     const keeper = kind === "smith" ? npcs.find((npc) => npc.role === "smith") : kind === "general" ? npcs.find((npc) => npc.role === "merchant") ?? npcs.find((npc) => npc.role === "innkeeper") : null;
-    const keeperName = keeper?.name ?? personName(random, genre);
-    const prefix = fill(pick(random, SHOP_NAMES), { keeper: keeperName.split(" ")[0] });
-    return { name: `${prefix} ${pick(random, SHOP_NOUNS[kind])}`, kind, size: shopSize, keeper: keeperName };
+    const keeperName = keeper?.name ?? personName(random, genre, input.language);
+    const prefix = fill(pick(random, czech ? CS_SHOP_PREFIXES : SHOP_NAMES), { keeper: keeperName.split(" ")[0] });
+    const noun = pick(random, czech ? CS_SHOP_NOUNS[kind] : SHOP_NOUNS[kind]);
+    const name = czech ? (prefix.startsWith("U ") ? `${prefix}: ${noun}` : `${prefix} – ${noun}`) : `${prefix} ${noun}`;
+    return { name, kind, size: shopSize, keeper: keeperName };
   });
   const values = {
     name,
     size,
-    roofs: ROOF_COUNT[size],
+    roofs: (czech ? CS_ROOFS : ROOF_COUNT)[size],
     landmark,
     landmark2,
-    role: roles[1] ?? "innkeeper",
-    role2: roles[2] ?? "elder",
+    role: czech ? CS_ROLES[roles[1] ?? "innkeeper"] : roles[1] ?? "innkeeper",
+    role2: czech ? CS_ROLES[roles[2] ?? "elder"] : roles[2] ?? "elder",
   };
   const rumourTexts = new Set<string>();
   while (rumourTexts.size < 2) {
-    rumourTexts.add(fill(pick(random, RUMOURS), values));
+    rumourTexts.add(fill(pick(random, czech ? CS_RUMOURS : RUMOURS), values));
   }
   const rumours: RollTableEntry[] = [...rumourTexts].map((text, index) => ({ min: index + 1, max: index + 1, text }));
-  const hook = pick(random, HOOKS);
+  const hook = pick(random, czech ? CS_HOOKS : HOOKS);
   return {
     name,
     size,
     terrain,
-    layoutDescription: fill(pick(random, LAYOUTS[terrain]), values),
+    layoutDescription: fill(pick(random, czech ? CS_LAYOUTS[terrain] : LAYOUTS[terrain]), values),
     npcs,
     shops,
     rumours,
