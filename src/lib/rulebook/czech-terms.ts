@@ -212,6 +212,10 @@ export const CZECH_MONSTERS: Readonly<Record<string, string>> = {
 };
 
 export const CZECH_SPELLS: Readonly<Record<string, string>> = {
+  Guidance: "Vedení",
+  "Protection from Energy": "Ochrana před energií",
+  Resistance: "Odolání",
+  "Sacred Flame": "Posvátný plamen",
   "Acid Splash": "Kyselinová koule",
   "Aid": "Podpora",
   "Alarm": "Poplach",
