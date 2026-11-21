@@ -8,6 +8,7 @@ import { cn } from "@/lib/cn";
 import { textKey } from "@/lib/language/text-logic";
 import { useLocale, useT } from "@/lib/locale";
 import { speciesTraitName } from "@/lib/content/names";
+import { czechBundledSpeciesTrait } from "@/lib/content/species-traits-cs";
 import { ui } from "@/lib/ui";
 import { lineageFits } from "./lineageFits";
 import { AbilityText } from "./AbilityText";
@@ -54,7 +55,7 @@ function Traits({ slide }: { slide: LineageSlide }) {
   // The first trait with something to say arrives open, so the panel never
   // opens onto a wall of closed rows.
   const [openTrait, setOpenTrait] = useState<number | null>(() => {
-    const first = lines.findIndex((line) => parseTrait(line, slide, t).body);
+    const first = lines.findIndex((line) => (locale === "cs" && srdRaceFor(slide.id) && czechBundledSpeciesTrait(line)?.description) || parseTrait(line, slide, t).body);
     return first === -1 ? null : first;
   });
   if (!lines.length) {
@@ -66,11 +67,12 @@ function Traits({ slide }: { slide: LineageSlide }) {
     <div className="flex flex-col gap-[5px]">
       {lines.map((line, index) => {
         const parsed = parseTrait(line, slide, t);
-        // The trait's name reads in the reader's language where the official
-        // maps carry it; the shorthand around it ("adv. vs poison", "60 ft")
-        // is the app's own and stays as it was written.
-        const head = speciesTraitName(slide.id, parsed.head, locale);
-        const open = openTrait === index && Boolean(parsed.body);
+        // Complete Czech race-trait explanations are display-only. The raw
+        // English rows still drive mechanics and remain untouched on sheets.
+        const localized = locale === "cs" && srdRaceFor(slide.id) ? czechBundledSpeciesTrait(line) : null;
+        const head = localized?.name ?? speciesTraitName(slide.id, parsed.head, locale);
+        const body = localized?.description ?? parsed.body;
+        const open = openTrait === index && Boolean(body);
         const bodyId = `${baseId}-trait-${index}`;
         const headEl = (
           <span className="flex w-full items-center gap-2.5 px-3 py-2">
@@ -81,7 +83,7 @@ function Traits({ slide }: { slide: LineageSlide }) {
               {index + 1}
             </span>
             <span className="min-w-0 flex-1 font-display text-base font-semibold text-amber-200">{head}</span>
-            {parsed.body ? <ChevronDown className="creator-chevron size-3.5 shrink-0 text-stone-500" aria-hidden="true" /> : null}
+            {body ? <ChevronDown className="creator-chevron size-3.5 shrink-0 text-stone-500" aria-hidden="true" /> : null}
           </span>
         );
         // A trait with text has a toggle holding its name only, and its body
@@ -93,7 +95,7 @@ function Traits({ slide }: { slide: LineageSlide }) {
             data-open={open || undefined}
             style={{ "--i": Math.min(index, 8) } as CSSProperties}
           >
-            {parsed.body ? (
+            {body ? (
               <button
                 type="button"
                 onClick={() => setOpenTrait(open ? null : index)}
@@ -108,7 +110,7 @@ function Traits({ slide }: { slide: LineageSlide }) {
             )}
             {open ? (
               <div id={bodyId} className="creator-trait-body pb-2.5 pl-[42px] pr-3 font-serif text-base leading-normal text-stone-300">
-                {parsed.body}
+                {body}
               </div>
             ) : null}
           </div>
@@ -124,6 +126,10 @@ function Traits({ slide }: { slide: LineageSlide }) {
 export function LineageDetails({ slide }: { slide: LineageSlide }) {
   const srd = srdRaceFor(slide.id);
   const t = useT();
+  const locale = useLocale();
+  const localizedInfo = locale === "cs" && srd && !slide.source
+    ? srd.traits.map((line) => { const trait = czechBundledSpeciesTrait(line); return trait ? `${trait.name}: ${trait.description}` : line; }).join("\n")
+    : slide.info.text;
   const choices = lineageChoices(slide, t);
   const lines = traitLines(slide);
   // A size word reads in the reader's language where the table knows it.
@@ -199,7 +205,7 @@ export function LineageDetails({ slide }: { slide: LineageSlide }) {
             {t("Lineage traits")}
             {/* The full write-up, as the old picker's info button gave it:
                 the pack's own entry when one is installed. */}
-            <InfoButton label={slide.name} text={slide.info.text} reference={slide.info.reference} />
+            <InfoButton label={slide.name} text={localizedInfo} reference={slide.info.reference} />
           </span>
           <Traits slide={slide} />
         </div>
