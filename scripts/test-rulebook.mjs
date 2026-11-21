@@ -1445,11 +1445,11 @@ try {
     assert.ok(localized.md.includes("## Úplné znění pravidel v češtině"));
     assert.ok(localized.md.includes(translated));
     assert.ok(localized.md.endsWith(source.md), "Original English deity tables changed");
-    const batches = await Promise.all(Array.from({ length: 15 }, (_, i) =>
+    const batches = await Promise.all(Array.from({ length: 16 }, (_, i) =>
       import(`../src/lib/rulebook/czech-full-rules-${i + 1}.ts`)));
     const ids = batches.flatMap((mod, i) => Object.keys(mod[`CZECH_FULL_RULES_${i + 1}`]));
-    assert.equal(ids.length, 29);
-    assert.equal(new Set(ids).size, 29, "Duplicate SRD rules page with full Czech text");
+    assert.equal(ids.length, 30);
+    assert.equal(new Set(ids).size, 30, "Duplicate SRD rules page with full Czech text");
   });
 
   await test("Czech traps include eight fully translated mechanical and magical examples", async () => {
@@ -1486,6 +1486,44 @@ try {
       "20 liber",
     ]) {
       assert.ok(translated.includes(clause), "Missing canonical trap mechanic: " + clause);
+    }
+  });
+
+  await test("complete Czech spellcasting preserves every core 2014 SRD constraint", async () => {
+    const { CZECH_FULL_RULES_16 } = await import("../src/lib/rulebook/czech-full-rules-16.ts");
+    assert.deepEqual(Object.keys(CZECH_FULL_RULES_16), ["spellcasting"]);
+    const translated = CZECH_FULL_RULES_16.spellcasting;
+    const original = rulebookPage("spellcasting", "en").page;
+    const localized = rulebookPage("spellcasting", "cs").page;
+    assert.ok(translated.length > 15000, "Spellcasting full translation is unexpectedly short");
+    assert.equal(original.id, localized.id);
+    assert.ok(localized.md.includes("## Úplné znění pravidel v češtině"));
+    assert.ok(localized.md.includes(translated), "Czech spellcasting chapter must be connected to the reader");
+    assert.ok(localized.md.endsWith(original.md), "English canonical SRD must remain unchanged");
+    for (const section of [
+      "# Co je kouzlo?", "## Pozice kouzel", "# Triky", "# Rituály",
+      "## Doba sesílání", "## Složky kouzla", "## Trvání",
+      "### Soustředění", "## Cíle kouzel", "## Oblasti účinku",
+      "# Záchranné hody proti kouzlům", "# Útočné hody kouzly",
+      "# Kombinování magických účinků",
+    ]) {
+      assert.ok(translated.includes(section), "Missing Czech spellcasting section: " + section);
+    }
+    for (const school of [
+      "Vymítání", "Vyvolávání", "Věštění", "Očarování",
+      "Zaklínání", "Iluze", "Nekromancie", "Transmutace",
+    ]) {
+      assert.ok(translated.includes("**" + school + " ("), "Missing translated school: " + school);
+    }
+    for (const clause of [
+      "17. úrovně postavy", "čtyři pozice 1. úrovně a dvě pozice 2. úrovně",
+      "o 10 minut déle", "trik, jehož doba seslání je jedna akce",
+      "SO je 10 nebo polovina utrpěného zranění",
+      "samostatný záchranný hod za každý zdroj zranění",
+      "SO záchranného hodu proti tvému kouzlu = 8",
+      "Bonus k útoku kouzlem =", "Účinky **téhož kouzla seslaného vícekrát se však nesčítají**",
+    ]) {
+      assert.ok(translated.includes(clause), "Missing spellcasting rule: " + clause);
     }
   });
 
