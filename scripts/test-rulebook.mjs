@@ -1241,6 +1241,64 @@ try {
     assert.ok(madness.includes("*Mocné navrácení*"));
   });
 
+  await test("complete Czech multiclassing and background rules remain source-faithful", async () => {
+    const { CZECH_FULL_RULES_9 } = await import("../src/lib/rulebook/czech-full-rules-9.ts");
+    const { CZECH_FULL_RULES_10 } = await import("../src/lib/rulebook/czech-full-rules-10.ts");
+    assert.deepEqual(Object.keys(CZECH_FULL_RULES_9), ["multiclassing"]);
+    assert.deepEqual(Object.keys(CZECH_FULL_RULES_10), ["backgrounds"]);
+    const translated = { ...CZECH_FULL_RULES_9, ...CZECH_FULL_RULES_10 };
+    for (const [id, content] of Object.entries(translated)) {
+      const en = rulebookPage(id, "en")?.page;
+      const cs = rulebookPage(id, "cs")?.page;
+      assert.ok(en && cs, `Canonical page missing: ${id}`);
+      assert.equal(en.id, cs.id);
+      assert.equal(en.kind, "rules");
+      assert.ok(content.length > 6000, `Incomplete Czech translation: ${id}`);
+      assert.ok(cs.md.startsWith("## Český přehled pravidel"));
+      assert.ok(cs.md.includes("## Úplné znění pravidel v češtině"));
+      assert.ok(cs.md.includes(content));
+      assert.ok(cs.md.endsWith(en.md), `Original English rule altered: ${id}`);
+    }
+    const batches = await Promise.all([1, 2, 3, 4, 5, 6, 7, 8, 9, 10].map(
+      async (n) => {
+        const module = await import(`../src/lib/rulebook/czech-full-rules-${n}.ts`);
+        return module[`CZECH_FULL_RULES_${n}`];
+      },
+    ));
+    const ids = batches.flatMap((batch) => Object.keys(batch));
+    assert.equal(ids.length, 24);
+    assert.equal(new Set(ids).size, 24, "Duplicate page ID in full Czech rules dictionaries");
+  });
+
+  await test("Czech multiclassing and acolyte preserve every numeric table and rule", async () => {
+    const { CZECH_FULL_RULES_9 } = await import("../src/lib/rulebook/czech-full-rules-9.ts");
+    const { CZECH_FULL_RULES_10 } = await import("../src/lib/rulebook/czech-full-rules-10.ts");
+    const multi = CZECH_FULL_RULES_9.multiclassing;
+    const backgrounds = CZECH_FULL_RULES_10.backgrounds;
+    for (const klass of ["Barbar", "Bard", "Klerik", "Druid", "Bojovník",
+      "Mnich", "Paladin", "Hraničář", "Tulák", "Čaroděj",
+      "Černokněžník", "Kouzelník"]) {
+      assert.ok(multi.includes(`| ${klass} |`), `Missing multiclass prerequisite: ${klass}`);
+    }
+    for (let level = 1; level <= 20; level++) {
+      assert.ok(multi.includes(`| ${level} |`), `Multiclass spell slot table missing level ${level}`);
+    }
+    assert.ok(multi.includes("| 20 | 4 | 3 | 3 | 3 | 3 | 2 | 2 | 1 | 1 |"));
+    assert.ok(multi.includes("polovinu úrovní paladina a hraničáře, zaokrouhlenou dolů"));
+    assert.ok(multi.includes("Usměrnění božské energie"));
+    assert.ok(multi.includes("Paktová magie"));
+    assert.ok(backgrounds.includes("**Zdatnosti v dovednostech:** Odhad, Náboženství"));
+    assert.ok(backgrounds.includes("**15 zlatými**"));
+    assert.ok(backgrounds.includes("### Schopnost: Útočiště věřících"));
+    assert.ok(backgrounds.includes("## Akolyta"));
+    for (let n = 1; n <= 8; n++) {
+      assert.ok(backgrounds.includes(`| ${n} |`), `Missing akolyte personality trait ${n}`);
+    }
+    for (const table of ["| k6 | Ideál |", "| k6 | Pouto |", "| k6 | Vada |"]) {
+      assert.ok(backgrounds.includes(table), `Missing background characteristic table: ${table}`);
+    }
+  });
+
   // ---- the routes ----
   const { createUser } = await import("../src/lib/db/users.ts");
   const { mintSession } = await import("../src/lib/auth.ts");
