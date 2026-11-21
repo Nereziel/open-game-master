@@ -194,7 +194,11 @@ full original English text. `src/lib/rulebook/czech-companion.ts` adds
 original Czech summaries on **932 of the 933 canonical SRD pages**:
 35 of 36 core rules pages, all 319 SRD spells, all 318 monsters,
 all 239 magic items, all 12 classes and all nine playable races.
-Full Czech translations currently cover **28 of 35 nonlegal rules pages**.
+Full Czech translations currently cover **29 of 35 nonlegal rules pages**.
+The new `czech-full-rules-15.ts` translates the full **Traps** chapter, including
+triggering and disabling traps, severity tables, complex traps, and all eight
+sample traps with their saving throws, attack bonuses and damage values.
+The Czech reader retains the full English source directly below the translation.
 The newest full-text batch adds the complete **Spell Lists** and
 **Gods of the Multiverse** rule chapters. Every one of the **778 spell-list
 positions** across **8 spellcasting classes** and their 70 level groupings
@@ -256,7 +260,7 @@ were translated independently from the **English SRD 5.1 under CC BY 4.0**;
 they are **not** copied from the d20.cz/ShadoWWW fan translation.
 These 10 pages show the complete Czech text and tables after their brief
 Czech overview. The original English SRD content remains below for
-verification and exact reference. The remaining **7 nonlegal rules pages**
+verification and exact reference. The remaining **6 nonlegal rules pages**
 and the spells, monster stat blocks, classes, races and items still need
 full detailed translations even though they all have Czech summaries.
 Source and translation licensing are documented in `docs/srd-czech-translation.md`.
