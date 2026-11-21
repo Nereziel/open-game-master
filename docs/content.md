@@ -194,7 +194,15 @@ full original English text. `src/lib/rulebook/czech-companion.ts` adds
 original Czech summaries on **932 of the 933 canonical SRD pages**:
 35 of 36 core rules pages, all 319 SRD spells, all 318 monsters,
 all 239 magic items, all 12 classes and all nine playable races.
-Full Czech translations currently cover **31 of 35 nonlegal rules pages**.
+Full Czech translations currently cover **32 of 35 nonlegal rules pages**.
+The new `czech-full-rules-18.ts` adds the complete **Adventuring Gear**
+chapter, with Czech descriptions of all equipment that has special mechanics,
+all seven class equipment packs, the 103-row source gear price and weight
+table, and all 13 container capacities. Original distances, dice, DCs,
+prices and weights are preserved, with optional metric explanations;
+the unmodified English SRD chapter remains below the Czech text.
+The imported SRD data contains a split numeral for the healing potion's
+50 gp price; the Czech table presents that price correctly as 50 zl.
 The new `czech-full-rules-17.ts` adds the full **Adventuring** chapter:
 time scales, movement and travel pace with the source distance units,
 forced marches and exhaustion, terrain, climbing/swimming/jumping,
@@ -275,7 +283,7 @@ were translated independently from the **English SRD 5.1 under CC BY 4.0**;
 they are **not** copied from the d20.cz/ShadoWWW fan translation.
 These 10 pages show the complete Czech text and tables after their brief
 Czech overview. The original English SRD content remains below for
-verification and exact reference. The remaining **4 nonlegal rules pages**
+verification and exact reference. The remaining **3 nonlegal rules pages**
 and the spells, monster stat blocks, classes, races and items still need
 full detailed translations even though they all have Czech summaries.
 Source and translation licensing are documented in `docs/srd-czech-translation.md`.
