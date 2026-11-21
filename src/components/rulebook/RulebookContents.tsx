@@ -230,8 +230,8 @@ export function RulebookContents({
 
       {locale === "cs" ? (
         <p className="rb-legal">
-          Česká verze zatím obsahuje přehledy základních pravidel, ne úplný překlad všech stránek.
-          Úplný text SRD 5.1 zůstává v angličtině.{" "}
+          Česká verze obsahuje česká shrnutí pravidel a popisy vybraných kouzel, nestvůr a magických předmětů.
+          Nejde zatím o úplný překlad SRD 5.1; původní anglické znění je u položek zachováno.{" "}
           <a href="https://dnd5esrd.d20.cz/" target="_blank" rel="noreferrer">
             Komunitní český překlad na d20.cz
           </a>
