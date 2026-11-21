@@ -45,7 +45,7 @@ licence převzetí výslovně dovolí, a za příslušných podmínek s atribuc�
 - Aktuálně nově přeložené celé kapitoly **Kombinování povolání** a
   **Zázemí**, včetně všech tabulek a všech 26 návrhů vlastností akolyty.
 - Nově přeloženy také celé kapitoly **Zbraně** a **Výdaje**, včetně
-  všech 37 zbraní a třech tabulek životních nákladů, jídla a služeb.
+  všech 37 zbraní a tří tabulek životních nákladů, jídla a služeb.
 - Úplné české texty kouzel, statistiky nestvůr, předmětů, ras a povolání:
   zbývá dopracovat; přehledy nejsou totéž co plné překlady.
 - Testy ověřují dostupnost úplných textů a zachování originálu, ale před
