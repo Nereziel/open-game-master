@@ -227,11 +227,46 @@ všechny **3 typy zařízení**.
 Byly přidány regresní kontroly v `scripts/test-rulebook.mjs`;
 sada testů ani build se na Draft PR podle dohody zatím nespouštěly.
 
+## Úplný překlad všech triků SRD 5.1 (21. 11. 2026)
+
+Prvních **24 úplných českých popisů kouzel** je dokončeno.
+Jde o **24/24 triků (0. úroveň)** v kanonickém anglickém SRD 5.1,
+tedy o 24 z celkových 319 jednotlivých stránek kouzel.
+
+- `src/lib/rulebook/czech-full-spells-1.ts`: Kyselinová koule,
+  Dotek smrti, Tančící světla, Druidství, Tajemný výšleh, Ohnivá střela,
+  Vedení, Světlo, Mágova ruka, Oprav, Zpráva, Drobná iluze.
+- `src/lib/rulebook/czech-full-spells-2.ts`: Jedová sprška,
+  Kejkle, Stvoř plamen, Mrazivý paprsek, Odolání, Posvátný plamen,
+  Sukovice, Šokující sevření, Ušetři umírajícího, Taumaturgie,
+  Přesný úder, Zlomyslný výsměch.
+
+**Každý překlad** obsahuje dobu sesílání, dosah, původní kombinaci
+složek V/S/M, české vysvětlení materiálních složek, trvání a úplný
+popis účinků, včetně omezení a případného vývoje podle úrovně.
+Vysvětlující pasáže jsou **samostatně přeložené z anglického SRD 5.1
+(CC BY 4.0)**; ze zavedené české terminologie se přebírají pouze
+samostatné názvy kouzel a pravidlové pojmy.
+
+Překlady se načítají prostřednictvím `czech-companion.ts`.
+Původní anglická ID, anglický obsah stránek, zdrojová metadata
+i herní/MCP klíče zůstávají zachované. Czech reader zobrazuje české
+znění před původním anglickým zněním.
+
+**Statická kontrola** všech 24 kouzel potvrdila shodu všech čtyř
+parametrů sesílání a kombinací složek V/S/M, zachování všech kostek
+zranění a bonusů, výčtů účinků i původního pořadí ID. Zároveň je
+zaveden test se specifickými kontrolami kouzel
+v `scripts/test-rulebook.mjs`.
+Build ani automatické testy na Draft PR podle dohody zatím
+nebyly spuštěny.
+
 ## Stav
 
 - Stručné české přehledy: 932/933 kanonických stránek (výjimkou je atribuce).
 - Úplné české znění pravidlových stránek: **35/35 obsahových pravidlových stránek**.
 - Úplné české překlady jednotlivých ras: **9/9 rasových stránek SRD 5.1**, včetně všech podras obsažených ve zdrojovém SRD.
+- Úplné české popisy jednotlivých kouzel: **24/319**, tj. **24/24 triků SRD 5.1**.
 - Dříve dokončené kapitoly zahrnují **Stavy, Nemoci, Objekty, Artefakty** a další pravidla.
 - V další dávce jsou úplně přeloženy kapitoly **Jízdní zvířata a dopravní prostředky, Nástroje, Kouzelné předměty, Jedy a Inteligentní kouzelné předměty**.
 - Následující dávka přeložila celé kapitoly **Zbroje**, **Šílenství** a
