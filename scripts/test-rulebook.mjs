@@ -2005,6 +2005,129 @@ try {
     }
   });
 
+  await test("first 21 level-one SRD 5.1 spells have complete Czech mechanics and unchanged English originals", async () => {
+    const [{ CZECH_FULL_SPELLS_3 }, { CZECH_FULL_SPELLS_4 }, { CZECH_SPELLS }] = await Promise.all([
+      import("../src/lib/rulebook/czech-full-spells-3.ts"),
+      import("../src/lib/rulebook/czech-full-spells-4.ts"),
+      import("../src/lib/rulebook/czech-terms.ts"),
+    ]);
+    const translated = { ...CZECH_FULL_SPELLS_3, ...CZECH_FULL_SPELLS_4 };
+    const firstLevel = rulebookPages("en").filter((page) =>
+      page.kind === "spell" && page.meta?.startsWith("1st-level"));
+    assert.equal(firstLevel.length, 49, "Unexpected SRD 5.1 first-level spell count");
+    assert.equal(Object.keys(CZECH_FULL_SPELLS_3).length, 13);
+    assert.equal(Object.keys(CZECH_FULL_SPELLS_4).length, 8);
+    assert.deepEqual(Object.keys(translated), firstLevel.slice(0, 21).map((p) => p.id),
+      "First-level spell translations must use canonical IDs and original order");
+
+    const fieldLabels = [
+      ["Casting Time", "Doba sesílání"],
+      ["Range", "Dosah"],
+      ["Components", "Složky"],
+      ["Duration", "Trvání"],
+    ];
+    const originalField = (md, name) => md.split("\n")
+      .find((line) => line.startsWith("**" + name + ":** "))?.slice(("**" + name + ":** ").length);
+    const expected = {
+      "Casting Time": {
+        "1 action": "1 akce",
+        "1 bonus action": "1 bonusová akce",
+        "1 minute": "1 minuta",
+        "1 reaction, which you take when you or a creature within 60 feet of you falls": "1 reakce",
+      },
+      Range: {
+        "30 feet": "30 stop",
+        "60 feet": "60 stop",
+        "90 feet": "90 stop",
+        Self: "Sesilatel",
+        "Self (15-foot cone)": "Sesilatel (kužel 15 stop",
+        Touch: "Dotyk",
+      },
+      Duration: {
+        "8 hours": "8 hodin",
+        "24 hours": "24 hodin",
+        "Concentration, up to 1 minute": "Soustředění, až 1 minuta",
+        Instantaneous: "Ihned",
+        "1 hour": "1 hodina",
+        "1 round": "1 kolo",
+        "Concentration, up to 10 minutes": "Soustředění, až 10 minut",
+        "1 minute": "1 minuta",
+      },
+    };
+    for (const page of firstLevel.slice(0, 21)) {
+      const translation = translated[page.id];
+      const localized = rulebookPage(page.id, "cs")?.page;
+      const canonical = rulebookPage(page.id, "en")?.page;
+      assert.ok(localized && canonical, "Missing spell page: " + page.id);
+      assert.equal(localized.id, canonical.id);
+      assert.equal(localized.kind, "spell");
+      assert.equal(localized.title, CZECH_SPELLS[page.title],
+        "Spell title must use the established Czech glossary: " + page.id);
+      assert.ok(translation.length > 250, "Incomplete Czech spell: " + page.id);
+      assert.ok(localized.md.includes("## Úplné znění pravidel v češtině"));
+      assert.ok(localized.md.includes(translation), "Full Czech spell not rendered: " + page.id);
+      assert.ok(localized.md.endsWith(canonical.md),
+        "Canonical English source was changed: " + page.id);
+      assert.equal(localized.originalMeta, canonical.meta,
+        "Canonical spell metadata must remain accessible: " + page.id);
+
+      for (const [englishName, czechName] of fieldLabels) {
+        const sourceValue = originalField(page.md, englishName);
+        const translatedValue = originalField(translation, czechName);
+        assert.ok(sourceValue && translatedValue, "Missing spell attribute: " + page.id);
+        if (englishName === "Components") {
+          const letters = (x) => x.match(/^[VSM, ]+/)?.[0].trim();
+          assert.equal(letters(translatedValue), letters(sourceValue),
+            "Spell components changed: " + page.id);
+        } else {
+          assert.ok(translatedValue.startsWith(expected[englishName][sourceValue]),
+            "Casting time, range or duration changed: " + page.id + "/" + englishName);
+        }
+      }
+      const englishDice = [...new Set(page.md.match(/\b\d*d\d+\b/g) ?? [])];
+      for (const die of englishDice) {
+        assert.ok(translation.includes(die.replace("d", "k")),
+          "Damage, healing or effect dice changed: " + page.id + "/" + die);
+      }
+      const sections = (md) => md.split("\n").filter((line) => /^\*\*\*[^*]+\*\*\*/.test(line)).length;
+      assert.equal(sections(translation), sections(page.md),
+        "Missing named effect or higher-level spellcasting section: " + page.id);
+      if (page.md.includes("***At Higher Levels***")) {
+        assert.ok(translation.includes("***Na vyšších úrovních.***"),
+          "Higher-level scaling must be translated: " + page.id);
+      }
+    }
+
+    for (const [id, restrictions] of Object.entries({
+      alarm: ["**1 míle**", "**10 sekund**", "**60 stop (12 sáhů)**"],
+      "animal-friendship": ["**Inteligenci 4 nebo vyšší**", "**vidět i slyšet**"],
+      bane: ["**záchrannému hodu na Charisma**", "**odečíst**"],
+      bless: ["**k4**", "**přičíst**"],
+      "burning-hands": ["**3k6 ohnivého zranění**", "**polovinu**"],
+      "charm-person": ["**výhodu**", "**Po skončení kouzla ví**"],
+      "color-spray": ["**6k10**", "**oslepený až do konce tvého dalšího tahu**"],
+      command: ["***Přistup.***", "***Pusť.***", "***Uteč.***", "***Poklekni.***", "***Zastav.***"],
+      "comprehend-languages": ["**dotýkáš povrchu**", "**jedné stránky trvá přibližně 1 minutu**"],
+      "create-or-destroy-water": ["***Stvoření vody.***", "***Zničení vody.***", "**10 galonů**"],
+      "cure-wounds": ["**1k8 + opravu tvé sesílací vlastnosti životů**", "**neúčinkuje na nemrtvé ani na výtvory**"],
+      "detect-evil-and-good": ["**zrůda, nebešťan, elementál, víla, běs nebo nemrtvý**"],
+      "detect-magic": ["**svou akcí**", "**školu magie**"],
+      "detect-poison-and-disease": ["**přítomnost a polohu jedů, jedovatých tvorů a nemocí**"],
+      "disguise-self": ["**Základní stavbu těla ani uspořádání končetin však změnit nemůžeš**"],
+      "divine-favor": ["**1k4 zářivého zranění**"],
+      entangle: ["**obtížným terénem**", "**zadržený**", "**svou akci k ověření Síly**"],
+      "expeditious-retreat": ["**bonusovou akcí**", "**v každém svém dalším tahu**"],
+      "faerie-fire": ["**záchranném hodu na Obratnost**", "**nemůže těžit z neviditelnosti**"],
+      "false-life": ["**1k4 + 4 dočasné životy**", "**5 dočasných životů za každou úroveň pozice nad 1.**"],
+      "feather-fall": ["**pět padajících tvorů**", "**60 stop (12 sáhů) za kolo**", "**neutrpí zranění pádem**"],
+    })) {
+      for (const phrase of restrictions) {
+        assert.ok(translated[id].includes(phrase),
+          "Missing first-level spell rule: " + id + "/" + phrase);
+      }
+    }
+  });
+
   await test("all nine SRD 5.1 races have full independent Czech traits with unchanged English pages", async () => {
     const { CZECH_FULL_RACES_1 } = await import("../src/lib/rulebook/czech-full-races-1.ts");
     const { CZECH_FULL_RACES_2 } = await import("../src/lib/rulebook/czech-full-races-2.ts");
