@@ -194,7 +194,19 @@ full original English text. `src/lib/rulebook/czech-companion.ts` adds
 original Czech summaries on **932 of the 933 canonical SRD pages**:
 35 of 36 core rules pages, all 319 SRD spells, all 318 monsters,
 all 239 magic items, all 12 classes and all nine playable races.
-Full Czech translations currently cover **34 of 35 nonlegal rules pages**.
+Full Czech translations now cover **all 35 of 35 nonlegal rules pages**.
+The final `czech-full-rules-21.ts` translates **Monster Statistics**:
+six size categories, all 14 creature types, alignments, armor class,
+hit dice and average hit points, all movement modes, saving throws and skills,
+damage resistances and conditions, four special senses, languages and telepathy,
+challenge ratings, the complete 34-row proficiency and XP tables,
+innate and class-based spellcasting, psionics, monster attacks and grapples,
+multiattack, ammunition, limited-use and recharge abilities, equipment,
+and legendary creatures, legendary actions, lair actions and regional effects.
+The source importer omits XP rows for CR 9–13 and CR 26–30, and truncates
+the Spellcasting paragraph. These source gaps were restored in Czech against
+the official 2014 D&D Basic Rules while preserving the imported English JSON
+and canonical rulebook IDs.
 The new `czech-full-rules-20.ts` supplies a complete Czech translation
 of the **Combat** chapter: initiative, surprise, rounds and turns,
 movement and combat actions, reactions and opportunity attacks,
@@ -298,9 +310,9 @@ were translated independently from the **English SRD 5.1 under CC BY 4.0**;
 they are **not** copied from the d20.cz/ShadoWWW fan translation.
 These 10 pages show the complete Czech text and tables after their brief
 Czech overview. The original English SRD content remains below for
-verification and exact reference. The remaining **1 nonlegal rules page**
-and the spells, monster stat blocks, classes, races and items still need
-full detailed translations even though they all have Czech summaries.
+verification and exact reference. All 35 nonlegal rules pages now have complete Czech text, but individual
+spells, monster stat blocks, classes, races and items still need full
+detailed translations even though they already have Czech summaries.
 Source and translation licensing are documented in `docs/srd-czech-translation.md`.
 The sole exception is the CC BY 4.0 legal notice, which retains its full
 original English attribution verbatim, with a Czech display title.
