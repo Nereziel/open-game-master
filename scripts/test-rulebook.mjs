@@ -595,15 +595,16 @@ try {
     }
   });
 
-  await test("sixth wave: 31 Czech spell summaries preserve every canonical SRD page", () => {
+  await test("Additional 20 level-five Czech spell notes preserve every canonical SRD page", () => {
     const english = rulebookPages("en").filter((entry) => entry.kind === "spell");
     const byTitle = new Map(english.map((entry) => [entry.title, entry]));
     const keys = Object.keys(CZECH_SPELL_NOTES_6);
-    assert.equal(keys.length, 31, "New 3rd/4th-level spell batch count");
+    assert.equal(keys.length, 20, "New fifth-level spell batch count");
     const previous = new Set([
       ...Object.keys(CZECH_SPELL_NOTES), ...Object.keys(CZECH_SPELL_NOTES_2),
       ...Object.keys(CZECH_SPELL_NOTES_3), ...Object.keys(CZECH_SPELL_NOTES_4),
       ...Object.keys(CZECH_SPELL_NOTES_5),
+      ...Object.keys(CZECH_SPELL_NOTES_6A), ...Object.keys(CZECH_SPELL_NOTES_6B),
     ]);
     for (const [englishName, summary] of Object.entries(CZECH_SPELL_NOTES_6)) {
       assert.ok(!previous.has(englishName), `Duplicated Czech spell notes: ${englishName}`);
@@ -616,7 +617,7 @@ try {
       assert.ok(localized.md.includes(summary), `Czech summary not shown: ${englishName}`);
       assert.ok(localized.md.endsWith(original.md), `Changed English SRD mechanics: ${englishName}`);
     }
-    assert.ok(Object.keys(CZECH_SPELLS).length >= 238);
+    assert.ok(Object.keys(CZECH_SPELLS).length >= 259);
   });
 
   await test("Czech magic item and monster metadata are display-only and retain original metadata", () => {
