@@ -288,7 +288,7 @@ export function CallingStep({
           <InfoDialog
             open={Boolean(details)}
             onOpenChange={(open) => (open ? undefined : setDetailsFor(null))}
-            title={details?.name ?? ""}
+            title={details ? contentName("classes", { slug: details.id, name: details.name }, locale) : ""}
             // The card's role and "plays like", said again where the class
             // is read about at length.
             meta={
@@ -302,7 +302,7 @@ export function CallingStep({
                   }).join(" · ")
                 : undefined
             }
-            text={details?.infoText}
+            text={details?.infoText ? t(details.infoText) : undefined}
             reference={details?.reference}
           />
         </Field>
@@ -320,12 +320,12 @@ export function CallingStep({
               {subclass ? (
                 <>
                   <span className="grow">
-                    {firstSentence(chosenArchetype?.desc || subclassBlurb(klass?.id ?? "", subclass)) ??
+                    {firstSentence(t(chosenArchetype?.desc || subclassBlurb(klass?.id ?? "", subclass) || "")) ??
                       t("A specialization within your class.")}
                   </span>
                   <InfoButton
-                    label={subclass}
-                    text={chosenArchetype?.desc || subclassBlurb(klass?.id ?? "", subclass) || undefined}
+                    label={contentName("subclasses", subclass, locale)}
+                    text={chosenArchetype?.desc || subclassBlurb(klass?.id ?? "", subclass) ? t(chosenArchetype?.desc || subclassBlurb(klass?.id ?? "", subclass)) : undefined}
                     reference={
                       chosenArchetype ? { kind: "archetypes", slug: chosenArchetype.id } : undefined
                     }
