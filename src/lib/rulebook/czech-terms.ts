@@ -375,6 +375,89 @@ export const CZECH_SCHOOLS: Readonly<Record<string, string>> = {
   transmutation: "Transmutace",
 };
 
+// The stat-block subtitle is display text, not part of the rules-engine
+// record. Translate only grammar we know; keep unknown source fragments.
+const CZECH_MONSTER_SIZES: Readonly<Record<string, string>> = {
+  Tiny: "Drobný",
+  Small: "Malý",
+  Medium: "Střední",
+  Large: "Velký",
+  Huge: "Obrovský",
+  Gargantuan: "Gigantický",
+};
+
+const CZECH_CREATURE_TYPES: Readonly<Record<string, string>> = {
+  aberration: "aberace",
+  beast: "zvíře",
+  celestial: "nebešťan",
+  construct: "konstrukt",
+  dragon: "drak",
+  elemental: "elementál",
+  fey: "víla",
+  fiend: "běs",
+  giant: "obr",
+  humanoid: "humanoid",
+  monstrosity: "zrůda",
+  ooze: "sliz",
+  plant: "rostlina",
+  undead: "nemrtvý",
+};
+
+const CZECH_ALIGNMENTS: Readonly<Record<string, string>> = {
+  "lawful good": "zákonně dobrý",
+  "neutral good": "neutrálně dobrý",
+  "chaotic good": "chaoticky dobrý",
+  "lawful neutral": "zákonně neutrální",
+  neutral: "neutrální",
+  "chaotic neutral": "chaoticky neutrální",
+  "lawful evil": "zákonně zlý",
+  "neutral evil": "neutrálně zlý",
+  "chaotic evil": "chaoticky zlý",
+  unaligned: "bez přesvědčení",
+  "any alignment": "libovolné přesvědčení",
+};
+
+export function czechSrdMonsterMeta(meta: string): string {
+  const match = /^(Tiny|Small|Medium|Large|Huge|Gargantuan)\s+([\w-]+)(\s*\([^)]*\))?,\s*(.*)$/i.exec(meta);
+  if (!match) return meta;
+  const size = CZECH_MONSTER_SIZES[Object.keys(CZECH_MONSTER_SIZES).find((k) => k.toLowerCase() === match[1].toLowerCase()) ?? ""];
+  const creatureType = CZECH_CREATURE_TYPES[match[2].toLowerCase()];
+  if (!size || !creatureType) return meta;
+  return `${size} ${creatureType}${match[3] ?? ""}, ${CZECH_ALIGNMENTS[match[4].toLowerCase()] ?? match[4]}`;
+}
+
+type CzechItemType = { label: string; gender: "m" | "f" | "n" };
+const CZECH_ITEM_TYPES: Readonly<Record<string, CzechItemType>> = {
+  "Wondrous item": { label: "Divotvorný předmět", gender: "m" },
+  Weapon: { label: "Zbraň", gender: "f" },
+  Armor: { label: "Zbroj", gender: "f" },
+  Potion: { label: "Lektvar", gender: "m" },
+  Ring: { label: "Prsten", gender: "m" },
+  Rod: { label: "Žezlo", gender: "n" },
+  Staff: { label: "Berla", gender: "f" },
+  Wand: { label: "Hůlka", gender: "f" },
+  Scroll: { label: "Svitek", gender: "m" },
+};
+
+const CZECH_RARITY: Readonly<Record<string, Readonly<Record<"m" | "f" | "n", string>>>> = {
+  common: { m: "běžný", f: "běžná", n: "běžné" },
+  uncommon: { m: "neobvyklý", f: "neobvyklá", n: "neobvyklé" },
+  rare: { m: "vzácný", f: "vzácná", n: "vzácné" },
+  "very rare": { m: "velmi vzácný", f: "velmi vzácná", n: "velmi vzácné" },
+  legendary: { m: "legendární", f: "legendární", n: "legendární" },
+  artifact: { m: "artefakt", f: "artefakt", n: "artefakt" },
+};
+
+export function czechSrdItemMeta(meta: string): string {
+  const match = /^([A-Za-z ]+?)(\s*\([^)]*\))?,\s*(common|uncommon|rare|very rare|legendary|artifact)(.*)$/i.exec(meta);
+  if (!match) return meta;
+  const type = CZECH_ITEM_TYPES[Object.keys(CZECH_ITEM_TYPES).find((k) => k.toLowerCase() === match[1].toLowerCase()) ?? ""];
+  const rarity = CZECH_RARITY[match[3].toLowerCase()];
+  if (!type || !rarity) return meta;
+  const suffix = match[4].replace(/requires attunement/gi, "vyžaduje sladění");
+  return `${type.label}${match[2] ?? ""}, ${rarity[type.gender]}${suffix}`;
+}
+
 export function czechSrdSpellMeta(meta: string): string {
   // The English import writes "3rd-level evocation", optionally "(ritual)".
   // Some print variants begin with the school and end in "cantrip".
