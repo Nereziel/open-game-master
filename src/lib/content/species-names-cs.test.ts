@@ -3,6 +3,7 @@ import racesJson from "@/lib/srd/races.json";
 import { CS_NAMES_BY_TABLE } from "./names-cs";
 import { contentName } from "./names";
 import { installCsTables } from "@/lib/i18n/cs-tables";
+import { CZECH_BUNDLED_SPECIES_TRAITS, czechBundledSpeciesTrait } from "./species-traits-cs";
 
 // The builder uses the English race name, while other pickers also pass an
 // underscore/kebab-case id. Both paths must resolve to the same Czech label.
@@ -21,6 +22,22 @@ describe("Czech labels for all bundled playable races", () => {
       expect(byName, `Missing Czech name for ${race.name}`).toBeTruthy();
       expect(byId, `Missing Czech ID alias for ${race.id}`).toBe(byName);
     }
+  });
+
+  it("provides a Czech title and actual rule explanation for every bundled racial trait", () => {
+    const englishTraits = [...new Set(races.flatMap((race) => race.traits))];
+    expect(englishTraits).toHaveLength(126);
+    expect(Object.keys(CZECH_BUNDLED_SPECIES_TRAITS)).toHaveLength(126);
+    for (const trait of englishTraits) {
+      const translated = czechBundledSpeciesTrait(trait);
+      expect(translated?.name, `Missing Czech racial trait title: ${trait}`).toBeTruthy();
+      expect(translated?.description?.length, `Missing Czech explanation: ${trait}`).toBeGreaterThan(12);
+      expect(/[\u00c0-\u017f]/u.test(`${translated?.name} ${translated?.description}`)).toBe(true);
+    }
+    expect(czechBundledSpeciesTrait("Homebrew boon")).toBeNull();
+    expect(czechBundledSpeciesTrait("Dwarven Resilience (adv. vs poison)")?.name).toBe("Trpasličí odolnost");
+    expect(czechBundledSpeciesTrait("Fey Ancestry (adv. vs charm, immune to magical sleep)")?.name).toBe("Vílí původ");
+    expect(czechBundledSpeciesTrait("Stone's Endurance (reduce damage by 1d12 + CON, 1/short rest)")?.name).toBe("Kamenná výdrž");
   });
 
   it("distinguishes subraces and translates names in character creation", () => {
