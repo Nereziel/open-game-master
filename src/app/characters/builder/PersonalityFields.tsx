@@ -2,8 +2,9 @@
 
 import { useId, useState } from "react";
 import { cn } from "@/lib/cn";
-import { useT } from "@/lib/locale";
+import { useLocale, useT } from "@/lib/locale";
 import {
+  GENERAL_PERSONA,
   PERSONA_HINTS,
   PERSONA_KEYS,
   PERSONA_LABELS,
@@ -36,6 +37,7 @@ export function PersonalityFields({
   backgroundName?: string;
 }) {
   const t = useT();
+  const locale = useLocale();
   const baseId = useId();
   // Lines the player chose to write, kept open while still blank.
   const [writing, setWriting] = useState<Partial<Record<PersonaKey, boolean>>>({});
@@ -44,13 +46,19 @@ export function PersonalityFields({
   return (
     <div className="grid grid-cols-1 gap-4">
       {PERSONA_KEYS.map((key) => {
-        const list = suggestions.lists[key];
+        // External packs can supply English characteristic tables without Czech
+        // translations. Do not offer untranslated choices to Czech players:
+        // fall back to the fully localized general set for that field.
+        // Keep the stored values (the original English source strings) intact.
+        const originalList = suggestions.lists[key];
+        const hasUntranslatedChoice = locale === "cs" && originalList.some((line) => t(line) === line);
+        const list = hasUntranslatedChoice ? GENERAL_PERSONA[key] : originalList;
         const current = value[key] ?? "";
         const own = writing[key] || (current !== "" && !list.includes(current));
         const captionId = `${baseId}-${key}`;
         const groups: PickerGroup[] = [
           {
-            label: suggestions.fromBackground && backgroundName ? t("Suggested for {background}", { background: backgroundName }) : t("Suggestions"),
+            label: !hasUntranslatedChoice && suggestions.fromBackground && backgroundName ? t("Suggested for {background}", { background: backgroundName }) : t("Suggestions"),
             options: list.map((line) => ({ id: line, name: t(line) })),
           },
           {
