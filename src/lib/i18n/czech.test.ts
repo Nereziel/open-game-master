@@ -20,6 +20,7 @@ import { STANDARD_LANGUAGES } from "../content/mechanics";
 import { languageLabel } from "../content/languages-cs";
 import { backgroundInfoText, classInfoText } from "../../app/characters/builder/usePickerGroups";
 import { CZECH_BUILDER_CLASS_RULES } from "../../app/characters/builder/classRulesCs";
+import { GENRE_CLASS_CS } from "../classes/genre-class-cs";
 import { knownSoFarRows } from "../../app/characters/builder/buildMath";
 import { CUSTOM_BACKGROUNDS, describeBackgroundFeature } from "../backgrounds";
 import { resourceDisplayName, resourceGuidance } from "../srd/class-resources-fr";
@@ -78,6 +79,24 @@ describe("Czech localization", () => {
     expect(contentName("backgrounds", "Corpo Dropout", "cs")).toBe("Odpadlík korporace");
   });
 
+
+  it("translates names and descriptions for all 36 original genre classes", () => {
+    expect(Object.keys(GENRE_CLASS_CS)).toHaveLength(36);
+    const grave = {
+      id: "grave_knight",
+      name: "Grave Knight",
+      blurb: "Sworn to a power in the earth, they carry a blade that answers their call and an aura of the tomb.",
+    };
+    expect(contentName("classes", grave.name, "cs")).toBe("Hrobový rytíř");
+    const czech = classInfoText(grave, (key) => translate("cs", key), "cs");
+    expect(czech).toContain("Rytíř přísahající moci");
+    expect(czech).not.toContain(grave.blurb);
+    expect(classInfoText(grave, (key) => translate("en", key), "en")).toBe(grave.blurb);
+    for (const [id, item] of Object.entries(GENRE_CLASS_CS)) {
+      expect(item.name.length, id).toBeGreaterThan(2);
+      expect(item.blurb.length, id).toBeGreaterThan(30);
+    }
+  });
 
   it("shows complete Czech class descriptions and localized known-pick sources in character details", () => {
     expect(Object.keys(CZECH_BUILDER_CLASS_RULES)).toHaveLength(12);

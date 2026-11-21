@@ -15,6 +15,7 @@ import { translate, type Locale } from "@/lib/i18n/translate";
 import { csTables } from "@/lib/i18n/cs-tables";
 import { srdRaceId } from "@/lib/srd/race-id";
 import { frTables } from "@/lib/i18n/fr-tables";
+import { genreClassCs } from "@/lib/classes/genre-class-cs";
 
 // The tables the maps carry, as the helper's callers name them.
 export type FrNamesTable =
@@ -152,6 +153,11 @@ export function contentName(
   const row: NamedRow = typeof ref === "string" ? { name: ref } : ref;
   if (locale === "en" || !row.name || (row.source && row.source !== "open5e")) {
     return row.name;
+  }
+  if (locale === "cs" && table === "classes") {
+    const id = (row.slug || slugKey(row.name)).replace(/-/g, "_");
+    const bundled = genreClassCs(id);
+    if (bundled) return bundled.name;
   }
   const tables: readonly FrNamesTable[] = table === "items" ? ITEM_TABLES : [table];
   for (const each of tables) {
