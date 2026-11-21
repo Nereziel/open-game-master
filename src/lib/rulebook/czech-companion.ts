@@ -155,6 +155,13 @@ const BLURBS: Record<string, string> = {
   appendix: "Doplňující informace a licence.",
 };
 
+// Appendix headings are looked up by their original SRD titles so their
+// canonical page IDs and deep links remain unchanged.
+const APPENDIX_PAGE_TITLES: Record<string, string> = {
+  "Gods of the Multiverse": "Bohové multivesmíru",
+  "The Planes of Existence": "Sféry existence",
+};
+
 const PAGES: Record<string, string> = {
   "racial-traits": "Rasové vlastnosti",
   "beyond-1st-level": "Postup na vyšší úrovně",
@@ -300,7 +307,7 @@ export function czechCompanionBook(english: RulebookData): RulebookData {
       const czechText = fullTranslation
         ? `${note ?? ""}\n\n## Úplné znění pravidel v češtině\n\n${fullTranslation}`
         : note;
-      const title = PAGES[page.id] ?? czechSrdTitle(page.title, page.kind);
+      const title = PAGES[page.id] ?? APPENDIX_PAGE_TITLES[page.title] ?? czechSrdTitle(page.title, page.kind);
       const meta = page.meta && page.kind === "spell" ? czechSrdSpellMeta(page.meta)
         : page.meta && page.kind === "monster" ? czechSrdMonsterMeta(page.meta)
         : page.meta && page.kind === "item" ? czechSrdItemMeta(page.meta)
