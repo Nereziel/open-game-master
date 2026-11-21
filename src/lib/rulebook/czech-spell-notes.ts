@@ -170,10 +170,6 @@ Vyvoláš jeden drobný nadpřirozený projev: tvůj hlas se zesílí až trojn�
 
 Všechny tvory v oblasti zasáhne tlaková vlna. Každý hází záchranný hod na Odolnost. Při neúspěchu utrpí **2k8 hromového zranění** a je odtlačen **10 stop** od tebe; při úspěchu utrpí polovinu a není odtlačen. Uvolněné předměty se také odsunou a zazní dunění slyšitelné až do **300 stop**. Za každou úroveň pozice nad první přidej **1k8** zranění.`,
 
-  "Misty Step": `**Vyvolání:** 1 bonusová akce. **Dosah:** vlastní osoba. **Trvání:** okamžité.
-
-Teleportuješ se až **30 stop** na volné místo, které vidíš; při přesunu tě krátce obklopí stříbřitá mlha.`,
-
   "Web": `**Vyvolání:** 1 akce. **Dosah:** 60 stop. **Trvání:** soustředění, nejvýše 1 hodina.
 
 Vytvoříš pavučiny v krychli o hraně **20 stop**. Oblast je **těžký terén** a je lehce zastřená. Tvor, který vstoupí do pavučin během svého tahu nebo v nich svůj tah začne, musí uspět v záchranném hodu na Obratnost, jinak je **zadržený**. Akcí se může pokusit uniknout ověřením Síly proti SO tvých kouzel. Pavučiny jsou hořlavé; část zasažená ohněm shoří během jednoho kola a tvor, který v ní začne tah, utrpí **2k4 ohnivého zranění**. Nejsou-li pavučiny ukotvené mezi pevnými body, po jednom kole se zhroutí.`,
