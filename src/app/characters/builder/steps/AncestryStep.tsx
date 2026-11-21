@@ -5,6 +5,7 @@ import { useMemo, useState, type ReactNode } from "react";
 import { InfoButton } from "@/components/ui/InfoDialog";
 import { Select } from "@/components/ui/Select";
 import { STANDARD_LANGUAGES } from "@/lib/content/mechanics";
+import { languageLabel } from "@/lib/content/languages-cs";
 import { describeRace } from "@/lib/help";
 import type { Reskinned } from "@/lib/worlds/reskin-logic";
 import { LineageCarousel, type LineageSlide } from "../LineageCarousel";
@@ -30,25 +31,25 @@ import { bonusLanguageCount } from "../submit";
 import { StepPanel, inputClass } from "./shared";
 
 function languageHelp(t: (key: string, vars?: Record<string, string | number>) => string, race: RaceOption, background: BackgroundOption | undefined, locale: Locale = "en"): string {
-  const langs = race.languages.join(locale === "fr" ? " et " : " and ");
+  const langs = race.languages.map((language) => languageLabel(language, locale)).join(locale === "fr" ? " et " : locale === "cs" ? " a " : " and ");
   const parts = [t("{race} speaks {langs}", { race: contentName("species", race.name, locale), langs })];
   const choice = race.languageChoice;
   const open = race.bonusLanguages - (choice?.count ?? 0);
   if (choice) {
-    parts.push(t(choice.count === 1 ? "plus one of {from}" : "plus {count} of {from}", { count: choice.count, from: choice.from.join(", ") }));
+    parts.push(t(choice.count === 1 ? "plus one of {from}" : "plus {count} of {from}", { count: choice.count, from: choice.from.map((language) => languageLabel(language, locale)).join(", ") }));
   }
   if (open > 0) {
     parts.push(t("{join} {count} of your choice", { join: choice ? t("and") : t("plus"), count: open }));
   }
   if (background?.knownLanguages?.length) {
-    parts.push(t("and {langs} from your {background} background", { langs: background.knownLanguages.join(" and "), background: background.name }));
+    parts.push(t("and {langs} from your {background} background", { langs: background.knownLanguages.map((language) => languageLabel(language, locale)).join(locale === "cs" ? " a " : " and "), background: contentName("backgrounds", background.name, locale) }));
   }
   if (background?.languages) {
     parts.push(
       t("{join} {count} more from your {background} background", {
         join: race.bonusLanguages > 0 ? t("and") : t("plus"),
         count: background.languages,
-        background: background.name,
+        background: contentName("backgrounds", background.name, locale),
       }),
     );
   }
@@ -212,7 +213,7 @@ export function AncestryStep({
                       !race.languages.includes(language) &&
                       !(background?.knownLanguages ?? []).includes(language) &&
                       (state.bonusLanguages[index] === language || !state.bonusLanguages.includes(language)),
-                  ).map((language) => ({ value: language as string, label: language as string })),
+                  ).map((language) => ({ value: language as string, label: languageLabel(language, locale) })),
                 ]}
               />
             ))}

@@ -15,7 +15,10 @@ import { RESOURCE_CS_EXTRA_GUIDANCE } from "../srd/resource-guidance-cs-extra";
 import { RESOURCE_CS_AUTHORED_GUIDANCE } from "../srd/resource-guidance-cs-authored";
 import { describeFeature } from "../help";
 import { BUNDLED_PERSONA, GENERAL_PERSONA } from "../backgrounds/persona-data";
-import { SRD_BACKGROUNDS } from "../srd";
+import { SRD_BACKGROUNDS, skillLabel } from "../srd";
+import { STANDARD_LANGUAGES } from "../content/mechanics";
+import { languageLabel } from "../content/languages-cs";
+import { backgroundInfoText } from "../app/characters/builder/usePickerGroups";
 import { CUSTOM_BACKGROUNDS, describeBackgroundFeature } from "../backgrounds";
 import { resourceDisplayName, resourceGuidance } from "../srd/class-resources-fr";
 import { resourceName } from "../srd/class-resources";
@@ -73,6 +76,36 @@ describe("Czech localization", () => {
     expect(contentName("backgrounds", "Corpo Dropout", "cs")).toBe("Odpadlík korporace");
   });
 
+
+  it("shows localized bundled background details and skill labels", () => {
+    const acolyte = SRD_BACKGROUNDS.find((row) => row.id === "acolyte");
+    expect(acolyte?.featureDesc).toBeTruthy();
+    expect(acolyte?.blurb).toBeTruthy();
+    if (!acolyte?.featureDesc || !acolyte.blurb) throw new Error("Missing Acolyte source descriptions");
+    const shown = backgroundInfoText(acolyte, "cs", (text) => translate("cs", text));
+    expect(shown).toContain("Útočiště věrných");
+    expect(shown).toContain("Schopnost:");
+    expect(shown).not.toContain("Feature:");
+    expect(shown).not.toContain(acolyte.blurb);
+    expect(shown).not.toContain(acolyte.featureDesc);
+    expect(skillLabel("insight", "cs")).toBe("Vhled");
+    expect(skillLabel("religion", "cs")).toBe("Náboženství");
+    expect(skillLabel("insight", "en")).toBe("Insight");
+  });
+
+  it("uses established Czech names for every standard D&D language without changing saved values", () => {
+    expect(STANDARD_LANGUAGES).toHaveLength(20);
+    for (const english of STANDARD_LANGUAGES) {
+      expect(languageLabel(english, "cs"), english).not.toBe(english);
+      expect(languageLabel(english, "en")).toBe(english);
+      expect(languageLabel(english, "fr")).toBe(english);
+    }
+    expect(languageLabel("Abyssal", "cs")).toBe("Démonština");
+    expect(languageLabel("Infernal", "cs")).toBe("Ďábelština");
+    expect(languageLabel("Draconic", "cs")).toBe("Dračí řeč");
+    expect(languageLabel("Undercommon", "cs")).toBe("Temnobecná řeč");
+    expect(languageLabel("Custom Language", "cs")).toBe("Custom Language");
+  });
 
   it("translates resource counter names and help without changing the rule engine's English ids", () => {
     expect(resourceName("lay_on_hands")).toBe("Lay on Hands (HP pool)");
