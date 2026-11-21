@@ -13,6 +13,9 @@ import { RESOURCE_CS_GUIDANCE } from "../srd/class-resources-cs-data";
 import { RESOURCE_CS_EXTRA_GUIDANCE } from "../srd/resource-guidance-cs-extra";
 import { RESOURCE_CS_AUTHORED_GUIDANCE } from "../srd/resource-guidance-cs-authored";
 import { describeFeature } from "../help";
+import { BUNDLED_PERSONA, GENERAL_PERSONA } from "../backgrounds/persona-data";
+import { SRD_BACKGROUNDS } from "../srd";
+import { CUSTOM_BACKGROUNDS, describeBackgroundFeature } from "../backgrounds";
 import { resourceDisplayName, resourceGuidance } from "../srd/class-resources-fr";
 import { resourceName } from "../srd/class-resources";
 import { RESOURCE_CS_EXTRA_NAMES } from "../srd/resource-names-cs-extra";
@@ -21,7 +24,7 @@ import authoredResources from "../srd/authored-resources.json";
 import genreResources from "../classes/resources.json";
 import { FR_NAMES_BY_TABLE } from "../content/names-fr";
 import { installCsTables } from "./cs-tables";
-import { contentName, classFeatureName, speciesTraitName, subclassName } from "../content/names";
+import { contentName, classFeatureName, speciesTraitName, subclassName, backgroundFeatureName, backgroundFeatureLabel } from "../content/names";
 import { damageTypeWord, damageWords } from "../dm/damage-logic";
 import { deviceSpeechLanguage, whisperLanguageCode } from "../stt-logic";
 
@@ -30,6 +33,40 @@ installCatalog("cs", catalog);
 installCsTables({ names: CS_NAMES_BY_TABLE, guidance: RESOURCE_CS_GUIDANCE });
 
 describe("Czech localization", () => {
+  it("translates all 234 bundled and general personality suggestions without changing saved English strings", () => {
+    const sets = [...Object.values(BUNDLED_PERSONA), GENERAL_PERSONA];
+    const lines = sets.flatMap((set) => [...set.trait, ...set.ideal, ...set.bond, ...set.flaw]);
+    expect(lines).toHaveLength(234);
+    for (const english of lines) {
+      const czech = translate("cs", english);
+      expect(czech, `Missing Czech personality suggestion: ${english}`).not.toBe(english);
+      expect(czech.trim().length).toBeGreaterThan(8);
+      expect(czech.length).toBeLessThanOrEqual(300);
+      expect(translate("en", english)).toBe(english);
+    }
+  });
+
+  it("localizes all 54 bundled background feature names, descriptions and blurbs", () => {
+    const rows = [...SRD_BACKGROUNDS, ...CUSTOM_BACKGROUNDS];
+    expect(SRD_BACKGROUNDS).toHaveLength(18);
+    expect(CUSTOM_BACKGROUNDS).toHaveLength(36);
+    for (const row of rows) {
+      expect(translate("cs", row.feature), `Untranslated feature name: ${row.id}`).not.toBe(row.feature);
+      expect(translate("cs", row.featureDesc), `Untranslated feature rule: ${row.id}`).not.toBe(row.featureDesc);
+      expect(translate("cs", row.blurb), `Untranslated background blurb: ${row.id}`).not.toBe(row.blurb);
+      expect(describeBackgroundFeature(row.feature, "cs")).toBe(translate("cs", row.featureDesc));
+      expect(describeBackgroundFeature(row.feature, "en")).toBe(row.featureDesc);
+      expect(backgroundFeatureLabel(row.name, row.feature, "cs")).not.toBe(row.feature);
+      expect(backgroundFeatureName(`${row.feature} (${row.name})`, "cs")).not.toContain(row.feature + " (");
+    }
+    const soldier = SRD_BACKGROUNDS.find((row) => row.id === "soldier")!;
+    expect(backgroundFeatureName("Military Rank (Soldier)", "cs")).toBe("Vojenská hodnost (Voják)");
+    expect(describeFeature("fighter", "", "Military Rank (Soldier)", "cs")).toBe(translate("cs", soldier.featureDesc));
+    expect(describeFeature("fighter", "", "Military Rank (Soldier)", "en")).toBe(soldier.featureDesc);
+    expect(contentName("backgrounds", "Corpo Dropout", "cs")).toBe("Odpadlík korporace");
+  });
+
+
   it("translates resource counter names and help without changing the rule engine's English ids", () => {
     expect(resourceName("lay_on_hands")).toBe("Lay on Hands (HP pool)");
     expect(resourceName("divine_sense")).toBe("Divine Sense");
