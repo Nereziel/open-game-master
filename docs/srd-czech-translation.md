@@ -115,6 +115,31 @@ překladu nepřebírají. Interní názvy, klíče SRD a MCP API zůstávají an
 | Kouzlící povolání | Sesílání rituálů; Sesílací ohniskový předmět |
 
 Ověření názvů bylo přidáno do `scripts/test-rulebook.mjs`.
+## Revize názvů kouzel a multipovolání (21. 11. 2026)
+
+Z českého [Abecedního grimoáru D&D 5e (2014)](https://dnd5esrd.d20.cz/grimoar/grimoar-jmen.html)
+byly ověřeny tyto **samostatné názvy kouzel**; jejich původní anglická
+ID a popisy kouzel zůstávají nezměněné:
+
+| Originální ID kouzla | Použitý český název |
+|---|---|
+| `Friends` | Přátelé |
+| `Haste` | Rychlost |
+| `Hold Person` | Znehybni osobu |
+| `Cloudkill` | Oblak smrti |
+| `Tree Stride` | Chůze stromy |
+| `Passwall` | Projdi zdí |
+| `Insect Plague` | Hmyzí zhouba |
+
+Upraven byl centrální slovník `czech-terms.ts`, plný seznam kouzel
+`czech-full-rules-13.ts` a odpovídající tabulky druida.
+V tabulkách a odkazech se nemění pořadí, pozice ani původní anglické klíče.
+
+Název **Multipovolání** odpovídá české
+[6. kapitole Příručky hráče](https://dnd5esrd.d20.cz/prirucka-hrace/6-kapitola.html).
+Anglické pravidlové ID `multiclassing` zůstalo stejné.
+
+Regresní kontroly názvů jsou v `scripts/test-rulebook.mjs`.
 ## Stav
 
 - Stručné české přehledy: 932/933 kanonických stránek (výjimkou je atribuce).
