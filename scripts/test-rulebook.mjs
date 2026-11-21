@@ -3138,6 +3138,102 @@ try {
         "Fourth-level mechanics missing: " + id + "/" + marker);
   });
 
+
+  await test("all 31 fourth-level SRD 5.1 spells have complete Czech translations", async () => {
+    const [{ CZECH_FULL_SPELLS_15 }, { CZECH_FULL_SPELLS_16 }, { CZECH_FULL_SPELLS_17 }] = await Promise.all([
+      import("../src/lib/rulebook/czech-full-spells-15.ts"),
+      import("../src/lib/rulebook/czech-full-spells-16.ts"),
+      import("../src/lib/rulebook/czech-full-spells-17.ts"),
+    ]);
+    const batches = [CZECH_FULL_SPELLS_15, CZECH_FULL_SPELLS_16, CZECH_FULL_SPELLS_17];
+    assert.deepEqual(batches.map((batch) => Object.keys(batch).length), [12, 10, 9]);
+    assert.deepEqual(Object.keys(CZECH_FULL_SPELLS_16), ["dominate-beast","fabricate","faithful-hound","fire-shield","freedom-of-movement","giant-insect","greater-invisibility","guardian-of-faith","hallucinatory-terrain","ice-storm"]);
+    assert.deepEqual(Object.keys(CZECH_FULL_SPELLS_17), ["locate-creature","phantasmal-killer","polymorph","private-sanctum","resilient-sphere","secret-chest","stone-shape","stoneskin","wall-of-fire"]);
+    const ids = batches.flatMap((batch) => Object.keys(batch));
+    assert.equal(new Set(ids).size, 31, "Fourth-level translation IDs must be unique");
+    const originals = rulebookPages("en").filter((page) =>
+      page.kind === "spell" && page.meta?.startsWith("4th-level"));
+    assert.equal(originals.length, 31);
+    assert.deepEqual(ids, originals.map((page) => page.id), "Canonical fourth-level SRD order mismatch");
+    const fullTranslations = Object.assign({}, ...batches);
+    const field = (markdown, label) => {
+      const prefix = "**" + label + ":** ";
+      return markdown.split("\n").find((line) => line.startsWith(prefix))?.slice(prefix.length);
+    };
+    const times = {
+      "1 action": "1 akce", "10 minutes": "10 minut",
+    };
+    const ranges = {
+      Touch: "Dotyk", Self: "Sesilatel",
+      "30 feet": "30 stop", "60 feet": "60 stop", "90 feet": "90 stop",
+      "120 feet": "120 stop", "300 feet": "300 stop", "500 feet": "500 stop",
+    };
+    const durations = {
+      Instantaneous: "Ihned", "10 minutes": "10 minut",
+      "1 hour": "1 hodina", "8 hours": "8 hodin", "24 hours": "24 hodin",
+      "Concentration, up to 1 minute": "Soustředění, až 1 minuta",
+      "Concentration, up to 10 minutes": "Soustředění, až 10 minut",
+      "Concentration, up to 1 hour": "Soustředění, až 1 hodina",
+    };
+    for (const original of originals) {
+      const full = fullTranslations[original.id];
+      const localized = rulebookPage(original.id, "cs").page;
+      assert.ok(full?.length >= 185, "Missing full fourth-level Czech spell: " + original.id);
+      assert.equal(localized.id, original.id);
+      assert.equal(localized.title, CZECH_SPELLS[original.title]);
+      assert.equal(localized.originalMeta, original.meta);
+      assert.ok(localized.md.includes("## Úplné znění pravidel v češtině"));
+      assert.ok(localized.md.includes(full), "Czech reader missing spell: " + original.id);
+      assert.ok(localized.md.endsWith(original.md), "Modified original English source: " + original.id);
+      for (const [en, cz] of [
+        ["Casting Time", "Doba sesílání"], ["Range", "Dosah"],
+        ["Components", "Složky"], ["Duration", "Trvání"]
+      ]) assert.ok(field(original.md, en) && field(full, cz),
+        "Missing casting field: " + original.id + "/" + cz);
+      const englishComponents = field(original.md, "Components").match(/^[VSM, ]+/)?.[0]?.trim();
+      const czechComponents = field(full, "Složky").match(/^[VSM, ]+/)?.[0]?.trim();
+      assert.ok(englishComponents);
+      assert.equal(czechComponents, englishComponents, "Component mismatch: " + original.id);
+      const time = field(original.md, "Casting Time");
+      if (times[time])
+        assert.equal(field(full, "Doba sesílání"), times[time], "Casting time mismatch: " + original.id);
+      const range = field(original.md, "Range");
+      if (ranges[range])
+        assert.ok(field(full, "Dosah").startsWith(ranges[range]), "Range mismatch: " + original.id);
+      const duration = field(original.md, "Duration");
+      if (durations[duration])
+        assert.ok(field(full, "Trvání").startsWith(durations[duration]), "Duration mismatch: " + original.id);
+      if (/^\*4th-level [^\n]*\(ritual\)\*/m.test(original.md))
+        assert.ok(full.includes("(rituál)"), "Ritual tag missing: " + original.id);
+      for (const [, count, die] of original.md.matchAll(/\b(\d+)d(\d+)\b/g))
+        assert.ok(full.includes(count + "k" + die), "Missing source dice: " + original.id);
+    }
+    const checks = {
+      "dominate-beast": ["Moudrost", "telepatické pouto", "reakci", "10 minut", "8 hodin"],
+      fabricate: ["10 stop", "osmi", "5 stop", "zdatnost", "magické předměty"],
+      "faithful-hound": ["100 stop", "30 stop", "4k8", "Éterické sféry"],
+      "fire-shield": ["2k8", "ohnivého", "chladného", "10 stop"],
+      "freedom-of-movement": ["obtížný terén", "5 stop", "Pod vodou", "paralyzovat"],
+      "giant-insect": ["deset stonožek", "tři pavouky", "pět vos", "jednoho štíra", "0 životů"],
+      "greater-invisibility": ["neviditelnými", "nekončí samotným útokem"],
+      "guardian-of-faith": ["20 zářivého", "60 zranění", "8 hodin"],
+      "hallucinatory-terrain": ["150 stop", "24 hodin", "Pátrání", "hmatové vlastnosti"],
+      "ice-storm": ["2k8", "4k6", "1k8", "40 stop", "obtížný terén"],
+      "locate-creature": ["1 000 stop", "30 stop", "10 stop", "tekoucí voda"],
+      "phantasmal-killer": ["Moudrost", "4k10", "1k10", "psychického"],
+      polymorph: ["nebezpečnost", "0 životů", "přebytečné zranění", "vybavení splyne"],
+      "private-sanctum": ["100 stop", "5 stop", "teleportovat", "celý rok", "věšteckými"],
+      "resilient-sphere": ["Obratnost", "dýchat", "poloviny", "Rozlož"],
+      "secret-chest": ["5 000 zl", "50 zl", "60 dnů", "5%", "12 krychlových"],
+      "stone-shape": ["5 stop", "dva panty", "jednu závoru"],
+      stoneskin: ["100 zl", "nemagickému drtivému", "bodnému", "sečnému"],
+      "wall-of-fire": ["60 stop", "20 stop", "5k8", "1k8", "10 stop"],
+    };
+    for (const [id, markers] of Object.entries(checks))
+      for (const marker of markers)
+        assert.ok(fullTranslations[id].includes(marker), "Missing fourth-level rule: " + id + "/" + marker);
+  });
+
   // ---- the routes ----
   const { createUser } = await import("../src/lib/db/users.ts");
   const { mintSession } = await import("../src/lib/auth.ts");
