@@ -149,13 +149,14 @@ const CS_HOOKS = [
   { title: "Světla u {name}", body: "Po nocích se u {landmark} objevují podivná světla. {role} shání dobrovolníky, kteří místo prozkoumají." },
   { title: "Dluhy v {name}", body: "Místní {role} dluží peníze nebezpečným lidem. S další karavanou dorazí vymahač a dlužník potřebuje pomoc." },
 ];
-const CS_SHOP_PREFIXES = ["U {keeper}", "Křivá", "Poctivá", "Stará", "Zlatá", "Poslední"];
-const CS_SHOP_NOUNS: Record<SettlementShop["kind"], string[]> = {
-  general: ["Smíšené zboží", "Kupecký krám", "Zásoby", "Tržiště"],
-  smith: ["Kovárna", "Výheň", "Kovadlina", "Kovárna"],
-  apothecary: ["Lékárna", "Bylinkářství", "Léčivé lektvary", "Mastičkářství"],
-  outfitter: ["Výstroj", "Cestovní potřeby", "Batohy a lana", "Obchod pro pocestné"],
-  curiosities: ["Kuriozity", "Podivuhodnosti", "Staré vzácnosti", "Antikvariát"],
+// Each title is grammatical Czech, rather than combining an adjective
+// with a mismatched gendered noun ("Křivá smíšené zboží").
+const CS_SHOP_NAMES: Record<SettlementShop["kind"], string[]> = {
+  general: ["Staré zásoby", "Poctivý kupec", "Krám u brodu", "Smíšené zboží", "Zlatý obchod"],
+  smith: ["Křivá kovárna", "Stará kovárna", "Rudá výheň", "U tří kladiv", "Černá kovadlina"],
+  apothecary: ["Lékárna u lípy", "Zelené bylinky", "Léčivé lektvary", "Mastičkářství"],
+  outfitter: ["Výstroj pocestných", "Cestovní potřeby", "Batohy a lana", "Kupecká výprava"],
+  curiosities: ["Staré kuriozity", "Podivuhodnosti", "Vzácné nálezy", "Starožitnosti"],
 };
 
 function feel(genre: string): "fantasy" | "dark" | "modern" {
@@ -314,10 +315,10 @@ export function generateSettlement(input: { name?: string; size?: unknown; terra
   const shops: SettlementShop[] = SHOP_KINDS_BY_SIZE[size].map((kind) => {
     const keeper = kind === "smith" ? npcs.find((npc) => npc.role === "smith") : kind === "general" ? npcs.find((npc) => npc.role === "merchant") ?? npcs.find((npc) => npc.role === "innkeeper") : null;
     const keeperName = keeper?.name ?? personName(random, genre, input.language);
-    const prefix = fill(pick(random, czech ? CS_SHOP_PREFIXES : SHOP_NAMES), { keeper: keeperName.split(" ")[0] });
-    const noun = pick(random, czech ? CS_SHOP_NOUNS[kind] : SHOP_NOUNS[kind]);
-    const name = czech ? (prefix.startsWith("U ") ? `${prefix}: ${noun}` : `${prefix} – ${noun}`) : `${prefix} ${noun}`;
-    return { name, kind, size: shopSize, keeper: keeperName };
+    const shopName = czech
+      ? pick(random, CS_SHOP_NAMES[kind])
+      : `${fill(pick(random, SHOP_NAMES), { keeper: keeperName.split(" ")[0] })} ${pick(random, SHOP_NOUNS[kind])}`;
+    return { name: shopName, kind, size: shopSize, keeper: keeperName };
   });
   const values = {
     name,
