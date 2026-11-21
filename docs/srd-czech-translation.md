@@ -130,10 +130,29 @@ ID a popisy kouzel zůstávají nezměněné:
 | `Tree Stride` | Chůze stromy |
 | `Passwall` | Projdi zdí |
 | `Insect Plague` | Hmyzí zhouba |
+| `Storm of Vengeance` | Bouře odplaty |
+| `Contact Other Plane` | Mluva sfér |
+| `Flesh to Stone` | Zkamenění |
+| `Mass Cure Wounds` | Hromadné zhojení zranění |
+| `Conjure Celestial` | Vyvolej nebešťana |
+| `Conjure Fey` | Vyvolej vílu |
+| `Create Undead` | Stvoř nemrtvé |
+| `Dispel Evil and Good` | Rozptyl zlo a dobro |
+| `Power Word Kill` | Slovo moci „ZABIJ“ |
+| `Power Word Stun` | Slovo moci „OCHROM“ |
 
 Upraven byl centrální slovník `czech-terms.ts`, plný seznam kouzel
 `czech-full-rules-13.ts` a odpovídající tabulky druida.
 V tabulkách a odkazech se nemění pořadí, pozice ani původní anglické klíče.
+
+Následná revize dalších deseti názvů zahrnuje také odkaz na kouzlo
+*Mluva sfér* v kapitole Šílenství a doménové kouzlo
+*Hromadné zhojení zranění* u klerika. Prohledáno 21 úplných
+pravidlových kapitol, 12 úplných překladů povolání a 12 souborů
+stručných poznámek ke kouzlům; v těchto souborech nezůstávají
+staré varianty právě opravovaných deseti názvů.
+Jde o statickou kontrolu obsahu, nikoli spuštěnou testovací sadu.
+
 
 Název **Multipovolání** odpovídá české
 [6. kapitole Příručky hráče](https://dnd5esrd.d20.cz/prirucka-hrace/6-kapitola.html).
