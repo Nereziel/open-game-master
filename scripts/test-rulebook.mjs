@@ -429,7 +429,9 @@ try {
     for (const name of Object.keys(CZECH_ITEM_NOTES_2)) {
       assert.ok(!Object.hasOwn(CZECH_ITEM_NOTES, name), `Duplicate item in both batches: ${name}`);
     }
-    assert.ok(rulebookSearch("Lovcova marka", 10, "cs").hits.some((hit) => hit.page === "hunters-mark"), "Czech hunter mark lookup");
+    const huntersMark = originals.find((page) => page.kind === "spell" && page.title === "Hunter\'s Mark");
+    assert.ok(huntersMark, "Hunter\'s Mark exists in the SRD");
+    assert.ok(rulebookSearch("Lovcova marka", 10, "cs").hits.some((hit) => hit.page === huntersMark.id), "Czech hunter mark lookup");
   });
 
   await test("Czech magic item and monster metadata are display-only and retain original metadata", () => {
