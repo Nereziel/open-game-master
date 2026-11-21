@@ -1245,6 +1245,8 @@ try {
     const { CZECH_FULL_RULES_9 } = await import("../src/lib/rulebook/czech-full-rules-9.ts");
     const { CZECH_FULL_RULES_10 } = await import("../src/lib/rulebook/czech-full-rules-10.ts");
     assert.deepEqual(Object.keys(CZECH_FULL_RULES_9), ["multiclassing"]);
+    assert.equal(rulebookPage("multiclassing", "cs")?.page?.title, "Multipovolání");
+    assert.ok(CZECH_FULL_RULES_9.multiclassing.startsWith("Multipovolání umožňuje"));
     assert.deepEqual(Object.keys(CZECH_FULL_RULES_10), ["backgrounds"]);
     const translated = { ...CZECH_FULL_RULES_9, ...CZECH_FULL_RULES_10 };
     for (const [id, content] of Object.entries(translated)) {
@@ -1379,6 +1381,20 @@ try {
     const { CZECH_FULL_RULES_13 } = await import("../src/lib/rulebook/czech-full-rules-13.ts");
     const { CZECH_SPELLS } = await import("../src/lib/rulebook/czech-terms.ts");
     assert.deepEqual(Object.keys(CZECH_FULL_RULES_13), ["spell-lists"]);
+    // Only isolated spell titles are aligned with the Czech 2014 D&D grimoire.
+    const spellNames2014 = {
+      Friends: "Přátelé",
+      Haste: "Rychlost",
+      "Hold Person": "Znehybni osobu",
+      Cloudkill: "Oblak smrti",
+      "Tree Stride": "Chůze stromy",
+      Passwall: "Projdi zdí",
+      "Insect Plague": "Hmyzí zhouba",
+    };
+    for (const [englishName, czechName] of Object.entries(spellNames2014)) {
+      assert.equal(CZECH_SPELLS[englishName], czechName,
+        `Czech 2014 grimoire title mismatch: ${englishName}`);
+    }
     const source = rulebookPage("spell-lists", "en")?.page;
     const localized = rulebookPage("spell-lists", "cs")?.page;
     assert.ok(source && localized);
@@ -1942,6 +1958,12 @@ try {
         "Missing a Czech Circle of Land terrain spell list: " + region);
     }
     assert.ok(druid.includes("**Tabulka – Zvířecí podoby**"));
+    for (const spell of ["Rychlost", "Znehybni osobu", "Chůze stromy", "Projdi zdí", "Hmyzí zhouba"]) {
+      assert.ok(druid.includes("*" + spell + "*"), "Druid circle uses wrong Czech spell name: " + spell);
+    }
+    for (const old of ["Zrychlení", "Zadrž osobu", "Krok stromy", "Průchod zdí", "Hmyzí pohroma"]) {
+      assert.ok(!druid.includes("*" + old + "*"), "Obsolete Druid circle spell name: " + old);
+    }
 
     const { CZECH_FULL_CLASSES_10 } = await import("../src/lib/rulebook/czech-full-classes-10.ts");
     const sorcerer = CZECH_FULL_CLASSES_10.sorcerer;
