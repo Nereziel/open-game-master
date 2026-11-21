@@ -5,7 +5,7 @@ import { classGenres } from "@/lib/classes";
 import { GENRE_PRESETS } from "@/lib/genres";
 import { describeRace } from "@/lib/help";
 import type { Genre } from "@/lib/schemas/game-settings";
-import { SRD_SKILLS, skillLabel } from "@/lib/srd";
+import { skillLabel } from "@/lib/srd";
 import { subclassBlurb, subclassGate, subclassNamesFor } from "@/lib/srd/features";
 import { packRecommends, type Reskinned } from "@/lib/worlds/reskin-logic";
 import type { WorldPack } from "@/lib/worlds/types";
