@@ -191,9 +191,9 @@ leaves markdown behind, and that the quick links a table uses mid-session
 The rulebook API also accepts `cs` / `cs-CZ` (including `X-Odm-Locale: cs`).
 The Czech view uses the same SRD 5.1 page IDs, links, bookmarks, folios and
 full original English text. `src/lib/rulebook/czech-companion.ts` adds
-original Czech summaries of 35 core rules pages, 227 spells, 138 monsters, 57
+original Czech summaries of 35 core rules pages, 226 spells, 138 monsters, 57
 magic items, all 12 playable classes and the nine base playable races
-(478 Czech summaries in total). It also localizes recurring spell schools, creature size/type,
+(477 Czech summaries in total). It also localizes recurring spell schools, creature size/type,
 item rarity and attunement text; the original English SRD stays attached to
 every page for exact numeric mechanics.
 Separately, the character builder maps all **46 bundled playable races and
@@ -202,6 +202,10 @@ names and canonical race IDs with Czech labels. This display-only mapping also
 corrects Hill Dwarf versus Mountain Dwarf and does not translate homebrew
 names or stored race identifiers. The titles, spell and monster names
 are based on the established d20.cz glossary, not copied full prose.
+The character builder also presents Czech headings and explanations for all
+**126 distinct bundled racial trait descriptions** across its 46 playable
+races and subraces. These display-only translations are covered by a
+regression test and leave stored English rule data unchanged.
 All remaining pages show the original English SRD, not a machine-generated
 or third-party translation. The reader marks this
 partial coverage and links to https://dnd5esrd.d20.cz/ for readers who
