@@ -446,7 +446,7 @@ export type DerivedPart = { label: string; value: number };
 // label (a pack's own) reads as it was built.
 const MATH_PART_KEYS: Record<string, string> = {
   base: "base",
-  proficiency: "proficiency",
+  proficiency: "proficiency bonus",
   features: "features",
   "subclass features": "subclass features",
   "magic items": "magic items",
@@ -465,15 +465,35 @@ export function mathPartLabel(t: T, label: string): string {
   if (modifier) {
     const ability = modifier[1].toLowerCase();
     if (["str", "dex", "con", "int", "wis", "cha"].includes(ability)) {
-      // English keeps the sheet's own "DEX modifier"; a translation names
-      // the ability in full ("modificateur de Dextérité").
+      // English keeps the sheet's own "DEX modifier"; French uses a generic
+      // "modifier" template. Czech requires a different genitive for each
+      // ability ("Oprava Moudrosti", never "Oprava Moudrost").
       const full = ({ str: "Strength", dex: "Dexterity", con: "Constitution", int: "Intelligence", wis: "Wisdom", cha: "Charisma" } as Record<string, string>)[ability];
+      const specific = ({
+        str: t("Strength modifier"),
+        dex: t("Dexterity modifier"),
+        con: t("Constitution modifier"),
+        int: t("Intelligence modifier"),
+        wis: t("Wisdom modifier"),
+        cha: t("Charisma modifier"),
+      } as Record<string, string>)[ability];
+      if (specific !== `${full} modifier`) return specific;
       const line = t("{ability} modifier", { ability: t(full) });
       return line === `${full} modifier` ? label : line;
     }
   }
   const key = MATH_PART_KEYS[label];
   return key ? t(key) : label;
+}
+
+// In Czech, an explanation reads naturally with its label first:
+// "Oprava Moudrosti: +0, zdatnostní bonus: +2".
+export function formatMathParts(t: T, parts: DerivedPart[], locale: "en" | "fr" | "cs"): string {
+  return parts.map((part) => {
+    const label = mathPartLabel(t, part.label);
+    const value = formatModifier(part.value);
+    return locale === "cs" ? `${label}: ${value}` : `${value} ${label}`;
+  }).join(", ");
 }
 
 // Every derived number's working. Sums are guaranteed to match the totals
