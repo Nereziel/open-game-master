@@ -330,6 +330,7 @@ export const CZECH_SPELLS: Readonly<Record<string, string>> = {
   "Flaming Sphere": "Planoucí koule",
   "Freedom of Movement": "Volnost",
   "Guardian of Faith": "Strážce víry",
+  "Tiny Hut": "Leomundova chatka",
   "Leomund's Tiny Hut": "Leomundova chatka",
   "Moonbeam": "Měsíční paprsek",
   "Polymorph": "Proměna",
