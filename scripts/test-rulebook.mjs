@@ -2568,8 +2568,15 @@ try {
       for (const field of ["Doba sesílání", "Dosah", "Složky", "Trvání"]) {
         assert.ok(fullText.includes("**" + field + ":**"), "Missing spell field: " + original.id + " / " + field);
       }
-      const originalComponents = original.md.match(/\\*\\*Components:\\*\\* ([VSM, ]+)/)?.[1]?.trim();
-      const czComponents = fullText.match(/\\*\\*Složky:\\*\\* ([VSM, ]+)/)?.[1]?.trim();
+      const components = (text, label) => {
+        const prefix = "**" + label + ":** ";
+        const line = text.split("\n").find((candidate) => candidate.startsWith(prefix));
+        return line?.slice(prefix.length).match(/^[VSM, ]+/)?.[0]?.trim();
+      };
+      const originalComponents = components(original.md, "Components");
+      const czComponents = components(fullText, "Složky");
+      assert.ok(originalComponents, "English components missing: " + original.id);
+      assert.ok(czComponents, "Czech components missing: " + original.id);
       assert.equal(czComponents, originalComponents, "Components differ: " + original.id);
     }
     for (const [id, tokens] of Object.entries({
