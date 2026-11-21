@@ -3,6 +3,7 @@
 // The source SRD 5.1 is CC BY 4.0; untranslated original passages stay in English.
 // All page ids and original English headings stay intact for deep links.
 import type { RulebookData } from "./types";
+import { CZECH_ABILITIES, CZECH_CLASSES, CZECH_SKILLS, czechSrdTitle } from "./czech-terms";
 
 const CHAPTERS: Record<string, string> = {
   races: "Rasy",
@@ -93,7 +94,7 @@ const NOTES: Record<string, string> = {
 
   inspiration: `Inspiraci uděluje Pán jeskyně za hraní charakteru a rozhodnutí postavy. Postava může mít pouze jednu inspiraci najednou. Její spotřebování poskytne **výhodu** k jednomu hodu na útok, ověření vlastnosti nebo záchrannému hodu. Inspiraci lze také předat jiné postavě.`,
 
-  armor: `**Třída zbroje (TZ, anglicky AC)** určuje, jak náročné je postavu zasáhnout útokem. Lehká zbroj započítává opravu Obratnosti; střední zbroj zpravidla nejvýše +2 a těžká zbroj bonus Obratnosti nezapočítává. Štít běžně zvyšuje TZ o 2.
+  armor: `**Obranné číslo (OČ, anglicky AC)** určuje, jak náročné je postavu zasáhnout útokem. Lehká zbroj započítává opravu Obratnosti; střední zbroj zpravidla nejvýše +2 a těžká zbroj bonus Obratnosti nezapočítává. Štít běžně zvyšuje TZ o 2.
 
 Zbroj, se kterou postava není zdatná, omezuje hody založené na Síle a Obratnosti a znemožňuje sesílání kouzel. Některá těžká zbroj při nedostatečné Síle snižuje rychlost. Konkrétní hodnoty najdete v původní tabulce.`,
 
@@ -121,7 +122,7 @@ V každém tahu se můžete **pohnout** až do své rychlosti a obvykle provést
 
 ## Útoky a zranění
 
-Útok zpravidla znamená hod k20 s opravou vlastnosti a případným bonusem zdatnosti proti **třídě zbroje (AC)** cíle. Při úspěchu se hodí zranění. Přirozená 20 zasáhne kriticky: házejí se dvakrát kostky zranění útoku. Přirozená 1 při útoku vždy mine.
+Útok zpravidla znamená hod k20 s opravou vlastnosti a případným bonusem zdatnosti proti **obrannému číslu (AC)** cíle. Při úspěchu se hodí zranění. Přirozená 20 zasáhne kriticky: házejí se dvakrát kostky zranění útoku. Přirozená 1 při útoku vždy mine.
 
 ## Ztráta vědomí a smrt
 
@@ -142,6 +143,20 @@ Stavy mění, co může tvor dělat a jaké hody provádí. Patří mezi ně nap
 Jednotlivé stavy mají různé mechanické účinky. Například tvor **sražený na zem** se pohybuje plazením, jeho vlastní útoky mají nevýhodu a útoky vedené proti němu z bezprostřední blízkosti mají výhodu. Přesné účinky a výjimky jsou v anglických pravidlech níže.`,
 };
 
+// Short terminology index; no copied third-party descriptions.
+const SKILLS_REFERENCE = [
+  "## Vlastnosti",
+  ...Object.entries(CZECH_ABILITIES).map(([en, cs]) => `- ${cs} (${en})`),
+  "",
+  "## Dovednosti",
+  ...Object.entries(CZECH_SKILLS).map(([en, cs]) => `- ${cs} (${en})`),
+].join("\n");
+
+const CLASSES_REFERENCE = [
+  "## Povolání",
+  ...Object.entries(CZECH_CLASSES).map(([en, cs]) => `- ${cs} (${en})`),
+].join("\n");
+
 export function czechCompanionBook(english: RulebookData): RulebookData {
   return {
     source: english.source,
@@ -156,10 +171,15 @@ export function czechCompanionBook(english: RulebookData): RulebookData {
       blurb: BLURBS[chapter.id] ?? chapter.blurb,
     })),
     pages: english.pages.map((page) => {
-      const note = NOTES[page.id];
+      const note = page.id === "using-ability-scores"
+        ? `${NOTES[page.id]}\n\n${SKILLS_REFERENCE}`
+        : page.id === "beyond-1st-level"
+          ? `${NOTES[page.id]}\n\n${CLASSES_REFERENCE}`
+          : NOTES[page.id];
+      const title = PAGES[page.id] ?? czechSrdTitle(page.title, page.kind);
       return {
         ...page,
-        title: PAGES[page.id] ?? page.title,
+        title,
         ...(note
           ? {
               md: `## Český přehled pravidel
