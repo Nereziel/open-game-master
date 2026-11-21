@@ -7,6 +7,7 @@
 
 import { workshopClassName } from "@/lib/classes/workshop-registry";
 import { contentName } from "@/lib/content/names";
+import { genreClassCs } from "@/lib/classes/genre-class-cs";
 import type { Locale } from "@/lib/messages-logic";
 
 export type ClassWordsSource = {
@@ -75,6 +76,9 @@ export function classDisplayNameFor(id: string, locale: Locale = "en"): string {
   const named = workshopClassName(id);
   if (named) {
     return named;
+  }
+  if (locale === "cs") {
+    return genreClassCs(id)?.name ?? contentName("classes", spaced(id), locale);
   }
   if (locale === "fr") {
     const official = contentName("classes", spaced(id), locale);
