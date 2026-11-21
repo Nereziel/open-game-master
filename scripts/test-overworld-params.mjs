@@ -13,6 +13,8 @@ const {
   parseOverworldPlan,
 } = await import("../src/lib/overworld/logic.ts");
 
+const { translate } = await import("../src/lib/i18n/translate.ts");
+
 let passed = 0;
 function test(name, fn) {
   fn();
@@ -27,6 +29,23 @@ test("every dial has a label and defaults to the middle", () => {
     assert.equal(DEFAULT_OVERWORLD_PARAMS[key], 0.5, key);
     assert.ok(OVERWORLD_PARAM_LABELS[key], `${key} has no label`);
   }
+});
+
+test("region editor controls and map-size keys resolve to Czech text", () => {
+  const cs = (key, vars) => translate("cs", key, vars);
+  assert.equal(cs("Read it into the dials"), "Převést popis na nastavení terénu");
+  assert.equal(cs("Sea level"), "Hladina moře");
+  assert.equal(cs("Aridity"), "Suchost");
+  assert.equal(cs("Coastline"), "Pobřeží");
+  assert.equal(cs("overworld.size.medium"), "Střední");
+  assert.equal(
+    cs("{label} ({width} by {height})", { label: cs("overworld.size.medium"), width: 96, height: 72 }),
+    "Střední (96 × 72)",
+  );
+  assert.equal(cs("Put it on the map"), "Umístit na mapu");
+  assert.equal(cs("Notes on the region"), "Poznámky o oblasti");
+  assert.equal(cs("Yours alone; players never see this."), "Pouze pro vás, hráči tyto poznámky neuvidí.");
+  assert.equal(translate("en", "overworld.size.medium"), "overworld.size.medium");
 });
 
 // The load-bearing one. Every campaign that already has a map rerolls under
