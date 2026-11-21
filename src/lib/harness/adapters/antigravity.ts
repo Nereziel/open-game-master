@@ -395,7 +395,7 @@ function findGeneratedImage(
   for (const dir of dirs) {
     let names: string[];
     try {
-      names = readdirSync(dir);
+      names = readdirSync(/* turbopackIgnore: true */ dir);
     } catch {
       continue;
     }

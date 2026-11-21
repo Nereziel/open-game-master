@@ -171,7 +171,7 @@ export function sweepStaleRunDirs(options: { tmpdir?: string; now?: number } = {
   let removed = 0;
   for (const name of staleRunDirNames(entries, { now, live, uid: ownUid })) {
     // One attempt each; what is still held now is tried at the next sweep.
-    if (removeRunDir(path.join(tmpdir, name), { retryMs: [] })) {
+    if (removeRunDir(path.join(/* turbopackIgnore: true */ tmpdir, name), { retryMs: [] })) {
       removed += 1;
     }
   }

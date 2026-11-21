@@ -111,12 +111,13 @@ function normalizeDmArgs(args: Args): Args {
   // pc_attack submits a list of attack entries. Other list fields are left
   // untouched; in particular names and descriptions are never rewritten.
   if (Array.isArray(args.attacks)) {
-    const attacks = args.attacks.map((entry) => {
+    const originalAttacks = args.attacks;
+    const attacks = originalAttacks.map((entry) => {
       if (!record(entry)) return entry;
       const spell = canonical(entry.spell, SPELLS);
       return spell === entry.spell ? entry : { ...entry, spell };
     });
-    if (attacks.some((entry, index) => entry !== args.attacks[index])) {
+    if (attacks.some((entry, index) => entry !== originalAttacks[index])) {
       next ??= { ...args };
       next.attacks = attacks;
     }
