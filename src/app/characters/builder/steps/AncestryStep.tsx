@@ -20,6 +20,7 @@ import type { Ability } from "@/lib/schemas/sheet";
 import { OptionCardGrid, type OptionCardGroup } from "../OptionCardGrid";
 import type { PickerGroup } from "../OptionPicker";
 import { contentName } from "@/lib/content/names";
+import { czechBundledSpeciesTrait } from "@/lib/content/species-traits-cs";
 import { knownTraining } from "../FeatChoicesFields";
 import { RacialChoicesSection } from "../RacialChoicesSection";
 import type { BackgroundOption, RaceOption } from "../useBuilderOptions";
@@ -89,6 +90,11 @@ export function AncestryStep({
   const t = useT();
   const tp = useTp();
   const locale = useLocale();
+  const bundledRace = race && !race.source ? srdRaceFor(race.id) : null;
+  const localizedRaceNote = locale === "cs" && bundledRace
+    ? bundledRace.traits.map((line) => { const trait = czechBundledSpeciesTrait(line); return trait ? `${trait.name}: ${trait.description}` : line; }).join(" · ")
+    : race?.note;
+  const localizedRaceInfo = locale === "cs" && bundledRace ? localizedRaceNote : (race ? describeRace(race.id) ?? race.note : undefined);
 
   // One slide per picker row, in the picker's order, so the carousel walks
   // exactly what the grid shows.
@@ -136,11 +142,11 @@ export function AncestryStep({
               <span className="text-amber-200">{contentName("species", race.name, locale)}</span>
               {race.source ? <span className="font-mono text-[0.875rem] text-stone-500"> · {race.source}</span> : null}
               <span className="text-amber-200">: </span>
-              {race.note}
+              {localizedRaceNote}
             </span>
             <InfoButton
               label={contentName("species", race.name, locale)}
-              text={describeRace(race.id) ?? race.note}
+              text={localizedRaceInfo}
               reference={{ kind: "races", slug: race.slug ?? race.id }}
             />
           </span>
