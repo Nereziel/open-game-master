@@ -72,5 +72,5 @@ Případně můžeš jako akci utratit 1 až 3 náboje prstenu a pokusit se rozb
 Když nosíš tento prsten, můžeš jako akci utratit 1 z jeho 3 nábojů a seslat z něj kouzlo *přání*. Po spotřebování posledního náboje prsten přestane být magický.`,
   "ring-of-warmth": `*Prsten, neobvyklý (vyžaduje sladění)*
 
-Když nosíš tento prsten, máš odolnost vůči chladnému zranění. Navíc tobě ani ničemu, co máš na sobě nebo neseš, neškodí teploty až do −50 stupňů Fahrenheita.`,
+Když nosíš tento prsten, máš odolnost vůči chladnému zranění. Navíc tobě ani ničemu, co máš na sobě nebo neseš, neškodí teploty až do -50 stupňů Fahrenheita.`,
 };
