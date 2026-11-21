@@ -62,6 +62,8 @@ jejich terminologii nemícháme s touto edicí.
 | Performance | Vystupování | Umění |
 | Sleight of Hand | Obratnost rukou | Čachry |
 | Stealth | Plížení | Nenápadnost |
+| Proficiency | zběhlost | Zdatnost |
+| Ability Modifier (Wisdom) | Oprava Moudrost | Oprava Moudrosti |
 | Proficiency Bonus | bonus zdatnosti | Zdatnostní bonus |
 | Dash | Běh | Sprint |
 | Disengage | Odpoutání | Odpoutání se |
@@ -74,6 +76,12 @@ jejich terminologii nemícháme s touto edicí.
 | Aberration | aberace | zrůda |
 | Monstrosity | zrůda | obluda |
 | Construct | konstrukt | výtvor |
+
+V českých rozpisových popiscích hodů používáme **opravu vlastnosti**
+se správným 2. pádem: **Oprava Síly, Obratnosti, Odolnosti, Inteligence,
+Moudrosti a Charismatu**. Odlišujeme vlastní **zdatnost** od
+**zdatnostního bonusu**, který se k hodům přičítá. Čísla a mechanika hodů
+se lokalizací nemění.
 
 Zároveň byly sjednoceny izolované názvy nestvůr z bestiáře,
 například **Abolet, Zřící, Slád, Kovatl, Skurut, Gobr,
