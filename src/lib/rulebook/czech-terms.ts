@@ -693,17 +693,17 @@ const CZECH_MONSTER_SIZES: Readonly<Record<string, string>> = {
 };
 
 const CZECH_CREATURE_TYPES: Readonly<Record<string, string>> = {
-  aberration: "aberace",
+  aberration: "zrůda",
   beast: "zvíře",
   celestial: "nebešťan",
-  construct: "konstrukt",
+  construct: "výtvor",
   dragon: "drak",
   elemental: "elementál",
   fey: "víla",
   fiend: "běs",
   giant: "obr",
   humanoid: "humanoid",
-  monstrosity: "zrůda",
+  monstrosity: "obluda",
   ooze: "sliz",
   plant: "rostlina",
   undead: "nemrtvý",
