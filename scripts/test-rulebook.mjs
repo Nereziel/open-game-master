@@ -324,6 +324,8 @@ try {
     assert.equal(localeFromAcceptLanguage("cs-CZ,fr;q=0.5"), "cs");
     assert.equal(localeFromAcceptLanguage("en;q=0.9,cs;q=0.3"), "en");
     assert.equal(localeFromAcceptLanguage("cs;q=0"), "en");
+    assert.equal(crosswalkFor(rulebookPage("fireball", "cs").page, "cs").editor, "spell");
+    assert.equal(crosswalkFor(rulebookPage("armor", "cs").page, "cs").support, "engine");
   });
 
   // ---- the French book ----
