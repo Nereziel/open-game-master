@@ -37,7 +37,8 @@ licence převzetí výslovně dovolí, a za příslušných podmínek s atribuc�
 ## Stav
 
 - Stručné české přehledy: 932/933 kanonických stránek (výjimkou je atribuce).
-- Úplné české znění pravidlových stránek: **10/35 obsahových pravidlových stránek**.
+- Úplné české znění pravidlových stránek: **14/35 obsahových pravidlových stránek**.
+- Nově kompletní kapitoly: **Stavy, Nemoci, Objekty, Artefakty**; celkem 14/35.
 - Úplné české texty kouzel, statistiky nestvůr, předmětů, ras a povolání:
   zbývá dopracovat; přehledy nejsou totéž co plné překlady.
 - Testy ověřují dostupnost úplných textů a zachování originálu, ale před
