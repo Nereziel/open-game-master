@@ -261,12 +261,25 @@ v `scripts/test-rulebook.mjs`.
 Build ani automatické testy na Draft PR podle dohody zatím
 nebyly spuštěny.
 
+## Úplné popisy kouzel 1. úrovně – první dvě dávky (21. 11. 2026)
+
+Po dokončení všech 24 triků jsou nyní přeloženy také **první 21 z 49 kouzel 1. úrovně**, přesně v pořadí původního anglického SRD 5.1. Celkový počet úplných překladů jednotlivých kouzel je tedy **45 z 319**.
+
+- `czech-full-spells-3.ts` – 13 kouzel: Poplach, Přátelství zvířat, Uřknutí, Požehnání, Hořící ruce, Zmam osobu, Barevná sprška, Rozkaz, Porozumění jazykům, Stvoř nebo znič vodu, Zhoj zranění, Najdi zlo a dobro, Najdi magii.
+- `czech-full-spells-4.ts` – dalších 8 kouzel: Najdi jed a nemoc, Přestrojení, Přízeň bohů, Zapletení, Spěšný ústup, Vílí oheň, Falešný život, Pomalý pád.
+
+Každá položka obsahuje původní kombinaci složek V/S/M a úplné nově formulované české podmínky sesílání, trvání a účinků včetně případného sesílání pozicí vyšší úrovně. Zavedené názvy odpovídají internímu slovníku a českému [Abecednímu grimoáru](https://dnd5esrd.d20.cz/grimoar/grimoar-jmen.html). Z tohoto webu přebíráme **pouze samostatné názvy, nikoli pravidlový text**. Úplný popis je přeložen výhradně z anglického SRD 5.1 pod licencí CC BY 4.0.
+
+Zápisy jsou propojeny v `czech-companion.ts` se čtečkou. Anglická ID, originální anglické tělo stránek, jejich metadata a herní/MCP identifikátory jsou zachované.
+
+**Statická kontrola:** 21/21 přeložených kouzel 1. úrovně odpovídá anglickému originálu v době sesílání, dosahu, trvání, kombinaci složek, všech původních kostkách a počtu pojmenovaných účinků. Kontroly doplňuje cílený regresní test v `scripts/test-rulebook.mjs`. **Testy a build zůstávají na Draft PR nespouštěné**.
+
 ## Stav
 
 - Stručné české přehledy: 932/933 kanonických stránek (výjimkou je atribuce).
 - Úplné české znění pravidlových stránek: **35/35 obsahových pravidlových stránek**.
 - Úplné české překlady jednotlivých ras: **9/9 rasových stránek SRD 5.1**, včetně všech podras obsažených ve zdrojovém SRD.
-- Úplné české popisy jednotlivých kouzel: **24/319**, tj. **24/24 triků SRD 5.1**.
+- Úplné české popisy jednotlivých kouzel: **45/319** – 24/24 triků a 21/49 kouzel 1. úrovně.
 - Dříve dokončené kapitoly zahrnují **Stavy, Nemoci, Objekty, Artefakty** a další pravidla.
 - V další dávce jsou úplně přeloženy kapitoly **Jízdní zvířata a dopravní prostředky, Nástroje, Kouzelné předměty, Jedy a Inteligentní kouzelné předměty**.
 - Následující dávka přeložila celé kapitoly **Zbroje**, **Šílenství** a
