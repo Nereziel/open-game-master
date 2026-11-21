@@ -15,7 +15,7 @@ Tato hůlka má 7 dávek pro následující vlastnosti. Každý den za úsvitu s
 ***Usnadněný únik.*** Když držíš hůlku, můžeš jako reakci utratit 1 dávku a získat výhodu k záchrannému hodu, který provádíš, abys nebyl paralyzovaný nebo zadržený. Případně můžeš utratit 1 dávku a získat výhodu k libovolnému ověření, kterým se snažíš uniknout ze zápasu.`,
   "wand-of-enemy-detection": `*Hůlka, vzácná (vyžaduje sladění)*
 
-Tato hůlka má 7 dávek. Když ji držíš, můžeš jako akci utratit 1 dávku a vyslovit její příkazové slovo. Následující 1 minutu znáš směr k nejbližšímu tvorovi, který je vůči tobě nepřátelský a nachází se do vzdálenosti 60 stop, ale nevíš, jak daleko je. Hůlka vycítí přítomnost nepřátelských tvorů v Éterické sféře, neviditelných, přestrojených i skrytých, stejně jako těch, kteří jsou zjevně na očích. Účinek skončí, jakmile hůlku přestaneš držet.
+Tato hůlka má 7 dávek. Když ji držíš, můžeš jako akci utratit 1 dávku a vyslovit její příkazové slovo. Následující minutu znáš směr k nejbližšímu tvorovi, který je vůči tobě nepřátelský a nachází se do vzdálenosti 60 stop, ale nevíš, jak daleko je. Hůlka vycítí přítomnost nepřátelských tvorů v Éterické sféře, neviditelných, přestrojených i skrytých, stejně jako těch, kteří jsou zjevně na očích. Účinek skončí, jakmile hůlku přestaneš držet.
 
 Hůlka si každý den za úsvitu obnoví 1k6+1 spotřebovaných dávek. Pokud utratíš poslední dávku, hoď k20. Při výsledku 1 se hůlka rozpadne na popel a je zničena.`,
   "wand-of-fear": `*Hůlka, vzácná (vyžaduje sladění)*
