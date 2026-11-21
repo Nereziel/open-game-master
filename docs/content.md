@@ -186,6 +186,25 @@ page. `scripts/test-rulebook.mjs` asserts the book is complete, that no page
 leaves markdown behind, and that the quick links a table uses mid-session
 (`QUICK_LINKS` in `src/lib/rulebook/book.ts`) point at anchors that exist.
 
+### Czech rulebook companion (partial)
+
+The rulebook API also accepts `cs` / `cs-CZ` (including `X-Odm-Locale: cs`).
+The Czech view uses the same SRD 5.1 page IDs, links, bookmarks, folios and
+full original English text. `src/lib/rulebook/czech-companion.ts` adds
+original Czech summaries of core mechanics and Czech titles for selected
+chapters and rules. All other pages still show the original English SRD,
+not a machine-generated or third-party translation. The reader marks this
+partial coverage and links to https://dnd5esrd.d20.cz/ for readers who
+want the community's full Czech translation.
+
+The 2006 licensing statement at https://www.d20.cz/stranky/1659.html
+explicitly covers an older D&D 3.5 SRD translation and warns that its
+information may not apply to later editions. It does **not** establish
+redistribution rights for the D&D 5e community translation. Do not paste
+pages from d20.cz into this repository without verifying the current
+5e translation's licensing terms with its rights holders. The original
+English SRD 5.1 remains CC BY 4.0, attributed in the existing rulebook.
+
 ## Licensing
 
 Each imported document's license is listed on the in-app `/licenses` page,
