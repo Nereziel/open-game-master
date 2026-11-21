@@ -3305,7 +3305,7 @@ try {
       "commune-with-nature": ["(rituál)", "3 mil", "300 stop", "tři skutečnosti", "Budovy"],
       "cone-of-cold": ["60 stop", "8k8", "1k8", "zmrzlou sochu"],
       "conjure-elemental": ["nebezpečností nejvýše 5", "1 hodinu", "ztratíš soustředění", "nepřátelským"],
-      "contact-other-plane": ["(rituál)", "SO 15", "6k6", "pět otázek", "Vyšší navrácení"],
+      "contact-other-plane": ["(rituál)", "SO 15", "6k6", "pět otázek", "Mocné navrácení"],
       contagion: ["tři úspěchy", "tři neúspěchy", "Oslepující nemoc", "Špinavá horečka", "Hniloba masa", "Mozkový žár", "Záchvaty", "Slizký rozklad"],
       creation: ["1 den", "12 hodin", "1 hodina", "10 minut", "1 minuta", "5 stop", "materiální složka"],
     })) for (const needle of needles)
