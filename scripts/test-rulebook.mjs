@@ -1445,11 +1445,11 @@ try {
     assert.ok(localized.md.includes("## Úplné znění pravidel v češtině"));
     assert.ok(localized.md.includes(translated));
     assert.ok(localized.md.endsWith(source.md), "Original English deity tables changed");
-    const batches = await Promise.all(Array.from({ length: 20 }, (_, i) =>
+    const batches = await Promise.all(Array.from({ length: 21 }, (_, i) =>
       import(`../src/lib/rulebook/czech-full-rules-${i + 1}.ts`)));
     const ids = batches.flatMap((mod, i) => Object.keys(mod[`CZECH_FULL_RULES_${i + 1}`]));
-    assert.equal(ids.length, 34);
-    assert.equal(new Set(ids).size, 34, "Duplicate SRD rules page with full Czech text");
+    assert.equal(ids.length, 35);
+    assert.equal(new Set(ids).size, 35, "Duplicate SRD rules page with full Czech text");
   });
 
   await test("Czech traps include eight fully translated mechanical and magical examples", async () => {
@@ -1733,6 +1733,90 @@ try {
       "Jedové", "Psychické", "Zářivé", "Sečné", "Hromové",
     ]) {
       assert.ok(translated.includes("***" + damageType + ".***"), "Missing translated damage type: " + damageType);
+    }
+  });
+
+  await test("full Czech monster-statistics chapter preserves CR mechanics, tables and legendary actions", async () => {
+    const { CZECH_FULL_RULES_21 } = await import("../src/lib/rulebook/czech-full-rules-21.ts");
+    assert.deepEqual(Object.keys(CZECH_FULL_RULES_21), ["monster-statistics"]);
+    const translated = CZECH_FULL_RULES_21["monster-statistics"];
+    const en = rulebookPage("monster-statistics", "en").page;
+    const cs = rulebookPage("monster-statistics", "cs").page;
+    assert.equal(cs.id, en.id);
+    assert.equal(cs.kind, "rules");
+    assert.ok(translated.length > 26000, "Monster statistics full Czech translation unexpectedly short");
+    assert.ok(cs.md.includes("## Úplné znění pravidel v češtině"));
+    assert.ok(cs.md.includes(translated), "Czech reader must render the full monster-statistics translation");
+    assert.ok(cs.md.endsWith(en.md), "Unmodified canonical English monster rules must remain below the translation");
+    for (const section of [
+      "## Velikost", "## Typ tvora", "### Štítky typů",
+      "## Přesvědčení", "## Obranné číslo", "## Životy",
+      "## Rychlost", "### Hrabání", "### Šplhání", "### Létání",
+      "### Plavání", "## Hodnoty vlastností", "## Záchranné hody",
+      "## Dovednosti", "## Zranitelnosti, odolnosti a imunity",
+      "## Smysly", "### Slepozrak", "### Vidění ve tmě",
+      "### Vnímání otřesů", "### Pravé vidění", "## Jazyky",
+      "### Telepatie", "## Stupeň nebezpečnosti",
+      "### Zkušenostní body", "## Zvláštní vlastnosti",
+      "### Vrozené sesílání kouzel", "### Sesílání kouzel",
+      "### Psionika", "## Akce", "### Útoky na blízko a na dálku",
+      "### Víceútok", "### Střelivo", "## Reakce",
+      "## Omezené použití", "## Vybavení",
+      "# Legendární tvorové", "## Legendární akce",
+      "## Doupě legendárního tvora", "### Akce doupěte",
+      "### Regionální účinky",
+    ]) {
+      assert.ok(translated.includes(section), "Missing Czech monster statistics section: " + section);
+    }
+    for (const type of [
+      "Aberace", "Zvířata", "Nebešťané", "Konstrukti",
+      "Draci", "Elementálové", "Víly", "Běsové",
+      "Obři", "Humanoidi", "Zrůdy", "Slizové",
+      "Rostliny", "Nemrtví",
+    ]) {
+      assert.ok(translated.includes("**" + type + " ("), "Missing one of the 14 monster types: " + type);
+    }
+    for (const rule of [
+      "2k8 + 2 životů", "2k8 kostkami životů",
+      "| Gigantický | k20 | 10½ |",
+      "Oprava příslušné vlastnosti", "bonus zdatnosti",
+      "nestvůra i zdroj otřesů se dotýkají stejné země",
+      "může telepatické zprávy vysílat ani přijímat",
+      "čtyř dobrodruhů", "SN 21 nebo vyšší",
+      "pozici kouzla vyšší úrovně",
+      "jiným kouzlem stejné úrovně ze seznamu téhož povolání",
+      "SO = 10 + oprava Síly (Atletika)",
+      "2k4 kusů střeliva", "2k10 kusů střeliva",
+      "Obnovení 5–6", "k6", "20",
+      "pouze na konci tahu jiného tvora",
+      "prohrává všechny shody v iniciativě",
+      "regionální účinky",
+    ]) {
+      assert.ok(translated.includes(rule), "Missing source mechanic in Czech chapter: " + rule);
+    }
+    const lines = translated.split("\n");
+    const between = (start, last) => {
+      const begin = lines.indexOf(start);
+      const end = lines.indexOf(last);
+      assert.ok(begin >= 0 && end > begin, "Cannot find table range: " + start);
+      return lines.slice(begin + 2, end + 1);
+    };
+    const sizeRows = between("| Velikost | Prostor | Příklady |", "| Gigantický | 20 × 20 stop nebo více | kraken, purpurový červ |");
+    const hitDiceRows = between("| Velikost nestvůry | Kostka životů | Průměr na kostku |", "| Gigantický | k20 | 10½ |");
+    const proficiencyRows = between("| Stupeň nebezpečnosti (SN) | Bonus zdatnosti |", "| 30 | +9 |");
+    const experienceRows = between("| Stupeň nebezpečnosti (SN) | Zkušenostní body (ZK) |", "| 30 | 155 000 |");
+    assert.equal(sizeRows.length, 6);
+    assert.equal(hitDiceRows.length, 6);
+    assert.equal(proficiencyRows.length, 34);
+    assert.equal(experienceRows.length, 34, "Every CR from 0, 1/8, 1/4, 1/2, and 1–30 needs XP");
+    for (const [cr, expectedXp] of [
+      [9, "5 000"], [10, "5 900"], [11, "7 200"],
+      [12, "8 400"], [13, "10 000"], [26, "90 000"],
+      [27, "105 000"], [28, "120 000"], [29, "135 000"],
+      [30, "155 000"],
+    ]) {
+      assert.ok(experienceRows.includes("| " + cr + " | " + expectedXp + " |"),
+        "Missing verified 2014 XP value for CR " + cr);
     }
   });
 
