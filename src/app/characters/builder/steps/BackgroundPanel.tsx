@@ -110,7 +110,7 @@ export function BackgroundPanel({
                     background.feature
                       ? `**Schopnost: ${backgroundFeatureLabel(background.name, background.feature, locale)}.** ${background.featureDesc ? t(background.featureDesc) : ""}`
                       : null,
-                  ].filter(Boolean).join("\\n\\n")
+                  ].filter(Boolean).join("\n\n")
                 : backgroundInfoText(background)}
               reference={{ kind: "backgrounds", slug: background.id }}
             />
