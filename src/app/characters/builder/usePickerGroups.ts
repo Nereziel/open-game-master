@@ -358,7 +358,7 @@ export function usePickerGroups({
           ? `d${entry.hitDie} · ${t("caster")}`
           : `d${entry.hitDie}`,
       ...(showSource && entry.source && !isCoreDocument(entry.documentSlug) ? { source: entry.source } : {}),
-      infoText: classInfoText(entry, t),
+      infoText: classInfoText(entry, t, locale),
       reference: { kind: "classes", slug: entry.id, name: entry.name },
     });
     if (classTier.recommended.length) {
