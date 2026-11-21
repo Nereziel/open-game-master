@@ -489,7 +489,7 @@ try {
     }
     const spell = english.find((page) => page.kind === "spell" && page.title === "Polymorph");
     assert.ok(spell, "Polymorph exists in SRD 5.1");
-    assert.ok(rulebookSearch("Proměna", 10, "cs").hits.some((hit) => hit.page === spell.id), "Czech search resolves Polymorph");
+    assert.ok(rulebookSearch("Proměň tvora", 10, "cs").hits.some((hit) => hit.page === spell.id), "Czech search resolves Polymorph");
     assert.equal(rulebookPage("polymorph", "en").page.title, "Polymorph");
   });
 
@@ -1238,7 +1238,7 @@ try {
     }
     assert.ok(planes.includes("šestnácti sfér"));
     assert.ok(planes.includes("*Spatři neviditelné*"));
-    assert.ok(planes.includes("*Pravé vidění*"));
+    assert.ok(planes.includes("*Pravdivé vidění*"));
     assert.ok(madness.includes("*Mocné navrácení*"));
   });
 
@@ -1401,6 +1401,16 @@ try {
       "Dispel Evil and Good": "Rozptyl zlo a dobro",
       "Power Word Kill": "Slovo moci „ZABIJ“",
       "Power Word Stun": "Slovo moci „OCHROM“",
+      "Alter Self": "Změň svůj tvar",
+      Polymorph: "Proměň tvora",
+      Seeming: "Hromadné přestrojení",
+      "Wall of Force": "Zeď síly",
+      Harm: "Zraň",
+      "Planar Binding": "Sférická vazba",
+      "Magic Jar": "Schránka života",
+      "True Seeing": "Pravdivé vidění",
+      Sunburst: "Sluneční záblesk",
+      "Prismatic Spray": "Spektrální sprška",
     };
     for (const [englishName, czechName] of Object.entries(spellNames2014)) {
       assert.equal(CZECH_SPELLS[englishName], czechName,
