@@ -23,7 +23,7 @@ const { test, finish } = suite("test-turn-failure-retry");
 const { listRecentMessages, findMessageForDmTurn, getCampaignMessage, insertCampaignMessage } = await import("../src/lib/db/messages.ts");
 const { allocateSeq } = await import("../src/lib/db/campaigns.ts");
 const { getDmTurn, getLatestDmTurnId } = await import("../src/lib/db/dm-turns.ts");
-const { insertPlayerWhisper } = await import("../src/lib/db/dm-whispers.ts");
+const { insertPlayerWhisper, listWhispersForUser } = await import("../src/lib/db/dm-whispers.ts");
 const { getDatabase } = await import("../src/lib/db/core.ts");
 const { getDmStatus } = await import("../src/lib/dm/status.ts");
 const { DM_HALTED_PREFIX, haltedTurnPrefix } = await import("../src/lib/campaign-types.ts");
@@ -131,6 +131,29 @@ async function table() {
   model.pointAt(world);
   return { world, kara, model };
 }
+
+await test("A private-only whisper reply finishes in one AI call and never posts shared narration", async () => {
+  const { world, kara, model } = await table();
+  world.say("dm", "Kara, the innkeeper has retired for the night.");
+  const prior = narrations(world).length;
+  const sheet = world.sheet(kara.id);
+  const sentId = insertPlayerWhisper(world.campaignId, sheet.userId, kara.id, "I privately ask about the locked cellar.");
+  model.script([
+    reply({ calls: [call("send_whisper", { characterIds: [kara.id], message: "The key is under the old bench." })] }),
+  ]);
+  requestDmTurn(world.campaignId);
+  await settleQueue(world.campaignId);
+  const latest = getDmTurn(getLatestDmTurnId(world.campaignId));
+  assert.equal(latest.status, "done");
+  assert.equal(model.served(), 1, "a private-only send_whisper must not ask for a second public narration");
+  assert.equal(narrations(world).length, prior, "the private exchange leaked a passage into shared chat");
+  const whispers = listWhispersForUser(world.campaignId, sheet.userId);
+  assert.ok(whispers.some((entry) => entry.direction === "to_player" && entry.content.includes("key is under")), "the answer never reached the player");
+  assert.ok(whispers.some((entry) => entry.id === sentId && entry.answered), "the private question was left pending");
+  assert.equal(getDmStatus(world.campaignId), "idle");
+  model.close();
+  world.close();
+});
 
 await test("A halted notice is known by its mark in either wording: the GM's, or the DM's an older transcript kept.", () => {
   assert.equal(haltedTurnPrefix(`${DM_HALTED_PREFIX}the backend did not answer.`), DM_HALTED_PREFIX);
