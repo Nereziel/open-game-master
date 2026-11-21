@@ -191,10 +191,47 @@ slovo *proměna* v pravidlech druida není názvem kouzla `Polymorph`.
 
 Kontroly v `scripts/test-rulebook.mjs` zahrnují nyní 29 individuálně
 ověřených názvů. Testovací sada ani build se pro Draft PR nespouštěly.
+## Úplné překlady ras SRD 5.1 (21. 11. 2026)
+
+V PR #35 jsou nově **úplné české překlady 9 z 9 samostatných rasových
+stránek** v anglickém SRD 5.1 (2014). Nejde pouze o stručné anotace.
+Zahrnují všechny rasové rysy, věk, přesvědčení, velikost, rychlost,
+jazyky, číselné hodnoty a všechny podrody skutečně uvedené v tomto SRD.
+
+| Anglické ID stránky | Česká rasa | Podrasa v SRD 5.1 |
+|---|---|---|
+| `dwarf` | Trpaslík | Kopcový trpaslík |
+| `elf` | Elf | Vznešený elf |
+| `halfling` | Hobit | Tichošlápek |
+| `human` | Člověk | – |
+| `dragonborn` | Drakorozený | Tabulka 10 dračích původů |
+| `gnome` | Gnóm | Skalní gnóm |
+| `half-elf` | Půlelf | – |
+| `half-orc` | Půlork | – |
+| `tiefling` | Tiefling | – |
+
+Základní text je **samostatně přeložen z anglického SRD 5.1 (CC BY 4.0)**.
+Z české [2. kapitoly Příručky hráče 2014](https://dnd5esrd.d20.cz/prirucka-hrace/2-kapitola.html)
+byly převzaty pouze ustálené názvy ras, rodů a schopností,
+nikoli souvislé popisy nebo vysvětlení.
+
+Překlad je rozdělen mezi `czech-full-races-1.ts` a
+`czech-full-races-2.ts`. Na každé stránce zůstává zachováno
+původní anglické ID a celé nezměněné anglické znění, které se zobrazí
+za českým překladem. Integrace je v `czech-companion.ts`.
+Statické porovnání s kanonickým anglickým JSON potvrdilo
+**9/9 ras**, shodné počty schopností a strukturu nadpisů u všech devíti.
+Tabulka dračího původu obsahuje všech **10 typů**, gnómský Kutil
+všechny **3 typy zařízení**.
+
+Byly přidány regresní kontroly v `scripts/test-rulebook.mjs`;
+sada testů ani build se na Draft PR podle dohody zatím nespouštěly.
+
 ## Stav
 
 - Stručné české přehledy: 932/933 kanonických stránek (výjimkou je atribuce).
 - Úplné české znění pravidlových stránek: **35/35 obsahových pravidlových stránek**.
+- Úplné české překlady jednotlivých ras: **9/9 rasových stránek SRD 5.1**, včetně všech podras obsažených ve zdrojovém SRD.
 - Dříve dokončené kapitoly zahrnují **Stavy, Nemoci, Objekty, Artefakty** a další pravidla.
 - V další dávce jsou úplně přeloženy kapitoly **Jízdní zvířata a dopravní prostředky, Nástroje, Kouzelné předměty, Jedy a Inteligentní kouzelné předměty**.
 - Následující dávka přeložila celé kapitoly **Zbroje**, **Šílenství** a
