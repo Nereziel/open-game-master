@@ -3706,6 +3706,81 @@ try {
           "Critical seventh-level mechanic missing: "+id+"/"+marker);
   });
 
+
+  await test("all 20 seventh-level SRD 5.1 spells have complete Czech rules", async () => {
+    const [{ CZECH_FULL_SPELLS_25 }, { CZECH_FULL_SPELLS_26 }] = await Promise.all([
+      import("../src/lib/rulebook/czech-full-spells-25.ts"),
+      import("../src/lib/rulebook/czech-full-spells-26.ts"),
+    ]);
+    const batches=[CZECH_FULL_SPELLS_25,CZECH_FULL_SPELLS_26];
+    assert.deepEqual(batches.map(batch=>Object.keys(batch).length),[12,8]);
+    assert.deepEqual(Object.keys(CZECH_FULL_SPELLS_26),["project-image","regenerate","resurrection","reverse-gravity","sequester","simulacrum","symbol","teleport"]);
+    const ids=batches.flatMap(batch=>Object.keys(batch));
+    assert.equal(new Set(ids).size,20,"All 7th-level spells should have distinct canonical IDs");
+    const originals=rulebookPages("en").filter(page=>
+      page.kind==="spell"&&page.meta?.startsWith("7th-level"));
+    assert.equal(originals.length,20);
+    assert.deepEqual(ids,originals.map(page=>page.id),
+      "7th-level Czech translations must preserve the exact English SRD ordering");
+    const fullTexts=Object.assign({},...batches);
+    const field=(md,label)=>{
+      const prefix="**"+label+":** ";
+      return md.split("\n").find(line=>line.startsWith(prefix))?.slice(prefix.length);
+    };
+    const times={"1 action":"1 akce","1 bonus action":"1 bonusová akce",
+      "1 minute":"1 minuta","10 minutes":"10 minut","1 hour":"1 hodina","12 hours":"12 hodin"};
+    const ranges={"500 miles":"500 mil","100 feet":"100 stop","10 feet":"10 stop",
+      "30 feet":"30 stop","60 feet":"60 stop","90 feet":"90 stop",
+      "150 feet":"150 stop","300 feet":"300 stop",
+      Touch:"Dotyk",Self:"Sesilatel",Sight:"Dohled"};
+    const durations={Instantaneous:"Ihned","1 hour":"1 hodina","10 days":"10 dnů",
+      "24 hours":"24 hodin","Up to 8 hours":"Až 8 hodin","Until dispelled":"Do rozptýlení",
+      "Until dispelled or triggered":"Do rozptýlení nebo spuštění",
+      "Concentration, up to 1 minute":"Soustředění, až 1 minuta",
+      "Concentration, up to 1 day":"Soustředění, až 1 den",
+      "Concentration, up to 1 hour":"Soustředění, až 1 hodina"};
+    for(const original of originals){
+      const full=fullTexts[original.id];
+      const localized=rulebookPage(original.id,"cs").page;
+      assert.ok(full?.length>=220,"Missing Czech full spell: "+original.id);
+      assert.equal(localized.id,original.id);
+      assert.equal(localized.title,CZECH_SPELLS[original.title]);
+      assert.equal(localized.originalMeta,original.meta);
+      assert.ok(localized.md.includes("## Úplné znění pravidel v češtině"));
+      assert.ok(localized.md.includes(full),"Reader missing Czech text: "+original.id);
+      assert.ok(localized.md.endsWith(original.md),"Original English spell modified: "+original.id);
+      for(const [en,cz] of [
+        ["Casting Time","Doba sesílání"],["Range","Dosah"],
+        ["Components","Složky"],["Duration","Trvání"]
+      ]){
+        assert.ok(field(original.md,en),"Missing English source field: "+original.id+"/"+en);
+        assert.ok(field(full,cz),"Missing Czech field: "+original.id+"/"+cz);
+      }
+      assert.equal(field(full,"Složky").match(/^[VSM, ]+/)?.[0]?.trim(),
+        field(original.md,"Components").match(/^[VSM, ]+/)?.[0]?.trim(),
+        "Spell components changed: "+original.id);
+      for(const [label,values,czLabel] of [
+        ["Casting Time",times,"Doba sesílání"],["Range",ranges,"Dosah"],["Duration",durations,"Trvání"]
+      ]){
+        const originalValue=field(original.md,label);
+        if(values[originalValue]){
+          if(label==="Range") assert.ok(field(full,czLabel).startsWith(values[originalValue]),
+            "Range changed: "+original.id);
+          else assert.equal(field(full,czLabel),values[originalValue],
+            "Casting field differs: "+original.id+"/"+label);
+        }
+      }
+      if(/^\*7th-level [^\n]*\(ritual\)\*/m.test(original.md))
+        assert.ok(full.includes("(rituál)"),"Ritual tag missing: "+original.id);
+      for(const [,count,sides] of original.md.matchAll(/\b(\d+)d(\d+)\b/g))
+        assert.ok(full.includes(count+"k"+sides),"Source dice missing: "+original.id);
+    }
+    const checks={"project-image":["500 mil","5 zl","dvojnásobek","Bonusovou akcí","oslepený a ohluchlý","Pátrání"],"regenerate":["4k8 + 15","1 život","10 životů","2 minutách","okamžitě"],"resurrection":["100 lety","1 000 zl","stářím","všechny chybějící části","−4","alespoň 1 rok","nemůžeš sesílat"],"reverse-gravity":["50 stop","100 stop","Obratnost","pádu","horní hranice","znovu padají dolů"],"sequester":["5 000 zl","neviditelným","věšteckých kouzel","nestárne","1 míle","1 000 letech","jakékoli zranění"],"simulacrum":["12 hodin","1 500 zl","polovinu jeho maximálních životů","výtvorem","pozice kouzel","100 zl","0 životů","znovu"],"symbol":["1 000 zl","10 stop","60 stop","10 minut","Smrt","Svár","Strach","Beznaděj","Šílenství","Bolest","Spánek","Omráčení","10k10"],"teleport":["osm ochotných","10 stop","01–100","01–05","06–13","14–24","25–100","01–33","34–43","44–53","54–100","01–43","54–73","74–100","01–50","51–100","1k10 × 1k10","3k10","šesti měsíců"]};
+    for(const [id,markers] of Object.entries(checks))
+      for(const marker of markers)
+        assert.ok(fullTexts[id].includes(marker),"Missing 7th-level mechanics: "+id+"/"+marker);
+  });
+
   // ---- the routes ----
   const { createUser } = await import("../src/lib/db/users.ts");
   const { mintSession } = await import("../src/lib/auth.ts");
