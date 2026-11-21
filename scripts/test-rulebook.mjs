@@ -1843,8 +1843,23 @@ try {
       Survival: "Přežití",
     };
     assert.deepEqual(CZECH_SKILLS, expected);
+    const { CZECH_CREATURE_TYPES } = await import("../src/lib/rulebook/czech-terms.ts");
+    assert.equal(CZECH_CREATURE_TYPES.aberration, "zrůda");
+    assert.equal(CZECH_CREATURE_TYPES.monstrosity, "obluda");
+    assert.equal(CZECH_CREATURE_TYPES.construct, "výtvor");
+    assert.equal(new Set(Object.values(CZECH_CREATURE_TYPES)).size, 14,
+      "Every English creature type must have a distinct Czech name");
     const { CZECH_FULL_RULES_19 } = await import("../src/lib/rulebook/czech-full-rules-19.ts");
     const abilities = CZECH_FULL_RULES_19["using-ability-scores"];
+    const { CZECH_FULL_RULES_21 } = await import("../src/lib/rulebook/czech-full-rules-21.ts");
+    const monsterRules = CZECH_FULL_RULES_21["monster-statistics"];
+    for (const title of [
+      "**Zrůdy (aberrations)**",
+      "**Obludy (monstrosities)**",
+      "**Výtvory (constructs)**",
+    ]) {
+      assert.ok(monsterRules.includes(title), "Wrong Czech monster type: " + title);
+    }
     for (const term of Object.values(expected)) {
       assert.ok(abilities.includes(term), "Missing Czech PHB skill name: " + term);
     }
