@@ -2951,7 +2951,7 @@ try {
     for (const [id, needles] of Object.entries({
       fireball: ["20 stop", "8k6", "1k6", "za rohy"],
       fly: ["60 stop", "spadne", "jednoho dalšího tvora"],
-      "gaseous-form": ["10 stop", "nemagickému zranění", "0 životů", "nemůže útočit ani sesílat kouzla"],
+      "gaseous-form": ["10 stop", "nemagickému zranění", "0 životů", "Nemůže útočit ani sesílat kouzla"],
       "glyph-of-warding": ["200 zl", "10 stop", "Pátrání", "20 stop", "5k8", "1k8", "soustředění"],
       haste: ["bonus +2", "dvojnásobnou rychlost", "jeden útok zbraní", "následujícího tahu"],
       "hypnotic-pattern": ["30 stop", "Moudrost", "rychlost je 0", "zatřese"],
