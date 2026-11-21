@@ -37,8 +37,8 @@ licence převzetí výslovně dovolí, a za příslušných podmínek s atribuc�
 ## Stav
 
 - Stručné české přehledy: 932/933 kanonických stránek (výjimkou je atribuce).
-- Úplné české znění pravidlových stránek: **26/35 obsahových pravidlových stránek**.
-- Nově kompletní kapitoly: **Stavy, Nemoci, Objekty, Artefakty**; celkem 26/35.
+- Úplné české znění pravidlových stránek: **28/35 obsahových pravidlových stránek**.
+- Nově kompletní kapitoly: **Stavy, Nemoci, Objekty, Artefakty**; celkem 28/35.
 - V další dávce jsou úplně přeloženy kapitoly **Jízdní zvířata a dopravní prostředky, Nástroje, Kouzelné předměty, Jedy a Inteligentní kouzelné předměty**.
 - Následující dávka přeložila celé kapitoly **Zbroje**, **Šílenství** a
   **Sféry existence**, včetně tabulek a konkrétních pravidlových omezení.
@@ -46,7 +46,12 @@ licence převzetí výslovně dovolí, a za příslušných podmínek s atribuc�
   **Zázemí**, včetně všech tabulek a všech 26 návrhů vlastností akolyty.
 - Nově přeloženy také celé kapitoly **Zbraně** a **Výdaje**, včetně
   všech 37 zbraní a tří tabulek životních nákladů, jídla a služeb.
-- Úplné české texty kouzel, statistiky nestvůr, předmětů, ras a povolání:
+- Nově přeložena celá kapitola **Seznamy kouzel**: **778 výskytů**
+  **319 jedinečných kouzel**, v seznamech osmi povolání a 70 skupinách úrovní,
+  všechny podle existujícího českého slovníku.
+- Také kapitola **Božstva mnohovesmíru**: všechny úvodní popisy i **67 božstev**
+  keltského, řeckého, egyptského a severského panteonu, včetně všech tabulkových hodnot.
+- Úplné české texty jednotlivých kouzel, statistiky nestvůr, předmětů, ras a povolání:
   zbývá dopracovat; přehledy nejsou totéž co plné překlady.
 - Testy ověřují dostupnost úplných textů a zachování originálu, ale před
   sloučením je třeba samostatně spustit build a test suite.
