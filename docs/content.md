@@ -186,6 +186,72 @@ page. `scripts/test-rulebook.mjs` asserts the book is complete, that no page
 leaves markdown behind, and that the quick links a table uses mid-session
 (`QUICK_LINKS` in `src/lib/rulebook/book.ts`) point at anchors that exist.
 
+### Czech rulebook companion (all content pages)
+
+The rulebook API also accepts `cs` / `cs-CZ` (including `X-Odm-Locale: cs`).
+The Czech view uses the same SRD 5.1 page IDs, links, bookmarks, folios and
+full original English text. `src/lib/rulebook/czech-companion.ts` adds
+original Czech summaries on **932 of the 933 canonical SRD pages**:
+35 of 36 core rules pages, all 319 SRD spells, all 318 monsters,
+all 239 magic items, all 12 classes and all nine playable races.
+The first complete Czech rules-text translation batch is now available for
+**10 rules pages**: racial traits, inspiration, languages, coinage,
+selling treasure, trade goods, feats (including Grappler), customizing NPCs,
+character advancement and alignment.
+The texts in `czech-full-rules-1.ts` and `czech-full-rules-2.ts`
+were translated independently from the **English SRD 5.1 under CC BY 4.0**;
+they are **not** copied from the d20.cz/ShadoWWW fan translation.
+These 10 pages show the complete Czech text and tables after their brief
+Czech overview. The original English SRD content remains below for
+verification and exact reference. The remaining **25 nonlegal rules pages**
+and the spells, monster stat blocks, classes, races and items still need
+full detailed translations even though they all have Czech summaries.
+Source and translation licensing are documented in `docs/srd-czech-translation.md`.
+The sole exception is the CC BY 4.0 legal notice, which retains its full
+original English attribution verbatim, with a Czech display title.
+The note dictionaries additionally contain 14 monster/item notes that do not
+match standalone canonical 2014 SRD pages and are not counted as page coverage.
+These companion notes are concise Czech explanations, **not full Czech translations
+of the original source's every rule clause, stat block, or spell effect**.
+A known SRD title variant, `Animated Armor (Animated Object)`, reuses the
+existing Czech `Animated Armor` note and title. It also localizes recurring spell schools, creature size/type,
+item rarity and attunement text; the original English SRD stays attached to
+every page for exact numeric mechanics.
+Separately, the character builder maps all **46 bundled playable races and
+subraces** through `src/lib/content/names-cs.ts`, covering their English
+names and canonical race IDs with Czech labels. This display-only mapping also
+corrects Hill Dwarf versus Mountain Dwarf and does not translate homebrew
+names or stored race identifiers. The titles, spell and monster names
+are based on the established d20.cz glossary, not copied full prose.
+The final 2026-11-21 batches add 76 Czech monster, beast and NPC summaries
+(`czech-monster-notes-8.ts`) and 73 original magic-item summaries
+(`czech-item-notes-6.ts`), on top of the prior 70+70 batch.
+All are bound to canonical English SRD pages using exact titles and
+independent Czech display names, preserving the original English mechanics.
+The test suite asserts 932/933 page coverage, each newly written name and note,
+and byte-for-byte preservation of the original CC BY 4.0 attribution.
+The character builder also presents Czech headings and explanations for all
+**126 distinct bundled racial trait descriptions** across its 46 playable
+races and subraces. These display-only translations are covered by a
+regression test and leave stored English rule data unchanged.
+Spell coverage is counted against the **319 canonical 2014 SRD spell pages**,
+not merely the number of spell descriptions written. Some extra PHB-only spell
+notes and alternative English capitalization aliases remain in source files
+for other parts of the app; they do not create SRD pages or alter game IDs.
+
+The legal page shows only the original English attribution, not a machine-generated
+or third-party translation. The reader marks this
+partial coverage and links to https://dnd5esrd.d20.cz/ for readers who
+want the community's full Czech translation.
+
+The 2006 licensing statement at https://www.d20.cz/stranky/1659.html
+explicitly covers an older D&D 3.5 SRD translation and warns that its
+information may not apply to later editions. It does **not** establish
+redistribution rights for the D&D 5e community translation. Do not paste
+pages from d20.cz into this repository without verifying the current
+5e translation's licensing terms with its rights holders. The original
+English SRD 5.1 remains CC BY 4.0, attributed in the existing rulebook.
+
 ## Licensing
 
 Each imported document's license is listed on the in-app `/licenses` page,

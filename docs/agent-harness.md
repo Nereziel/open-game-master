@@ -11,6 +11,29 @@ on the server's computer, in two ways:
 
 Neither way ever asks for, reads or stores the program's password or key.
 
+## Czech campaigns and the MCP tool protocol
+
+The MCP endpoint and `tools/list` remain **English**. Tool names (for example
+`request_roll`, `cast_at_enemy`, `odm_dm_invoke`), JSON field names, enum
+values, character IDs and session permissions are unchanged. A model narrating
+in Czech should use those stable tool names and follow the English schema.
+
+For compatibility, the MCP call boundary recognizes known Czech D&D 5e names
+in structured rule fields and resolves them to canonical English engine
+names before invoking the existing server handlers. Examples:
+
+- `request_roll {"skill":"Plížení","ability":"Moudrost"}` resolves the
+  structured fields to `stealth` and `wis`;
+- `cast_at_enemy {"spell":"Ohnivá koule"}` passes `Fireball`;
+- a connected agent's `odm_dm_invoke` normalizes only the nested
+  `args`, not the MCP tool name or the action name.
+
+This is an **exact glossary lookup**, not a general translator: unfamiliar
+values are passed unchanged for the normal server validator to accept or
+reject. Free-form player text, NPC and location names, narration, security
+checks and allowed tool profiles are never translated. The existing
+restriction on native tools remains in force for CLI agents.
+
 ## The storyteller
 
 The guided setup (**Admin > Guided setup**, and the first thing a fresh server

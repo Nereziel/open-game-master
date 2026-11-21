@@ -23,6 +23,26 @@ const { rulebookContents, rulebookPage, rulebookPages, rulebookSearch, localeFro
   "../src/lib/rulebook/book.ts"
 );
 const { crosswalkFor } = await import("../src/lib/rulebook/crosswalk.ts");
+const { CZECH_SKILLS, CZECH_ITEMS, CZECH_MONSTERS, CZECH_SPELLS, czechSrdTitle, czechSrdSpellGroup, czechSrdSpellMeta, czechSrdMonsterMeta, czechSrdItemMeta } =
+  await import("../src/lib/rulebook/czech-terms.ts");
+const { CZECH_SPELL_NOTES } = await import("../src/lib/rulebook/czech-spell-notes.ts");
+const { CZECH_SPELL_NOTES_2 } = await import("../src/lib/rulebook/czech-spell-notes-2.ts");
+const { CZECH_SPELL_NOTES_3 } = await import("../src/lib/rulebook/czech-spell-notes-3.ts");
+const { CZECH_SPELL_NOTES_4 } = await import("../src/lib/rulebook/czech-spell-notes-4.ts");
+const { CZECH_SPELL_NOTES_5 } = await import("../src/lib/rulebook/czech-spell-notes-5.ts");
+const { CZECH_SPELL_NOTES_6 } = await import("../src/lib/rulebook/czech-spell-notes-6.ts");
+const { CZECH_SPELL_NOTES_6A } = await import("../src/lib/rulebook/czech-spell-notes-6a.ts");
+const { CZECH_SPELL_NOTES_6B } = await import("../src/lib/rulebook/czech-spell-notes-6b.ts");
+const { CZECH_SPELL_NOTES_7A } = await import("../src/lib/rulebook/czech-spell-notes-7a.ts");
+const { CZECH_SPELL_NOTES_7B } = await import("../src/lib/rulebook/czech-spell-notes-7b.ts");
+const { CZECH_SPELL_NOTES_7C } = await import("../src/lib/rulebook/czech-spell-notes-7c.ts");
+const { CZECH_SPELL_NOTES_7D } = await import("../src/lib/rulebook/czech-spell-notes-7d.ts");
+const { CZECH_MONSTER_NOTES, CZECH_ITEM_NOTES } = await import("../src/lib/rulebook/czech-bestiary-items.ts");
+const { CZECH_MONSTER_NOTES_2, CZECH_ITEM_NOTES_2 } = await import("../src/lib/rulebook/czech-bestiary-items-2.ts");
+const { CZECH_MONSTER_NOTES_3, CZECH_ITEM_NOTES_3 } = await import("../src/lib/rulebook/czech-bestiary-items-3.ts");
+const { CZECH_MONSTER_NOTES_4 } = await import("../src/lib/rulebook/czech-monster-notes-4.ts");
+const { CZECH_MONSTER_NOTES_5 } = await import("../src/lib/rulebook/czech-monster-notes-5.ts");
+const { CZECH_CLASS_NOTES, CZECH_RACE_NOTES } = await import("../src/lib/rulebook/czech-character-notes.ts");
 const { anchorSlug, blockText, inlineText, parseBook, parseInline, stripInline } = await import(
   "../src/lib/rulebook/markdown.ts"
 );
@@ -297,6 +317,393 @@ try {
     assert.equal(snippetFor("Short text.", ["x"]), "Short text.");
   });
 
+  // ---- Czech SRD companion ----
+  await test("Czech shares the exact SRD 5.1 bindings and preserves the English text", () => {
+    const en = rulebookPages("en");
+    const cs = rulebookPages("cs");
+    assert.deepEqual(cs.map((page) => page.id), en.map((page) => page.id));
+    assert.deepEqual(cs.map((page) => page.chapter), en.map((page) => page.chapter));
+    assert.equal(rulebookPage("combat", "cs").page.title, "Boj");
+    assert.equal(rulebookPage("fireball", "cs").page.title, "Ohnivá koule");
+    assert.equal(rulebookPage("dwarf", "cs").page.title, "Trpaslík");
+    assert.equal(rulebookPage("halfling", "cs").page.title, "Hobit");
+    assert.match(rulebookPage("combat", "cs").page.md, /Český přehled pravidel/);
+    assert.ok(rulebookPage("combat", "cs").page.md.endsWith(rulebookPage("combat", "en").page.md));
+    assert.match(rulebookPage("fireball", "cs").page.md, /Český popis kouzla/);
+    assert.ok(rulebookPage("fireball", "cs").page.md.endsWith(rulebookPage("fireball", "en").page.md));
+    assert.equal(rulebookPage("legal-information", "cs").page.md, rulebookPage("legal-information", "en").page.md);
+    assert.equal(rulebookContents("cs").pageCount, rulebookContents("en").pageCount);
+    assert.equal(rulebookContents("cs").source.license, "CC-BY-4.0");
+    assert.equal(rulebookContents("cs").chapters.find((chapter) => chapter.id === "combat").title, "Boj");
+  });
+
+  await test("Czech quick links keep their original anchors and search stems Czech", () => {
+    for (const link of QUICK_LINKS) {
+      const page = rulebookPage(link.page, "cs");
+      assert.ok(page, `Missing Czech fallback for ${link.page}`);
+      if (link.at) assert.ok(anchorsOf(parseBook(page.page.md)).includes(link.at), `Missing Czech anchor ${link.at}`);
+    }
+    const hits = rulebookSearch("soustředění", undefined, "cs").hits;
+    assert.ok(hits.some((hit) => hit.page === "spellcasting"), "Czech rules find the original Czech concentration note");
+    assert.equal(localeFromAcceptLanguage("cs-CZ,fr;q=0.5"), "cs");
+    assert.equal(localeFromAcceptLanguage("en;q=0.9,cs;q=0.3"), "en");
+    assert.equal(localeFromAcceptLanguage("cs;q=0"), "en");
+    assert.equal(crosswalkFor(rulebookPage("fireball", "cs").page, "cs").editor, "spell");
+    assert.equal(crosswalkFor(rulebookPage("armor", "cs").page, "cs").support, "engine");
+    assert.equal(crosswalkFor(rulebookPage("fireball", "cs").page, "cs").support, crosswalkFor(rulebookPage("fireball", "en").page).support);
+  });
+
+  await test("Czech titles, magic school subtitles, and spell groups are translated without changing SRD IDs", () => {
+    assert.equal(Object.keys(CZECH_SKILLS).length, 18, "the full 5e skill list");
+    assert.ok(Object.keys(CZECH_MONSTERS).length >= 120, "the expanded monster dictionary");
+    assert.ok(Object.keys(CZECH_SPELLS).length >= 60, "the expanded spell dictionary");
+    assert.ok(Object.keys(CZECH_ITEMS).length >= 50, "the expanded magic-item dictionary");
+    assert.equal(czechSrdTitle("Wolf", "monster"), "Vlk");
+    assert.equal(czechSrdTitle("Fire Bolt", "spell"), "Ohnivá střela");
+    assert.equal(czechSrdTitle("Amulet of Health", "item"), "Amulet zdraví");
+    assert.equal(czechSrdTitle("Druid", "class"), "Druid");
+    assert.equal(czechSrdSpellGroup("Cantrips"), "Triky");
+    assert.equal(czechSrdSpellGroup("3rd Level"), "3. úroveň");
+    assert.equal(czechSrdSpellMeta("3rd-level evocation"), "Zaklínání 3. úrovně");
+    assert.equal(czechSrdSpellMeta("1st-level divination (ritual)"), "Věštění 1. úrovně (rituál)");
+    assert.equal(czechSrdSpellMeta("unknown metadata"), "unknown metadata");
+    const spell = rulebookPage("fireball", "cs").page;
+    assert.equal(spell.meta, "Zaklínání 3. úrovně");
+    assert.equal(spell.originalMeta, rulebookPage("fireball", "en").page.meta);
+    assert.equal(spell.group, "3. úroveň");
+    assert.equal(rulebookPage("fireball", "en").page.title, "Fireball");
+    assert.equal(rulebookPage("fireball", "fr").page.title, "Boule de feu");
+  });
+
+  await test("Czech spell explanations cover common SRD spells with canonical English fallback", () => {
+    const english = rulebookPages("en");
+    const spellsByName = new Map(english.filter((page) => page.kind === "spell").map((page) => [page.title, page]));
+    assert.equal(Object.keys(CZECH_SPELL_NOTES).length, 44, "new Czech spell explanations");
+    for (const [name, note] of Object.entries(CZECH_SPELL_NOTES)) {
+      const spell = spellsByName.get(name);
+      assert.ok(spell, `Spell note is not a canonical SRD 5.1 spell: ${name}`);
+      assert.ok(note.length > 120, `Spell note is unexpectedly short: ${name}`);
+      const czech = rulebookPage(spell.id, "cs").page;
+      assert.match(czech.md, /Český popis kouzla/);
+      assert.ok(czech.md.includes(note));
+      assert.ok(czech.md.endsWith(spell.md), `Original SRD lost in ${name}`);
+      assert.ok(CZECH_SPELLS[name], `Czech title missing for ${name}`);
+    }
+    const fireball = rulebookSearch("Ohnivá koule", 5, "cs").hits;
+    assert.ok(fireball.some((hit) => hit.page === "fireball"), "Czech spell search finds canonical fireball id");
+  });
+
+  await test("Czech bestiary and magic item guides preserve all original English stat blocks", () => {
+    const english = rulebookPages("en");
+    assert.equal(Object.keys(CZECH_MONSTER_NOTES).length, 27);
+    assert.equal(Object.keys(CZECH_ITEM_NOTES).length, 20);
+    for (const [kind, mapping, heading] of [
+      ["monster", CZECH_MONSTER_NOTES, "Český přehled nestvůry"],
+      ["item", CZECH_ITEM_NOTES, "Český přehled předmětu"],
+    ]) {
+      const originals = new Map(english.filter((page) => page.kind === kind).map((page) => [page.title, page]));
+      for (const [name, note] of Object.entries(mapping)) {
+        const original = originals.get(name);
+        assert.ok(original, `Missing English SRD ${kind}: ${name}`);
+        assert.ok(CZECH_ITEMS[name] || CZECH_MONSTERS[name], `Missing Czech title for ${name}`);
+        const czech = rulebookPage(original.id, "cs").page;
+        assert.ok(czech.md.includes(heading), `Missing Czech heading for ${name}`);
+        assert.ok(czech.md.includes(note), `Missing Czech note for ${name}`);
+        assert.ok(czech.md.endsWith(original.md), `English stat block lost for ${name}`);
+      }
+    }
+  });
+
+  await test("second Czech batch: 42 spells, 26 monsters and 20 items resolve to unchanged canonical SRD pages", () => {
+    const originals = rulebookPages("en");
+    const check = (kind, mapping, expectedCount, heading, titles) => {
+      assert.equal(Object.keys(mapping).length, expectedCount, `${kind} new translation count`);
+      const byTitle = new Map(originals.filter((page) => page.kind === kind).map((page) => [page.title, page]));
+      for (const [englishName, summary] of Object.entries(mapping)) {
+        const source = byTitle.get(englishName);
+        // The character-builder catalogue also contains non-SRD PHB spells.
+        // Such notes do not create pages in the CC BY 4.0 SRD rulebook.
+        if (kind === "spell" && !source) {
+          assert.ok(titles[englishName], `Czech PHB spell name missing for ${englishName}`);
+          continue;
+        }
+        assert.ok(source, `${kind} missing from canonical English 2014 SRD: ${englishName}`);
+        assert.ok(titles[englishName], `Missing Czech title for ${englishName}`);
+        assert.ok(summary.length >= 100, `Unexpectedly short summary for ${englishName}`);
+        const localized = rulebookPage(source.id, "cs").page;
+        assert.ok(localized.md.includes(heading), `Missing heading for ${englishName}`);
+        assert.ok(localized.md.includes(summary), `Missing Czech text for ${englishName}`);
+        assert.ok(localized.md.endsWith(source.md), `English canonical source was modified for ${englishName}`);
+        assert.equal(localized.id, source.id, `Page binding drift for ${englishName}`);
+      }
+    };
+    check("spell", CZECH_SPELL_NOTES_2, 42, "Český popis kouzla", CZECH_SPELLS);
+    check("monster", CZECH_MONSTER_NOTES_2, 26, "Český přehled nestvůry", CZECH_MONSTERS);
+    check("item", CZECH_ITEM_NOTES_2, 20, "Český přehled předmětu", CZECH_ITEMS);
+    for (const name of Object.keys(CZECH_SPELL_NOTES_2)) {
+      assert.ok(!Object.hasOwn(CZECH_SPELL_NOTES, name), `Duplicate spell summary in both batches: ${name}`);
+    }
+    for (const name of Object.keys(CZECH_MONSTER_NOTES_2)) {
+      assert.ok(!Object.hasOwn(CZECH_MONSTER_NOTES, name), `Duplicate creature in both batches: ${name}`);
+    }
+    for (const name of Object.keys(CZECH_ITEM_NOTES_2)) {
+      assert.ok(!Object.hasOwn(CZECH_ITEM_NOTES, name), `Duplicate item in both batches: ${name}`);
+    }
+    const huntersMark = originals.find((page) => page.kind === "spell" && page.title === "Hunter\'s Mark");
+    assert.ok(huntersMark, "Hunter\'s Mark exists in the SRD");
+    assert.ok(rulebookSearch("Lovcova marka", 10, "cs").hits.some((hit) => hit.page === huntersMark.id), "Czech hunter mark lookup");
+  });
+
+  await test("third Czech batch preserves 69 canonical SRD entries and does not duplicate the earlier notes", () => {
+    const english = rulebookPages("en");
+    const grouped = {
+      spell: [CZECH_SPELL_NOTES, CZECH_SPELL_NOTES_2, CZECH_SPELL_NOTES_3],
+      monster: [CZECH_MONSTER_NOTES, CZECH_MONSTER_NOTES_2, CZECH_MONSTER_NOTES_3],
+      item: [CZECH_ITEM_NOTES, CZECH_ITEM_NOTES_2, CZECH_ITEM_NOTES_3],
+    };
+    const titles = { spell: CZECH_SPELLS, monster: CZECH_MONSTERS, item: CZECH_ITEMS };
+    const headings = {
+      spell: "Český popis kouzla",
+      monster: "Český přehled nestvůry",
+      item: "Český přehled předmětu",
+    };
+    assert.equal(Object.keys(CZECH_SPELL_NOTES_3).length, 30);
+    assert.equal(Object.keys(CZECH_MONSTER_NOTES_3).length, 22);
+    assert.equal(Object.keys(CZECH_ITEM_NOTES_3).length, 17);
+    for (const kind of ["spell", "monster", "item"]) {
+      const [first, second, third] = grouped[kind];
+      const everyName = [...Object.keys(first), ...Object.keys(second), ...Object.keys(third)];
+      assert.equal(new Set(everyName).size, everyName.length, `No duplicate ${kind} notes across batches`);
+      const byEnglishTitle = new Map(english.filter((entry) => entry.kind === kind).map((entry) => [entry.title, entry]));
+      for (const [name, note] of Object.entries(third)) {
+        const original = byEnglishTitle.get(name);
+        assert.ok(original, `Missing original SRD ${kind}: ${name}`);
+        assert.ok(titles[kind][name], `Missing Czech title for ${name}`);
+        assert.ok(note.length >= 120, `Unexpectedly short note for ${name}`);
+        const translated = rulebookPage(original.id, "cs").page;
+        assert.equal(translated.id, original.id);
+        assert.ok(translated.md.includes(headings[kind]), `Missing Czech heading for ${name}`);
+        assert.ok(translated.md.includes(note), `Missing Czech description for ${name}`);
+        assert.ok(translated.md.endsWith(original.md), `Original English text not preserved for ${name}`);
+      }
+    }
+    const spell = english.find((page) => page.kind === "spell" && page.title === "Polymorph");
+    assert.ok(spell, "Polymorph exists in SRD 5.1");
+    assert.ok(rulebookSearch("Proměna", 10, "cs").hits.some((hit) => hit.page === spell.id), "Czech search resolves Polymorph");
+    assert.equal(rulebookPage("polymorph", "en").page.title, "Polymorph");
+  });
+
+  await test("fourth Czech translation batch keeps 31 spells, 26 monsters and 21 character guides on canonical SRD pages", () => {
+    const english = rulebookPages("en");
+    const byKind = {
+      spell: { batch: CZECH_SPELL_NOTES_4, all: [CZECH_SPELL_NOTES, CZECH_SPELL_NOTES_2, CZECH_SPELL_NOTES_3, CZECH_SPELL_NOTES_4], heading: "Český popis kouzla", expected: 31 },
+      monster: { batch: CZECH_MONSTER_NOTES_4, all: [CZECH_MONSTER_NOTES, CZECH_MONSTER_NOTES_2, CZECH_MONSTER_NOTES_3, CZECH_MONSTER_NOTES_4], heading: "Český přehled nestvůry", expected: 26 },
+      class: { batch: CZECH_CLASS_NOTES, all: [CZECH_CLASS_NOTES], heading: "Český přehled povolání", expected: 12 },
+      race: { batch: CZECH_RACE_NOTES, all: [CZECH_RACE_NOTES], heading: "Český přehled rasy", expected: 9 },
+    };
+    const uniqueTitles = { spell: CZECH_SPELLS, monster: CZECH_MONSTERS };
+    for (const [kind, config] of Object.entries(byKind)) {
+      assert.equal(Object.keys(config.batch).length, config.expected, `Wrong Czech ${kind} batch size`);
+      const names = config.all.flatMap((mapping) => Object.keys(mapping));
+      assert.equal(new Set(names).size, names.length, `Duplicate ${kind} translation across batches`);
+      const byTitle = new Map(english.filter((page) => page.kind === kind).map((page) => [page.title, page]));
+      for (const [title, description] of Object.entries(config.batch)) {
+        const original = byTitle.get(title);
+        assert.ok(original, `Missing canonical SRD ${kind}: ${title}`);
+        assert.ok(description.length >= 150, `Unexpectedly short Czech summary: ${title}`);
+        if (uniqueTitles[kind]) {
+          assert.ok(uniqueTitles[kind][title], `Missing Czech glossary title: ${title}`);
+        }
+        const translated = rulebookPage(original.id, "cs").page;
+        assert.equal(translated.id, original.id);
+        assert.ok(translated.md.includes(config.heading), `Missing Czech heading: ${title}`);
+        assert.ok(translated.md.includes(description), `Czech summary not attached: ${title}`);
+        assert.ok(translated.md.endsWith(original.md), `Original English SRD modified: ${title}`);
+      }
+    }
+    assert.equal(rulebookPage("fighter", "cs").page.title, "Bojovník");
+    assert.equal(rulebookPage("half-orc", "cs").page.title, "Půlork");
+    const spiritGuardians = english.find((page) => page.kind === "spell" && page.title === "Spirit Guardians");
+    assert.ok(spiritGuardians);
+    assert.ok(rulebookSearch("Přízrační strážci", 15, "cs").hits.some((hit) => hit.page === spiritGuardians.id));
+  });
+
+  await test("fifth Czech batch binds 48 spells and 37 creatures to canonical 2014 SRD pages", () => {
+    const original = rulebookPages("en");
+    const groups = {
+      spell: {
+        newNotes: CZECH_SPELL_NOTES_5,
+        priorNotes: [CZECH_SPELL_NOTES, CZECH_SPELL_NOTES_2, CZECH_SPELL_NOTES_3, CZECH_SPELL_NOTES_4],
+        names: CZECH_SPELLS,
+        heading: "Český popis kouzla",
+        expected: 48,
+      },
+      monster: {
+        newNotes: CZECH_MONSTER_NOTES_5,
+        priorNotes: [CZECH_MONSTER_NOTES, CZECH_MONSTER_NOTES_2, CZECH_MONSTER_NOTES_3, CZECH_MONSTER_NOTES_4],
+        names: CZECH_MONSTERS,
+        heading: "Český přehled nestvůry",
+        expected: 37,
+      },
+    };
+    for (const [kind, group] of Object.entries(groups)) {
+      assert.equal(Object.keys(group.newNotes).length, group.expected);
+      const priorKeys = new Set(group.priorNotes.flatMap((mapping) => Object.keys(mapping)));
+      const sourceByTitle = new Map(original.filter((page) => page.kind === kind).map((page) => [page.title, page]));
+      for (const [name, note] of Object.entries(group.newNotes)) {
+        assert.ok(!priorKeys.has(name), `Duplicate ${kind} note: ${name}`);
+        assert.ok(group.names[name], `Missing Czech ${kind} title: ${name}`);
+        assert.ok(note.length >= 120, `Unexpectedly short Czech ${kind} note: ${name}`);
+        const source = sourceByTitle.get(name);
+        if (kind === "spell" && !source) continue; // PHB-only spell notes, not SRD pages
+        assert.ok(source, `Missing canonical SRD ${kind} entry: ${name}`);
+        const translated = rulebookPage(source.id, "cs").page;
+        assert.equal(translated.id, source.id, `Changed canonical SRD identifier for ${name}`);
+        assert.ok(translated.md.includes(group.heading), `Missing Czech heading for ${name}`);
+        assert.ok(translated.md.includes(note), `Missing Czech note for ${name}`);
+        assert.ok(translated.md.endsWith(source.md), `English SRD text modified for ${name}`);
+      }
+    }
+    assert.ok(Object.keys(CZECH_SPELLS).length >= 207, "Czech dictionary includes the new spell names");
+    assert.ok(Object.keys(CZECH_MONSTERS).length >= 138, "Monster glossary retains every existing name");
+    const spell = original.find((page) => page.kind === "spell" && page.title === "Vicious Mockery");
+    assert.ok(spell, "Vicious Mockery exists in SRD");
+    assert.ok(rulebookSearch("Zlomyslný výsměch", 10, "cs").hits.some((hit) => hit.page === spell.id));
+  });
+
+  await test("sixth Czech batch keeps 32 spell IDs, English text and distinct Czech notes", () => {
+    const original = rulebookPages("en").filter((page) => page.kind === "spell");
+    const originals = new Map(original.map((page) => [page.title, page]));
+    const prior = [CZECH_SPELL_NOTES, CZECH_SPELL_NOTES_2, CZECH_SPELL_NOTES_3, CZECH_SPELL_NOTES_4, CZECH_SPELL_NOTES_5];
+    const batch = { ...CZECH_SPELL_NOTES_6A, ...CZECH_SPELL_NOTES_6B };
+    assert.equal(Object.keys(CZECH_SPELL_NOTES_6A).length, 18, "Third-level summaries");
+    assert.equal(Object.keys(CZECH_SPELL_NOTES_6B).length, 14, "Fourth-level summaries");
+    assert.equal(Object.keys(batch).length, 32, "No duplicates within sixth batch");
+    assert.ok(Object.keys(CZECH_SPELLS).length >= 239, "Expanded Czech title dictionary");
+    const earlierNames = new Set(prior.flatMap((notes) => Object.keys(notes)));
+    for (const [englishName, note] of Object.entries(batch)) {
+      assert.ok(!earlierNames.has(englishName), `Duplicate translated spell: ${englishName}`);
+      assert.ok(CZECH_SPELLS[englishName], `Missing Czech spell name: ${englishName}`);
+      assert.ok(note.length >= 160, `Suspiciously short Czech spell description: ${englishName}`);
+      const source = originals.get(englishName);
+      if (!source) continue; // Core PHB spell absent from the licensed SRD 5.1
+      assert.ok(source, `No canonical 2014 SRD spell: ${englishName}`);
+      const translated = rulebookPage(source.id, "cs").page;
+      assert.equal(translated.id, source.id, `Page ID changed for ${englishName}`);
+      assert.equal(translated.title, CZECH_SPELLS[englishName], `Czech title not used for ${englishName}`);
+      assert.ok(translated.md.includes("Český popis kouzla"), `No Czech heading for ${englishName}`);
+      assert.ok(translated.md.includes(note), `Missing sixth-batch note for ${englishName}`);
+      assert.ok(translated.md.endsWith(source.md), `Original full English source changed for ${englishName}`);
+    }
+    for (const [query, englishName] of [
+      ["Mihotání", "Blink"],
+      ["Větrná zeď", "Wind Wall"],
+      ["Páchnoucí oblak", "Stinking Cloud"],
+    ]) {
+      const originalPage = originals.get(englishName);
+      assert.ok(originalPage);
+      assert.ok(rulebookSearch(query, 20, "cs").hits.some((hit) => hit.page === originalPage.id),
+        `Czech lookup did not resolve ${query}`);
+    }
+  });
+
+  await test("Additional 20 level-five Czech spell notes preserve every canonical SRD page", () => {
+    const english = rulebookPages("en").filter((entry) => entry.kind === "spell");
+    const byTitle = new Map(english.map((entry) => [entry.title, entry]));
+    const keys = Object.keys(CZECH_SPELL_NOTES_6);
+    assert.equal(keys.length, 20, "New fifth-level spell batch count");
+    const previous = new Set([
+      ...Object.keys(CZECH_SPELL_NOTES), ...Object.keys(CZECH_SPELL_NOTES_2),
+      ...Object.keys(CZECH_SPELL_NOTES_3), ...Object.keys(CZECH_SPELL_NOTES_4),
+      ...Object.keys(CZECH_SPELL_NOTES_5),
+      ...Object.keys(CZECH_SPELL_NOTES_6A), ...Object.keys(CZECH_SPELL_NOTES_6B),
+    ]);
+    for (const [englishName, summary] of Object.entries(CZECH_SPELL_NOTES_6)) {
+      assert.ok(!previous.has(englishName), `Duplicated Czech spell notes: ${englishName}`);
+      assert.ok(CZECH_SPELLS[englishName], `Missing canonical Czech spell title: ${englishName}`);
+      const original = byTitle.get(englishName);
+      if (!original) continue; // Non-SRD spells remain valid builder-only reference names
+      assert.ok(original, `Missing English SRD spell: ${englishName}`);
+      assert.ok(summary.length >= 140, `Empty Czech spell description: ${englishName}`);
+      const localized = rulebookPage(original.id, "cs").page;
+      assert.equal(localized.id, original.id);
+      assert.ok(localized.md.includes(summary), `Czech summary not shown: ${englishName}`);
+      assert.ok(localized.md.endsWith(original.md), `Changed English SRD mechanics: ${englishName}`);
+    }
+    assert.ok(Object.keys(CZECH_SPELLS).length >= 259);
+  });
+
+  await test("every one of the 319 SRD 5.1 spell pages has a canonical Czech title and summary", () => {
+    const spellPages = rulebookPages("en").filter((page) => page.kind === "spell");
+    assert.equal(spellPages.length, 319, "Expected full 2014 CC BY 4.0 SRD spellbook");
+    const batches = [
+      CZECH_SPELL_NOTES, CZECH_SPELL_NOTES_2, CZECH_SPELL_NOTES_3,
+      CZECH_SPELL_NOTES_4, CZECH_SPELL_NOTES_5, CZECH_SPELL_NOTES_6,
+      CZECH_SPELL_NOTES_6A, CZECH_SPELL_NOTES_6B,
+      CZECH_SPELL_NOTES_7A, CZECH_SPELL_NOTES_7B,
+      CZECH_SPELL_NOTES_7C, CZECH_SPELL_NOTES_7D,
+    ];
+    assert.equal(Object.keys(CZECH_SPELL_NOTES_7A).length, 22);
+    assert.equal(Object.keys(CZECH_SPELL_NOTES_7B).length, 26);
+    assert.equal(Object.keys(CZECH_SPELL_NOTES_7C).length, 25);
+    assert.equal(Object.keys(CZECH_SPELL_NOTES_7D).length, 35);
+    const notes = new Map();
+    for (const batch of batches) {
+      for (const [name, note] of Object.entries(batch)) {
+        if (!notes.has(name.toLowerCase())) notes.set(name.toLowerCase(), note);
+      }
+    }
+    const byName = new Set();
+    for (const page of spellPages) {
+      assert.ok(!byName.has(page.title), `Duplicate SRD spell page title: ${page.title}`);
+      byName.add(page.title);
+      const note = notes.get(page.title.toLowerCase());
+      const title = CZECH_SPELLS[page.title];
+      assert.ok(note && note.length >= 100, `Missing Czech summary for SRD spell: ${page.title}`);
+      assert.ok(title, `Missing Czech display name for SRD spell: ${page.title}`);
+      const translated = rulebookPage(page.id, "cs").page;
+      assert.equal(translated.id, page.id, `Changed canonical SRD identifier: ${page.title}`);
+      assert.equal(translated.title, title, `Czech spell title mismatch: ${page.title}`);
+      assert.ok(translated.md.includes("Český popis kouzla"), `Missing Czech heading: ${page.title}`);
+      assert.ok(translated.md.includes(note), `Missing Czech summary in page: ${page.title}`);
+      assert.ok(translated.md.endsWith(page.md), `Original English spell rules modified: ${page.title}`);
+    }
+    for (const [query, title] of [
+      ["Melfův kyselinový šíp", "Acid Arrow"],
+      ["Bigbyho ruka", "Arcane Hand"],
+      ["Meteorický roj", "Meteor Swarm"],
+      ["Přání", "Wish"],
+    ]) {
+      const original = spellPages.find((page) => page.title === title);
+      assert.ok(original, `Missing reference spell: ${title}`);
+      assert.ok(rulebookSearch(query, 15, "cs").hits.some((hit) => hit.page === original.id),
+        `Czech lookup failed: ${query}`);
+    }
+  });
+
+  await test("Czech magic item and monster metadata are display-only and retain original metadata", () => {
+    assert.equal(czechSrdMonsterMeta("Huge dragon, chaotic evil"), "Obrovský drak, chaoticky zlý");
+    assert.equal(czechSrdMonsterMeta("Medium humanoid (goblinoid), neutral evil"), "Střední humanoid (goblinoid), neutrálně zlý");
+    assert.equal(czechSrdItemMeta("Wondrous item, uncommon (requires attunement)"), "Divotvorný předmět, neobvyklý (vyžaduje sladění)");
+    assert.equal(czechSrdItemMeta("Unknown item, rare"), "Unknown item, rare");
+    assert.equal(czechSrdMonsterMeta("unknown metadata"), "unknown metadata");
+    const originalDrake = rulebookPages("en").find((page) => page.kind === "monster" && page.title === "Adult Red Dragon");
+    assert.ok(originalDrake, "Adult Red Dragon exists in SRD");
+    const drake = rulebookPage(originalDrake.id, "cs").page;
+    assert.equal(drake.meta, czechSrdMonsterMeta(originalDrake.meta));
+    assert.equal(drake.originalMeta, originalDrake.meta);
+  });
+
+  await test("Czech companion adds original rules summaries while preserving each full English page", () => {
+    for (const id of ["coinage", "backgrounds", "magic-items", "nonplayer-characters", "traps"]) {
+      const english = rulebookPage(id, "en").page.md;
+      const czech = rulebookPage(id, "cs").page.md;
+      assert.match(czech, /Český přehled pravidel/, `missing Czech notes for ${id}`);
+      assert.ok(czech.endsWith(english), `English SRD content modified in ${id}`);
+    }
+    assert.ok(!rulebookPage("legal-information", "cs").page.md.includes("Český přehled pravidel"));
+  });
+
   // ---- the French book ----
   // The same binding in the official French print (srd-5.1-fr.json, built by
   // scripts/import-srd-rulebook-fr.mjs): identical page ids in the identical
@@ -433,6 +840,213 @@ try {
     assert.equal(localeFromAcceptLanguage("en;q=0.2,fr;q=0.9"), "fr", "the higher weight wins, not the earlier tag");
     assert.equal(localeFromAcceptLanguage("fr;q=0,en"), "en", "a language weighted q=0 is refused");
     assert.equal(localeFromAcceptLanguage("fr;q=0"), "en");
+  });
+
+  // Newly covered canonical SRD pages must have Czech titles and short
+  // summaries while retaining the original English rule blocks and IDs.
+  await test("new Czech monster and magic-item notes bind to exact SRD pages", async () => {
+    const {
+      CZECH_MONSTER_NOTES_6, CZECH_ITEM_NOTES_4,
+      CZECH_MONSTER_TITLES_6, CZECH_ITEM_TITLES_4,
+    } = await import("../src/lib/rulebook/czech-bestiary-items-4.ts");
+    assert.equal(Object.keys(CZECH_MONSTER_NOTES_6).length, 41);
+    assert.equal(Object.keys(CZECH_ITEM_NOTES_4).length, 45);
+    for (const [kind, notes, titles, heading] of [
+      ["monster", CZECH_MONSTER_NOTES_6, CZECH_MONSTER_TITLES_6, "Český přehled nestvůry"],
+      ["item", CZECH_ITEM_NOTES_4, CZECH_ITEM_TITLES_4, "Český přehled předmětu"],
+    ]) {
+      const sourceByTitle = new Map(rulebookPages("en").filter((page) => page.kind === kind).map((page) => [page.title, page]));
+      assert.deepEqual(Object.keys(notes).sort(), Object.keys(titles).sort());
+      for (const [name, note] of Object.entries(notes)) {
+        const original = sourceByTitle.get(name);
+        assert.ok(original, `Missing canonical SRD ${kind}: ${name}`);
+        const translated = rulebookPage(original.id, "cs")?.page;
+        assert.ok(translated, `Missing Czech SRD page: ${name}`);
+        assert.equal(translated.id, original.id);
+        assert.equal(translated.title, titles[name], `Missing Czech title: ${name}`);
+        assert.ok(translated.md.includes(heading) && translated.md.includes(note), `Missing Czech summary: ${name}`);
+        assert.ok(translated.md.endsWith(original.md), `English rules must stay intact: ${name}`);
+      }
+    }
+    const armor = rulebookPages("en").find((page) => page.title === "Animated Armor (Animated Object)");
+    assert.ok(armor);
+    const localizedArmor = rulebookPage(armor.id, "cs").page;
+    assert.equal(localizedArmor.title, "Oživlá zbroj");
+    assert.ok(localizedArmor.md.includes("Český přehled nestvůry"));
+    assert.ok(localizedArmor.md.endsWith(armor.md));
+  });
+
+  await test("previous Czech summary batch had 643 canonical SRD pages", () => {
+    const all = rulebookPages("cs");
+    assert.equal(all.length, 933);
+    const counts = Object.fromEntries(["rules", "race", "class", "spell", "item", "monster"].map((kind) => [
+      kind, all.filter((page) => page.kind === kind && page.md.startsWith("## Český ")).length,
+    ]));
+    assert.ok(counts.rules >= 35 && counts.race === 9 && counts.class === 12 && counts.spell === 319);
+    assert.ok(counts.item >= 96 && counts.monster >= 172);
+    assert.ok(Object.values(counts).reduce((sum, count) => sum + count, 0) >= 643);
+  });
+
+  await test("batch 7 Czech monster and batch 5 magic-item notes bind to canonical SRD pages", async () => {
+    const { CZECH_MONSTER_NOTES_7, CZECH_MONSTER_TITLES_7 } = await import("../src/lib/rulebook/czech-monster-notes-7.ts");
+    const { CZECH_ITEM_NOTES_5, CZECH_ITEM_TITLES_5 } = await import("../src/lib/rulebook/czech-item-notes-5.ts");
+    assert.equal(Object.keys(CZECH_MONSTER_NOTES_7).length, 70);
+    assert.equal(Object.keys(CZECH_ITEM_NOTES_5).length, 70);
+    for (const [kind, notes, titles, heading] of [
+      ["monster", CZECH_MONSTER_NOTES_7, CZECH_MONSTER_TITLES_7, "Český přehled nestvůry"],
+      ["item", CZECH_ITEM_NOTES_5, CZECH_ITEM_TITLES_5, "Český přehled předmětu"],
+    ]) {
+      const sourceByName = new Map(rulebookPages("en").filter((page) => page.kind === kind).map((page) => [page.title, page]));
+      assert.deepEqual(Object.keys(notes).sort(), Object.keys(titles).sort());
+      for (const [name, note] of Object.entries(notes)) {
+        const original = sourceByName.get(name);
+        assert.ok(original, `Unknown canonical SRD ${kind}: ${name}`);
+        const localized = rulebookPage(original.id, "cs")?.page;
+        assert.ok(localized, `Missing Czech page: ${name}`);
+        assert.equal(localized.id, original.id);
+        assert.equal(localized.title, titles[name]);
+        assert.ok(localized.md.includes(heading) && localized.md.includes(note), `Unlinked Czech note: ${name}`);
+        assert.ok(localized.md.endsWith(original.md), `Canonical English rules changed: ${name}`);
+      }
+    }
+  });
+
+  await test("the earlier Czech translation coverage was at least 783 canonical SRD pages", () => {
+    const all = rulebookPages("cs");
+    assert.equal(all.length, 933);
+    const counts = Object.fromEntries(["rules", "race", "class", "spell", "item", "monster"].map((kind) => [
+      kind, all.filter((page) => page.kind === kind && page.md.startsWith("## Český ")).length,
+    ]));
+    assert.equal(counts.rules, 35);
+    assert.equal(counts.race, 9);
+    assert.equal(counts.class, 12);
+    assert.equal(counts.spell, 319);
+    assert.ok(counts.item >= 166);
+    assert.ok(counts.monster >= 242);
+    assert.ok(Object.values(counts).reduce((sum, count) => sum + count, 0) >= 783);
+  });
+
+  await test("established Czech monster and magic-item names remain stable", () => {
+    for (const [kind, english, czech] of [
+      ["monster", "Gelatinous Cube", "Rosolová krychle"],
+      ["monster", "Gibbering Mouther", "Blekotající tlamáč"],
+      ["monster", "Grick", "Gryk"],
+      ["monster", "Roc", "Noh"],
+      ["monster", "Tarrasque", "Tarask"],
+      ["monster", "Rakshasa", "Rakšáza"],
+      ["monster", "Shield Guardian", "Štítový strážce"],
+      ["monster", "Animated Armor (Animated Object)", "Oživlá zbroj"],
+      ["item", "Bag of Holding", "Pytel beztíže"],
+      ["item", "Flame Tongue", "Plamenec"],
+      ["item", "Holy Avenger", "Posvěcený mstitel"],
+      ["item", "Feather Token", "Quaalův péřový žeton"],
+      ["item", "Portable Hole", "Přenosný otvor"],
+    ]) {
+      const original = rulebookPages("en").find((page) => page.kind === kind && page.title === english);
+      assert.ok(original, `Not in SRD: ${english}`);
+      assert.equal(rulebookPage(original.id, "cs").page.title, czech);
+      assert.equal(czechSrdTitle(english, kind), czech);
+    }
+  });
+
+  await test("all 76 remaining SRD monster and NPC pages have Czech titles and notes", async () => {
+    const { CZECH_MONSTER_NOTES_8, CZECH_MONSTER_TITLES_8 } =
+      await import("../src/lib/rulebook/czech-monster-notes-8.ts");
+    assert.equal(Object.keys(CZECH_MONSTER_NOTES_8).length, 76);
+    assert.deepEqual(Object.keys(CZECH_MONSTER_NOTES_8).sort(), Object.keys(CZECH_MONSTER_TITLES_8).sort());
+    const originals = new Map(rulebookPages("en").filter((page) => page.kind === "monster").map((page) => [page.title, page]));
+    for (const [name, note] of Object.entries(CZECH_MONSTER_NOTES_8)) {
+      const source = originals.get(name);
+      assert.ok(source, `Monster must belong to the canonical SRD: ${name}`);
+      const localized = rulebookPage(source.id, "cs")?.page;
+      assert.ok(localized, `Unlinked Czech monster: ${name}`);
+      assert.equal(localized.id, source.id);
+      assert.equal(localized.title, CZECH_MONSTER_TITLES_8[name]);
+      assert.ok(localized.md.startsWith("## Český přehled nestvůry"));
+      assert.ok(localized.md.includes(note));
+      assert.ok(localized.md.endsWith(source.md), `Original English mechanics changed: ${name}`);
+    }
+  });
+
+  await test("all 73 remaining canonical magic items have Czech titles and notes", async () => {
+    const { CZECH_ITEM_NOTES_6, CZECH_ITEM_TITLES_6 } =
+      await import("../src/lib/rulebook/czech-item-notes-6.ts");
+    assert.equal(Object.keys(CZECH_ITEM_NOTES_6).length, 73);
+    assert.deepEqual(Object.keys(CZECH_ITEM_NOTES_6).sort(), Object.keys(CZECH_ITEM_TITLES_6).sort());
+    const originals = new Map(rulebookPages("en").filter((page) => page.kind === "item").map((page) => [page.title, page]));
+    for (const [name, note] of Object.entries(CZECH_ITEM_NOTES_6)) {
+      const source = originals.get(name);
+      assert.ok(source, `Item must belong to canonical SRD: ${name}`);
+      const localized = rulebookPage(source.id, "cs")?.page;
+      assert.ok(localized, `Unlinked Czech item: ${name}`);
+      assert.equal(localized.id, source.id);
+      assert.equal(localized.title, CZECH_ITEM_TITLES_6[name]);
+      assert.ok(localized.md.startsWith("## Český přehled předmětu"));
+      assert.ok(localized.md.includes(note));
+      assert.ok(localized.md.endsWith(source.md), `Original English item mechanics changed: ${name}`);
+    }
+  });
+
+  await test("Czech companion summaries cover 932 of 933 SRD pages; English CC BY notice stays identical", () => {
+    const original = rulebookPages("en");
+    const localized = rulebookPages("cs");
+    assert.equal(original.length, 933);
+    assert.equal(localized.length, 933);
+    const covered = localized.filter((page) => page.md.startsWith("## Český "));
+    assert.equal(covered.length, 932);
+    const byKind = Object.fromEntries(["rules", "race", "class", "spell", "monster", "item"].map((kind) => [
+      kind, covered.filter((page) => page.kind === kind).length,
+    ]));
+    assert.deepEqual(byKind, { rules: 35, race: 9, class: 12, spell: 319, monster: 318, item: 239 });
+    const sourceById = new Map(original.map((page) => [page.id, page]));
+    for (const page of localized) {
+      const source = sourceById.get(page.id);
+      assert.ok(source, `Czech page without original ID: ${page.id}`);
+      assert.equal(page.chapter, source.chapter);
+      assert.ok(page.md.endsWith(source.md), `Canonical SRD changed: ${page.id}`);
+    }
+    const legalOriginal = rulebookPage("legal-information", "en")?.page;
+    const legalCzech = rulebookPage("legal-information", "cs")?.page;
+    assert.ok(legalOriginal && legalCzech);
+    assert.equal(legalCzech.md, legalOriginal.md);
+    assert.equal(legalCzech.title, "Licenční informace");
+    assert.ok(!legalCzech.md.startsWith("## Český "));
+  });
+
+  await test("first 10 original full Czech SRD translations preserve IDs and source rules", async () => {
+    const { CZECH_FULL_RULES_1 } = await import("../src/lib/rulebook/czech-full-rules-1.ts");
+    const { CZECH_FULL_RULES_2 } = await import("../src/lib/rulebook/czech-full-rules-2.ts");
+    const batch1 = Object.keys(CZECH_FULL_RULES_1);
+    const batch2 = Object.keys(CZECH_FULL_RULES_2);
+    assert.equal(batch1.length, 8);
+    assert.equal(batch2.length, 2);
+    assert.equal(new Set([...batch1, ...batch2]).size, 10);
+    for (const [id, translation] of Object.entries({ ...CZECH_FULL_RULES_1, ...CZECH_FULL_RULES_2 })) {
+      const source = rulebookPage(id, "en")?.page;
+      const localized = rulebookPage(id, "cs")?.page;
+      assert.ok(source && localized, `Unknown full SRD rule: ${id}`);
+      assert.equal(source.id, localized.id);
+      assert.equal(localized.title !== source.title || id === "beyond-1st-level", true);
+      assert.ok(translation.length >= 400, `Unusually brief full translation: ${id}`);
+      assert.ok(localized.md.includes("## Úplné znění pravidel v češtině"));
+      assert.ok(localized.md.includes(translation));
+      assert.ok(localized.md.endsWith(source.md), `Original English rule altered: ${id}`);
+      assert.ok(localized.md.startsWith("## Český přehled pravidel"));
+    }
+    const source = rulebookPage("legal-information", "en")?.page;
+    const legal = rulebookPage("legal-information", "cs")?.page;
+    assert.equal(legal.md, source.md);
+    assert.equal(legal.title, "Licenční informace");
+  });
+
+  await test("Czech complete rules translations retain full numbered tables and mechanical details", async () => {
+    const { CZECH_FULL_RULES_1 } = await import("../src/lib/rulebook/czech-full-rules-1.ts");
+    const { CZECH_FULL_RULES_2 } = await import("../src/lib/rulebook/czech-full-rules-2.ts");
+    assert.equal((CZECH_FULL_RULES_2["beyond-1st-level"].match(/\| \d[\d ]* \| \d+ \| \+\d \|/g) ?? []).length, 20);
+    assert.match(CZECH_FULL_RULES_1.coinage, /1 000/);
+    assert.match(CZECH_FULL_RULES_1.languages, /Podzemní obecná/);
+    assert.match(CZECH_FULL_RULES_1.feats, /Zápasník/);
+    assert.match(CZECH_FULL_RULES_1["trade-goods"], /500 zl/);
   });
 
   // ---- the routes ----

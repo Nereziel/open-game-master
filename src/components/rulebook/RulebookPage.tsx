@@ -248,7 +248,7 @@ export function RulebookPage({
     const all = parseBook(page.md);
     // The entry's italic first line is lettered under the title already.
     const first = all[0];
-    if (page.meta && first?.kind === "paragraph" && inlineText(parseInline(first.text)).trim() === page.meta) {
+    if (page.meta && first?.kind === "paragraph" && inlineText(parseInline(first.text)).trim() === (page.originalMeta ?? page.meta)) {
       return all.slice(1);
     }
     return all;
