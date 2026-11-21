@@ -2965,6 +2965,104 @@ try {
       assert.ok(CZECH_FULL_SPELLS_13[id].includes(needle), "Missing rules: " + id + "/" + needle);
   });
 
+
+  await test("all 42 third-level SRD spells have complete Czech pages in canonical order", async () => {
+    const [{ CZECH_FULL_SPELLS_12 }, { CZECH_FULL_SPELLS_13 }, { CZECH_FULL_SPELLS_14 }] = await Promise.all([
+      import("../src/lib/rulebook/czech-full-spells-12.ts"),
+      import("../src/lib/rulebook/czech-full-spells-13.ts"),
+      import("../src/lib/rulebook/czech-full-spells-14.ts"),
+    ]);
+    const batches = [CZECH_FULL_SPELLS_12, CZECH_FULL_SPELLS_13, CZECH_FULL_SPELLS_14];
+    assert.deepEqual(batches.map((batch) => Object.keys(batch).length), [12, 12, 18]);
+    assert.deepEqual(Object.keys(CZECH_FULL_SPELLS_14), ["phantom-steed","plant-growth","protection-from-energy","remove-curse","revivify","sending","sleet-storm","slow","speak-with-dead","speak-with-plants","spirit-guardians","stinking-cloud","tiny-hut","tongues","vampiric-touch","water-breathing","water-walk","wind-wall"]);
+    const ids = batches.flatMap((batch) => Object.keys(batch));
+    assert.equal(new Set(ids).size, 42, "Third-level spell translation IDs must be unique");
+    const originals = rulebookPages("en").filter((page) =>
+      page.kind === "spell" && page.meta?.startsWith("3rd-level"));
+    assert.equal(originals.length, 42);
+    assert.deepEqual(ids, originals.map((page) => page.id), "Third-level SRD order / coverage mismatch");
+    const all = Object.assign({}, ...batches);
+    const field = (md, label) => {
+      const prefix = "**" + label + ":** ";
+      return md.split("\n").find((line) => line.startsWith(prefix))?.slice(prefix.length);
+    };
+    const timeMap = {
+      "1 action": "1 akce", "1 bonus action": "1 bonusová akce",
+      "1 minute": "1 minuta", "10 minutes": "10 minut",
+      "1 hour": "1 hodina",
+    };
+    const rangeMap = {
+      Touch: "Dotyk", Self: "Sesilatel", "10 feet": "10 stop",
+      "30 feet": "30 stop", "60 feet": "60 stop", "90 feet": "90 stop",
+      "120 feet": "120 stop", "150 feet": "150 stop", "1 mile": "1 míle",
+      Unlimited: "Neomezený",
+    };
+    const durationMap = {
+      Instantaneous: "Ihned", "1 round": "1 kolo",
+      "10 minutes": "10 minut", "1 hour": "1 hodina",
+      "8 hours": "8 hodin", "24 hours": "24 hodin",
+      "Concentration, up to 1 minute": "Soustředění, až 1 minuta",
+      "Concentration, up to 10 minutes": "Soustředění, až 10 minut",
+      "Concentration, up to 1 hour": "Soustředění, až 1 hodina",
+      "Until dispelled or triggered": "Do rozptýlení nebo spuštění",
+    };
+    for (const original of originals) {
+      const full = all[original.id];
+      const localized = rulebookPage(original.id, "cs").page;
+      assert.ok(full?.length >= 210, "Third-level full Czech description absent: " + original.id);
+      assert.equal(localized.id, original.id);
+      assert.equal(localized.title, CZECH_SPELLS[original.title]);
+      assert.equal(localized.originalMeta, original.meta);
+      assert.ok(localized.md.includes("## Úplné znění pravidel v češtině"));
+      assert.ok(localized.md.includes(full), "Third-level spell not linked to Czech reader: " + original.id);
+      assert.ok(localized.md.endsWith(original.md), "English source altered: " + original.id);
+      for (const [english, czech] of [
+        ["Casting Time", "Doba sesílání"], ["Range", "Dosah"],
+        ["Components", "Složky"], ["Duration", "Trvání"],
+      ]) {
+        assert.ok(field(original.md, english), "English metadata missing: " + original.id + "/" + english);
+        assert.ok(field(full, czech), "Czech metadata missing: " + original.id + "/" + czech);
+      }
+      const originalComponents = field(original.md, "Components").match(/^[VSM, ]+/)?.[0].trim();
+      assert.ok(originalComponents);
+      assert.equal(field(full, "Složky").match(/^[VSM, ]+/)?.[0].trim(), originalComponents);
+      const originalTime = field(original.md, "Casting Time");
+      if (timeMap[originalTime])
+        assert.equal(field(full, "Doba sesílání"), timeMap[originalTime], "Casting time mismatch: " + original.id);
+      const originalRange = field(original.md, "Range");
+      if (rangeMap[originalRange])
+        assert.ok(field(full, "Dosah").startsWith(rangeMap[originalRange]), "Spell range mismatch: " + original.id);
+      const duration = field(original.md, "Duration");
+      if (durationMap[duration])
+        assert.ok(field(full, "Trvání").startsWith(durationMap[duration]), "Duration mismatch: " + original.id);
+      if (/^\*3rd-level [^\n]*\(ritual\)\*/m.test(original.md))
+        assert.ok(full.includes("(rituál)"), "Ritual tag missing: " + original.id);
+      for (const [, count, die] of original.md.matchAll(/\b(\d+)d(\d+)\b/g))
+        assert.ok(full.includes(count + "k" + die), "Missing source dice: " + original.id);
+    }
+    for (const [id, markers] of Object.entries({
+      "phantom-steed": ["(rituál)", "100 stop", "10 mil", "13 mil", "10 stop", "1 minutu"],
+      "plant-growth": ["1 akce nebo 8 hodin", "100 stop", "4 stopy", "půl míle", "1 rok"],
+      "protection-from-energy": ["kyselinovému", "chladnému", "ohnivému", "bleskovému", "hromovému"],
+      "remove-curse": ["Všechny kletby", "sladění", "předmět"],
+      revivify: ["300 zl", "poslední 1 minuty", "1 životem", "stářím"],
+      sending: ["25 slovech", "Inteligencí alespoň 1", "5%", "jiné sféře"],
+      "sleet-storm": ["40 stop", "20 stop", "obtížným terénem", "Odolnost", "ztratí soustředění"],
+      slow: ["šesti tvorů", "−2", "reakce", "k20", "11 nebo více", "Moudrost"],
+      "speak-with-dead": ["pět otázek", "posledních 10 dnů", "ústa", "pravdu"],
+      "speak-with-plants": ["poslední den", "obtížný terén", "Pána jeskyně", "rostlinný tvor"],
+      "spirit-guardians": ["15 stop", "3k8", "1k8", "polovinu", "Moudrost"],
+      "stinking-cloud": ["20 stop", "Odolnost", "po 4 kolech", "po 1 kole"],
+      "tiny-hut": ["(rituál)", "devět tvorů", "8 hodin", "neprůhledná"],
+      tongues: ["jakémukoli mluvenému", "alespoň jeden jazyk", "1 hodina"],
+      "vampiric-touch": ["3k6", "1k6", "polovině", "svou akcí"],
+      "water-breathing": ["(rituál)", "deset ochotných", "24 hodin"],
+      "water-walk": ["(rituál)", "lávu", "zranění žárem", "60 stop"],
+      "wind-wall": ["50 stop", "15 stop", "1 stopu", "3k8", "automaticky minou"],
+    })) for (const marker of markers)
+      assert.ok(all[id].includes(marker), "Missing essential spell rule: " + id + "/" + marker);
+  });
+
   // ---- the routes ----
   const { createUser } = await import("../src/lib/db/users.ts");
   const { mintSession } = await import("../src/lib/auth.ts");

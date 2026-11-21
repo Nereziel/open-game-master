@@ -454,12 +454,43 @@ V/S/M, rituál, kostky a významné mechanické účinky.
 
 Build ani testovací sada nebyly spuštěny na Draft PR podle dohody.
 
+## Dokončení všech kouzel 3. úrovně (21. 11. 2026)
+
+Přeloženo všech **42/42 kouzel 3. úrovně** anglického SRD 5.1
+(CC BY 4.0). Soubor `src/lib/rulebook/czech-full-spells-14.ts` přidává
+posledních **18 úplných, nezávisle napsaných českých popisů**:
+
+Přízračný oř, Růst rostlin, Ochrana před energií, Sejmi kletbu,
+Obrození, Poselství, Zmrzlý déšť, Zpomalení, Mluv s mrtvými,
+Mluv s rostlinami, Přízrační strážci, Páchnoucí oblak,
+Leomundova chatka, Jazyky, Upíří dotyk, Vodní dech,
+Chůze po vodě a Větrná zeď.
+
+Plné české popisy všech 42 kouzel jsou propojené s čtečkou
+v `czech-companion.ts`. Anglický originál, ID, metadata, názvy
+klíčů a MCP zůstávají zachované. Samostatný regresní test
+v `scripts/test-rulebook.mjs` kontroluje **42 unikátních kanonických
+ID v úplném pořadí**, dávky 12+12+18, pojmenování, metadata
+sesílání, složky V/S/M, rituály, kostky, původní text a klíčové
+mechaniky všech posledních 18 kouzel.
+
+Český komunitní překlad byl použit jen k převzetí ustálených
+**názvů**; pravidlové odstavce jsou vlastní překlady původního
+anglického SRD 5.1.
+
+**Celkový stav: 169/319 úplných českých popisů kouzel**:
+24/24 triků, 49/49 kouzel 1. úrovně, 54/54 kouzel 2. úrovně
+a 42/42 kouzel 3. úrovně. **Zbývá 150 kouzel úrovní 4–9.**
+
+Statická kontrola ověřila 18 položek a napojení do čtečky.
+Build a testovací sady se na Draft PR nespouštějí podle dohody.
+
 ## Stav
 
 - Stručné české přehledy: 932/933 kanonických stránek (výjimkou je atribuce).
 - Úplné české znění pravidlových stránek: **35/35 obsahových pravidlových stránek**.
 - Úplné české překlady jednotlivých ras: **9/9 rasových stránek SRD 5.1**, včetně všech podras obsažených ve zdrojovém SRD.
-- Úplné české popisy jednotlivých kouzel: **151/319** – všech **24/24 triků** a všech **49/49 kouzel 1. úrovně** a všech **54/54 kouzel 2. úrovně** a prvních **24/42 kouzel 3. úrovně**.
+- Úplné české popisy jednotlivých kouzel: **169/319** – všech **24/24 triků** a všech **49/49 kouzel 1. úrovně** a všech **54/54 kouzel 2. úrovně** a všech **42/42 kouzel 3. úrovně**.
 - Dříve dokončené kapitoly zahrnují **Stavy, Nemoci, Objekty, Artefakty** a další pravidla.
 - V další dávce jsou úplně přeloženy kapitoly **Jízdní zvířata a dopravní prostředky, Nástroje, Kouzelné předměty, Jedy a Inteligentní kouzelné předměty**.
 - Následující dávka přeložila celé kapitoly **Zbroje**, **Šílenství** a
