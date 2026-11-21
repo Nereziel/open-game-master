@@ -190,6 +190,41 @@ export const CZECH_RULE_TERMS: Readonly<Record<string, string>> = {
   "Death Saving Throw": "Záchranný hod proti smrti",
 };
 
+// Magic schools follow the terminology of the Czech 5e SRD. We translate
+// only recognized SRD spell metadata; unknown text is left unchanged.
+export const CZECH_SCHOOLS: Readonly<Record<string, string>> = {
+  abjuration: "Vymítání",
+  conjuration: "Vyvolávání",
+  divination: "Věštění",
+  enchantment: "Očarování",
+  evocation: "Zaklínání",
+  illusion: "Iluze",
+  necromancy: "Nekromancie",
+  transmutation: "Transmutace",
+};
+
+export function czechSrdSpellMeta(meta: string): string {
+  // The English import writes "3rd-level evocation", optionally "(ritual)".
+  // Some print variants begin with the school and end in "cantrip".
+  const level = /^(\d+)(?:st|nd|rd|th)-level\s+(\w+)(.*)$/i.exec(meta);
+  if (level) {
+    const school = CZECH_SCHOOLS[level[2].toLowerCase()];
+    if (school) return `${school} ${level[1]}. úrovně${level[3].replace(/\britual\b/gi, "rituál")}`;
+  }
+  const cantrip = /^(\w+)\s+cantrip(.*)$/i.exec(meta);
+  if (cantrip) {
+    const school = CZECH_SCHOOLS[cantrip[1].toLowerCase()];
+    if (school) return `${school} (trik)${cantrip[2]}`;
+  }
+  return meta;
+}
+
+export function czechSrdSpellGroup(group: string): string {
+  if (group === "Cantrips") return "Triky";
+  const level = /^(\d+)(?:st|nd|rd|th) Level$/.exec(group);
+  return level ? `${level[1]}. úroveň` : group;
+}
+
 const TITLES: Readonly<Record<string, Readonly<Record<string, string>>>> = {
   class: CZECH_CLASSES,
   race: CZECH_RACES,
