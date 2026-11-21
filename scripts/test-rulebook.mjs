@@ -1665,7 +1665,7 @@ try {
     for (const rule of [
       "| 1 | −5 |", "| 10–11 | +0 |", "| 30 | +10 |",
       "| Velmi snadný | 5 |", "| Téměř nemožný | 30 |",
-      "vzájemně se ruší", "hodíš jen", "nejvýše jednou jej násobíš",
+      "vzájemně se ruší", "házíš jen", "nejvýše jednou jej násobíš",
       "Pasivní hodnota = 10 + všechny opravy",
       "alespoň polovina skupiny", "30 × hodnota Síly",
       "větší než 5 × hodnota Síly", "větší než 10 × hodnota Síly",
