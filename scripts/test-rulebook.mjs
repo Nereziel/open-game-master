@@ -1445,11 +1445,11 @@ try {
     assert.ok(localized.md.includes("## Úplné znění pravidel v češtině"));
     assert.ok(localized.md.includes(translated));
     assert.ok(localized.md.endsWith(source.md), "Original English deity tables changed");
-    const batches = await Promise.all(Array.from({ length: 17 }, (_, i) =>
+    const batches = await Promise.all(Array.from({ length: 18 }, (_, i) =>
       import(`../src/lib/rulebook/czech-full-rules-${i + 1}.ts`)));
     const ids = batches.flatMap((mod, i) => Object.keys(mod[`CZECH_FULL_RULES_${i + 1}`]));
-    assert.equal(ids.length, 31);
-    assert.equal(new Set(ids).size, 31, "Duplicate SRD rules page with full Czech text");
+    assert.equal(ids.length, 32);
+    assert.equal(new Set(ids).size, 32, "Duplicate SRD rules page with full Czech text");
   });
 
   await test("Czech traps include eight fully translated mechanical and magical examples", async () => {
@@ -1568,6 +1568,65 @@ try {
       "750 zl", "250 dní",
     ]) {
       assert.ok(translated.includes(clause), "Missing canonical Adventuring mechanic: " + clause);
+    }
+  });
+
+  await test("Czech Adventuring Gear preserves all 103 item prices, 13 container capacities, seven packs and special mechanics", async () => {
+    const { CZECH_FULL_RULES_18 } = await import("../src/lib/rulebook/czech-full-rules-18.ts");
+    assert.deepEqual(Object.keys(CZECH_FULL_RULES_18), ["adventuring-gear"]);
+    const translated = CZECH_FULL_RULES_18["adventuring-gear"];
+    const en = rulebookPage("adventuring-gear", "en").page;
+    const cs = rulebookPage("adventuring-gear", "cs").page;
+    assert.equal(cs.id, en.id);
+    assert.equal(cs.kind, "rules");
+    assert.ok(translated.length > 17000, "Czech gear translation unexpectedly short");
+    assert.ok(cs.md.includes("## Úplné znění pravidel v češtině"));
+    assert.ok(cs.md.includes(translated), "Full gear translation must be wired to the Czech reader");
+    assert.ok(cs.md.endsWith(en.md), "Original English gear chapter must be unchanged");
+    for (const title of [
+      "## Vybavení se zvláštními pravidly",
+      "## Výbavové balíčky",
+      "## Tabulka – Dobrodružné vybavení",
+      "## Tabulka – Kapacita nádob",
+    ]) {
+      assert.ok(translated.includes(title), "Missing gear section: " + title);
+    }
+    for (const pack of [
+      "Zlodějský balíček (16 zl)",
+      "Diplomatický balíček (39 zl)",
+      "Balíček průzkumníka podzemí (12 zl)",
+      "Balíček baviče (40 zl)",
+      "Průzkumnický balíček (10 zl)",
+      "Kněžský balíček (19 zl)",
+      "Učenecký balíček (40 zl)",
+    ]) {
+      assert.ok(translated.includes(pack), "Missing pack: " + pack);
+    }
+    const lines = translated.split("\n");
+    const itemStart = lines.indexOf("| Předmět | Cena | Hmotnost |");
+    const itemEnd = lines.indexOf("| Brousek | 1 md | 1 lb |");
+    const containerStart = lines.indexOf("| Nádoba | Kapacita |");
+    const containerEnd = lines.indexOf("| Měch na vodu | 4 pinty tekutiny |");
+    assert.ok(itemStart > 0 && itemEnd > itemStart);
+    assert.equal(itemEnd - itemStart - 1, 103, "Every item price table row should be present");
+    assert.ok(containerStart > itemEnd && containerEnd > containerStart);
+    assert.equal(containerEnd - containerStart - 1, 13, "Every container capacity should be present");
+    for (const clause of [
+      "2k6 kyselinového zranění",
+      "1k4 ohnivého zranění na začátku každého svého tahu",
+      "záchranném hodu na Obratnost proti SO 15",
+      "10 použití",
+      "2k6 zářivého zranění",
+      "1k4 bodného zranění",
+      "6 hodin",
+      "záchranném hodu na Odolnost proti SO 10",
+      "2k4 + 2 životů",
+      "bonus +4 k ověření Síly",
+      "50 zl | ½ lb",
+      "1 000 zl | 1 lb",
+      "| Batoh* | 1 krychlová stopa / 30 liber výbavy |",
+    ]) {
+      assert.ok(translated.includes(clause), "Missing canonical equipment mechanic: " + clause);
     }
   });
 
