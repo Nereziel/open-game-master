@@ -2587,7 +2587,7 @@ export function deferConflictingSagaBosses(plan: SagaPlan): {
     plan: {
       ...plan,
       sketches,
-      finaleBoss,
+      finaleBoss: finalBoss,
       record: {
         ...plan.record,
         actPlan,
