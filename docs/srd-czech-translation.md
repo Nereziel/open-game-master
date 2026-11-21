@@ -25,7 +25,7 @@ anglickém zobrazení a na konci české stránky.
 ## Co **není** převzato
 
 České texty na https://dnd5esrd.d20.cz/ vycházejí z komunitního překladu
-ShadoWWWa a dalších spolupracovníků. Stránka uvádí autorství, ale při kontrole
+ShadoWWW a dalších spolupracovníků. Stránka uvádí autorství, ale při kontrole
 nebylo nalezeno jednoznačné licenční oprávnění k automatickému převzetí
 kompletního českého znění do tohoto projektu. **Proto odtud nekopírujeme
 celé odstavce, tabulky, statbloky ani celé knihy.** Lze se inspirovat již
@@ -34,11 +34,57 @@ zavedenými českými názvy herních pojmů.
 Další cizí český překlad lze importovat, pokud jeho autor nebo platná
 licence převzetí výslovně dovolí, a za příslušných podmínek s atribucí.
 
+## Sjednocení názvů s českým D&D 5e (2014)
+
+**Jediné části, které se přebírají doslova z komunitního českého
+překladu, jsou samostatné názvy a ustálené herní termíny.**
+Všechny popisy, definice, vysvětlení, příklady a celé tabulky pravidel
+zůstávají naším vlastním překladem anglického SRD 5.1.
+Měníme jen terminologii a nutné vlastní gramatické vazby. Nepřebíráme
+delší pasáže ani odstavce cizího překladu.
+
+Srovnání je založeno na české **Příručce hráče D&D 5e (2014)**.
+**Jeskyně a draci** a překlad pravidel z roku 2024 jsou odlišné zdroje;
+jejich terminologii nemícháme s touto edicí.
+
+- Přehled českého D&D 5e: https://dnd5esrd.d20.cz/
+- Dovednosti a používání vlastností: https://dnd5esrd.d20.cz/prirucka-hrace/7-kapitola.html
+- Názvy bojových akcí a stavů: https://dnd5esrd.d20.cz/prirucka-hrace/9-kapitola.html
+- Názvy vybavení a balíčků: https://dnd5esrd.d20.cz/prirucka-hrace/5-kapitola.html
+- Názvy kouzel: https://dnd5esrd.d20.cz/grimoar/grimoar-jmen.html
+
+| Anglický pojem | Dřívější název v aplikaci | Sjednocený název |
+|---|---|---|
+| Animal Handling | Zacházení se zvířaty | Ovládání zvířat |
+| Arcana | Magie | Mystika |
+| Insight | Odhad | Vhled |
+| Performance | Vystupování | Umění |
+| Sleight of Hand | Obratnost rukou | Čachry |
+| Stealth | Plížení | Nenápadnost |
+| Proficiency Bonus | bonus zdatnosti | Zdatnostní bonus |
+| Dash | Běh | Sprint |
+| Disengage | Odpoutání | Odpoutání se |
+| Dodge | Úhyb | Uhýbání |
+| Ready | Připravení akce | Příprava |
+| Hide | Ukrytí | Schování se |
+| Grapple | Chycení | Chvat |
+| Expertise (tulák) | Odbornost | Kvalifikace |
+| Cunning Action | Lstivá akce | Mazaná akce |
+
+Názvy souvisejících předmětů byly sjednoceny také v kapitole
+`adventuring-gear`: například **Torna, Karimatka, Brašnička na suroviny,
+Ježci, Okovy, Nádobíčko** a názvy sedmi výbavových balíčků.
+
+Anglické identifikátory (`Stealth`, `Dash`, `monster-statistics` atd.),
+interní hodnoty a názvy MCP nástrojů se **nesmějí překladem měnit**.
+Český slovník dovedností je v `src/lib/rulebook/czech-terms.ts`.
+Regresní test v `scripts/test-rulebook.mjs` ověřuje všech 18 názvů.
+
 ## Stav
 
 - Stručné české přehledy: 932/933 kanonických stránek (výjimkou je atribuce).
-- Úplné české znění pravidlových stránek: **28/35 obsahových pravidlových stránek**.
-- Nově kompletní kapitoly: **Stavy, Nemoci, Objekty, Artefakty**; celkem 28/35.
+- Úplné české znění pravidlových stránek: **35/35 obsahových pravidlových stránek**.
+- Dříve dokončené kapitoly zahrnují **Stavy, Nemoci, Objekty, Artefakty** a další pravidla.
 - V další dávce jsou úplně přeloženy kapitoly **Jízdní zvířata a dopravní prostředky, Nástroje, Kouzelné předměty, Jedy a Inteligentní kouzelné předměty**.
 - Následující dávka přeložila celé kapitoly **Zbroje**, **Šílenství** a
   **Sféry existence**, včetně tabulek a konkrétních pravidlových omezení.
@@ -51,6 +97,7 @@ licence převzetí výslovně dovolí, a za příslušných podmínek s atribuc�
   všechny podle existujícího českého slovníku.
 - Také kapitola **Božstva mnohovesmíru**: všechny úvodní popisy i **67 božstev**
   keltského, řeckého, egyptského a severského panteonu, včetně všech tabulkových hodnot.
+- Dokončené základní kapitoly zahrnují také **Dobrodružství**, **Dobrodružné vybavení**, **Používání vlastností**, **Boj** a **Statistiky nestvůr**, čímž je uzavřeno všech **35/35** nelegálních pravidlových kapitol.
 - Úplné české texty jednotlivých kouzel, statistiky nestvůr, předmětů, ras a povolání:
   zbývá dopracovat; přehledy nejsou totéž co plné překlady.
 - Testy ověřují dostupnost úplných textů a zachování originálu, ale před
