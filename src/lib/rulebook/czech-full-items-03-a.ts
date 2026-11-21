@@ -26,11 +26,11 @@ Když nosíš tento prsten, máš odolnost vůči jednomu typu zranění. Drahok
 
 Když nosíš tento prsten v šeru nebo ve tmě, můžeš z něj libovolně sesílat kouzla *tančící světla* a *světlo*. Seslání každého z těchto kouzel z prstenu vyžaduje akci.
 
-Prsten má 6 nábojů pro následující další vlastnosti. Denně za úsvitu si obnoví 1k6 spotřebovaných nábojů.
+Prsten má 6 dávek pro následující další vlastnosti. Denně za úsvitu si obnoví 1k6 spotřebovaných dávek.
 
-***Vílový oheň.*** Jako akci můžeš utratit 1 náboj a seslat z prstenu *vílí oheň*.
+***Vílový oheň.*** Jako akci můžeš utratit 1 dávku a seslat z prstenu *vílí oheň*.
 
-***Kulový blesk.*** Jako akci můžeš utratit 2 náboje a vytvořit jednu až čtyři koule blesků o průměru 3 stopy. Čím více koulí vytvoříš, tím slabší je každá z nich.
+***Kulový blesk.*** Jako akci můžeš utratit 2 dávky a vytvořit jednu až čtyři koule blesků o průměru 3 stopy. Čím více koulí vytvoříš, tím slabší je každá z nich.
 
 Každá koule se objeví na neobsazeném místě, které vidíš do vzdálenosti 120 stop. Koule vydrží, dokud se na ně soustředíš (jako při soustředění na kouzlo), nejvýše 1 minutu. Každá koule vydává šero v okruhu 30 stop.
 
@@ -45,7 +45,7 @@ Jako bonusovou akci můžeš každou kouli přesunout až o 30 stop, ale žádn�
 | 2 | 5k4 |
 | 1 | 4k12 |
 
-***Padající hvězdy.*** Jako akci můžeš utratit 1 až 3 náboje. Za každý utracený náboj vystřelíš z prstenu zářící světelnou jiskru na bod, který vidíš do vzdálenosti 60 stop. Každého tvora v krychli o hraně 15 stop vycházející z daného bodu zasypou jiskry; musí uspět v záchranném hodu na Obratnost se SO 15, jinak utrpí ohnivé zranění 5k4. Při úspěchu utrpí poloviční zranění.`,
+***Padající hvězdy.*** Jako akci můžeš utratit 1 až 3 dávky. Za každý utracený dávku vystřelíš z prstenu zářící světelnou jiskru na bod, který vidíš do vzdálenosti 60 stop. Každého tvora v krychli o hraně 15 stop vycházející z daného bodu zasypou jiskry; musí uspět v záchranném hodu na Obratnost se SO 15, jinak utrpí ohnivé zranění 5k4. Při úspěchu utrpí poloviční zranění.`,
   "ring-of-spell-storing": `*Prsten, vzácný (vyžaduje sladění)*
 
 Tento prsten uchovává kouzla, která do něj někdo sešle, dokud je sladěný nositel nepoužije. Současně dokáže uchovávat kouzla v souhrnu nejvýše 5 stupňů. Při nalezení obsahuje kouzla v souhrnu 1k6 − 1 stupňů, která zvolí PJ.
@@ -64,12 +64,12 @@ Když nosíš tento prsten, máš rychlost plavání 40 stop.`,
 Když nosíš tento prsten, můžeš libovolně sesílat kouzlo *telekineze*, ale jako cíl můžeš zvolit pouze předměty, které nikdo nemá na sobě ani je nedrží či nenese.`,
   "ring-of-the-ram": `*Prsten, vzácný (vyžaduje sladění)*
 
-Prsten má 3 náboje a každý den za úsvitu si obnoví 1k3 spotřebovaných nábojů. Když jej nosíš, můžeš jako akci utratit 1 až 3 jeho náboje a zaútočit na jednoho tvora, kterého vidíš do vzdálenosti 60 stop. Prsten vytvoří přízračnou beraní hlavu, která provede hod na útok s bonusem +7. Při zásahu utrpí cíl za každý utracený náboj silové zranění 2k10 a je odtlačen o 5 stop od tebe.
+Prsten má 3 dávky a každý den za úsvitu si obnoví 1k3 spotřebovaných dávek. Když jej nosíš, můžeš jako akci utratit 1 až 3 jeho dávky a zaútočit na jednoho tvora, kterého vidíš do vzdálenosti 60 stop. Prsten vytvoří přízračnou beraní hlavu, která provede hod na útok s bonusem +7. Při zásahu utrpí cíl za každou utracenou dávku silové zranění 2k10 a je odtlačen o 5 stop od tebe.
 
-Případně můžeš jako akci utratit 1 až 3 náboje prstenu a pokusit se rozbít předmět, který vidíš do vzdálenosti 60 stop a který nikdo nemá na sobě ani jej nedrží či nenese. Prsten provede ověření Síly s bonusem +5 za každý utracený náboj.`,
+Případně můžeš jako akci utratit 1 až 3 dávky prstenu a pokusit se rozbít předmět, který vidíš do vzdálenosti 60 stop a který nikdo nemá na sobě ani jej nedrží či nenese. Prsten provede ověření Síly s bonusem +5 za každou utracenou dávku.`,
   "ring-of-three-wishes": `*Prsten, legendární*
 
-Když nosíš tento prsten, můžeš jako akci utratit 1 z jeho 3 nábojů a seslat z něj kouzlo *přání*. Po spotřebování posledního náboje prsten přestane být magický.`,
+Když nosíš tento prsten, můžeš jako akci utratit 1 z jeho 3 dávek a seslat z něj kouzlo *přání*. Po spotřebování poslední dávky prsten přestane být magický.`,
   "ring-of-warmth": `*Prsten, neobvyklý (vyžaduje sladění)*
 
 Když nosíš tento prsten, máš odolnost vůči chladnému zranění. Navíc tobě ani ničemu, co máš na sobě nebo neseš, neškodí teploty až do -50 stupňů Fahrenheita.`,
