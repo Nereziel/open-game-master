@@ -1919,6 +1919,95 @@ try {
     }
   });
 
+  await test("all nine SRD 5.1 races have full independent Czech traits with unchanged English pages", async () => {
+    const { CZECH_FULL_RACES_1 } = await import("../src/lib/rulebook/czech-full-races-1.ts");
+    const { CZECH_FULL_RACES_2 } = await import("../src/lib/rulebook/czech-full-races-2.ts");
+    const translatedRaces = { ...CZECH_FULL_RACES_1, ...CZECH_FULL_RACES_2 };
+    const englishRacePages = rulebookPages("en").filter((page) => page.kind === "race");
+    const expectedIds = [
+      "dwarf", "elf", "halfling", "human", "dragonborn",
+      "gnome", "half-elf", "half-orc", "tiefling",
+    ];
+    assert.deepEqual(Object.keys(translatedRaces), expectedIds);
+    assert.deepEqual(englishRacePages.map((page) => page.id).sort(), [...expectedIds].sort());
+
+    const { CZECH_RACES } = await import("../src/lib/rulebook/czech-terms.ts");
+    for (const id of expectedIds) {
+      const content = translatedRaces[id];
+      const english = rulebookPage(id, "en")?.page;
+      const czech = rulebookPage(id, "cs")?.page;
+      assert.ok(english && czech, "Missing race page: " + id);
+      assert.equal(english.kind, "race");
+      assert.equal(czech.kind, "race");
+      assert.equal(czech.id, english.id);
+      assert.equal(czech.title, CZECH_RACES[english.title]);
+      assert.ok(content.length > 800, "Incomplete Czech race traits: " + id);
+      assert.ok(czech.md.includes("## Úplné znění pravidel v češtině"));
+      assert.ok(czech.md.includes(content), "Missing Czech race rules in reader: " + id);
+      assert.ok(czech.md.endsWith(english.md), "English race source changed: " + id);
+
+      const headingLevels = (markdown) => markdown.split("\n")
+        .filter((line) => /^#{2,3} /.test(line)).map((line) => line.match(/^#+/)[0].length);
+      assert.deepEqual(headingLevels(content), headingLevels(english.md),
+        "Missing or extra SRD race/subrace sections: " + id);
+      const traitCount = (markdown) => markdown.split("\n")
+        .filter((line) => line.startsWith("***")).length;
+      assert.equal(traitCount(content), traitCount(english.md),
+        "Missing or extra racial traits: " + id);
+      assert.ok(content.includes("***Zvýšení hodnot vlastností.***"));
+      assert.ok(content.includes("***Rychlost.***"));
+      assert.ok(content.includes("***Jazyky.***"));
+    }
+
+    const dwarf = translatedRaces.dwarf;
+    assert.ok(dwarf.includes("## Kopcový trpaslík"));
+    assert.ok(dwarf.includes("***Trpasličí nezlomnost.***"));
+    assert.ok(dwarf.includes("***Trpasličí nezdolnost.***"));
+    assert.ok(dwarf.includes("25 stop (5 sáhů)"));
+    const elf = translatedRaces.elf;
+    assert.ok(elf.includes("## Vznešený elf"));
+    assert.ok(elf.includes("***Trans.***"));
+    assert.ok(elf.includes("**4 hodiny hlubokou meditací**"));
+    const halfling = translatedRaces.halfling;
+    assert.ok(halfling.includes("## Tichošlápek"));
+    assert.ok(halfling.includes("***Přirozená nenápadnost.***"));
+    assert.ok(halfling.includes("**Nový výsledek musíš použít**"));
+    const human = translatedRaces.human;
+    assert.ok(human.includes("**Každá ze šesti tvých vlastností se zvýší o 1**"));
+
+    const dragonborn = translatedRaces.dragonborn;
+    const ancestryNames = [
+      "Černý", "Modrý", "Mosazný", "Bronzový", "Měděný",
+      "Zlatý", "Zelený", "Rudý", "Stříbrný", "Bílý",
+    ];
+    for (const name of ancestryNames) {
+      assert.ok(dragonborn.includes("| " + name + " |"),
+        "Missing Draconic Ancestry table entry: " + name);
+    }
+    assert.equal(dragonborn.split("\n").filter((line) => /^\| (Černý|Modrý|Mosazný|Bronzový|Měděný|Zlatý|Zelený|Rudý|Stříbrný|Bílý) \|/.test(line)).length, 10);
+    for (const amount of ["2k6", "3k6", "4k6", "5k6"]) {
+      assert.ok(dragonborn.includes(amount), "Missing Breath Weapon damage step " + amount);
+    }
+    assert.ok(dragonborn.includes("8 + tvá oprava Odolnosti + tvůj zdatnostní bonus"));
+    const gnome = translatedRaces.gnome;
+    assert.ok(gnome.includes("## Skalní gnóm"));
+    for (const name of ["Mechanická hračka", "Zapalovač", "Hudební skříňka"]) {
+      assert.ok(gnome.includes("***" + name + ".***"), "Missing gnome tinkering device: " + name);
+    }
+    for (const value of ["**10 zl**", "**24 hodin**", "**nejvýše tři**"]) {
+      assert.ok(gnome.includes(value), "Missing Gnome Tinker limit: " + value);
+    }
+    const halfOrc = translatedRaces["half-orc"];
+    assert.ok(halfOrc.includes("***Zarytá houževnatost.***"));
+    assert.ok(halfOrc.includes("***Divoké útoky.***"));
+    assert.ok(translatedRaces["half-elf"].includes("***Dovednostní všestrannost.***"));
+    const tiefling = translatedRaces.tiefling;
+    assert.ok(tiefling.includes("***Pekelné dědictví.***"));
+    assert.ok(tiefling.includes("Od **3. úrovně**"));
+    assert.ok(tiefling.includes("Od **5. úrovně**"));
+    assert.ok(tiefling.includes("**dlouhého odpočinku**"));
+  });
+
   await test("all twelve SRD 5.1 classes have full original Czech rules and unmodified English source", async () => {
     const classIds = [
       "fighter", "rogue", "barbarian", "bard", "cleric", "druid",
