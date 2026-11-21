@@ -2170,6 +2170,10 @@ async function runAdvance(context: TurnContext, turn: DmTurn) {
     const filter = createStreamingArtifactFilter();
     const closers = createOrphanCloserFilter();
     const batcher = createDeltaBatcher((text) => {
+      // A whisper-only prompt contains secrets. Its raw text must NEVER
+      // stream to the whole table: a sloppy model could echo the message.
+      // Any legitimately public consequence is persisted at turn end.
+      if (privateOnly) return;
       shown += text;
       narrationShown(campaignId, turn.id);
       publishEphemeral(campaignId, "dm_delta", { text });
@@ -2436,7 +2440,11 @@ async function runAdvance(context: TurnContext, turn: DmTurn) {
     if (finalRepeat) {
       finalRepeated = true;
     }
-    if (narration && !finalRepeat && (!calledOutcomeTool || finalCall)) {
+    // If this is a private-only exchange and its sole work is send_whisper,
+    // any model prose belongs on the private line, not the public transcript.
+    const onlyPrivateWhisperTools =
+      privateOnly && toolCalls.length > 0 && toolCalls.every((call) => call.name === "send_whisper");
+    if (narration && !onlyPrivateWhisperTools && !finalRepeat && (!calledOutcomeTool || finalCall)) {
       turn.narrationParts.push(narration);
       if (read) {
         partReads.set(narration, read);
