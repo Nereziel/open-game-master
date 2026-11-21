@@ -191,9 +191,13 @@ leaves markdown behind, and that the quick links a table uses mid-session
 The rulebook API also accepts `cs` / `cs-CZ` (including `X-Odm-Locale: cs`).
 The Czech view uses the same SRD 5.1 page IDs, links, bookmarks, folios and
 full original English text. `src/lib/rulebook/czech-companion.ts` adds
-original Czech summaries of core mechanics and Czech titles for selected
-chapters and rules. All other pages still show the original English SRD,
-not a machine-generated or third-party translation. The reader marks this
+original Czech summaries of 35 core rules pages, 44 spells, 27 monsters and 20
+magic items. It also localizes recurring spell schools, creature size/type,
+item rarity and attunement text; the original English SRD stays attached to
+every page for exact numeric mechanics. The titles, spell and monster names
+are based on the established d20.cz glossary, not copied full prose.
+All remaining pages show the original English SRD, not a machine-generated
+or third-party translation. The reader marks this
 partial coverage and links to https://dnd5esrd.d20.cz/ for readers who
 want the community's full Czech translation.
 
