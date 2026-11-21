@@ -9,6 +9,7 @@ register("./lib/register-alias.mjs", import.meta.url);
 const { normalizeAbility } = await import("../src/lib/dm/arg-coerce.ts");
 const { rollArgsSchema } = await import("../src/lib/dm/roll-args.ts");
 const { invalidArguments } = await import("../src/lib/dm/tool-errors.ts");
+const { canonicalMcpToolArgs } = await import("../src/lib/agents/czech-tool-args.ts");
 
 let passed = 0;
 function test(name, fn) {
@@ -53,6 +54,42 @@ test("every refused field is named, each with zod's reason", () => {
   const { error, retry } = invalidArguments("Invalid request_roll arguments.", parsed.error);
   assert.equal(retry, true);
   assert.match(error, /kind: Invalid option[^;]*; advantage: Invalid option/);
+});
+
+test("MCP: Czech names resolve to canonical rule arguments, not Czech tool identifiers", () => {
+  const args = canonicalMcpToolArgs("request_roll", { kind: "skill_check", skill: "Plížení", ability: "Moudrost", reason: "Ověření pod oknem" });
+  assert.deepEqual(args, { kind: "skill_check", skill: "stealth", ability: "wis", reason: "Ověření pod oknem" });
+  assert.equal(rollArgsSchema.parse(args).skill, "stealth");
+  assert.equal(rollArgsSchema.parse(args).ability, "wis");
+  assert.equal(canonicalMcpToolArgs("request_roll", { skill: "Mystika" }).skill, "arcana");
+  assert.equal(canonicalMcpToolArgs("request_roll", { skill: "Magie" }).skill, "arcana");
+  assert.equal(canonicalMcpToolArgs("request_roll", { skill: "Zacházení se zvířaty" }).skill, "animal_handling");
+  assert.equal(canonicalMcpToolArgs("request_roll", { ability: "Síla" }).ability, "str");
+});
+
+test("MCP: spell, creature and condition aliases keep exact target and character IDs", () => {
+  const spell = canonicalMcpToolArgs("cast_at_enemy", { spell: "Ohnivá koule", targetEnemyId: "ghúl", casterCharacterId: "123-abc" });
+  assert.deepEqual(spell, { spell: "Fireball", targetEnemyId: "ghúl", casterCharacterId: "123-abc" });
+  const attack = canonicalMcpToolArgs("pc_attack", {
+    characterId: "PC0",
+    attacks: [{ spell: "Ohnivá střela", targetEnemyId: "Goblin-1" }, { weapon: "Dagger", targetEnemyId: "Goblin-2" }],
+  });
+  assert.deepEqual(attack.attacks, [{ spell: "Fire Bolt", targetEnemyId: "Goblin-1" }, { weapon: "Dagger", targetEnemyId: "Goblin-2" }]);
+  assert.equal(canonicalMcpToolArgs("set_condition", { condition: "Otrávený" }).condition, "poisoned");
+  assert.equal(canonicalMcpToolArgs("check_notice", { againstMonster: "Ghúl" }).againstMonster, "Ghoul");
+});
+
+test("MCP: connected GM invocation is normalized but every non-GM method is untouched", () => {
+  const incoming = {
+    campaignId: "abc", name: "cast_buff", args: { spell: "Požehnání", targetCharacterIds: ["Hráč"] },
+  };
+  assert.deepEqual(canonicalMcpToolArgs("odm_dm_invoke", incoming), {
+    campaignId: "abc", name: "cast_buff", args: { spell: "Bless", targetCharacterIds: ["Hráč"] },
+  });
+  const text = { campaignId: "abc", content: "Sesílám Ohnivou kouli na ghúla.", name: "Ohnivá koule" };
+  assert.strictEqual(canonicalMcpToolArgs("odm_dm_narrate", text), text);
+  const unknown = { item: "Osobní meč", targetEnemyId: "Ghúl", name: "Bojovník" };
+  assert.deepEqual(canonicalMcpToolArgs("grant_item", unknown), unknown);
 });
 
 console.log(`test-arg-coerce: ${passed} tests passed`);
