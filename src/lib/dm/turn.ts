@@ -2443,7 +2443,7 @@ async function runAdvance(context: TurnContext, turn: DmTurn) {
     // If this is a private-only exchange and its sole work is send_whisper,
     // any model prose belongs on the private line, not the public transcript.
     const onlyPrivateWhisperTools =
-      privateOnly && toolCalls.length > 0 && toolCalls.every((call) => call.name === "send_whisper");
+      privateOnly && toolCalls.every((call) => call.name === "send_whisper");
     if (narration && !onlyPrivateWhisperTools && !finalRepeat && (!calledOutcomeTool || finalCall)) {
       turn.narrationParts.push(narration);
       if (read) {
