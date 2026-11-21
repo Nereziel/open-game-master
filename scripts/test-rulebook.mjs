@@ -2128,6 +2128,205 @@ try {
     }
   });
 
+  await test("all 49 first-level SRD spells have full Czech descriptions and exact mechanical fields", async () => {
+    const modules = await Promise.all([3, 4, 5, 6, 7].map((i) =>
+      import("../src/lib/rulebook/czech-full-spells-" + i + ".ts")));
+    const batches = modules.map((module, index) =>
+      module["CZECH_FULL_SPELLS_" + (index + 3)]);
+    assert.deepEqual(batches.map((entry) => Object.keys(entry).length),
+      [13, 8, 10, 10, 8]);
+    const all = Object.assign({}, ...batches);
+    const originals = rulebookPages("en").filter((page) =>
+      page.kind === "spell" && page.meta?.startsWith("1st-level"));
+    assert.equal(originals.length, 49);
+    assert.deepEqual(Object.keys(all), originals.map((page) => page.id));
+    const get = (md, label) => md.split("\n")
+      .find((line) => line.startsWith("**" + label + ":** "))
+      ?.slice(("**" + label + ":** ").length);
+    const time = {
+      "1 action": "1 akce", "1 bonus action": "1 bonusová akce",
+      "1 minute": "1 minuta", "1 hour": "1 hodina",
+    };
+    const range = {
+      "10 feet": "10 stop", "30 feet": "30 stop", "60 feet": "60 stop",
+      "90 feet": "90 stop", "120 feet": "120 stop", Touch: "Dotyk",
+      Self: "Sesilatel",
+      "Self (15-foot cone)": "Sesilatel (kužel 15 stop",
+      "Self (15-foot cube)": "Sesilatel (krychle o hraně 15 stop",
+    };
+    const duration = {
+      Instantaneous: "Ihned", "1 round": "1 kolo",
+      "1 minute": "1 minuta", "10 minutes": "10 minut",
+      "1 hour": "1 hodina", "8 hours": "8 hodin",
+      "24 hours": "24 hodin", "10 days": "10 dní",
+      "Concentration, up to 1 minute": "Soustředění, až 1 minuta",
+      "Concentration, up to 10 minutes": "Soustředění, až 10 minut",
+      "Concentration up to 10 minutes": "Soustředění, až 10 minut",
+      "Concentration, up to 1 hour": "Soustředění, až 1 hodina",
+    };
+    for (const original of originals) {
+      const id = original.id;
+      const translated = all[id];
+      const localized = rulebookPage(id, "cs")?.page;
+      const english = rulebookPage(id, "en")?.page;
+      assert.ok(translated && localized && english, "Missing first-level spell: " + id);
+      assert.equal(localized.title, CZECH_SPELLS[original.title],
+        "Canonical translated spell name mismatch: " + id);
+      assert.equal(localized.id, original.id);
+      assert.equal(localized.originalMeta, original.meta);
+      assert.ok(localized.md.includes("## Úplné znění pravidel v češtině"));
+      assert.ok(localized.md.includes(translated),
+        "Missing full Czech description in reader: " + id);
+      assert.ok(localized.md.endsWith(english.md),
+        "Original English SRD description modified: " + id);
+      for (const [englishField, czechField, mapping] of [
+        ["Casting Time", "Doba sesílání", time],
+        ["Range", "Dosah", range],
+        ["Duration", "Trvání", duration],
+      ]) {
+        const oldValue = get(original.md, englishField);
+        const converted = englishField === "Casting Time" && oldValue?.startsWith("1 reaction,")
+          ? "1 reakce" : mapping[oldValue];
+        const newValue = get(translated, czechField);
+        assert.ok(converted && newValue?.startsWith(converted),
+          "Changed casting time, range or duration: " + id + "/" + englishField);
+      }
+      const comp = (md, label) => get(md, label)?.match(/^[VSM, ]+/)?.[0]?.trim();
+      assert.equal(comp(translated, "Složky"), comp(original.md, "Components"),
+        "Original V/S/M components changed: " + id);
+      for (const die of new Set(original.md.match(/\b\d*d\d+\b/g) ?? [])) {
+        assert.ok(translated.includes(die.replace("d", "k")),
+          "Original spell dice changed: " + id + "/" + die);
+      }
+      const sections = (md) => (md.match(/^\*\*\*[^*\n]+\*\*\*/gm) ?? []).length;
+      const bullets = (md) => (md.match(/^- /gm) ?? []).length;
+      assert.equal(sections(translated), sections(original.md),
+        "Missing special effects or level scaling: " + id);
+      assert.equal(bullets(translated), bullets(original.md),
+        "Missing spell effect list entries: " + id);
+      if (original.md.includes("***At Higher Levels***")) {
+        assert.ok(translated.includes("***Na vyšších úrovních.***"),
+          "Missing higher-level spell slot rules: " + id);
+      }
+    }
+    const specialRules = {
+      "find-familiar": [
+            "**jen jednoho přítelíčka**",
+            "**svou reakci**",
+            "**Nemůže útočit**"
+      ],
+      "floating-disk": [
+            "**500 liber**",
+            "**100 stop (20 sáhů)**"
+      ],
+      "fog-cloud": [
+            "**silně zahalená**",
+            "**poloměr mlhy se zvětší o 20 stop (4 sáhy)**"
+      ],
+      "goodberry": [
+            "**10 magických bobulí**",
+            "**24 hodin od seslání**"
+      ],
+      "grease": [
+            "**obtížný terén**",
+            "**do oblasti vstoupí nebo v ní ukončí svůj tah**"
+      ],
+      "guiding-bolt": [
+            "**4k6 zářivého zranění**",
+            "**následující hod na útok proti tomuto cíli má výhodu**"
+      ],
+      "healing-word": [
+            "**1k4 + opravu tvé sesílací vlastnosti životů**"
+      ],
+      "hellish-rebuke": [
+            "**2k10 ohnivého zranění**",
+            "**polovinu**"
+      ],
+      "heroism": [
+            "**imunitu vůči vystrašení**",
+            "**na začátku každého svého tahu**"
+      ],
+      "hideous-laughter": [
+            "**Inteligencí 4 nebo nižší**",
+            "**výhodu**"
+      ],
+      "hunters-mark": [
+            "**8 hodin**",
+            "**24 hodin**"
+      ],
+      "identify": [
+            "**sladění**",
+            "**kolik má případných nabití**"
+      ],
+      "illusory-script": [
+            "**původní text i iluze**",
+            "**přečíst skryté sdělení**"
+      ],
+      "inflict-wounds": [
+            "**3k10 nekrotického zranění**"
+      ],
+      "jump": [
+            "**vzdálenost jeho skoků ztrojnásobí**"
+      ],
+      "longstrider": [
+            "**rychlost se zvýší o 10 stop (2 sáhy)**"
+      ],
+      "mage-armor": [
+            "**základní OČ se rovná 13 + jeho oprava Obratnosti**"
+      ],
+      "magic-missile": [
+            "**tři zářící střely magické síly**",
+            "**1k4 + 1 silového zranění**"
+      ],
+      "protection-from-evil-and-good": [
+            "**nemůže být zmámený, vystrašený ani posedlý**"
+      ],
+      "purify-food-and-drink": [
+            "**nemagické jídlo a pití**",
+            "**očistí od jedů a nemocí**"
+      ],
+      "sanctuary": [
+            "**nepůsobí proti plošným účinkům**",
+            "**záchranném hodu na Moudrost**"
+      ],
+      "shield": [
+            "**bonus +5 k OČ**",
+            "**neutrpíš žádné zranění kouzlem Magická střela**"
+      ],
+      "shield-of-faith": [
+            "**bonus +2 k OČ**"
+      ],
+      "silent-image": [
+            "**krychle o hraně 15 stop (3 sáhy)**",
+            "**vidí skrze ni**"
+      ],
+      "sleep": [
+            "**5k8**",
+            "**upadne do bezvědomí**",
+            "**Nemrtví a tvorové s imunitou vůči zmámení**"
+      ],
+      "speak-with-animals": [
+            "**během posledního dne**",
+            "**drobnou laskavost**"
+      ],
+      "thunderwave": [
+            "**2k8 hromového zranění**",
+            "**ohlušující ránu slyšitelnou až do 300 stop (60 sáhů)**"
+      ],
+      "unseen-servant": [
+            "**OČ 10**",
+            "**Sílu 2**",
+            "**15 stop (3 sáhy)**"
+      ]
+};
+    for (const [id, excerpts] of Object.entries(specialRules)) {
+      for (const excerpt of excerpts) {
+        assert.ok(all[id]?.includes(excerpt),
+          "Important first-level spell mechanic missing: " + id + "/" + excerpt);
+      }
+    }
+  });
+
   await test("all nine SRD 5.1 races have full independent Czech traits with unchanged English pages", async () => {
     const { CZECH_FULL_RACES_1 } = await import("../src/lib/rulebook/czech-full-races-1.ts");
     const { CZECH_FULL_RACES_2 } = await import("../src/lib/rulebook/czech-full-races-2.ts");
