@@ -1445,11 +1445,48 @@ try {
     assert.ok(localized.md.includes("## Úplné znění pravidel v češtině"));
     assert.ok(localized.md.includes(translated));
     assert.ok(localized.md.endsWith(source.md), "Original English deity tables changed");
-    const batches = await Promise.all(Array.from({ length: 14 }, (_, i) =>
+    const batches = await Promise.all(Array.from({ length: 15 }, (_, i) =>
       import(`../src/lib/rulebook/czech-full-rules-${i + 1}.ts`)));
     const ids = batches.flatMap((mod, i) => Object.keys(mod[`CZECH_FULL_RULES_${i + 1}`]));
-    assert.equal(ids.length, 28);
-    assert.equal(new Set(ids).size, 28, "Duplicate SRD rules page with full Czech text");
+    assert.equal(ids.length, 29);
+    assert.equal(new Set(ids).size, 29, "Duplicate SRD rules page with full Czech text");
+  });
+
+  await test("Czech traps include eight fully translated mechanical and magical examples", async () => {
+    const { CZECH_FULL_RULES_15 } = await import("../src/lib/rulebook/czech-full-rules-15.ts");
+    assert.deepEqual(Object.keys(CZECH_FULL_RULES_15), ["traps"]);
+    const translated = CZECH_FULL_RULES_15.traps;
+    const en = rulebookPage("traps", "en").page;
+    const cs = rulebookPage("traps", "cs").page;
+    assert.ok(translated.length > 12000, "Traps text is unexpectedly short");
+    assert.equal(cs.id, en.id, "The canonical rule ID is preserved");
+    assert.ok(cs.md.includes("## Úplné znění pravidel v češtině"));
+    assert.ok(cs.md.includes(translated), "Czech traps are wired into the reader");
+    assert.ok(cs.md.endsWith(en.md), "The original English SRD remains unchanged");
+    const examples = [
+      "Hroutící se strop",
+      "Padající síť",
+      "Socha chrlící oheň",
+      "Jámy",
+      "Otrávené šipky",
+      "Otrávená jehla",
+      "Valící se kamenná koule",
+      "Sféra anihilace",
+    ];
+    for (const name of examples) {
+      assert.ok(translated.includes("### " + name), "Missing Czech sample trap: " + name);
+    }
+    for (const clause of [
+      "| 1.–4. | 1k10 | 2k10 | 4k10 |",
+      "| 17.–20. | 10k10 | 18k10 | 24k10 |",
+      "22 (4k10) ohnivého zranění",
+      "55 (10k10) drtivého zranění",
+      "SO 18",
+      "bonus +8",
+      "20 liber",
+    ]) {
+      assert.ok(translated.includes(clause), "Missing canonical trap mechanic: " + clause);
+    }
   });
 
   // ---- the routes ----
