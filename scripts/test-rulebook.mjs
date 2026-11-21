@@ -647,12 +647,17 @@ try {
     assert.equal(Object.keys(CZECH_SPELL_NOTES_7B).length, 26);
     assert.equal(Object.keys(CZECH_SPELL_NOTES_7C).length, 25);
     assert.equal(Object.keys(CZECH_SPELL_NOTES_7D).length, 35);
-    const notes = Object.assign({}, ...batches);
+    const notes = new Map();
+    for (const batch of batches) {
+      for (const [name, note] of Object.entries(batch)) {
+        if (!notes.has(name.toLowerCase())) notes.set(name.toLowerCase(), note);
+      }
+    }
     const byName = new Set();
     for (const page of spellPages) {
       assert.ok(!byName.has(page.title), `Duplicate SRD spell page title: ${page.title}`);
       byName.add(page.title);
-      const note = notes[page.title];
+      const note = notes.get(page.title.toLowerCase());
       const title = CZECH_SPELLS[page.title];
       assert.ok(note && note.length >= 100, `Missing Czech summary for SRD spell: ${page.title}`);
       assert.ok(title, `Missing Czech display name for SRD spell: ${page.title}`);
