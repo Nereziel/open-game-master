@@ -26,6 +26,7 @@ const { crosswalkFor } = await import("../src/lib/rulebook/crosswalk.ts");
 const { CZECH_SKILLS, CZECH_ITEMS, CZECH_MONSTERS, CZECH_SPELLS, czechSrdTitle, czechSrdSpellGroup, czechSrdSpellMeta, czechSrdMonsterMeta, czechSrdItemMeta } =
   await import("../src/lib/rulebook/czech-terms.ts");
 const { CZECH_SPELL_NOTES } = await import("../src/lib/rulebook/czech-spell-notes.ts");
+const { CZECH_MONSTER_NOTES, CZECH_ITEM_NOTES } = await import("../src/lib/rulebook/czech-bestiary-items.ts");
 const { anchorSlug, blockText, inlineText, parseBook, parseInline, stripInline } = await import(
   "../src/lib/rulebook/markdown.ts"
 );
@@ -374,6 +375,27 @@ try {
     }
     const fireball = rulebookSearch("Ohnivá koule", 5, "cs").hits;
     assert.ok(fireball.some((hit) => hit.page === "fireball"), "Czech spell search finds canonical fireball id");
+  });
+
+  await test("Czech bestiary and magic item guides preserve all original English stat blocks", () => {
+    const english = rulebookPages("en");
+    assert.equal(Object.keys(CZECH_MONSTER_NOTES).length, 27);
+    assert.equal(Object.keys(CZECH_ITEM_NOTES).length, 20);
+    for (const [kind, mapping, heading] of [
+      ["monster", CZECH_MONSTER_NOTES, "Český přehled nestvůry"],
+      ["item", CZECH_ITEM_NOTES, "Český přehled předmětu"],
+    ]) {
+      const originals = new Map(english.filter((page) => page.kind === kind).map((page) => [page.title, page]));
+      for (const [name, note] of Object.entries(mapping)) {
+        const original = originals.get(name);
+        assert.ok(original, `Missing English SRD ${kind}: ${name}`);
+        assert.ok(CZECH_ITEMS[name] || CZECH_MONSTERS[name], `Missing Czech title for ${name}`);
+        const czech = rulebookPage(original.id, "cs").page;
+        assert.ok(czech.md.includes(heading), `Missing Czech heading for ${name}`);
+        assert.ok(czech.md.includes(note), `Missing Czech note for ${name}`);
+        assert.ok(czech.md.endsWith(original.md), `English stat block lost for ${name}`);
+      }
+    }
   });
 
   await test("Czech magic item and monster metadata are display-only and retain original metadata", () => {
