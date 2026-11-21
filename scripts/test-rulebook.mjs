@@ -1880,6 +1880,94 @@ try {
     }
   });
 
+  await test("all twelve SRD 5.1 classes have full original Czech rules and unmodified English source", async () => {
+    const classIds = [
+      "fighter", "rogue", "barbarian", "bard", "cleric", "druid",
+      "monk", "paladin", "ranger", "sorcerer", "warlock", "wizard",
+    ];
+    const modules = await Promise.all(Array.from({ length: 12 }, (_, i) =>
+      import("../src/lib/rulebook/czech-full-classes-" + (i + 1) + ".ts")));
+    const allIds = modules.flatMap((mod, i) => Object.keys(mod["CZECH_FULL_CLASSES_" + (i + 1)]));
+    assert.deepEqual(allIds, classIds, "Every class has exactly one standalone Czech translation");
+
+    for (let i = 0; i < classIds.length; i++) {
+      const id = classIds[i];
+      const translated = modules[i]["CZECH_FULL_CLASSES_" + (i + 1)][id];
+      const source = rulebookPage(id, "en").page;
+      const localized = rulebookPage(id, "cs").page;
+      assert.equal(source.kind, "class");
+      assert.equal(localized.id, id);
+      assert.equal(localized.kind, "class");
+      assert.ok(translated.length > 5000, "Class translation unexpectedly short: " + id);
+      assert.ok(localized.md.includes("## Úplné znění pravidel v češtině"));
+      assert.ok(localized.md.includes(translated), "Complete Czech class not in reader: " + id);
+      assert.ok(localized.md.endsWith(source.md), "Canonical English SRD must be intact: " + id);
+      assert.ok(translated.includes("### Schopnosti povolání"), "Class introduction not localized: " + id);
+      assert.ok(translated.includes("#### Zdatnosti"), "Class proficiencies not localized: " + id);
+      assert.ok(translated.includes("#### Počáteční vybavení"), "Class starting equipment not localized: " + id);
+      assert.ok(translated.includes("### Zvýšení hodnot vlastností"), "Ability score increase missing: " + id);
+      assert.ok(translated.includes("**Tabulka – "), "Class progression table missing: " + id);
+
+      const firstTableAt = translated.indexOf("| Úroveň |");
+      assert.ok(firstTableAt >= 0, "Class progression table header missing: " + id);
+      const firstTable = translated.slice(firstTableAt).split("\n\n")[0];
+      const localRows = firstTable.split("\n").filter((line) => /^\|\s*\d+\.\s*\|/.test(line));
+      const englishRows = source.md.split("\n").filter((line) => /^\|\s*\d+(st|nd|rd|th)\s*\|/.test(line)).slice(0, 20);
+      assert.equal(localRows.length, 20, "Expected full class progression 1–20: " + id);
+      assert.equal(englishRows.length, 20, "Expected source class progression: " + id);
+      for (let level = 1; level <= 20; level++) {
+        const enCells = englishRows[level - 1].split("|").slice(1, -1).map((cell) => cell.trim());
+        const csCells = localRows[level - 1].split("|").slice(1, -1).map((cell) => cell.trim());
+        assert.ok(csCells[0] === level + ".", "Class levels must be in ascending order: " + id);
+        assert.equal(csCells.length, enCells.length, "Progression table columns changed: " + id);
+        for (let col = 1; col < enCells.length; col++) {
+          if (/^(?:[+-]?\d+|[-–]|\d+d\d+|\+\d+\s*ft\.)$/.test(enCells[col])) {
+            const value = enCells[col].replace(/(\d+)d(\d+)/g, "$1k$2");
+            assert.equal(csCells[col], value,
+              "Changed slot count, proficiency, damage die or other value in " + id +
+              " level " + level + " column " + col);
+          }
+        }
+      }
+    }
+
+    const { CZECH_FULL_CLASSES_6 } = await import("../src/lib/rulebook/czech-full-classes-6.ts");
+    const druid = CZECH_FULL_CLASSES_6.druid;
+    for (const region of ["Arktida", "Pobřeží", "Poušť", "Hvozd", "Pláň", "Hory", "Bažina"]) {
+      assert.ok(druid.includes("**" + region + " – kouzla kruhu**"),
+        "Missing a Czech Circle of Land terrain spell list: " + region);
+    }
+    assert.ok(druid.includes("**Tabulka – Zvířecí podoby**"));
+
+    const { CZECH_FULL_CLASSES_10 } = await import("../src/lib/rulebook/czech-full-classes-10.ts");
+    const sorcerer = CZECH_FULL_CLASSES_10.sorcerer;
+    for (const name of [
+      "Opatrné kouzlo", "Vzdálené kouzlo", "Posílené kouzlo", "Prodloužené kouzlo",
+      "Zesílené kouzlo", "Rychlé kouzlo", "Nenápadné kouzlo", "Dvojité kouzlo",
+    ]) {
+      assert.ok(sorcerer.includes("#### " + name), "Missing Metamagic option: " + name);
+    }
+    for (const price of [
+      "| 1. | 2 |", "| 2. | 3 |", "| 3. | 5 |",
+      "| 4. | 6 |", "| 5. | 7 |",
+    ]) assert.ok(sorcerer.includes(price), "Missing sorcery-point slot cost: " + price);
+
+    const { CZECH_FULL_CLASSES_11 } = await import("../src/lib/rulebook/czech-full-classes-11.ts");
+    const warlock = CZECH_FULL_CLASSES_11.warlock;
+    const invocations = warlock.split("### Seznam mystických invokací")[1].split("## Nadpozemští patroni")[0];
+    assert.equal((invocations.match(/^#### /gm) ?? []).length, 32,
+      "Every SRD 5.1 Eldritch Invocation should have an independently authored Czech description");
+    for (const pact of ["Pakt řetězu", "Pakt čepele", "Pakt knihy"]) {
+      assert.ok(warlock.includes("#### " + pact), "Missing warlock Pact Boon: " + pact);
+    }
+
+    const { CZECH_FULL_CLASSES_12 } = await import("../src/lib/rulebook/czech-full-classes-12.ts");
+    const wizard = CZECH_FULL_CLASSES_12.wizard;
+    assert.ok(wizard.includes("### Škola zaklínání"));
+    assert.ok(wizard.includes("**Za každou úroveň kouzla to stojí 2 hodiny a 50 zl**"));
+    assert.ok(wizard.includes("**1 hodinu a 10 zl za každou úroveň kouzla**"));
+  });
+
   // ---- the routes ----
   const { createUser } = await import("../src/lib/db/users.ts");
   const { mintSession } = await import("../src/lib/auth.ts");
