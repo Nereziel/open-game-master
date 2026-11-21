@@ -3,24 +3,24 @@
 export const CZECH_FULL_ITEMS_03_H: Readonly<Record<string, string>> = {
   "wand-of-secrets": `*Hůlka, neobvyklá*
 
-Tato hůlka má 3 náboje. Když ji držíš, můžeš jako akci utratit 1 její náboj. Pokud se do vzdálenosti 30 stop od tebe nacházejí tajné dveře nebo past, hůlka začne pulzovat a ukáže na nejbližší z nich. Hůlka si každý den za úsvitu obnoví 1k3 spotřebovaných nábojů.`,
+Tato hůlka má 3 dávky. Když ji držíš, můžeš jako akci utratit 1 její dávku. Pokud se do vzdálenosti 30 stop od tebe nacházejí tajné dveře nebo past, hůlka začne pulzovat a ukáže na nejbližší z nich. Hůlka si každý den za úsvitu obnoví 1k3 spotřebovaných dávek.`,
   "wand-of-the-war-mage-1-2-or-3": `*Hůlka, neobvyklá (+1), vzácná (+2) nebo velmi vzácná (+3) (vyžaduje sladění sesilatelem kouzel)*
 
 Když držíš tuto hůlku, získáváš bonus k hodům na útok kouzlem podle vzácnosti hůlky. Navíc při provádění útoku kouzlem ignoruješ poloviční kryt.`,
   "wand-of-web": `*Hůlka, neobvyklá (vyžaduje sladění sesilatelem kouzel)*
 
-Tato hůlka má 7 nábojů. Když ji držíš, můžeš jako akci utratit 1 náboj a seslat z ní kouzlo *pavučina* (SO záchrany 15).
+Tato hůlka má 7 dávek. Když ji držíš, můžeš jako akci utratit 1 dávku a seslat z ní kouzlo *pavučina* (SO záchrany 15).
 
-Hůlka si každý den za úsvitu obnoví 1k6+1 spotřebovaných nábojů. Pokud utratíš poslední náboj, hoď k20. Při výsledku 1 se hůlka rozpadne na popel a je zničena.`,
+Hůlka si každý den za úsvitu obnoví 1k6+1 spotřebovaných dávek. Pokud utratíš poslední dávku, hoď k20. Při výsledku 1 se hůlka rozpadne na popel a je zničena.`,
   "wand-of-wonder": `*Hůlka, vzácná (vyžaduje sladění sesilatelem kouzel)*
 
-Tato hůlka má 7 nábojů. Když ji držíš, můžeš jako akci utratit 1 náboj a zvolit cíl do vzdálenosti 120 stop od sebe. Cílem může být tvor, předmět nebo bod v prostoru. Hoď k100 a podle následující tabulky urči, co se stane.
+Tato hůlka má 7 dávek. Když ji držíš, můžeš jako akci utratit 1 dávku a zvolit cíl do vzdálenosti 120 stop od sebe. Cílem může být tvor, předmět nebo bod v prostoru. Hoď k100 a podle následující tabulky urči, co se stane.
 
 Pokud účinek způsobí, že z hůlky sešleš kouzlo, je SO záchrany proti kouzlu 15. Pokud má kouzlo běžně dosah udaný ve stopách, změní se jeho dosah na 120 stop, není-li už takový.
 
 Pokud účinek pokrývá oblast, musíš kouzlo vystředit na vybraný cíl a zahrnout ho do oblasti. Pokud může být účinkem zasaženo několik možných objektů nebo tvorů, PJ náhodně určí, na které dopadne.
 
-Hůlka si každý den za úsvitu obnoví 1k6+1 spotřebovaných nábojů. Pokud utratíš poslední náboj, hoď k20. Při výsledku 1 se hůlka rozpadne na prach a je zničena.
+Hůlka si každý den za úsvitu obnoví 1k6+1 spotřebovaných dávek. Pokud utratíš poslední dávku, hoď k20. Při výsledku 1 se hůlka rozpadne na prach a je zničena.
 
 **Tabulka – Hůlka divů**
 
