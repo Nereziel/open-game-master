@@ -3393,6 +3393,91 @@ try {
       assert.ok(CZECH_FULL_SPELLS_19[id].includes(needle), "Omitted fifth-level mechanic: " + id + "/" + needle);
   });
 
+
+  await test("all 37 fifth-level SRD spells have complete Czech translations and preserved English", async () => {
+    const [{ CZECH_FULL_SPELLS_18 }, { CZECH_FULL_SPELLS_19 }, { CZECH_FULL_SPELLS_20 }, { CZECH_FULL_SPELLS_21 }] = await Promise.all([
+      import("../src/lib/rulebook/czech-full-spells-18.ts"),
+      import("../src/lib/rulebook/czech-full-spells-19.ts"),
+      import("../src/lib/rulebook/czech-full-spells-20.ts"),
+      import("../src/lib/rulebook/czech-full-spells-21.ts"),
+    ]);
+    const batches = [CZECH_FULL_SPELLS_18, CZECH_FULL_SPELLS_19, CZECH_FULL_SPELLS_20, CZECH_FULL_SPELLS_21];
+    assert.deepEqual(batches.map(batch => Object.keys(batch).length), [12, 12, 7, 6]);
+    assert.deepEqual(Object.keys(CZECH_FULL_SPELLS_20), ["modify-memory","passwall","planar-binding","raise-dead","reincarnate","scrying","seeming"]);
+    assert.deepEqual(Object.keys(CZECH_FULL_SPELLS_21), ["telekinesis","telepathic-bond","teleportation-circle","tree-stride","wall-of-force","wall-of-stone"]);
+    const ids = batches.flatMap(batch => Object.keys(batch));
+    assert.equal(new Set(ids).size, 37, "A fifth-level spell is missing or duplicated");
+    const originals = rulebookPages("en").filter(page =>
+      page.kind === "spell" && page.meta?.startsWith("5th-level"));
+    assert.equal(originals.length, 37);
+    assert.deepEqual(ids, originals.map(page => page.id), "Fifth-level Czech spell IDs differ from English SRD order");
+
+    const fullTexts = Object.assign({}, ...batches);
+    const field = (markdown, label) => {
+      const prefix = "**" + label + ":** ";
+      return markdown.split("\n").find(line => line.startsWith(prefix))?.slice(prefix.length);
+    };
+    const times = { "1 action": "1 akce", "1 minute": "1 minuta", "10 minutes": "10 minut", "1 hour": "1 hodina" };
+    const ranges = { Touch: "Dotyk", Self: "Sesilatel", "10 feet": "10 stop", "30 feet": "30 stop", "60 feet": "60 stop", "120 feet": "120 stop" };
+    const durations = {
+      Instantaneous: "Ihned", "1 round": "1 kolo", "1 hour": "1 hodina",
+      "8 hours": "8 hodin", "24 hours": "24 hodin",
+      "Concentration, up to 1 minute": "Soustředění, až 1 minuta",
+      "Concentration, up to 10 minutes": "Soustředění, až 10 minut",
+    };
+    for (const original of originals) {
+      const full = fullTexts[original.id];
+      const page = rulebookPage(original.id, "cs").page;
+      assert.ok(full?.length >= 190, "Missing full Czech fifth-level spell: " + original.id);
+      assert.equal(page.id, original.id);
+      assert.equal(page.title, CZECH_SPELLS[original.title]);
+      assert.equal(page.originalMeta, original.meta);
+      assert.ok(page.md.includes("## Úplné znění pravidel v češtině"));
+      assert.ok(page.md.includes(full), "The Czech reader does not contain the full text: " + original.id);
+      assert.ok(page.md.endsWith(original.md), "The original English spell was modified: " + original.id);
+      for (const [en, cz] of [
+        ["Casting Time", "Doba sesílání"], ["Range", "Dosah"], ["Duration", "Trvání"]
+      ]) assert.ok(field(original.md, en) && field(full, cz), "A spell field is missing: " + original.id + "/" + cz);
+      // Contagion has the singular label '**Component:**' upstream.
+      const sourceComponents = field(original.md, "Components") ?? field(original.md, "Component");
+      const originalParts = sourceComponents?.match(/^[VSM, ]+/)?.[0]?.trim();
+      const translatedParts = field(full, "Složky")?.match(/^[VSM, ]+/)?.[0]?.trim();
+      assert.ok(originalParts, "Source spell components are absent: " + original.id);
+      assert.equal(translatedParts, originalParts, "Spell components changed: " + original.id);
+      const casting = field(original.md, "Casting Time");
+      if (times[casting])
+        assert.equal(field(full, "Doba sesílání"), times[casting], "Casting time changed: " + original.id);
+      const range = field(original.md, "Range");
+      if (ranges[range])
+        assert.ok(field(full, "Dosah").startsWith(ranges[range]), "Range changed: " + original.id);
+      const duration = field(original.md, "Duration");
+      if (durations[duration])
+        assert.equal(field(full, "Trvání"), durations[duration], "Duration changed: " + original.id);
+      if (/^\*5th-level [^\n]*\(ritual\)\*/m.test(original.md))
+        assert.ok(full.includes("(rituál)"), "Ritual marking missing: " + original.id);
+      for (const [, count, die] of original.md.matchAll(/\b(\d+)d(\d+)\b/g))
+        assert.ok(full.includes(count + "k" + die), "Original SRD damage dice missing: " + original.id);
+    }
+    const checks = {
+      "modify-memory": ["24 hodin", "10 minut", "Moudrost", "Sejmi kletbu", "Mocné navrácení", "7 dny", "30 dnů", "1 rok"],
+      passwall: ["5 stop", "8 stop", "20 stop", "stabilitu", "bezpečně vytlačeni"],
+      "planar-binding": ["1 000 zl", "Charisma", "10 dnů", "30 dnů", "180 dnů", "rok a jeden den"],
+      "raise-dead": ["10 dnů", "500 zl", "1 životem", "−4", "důkladného odpočinku", "nemrtvého"],
+      reincarnate: ["1 000 zl", "10 dnů", "01–04", "97–00", "Drakorozený", "Hobit tichošlápek", "Tiefling"],
+      scrying: ["1 000 zl", "+5", "+0", "−5", "−2", "−4", "−10", "24 hodin", "10 stop"],
+      seeming: ["Charisma", "1 stopu", "Inteligence (Pátrání)", "8 hodin", "uspořádání končetin"],
+      telekinesis: ["1 000 liber", "454 kg", "30 stop", "Síly cíle", "zadržený", "jemnou manipulaci"],
+      "telepathic-bond": ["(rituál)", "osmi ochotnými", "Inteligencí 2", "libovolnou vzdálenost"],
+      "teleportation-circle": ["50 zl", "10 stop", "5 stop", "dvou cílů", "1 minutě", "jednoho roku"],
+      "tree-stride": ["500 stop", "5 stop", "jednou za kolo", "mimo strom"],
+      "wall-of-force": ["10 × 10 stop", "1/4 palce", "Rozptyl magii", "Rozklad", "Éterické sféry"],
+      "wall-of-stone": ["6 palců", "3 palce", "OČ 15", "30 životů", "20 stop", "trvalou"],
+    };
+    for (const [id, markers] of Object.entries(checks))
+      for (const marker of markers)
+        assert.ok(fullTexts[id].includes(marker), "Missing fifth-level spell rule: " + id + "/" + marker);
+  });
+
   // ---- the routes ----
   const { createUser } = await import("../src/lib/db/users.ts");
   const { mintSession } = await import("../src/lib/auth.ts");
