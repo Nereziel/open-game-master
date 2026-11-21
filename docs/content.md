@@ -194,7 +194,16 @@ full original English text. `src/lib/rulebook/czech-companion.ts` adds
 original Czech summaries on **932 of the 933 canonical SRD pages**:
 35 of 36 core rules pages, all 319 SRD spells, all 318 monsters,
 all 239 magic items, all 12 classes and all nine playable races.
-Full Czech translations currently cover **19 of 35 nonlegal rules pages**.
+Full Czech translations currently cover **22 of 35 nonlegal rules pages**.
+Another complete three-chapter batch adds **Armor**, **Madness** and
+**The Planes of Existence**. The full Czech Armor chapter includes every
+armor value, weight, stealth requirement, Strength threshold and don/doff
+time. Madness includes all 3 complete d100 effect tables, healing rules and
+durations. The cosmology chapter covers planar travel, the Ethereal and
+Astral transit planes, Inner/Outer Planes and demiplanes. These chapters
+are in `czech-full-rules-6.ts`, `czech-full-rules-7.ts`, and
+`czech-full-rules-8.ts` and each retains the original English source.
+
 The next batch adds the complete **Mounts and Vehicles**, **Tools**,
 **Magic Items**, **Poisons** and **Sentient Magic Items** sections, preserving
 all item and vehicle tables, 14 poison variants with mechanics, attunement
@@ -218,7 +227,7 @@ were translated independently from the **English SRD 5.1 under CC BY 4.0**;
 they are **not** copied from the d20.cz/ShadoWWW fan translation.
 These 10 pages show the complete Czech text and tables after their brief
 Czech overview. The original English SRD content remains below for
-verification and exact reference. The remaining **16 nonlegal rules pages**
+verification and exact reference. The remaining **13 nonlegal rules pages**
 and the spells, monster stat blocks, classes, races and items still need
 full detailed translations even though they all have Czech summaries.
 Source and translation licensing are documented in `docs/srd-czech-translation.md`.
