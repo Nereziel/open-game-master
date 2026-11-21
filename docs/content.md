@@ -194,7 +194,17 @@ full original English text. `src/lib/rulebook/czech-companion.ts` adds
 original Czech summaries on **932 of the 933 canonical SRD pages**:
 35 of 36 core rules pages, all 319 SRD spells, all 318 monsters,
 all 239 magic items, all 12 classes and all nine playable races.
-Full Czech translations currently cover **24 of 35 nonlegal rules pages**.
+Full Czech translations currently cover **26 of 35 nonlegal rules pages**.
+The latest full-text batch adds **Weapons** and **Expenses**. Weapons includes
+all 37 canonical weapons and four category groups, complete weapon-property
+rules (including ammunition, finesse, heavy, loading, range and reach),
+improvised weapons, silvering, nets and lances. Its Czech weapon table retains
+all prices, weights, damage dice, ammunition ranges and properties.
+Expenses includes every lifestyle, lodging and meal price, all hireling
+rates, self-sufficiency rules and spellcasting services, with three Czech
+price tables. These complete translations live in `czech-full-rules-11.ts`
+and `czech-full-rules-12.ts`, and preserve the English original below.
+
 The next full-text batch adds **Multiclassing** and **Backgrounds**.
 The multiclassing chapter includes all ability-score prerequisites, acquired
 proficiencies, feature interactions (Channel Divinity, Extra Attack, Unarmored
@@ -236,7 +246,7 @@ were translated independently from the **English SRD 5.1 under CC BY 4.0**;
 they are **not** copied from the d20.cz/ShadoWWW fan translation.
 These 10 pages show the complete Czech text and tables after their brief
 Czech overview. The original English SRD content remains below for
-verification and exact reference. The remaining **11 nonlegal rules pages**
+verification and exact reference. The remaining **9 nonlegal rules pages**
 and the spells, monster stat blocks, classes, races and items still need
 full detailed translations even though they all have Czech summaries.
 Source and translation licensing are documented in `docs/srd-czech-translation.md`.
