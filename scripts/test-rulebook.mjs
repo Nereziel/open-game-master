@@ -1157,6 +1157,90 @@ try {
     }
   });
 
+  await test("three complete Czech SRD translations cover armor, madness and planes", async () => {
+    const { CZECH_FULL_RULES_6 } = await import("../src/lib/rulebook/czech-full-rules-6.ts");
+    const { CZECH_FULL_RULES_7 } = await import("../src/lib/rulebook/czech-full-rules-7.ts");
+    const { CZECH_FULL_RULES_8 } = await import("../src/lib/rulebook/czech-full-rules-8.ts");
+    assert.deepEqual(Object.keys(CZECH_FULL_RULES_6), ["armor"]);
+    assert.deepEqual(Object.keys(CZECH_FULL_RULES_7), ["madness"]);
+    assert.deepEqual(Object.keys(CZECH_FULL_RULES_8), ["the-planes-of-existence"]);
+    for (const [id, translated] of Object.entries({
+      ...CZECH_FULL_RULES_6, ...CZECH_FULL_RULES_7, ...CZECH_FULL_RULES_8,
+    })) {
+      const original = rulebookPage(id, "en")?.page;
+      const localized = rulebookPage(id, "cs")?.page;
+      assert.ok(original && localized, `Missing source or Czech rules page: ${id}`);
+      assert.equal(localized.id, original.id);
+      assert.equal(localized.kind, "rules");
+      assert.ok(translated.length > 5000, `Unexpectedly short Czech rules page: ${id}`);
+      assert.ok(localized.md.startsWith("## Český přehled pravidel"));
+      assert.ok(localized.md.includes("## Úplné znění pravidel v češtině"));
+      assert.ok(localized.md.includes(translated), `Full Czech rules not connected: ${id}`);
+      assert.ok(localized.md.endsWith(original.md), `English canonical SRD changed: ${id}`);
+    }
+    const modules = await Promise.all([1, 2, 3, 4, 5, 6, 7, 8]
+      .map((batch) => import(`../src/lib/rulebook/czech-full-rules-${batch}.ts`)));
+    const ids = modules.flatMap((module, idx) => Object.keys(module[`CZECH_FULL_RULES_${idx + 1}`]));
+    assert.equal(ids.length, 22);
+    assert.equal(new Set(ids).size, 22, "Duplicated full Czech rules translation");
+  });
+
+  await test("Czech armor and madness tables preserve the 2014 SRD mechanical values", async () => {
+    const { CZECH_FULL_RULES_6: batch6 } = await import("../src/lib/rulebook/czech-full-rules-6.ts");
+    const { CZECH_FULL_RULES_7: batch7 } = await import("../src/lib/rulebook/czech-full-rules-7.ts");
+    const { CZECH_FULL_RULES_8: batch8 } = await import("../src/lib/rulebook/czech-full-rules-8.ts");
+    const armor = batch6.armor;
+    for (const row of [
+      "| Vycpávaná | 5 zl | 11 + oprava Obr |",
+      "| Kožená | 10 zl | 11 + oprava Obr |",
+      "| Pobíjená kožená | 45 zl | 12 + oprava Obr |",
+      "| Kožešinová | 10 zl | 12 + oprava Obr (max. +2) |",
+      "| Kroužková košile | 50 zl | 13 + oprava Obr (max. +2) |",
+      "| Šupinová | 50 zl | 14 + oprava Obr (max. +2) |",
+      "| Kyrys | 400 zl | 14 + oprava Obr (max. +2) |",
+      "| Poloviční plátová | 750 zl | 15 + oprava Obr (max. +2) |",
+      "| Kroužková | 30 zl | 14 |",
+      "| Kroužková brň | 75 zl | 16 | Sil 13 |",
+      "| Pásová | 200 zl | 17 | Sil 15 |",
+      "| Plátová | 1 500 zl | 18 | Sil 15 |",
+      "| Štít | 10 zl | +2 |",
+      "| Lehká zbroj | 1 minuta | 1 minuta |",
+      "| Střední zbroj | 5 minut | 1 minuta |",
+      "| Těžká zbroj | 10 minut | 5 minut |",
+      "| Štít | 1 akce | 1 akce |",
+    ]) {
+      assert.ok(armor.includes(row), `Missing armor rule/table row: ${row}`);
+    }
+    assert.ok(armor.includes("rychlost o 10 stop"));
+    assert.ok(armor.includes("S pomocí dalšího tvora se zkrátí na polovinu"));
+    const madness = batch7.madness;
+    assert.ok(madness.includes("1k10 minut"));
+    assert.ok(madness.includes("1k10 × 10 hodin"));
+    for (const range of [
+      "01–20", "21–30", "31–40", "41–50", "51–60", "61–70",
+      "71–75", "76–80", "81–90", "91–100",
+      "01–10", "11–20", "41–45", "46–55", "56–65",
+      "66–75", "76–85", "86–90", "91–95", "96–100",
+      "01–15", "16–25", "26–30", "31–35", "36–45", "46–50",
+      "51–55", "56–70", "71–80", "81–85", "86–95",
+    ]) {
+      assert.ok(madness.includes(`| ${range} |`), `Missing madness range: ${range}`);
+    }
+    assert.ok(madness.includes("SO 15"));
+    const planes = batch8["the-planes-of-existence"];
+    for (const term of [
+      "Materiální sféra", "Éterická sféra", "Astrální sféra",
+      "Vnitřní sféry", "Vnější sféry", "Horní sféry",
+      "Dolní sféry", "Živelný chaos", "Polosféry",
+    ]) {
+      assert.ok(planes.includes(term), `Missing cosmology section: ${term}`);
+    }
+    assert.ok(planes.includes("šestnácti sfér"));
+    assert.ok(planes.includes("*Spatři neviditelné*"));
+    assert.ok(planes.includes("*Pravé vidění*"));
+    assert.ok(madness.includes("*Mocné navrácení*"));
+  });
+
   // ---- the routes ----
   const { createUser } = await import("../src/lib/db/users.ts");
   const { mintSession } = await import("../src/lib/auth.ts");
