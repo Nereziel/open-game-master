@@ -57,8 +57,8 @@ export const CZECH_RACES: Readonly<Record<string, string>> = {
   Halfling: "Hobit",
   Human: "Člověk",
   Tiefling: "Tiefling",
-  "Hill Dwarf": "Kopcoví trpaslíci",
-  "Mountain Dwarf": "Horští trpaslíci",
+  "Hill Dwarf": "Kopcový trpaslík",
+  "Mountain Dwarf": "Horský trpaslík",
   "High Elf": "Vznešený elf",
   "Wood Elf": "Lesní elf",
   "Dark Elf": "Temný elf",
@@ -66,8 +66,8 @@ export const CZECH_RACES: Readonly<Record<string, string>> = {
   "Forest Gnome": "Lesní gnóm",
   "Rock Gnome": "Skalní gnóm",
   "Deep Gnome": "Hlubinný gnóm",
-  "Lightfoot Halfling": "Tichošlápek",
-  "Stout Halfling": "Pořízek",
+  "Lightfoot Halfling": "Hobit tichošlápek",
+  "Stout Halfling": "Hobit pořízek",
 };
 
 export const CZECH_MONSTERS: Readonly<Record<string, string>> = {
