@@ -27,8 +27,10 @@ const { CZECH_SKILLS, CZECH_ITEMS, CZECH_MONSTERS, CZECH_SPELLS, czechSrdTitle, 
   await import("../src/lib/rulebook/czech-terms.ts");
 const { CZECH_SPELL_NOTES } = await import("../src/lib/rulebook/czech-spell-notes.ts");
 const { CZECH_SPELL_NOTES_2 } = await import("../src/lib/rulebook/czech-spell-notes-2.ts");
+const { CZECH_SPELL_NOTES_3 } = await import("../src/lib/rulebook/czech-spell-notes-3.ts");
 const { CZECH_MONSTER_NOTES, CZECH_ITEM_NOTES } = await import("../src/lib/rulebook/czech-bestiary-items.ts");
 const { CZECH_MONSTER_NOTES_2, CZECH_ITEM_NOTES_2 } = await import("../src/lib/rulebook/czech-bestiary-items-2.ts");
+const { CZECH_MONSTER_NOTES_3, CZECH_ITEM_NOTES_3 } = await import("../src/lib/rulebook/czech-bestiary-items-3.ts");
 const { anchorSlug, blockText, inlineText, parseBook, parseInline, stripInline } = await import(
   "../src/lib/rulebook/markdown.ts"
 );
@@ -432,6 +434,45 @@ try {
     const huntersMark = originals.find((page) => page.kind === "spell" && page.title === "Hunter\'s Mark");
     assert.ok(huntersMark, "Hunter\'s Mark exists in the SRD");
     assert.ok(rulebookSearch("Lovcova marka", 10, "cs").hits.some((hit) => hit.page === huntersMark.id), "Czech hunter mark lookup");
+  });
+
+  await test("third Czech batch preserves 69 canonical SRD entries and does not duplicate the earlier notes", () => {
+    const english = rulebookPages("en");
+    const grouped = {
+      spell: [CZECH_SPELL_NOTES, CZECH_SPELL_NOTES_2, CZECH_SPELL_NOTES_3],
+      monster: [CZECH_MONSTER_NOTES, CZECH_MONSTER_NOTES_2, CZECH_MONSTER_NOTES_3],
+      item: [CZECH_ITEM_NOTES, CZECH_ITEM_NOTES_2, CZECH_ITEM_NOTES_3],
+    };
+    const titles = { spell: CZECH_SPELLS, monster: CZECH_MONSTERS, item: CZECH_ITEMS };
+    const headings = {
+      spell: "Český popis kouzla",
+      monster: "Český přehled nestvůry",
+      item: "Český přehled předmětu",
+    };
+    assert.equal(Object.keys(CZECH_SPELL_NOTES_3).length, 30);
+    assert.equal(Object.keys(CZECH_MONSTER_NOTES_3).length, 22);
+    assert.equal(Object.keys(CZECH_ITEM_NOTES_3).length, 17);
+    for (const kind of ["spell", "monster", "item"]) {
+      const [first, second, third] = grouped[kind];
+      const everyName = [...Object.keys(first), ...Object.keys(second), ...Object.keys(third)];
+      assert.equal(new Set(everyName).size, everyName.length, `No duplicate ${kind} notes across batches`);
+      const byEnglishTitle = new Map(english.filter((entry) => entry.kind === kind).map((entry) => [entry.title, entry]));
+      for (const [name, note] of Object.entries(third)) {
+        const original = byEnglishTitle.get(name);
+        assert.ok(original, `Missing original SRD ${kind}: ${name}`);
+        assert.ok(titles[kind][name], `Missing Czech title for ${name}`);
+        assert.ok(note.length >= 120, `Unexpectedly short note for ${name}`);
+        const translated = rulebookPage(original.id, "cs").page;
+        assert.equal(translated.id, original.id);
+        assert.ok(translated.md.includes(headings[kind]), `Missing Czech heading for ${name}`);
+        assert.ok(translated.md.includes(note), `Missing Czech description for ${name}`);
+        assert.ok(translated.md.endsWith(original.md), `Original English text not preserved for ${name}`);
+      }
+    }
+    const spell = english.find((page) => page.kind === "spell" && page.title === "Polymorph");
+    assert.ok(spell, "Polymorph exists in SRD 5.1");
+    assert.ok(rulebookSearch("Proměna", 10, "cs").hits.some((hit) => hit.page === spell.id), "Czech search resolves Polymorph");
+    assert.equal(rulebookPage("polymorph", "en").page.title, "Polymorph");
   });
 
   await test("Czech magic item and monster metadata are display-only and retain original metadata", () => {
