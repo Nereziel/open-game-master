@@ -41,4 +41,18 @@ test("a roll never repeats the name already in the field", () => {
   }
 });
 
+test("Czech name dice offer localized names across lineages while English remains unchanged", () => {
+  for (const raceId of ["human", "hill_dwarf", "high_elf", "lightfoot_halfling", "forest_gnome", "half_orc", "dragonborn", "tiefling"]) {
+    const first = rollHeroName({ raceId, locale: "cs", rng: () => 0.1 });
+    assert.ok(first.includes(" "), `${raceId}: ${first}`);
+    assert.ok(!/Ashvale|Stoutheart|Moonbrook|Copperpot|Cogsworth|Ironjaw|Ashscale/i.test(first), first);
+    const changed = rollHeroName({ raceId, locale: "cs", current: first, rng: () => 0.1 });
+    assert.notEqual(changed, first, "same hero name should never repeat");
+  }
+  const inEnglish = rollHeroName({ raceId: "human", locale: "en", rng: () => 0 });
+  assert.equal(inEnglish, "Rowan Ashvale");
+  const csWithEnglishPack = rollHeroName({ raceId: "human", locale: "cs", packNames: ["Maren Tidewright"], rng: () => 0 });
+  assert.equal(csWithEnglishPack, "Radovan Záleský", "Czech dice must not prioritize untranslated world-pack seeds");
+});
+
 console.log(`\ntest-hero-names: ${passed} tests passed.`);
