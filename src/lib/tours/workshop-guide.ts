@@ -28,6 +28,71 @@ export interface ToolGuide {
   tipsFr?: string[];
 }
 
+// Czech labels and summaries for the workshop help accordion.
+// Keep English source records and the French guide intact.
+export const CZECH_WORKSHOP_GUIDE_SUMMARIES: Record<string, { title: string; purpose: string }> = {
+  world: {
+    title: "WorldForge",
+    purpose: "Samotný herní svět podle WorldForge od Smoeba: encyklopedie postav, míst, frakcí a historie, jejich vzájemných vazeb, časové osy, atlasu, tajemství i dosud nevytvořených záznamů.",
+  },
+  storyboard: {
+    title: "Osnova příběhu",
+    purpose: "Plán dobrodružství na kartách: scény, souboje, místa, postavy a vyústění.",
+  },
+  party: {
+    title: "Družina",
+    purpose: "Vzorová družina, podle které se vyhodnocuje obtížnost přípravy, a předpřipravené postavy, které ji doprovázejí.",
+  },
+  maps: {
+    title: "Bojové mapy",
+    purpose: "Prostory pro souboje, ručně kreslené, náhodně vytvořené nebo importované, včetně osvětlení, dveří, popisků a objektů.",
+  },
+  region: {
+    title: "Oblast",
+    purpose: "Mapa krajiny s cestami, řekami, hranicemi, popisky a vyznačenými místy.",
+  },
+  encounters: {
+    title: "Střetnutí",
+    purpose: "Předem připravené souboje, jejichž obtížnost se počítá pro vzorovou družinu.",
+  },
+  cast: {
+    title: "Postavy světa",
+    purpose: "Obyvatelé světa, jejich osobnosti, cíle a vzájemné vztahy.",
+  },
+  factions: {
+    title: "Frakce",
+    purpose: "Mocenské skupiny světa: co o nich družina ví, čeho chtějí dosáhnout a jaké s nimi má vztahy.",
+  },
+  bestiary: {
+    title: "Bestiář",
+    purpose: "Vlastní nestvůry s úplnými bloky statistik, které umí herní systém používat.",
+  },
+  homebrew: {
+    title: "Vlastní tvorba",
+    purpose: "Vlastní předměty, kouzla, odbornosti, minulosti, druhy, povolání, podobory a nebezpečí.",
+  },
+  lore: {
+    title: "Historie a znalosti světa",
+    purpose: "Encyklopedie světa: místa, frakce, dějiny a tajemství známá vypravěči i materiály, které mohou číst hráči.",
+  },
+  tables: {
+    title: "Náhodné tabulky",
+    purpose: "Tabulky pro náhodné výsledky: pověsti, poklady, počasí, střetnutí a cokoli dalšího, o čem rozhoduje hod kostkou.",
+  },
+  rules: {
+    title: "Pravidla",
+    purpose: "Volitelná pravidla, která herní systém vyhodnocuje, a domácí pravidla, z nichž vypravěč čerpá.",
+  },
+  plugin: {
+    title: "Balíček světa",
+    purpose: "Vlastní balíček herního světa s jeho názvy, pravidlovými úpravami, historií a obrázky, který lze nainstalovat na jiný server.",
+  },
+  share: {
+    title: "Sdílení",
+    purpose: "Export celé Dílny do jednoho souboru nebo sestavení návrhu balíčku světa.",
+  },
+};
+
 export const WORKSHOP_GUIDES: ToolGuide[] = [
   {
     id: "world",

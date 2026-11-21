@@ -4,6 +4,7 @@ import { mathPartLabel, formatMathParts } from "../srd";
 import { APPEARANCE_THEMES } from "../appearance-themes";
 import { SHELF_TOUR, HUB_TOUR, SYSTEM_TOURS } from "../tours/workshop";
 import { PLAYER_TOUR, FIRST_TURN_TOUR, DM_TOUR } from "../tours/table";
+import { CZECH_WORKSHOP_GUIDE_SUMMARIES, WORKSHOP_GUIDES } from "../tours/workshop-guide";
 import catalog from "./cs.json";
 import { installCatalog, translate, translatePlural } from "./translate";
 import { localeFromAcceptLanguage, localeOfServerLanguage, parseLocale, resolveLocale } from "./locale";
@@ -240,6 +241,19 @@ describe("Czech localization", () => {
       expect(translate("en", step.title)).toBe(step.title);
     }
     expect(translate("cs", "The workshop shelf")).toBe("Polička dílny");
+  });
+
+  it("provides Czech titles and summaries for every workshop help tool", () => {
+    expect(WORKSHOP_GUIDES).toHaveLength(15);
+    expect(Object.keys(CZECH_WORKSHOP_GUIDE_SUMMARIES)).toHaveLength(WORKSHOP_GUIDES.length);
+    for (const guide of WORKSHOP_GUIDES) {
+      const localized = CZECH_WORKSHOP_GUIDE_SUMMARIES[guide.id];
+      expect(localized, `Missing Czech workshop help: ${guide.id}`).toBeDefined();
+      expect(localized.title.trim().length).toBeGreaterThan(2);
+      expect(localized.purpose.trim().length).toBeGreaterThan(20);
+      expect(localized.purpose, `Untranslated workshop purpose: ${guide.id}`).not.toBe(guide.purpose);
+    }
+    expect(CZECH_WORKSHOP_GUIDE_SUMMARIES.storyboard.purpose).toContain("Plán dobrodružství");
   });
 
   it("covers all 88 table tour headings and explanations in Czech", () => {

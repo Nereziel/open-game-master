@@ -13,7 +13,7 @@ import {
 import { cn } from "@/lib/cn";
 import { ui } from "@/lib/ui";
 import { useLocale, useT } from "@/lib/locale";
-import { WORKSHOP_GUIDES } from "@/lib/tours/workshop-guide";
+import { CZECH_WORKSHOP_GUIDE_SUMMARIES, WORKSHOP_GUIDES } from "@/lib/tours/workshop-guide";
 import { Dialog } from "@/components/ui/Dialog";
 import { Section } from "@/components/HelpDialog";
 
@@ -44,6 +44,7 @@ export function WorkshopHelpDialog({
   // Each guide follows the reader: the French fields when the locale is fr
   // and present, the English source otherwise.
   const french = locale === "fr";
+  const czech = locale === "cs";
   const guides = [
     ...WORKSHOP_GUIDES.filter((guide) => guide.id === system),
     ...WORKSHOP_GUIDES.filter((guide) => guide.id !== system),
@@ -86,8 +87,9 @@ export function WorkshopHelpDialog({
         </p>
         <div className="space-y-1.5">
           {guides.map((guide) => {
-            const title = french && guide.titleFr ? guide.titleFr : guide.title;
-            const purpose = french && guide.purposeFr ? guide.purposeFr : guide.purpose;
+            const cs = czech ? CZECH_WORKSHOP_GUIDE_SUMMARIES[guide.id] : undefined;
+            const title = cs?.title ?? (french && guide.titleFr ? guide.titleFr : guide.title);
+            const purpose = cs?.purpose ?? (french && guide.purposeFr ? guide.purposeFr : guide.purpose);
             const steps = french && guide.stepsFr ? guide.stepsFr : guide.steps;
             const atTable = french && guide.atTableFr ? guide.atTableFr : guide.atTable;
             const tips = french && guide.tipsFr ? guide.tipsFr : guide.tips;
