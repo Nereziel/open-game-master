@@ -11,21 +11,21 @@ Když držíš toto žezlo, můžeš ho jako akci aktivovat. Žezlo okamžitě p
 Za každou hodinu strávenou v ráji si návštěvník obnoví tolik životů, jako by utratil 1 kostku životů. Tvorové navíc v ráji nestárnou, přestože čas běží normálně. Návštěvníci mohou zůstat nejvýše 200 dní děleno počtem přítomných tvorů (zaokrouhleno dolů).
 
 Po vypršení této doby nebo když účinek ukončíš akcí se všichni návštěvníci znovu objeví na místech, která zaujímali při aktivaci žezla, případně na nejbližších neobsazených místech. Žezlo lze znovu použít až po uplynutí deseti dní.`,
-  "rope-of-climbing": `*Podivuhodný předmět, neobvyklý*
+  "rope-of-climbing": `*Divotvorný předmět, neobvyklý*
 
 Toto hedvábné lano dlouhé 60 stop váží 3 libry a unese až 3 000 liber. Když držíš jeden konec lana a jako akci vyslovíš příkazové slovo, lano ožije. Jako bonusovou akci můžeš druhému konci přikázat, aby se pohyboval k cíli, který zvolíš. Tento konec se v tahu, kdy mu příkaz poprvé udělíš, pohne o 10 stop a v každém dalším tvém tahu o dalších 10 stop, dokud nedosáhne cíle, maximální délky lana od tebe nebo dokud mu nepřikážeš zastavit. Můžeš mu také přikázat, aby se pevně přichytil k předmětu či se od něj odpoutal, zavázal nebo rozvázal uzly nebo se svinul k přenášení.
 
 Když lanu přikážeš uvázat uzly, vytvoří po celé délce velké uzly po 1 stopě. Se zavázanými uzly se lano zkrátí na 50 stop a poskytuje výhodu k ověřením při šplhání po něm.
 
 Lano má OČ 20 a 20 životů. Pokud má alespoň 1 život, každých 5 minut si obnoví 1 život. Klesne-li na 0 životů, je zničeno.`,
-  "rope-of-entanglement": `*Podivuhodný předmět, vzácný*
+  "rope-of-entanglement": `*Divotvorný předmět, vzácný*
 
 Toto lano je dlouhé 30 stop a váží 3 libry. Když držíš jeden jeho konec a jako akci vyslovíš příkazové slovo, druhý konec vystřelí vpřed a pokusí se spoutat tvora, kterého vidíš do vzdálenosti 20 stop. Cíl musí uspět v záchranném hodu na Obratnost se SO 15, jinak je zadržený.
 
 Pomocí bonusové akce můžeš vyslovit druhé příkazové slovo a tvora propustit. Cíl zadržený lanem může pomocí akce provést ověření Síly nebo Obratnosti (podle vlastní volby) se SO 15. Při úspěchu už není lanem zadržený.
 
 Lano má OČ 20 a 20 životů. Pokud má alespoň 1 život, každých 5 minut si obnoví 1 život. Klesne-li na 0 životů, je zničeno.`,
-  "scarab-of-protection": `*Podivuhodný předmět, legendární (vyžaduje sladění)*
+  "scarab-of-protection": `*Divotvorný předmět, legendární (vyžaduje sladění)*
 
 Když tento medailon ve tvaru brouka držíš v ruce po dobu 1 kola, objeví se na jeho povrchu nápis odhalující jeho magickou povahu. Dokud jej máš u sebe, poskytuje dvě výhody:
 
@@ -42,10 +42,10 @@ Když držíš tento štít, máš bonus k OČ podle jeho vzácnosti. Tento bonu
 Když držíš tento štít, máš odolnost vůči zranění způsobenému útoky zbraněmi na dálku.
 
 ***Kletba.*** Tento štít je prokletý. Sladěním se štítem na sebe přivoláš kletbu, která trvá, dokud se nestaneš cílem kouzla *sejmi kletbu* nebo podobné magie. Sundání štítu kletbu neukončí. Kdykoli je proveden útok zbraní na dálku proti cíli do vzdálenosti 10 stop od tebe, kletba způsobí, že se místo něj staneš cílem ty.`,
-  "slippers-of-spider-climbing": `*Podivuhodný předmět, neobvyklý (vyžaduje sladění)*
+  "slippers-of-spider-climbing": `*Divotvorný předmět, neobvyklý (vyžaduje sladění)*
 
 Když máš na nohou tyto lehké střevíce, můžeš se s volnýma rukama pohybovat nahoru, dolů i napříč svislými povrchy a hlavou dolů po stropech. Máš rychlost šplhání stejnou jako svou rychlost chůze. Střevíce ti ale takový pohyb neumožňují po kluzkém povrchu, například po ledu nebo oleji.`,
-  "sovereign-glue": `*Podivuhodný předmět, legendární*
+  "sovereign-glue": `*Divotvorný předmět, legendární*
 
 Tato viskózní mléčně bílá látka dokáže vytvořit trvalý lepicí spoj mezi libovolnými dvěma předměty. Musí se uchovávat ve sklenici nebo lahvičce, jejíž vnitřek je potřen *olejem kluzkosti*. Při nalezení obsahuje nádobka 1k6+1 uncí lepidla.
 
