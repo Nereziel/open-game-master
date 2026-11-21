@@ -1396,7 +1396,7 @@ try {
         assert.equal(cz, `- ${CZECH_SPELLS[name]}`, `Wrong class/level spell at line ${i + 1}`);
         items++;
       } else if (line.startsWith("## ")) {
-        assert.ok(cz.startsWith("## Kouzla povolání "), `Untranslated class heading: ${cz}`);
+        assert.ok(cz.startsWith("## Kouzla "), `Untranslated class heading: ${cz}`);
         headings++;
       } else if (line.startsWith("#### ")) {
         assert.ok(cz.startsWith("#### ") && (cz.includes("úroveň") || cz.includes("Triky")),
