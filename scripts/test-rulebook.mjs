@@ -1445,11 +1445,11 @@ try {
     assert.ok(localized.md.includes("## Úplné znění pravidel v češtině"));
     assert.ok(localized.md.includes(translated));
     assert.ok(localized.md.endsWith(source.md), "Original English deity tables changed");
-    const batches = await Promise.all(Array.from({ length: 16 }, (_, i) =>
+    const batches = await Promise.all(Array.from({ length: 17 }, (_, i) =>
       import(`../src/lib/rulebook/czech-full-rules-${i + 1}.ts`)));
     const ids = batches.flatMap((mod, i) => Object.keys(mod[`CZECH_FULL_RULES_${i + 1}`]));
-    assert.equal(ids.length, 30);
-    assert.equal(new Set(ids).size, 30, "Duplicate SRD rules page with full Czech text");
+    assert.equal(ids.length, 31);
+    assert.equal(new Set(ids).size, 31, "Duplicate SRD rules page with full Czech text");
   });
 
   await test("Czech traps include eight fully translated mechanical and magical examples", async () => {
@@ -1524,6 +1524,50 @@ try {
       "Bonus k útoku kouzlem =", "Účinky **téhož kouzla seslaného vícekrát se však nesčítají**",
     ]) {
       assert.ok(translated.includes(clause), "Missing spellcasting rule: " + clause);
+    }
+  });
+
+  await test("Czech Adventuring retains all SRD 5.1 travel, environment, rests and downtime rules", async () => {
+    const { CZECH_FULL_RULES_17 } = await import("../src/lib/rulebook/czech-full-rules-17.ts");
+    assert.deepEqual(Object.keys(CZECH_FULL_RULES_17), ["adventuring"]);
+    const translated = CZECH_FULL_RULES_17.adventuring;
+    const source = rulebookPage("adventuring", "en").page;
+    const localized = rulebookPage("adventuring", "cs").page;
+    assert.ok(translated.length > 17000, "Adventuring translation unexpectedly short");
+    assert.equal(localized.id, source.id);
+    assert.equal(localized.kind, "rules");
+    assert.ok(localized.md.includes("## Úplné znění pravidel v češtině"));
+    assert.ok(localized.md.includes(translated));
+    assert.ok(localized.md.endsWith(source.md), "The canonical English chapter changed");
+    for (const heading of [
+      "# Čas", "# Pohyb", "## Rychlost", "### Cestovní tempo",
+      "### Obtížný terén", "### Skákání", "# Prostředí",
+      "## Pád", "## Dušení", "## Vidění a světlo",
+      "### Slepozrak", "### Vidění ve tmě", "### Pravé vidění",
+      "## Jídlo a voda", "### Jídlo", "### Voda",
+      "## Zacházení s předměty", "# Odpočinek",
+      "## Krátký odpočinek", "## Dlouhý odpočinek",
+      "# Mezi dobrodružstvími", "## Činnosti v mezidobí",
+      "### Výroba předmětů", "### Výkon povolání",
+      "### Zotavování", "### Bádání", "### Výcvik",
+    ]) {
+      assert.ok(translated.includes(heading), "Missing Czech Adventuring section: " + heading);
+    }
+    for (const clause of [
+      "| Rychlé | 400 stop | 4 míle | 30 mil |",
+      "| Běžné | 300 stop | 3 míle | 24 mil |",
+      "| Pomalé | 200 stop | 2 míle | 18 mil |",
+      "SO 10 + 1 za každou hodinu nad osmou",
+      "3 + oprava Síly", "1k6 drtivého zranění",
+      "20k6", "1 + oprava Odolnosti minut",
+      "3 + oprava Odolnosti", "SO 15",
+      "nejméně 8 hodin", "spát alespoň 6 hodin",
+      "nejvýše 2 hodiny lehkou činností",
+      "jednoho dlouhého odpočinku během 24 hodin",
+      "1 500 zl", "300 dní výroby", "100 dní",
+      "750 zl", "250 dní",
+    ]) {
+      assert.ok(translated.includes(clause), "Missing canonical Adventuring mechanic: " + clause);
     }
   });
 
