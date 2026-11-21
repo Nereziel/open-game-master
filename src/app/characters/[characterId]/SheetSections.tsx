@@ -17,10 +17,10 @@ import { SheetSpells } from "@/components/sheet/SheetSpells";
 import { speciesSpellsShown } from "@/lib/srd/species-spell-view";
 import { Ribbon } from "@/components/ui/Ribbon";
 import { cn } from "@/lib/cn";
-import { useT } from "@/lib/locale";
+import { useT, useLocale } from "@/lib/locale";
 import type { CreateSheetInput } from "@/lib/schemas/sheet";
 import { computeSheetDerived, formatModifier, speedFor, type DerivedPart,
-  mathPartLabel,
+  formatMathParts,
 } from "@/lib/srd";
 import { formatPrice, purseCopper } from "@/lib/srd/currency";
 import { ui } from "@/lib/ui";
@@ -81,7 +81,8 @@ export function SheetSections({ sheet, level = 1 }: { sheet: CreateSheetInput; l
     feats: sheet.feats,
     equipment: sheet.equipment,
   });
-  const explain = (parts: DerivedPart[]) => parts.map((part) => `${formatModifier(part.value)} ${mathPartLabel(t, part.label)}`).join(", ");
+  const locale = useLocale();
+  const explain = (parts: DerivedPart[]) => formatMathParts(t, parts, locale);
   return (
     <div className="space-y-4">
       <SheetPanel title={t("Abilities")} className="ornate">
