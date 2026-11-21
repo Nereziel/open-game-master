@@ -1411,6 +1411,8 @@ try {
       "True Seeing": "Pravdivé vidění",
       Sunburst: "Sluneční záblesk",
       "Prismatic Spray": "Spektrální sprška",
+      Feeblemind: "Slabomyslnost",
+      "Mind Blank": "Ukryj mysl",
     };
     for (const [englishName, czechName] of Object.entries(spellNames2014)) {
       assert.equal(CZECH_SPELLS[englishName], czechName,
