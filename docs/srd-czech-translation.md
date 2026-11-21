@@ -94,6 +94,26 @@ anglického SRD 5.1 pod licencí CC BY 4.0; česká komunitní vysvětlení
 a odstavce nejsou kopírovány. Anglické zdroje zůstávají v čtečce pod
 českým textem a identifikátory povolání zůstávají nezměněné.
 
+## Terminologická revize povolání (2026-11-21)
+
+Všechny následující úpravy se týkají **pouze názvů schopností a podtříd**.
+Jejich česká podoba byla ověřena proti [3. kapitole české Příručky hráče
+D&D 5e (2014)](https://dnd5esrd.d20.cz/prirucka-hrace/3-kapitola.html).
+Vysvětlující texty, mechaniky, tabulky a jejich čísla se z komunitního
+překladu nepřebírají. Interní názvy, klíče SRD a MCP API zůstávají anglicky.
+
+| Povolání | Příklady sjednocených názvů |
+|---|---|
+| Bojovník | Mimořádný atlet; Dokonalejší kritický zásah; Zarputilec |
+| Bard | Kolej znalostí; Kolej odvahy; Slovní výpad; Nedostižná dovednost |
+| Klerik | Ničení nemrtvých |
+| Druid | Nestárnoucí tělo; Kruhová kouzla; Chůze krajem; Přírodní ochrana; Přírodní svatyně |
+| Mnich | Klid; Smrtící dlaň |
+| Paladin | Vnímání božství; Přikládání rukou; Boží úder; Čistota duše; Svatozář |
+| Hraničář | Rozený průzkumník; Pravěká ostražitost; Schování se přímo před zraky; Mimořádná lovcova obrana |
+| Kouzlící povolání | Sesílání rituálů; Sesílací ohniskový předmět |
+
+Ověření názvů bylo přidáno do `scripts/test-rulebook.mjs`.
 ## Stav
 
 - Stručné české přehledy: 932/933 kanonických stránek (výjimkou je atribuce).
