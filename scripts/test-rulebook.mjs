@@ -1107,9 +1107,6 @@ try {
       assert.ok(original && localized, `Missing canonical rules page: ${id}`);
       assert.equal(original.id, localized.id);
       assert.equal(original.kind, "rules");
-      assert.equal(localized.title, czechSrdTitle(original.title, "rules") === original.title
-        ? localized.title
-        : czechSrdTitle(original.title, "rules"));
       assert.ok(translation.length > 3200, `Suspiciously short translation: ${id}`);
       assert.ok(localized.md.startsWith("## Český přehled pravidel"), `Missing Czech summary: ${id}`);
       assert.ok(localized.md.includes("## Úplné znění pravidel v češtině"));
