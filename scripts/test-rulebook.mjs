@@ -1287,7 +1287,7 @@ try {
     assert.ok(multi.includes("polovinu úrovní paladina a hraničáře, zaokrouhlenou dolů"));
     assert.ok(multi.includes("Usměrnění božské energie"));
     assert.ok(multi.includes("Paktová magie"));
-    assert.ok(backgrounds.includes("**Zdatnosti v dovednostech:** Odhad, Náboženství"));
+    assert.ok(backgrounds.includes("**Zdatnosti v dovednostech:** Vhled, Náboženství"));
     assert.ok(backgrounds.includes("**15 zlatými**"));
     assert.ok(backgrounds.includes("### Schopnost: Útočiště věřících"));
     assert.ok(backgrounds.includes("## Akolyta"));
@@ -1592,13 +1592,13 @@ try {
       assert.ok(translated.includes(title), "Missing gear section: " + title);
     }
     for (const pack of [
-      "Zlodějský balíček (16 zl)",
+      "Lupičský balíček (16 zl)",
       "Diplomatický balíček (39 zl)",
-      "Balíček průzkumníka podzemí (12 zl)",
-      "Balíček baviče (40 zl)",
+      "Jeskyňářský balíček (12 zl)",
+      "Zábavní balíček (40 zl)",
       "Průzkumnický balíček (10 zl)",
       "Kněžský balíček (19 zl)",
-      "Učenecký balíček (40 zl)",
+      "Badatelský balíček (40 zl)",
     ]) {
       assert.ok(translated.includes(pack), "Missing pack: " + pack);
     }
@@ -1624,7 +1624,7 @@ try {
       "bonus +4 k ověření Síly",
       "50 zl | ½ lb",
       "1 000 zl | 1 lb",
-      "| Batoh* | 1 krychlová stopa / 30 liber výbavy |",
+      "| Torna* | 1 krychlová stopa / 30 liber výbavy |",
     ]) {
       assert.ok(translated.includes(clause), "Missing canonical equipment mechanic: " + clause);
     }
@@ -1644,8 +1644,8 @@ try {
     assert.ok(localized.md.endsWith(source.md), "Original English SRD source must be unchanged");
     for (const section of [
       "## Hodnoty vlastností a jejich opravy",
-      "# Výhoda a nevýhoda", "# Bonus zdatnosti", "# Ověření vlastností",
-      "## Soutěžní ověření", "## Dovednosti", "## Pasivní ověření",
+      "# Výhoda a nevýhoda", "# Zdatnostní bonus", "# Ověření vlastností",
+      "## Konflikty", "## Dovednosti", "## Pasivní ověření",
       "## Spolupráce", "### Skupinová ověření",
       "### Síla", "### Obratnost", "### Odolnost",
       "### Inteligence", "### Moudrost", "### Charisma",
@@ -1654,10 +1654,10 @@ try {
       assert.ok(translated.includes(section), "Missing ability rules: " + section);
     }
     for (const skill of [
-      "Atletika", "Akrobacie", "Obratnost rukou", "Plížení",
-      "Magie", "Historie", "Pátrání", "Příroda", "Náboženství",
-      "Zacházení se zvířaty", "Odhad", "Lékařství", "Vnímání",
-      "Přežití", "Klamání", "Zastrašování", "Vystupování",
+      "Atletika", "Akrobacie", "Čachry", "Nenápadnost",
+      "Mystika", "Historie", "Pátrání", "Příroda", "Náboženství",
+      "Ovládání zvířat", "Vhled", "Lékařství", "Vnímání",
+      "Přežití", "Klamání", "Zastrašování", "Umění",
       "Přesvědčování",
     ]) {
       assert.ok(translated.includes(skill), "Missing Czech skill: " + skill);
@@ -1670,7 +1670,7 @@ try {
       "alespoň polovina skupiny", "30 × hodnota Síly",
       "větší než 5 × hodnota Síly", "větší než 10 × hodnota Síly",
       "sníží o 20 stop", "pasivní Vnímání 14",
-      "Inteligence (Magie)", "Moudrost (Zacházení se zvířaty)",
+      "Inteligence (Mystika)", "Moudrost (Ovládání zvířat)",
     ]) {
       assert.ok(translated.includes(rule), "Missing canonical ability mechanic: " + rule);
     }
@@ -1693,15 +1693,15 @@ try {
       "## Bonusové akce", "# Reakce", "# Pohyb a pozice",
       "## Rozdělení pohybu", "## Ležení na zemi",
       "## Velikosti tvorů", "# Akce v boji",
-      "## Útok", "## Seslání kouzla", "## Běh (Dash)",
-      "## Odpoutání (Disengage)", "## Úhyb (Dodge)",
-      "## Pomoc (Help)", "## Ukrytí (Hide)",
-      "## Připravení akce (Ready)", "## Hledání (Search)",
+      "## Útok", "## Seslání kouzla", "## Sprint (Dash)",
+      "## Odpoutání se (Disengage)", "## Uhýbání (Dodge)",
+      "## Pomoc (Help)", "## Schování se (Hide)",
+      "## Příprava (Ready)", "## Hledání (Search)",
       "## Použití předmětu (Use an Object)",
-      "# Provedení útoku", "## Hody na útok",
+      "# Zaútočení", "## Hody na útok",
       "## Nevidění útočníci a cíle", "## Útoky na dálku",
       "## Útoky na blízko", "#### Příležitostné útoky",
-      "### Boj se dvěma zbraněmi", "### Chycení",
+      "### Boj se dvěma zbraněmi", "### Chvat",
       "### Strčení tvora", "## Kryt", "## Zranění a léčení",
       "### Kritické zásahy", "### Záchranné hody proti smrti",
       "#### Stabilizování tvora", "## Dočasné životy",
@@ -1721,7 +1721,7 @@ try {
       "třetím úspěchu", "třetím neúspěchu",
       "dva neúspěchy", "SO 10", "1k4 hodinách",
       "10 nebo 12", "nikdy však **22**",
-      "polovinu tvé rychlosti", "tři akce: Běh, Odpoutání a Úhyb",
+      "polovinu tvé rychlosti", "tři akce: Sprint, Odpoutání se a Uhýbání",
       "automaticky mine cíl za běžným dostřelem",
       "odolnost vůči ohnivému zranění",
     ]) {
@@ -1779,7 +1779,7 @@ try {
     for (const rule of [
       "2k8 + 2 životů", "2k8 kostkami životů",
       "| Gigantický | k20 | 10½ |",
-      "oprava příslušné vlastnosti", "bonus zdatnosti",
+      "oprava příslušné vlastnosti", "zdatnostní bonus",
       "nestvůra i zdroj otřesů se dotýkají stejné země",
       "může telepatické zprávy vysílat ani přijímat",
       "čtyř dobrodruhů", "SN 21 nebo vyšší",
@@ -1803,7 +1803,7 @@ try {
     };
     const sizeRows = between("| Velikost | Prostor | Příklady |", "| Gigantický | 20 × 20 stop nebo více | kraken, purpurový červ |");
     const hitDiceRows = between("| Velikost nestvůry | Kostka životů | Průměr na kostku |", "| Gigantický | k20 | 10½ |");
-    const proficiencyRows = between("| Stupeň nebezpečnosti (SN) | Bonus zdatnosti |", "| 30 | +9 |");
+    const proficiencyRows = between("| Stupeň nebezpečnosti (SN) | Zdatnostní bonus |", "| 30 | +9 |");
     const experienceRows = between("| Stupeň nebezpečnosti (SN) | Zkušenostní body (ZK) |", "| 30 | 155 000 |");
     assert.equal(sizeRows.length, 6);
     assert.equal(hitDiceRows.length, 6);
@@ -1817,6 +1817,51 @@ try {
     ]) {
       assert.ok(experienceRows.includes("| " + cr + " | " + expectedXp + " |"),
         "Missing verified 2014 XP value for CR " + cr);
+    }
+  });
+
+  await test("Czech 2014 D&D glossary uses all 18 official skill names without copying rule prose", async () => {
+    const { CZECH_SKILLS } = await import("../src/lib/rulebook/czech-terms.ts");
+    const expected = {
+      Acrobatics: "Akrobacie",
+      "Animal Handling": "Ovládání zvířat",
+      Arcana: "Mystika",
+      Athletics: "Atletika",
+      Deception: "Klamání",
+      History: "Historie",
+      Insight: "Vhled",
+      Intimidation: "Zastrašování",
+      Investigation: "Pátrání",
+      Medicine: "Lékařství",
+      Nature: "Příroda",
+      Perception: "Vnímání",
+      Performance: "Umění",
+      Persuasion: "Přesvědčování",
+      Religion: "Náboženství",
+      "Sleight of Hand": "Čachry",
+      Stealth: "Nenápadnost",
+      Survival: "Přežití",
+    };
+    assert.deepEqual(CZECH_SKILLS, expected);
+    const { CZECH_FULL_RULES_19 } = await import("../src/lib/rulebook/czech-full-rules-19.ts");
+    const abilities = CZECH_FULL_RULES_19["using-ability-scores"];
+    for (const term of Object.values(expected)) {
+      assert.ok(abilities.includes(term), "Missing Czech PHB skill name: " + term);
+    }
+    for (const old of [
+      "Zacházení se zvířaty", "Obratnost rukou",
+      "Plížení", "Vystupování", "Moudrost (Odhad)",
+      "Inteligence (Magie)",
+    ]) {
+      assert.ok(!abilities.includes(old), "Outdated Czech skill name: " + old);
+    }
+    const { CZECH_FULL_RULES_20 } = await import("../src/lib/rulebook/czech-full-rules-20.ts");
+    for (const action of [
+      "## Sprint (Dash)", "## Odpoutání se (Disengage)",
+      "## Uhýbání (Dodge)", "## Schování se (Hide)",
+      "## Příprava (Ready)", "### Chvat",
+    ]) {
+      assert.ok(CZECH_FULL_RULES_20.combat.includes(action), "Missing Czech PHB combat action: " + action);
     }
   });
 
