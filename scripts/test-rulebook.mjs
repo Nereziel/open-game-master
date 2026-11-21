@@ -23,6 +23,8 @@ const { rulebookContents, rulebookPage, rulebookPages, rulebookSearch, localeFro
   "../src/lib/rulebook/book.ts"
 );
 const { crosswalkFor } = await import("../src/lib/rulebook/crosswalk.ts");
+const { CZECH_SKILLS, CZECH_ITEMS, CZECH_MONSTERS, CZECH_SPELLS, czechSrdTitle, czechSrdSpellGroup, czechSrdSpellMeta } =
+  await import("../src/lib/rulebook/czech-terms.ts");
 const { anchorSlug, blockText, inlineText, parseBook, parseInline, stripInline } = await import(
   "../src/lib/rulebook/markdown.ts"
 );
@@ -330,6 +332,38 @@ try {
     assert.equal(crosswalkFor(rulebookPage("fireball", "cs").page, "cs").editor, "spell");
     assert.equal(crosswalkFor(rulebookPage("armor", "cs").page, "cs").support, "engine");
     assert.equal(crosswalkFor(rulebookPage("fireball", "cs").page, "cs").support, crosswalkFor(rulebookPage("fireball", "en").page).support);
+  });
+
+  await test("Czech titles, magic school subtitles, and spell groups are translated without changing SRD IDs", () => {
+    assert.equal(Object.keys(CZECH_SKILLS).length, 18, "the full 5e skill list");
+    assert.ok(Object.keys(CZECH_MONSTERS).length >= 120, "the expanded monster dictionary");
+    assert.ok(Object.keys(CZECH_SPELLS).length >= 60, "the expanded spell dictionary");
+    assert.ok(Object.keys(CZECH_ITEMS).length >= 50, "the expanded magic-item dictionary");
+    assert.equal(czechSrdTitle("Wolf", "monster"), "Vlk");
+    assert.equal(czechSrdTitle("Fire Bolt", "spell"), "Ohnivá střela");
+    assert.equal(czechSrdTitle("Amulet of Health", "item"), "Amulet zdraví");
+    assert.equal(czechSrdTitle("Druid", "class"), "Druid");
+    assert.equal(czechSrdSpellGroup("Cantrips"), "Triky");
+    assert.equal(czechSrdSpellGroup("3rd Level"), "3. úroveň");
+    assert.equal(czechSrdSpellMeta("3rd-level evocation"), "Zaklínání 3. úrovně");
+    assert.equal(czechSrdSpellMeta("1st-level divination (ritual)"), "Věštění 1. úrovně (rituál)");
+    assert.equal(czechSrdSpellMeta("unknown metadata"), "unknown metadata");
+    const spell = rulebookPage("fireball", "cs").page;
+    assert.equal(spell.meta, "Zaklínání 3. úrovně");
+    assert.equal(spell.originalMeta, rulebookPage("fireball", "en").page.meta);
+    assert.equal(spell.group, "3. úroveň");
+    assert.equal(rulebookPage("fireball", "en").page.title, "Fireball");
+    assert.equal(rulebookPage("fireball", "fr").page.title, "Boule de feu");
+  });
+
+  await test("Czech companion adds original rules summaries while preserving each full English page", () => {
+    for (const id of ["coinage", "backgrounds", "magic-items", "nonplayer-characters", "traps"]) {
+      const english = rulebookPage(id, "en").page.md;
+      const czech = rulebookPage(id, "cs").page.md;
+      assert.match(czech, /Český přehled pravidel/, `missing Czech notes for ${id}`);
+      assert.ok(czech.endsWith(english), `English SRD content modified in ${id}`);
+    }
+    assert.ok(!rulebookPage("legal-information", "cs").page.md.includes("Český přehled pravidel"));
   });
 
   // ---- the French book ----
