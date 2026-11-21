@@ -162,7 +162,11 @@ export function contentName(
       }
     }
   }
-  return row.name;
+  // Original, bundled custom backgrounds also have Czech names in the UI
+  // catalog. Unrecognized content-pack and homebrew names stay unchanged.
+  return locale === "cs" && table === "backgrounds"
+    ? translate(locale, row.name)
+    : row.name;
 }
 
 // Only known game-system classes use the cross-class feature-name fallback.
