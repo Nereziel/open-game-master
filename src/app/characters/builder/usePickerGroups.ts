@@ -5,12 +5,12 @@ import { classGenres } from "@/lib/classes";
 import { GENRE_PRESETS } from "@/lib/genres";
 import { describeRace } from "@/lib/help";
 import type { Genre } from "@/lib/schemas/game-settings";
-import { SRD_SKILLS } from "@/lib/srd";
+import { SRD_SKILLS, skillLabel } from "@/lib/srd";
 import { subclassBlurb, subclassGate, subclassNamesFor } from "@/lib/srd/features";
 import { packRecommends, type Reskinned } from "@/lib/worlds/reskin-logic";
 import type { WorldPack } from "@/lib/worlds/types";
 import type { PickerGroup, PickerOption } from "./OptionPicker";
-import { contentName, subclassName } from "@/lib/content/names";
+import { backgroundFeatureLabel, contentName, subclassName } from "@/lib/content/names";
 import { useLocale, useT } from "@/lib/locale";
 import type { Locale } from "@/lib/messages-logic";
 import type {
@@ -185,11 +185,24 @@ export function backgroundInfoText(entry: {
   desc?: string;
   feature?: string;
   featureDesc?: string;
-}): string | undefined {
-  const feature = entry.feature
-    ? `**Feature: ${entry.feature}.**${entry.featureDesc ? ` ${entry.featureDesc}` : ""}`
+  name?: string;
+}, locale: Locale = "en", t: (key: string) => string = (value) => value): string | undefined {
+  const name = entry.feature
+    ? locale === "cs" ? backgroundFeatureLabel(entry.name ?? "", entry.feature, locale) : entry.feature
     : "";
-  const parts = [entry.packBlurb || entry.blurb, feature, entry.desc].filter(Boolean);
+  const description = entry.featureDesc
+    ? locale === "cs" ? t(entry.featureDesc) : entry.featureDesc
+    : "";
+  const feature = entry.feature
+    ? locale === "cs"
+      ? `**Schopnost: ${name}.**${description ? ` ${description}` : ""}`
+      : `**Feature: ${name}.**${description ? ` ${description}` : ""}`
+    : "";
+  const parts = [
+    entry.packBlurb || (entry.blurb ? locale === "cs" ? t(entry.blurb) : entry.blurb : ""),
+    feature,
+    entry.desc ? locale === "cs" ? t(entry.desc) : entry.desc : "",
+  ].filter(Boolean);
   return parts.length ? parts.join("\n\n") : undefined;
 }
 
@@ -462,10 +475,10 @@ export function usePickerGroups({
       id: entry.id,
       name: shownOption(entry, "backgrounds", locale),
       meta: entry.skills
-        .map((skillId) => SRD_SKILLS.find((skill) => skill.id === skillId)?.name ?? skillId)
+        .map((skillId) => skillLabel(skillId, locale))
         .join(", "),
       ...(showSource && entry.source && !isCoreDocument(entry.documentSlug) ? { source: entry.source } : {}),
-      infoText: backgroundInfoText(entry),
+      infoText: backgroundInfoText(entry, locale, t),
       reference: { kind: "backgrounds", slug: entry.id, name: entry.name },
     });
     if (backgroundTier.recommended.length) {
