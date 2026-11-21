@@ -921,6 +921,29 @@ try {
     assert.equal(Object.values(counts).reduce((sum, count) => sum + count, 0), 783);
   });
 
+  await test("established Czech monster and magic-item names remain stable", () => {
+    for (const [kind, english, czech] of [
+      ["monster", "Gelatinous Cube", "Rosolová krychle"],
+      ["monster", "Gibbering Mouther", "Blekotající tlamáč"],
+      ["monster", "Grick", "Gryk"],
+      ["monster", "Roc", "Noh"],
+      ["monster", "Tarrasque", "Tarask"],
+      ["monster", "Rakshasa", "Rakšáza"],
+      ["monster", "Shield Guardian", "Štítový strážce"],
+      ["monster", "Animated Armor (Animated Object)", "Oživlá zbroj"],
+      ["item", "Bag of Holding", "Pytel beztíže"],
+      ["item", "Flame Tongue", "Plamenec"],
+      ["item", "Holy Avenger", "Posvěcený mstitel"],
+      ["item", "Feather Token", "Quaalův péřový žeton"],
+      ["item", "Portable Hole", "Přenosný otvor"],
+    ]) {
+      const original = rulebookPages("en").find((page) => page.kind === kind && page.title === english);
+      assert.ok(original, `Not in SRD: ${english}`);
+      assert.equal(rulebookPage(original.id, "cs").page.title, czech);
+      assert.equal(czechSrdTitle(english, kind), czech);
+    }
+  });
+
   // ---- the routes ----
   const { createUser } = await import("../src/lib/db/users.ts");
   const { mintSession } = await import("../src/lib/auth.ts");
