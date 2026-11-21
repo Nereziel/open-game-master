@@ -286,7 +286,7 @@ export function TrainingLines({
     return title;
   };
   const rows: Array<[string, string[]]> = [
-    [t("Languages"), proficiencies.languages.map((language) => languageLabel(language, locale))],
+    [t("Languages"), proficiencies.languages],
     [t("Tools"), proficiencies.tools],
     [t("Armor"), proficiencies.armor],
     [t("Weapons", { context: "sheet.training.weapons" }), proficiencies.weapons],
@@ -296,7 +296,7 @@ export function TrainingLines({
       {rows.map(([label, values]) => (
         <div key={label} className="contents">
           <dt className="text-stone-500">{label}</dt>
-          <dd className="text-stone-200">{values.length ? [...new Set(values.map(localizeValue))].join(", ") : <span className="text-stone-400">{t("none", { context: "sheet.training.none" })}</span>}</dd>
+          <dd className="text-stone-200">{values.length ? [...new Set(values.map((value) => label === t("Languages") ? languageLabel(value, locale) : localizeValue(value)))].join(", ") : <span className="text-stone-400">{t("none", { context: "sheet.training.none" })}</span>}</dd>
         </div>
       ))}
       {conditional.length ? (
