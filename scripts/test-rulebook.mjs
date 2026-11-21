@@ -297,6 +297,35 @@ try {
     assert.equal(snippetFor("Short text.", ["x"]), "Short text.");
   });
 
+  // ---- Czech SRD companion ----
+  await test("Czech shares the exact SRD 5.1 bindings and preserves the English text", () => {
+    const en = rulebookPages("en");
+    const cs = rulebookPages("cs");
+    assert.deepEqual(cs.map((page) => page.id), en.map((page) => page.id));
+    assert.deepEqual(cs.map((page) => page.chapter), en.map((page) => page.chapter));
+    assert.equal(rulebookPage("combat", "cs").page.title, "Boj");
+    assert.match(rulebookPage("combat", "cs").page.md, /Český přehled pravidel/);
+    assert.ok(rulebookPage("combat", "cs").page.md.endsWith(rulebookPage("combat", "en").page.md));
+    assert.equal(rulebookPage("fireball", "cs").page.md, rulebookPage("fireball", "en").page.md);
+    assert.equal(rulebookPage("legal-information", "cs").page.md, rulebookPage("legal-information", "en").page.md);
+    assert.equal(rulebookContents("cs").pageCount, rulebookContents("en").pageCount);
+    assert.equal(rulebookContents("cs").source.license, "CC-BY-4.0");
+    assert.equal(rulebookContents("cs").chapters.find((chapter) => chapter.id === "combat").title, "Boj");
+  });
+
+  await test("Czech quick links keep their original anchors and search stems Czech", () => {
+    for (const link of QUICK_LINKS) {
+      const page = rulebookPage(link.page, "cs");
+      assert.ok(page, `Missing Czech fallback for ${link.page}`);
+      if (link.at) assert.ok(anchorsOf(parseBook(page.page.md)).includes(link.at), `Missing Czech anchor ${link.at}`);
+    }
+    const hits = rulebookSearch("soustředění", undefined, "cs").hits;
+    assert.ok(hits.some((hit) => hit.page === "spellcasting"), "Czech rules find the original Czech concentration note");
+    assert.equal(localeFromAcceptLanguage("cs-CZ,fr;q=0.5"), "cs");
+    assert.equal(localeFromAcceptLanguage("en;q=0.9,cs;q=0.3"), "en");
+    assert.equal(localeFromAcceptLanguage("cs;q=0"), "en");
+  });
+
   // ---- the French book ----
   // The same binding in the official French print (srd-5.1-fr.json, built by
   // scripts/import-srd-rulebook-fr.mjs): identical page ids in the identical
