@@ -21,6 +21,7 @@ import type {
 } from "./useBuilderOptions";
 import { textKey } from "@/lib/language/text-logic";
 import { CZECH_BUILDER_CLASS_RULES } from "./classRulesCs";
+import { genreClassCs } from "@/lib/classes/genre-class-cs";
 
 export const ALIGNMENTS = ["LG", "NG", "CG", "LN", "N", "CN", "LE", "NE", "CE"];
 
@@ -175,7 +176,8 @@ function tier<T extends { id: string }>(
 // a background what its feature does. Joined so a short line and a long
 // rules text both show rather than one hiding the other.
 export function classInfoText(entry: { id?: string; packBlurb?: string; blurb?: string; desc?: string }, t?: (key: string) => string, locale: Locale = "en"): string | undefined {
-  const blurb = entry.packBlurb || (entry.blurb && t ? t(entry.blurb) : entry.blurb);
+  const genre = locale === "cs" && entry.id && !entry.packBlurb ? genreClassCs(entry.id) : undefined;
+  const blurb = entry.packBlurb || genre?.blurb || (entry.blurb && t ? t(entry.blurb) : entry.blurb);
   // Official SRD classes have complete Czech rules, not only translated labels.
   // Other settings and homebrew retain their own authored descriptions.
   const czechRules = locale === "cs" && entry.id && !entry.packBlurb
