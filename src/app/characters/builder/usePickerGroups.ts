@@ -20,6 +20,7 @@ import type {
   RaceOption,
 } from "./useBuilderOptions";
 import { textKey } from "@/lib/language/text-logic";
+import { CZECH_BUILDER_CLASS_RULES } from "./classRulesCs";
 
 export const ALIGNMENTS = ["LG", "NG", "CG", "LN", "N", "CN", "LE", "NE", "CE"];
 
@@ -173,9 +174,14 @@ function tier<T extends { id: string }>(
 // blurb, then the bundled line, then the content pack's full entry, and for
 // a background what its feature does. Joined so a short line and a long
 // rules text both show rather than one hiding the other.
-export function classInfoText(entry: { packBlurb?: string; blurb?: string; desc?: string }, t?: (key: string) => string): string | undefined {
+export function classInfoText(entry: { id?: string; packBlurb?: string; blurb?: string; desc?: string }, t?: (key: string) => string, locale: Locale = "en"): string | undefined {
   const blurb = entry.packBlurb || (entry.blurb && t ? t(entry.blurb) : entry.blurb);
-  const parts = [blurb, entry.desc].filter(Boolean);
+  // Official SRD classes have complete Czech rules, not only translated labels.
+  // Other settings and homebrew retain their own authored descriptions.
+  const czechRules = locale === "cs" && entry.id && !entry.packBlurb
+    ? CZECH_BUILDER_CLASS_RULES[entry.id]
+    : undefined;
+  const parts = [blurb, czechRules ?? entry.desc].filter(Boolean);
   return parts.length ? parts.join("\n\n") : undefined;
 }
 
