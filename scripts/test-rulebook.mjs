@@ -1966,6 +1966,37 @@ try {
     }
 
     const { CZECH_FULL_CLASSES_12 } = await import("../src/lib/rulebook/czech-full-classes-12.ts");
+    // Terminology alone follows the Czech 2014 PHB; class mechanics remain from SRD 5.1.
+    const establishedClassLabels = {
+      fighter: ["Mimořádný atlet", "Dokonalejší kritický zásah", "Zarputilec"],
+      bard: ["Kolej znalostí", "Slovní výpad", "Nedostižná dovednost"],
+      cleric: ["Ničení nemrtvých"],
+      druid: ["Nestárnoucí tělo", "Kruhová kouzla", "Přírodní svatyně"],
+      monk: ["Klid", "Smrtící dlaň"],
+      paladin: ["Vnímání božství", "Přikládání rukou", "Boží úder", "Čistota duše", "Svatozář"],
+      ranger: ["Rozený průzkumník", "Pravěká ostražitost", "Zvířecí smysly", "Mimořádná lovcova obrana"],
+    };
+    for (const [id, labels] of Object.entries(establishedClassLabels)) {
+      const index = classIds.indexOf(id);
+      const translated = modules[index]["CZECH_FULL_CLASSES_" + (index + 1)][id];
+      for (const label of labels) {
+        assert.ok(translated.includes(label), `Missing Czech 2014 class label in ${id}: ${label}`);
+      }
+    }
+    for (const [id, outdated] of Object.entries({
+      fighter: ["Pozoruhodný atlet", "Vynikající kritický zásah", "Přeživší"],
+      bard: ["Kolej vědění", "Jízlivá slova"],
+      druid: ["Ochrana přírody", "Útočiště přírody"],
+      monk: ["Poklid", "Chvějící se dlaň"],
+      paladin: ["Božský smysl", "Vkládání rukou", "Svatá záře"],
+      ranger: ["Průzkumník přírody", "Divoké smysly", "Skrývání na očích"],
+    })) {
+      const index = classIds.indexOf(id);
+      const translated = modules[index]["CZECH_FULL_CLASSES_" + (index + 1)][id];
+      for (const label of outdated) {
+        assert.ok(!translated.includes(label), `Outdated Czech class label in ${id}: ${label}`);
+      }
+    }
     const wizard = CZECH_FULL_CLASSES_12.wizard;
     assert.ok(wizard.includes("### Škola zaklínání"));
     assert.ok(wizard.includes("**Za každou úroveň kouzla to stojí 2 hodiny a 50 zl**"));
