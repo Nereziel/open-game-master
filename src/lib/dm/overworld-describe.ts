@@ -47,7 +47,10 @@ export async function describeOverworld(
           `Setting: ${campaign.theme || campaign.gameSettings.genre.replace(/_/g, " ")}`,
           `Region: ${text}`,
           `The dials, in order: ${Object.values(OVERWORLD_PARAM_LABELS).join(", ")}.`,
-        ].join("\n"),
+          campaign.gameSettings.tableLanguage === "czech"
+            ? "FINAL LANGUAGE REQUIREMENT: All human-facing place names that you invent, blurbs, and the region note MUST be natural Czech. Preserve proper names explicitly provided in the description. Keep the JSON keys and the five dial names in English; no English descriptive text."
+            : "",
+        ].filter(Boolean).join("\n"),
       },
     ],
     { meta: { task: "overworld" }, timeoutMs: arcTextTimeoutMs() },
