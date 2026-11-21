@@ -194,6 +194,13 @@ full original English text. `src/lib/rulebook/czech-companion.ts` adds
 original Czech summaries on **932 of the 933 canonical SRD pages**:
 35 of 36 core rules pages, all 319 SRD spells, all 318 monsters,
 all 239 magic items, all 12 classes and all nine playable races.
+Full Czech translations currently cover **14 of 35 nonlegal rules pages**.
+The second batch translates the entire **Conditions, Diseases, Objects and
+Artifacts** sections, including exhaustion levels, disease mechanics,
+object material/HP tables and the Orb of Dragonkind.
+These translations are in `czech-full-rules-3.ts` and retain the original
+English SRD under the complete Czech text.
+
 The first complete Czech rules-text translation batch is now available for
 **10 rules pages**: racial traits, inspiration, languages, coinage,
 selling treasure, trade goods, feats (including Grappler), customizing NPCs,
@@ -203,7 +210,7 @@ were translated independently from the **English SRD 5.1 under CC BY 4.0**;
 they are **not** copied from the d20.cz/ShadoWWW fan translation.
 These 10 pages show the complete Czech text and tables after their brief
 Czech overview. The original English SRD content remains below for
-verification and exact reference. The remaining **25 nonlegal rules pages**
+verification and exact reference. The remaining **21 nonlegal rules pages**
 and the spells, monster stat blocks, classes, races and items still need
 full detailed translations even though they all have Czech summaries.
 Source and translation licensing are documented in `docs/srd-czech-translation.md`.
