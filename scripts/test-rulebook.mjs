@@ -30,6 +30,8 @@ const { CZECH_SPELL_NOTES_2 } = await import("../src/lib/rulebook/czech-spell-no
 const { CZECH_SPELL_NOTES_3 } = await import("../src/lib/rulebook/czech-spell-notes-3.ts");
 const { CZECH_SPELL_NOTES_4 } = await import("../src/lib/rulebook/czech-spell-notes-4.ts");
 const { CZECH_SPELL_NOTES_5 } = await import("../src/lib/rulebook/czech-spell-notes-5.ts");
+const { CZECH_SPELL_NOTES_6A } = await import("../src/lib/rulebook/czech-spell-notes-6a.ts");
+const { CZECH_SPELL_NOTES_6B } = await import("../src/lib/rulebook/czech-spell-notes-6b.ts");
 const { CZECH_MONSTER_NOTES, CZECH_ITEM_NOTES } = await import("../src/lib/rulebook/czech-bestiary-items.ts");
 const { CZECH_MONSTER_NOTES_2, CZECH_ITEM_NOTES_2 } = await import("../src/lib/rulebook/czech-bestiary-items-2.ts");
 const { CZECH_MONSTER_NOTES_3, CZECH_ITEM_NOTES_3 } = await import("../src/lib/rulebook/czech-bestiary-items-3.ts");
@@ -555,6 +557,41 @@ try {
     const spell = original.find((page) => page.kind === "spell" && page.title === "Vicious Mockery");
     assert.ok(spell, "Vicious Mockery exists in SRD");
     assert.ok(rulebookSearch("Zlomyslný výsměch", 10, "cs").hits.some((hit) => hit.page === spell.id));
+  });
+
+  await test("sixth Czech batch keeps 32 spell IDs, English text and distinct Czech notes", () => {
+    const original = rulebookPages("en").filter((page) => page.kind === "spell");
+    const originals = new Map(original.map((page) => [page.title, page]));
+    const prior = [CZECH_SPELL_NOTES, CZECH_SPELL_NOTES_2, CZECH_SPELL_NOTES_3, CZECH_SPELL_NOTES_4, CZECH_SPELL_NOTES_5];
+    const batch = { ...CZECH_SPELL_NOTES_6A, ...CZECH_SPELL_NOTES_6B };
+    assert.equal(Object.keys(CZECH_SPELL_NOTES_6A).length, 18, "Third-level summaries");
+    assert.equal(Object.keys(CZECH_SPELL_NOTES_6B).length, 14, "Fourth-level summaries");
+    assert.equal(Object.keys(batch).length, 32, "No duplicates within sixth batch");
+    assert.ok(Object.keys(CZECH_SPELLS).length >= 239, "Expanded Czech title dictionary");
+    const earlierNames = new Set(prior.flatMap((notes) => Object.keys(notes)));
+    for (const [englishName, note] of Object.entries(batch)) {
+      assert.ok(!earlierNames.has(englishName), `Duplicate translated spell: ${englishName}`);
+      assert.ok(CZECH_SPELLS[englishName], `Missing Czech spell name: ${englishName}`);
+      assert.ok(note.length >= 160, `Suspiciously short Czech spell description: ${englishName}`);
+      const source = originals.get(englishName);
+      assert.ok(source, `No canonical 2014 SRD spell: ${englishName}`);
+      const translated = rulebookPage(source.id, "cs").page;
+      assert.equal(translated.id, source.id, `Page ID changed for ${englishName}`);
+      assert.equal(translated.title, CZECH_SPELLS[englishName], `Czech title not used for ${englishName}`);
+      assert.ok(translated.md.includes("Český popis kouzla"), `No Czech heading for ${englishName}`);
+      assert.ok(translated.md.includes(note), `Missing sixth-batch note for ${englishName}`);
+      assert.ok(translated.md.endsWith(source.md), `Original full English source changed for ${englishName}`);
+    }
+    for (const [query, englishName] of [
+      ["Mihotání", "Blink"],
+      ["Aura života", "Aura of Life"],
+      ["Závratný úder", "Staggering Smite"],
+    ]) {
+      const originalPage = originals.get(englishName);
+      assert.ok(originalPage);
+      assert.ok(rulebookSearch(query, 20, "cs").hits.some((hit) => hit.page === originalPage.id),
+        `Czech lookup did not resolve ${query}`);
+    }
   });
 
   await test("Czech magic item and monster metadata are display-only and retain original metadata", () => {
