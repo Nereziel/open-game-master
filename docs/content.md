@@ -191,9 +191,14 @@ leaves markdown behind, and that the quick links a table uses mid-session
 The rulebook API also accepts `cs` / `cs-CZ` (including `X-Odm-Locale: cs`).
 The Czech view uses the same SRD 5.1 page IDs, links, bookmarks, folios and
 full original English text. `src/lib/rulebook/czech-companion.ts` adds
-original Czech summaries of 35 core rules pages, all 319 canonical SRD 5.1
-spells, 138 monsters, 57 magic items, all 12 playable classes and the nine base
-playable races (570 Czech summaries attached to actual SRD pages in total). It also localizes recurring spell schools, creature size/type,
+original Czech summaries on **643 of the 933 canonical SRD pages**:
+35 of 36 rules pages, all 319 SRD spells, 172 of 318 monsters,
+96 of 239 magic items, all 12 classes and all nine playable races.
+The separate note dictionaries contain 656 entries for these six categories
+(plus non-SRD character and spell aliases); 13 monster/item notes do not
+match standalone canonical 2014 SRD pages and are not counted as page coverage.
+A known SRD title variant, `Animated Armor (Animated Object)`, reuses the
+existing Czech `Animated Armor` note and title. It also localizes recurring spell schools, creature size/type,
 item rarity and attunement text; the original English SRD stays attached to
 every page for exact numeric mechanics.
 Separately, the character builder maps all **46 bundled playable races and
