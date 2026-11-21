@@ -3846,6 +3846,91 @@ try {
       "Weather should have 5+6+5 stage rows");
   });
 
+
+  await test("all 15 ninth-level SRD 5.1 spells have complete Czech rules", async () => {
+    const [{ CZECH_FULL_SPELLS_29 }, { CZECH_FULL_SPELLS_30 }] = await Promise.all([
+      import("../src/lib/rulebook/czech-full-spells-29.ts"),
+      import("../src/lib/rulebook/czech-full-spells-30.ts"),
+    ]);
+    const batches = [CZECH_FULL_SPELLS_29, CZECH_FULL_SPELLS_30];
+    assert.deepEqual(batches.map(batch => Object.keys(batch).length), [8, 7]);
+    assert.deepEqual(Object.keys(CZECH_FULL_SPELLS_29), ["astral-projection","foresight","gate","imprisonment","mass-heal","meteor-swarm","power-word-kill","prismatic-wall"]);
+    assert.deepEqual(Object.keys(CZECH_FULL_SPELLS_30), ["shapechange","storm-of-vengeance","time-stop","true-polymorph","true-resurrection","weird","wish"]);
+    const ids = batches.flatMap(batch => Object.keys(batch));
+    assert.equal(new Set(ids).size, 15, "Ninth-level spell IDs must be unique");
+    const originals = rulebookPages("en").filter(page =>
+      page.kind === "spell" && page.meta?.startsWith("9th-level"));
+    assert.equal(originals.length, 15, "English SRD ninth-level spell count changed");
+    assert.deepEqual(ids, originals.map(page => page.id),
+      "Ninth-level Czech spell IDs must match exact English SRD order");
+    const translations = Object.assign({}, ...batches);
+    const field = (markdown, label) => {
+      const prefix = "**" + label + ":** ";
+      return markdown.split("\n").find(line => line.startsWith(prefix))?.slice(prefix.length);
+    };
+    const times = {"1 action":"1 akce", "1 minute":"1 minuta", "1 hour":"1 hodina"};
+    const ranges = {"10 feet":"10 stop", "30 feet":"30 stop", "60 feet":"60 stop",
+      "120 feet":"120 stop", "1 mile":"1 míle", "Touch":"Dotyk",
+      "Self":"Sesilatel", "Sight":"Dohled"};
+    const durations = {"Instantaneous":"Ihned", "Special":"Zvláštní",
+      "8 hours":"8 hodin", "10 minutes":"10 minut", "Until dispelled":"Do rozptýlení",
+      "Concentration, up to 1 minute":"Soustředění, až 1 minuta",
+      "Concentration, up to one minute":"Soustředění, až 1 minuta",
+      "Concentration, up to 1 hour":"Soustředění, až 1 hodina"};
+    for(const original of originals){
+      const full = translations[original.id], page = rulebookPage(original.id, "cs").page;
+      assert.ok(full?.length >= 260, "Full ninth-level Czech translation missing: "+original.id);
+      assert.equal(page.id, original.id);
+      assert.equal(page.title, CZECH_SPELLS[original.title]);
+      assert.equal(page.originalMeta, original.meta);
+      assert.ok(page.md.includes("## Úplné znění pravidel v češtině"));
+      assert.ok(page.md.includes(full), "Reader missing ninth-level Czech text: "+original.id);
+      assert.ok(page.md.endsWith(original.md), "Original English SRD content changed: "+original.id);
+      for(const [en,cz] of [
+        ["Casting Time","Doba sesílání"],["Range","Dosah"],
+        ["Components","Složky"],["Duration","Trvání"]
+      ]) assert.ok(field(original.md,en) && field(full,cz),
+        "Ninth-level spell casting field missing: "+original.id+"/"+cz);
+      const originalComponents=field(original.md,"Components")?.match(/^[VSM, ]+/)?.[0]?.trim();
+      const czechComponents=field(full,"Složky")?.match(/^[VSM, ]+/)?.[0]?.trim();
+      assert.ok(originalComponents,"English spell components missing: "+original.id);
+      assert.equal(czechComponents,originalComponents,"Spell component letters changed: "+original.id);
+      const cast=field(original.md,"Casting Time"),range=field(original.md,"Range"),
+        duration=field(original.md,"Duration");
+      if(times[cast])assert.equal(field(full,"Doba sesílání"),times[cast],"Casting time changed: "+original.id);
+      if(ranges[range])assert.ok(field(full,"Dosah").startsWith(ranges[range]),"Range changed: "+original.id);
+      if(durations[duration])assert.equal(field(full,"Trvání"),durations[duration],"Duration changed: "+original.id);
+      for(const [,count,sides] of original.md.matchAll(/\b(\d+)d(\d+)\b/g))
+        assert.ok(full.includes(count+"k"+sides),"Damage or healing dice missing: "+original.id);
+    }
+    const markers = {"astral-projection":["1 000 zl","100 zl","osm ochotných","stříbrnou šňůrou","0 životů","Rozptyl magii","bezvědomí"],"foresight":["8 hodin","nelze překvapit","výhodu k hodům na útok","nevýhodu k hodům na útok","okamžitě skončí"],"gate":["5 000 zl","5 až 20 stop","přední a zadní stranu","Božstva","skutečné jméno","nezískáváš žádnou zvláštní moc"],"imprisonment":["500 zl za každou Kostku","Moudrost","Pohřbení","Spoutání","Uzavřené vězení","Miniaturní zajetí","Spánek","Ukončení kouzla","9. úrovně","okamžitě osvobozen"],"mass-heal":["700","oslepení","ohluchnutí","nemrtvé ani výtvory"],"meteor-swarm":["čtyři různá místa","40 stop","20k6 ohnivého","20k6 drtivého","pouze jednou"],"power-word-kill":["100 životů","okamžitě zemřel","nemá žádný účinek"],"prismatic-wall":["90 stop","30 stop","1 palec","Červená vrstva","Oranžová vrstva","Žlutá vrstva","Zelená vrstva","Modrá vrstva","Indigová vrstva","Fialová vrstva","25 chladného","60 silového","25 ohnivého","Rozptyl magii","Antimagické pole","třech úspěších","třech neúspěších"],"shapechange":["1 500 zl","nebezpečností nejvýše rovnou tvé úrovni","legendární akce","Kostky životů","úrovní povolání","své přesvědčení"],"storm-of-vengeance":["360 stop","5 000 stop","2k6 hromového","1k6 kyselinového","šest blesků","10k6","2k6 drtivého","5.–10. kolo","1k6 chladného"],"time-stop":["1k4 + 1","1 000 stop","předmět, který někdo jiný nosí"],"true-polymorph":["nebezpečnost je nejvýše rovna","nebezpečnost je nejvýše 9","trvá až do rozptýlení","Moudrost","Tvor v tvora","Předmět v tvora","Tvor v předmět","ztratíš nad tvorem kontrolu"],"true-resurrection":["25 000 zl","200 let","stářím","původní nenemrtvé podoby","10 stop","vyslovit jméno"],"weird":["30 stop","Moudrost","4k10","vystrašený"],"wish":["8. nebo nižší úrovně","25 000 zl","dvaceti tvorům","deseti tvorům","8 hodin","posledního kola","1k10 nekrotického","2k4 dnů","33%"]};
+    for(const [id,needles] of Object.entries(markers))
+      for(const needle of needles)
+        assert.ok(translations[id].includes(needle),"Ninth-level spell mechanic missing: "+id+"/"+needle);
+    for(const name of ["Pohřbení","Spoutání","Uzavřené vězení","Miniaturní zajetí","Spánek"])
+      assert.ok(translations.imprisonment.includes("***"+name+".***"),
+        "Imprisonment alternative missing: "+name);
+    for(const color of ["Červená","Oranžová","Žlutá","Zelená","Modrá","Indigová","Fialová"])
+      assert.ok(translations["prismatic-wall"].includes("***"+color+" vrstva.***"),
+        "Prismatic Wall layer missing: "+color);
+  });
+
+  await test("all 319 English SRD spells have full Czech text without altering originals", async () => {
+    const originals = rulebookPages("en").filter(page => page.kind === "spell");
+    assert.equal(originals.length, 319, "Canonical SRD 5.1 spell count changed");
+    const ids = originals.map(page => page.id);
+    assert.equal(new Set(ids).size, 319, "English SRD spell IDs are not unique");
+    for(const original of originals){
+      const localized = rulebookPage(original.id, "cs").page;
+      assert.equal(localized.id, original.id);
+      assert.equal(localized.originalMeta, original.meta);
+      assert.ok(localized.md.includes("## Úplné znění pravidel v češtině"),
+        "Missing full Czech spell description: "+original.id);
+      assert.ok(localized.md.endsWith(original.md),
+        "The English SRD original was changed: "+original.id);
+    }
+  });
+
   // ---- the routes ----
   const { createUser } = await import("../src/lib/db/users.ts");
   const { mintSession } = await import("../src/lib/auth.ts");
