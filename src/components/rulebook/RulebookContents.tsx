@@ -222,6 +222,16 @@ export function RulebookContents({
         <p className="rb-book-sub">{t("Fifth Edition · System Reference Document 5.1")}</p>
       </header>
 
+      {locale === "cs" ? (
+        <p className="rb-legal">
+          Česká verze zatím obsahuje přehledy základních pravidel, ne úplný překlad všech stránek.
+          Úplný text SRD 5.1 zůstává v angličtině.{" "}
+          <a href="https://dnd5esrd.d20.cz/" target="_blank" rel="noreferrer">
+            Komunitní český překlad na d20.cz
+          </a>
+        </p>
+      ) : null}
+
       <label className="rb-search">
         <Search className="rb-search-icon" aria-hidden="true" />
         <input
