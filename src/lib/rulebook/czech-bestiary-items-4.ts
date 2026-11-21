@@ -46,7 +46,6 @@ export const CZECH_MONSTER_NOTES_6: Readonly<Record<string, string>> = {
 };
 
 export const CZECH_ITEM_NOTES_4: Readonly<Record<string, string>> = {
-  "Adamantine Armor": "Adamantinová zbroj se vyrábí ze zvlášť odolného kovu. Pokud ji nosíš, **kritický zásah proti tobě se počítá jako běžný zásah**. Tato vlastnost neposkytuje automaticky další bonus k obrannému číslu; rozhoduje původní typ zbroje.",
   "Ammunition, +1, +2, or +3": "Magické střelivo dává odpovídající bonus k **hodu na útok i ke zranění**. Jeho síla závisí na vzácnosti konkrétního kusu. Jakmile střela zasáhne cíl, přestane být magická.",
   "Amulet of the Planes": "Amulet umožňuje pokusit se přesunout na známé místo v jiné **sféře existence** pomocí účinku kouzla *Přesun do jiné sféry*. Neúspěch při ověření Inteligence může přemístit nositele a okolní tvory na náhodné místo. Přesné rozmezí výsledků určují pravidla předmětu.",
   "Animated Shield": "Při vyslovení povelového slova se štít vznesne a **chrání nositele, jako by jej držel**, přestože má obě ruce volné. Oživení vyžaduje bonusovou akci a je časově omezené. Neschopnost jednat nebo smrt nositele účinek ukončuje.",
@@ -57,7 +56,6 @@ export const CZECH_ITEM_NOTES_4: Readonly<Record<string, string>> = {
   "Armor, +1, +2, or +3": "Magická zbroj zvyšuje **obranné číslo** nositele o uvedený bonus. Základní pravidla pro daný druh zbroje nadále platí. Vyšší bonus znamená vzácnější předmět.",
   "Arrow of Slaying": "Šíp je určen proti vybranému **druhu nebo skupině tvorů**. Pokud takového tvora zasáhne a zraní, musí cíl uspět v záchranném hodu na Odolnost, jinak utrpí další výrazné zranění. Po zásahu šíp ztrácí tuto magii.",
   "Arrow-Catching Shield": "Štít poskytuje dodatečnou ochranu proti **útokům na dálku**. Reakcí může jeho nositel přesměrovat střelecký útok vedený na tvora v těsné blízkosti na sebe. Podmínky použití se řídí vzdáleností a dostupnou reakcí.",
-  "Bag of Beans": "Pytel obsahuje magické fazole, které při **zasazení** mohou vyvolat náhodné neobyčejné účinky. Vysypání všech fazolí na zem místo sázení může způsobit výbuch. Výsledek každé zasazené fazole určuje původní náhodná tabulka.",
   "Bag of Devouring": "Vak připomíná běžný bezedný vak, ale ve skutečnosti je **ústy mimoprostorového tvora**. Vkládané organické věci mizí a živý tvor se může dostat do nebezpečí vtažení. Nejde o bezpečný úložný předmět; záchranné hody a následky popisují pravidla.",
   "Bag of Holding": "Bezedný vak má uvnitř **větší prostor než navenek** a unese velký objem předmětů bez odpovídající hmotnosti. Vybírání předmětu vyžaduje akci. Při přetížení nebo protržení může být obsah ztracen a kombinace s jinými mimoprostorovými předměty je nebezpečná.",
   "Belt of Dwarvenkind": "Pás zvyšuje **Odolnost**, pomáhá při společenském jednání s trpaslíky a může nositeli nechat vyrůst vousy. Při sladění poskytuje také další trpasličí odolnost a znalosti podle úplného textu předmětu.",
@@ -90,7 +88,9 @@ export const CZECH_ITEM_NOTES_4: Readonly<Record<string, string>> = {
   "Dragon Slayer": "Magický meč poskytuje bonus k útokům a zranění a při zásahu **draka působí další zranění**. Účinek platí na všechny tvory typu drak, včetně dračích želv a vyvern. Na jiný typ tvora žádný zvláštní bonus ke zranění neposkytuje.",
   "Dust of Disappearance": "Jednorázový prach po rozprášení učiní **neviditelnými** tvory a předměty v blízkém okolí. Účinek trvá náhodně dlouho, ale pro jednotlivé cíle skončí při určitých činnostech, například útoku. Spotřebuje se celé balení.",
   "Dust of Dryness": "Špetka prachu dokáže proměnit **velký objem vody v drobnou kuličku**. Když se kulička rozbije, voda se znovu uvolní. Prach je jednorázový a v balení je několik dávek.",
-  "Dust of Sneezing and Choking": "Prach se podobá prachu zmizení, ale při použití vyvolá **prudké kýchání a dušení** tvorů, kteří potřebují dýchat. Neúspěšná záchrana je může zneschopnit a ohrozit. Jde o nebezpečný klamavý předmět, nikoli o pomoc k neviditelnosti."
+  "Dust of Sneezing and Choking": "Prach se podobá prachu zmizení, ale při použití vyvolá **prudké kýchání a dušení** tvorů, kteří potřebují dýchat. Neúspěšná záchrana je může zneschopnit a ohrozit. Jde o nebezpečný klamavý předmět, nikoli o pomoc k neviditelnosti.",
+  "Efficient Quiver": "Toulcovka má tři **mimoprostorové přihrádky** na velké množství šípů, oštěpů a dlouhých zbraní. I naplněná zůstává lehká a uložené předměty lze vytahovat jako z běžného toulce. Každá přihrádka má vlastní kapacitu podle typu uložených předmětů.",
+  "Efreeti Bottle": "Po otevření mosazné lahve se objeví **ifrit**. Jeho chování určuje náhodná tabulka: může zaútočit, dočasně sloužit majiteli nebo splnit tři přání pomocí kouzla *Přání*. Láhev má omezený počet použití a po vyčerpání přestane být magická."
 };
 
 export const CZECH_MONSTER_TITLES_6: Readonly<Record<string, string>> = {
@@ -138,7 +138,6 @@ export const CZECH_MONSTER_TITLES_6: Readonly<Record<string, string>> = {
 };
 
 export const CZECH_ITEM_TITLES_4: Readonly<Record<string, string>> = {
-  "Adamantine Armor": "Adamantinová zbroj",
   "Ammunition, +1, +2, or +3": "Střelivo +1, +2 nebo +3",
   "Amulet of the Planes": "Amulet sfér",
   "Animated Shield": "Oživlý štít",
@@ -149,7 +148,6 @@ export const CZECH_ITEM_TITLES_4: Readonly<Record<string, string>> = {
   "Armor, +1, +2, or +3": "Zbroj +1, +2 nebo +3",
   "Arrow of Slaying": "Šíp zabíjení",
   "Arrow-Catching Shield": "Štít zachycování střel",
-  "Bag of Beans": "Pytel fazolí",
   "Bag of Devouring": "Požírající vak",
   "Bag of Holding": "Bezedný vak",
   "Belt of Dwarvenkind": "Pás trpasličího rodu",
@@ -182,5 +180,7 @@ export const CZECH_ITEM_TITLES_4: Readonly<Record<string, string>> = {
   "Dragon Slayer": "Drakobijce",
   "Dust of Disappearance": "Prach zmizení",
   "Dust of Dryness": "Prach vysušení",
-  "Dust of Sneezing and Choking": "Prach kýchání a dušení"
+  "Dust of Sneezing and Choking": "Prach kýchání a dušení",
+  "Efficient Quiver": "Prostorný toulec",
+  "Efreeti Bottle": "Láhev s ifritem"
 };
