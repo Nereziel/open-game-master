@@ -663,12 +663,49 @@ jsou přejímány jen ustálené názvy.
 Build ani automatická testovací sada nebyly na Draft PR
 podle dohody spuštěny.
 
+## Prvních 12 úplných kouzel 6. úrovně SRD 5.1 (21. 11. 2026)
+
+Anglické SRD 5.1 obsahuje **31 skutečných kouzel 6. úrovně**.
+Vyhledávání názvu „6th-level“ zahrnuje dalších pět kouzel nižších
+úrovní s pravidly sesílání do vyšší pozice; ta se nezapočítávají.
+
+Nový soubor `src/lib/rulebook/czech-full-spells-22.ts` obsahuje
+**12/31 úplných nezávislých českých překladů**: Bariéra čepelí,
+Řetězový blesk, Kruh smrti, Vyvolej vílu, Podmíněné kouzlo,
+Stvoř nemrtvé, Rozklad, Zlé oko, Najdi cestu, Zkamenění,
+Zákaz vstupu a Otilukeho mrazivá koule.
+
+Překlady zachovávají přesné rozměry účinků, zranění a všechny
+zvláštní podmínky – například tříčtvrteční kryt Bariéry čepelí,
+ztrátu kontroly při vyvolání víly, spotřebu obou pozic u Podmíněného
+kouzla, ovládání a vyšší úrovně Stvoř nemrtvé, rozklad nemagických
+předmětů, tři varianty Zlého oka, opakované záchrany u Zkamenění,
+trvalý Zákaz vstupu po 30 dnech a odložený výbuch mrazivé koule.
+
+`czech-companion.ts` přidává plné texty do české čtečky
+se zachováním původních anglických popisů, ID, metadat
+i herního/MCP rozhraní. `scripts/test-rulebook.mjs`
+nově obsahuje regresní kontrolu 12 ID a kanonického pořadí,
+českých názvů, všech čtyř polí sesílání, V/S/M,
+rituálů, kostek a zásadních mechanik.
+
+Úplné texty jsou samostatně napsané překlady
+anglického SRD 5.1 (CC BY 4.0); z komunitního českého
+překladu jsou přejaty pouze ustálené názvy.
+
+**Stav 249/319 úplných českých popisů kouzel**,
+z toho **12/31 kouzel 6. úrovně**. Zbývá **19 kouzel
+6. úrovně a 70 kouzel celkem**.
+
+Podle dohody se na Draft PR nesestavuje build ani
+nespouštějí automatické testy.
+
 ## Stav
 
 - Stručné české přehledy: 932/933 kanonických stránek (výjimkou je atribuce).
 - Úplné české znění pravidlových stránek: **35/35 obsahových pravidlových stránek**.
 - Úplné české překlady jednotlivých ras: **9/9 rasových stránek SRD 5.1**, včetně všech podras obsažených ve zdrojovém SRD.
-- Úplné české popisy jednotlivých kouzel: **237/319** – všech **24/24 triků** a všech **49/49 kouzel 1. úrovně** a všech **54/54 kouzel 2. úrovně** a všech **42/42 kouzel 3. úrovně** a všech **31/31 kouzel 4. úrovně** a všech **37/37 kouzel 5. úrovně**.
+- Úplné české popisy jednotlivých kouzel: **249/319** – všech **24/24 triků** a všech **49/49 kouzel 1. úrovně** a všech **54/54 kouzel 2. úrovně** a všech **42/42 kouzel 3. úrovně** a všech **31/31 kouzel 4. úrovně** a všech **37/37 kouzel 5. úrovně** a prvních **12/31 kouzel 6. úrovně**.
 - Dříve dokončené kapitoly zahrnují **Stavy, Nemoci, Objekty, Artefakty** a další pravidla.
 - V další dávce jsou úplně přeloženy kapitoly **Jízdní zvířata a dopravní prostředky, Nástroje, Kouzelné předměty, Jedy a Inteligentní kouzelné předměty**.
 - Následující dávka přeložila celé kapitoly **Zbroje**, **Šílenství** a
