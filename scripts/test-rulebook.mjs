@@ -2597,6 +2597,53 @@ try {
     }
   });
 
+
+  await test("second-level SRD spells 13–24 have complete Czech descriptions", async () => {
+    const { CZECH_FULL_SPELLS_9 } = await import("../src/lib/rulebook/czech-full-spells-9.ts");
+    const expected = ["continual-flame","darkness","darkvision","detect-thoughts","enhance-ability","enlarge-reduce","enthrall","find-traps","flame-blade","flaming-sphere","gentle-repose","gust-of-wind"];
+    assert.deepEqual(Object.keys(CZECH_FULL_SPELLS_9), expected);
+    const originals = rulebookPages("en").filter((page) =>
+      page.kind === "spell" && page.meta?.startsWith("2nd-level"));
+    assert.deepEqual(originals.slice(12, 24).map((page) => page.id), expected);
+    function componentLetters(markdown, label) {
+      const prefix = "**" + label + ":** ";
+      return markdown.split("\n").find((line) => line.startsWith(prefix))
+        ?.slice(prefix.length).match(/^[VSM, ]+/)?.[0].trim();
+    }
+    for (const original of originals.slice(12, 24)) {
+      const translated = CZECH_FULL_SPELLS_9[original.id];
+      const displayed = rulebookPage(original.id, "cs").page;
+      assert.ok(translated?.length >= 220, "Missing spell: " + original.id);
+      assert.equal(displayed.id, original.id);
+      assert.equal(displayed.title, CZECH_SPELLS[original.title]);
+      assert.equal(displayed.originalMeta, original.meta);
+      assert.ok(displayed.md.includes(translated), "Czech text not in reader: " + original.id);
+      assert.ok(displayed.md.endsWith(original.md), "English source changed: " + original.id);
+      for (const label of ["Doba sesílání", "Dosah", "Složky", "Trvání"])
+        assert.ok(translated.includes("**" + label + ":**"), "Missing: " + label + "/" + original.id);
+      const originalComponents = componentLetters(original.md, "Components");
+      assert.ok(originalComponents, "Original components missing: " + original.id);
+      assert.equal(componentLetters(translated, "Složky"), originalComponents);
+      for (const [, count, die] of original.md.matchAll(/\\b(\\d+)d(\\d+)\\b/g))
+        assert.ok(translated.includes(count + "k" + die), "Missing dice: " + original.id);
+    }
+    for (const [id, needles] of Object.entries({
+      "continual-flame": ["50 zl", "nevytváří teplo"],
+      darkness: ["15 stop", "viděním ve tmě", "2. nebo nižší"],
+      darkvision: ["8 hodin", "60 stop"],
+      "detect-thoughts": ["Inteligencí 3", "záchranný hod na Moudrost", "2 stopy kamene", "2 palce kovu"],
+      "enhance-ability": ["Medvědí odolnost", "Býčí síla", "Kočičí ladnost", "Orlí nádhera", "Liščí vychytralost", "Soví moudrost", "2k6"],
+      "enlarge-reduce": ["osminásobek", "jednu osminu", "1k4", "nejméně 1 zranění"],
+      enthrall: ["imunní vůči zmámení", "Moudrosti (Vnímání)"],
+      "find-traps": ["120 stop", "Neodhalíš přesnou polohu"],
+      "flame-blade": ["3k6", "4. nebo vyšší"],
+      "flaming-sphere": ["2k6", "30 stop", "10 stop", "20 stop"],
+      "gentle-repose": ["10 dní", "nezapočítávají"],
+      "gust-of-wind": ["60 stop", "10 stop", "15 stop", "50%"],
+    })) for (const needle of needles)
+      assert.ok(CZECH_FULL_SPELLS_9[id].includes(needle), "Missing mechanic: " + id + "/" + needle);
+  });
+
   // ---- the routes ----
   const { createUser } = await import("../src/lib/db/users.ts");
   const { mintSession } = await import("../src/lib/auth.ts");

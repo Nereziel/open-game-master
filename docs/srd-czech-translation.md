@@ -331,12 +331,31 @@ Slepota nebo hluchota, Rozmazání, Cejchovací úder a Uklidni emoce.
 z toho dalších **42 kouzel 2. úrovně**. Build a test suite nebyly
 podle dohody pro Draft PR spuštěny.
 
+## Druhá dávka kouzel 2. úrovně (21. 11. 2026)
+
+Přidáno dalších **12 úplných samostatných českých popisů**, od
+**Věčného plamene** po **Poryv větru** v pořadí anglického SRD 5.1:
+Věčný plamen, Tma, Vidění ve tmě, Odhal myšlenky, Zlepši vlastnost,
+Zvětšení nebo zmenšení, Fascinuj, Najdi pasti, Ohnivá čepel,
+Planoucí koule, Důstojný odpočinek a Poryv větru.
+
+Nový soubor `src/lib/rulebook/czech-full-spells-9.ts` je připojen v
+`czech-companion.ts`. Anglická ID, původní texty, metadata a MCP
+zůstávají nedotčené. Regresní kontrola v `scripts/test-rulebook.mjs`
+ověřuje původní pořadí, složky, kostky, české názvy, důležité podmínky
+a nezměněný anglický originál. Účinky jsou nezávisle přeložené z
+anglického SRD 5.1 (CC BY 4.0); česká komunitní terminologie je
+použita pouze pro ustálené názvy.
+
+**Stav: 97/319 úplných popisů kouzel; zbývá 222, z toho 30 kouzel
+2. úrovně.** Build ani automatické testy na Draft PR nebyly spuštěny.
+
 ## Stav
 
 - Stručné české přehledy: 932/933 kanonických stránek (výjimkou je atribuce).
 - Úplné české znění pravidlových stránek: **35/35 obsahových pravidlových stránek**.
 - Úplné české překlady jednotlivých ras: **9/9 rasových stránek SRD 5.1**, včetně všech podras obsažených ve zdrojovém SRD.
-- Úplné české popisy jednotlivých kouzel: **85/319** – všech **24/24 triků** a všech **49/49 kouzel 1. úrovně** a prvních **12 kouzel 2. úrovně**.
+- Úplné české popisy jednotlivých kouzel: **97/319** – všech **24/24 triků** a všech **49/49 kouzel 1. úrovně** a prvních **24 kouzel 2. úrovně**.
 - Dříve dokončené kapitoly zahrnují **Stavy, Nemoci, Objekty, Artefakty** a další pravidla.
 - V další dávce jsou úplně přeloženy kapitoly **Jízdní zvířata a dopravní prostředky, Nástroje, Kouzelné předměty, Jedy a Inteligentní kouzelné předměty**.
 - Následující dávka přeložila celé kapitoly **Zbroje**, **Šílenství** a
