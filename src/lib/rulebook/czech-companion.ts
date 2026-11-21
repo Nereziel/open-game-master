@@ -24,6 +24,26 @@ import { CZECH_MONSTER_NOTES_5 } from "./czech-monster-notes-5";
 import { CZECH_CLASS_NOTES, CZECH_RACE_NOTES } from "./czech-character-notes";
 import { CZECH_ABILITIES, CZECH_CLASSES, CZECH_SKILLS, czechSrdItemMeta, czechSrdMonsterMeta, czechSrdSpellGroup, czechSrdSpellMeta, czechSrdTitle } from "./czech-terms";
 
+ // Preserve existing note precedence while accepting the SRD's differing
+ // capitalization (e.g. "Meld Into Stone" vs. "Meld into Stone").
+const CZECH_SPELL_NOTE_MAP: ReadonlyMap<string, string> = (() => {
+  const notes = new Map<string, string>();
+  for (const batch of [
+    CZECH_SPELL_NOTES, CZECH_SPELL_NOTES_2, CZECH_SPELL_NOTES_3,
+    CZECH_SPELL_NOTES_4, CZECH_SPELL_NOTES_5, CZECH_SPELL_NOTES_6,
+    CZECH_SPELL_NOTES_6A, CZECH_SPELL_NOTES_6B,
+    CZECH_SPELL_NOTES_7A, CZECH_SPELL_NOTES_7B,
+    CZECH_SPELL_NOTES_7C, CZECH_SPELL_NOTES_7D,
+  ]) {
+    for (const [name, note] of Object.entries(batch)) {
+      const key = name.toLowerCase();
+      if (!notes.has(key)) notes.set(key, note);
+    }
+  }
+  return notes;
+})();
+
+
 const CHAPTERS: Record<string, string> = {
   races: "Rasy",
   classes: "Povolání",
@@ -191,7 +211,7 @@ export function czechCompanionBook(english: RulebookData): RulebookData {
     })),
     pages: english.pages.map((page) => {
       const kindNote = page.kind === "spell"
-        ? CZECH_SPELL_NOTES[page.title] ?? CZECH_SPELL_NOTES_2[page.title] ?? CZECH_SPELL_NOTES_3[page.title] ?? CZECH_SPELL_NOTES_4[page.title] ?? CZECH_SPELL_NOTES_5[page.title] ?? CZECH_SPELL_NOTES_6[page.title] ?? CZECH_SPELL_NOTES_6A[page.title] ?? CZECH_SPELL_NOTES_6B[page.title] ?? CZECH_SPELL_NOTES_7A[page.title] ?? CZECH_SPELL_NOTES_7B[page.title] ?? CZECH_SPELL_NOTES_7C[page.title] ?? CZECH_SPELL_NOTES_7D[page.title]
+        ? CZECH_SPELL_NOTE_MAP.get(page.title.toLowerCase())
         : page.kind === "monster"
           ? CZECH_MONSTER_NOTES[page.title] ?? CZECH_MONSTER_NOTES_2[page.title] ?? CZECH_MONSTER_NOTES_3[page.title] ?? CZECH_MONSTER_NOTES_4[page.title] ?? CZECH_MONSTER_NOTES_5[page.title]
           : page.kind === "item"
