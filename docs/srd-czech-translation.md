@@ -960,8 +960,19 @@ Dle dohody **PR zůstává Draft**, bez sloučení;
 - U druida je zahrnuto **7 tabulek kouzel krajin**, u čaroděje všech
   **8 možností Metamagie**, u černokněžníka všech **32 mystických invokací**
   a u kouzelníka pravidla knihy kouzel.
-- Úplné české texty jednotlivých kouzel, statbloků nestvůr, magických
-  předmětů a ras je stále nutné dopracovat. **Další podtřídy mimo výchozí
-  SRD 5.1** nejsou součástí této dokončené dávky povolání.
-- Testy ověřují dostupnost úplných textů a zachování originálu, ale před
-  sloučením je třeba samostatně spustit build a test suite.
+- Úplné české statbloky a doprovodné texty **318/318 nestvůr** SRD 5.1
+  (včetně stránky `customizing-npcs`, která má ve zdrojovém JSON `kind: "monster"`).
+  Čtyři nepřekrývající se dávky: `czech-full-monsters-01.ts` až `-04.ts`.
+- Úplné české popisy **239/239 magických předmětů** SRD 5.1, včetně tabulek,
+  požadavků na sladění, účinků a omezení. Tři nepřekrývající se dávky:
+  `czech-full-items-01.ts` až `-03.ts`.
+- Všech **557** překladů je spojeno v `czech-full-bestiary.ts` a zapojeno
+  do `czech-companion.ts`. Každá česká stránka obsahuje úplný český text
+  i nezměněný anglický Markdown s licenční atribucí SRD 5.1 (CC BY 4.0).
+- Regresní kontrola `scripts/test-rulebook-cz-full.mjs` (volaná z
+  `scripts/test-rulebook.mjs`) prověřuje kanonická ID všech sedmi dávek,
+  jejich unikátnost, dostupnost překladů v české čtečce a zachování
+  originálního anglického Markdownu.
+- **Další podtřídy mimo výchozí SRD 5.1** nejsou součástí rozsahu.
+  Regresní testy a build je nutné ověřovat v CI; statické kontroly
+  jednotlivých překladů byly provedeny jejich autory.
