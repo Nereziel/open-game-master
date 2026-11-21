@@ -195,7 +195,12 @@ original Czech summaries of 35 core rules pages, 195 spells, 138 monsters, 57
 magic items, all 12 playable classes and the nine base playable races
 (446 Czech summaries in total). It also localizes recurring spell schools, creature size/type,
 item rarity and attunement text; the original English SRD stays attached to
-every page for exact numeric mechanics. The titles, spell and monster names
+every page for exact numeric mechanics.
+Separately, the character builder maps all **46 bundled playable races and
+subraces** through `src/lib/content/names-cs.ts`, covering their English
+names and canonical race IDs with Czech labels. This display-only mapping also
+corrects Hill Dwarf versus Mountain Dwarf and does not translate homebrew
+names or stored race identifiers. The titles, spell and monster names
 are based on the established d20.cz glossary, not copied full prose.
 All remaining pages show the original English SRD, not a machine-generated
 or third-party translation. The reader marks this
