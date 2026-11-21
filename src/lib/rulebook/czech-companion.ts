@@ -123,6 +123,7 @@ const PAGES: Record<string, string> = {
   "monster-statistics": "Statistiky nestvůr",
   "nonplayer-characters": "Nehráčské postavy",
   conditions: "Stavy",
+  "legal-information": "Licenční informace",
 };
 
 // These original short explanations make core rules accessible immediately.
