@@ -3535,7 +3535,7 @@ try {
     }
     const markers={
       "blade-barrier":["100 stop","20 stop","5 stop","60 stop","6k10","tříčtvrteční kryt"],
-      "chain-lightning":["150 stop","30 stop","10k8","jeden další blesk","každý cíl"],
+      "chain-lightning":["150 stop","30 stop","10k8","jeden další blesk","Každý cíl"],
       "circle-of-death":["500 zl","60 stop","8k6","2k6"],
       "conjure-fey":["nebezpečností 6","ztratíš kontrolu","přesvědčení","1 hodinu"],
       contingency:["1 500 zl","obě kouzla","obě kouzla","10 dnů","pouze jedno"],
