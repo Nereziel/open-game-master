@@ -62,5 +62,8 @@ export function describeBackgroundFeature(featureName: string, locale: Locale = 
     return locale === "cs" ? translate(locale, custom.featureDesc) : custom.featureDesc;
   }
   const srd = SRD_BACKGROUNDS.find((entry) => textKey(entry.feature) === wanted);
-  return srd ? (locale === "cs" ? translate(locale, srd.featureDesc) : srd.featureDesc) : null;
+  if (!srd?.featureDesc) {
+    return null;
+  }
+  return locale === "cs" ? translate(locale, srd.featureDesc) : srd.featureDesc;
 }

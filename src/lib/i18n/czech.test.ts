@@ -51,6 +51,9 @@ describe("Czech localization", () => {
     expect(SRD_BACKGROUNDS).toHaveLength(18);
     expect(CUSTOM_BACKGROUNDS).toHaveLength(36);
     for (const row of rows) {
+      if (!row.featureDesc || !row.blurb) {
+        throw new Error(`Missing bundled background feature description or blurb: ${row.id}`);
+      }
       expect(translate("cs", row.feature), `Untranslated feature name: ${row.id}`).not.toBe(row.feature);
       expect(translate("cs", row.featureDesc), `Untranslated feature rule: ${row.id}`).not.toBe(row.featureDesc);
       expect(translate("cs", row.blurb), `Untranslated background blurb: ${row.id}`).not.toBe(row.blurb);
@@ -59,7 +62,10 @@ describe("Czech localization", () => {
       expect(backgroundFeatureLabel(row.name, row.feature, "cs")).not.toBe(row.feature);
       expect(backgroundFeatureName(`${row.feature} (${row.name})`, "cs")).not.toContain(row.feature + " (");
     }
-    const soldier = SRD_BACKGROUNDS.find((row) => row.id === "soldier")!;
+    const soldier = SRD_BACKGROUNDS.find((row) => row.id === "soldier");
+    if (!soldier?.featureDesc) {
+      throw new Error("Missing bundled Soldier background feature description");
+    }
     expect(backgroundFeatureName("Military Rank (Soldier)", "cs")).toBe("Vojenská hodnost (Voják)");
     expect(describeFeature("fighter", "", "Military Rank (Soldier)", "cs")).toBe(translate("cs", soldier.featureDesc));
     expect(describeFeature("fighter", "", "Military Rank (Soldier)", "en")).toBe(soldier.featureDesc);
