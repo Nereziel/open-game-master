@@ -842,6 +842,40 @@ try {
     assert.equal(localeFromAcceptLanguage("fr;q=0"), "en");
   });
 
+  // Newly covered canonical SRD pages must have Czech titles and short
+  // summaries while retaining the original English rule blocks and IDs.
+  await test("new Czech monster and magic-item notes bind to exact SRD pages", async () => {
+    const {
+      CZECH_MONSTER_NOTES_6, CZECH_ITEM_NOTES_4,
+      CZECH_MONSTER_TITLES_6, CZECH_ITEM_TITLES_4,
+    } = await import("../src/lib/rulebook/czech-bestiary-items-4.ts");
+    assert.equal(Object.keys(CZECH_MONSTER_NOTES_6).length, 41);
+    assert.equal(Object.keys(CZECH_ITEM_NOTES_4).length, 45);
+    for (const [kind, notes, titles, heading] of [
+      ["monster", CZECH_MONSTER_NOTES_6, CZECH_MONSTER_TITLES_6, "Český přehled nestvůry"],
+      ["item", CZECH_ITEM_NOTES_4, CZECH_ITEM_TITLES_4, "Český přehled předmětu"],
+    ]) {
+      const sourceByTitle = new Map(rulebookPages("en").filter((page) => page.kind === kind).map((page) => [page.title, page]));
+      assert.deepEqual(Object.keys(notes).sort(), Object.keys(titles).sort());
+      for (const [name, note] of Object.entries(notes)) {
+        const original = sourceByTitle.get(name);
+        assert.ok(original, `Missing canonical SRD ${kind}: ${name}`);
+        const translated = rulebookPage(original.id, "cs")?.page;
+        assert.ok(translated, `Missing Czech SRD page: ${name}`);
+        assert.equal(translated.id, original.id);
+        assert.equal(translated.title, titles[name], `Missing Czech title: ${name}`);
+        assert.ok(translated.md.includes(heading) && translated.md.includes(note), `Missing Czech summary: ${name}`);
+        assert.ok(translated.md.endsWith(original.md), `English rules must stay intact: ${name}`);
+      }
+    }
+    const armor = rulebookPages("en").find((page) => page.title === "Animated Armor (Animated Object)");
+    assert.ok(armor);
+    const localizedArmor = rulebookPage(armor.id, "cs").page;
+    assert.equal(localizedArmor.title, "Oživlá zbroj");
+    assert.ok(localizedArmor.md.includes("Český přehled nestvůry"));
+    assert.ok(localizedArmor.md.endsWith(armor.md));
+  });
+
   // ---- the routes ----
   const { createUser } = await import("../src/lib/db/users.ts");
   const { mintSession } = await import("../src/lib/auth.ts");
