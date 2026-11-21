@@ -3553,6 +3553,84 @@ try {
           "Missing sixth-level spell rule: "+id+"/"+needle);
   });
 
+
+  await test("all 31 sixth-level SRD spells have complete Czech rules in canonical order", async () => {
+    const [{ CZECH_FULL_SPELLS_22 }, { CZECH_FULL_SPELLS_23 }, { CZECH_FULL_SPELLS_24 }] = await Promise.all([
+      import("../src/lib/rulebook/czech-full-spells-22.ts"),
+      import("../src/lib/rulebook/czech-full-spells-23.ts"),
+      import("../src/lib/rulebook/czech-full-spells-24.ts"),
+    ]);
+    const batches = [CZECH_FULL_SPELLS_22, CZECH_FULL_SPELLS_23, CZECH_FULL_SPELLS_24];
+    assert.deepEqual(batches.map(batch => Object.keys(batch).length), [12, 10, 9]);
+    assert.deepEqual(Object.keys(CZECH_FULL_SPELLS_23), ["globe-of-invulnerability","guards-and-wards","harm","heal","heroes-feast","instant-summons","irresistible-dance","magic-jar","mass-suggestion","move-earth"]);
+    assert.deepEqual(Object.keys(CZECH_FULL_SPELLS_24), ["planar-ally","programmed-illusion","sunbeam","transport-via-plants","true-seeing","wall-of-ice","wall-of-thorns","wind-walk","word-of-recall"]);
+    const allIds = batches.flatMap(batch => Object.keys(batch));
+    assert.equal(new Set(allIds).size, 31, "Sixth-level spell IDs must be unique");
+    const originals = rulebookPages("en").filter(page => page.kind === "spell" && page.meta?.startsWith("6th-level"));
+    assert.equal(originals.length, 31, "Unexpected English SRD sixth-level spell count");
+    assert.deepEqual(allIds, originals.map(page => page.id), "Sixth-level ID list or SRD order differs");
+    const translations = Object.assign({}, ...batches);
+    const field = (md, label) => {
+      const prefix = "**" + label + ":** ";
+      return md.split("\n").find(line => line.startsWith(prefix))?.slice(prefix.length);
+    };
+    const castingTimes = {
+      "1 action": "1 akce", "1 minute": "1 minuta", "10 minutes": "10 minut",
+    };
+    const ranges = {
+      Self: "Sesilatel", Touch: "Dotyk", "5 feet": "5 stop", "10 feet": "10 stop",
+      "30 feet": "30 stop", "60 feet": "60 stop", "90 feet": "90 stop",
+      "120 feet": "120 stop", "150 feet": "150 stop", "300 feet": "300 stop",
+    };
+    const durations = {
+      Instantaneous: "Ihned", "1 round": "1 kolo", "1 hour": "1 hodina",
+      "8 hours": "8 hodin", "10 days": "10 dnů", "24 hours": "24 hodin",
+      "Until dispelled": "Do rozptýlení",
+      "Concentration, up to 1 minute": "Soustředění, až 1 minuta",
+      "Concentration, up to 10 minutes": "Soustředění, až 10 minut",
+      "Concentration, up to 1 hour": "Soustředění, až 1 hodina",
+      "Concentration, up to 2 hours": "Soustředění, až 2 hodiny",
+      "Concentration, up to 1 day": "Soustředění, až 1 den",
+    };
+    for (const original of originals) {
+      const full = translations[original.id];
+      const localized = rulebookPage(original.id, "cs").page;
+      assert.ok(full?.length >= 185, "Sixth-level Czech spell is incomplete: " + original.id);
+      assert.equal(localized.id, original.id);
+      assert.equal(localized.title, CZECH_SPELLS[original.title]);
+      assert.equal(localized.originalMeta, original.meta);
+      assert.ok(localized.md.includes("## Úplné znění pravidel v češtině"));
+      assert.ok(localized.md.includes(full), "Czech reader is missing full spell rules: " + original.id);
+      assert.ok(localized.md.endsWith(original.md), "English SRD text was altered: " + original.id);
+      for (const [en, cz] of [
+        ["Casting Time","Doba sesílání"], ["Range","Dosah"],
+        ["Components","Složky"], ["Duration","Trvání"],
+      ]) assert.ok(field(original.md, en) && field(full, cz),
+        "English/Czech casting field missing: " + original.id + "/" + cz);
+      const enComponents = field(original.md,"Components").match(/^[VSM, ]+/)?.[0]?.trim();
+      const czComponents = field(full,"Složky").match(/^[VSM, ]+/)?.[0]?.trim();
+      assert.ok(enComponents, "English source components absent: " + original.id);
+      assert.equal(czComponents, enComponents, "Spell component letters differ: " + original.id);
+      const enTime = field(original.md, "Casting Time");
+      if (castingTimes[enTime])
+        assert.equal(field(full,"Doba sesílání"), castingTimes[enTime], "Casting time differs: " + original.id);
+      const enRange = field(original.md,"Range");
+      if (ranges[enRange])
+        assert.ok(field(full,"Dosah").startsWith(ranges[enRange]), "Range differs: " + original.id);
+      const enDuration = field(original.md,"Duration");
+      if (durations[enDuration])
+        assert.equal(field(full,"Trvání"), durations[enDuration], "Duration differs: " + original.id);
+      if (/^\*6th-level [^\n]*\(ritual\)\*/m.test(original.md))
+        assert.ok(full.includes("(rituál)"), "Ritual marking lost: " + original.id);
+      for (const [,count,sides] of original.md.matchAll(/\b(\d+)d(\d+)\b/g))
+        assert.ok(full.includes(count+"k"+sides), "Source dice missing: " + original.id);
+    }
+    const rules = {"globe-of-invulnerability":["10 stop","5. nebo nižší","vyšší úrovně","7. nebo vyšší"],"guards-and-wards":["2 500","20 stop","50%","deset dveří","10 minut","jednu","5 × 5 stop","každý den po celý rok"],"harm":["14k6","Odolnost","pod 1","maximum životů","1 hodinu"],"heal":["70 životů","oslepení","ohluchnutí","nemrtvé","10 za každou úroveň"],"heroes-feast":["1 000 zl","1 hodinu","dvanáct tvorů","Moudrost","2k10","24 hodin"],"instant-summons":["(rituál)","1 000 zl","10 liber","6 stop","safír rozdrtit"],"irresistible-dance":["nelze zmámit","veškerý svůj pohyb","Obratnost","Moudrost"],"magic-jar":["500 zl","katatonického","100 stop","Charisma","24 hodin","Inteligence, Moudrosti a Charismatu","schránka zničí"],"mass-suggestion":["dvanáct","Moudrost","24 hodin","10 dnů","30 dnů","rok a jeden den"],"move-earth":["40 stop","20 stop","10 minut","2 hodiny","kamenné stavby"],"planar-ally":["100 zl za minutu","1 000 zl za hodinu","10 000 zl za den","10 dnů","zkušenostních bodů"],"programmed-illusion":["30 stop","5 minut","10 minut","Pátrání","viditelné nebo slyšitelné"],"sunbeam":["60 stop","5 stop","6k8","Odolnost","30 stop","sluneční světlo"],"transport-via-plants":["Velké nebo větší","stejné sféře","5 stop","vidět nebo se jí dotknout"],"true-seeing":["25 zl","120 stop","pravdivé vidění","Éterické sféry"],"wall-of-ice":["10 stop","OČ 12","30 životů","10k6","5k6","2k6","1k6"],"wall-of-thorns":["60 stop","20 stop","7k8","1k8","4 stopy","brání ve výhledu"],"wind-walk":["deset ochotných","300 stop","nemagických zbraní","1 minutu","60 stop","8 hodin"],"word-of-recall":["pět ochotných","5 stop","zasvěceném","svatyni"]};
+    for (const [id,markers] of Object.entries(rules))
+      for (const marker of markers)
+        assert.ok(translations[id].includes(marker), "Missing sixth-level rule: " + id + "/" + marker);
+  });
+
   // ---- the routes ----
   const { createUser } = await import("../src/lib/db/users.ts");
   const { mintSession } = await import("../src/lib/auth.ts");
