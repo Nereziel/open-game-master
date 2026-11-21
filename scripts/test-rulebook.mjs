@@ -1013,6 +1013,42 @@ try {
     assert.ok(!legalCzech.md.startsWith("## Český "));
   });
 
+  await test("first 10 original full Czech SRD translations preserve IDs and source rules", async () => {
+    const { CZECH_FULL_RULES_1 } = await import("../src/lib/rulebook/czech-full-rules-1.ts");
+    const { CZECH_FULL_RULES_2 } = await import("../src/lib/rulebook/czech-full-rules-2.ts");
+    const batch1 = Object.keys(CZECH_FULL_RULES_1);
+    const batch2 = Object.keys(CZECH_FULL_RULES_2);
+    assert.equal(batch1.length, 8);
+    assert.equal(batch2.length, 2);
+    assert.equal(new Set([...batch1, ...batch2]).size, 10);
+    for (const [id, translation] of Object.entries({ ...CZECH_FULL_RULES_1, ...CZECH_FULL_RULES_2 })) {
+      const source = rulebookPage(id, "en")?.page;
+      const localized = rulebookPage(id, "cs")?.page;
+      assert.ok(source && localized, `Unknown full SRD rule: ${id}`);
+      assert.equal(source.id, localized.id);
+      assert.equal(localized.title !== source.title || id === "beyond-1st-level", true);
+      assert.ok(translation.length >= 400, `Unusually brief full translation: ${id}`);
+      assert.ok(localized.md.includes("## Úplné znění pravidel v češtině"));
+      assert.ok(localized.md.includes(translation));
+      assert.ok(localized.md.endsWith(source.md), `Original English rule altered: ${id}`);
+      assert.ok(localized.md.startsWith("## Český přehled pravidel"));
+    }
+    const source = rulebookPage("legal-information", "en")?.page;
+    const legal = rulebookPage("legal-information", "cs")?.page;
+    assert.equal(legal.md, source.md);
+    assert.equal(legal.title, "Licenční informace");
+  });
+
+  await test("Czech complete rules translations retain full numbered tables and mechanical details", async () => {
+    const { CZECH_FULL_RULES_1 } = await import("../src/lib/rulebook/czech-full-rules-1.ts");
+    const { CZECH_FULL_RULES_2 } = await import("../src/lib/rulebook/czech-full-rules-2.ts");
+    assert.equal((CZECH_FULL_RULES_2["beyond-1st-level"].match(/\| \d[\d ]* \| \d+ \| \+\d \|/g) ?? []).length, 20);
+    assert.match(CZECH_FULL_RULES_1.coinage, /1 000/);
+    assert.match(CZECH_FULL_RULES_1.languages, /Podzemní obecná/);
+    assert.match(CZECH_FULL_RULES_1.feats, /Zápasník/);
+    assert.match(CZECH_FULL_RULES_1["trade-goods"], /500 zl/);
+  });
+
   // ---- the routes ----
   const { createUser } = await import("../src/lib/db/users.ts");
   const { mintSession } = await import("../src/lib/auth.ts");
