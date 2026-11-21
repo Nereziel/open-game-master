@@ -180,7 +180,7 @@ export function czechCompanionBook(english: RulebookData): RulebookData {
       return {
         ...page,
         title,
-        ...(page.kind === "spell" && page.meta ? { meta: czechSrdSpellMeta(page.meta) } : {}),
+        ...(page.kind === "spell" && page.meta ? { meta: czechSrdSpellMeta(page.meta), originalMeta: page.meta } : {}),
         ...(page.kind === "spell" && page.group ? { group: czechSrdSpellGroup(page.group) } : {}),
         ...(note
           ? {
