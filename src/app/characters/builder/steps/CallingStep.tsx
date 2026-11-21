@@ -5,7 +5,7 @@ import { GameTerm } from "@/components/ui/GameTerm";
 import { textKey } from "@/lib/language/text-logic";
 import { InfoButton, InfoDialog } from "@/components/ui/InfoDialog";
 import { describeFeature, describeSkill } from "@/lib/help";
-import { contentName } from "@/lib/content/names";
+import { classFeatureName, contentName } from "@/lib/content/names";
 import { useClassFeatureText } from "@/lib/classes/use-feature-text";
 import { firstSentence } from "@/lib/help/rules-text";
 import { CLASS_ROLES, classRoles, type ClassRole } from "@/lib/srd/class-roles";
@@ -396,19 +396,23 @@ export function CallingStep({
           help={t("Tap any name to read what it does. Racial traits and background perks are added on top when the character is saved.")}
         >
           <div className="flex flex-wrap gap-x-3 gap-y-1">
-            {grantedFeatures.map((feature) => (
-              <span
-                key={`${feature.name}-${feature.level ?? 0}`}
-                className="flex items-center gap-1 text-xs text-stone-300"
-              >
-                {displayName(pack, "features", feature.name)}
-                <InfoButton
-                  label={feature.name}
-                  meta={feature.level ? t("Level {level}", { level: feature.level }) : undefined}
-                  text={klass ? describeFeature(klass.id, subclass, feature.name, locale) : null}
-                />
-              </span>
-            ))}
+            {grantedFeatures.map((feature) => {
+              const display = displayName(pack, "features", feature.name);
+              const localizedName = klass ? classFeatureName(klass.id, display, locale) : display;
+              return (
+                <span
+                  key={`${feature.name}-${feature.level ?? 0}`}
+                  className="flex items-center gap-1 text-xs text-stone-300"
+                >
+                  {localizedName}
+                  <InfoButton
+                    label={localizedName}
+                    meta={feature.level ? t("Level {level}", { level: feature.level }) : undefined}
+                    text={klass ? describeFeature(klass.id, subclass, feature.name, locale) : null}
+                  />
+                </span>
+              );
+            })}
           </div>
         </StepPanel>
       ) : null}
