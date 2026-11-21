@@ -119,6 +119,12 @@ describe("Czech localization", () => {
     expect(translate("cs", "Proficiency bonus")).toBe("Zdatnostní bonus");
     expect(translate("cs", "proficiency bonus")).toBe("zdatnostní bonus");
     expect(translate("cs", "half proficiency")).toBe("polovina zdatnostního bonusu");
+    for (const help of [
+      ...Object.values(RESOURCE_CS_EXTRA_GUIDANCE),
+      ...Object.values(RESOURCE_CS_AUTHORED_GUIDANCE),
+    ]) {
+      expect(help).not.toMatch(/odpovídá opravy|bonus za zdatnost|modifikátor/);
+    }
     expect(translate("cs", "{ability} modifier", { ability: "Moudrost" })).toBe("Oprava vlastnosti: Moudrost");
     expect(translatePlural("cs", "One skill proficiency", "{count} skill proficiencies", { count: 1 })).toBe("Jedna zdatnost v dovednosti");
     expect(translatePlural("cs", "One skill proficiency", "{count} skill proficiencies", { count: 2 })).toBe("2 zdatnosti v dovednostech");
