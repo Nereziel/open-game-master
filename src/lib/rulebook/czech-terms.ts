@@ -3,6 +3,8 @@
 // Terminology reference: https://dnd5esrd.d20.cz/prirucka-hrace/
 // and https://dnd5esrd.d20.cz/pruvodce-pana-jeskyne/dodatek-B.html
 import { CZECH_MONSTER_TITLES_6, CZECH_ITEM_TITLES_4 } from "./czech-bestiary-items-4";
+import { CZECH_MONSTER_TITLES_7 } from "./czech-monster-notes-7";
+import { CZECH_ITEM_TITLES_5 } from "./czech-item-notes-5";
 
 export const CZECH_ABILITIES: Readonly<Record<string, string>> = {
   Strength: "Síla",
@@ -212,6 +214,7 @@ export const CZECH_MONSTERS: Readonly<Record<string, string>> = {
   Wyvern: "Vyverna",
   Zombie: "Zombie",
   ...CZECH_MONSTER_TITLES_6,
+  ...CZECH_MONSTER_TITLES_7,
   "Animated Armor (Animated Object)": "Oživlá zbroj",
 };
 
@@ -639,6 +642,7 @@ export const CZECH_ITEMS: Readonly<Record<string, string>> = {
   "Weapon of Warning": "Zbraň varování",
   "Wings of Flying": "Křídla létání",
   ...CZECH_ITEM_TITLES_4,
+  ...CZECH_ITEM_TITLES_5,
 };
 
 export const CZECH_RULE_TERMS: Readonly<Record<string, string>> = {
