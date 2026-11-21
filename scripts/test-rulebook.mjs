@@ -600,9 +600,11 @@ try {
     assert.equal(czechSrdItemMeta("Wondrous item, uncommon (requires attunement)"), "Divotvorný předmět, neobvyklý (vyžaduje sladění)");
     assert.equal(czechSrdItemMeta("Unknown item, rare"), "Unknown item, rare");
     assert.equal(czechSrdMonsterMeta("unknown metadata"), "unknown metadata");
-    const drake = rulebookPage("adult-red-dragon-chromatic", "cs").page;
-    assert.equal(drake.meta, "Obrovský drak, chaoticky zlý");
-    assert.equal(drake.originalMeta, rulebookPage("adult-red-dragon-chromatic", "en").page.meta);
+    const originalDrake = rulebookPages("en").find((page) => page.kind === "monster" && page.title === "Adult Red Dragon");
+    assert.ok(originalDrake, "Adult Red Dragon exists in SRD");
+    const drake = rulebookPage(originalDrake.id, "cs").page;
+    assert.equal(drake.meta, czechSrdMonsterMeta(originalDrake.meta));
+    assert.equal(drake.originalMeta, originalDrake.meta);
   });
 
   await test("Czech companion adds original rules summaries while preserving each full English page", () => {
