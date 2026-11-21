@@ -3462,7 +3462,7 @@ try {
       "modify-memory": ["24 hodin", "10 minut", "Moudrost", "Sejmi kletbu", "Mocné navrácení", "7 dny", "30 dnů", "1 rok"],
       passwall: ["5 stop", "8 stop", "20 stop", "stabilitu", "bezpečně vytlačeni"],
       "planar-binding": ["1 000 zl", "Charisma", "10 dnů", "30 dnů", "180 dnů", "rok a jeden den"],
-      "raise-dead": ["10 dnů", "500 zl", "1 životem", "−4", "důkladného odpočinku", "nemrtvého"],
+      "raise-dead": ["10 dnů", "500 zl", "1 životem", "−4", "důkladného odpočinku", "Nemrtvého"],
       reincarnate: ["1 000 zl", "10 dnů", "01–04", "97–00", "Drakorozený", "Hobit tichošlápek", "Tiefling"],
       scrying: ["1 000 zl", "+5", "+0", "−5", "−2", "−4", "−10", "24 hodin", "10 stop"],
       seeming: ["Charisma", "1 stopu", "Inteligence (Pátrání)", "8 hodin", "uspořádání končetin"],
