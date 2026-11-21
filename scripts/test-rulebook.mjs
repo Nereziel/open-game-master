@@ -1943,7 +1943,7 @@ try {
     const sorcerer = CZECH_FULL_CLASSES_10.sorcerer;
     for (const name of [
       "Opatrné kouzlo", "Vzdálené kouzlo", "Posílené kouzlo", "Prodloužené kouzlo",
-      "Zesílené kouzlo", "Rychlé kouzlo", "Nenápadné kouzlo", "Dvojité kouzlo",
+      "Zostřené kouzlo", "Zrychlené kouzlo", "Záludné kouzlo", "Zdvojené kouzlo",
     ]) {
       assert.ok(sorcerer.includes("#### " + name), "Missing Metamagic option: " + name);
     }
@@ -1954,10 +1954,10 @@ try {
 
     const { CZECH_FULL_CLASSES_11 } = await import("../src/lib/rulebook/czech-full-classes-11.ts");
     const warlock = CZECH_FULL_CLASSES_11.warlock;
-    const invocations = warlock.split("### Seznam mystických invokací")[1].split("## Nadpozemští patroni")[0];
+    const invocations = warlock.split("### Seznam tajemných vzývání")[1].split("## Nadpozemští patroni")[0];
     assert.equal((invocations.match(/^#### /gm) ?? []).length, 32,
-      "Every SRD 5.1 Eldritch Invocation should have an independently authored Czech description");
-    for (const pact of ["Pakt řetězu", "Pakt čepele", "Pakt knihy"]) {
+      "Every SRD 5.1 Eldritch Invocation needs an independently authored Czech description");
+    for (const pact of ["Pakt řetězu", "Pakt čepele", "Pakt rukověti"]) {
       assert.ok(warlock.includes("#### " + pact), "Missing warlock Pact Boon: " + pact);
     }
 
