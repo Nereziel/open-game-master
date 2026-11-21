@@ -1769,9 +1769,9 @@ try {
       assert.ok(translated.includes(section), "Missing Czech monster statistics section: " + section);
     }
     for (const type of [
-      "Aberace", "Zvířata", "Nebešťané", "Konstrukti",
+      "Zrůdy", "Zvířata", "Nebešťané", "Výtvory",
       "Draci", "Elementálové", "Víly", "Běsové",
-      "Obři", "Humanoidi", "Zrůdy", "Slizové",
+      "Obři", "Humanoidi", "Obludy", "Slizové",
       "Rostliny", "Nemrtví",
     ]) {
       assert.ok(translated.includes("**" + type + " ("), "Missing one of the 14 monster types: " + type);
