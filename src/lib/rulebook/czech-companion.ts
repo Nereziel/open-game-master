@@ -5,7 +5,7 @@
 import type { RulebookData } from "./types";
 import { CZECH_RULE_NOTES } from "./czech-rule-extensions";
 import { CZECH_SPELL_NOTES } from "./czech-spell-notes";
-import { CZECH_ABILITIES, CZECH_CLASSES, CZECH_SKILLS, czechSrdSpellGroup, czechSrdSpellMeta, czechSrdTitle } from "./czech-terms";
+import { CZECH_ABILITIES, CZECH_CLASSES, CZECH_SKILLS, czechSrdItemMeta, czechSrdMonsterMeta, czechSrdSpellGroup, czechSrdSpellMeta, czechSrdTitle } from "./czech-terms";
 
 const CHAPTERS: Record<string, string> = {
   races: "Rasy",
@@ -181,10 +181,14 @@ export function czechCompanionBook(english: RulebookData): RulebookData {
             ? CZECH_SPELL_NOTES[page.title]
             : NOTES[page.id] ?? CZECH_RULE_NOTES[page.id];
       const title = PAGES[page.id] ?? czechSrdTitle(page.title, page.kind);
+      const meta = page.meta && page.kind === "spell" ? czechSrdSpellMeta(page.meta)
+        : page.meta && page.kind === "monster" ? czechSrdMonsterMeta(page.meta)
+        : page.meta && page.kind === "item" ? czechSrdItemMeta(page.meta)
+        : page.meta;
       return {
         ...page,
         title,
-        ...(page.kind === "spell" && page.meta ? { meta: czechSrdSpellMeta(page.meta), originalMeta: page.meta } : {}),
+        ...(meta && meta !== page.meta ? { meta, originalMeta: page.meta } : {}),
         ...(page.kind === "spell" && page.group ? { group: czechSrdSpellGroup(page.group) } : {}),
         ...(note
           ? {
