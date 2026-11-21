@@ -154,9 +154,9 @@ const NOTES: Record<string, string> = {
 
   "beyond-1st-level": `Za překonané výzvy postavy získávají zkušenosti (XP). Na vyšších úrovních přibývají životy a schopnosti povolání.
 
-**Bonus zdatnosti** závisí na celkové úrovni: +2 na úrovních 1–4, +3 na 5–8, +4 na 9–12, +5 na 13–16 a +6 na 17–20. Běžné zvýšení hodnot vlastností přidává +2 k jedné vlastnosti nebo +1 ke dvěma různým, zpravidla nejvýše na 20.`,
+**Zdatnostní bonus** závisí na celkové úrovni: +2 na úrovních 1–4, +3 na 5–8, +4 na 9–12, +5 na 13–16 a +6 na 17–20. Běžné zvýšení hodnot vlastností přidává +2 k jedné vlastnosti nebo +1 ke dvěma různým, zpravidla nejvýše na 20.`,
 
-  multiclassing: `Kombinování povolání je volitelné pravidlo. Při postupu na úroveň může postava získat úroveň dalšího povolání, pokud splňuje předepsané hodnoty vlastností původního i nového povolání. Schopnosti se získávají podle úrovní v jednotlivých povoláních; bonus zdatnosti se řídí celkovou úrovní. Pro sesílání kouzel platí zvláštní tabulka.`,
+  multiclassing: `Kombinování povolání je volitelné pravidlo. Při postupu na úroveň může postava získat úroveň dalšího povolání, pokud splňuje předepsané hodnoty vlastností původního i nového povolání. Schopnosti se získávají podle úrovní v jednotlivých povoláních; zdatnostní bonus se řídí celkovou úrovní. Pro sesílání kouzel platí zvláštní tabulka.`,
 
   inspiration: `Inspiraci uděluje Pán jeskyně za hraní charakteru a rozhodnutí postavy. Postava může mít pouze jednu inspiraci najednou. Její spotřebování poskytne **výhodu** k jednomu hodu na útok, ověření vlastnosti nebo záchrannému hodu. Inspiraci lze také předat jiné postavě.`,
 
@@ -164,13 +164,13 @@ const NOTES: Record<string, string> = {
 
 Zbroj, se kterou postava není zdatná, omezuje hody založené na Síle a Obratnosti a znemožňuje sesílání kouzel. Některá těžká zbroj při nedostatečné Síle snižuje rychlost. Konkrétní hodnoty najdete v původní tabulce.`,
 
-  weapons: `Zbraně jsou jednoduché nebo válečné a slouží k boji na blízko nebo na dálku. Zdatná postava přičítá k hodu na útok svůj bonus zdatnosti.
+  weapons: `Zbraně jsou jednoduché nebo válečné a slouží k boji na blízko nebo na dálku. Zdatná postava přičítá k hodu na útok svůj zdatnostní bonus.
 
-Útok zbraní na blízko obvykle používá Sílu, útok zbraní na dálku Obratnost. Obratná zbraň dovoluje použít Sílu nebo Obratnost. Kostky zranění a vlastnosti jako dosah, těžká, dvouruční či vrhací určuje konkrétní zbraň.`,
+Útok zbraní na blízko obvykle používá Sílu, útok zbraní na dálku Obratnost. Vytříbená zbraň dovoluje použít Sílu nebo Obratnost. Kostky zranění a vlastnosti jako dosah, těžká, dvouruční či vrhací určuje konkrétní zbraň.`,
 
   feats: `Odbornosti jsou volitelnou alternativou k některým zvýšením hodnot vlastností. Postava musí splnit předpoklady dané odbornosti. Účinky se řídí textem konkrétní odbornosti; odbornosti zpravidla nelze získávat opakovaně, pokud to výslovně neumožňují.`,
 
-  "using-ability-scores": `Pro **ověření vlastnosti** hoďte k20 a přičtěte opravu příslušné vlastnosti. Pokud má postava odpovídající zdatnost, přičte také bonus zdatnosti. Pán jeskyně stanovuje obtížnost (DC); hod musí dosáhnout této hodnoty nebo ji překročit.
+  "using-ability-scores": `Pro **ověření vlastnosti** hoďte k20 a přičtěte opravu příslušné vlastnosti. Pokud má postava odpovídající zdatnost, přičte také zdatnostní bonus. Pán jeskyně stanovuje obtížnost (DC); hod musí dosáhnout této hodnoty nebo ji překročit.
 
 **Výhoda** znamená hodit dvěma k20 a použít vyšší výsledek; **nevýhoda** znamená použít nižší. Více výhod se nesčítá a výhoda s nevýhodou se navzájem ruší.
 
