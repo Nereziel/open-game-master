@@ -7,7 +7,7 @@ import { cn } from "@/lib/cn";
 import type { ContentsChapter, ContentsEntry, RulebookContents as Contents, RulebookPart, SearchHit } from "@/lib/rulebook/types";
 import { Digits } from "./RulebookPage";
 import { splitWords, textKey } from "@/lib/language/text-logic";
-import { useLocale, useT, useTp } from "@/lib/locale";
+import { useLocale, useT, useTp, odmLocaleHeaders } from "@/lib/locale";
 
 // The left-hand page: the book's name, a search line, the rules a table
 // reaches for mid-session, the reader's bookmarks, and the contents, book by
@@ -135,7 +135,7 @@ export function RulebookContents({
   searchRef: RefObject<HTMLInputElement | null>;
 }) {
   const [query, setQuery] = useState("");
-  const [result, setResult] = useState<{ query: string; hits: SearchHit[] } | null>(null);
+  const [result, setResult] = useState<{ query: string; locale: string; hits: SearchHit[] } | null>(null);
   const [searching, setSearching] = useState(false);
   const t = useT();
   const tp = useTp();
@@ -162,16 +162,22 @@ export function RulebookContents({
   const asked = useRef("");
   useEffect(() => {
     const q = query.trim();
-    asked.current = q;
-    if (!q) return;
+    const key = `${locale}:${q}`;
+    asked.current = key;
+    if (!q) {
+      setSearching(false);
+      return;
+    }
     const timer = setTimeout(async () => {
       setSearching(true);
       try {
-        const response = await fetch(`/api/rulebook/search?q=${encodeURIComponent(q)}`, { headers: { "Accept-Language": locale } });
+        const response = await fetch(`/api/rulebook/search?q=${encodeURIComponent(q)}`, { headers: { "Accept-Language": locale, ...odmLocaleHeaders() } });
         const data = response.ok ? await response.json() : { hits: [] };
-        if (asked.current === q) setResult({ query: q, hits: data.hits ?? [] });
+        if (asked.current === key) setResult({ query: q, locale, hits: data.hits ?? [] });
+      } catch {
+        if (asked.current === key) setResult({ query: q, locale, hits: [] });
       } finally {
-        if (asked.current === q) setSearching(false);
+        if (asked.current === key) setSearching(false);
       }
     }, 180);
     return () => clearTimeout(timer);
@@ -211,7 +217,7 @@ export function RulebookContents({
   }, [contents]);
 
   const searchingNow = Boolean(query.trim());
-  const shown = searchingNow && result?.query === query.trim() ? result : null;
+  const shown = searchingNow && result?.query === query.trim() && result.locale === locale ? result : null;
   const marks = useMemo(() => bookmarks.map((id) => entries.get(id)).filter((entry): entry is ContentsEntry => Boolean(entry)), [bookmarks, entries]);
 
   return (
