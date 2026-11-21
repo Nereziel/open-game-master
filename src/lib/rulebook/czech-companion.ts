@@ -125,7 +125,7 @@ const BLURBS: Record<string, string> = {
 const PAGES: Record<string, string> = {
   "racial-traits": "Rasové vlastnosti",
   "beyond-1st-level": "Postup na vyšší úrovně",
-  multiclassing: "Kombinování povolání",
+  multiclassing: "Multipovolání",
   alignment: "Přesvědčení",
   languages: "Jazyky",
   inspiration: "Inspirace",
