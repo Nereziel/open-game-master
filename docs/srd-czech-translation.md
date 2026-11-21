@@ -485,12 +485,42 @@ a 42/42 kouzel 3. úrovně. **Zbývá 150 kouzel úrovní 4–9.**
 Statická kontrola ověřila 18 položek a napojení do čtečky.
 Build a testovací sady se na Draft PR nespouštějí podle dohody.
 
+## První dávka úplných kouzel 4. úrovně SRD 5.1 (21. 11. 2026)
+
+Nový soubor `src/lib/rulebook/czech-full-spells-15.ts` obsahuje úplné
+samostatné české překlady prvních **12/31 kouzel 4. úrovně**:
+**Mystické oko, Vypuzení, Evardova černá chapadla, Hniloba, Nutkání,
+Zmatek, Vyvolej nižší elementály, Vyvolej lesní bytosti, Ovládni vodu,
+Znamení proti smrti, Dimenzionální dveře a Věštění**.
+
+Každý záznam zachovává všechny čtyři údaje sesílání a kompletní
+pravidlové účinky. Zvláštní pozornost je věnována úplné tabulce k10
+u Zmatku, všem čtyřem účinkům Ovládni vodu, trvání Vypuzení
+a podmínkám přenosu Dimenzionálními dveřmi.
+
+`czech-companion.ts` propojuje nové texty s českou čtečkou;
+anglický originál, ID, metadata a herní/MCP rozhraní zůstávají
+nezměněné. Regresní test v `scripts/test-rulebook.mjs` kontroluje
+12 zdrojových ID v pořadí, české názvy, dobu sesílání, dosahy,
+složky V/S/M, trvání, rituály, kostky, důležité účinky a
+zachování anglických originálních popisů.
+
+Popisy jsou vlastní překlady z anglického SRD 5.1 (CC BY 4.0);
+české komunitní zdroje poskytují pouze ustálené názvy.
+
+**Úplné české popisy kouzel: 181/319**. Hotovo **12/31
+kouzel 4. úrovně**, zbývá **19** této úrovně a **138**
+kouzel celkem.
+
+Regresní test je připraven, ale **build ani testovací sada nebyly
+spuštěny**, jak je domluveno pro Draft PR.
+
 ## Stav
 
 - Stručné české přehledy: 932/933 kanonických stránek (výjimkou je atribuce).
 - Úplné české znění pravidlových stránek: **35/35 obsahových pravidlových stránek**.
 - Úplné české překlady jednotlivých ras: **9/9 rasových stránek SRD 5.1**, včetně všech podras obsažených ve zdrojovém SRD.
-- Úplné české popisy jednotlivých kouzel: **169/319** – všech **24/24 triků** a všech **49/49 kouzel 1. úrovně** a všech **54/54 kouzel 2. úrovně** a všech **42/42 kouzel 3. úrovně**.
+- Úplné české popisy jednotlivých kouzel: **181/319** – všech **24/24 triků** a všech **49/49 kouzel 1. úrovně** a všech **54/54 kouzel 2. úrovně** a všech **42/42 kouzel 3. úrovně** a prvních **12/31 kouzel 4. úrovně**.
 - Dříve dokončené kapitoly zahrnují **Stavy, Nemoci, Objekty, Artefakty** a další pravidla.
 - V další dávce jsou úplně přeloženy kapitoly **Jízdní zvířata a dopravní prostředky, Nástroje, Kouzelné předměty, Jedy a Inteligentní kouzelné předměty**.
 - Následující dávka přeložila celé kapitoly **Zbroje**, **Šílenství** a

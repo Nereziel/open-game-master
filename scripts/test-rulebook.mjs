@@ -3063,6 +3063,81 @@ try {
       assert.ok(all[id].includes(marker), "Missing essential spell rule: " + id + "/" + marker);
   });
 
+
+  await test("first 12 fourth-level SRD 5.1 spells have full Czech descriptions and correct mechanics", async () => {
+    const { CZECH_FULL_SPELLS_15 } = await import("../src/lib/rulebook/czech-full-spells-15.ts");
+    const expected = ["arcane-eye","banishment","black-tentacles","blight","compulsion","confusion","conjure-minor-elementals","conjure-woodland-beings","control-water","death-ward","dimension-door","divination"];
+    const originals = rulebookPages("en").filter((page) =>
+      page.kind === "spell" && page.meta?.startsWith("4th-level"));
+    assert.equal(originals.length, 31, "Unexpected fourth-level SRD source count");
+    assert.deepEqual(Object.keys(CZECH_FULL_SPELLS_15), expected);
+    assert.deepEqual(originals.slice(0, 12).map((page) => page.id), expected,
+      "Fourth-level spells must retain source ordering");
+    const field = (markdown, label) => {
+      const prefix = "**" + label + ":** ";
+      return markdown.split("\n").find((line) => line.startsWith(prefix))?.slice(prefix.length);
+    };
+    const ranges = {
+      "30 feet": "30 stop", "60 feet": "60 stop", "90 feet": "90 stop",
+      "300 feet": "300 stop", "500 feet": "500 stop", Touch: "Dotyk", Self: "Sesilatel",
+    };
+    const durations = {
+      Instantaneous: "Ihned", "8 hours": "8 hodin",
+      "Concentration, up to 1 minute": "Soustředění, až 1 minuta",
+      "Concentration, up to 10 minutes": "Soustředění, až 10 minut",
+      "Concentration, up to 1 hour": "Soustředění, až 1 hodina",
+    };
+    for (const original of originals.slice(0, 12)) {
+      const text = CZECH_FULL_SPELLS_15[original.id];
+      const localized = rulebookPage(original.id, "cs").page;
+      assert.ok(text?.length >= 230, "Missing Czech rules: " + original.id);
+      assert.equal(localized.id, original.id);
+      assert.equal(localized.title, CZECH_SPELLS[original.title]);
+      assert.equal(localized.originalMeta, original.meta);
+      assert.ok(localized.md.includes("## Úplné znění pravidel v češtině"));
+      assert.ok(localized.md.includes(text), "Czech reader missing spell: " + original.id);
+      assert.ok(localized.md.endsWith(original.md), "English SRD content changed: " + original.id);
+      for (const [english, czech] of [
+        ["Casting Time", "Doba sesílání"], ["Range", "Dosah"],
+        ["Components", "Složky"], ["Duration", "Trvání"],
+      ]) assert.ok(field(original.md, english) && field(text, czech),
+        "Missing field: " + original.id + "/" + czech);
+      const enParts = field(original.md, "Components").match(/^[VSM, ]+/)?.[0]?.trim();
+      const czParts = field(text, "Složky").match(/^[VSM, ]+/)?.[0]?.trim();
+      assert.ok(enParts);
+      assert.equal(czParts, enParts, "Spell components changed: " + original.id);
+      const originalRange = field(original.md, "Range");
+      if (ranges[originalRange]) assert.ok(field(text, "Dosah").startsWith(ranges[originalRange]),
+        "Spell range changed: " + original.id);
+      const duration = field(original.md, "Duration");
+      if (durations[duration]) assert.equal(field(text, "Trvání"), durations[duration]);
+      const casting = field(original.md, "Casting Time");
+      if (casting === "1 action") assert.equal(field(text, "Doba sesílání"), "1 akce");
+      if (casting === "1 minute") assert.equal(field(text, "Doba sesílání"), "1 minuta");
+      if (casting === "1 hour") assert.equal(field(text, "Doba sesílání"), "1 hodina");
+      if (/^\*4th-level [^\n]*\(ritual\)\*/m.test(original.md))
+        assert.ok(text.includes("(rituál)"), "Ritual marker missing: " + original.id);
+      for (const [, count, sides] of original.md.matchAll(/\b(\d+)d(\d+)\b/g))
+        assert.ok(text.includes(count + "k" + sides), "Missing source dice: " + original.id);
+    }
+    for (const [id, markers] of Object.entries({
+      "arcane-eye": ["30 stop", "1 palec", "jiné sféry", "všemi směry"],
+      banishment: ["Charisma", "neškodné polosféry", "celou minutu", "jednoho dalšího tvora"],
+      "black-tentacles": ["90 stop", "20 stop", "3k6", "Síly nebo Obratnosti", "obtížným terénem"],
+      blight: ["8k8", "1k8", "nemrtvé ani na výtvory", "nejvyšší možné"],
+      compulsion: ["bonusovou akcí", "Moudrost", "příležitostné útoky", "horizontální"],
+      confusion: ["k10", "k8", "2–6", "7–8", "9–10", "reakce"],
+      "conjure-minor-elementals": ["1/2", "1/4", "iniciativu", "6. úrovně", "8. úrovně"],
+      "conjure-woodland-beings": ["cesmíny", "1/2", "1/4", "6. úrovně", "8. úrovně"],
+      "control-water": ["300 stop", "100 stop", "25%", "2k8", "vír", "Přesměrování"],
+      "death-ward": ["0 životů", "1 život", "okamžitě zabil"],
+      "dimension-door": ["500 stop", "200 stop", "300 stop", "5 stop", "4k6"],
+      divination: ["(rituál)", "25 zl", "7 dnů", "25%", "Pán jeskyně"],
+    })) for (const marker of markers)
+      assert.ok(CZECH_FULL_SPELLS_15[id].includes(marker),
+        "Fourth-level mechanics missing: " + id + "/" + marker);
+  });
+
   // ---- the routes ----
   const { createUser } = await import("../src/lib/db/users.ts");
   const { mintSession } = await import("../src/lib/auth.ts");
