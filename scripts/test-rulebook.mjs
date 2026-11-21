@@ -489,7 +489,7 @@ try {
     }
     const spell = english.find((page) => page.kind === "spell" && page.title === "Polymorph");
     assert.ok(spell, "Polymorph exists in SRD 5.1");
-    assert.ok(rulebookSearch("Proměna", 10, "cs").hits.some((hit) => hit.page === spell.id), "Czech search resolves Polymorph");
+    assert.ok(rulebookSearch("Proměň tvora", 10, "cs").hits.some((hit) => hit.page === spell.id), "Czech search resolves Polymorph");
     assert.equal(rulebookPage("polymorph", "en").page.title, "Polymorph");
   });
 
@@ -1047,6 +1047,1182 @@ try {
     assert.match(CZECH_FULL_RULES_1.languages, /Podzemní obecná/);
     assert.match(CZECH_FULL_RULES_1.feats, /Zápasník/);
     assert.match(CZECH_FULL_RULES_1["trade-goods"], /500 zl/);
+  });
+
+  await test("four additional complete Czech SRD rule chapters retain their English source", async () => {
+    const { CZECH_FULL_RULES_3 } = await import("../src/lib/rulebook/czech-full-rules-3.ts");
+    assert.deepEqual(Object.keys(CZECH_FULL_RULES_3).sort(), ["artifacts", "conditions", "diseases", "objects"]);
+    const sourceById = new Map(rulebookPages("en").map((page) => [page.id, page]));
+    for (const [id, translated] of Object.entries(CZECH_FULL_RULES_3)) {
+      const original = sourceById.get(id);
+      const localized = rulebookPage(id, "cs")?.page;
+      assert.ok(original && localized, `Unknown SRD rules page: ${id}`);
+      assert.equal(localized.id, original.id);
+      assert.equal(localized.kind, original.kind);
+      assert.ok(localized.md.startsWith("## Český přehled pravidel"), `Missing Czech overview: ${id}`);
+      assert.ok(localized.md.includes("## Úplné znění pravidel v češtině"));
+      assert.ok(localized.md.includes(translated));
+      assert.ok(translated.length > 2500, `Incomplete rule chapter: ${id}`);
+      assert.ok(localized.md.endsWith(original.md), `English original changed: ${id}`);
+    }
+    assert.deepEqual(
+      [...new Set([...Object.keys((await import("../src/lib/rulebook/czech-full-rules-1.ts")).CZECH_FULL_RULES_1),
+        ...Object.keys((await import("../src/lib/rulebook/czech-full-rules-2.ts")).CZECH_FULL_RULES_2),
+        ...Object.keys(CZECH_FULL_RULES_3)])].length,
+      14,
+    );
+  });
+
+  await test("Czech conditions, diseases and objects retain their full numerical SRD rules", async () => {
+    const { CZECH_FULL_RULES_3 } = await import("../src/lib/rulebook/czech-full-rules-3.ts");
+    for (const name of ["Oslepený", "Okouzlený", "Ohlušený", "Vyčerpání", "Vystrašený",
+      "Uchvácený", "Neschopný", "Neviditelný", "Ochromený", "Zkamenělý",
+      "Otrávený", "Sražený", "Zadržený", "Omráčený", "V bezvědomí"]) {
+      assert.ok(CZECH_FULL_RULES_3.conditions.includes(`## ${name}`), name);
+    }
+    for (const n of ["| 1 |", "| 2 |", "| 3 |", "| 4 |", "| 5 |", "| 6 |"]) {
+      assert.ok(CZECH_FULL_RULES_3.conditions.includes(n));
+    }
+    for (const n of ["Záchvaty smíchu", "Stoková nákaza", "Hniloba zraku"]) {
+      assert.ok(CZECH_FULL_RULES_3.diseases.includes(n));
+    }
+    assert.match(CZECH_FULL_RULES_3.diseases, /SO 13/);
+    assert.match(CZECH_FULL_RULES_3.diseases, /SO 11/);
+    assert.match(CZECH_FULL_RULES_3.diseases, /SO 15/);
+    assert.match(CZECH_FULL_RULES_3.objects, /Práh zranění/);
+    assert.match(CZECH_FULL_RULES_3.objects, /\| Adamantin \| 23 \|/);
+    assert.match(CZECH_FULL_RULES_3.artifacts, /40 mil/);
+    assert.match(CZECH_FULL_RULES_3.artifacts, /1k4 \+ 3/);
+    assert.match(CZECH_FULL_RULES_3.artifacts, /Sledování/);
+  });
+
+  await test("five more SRD rule pages render complete Czech translations without altering original rules", async () => {
+    const { CZECH_FULL_RULES_4 } = await import("../src/lib/rulebook/czech-full-rules-4.ts");
+    const { CZECH_FULL_RULES_5 } = await import("../src/lib/rulebook/czech-full-rules-5.ts");
+    assert.deepEqual(Object.keys(CZECH_FULL_RULES_4).sort(), ["magic-items", "mounts-and-vehicles", "tools"]);
+    assert.deepEqual(Object.keys(CZECH_FULL_RULES_5).sort(), ["poisons", "sentient-magic-items"]);
+    for (const [id, translation] of Object.entries({ ...CZECH_FULL_RULES_4, ...CZECH_FULL_RULES_5 })) {
+      const original = rulebookPage(id, "en")?.page;
+      const localized = rulebookPage(id, "cs")?.page;
+      assert.ok(original && localized, `Missing canonical rules page: ${id}`);
+      assert.equal(original.id, localized.id);
+      assert.equal(original.kind, "rules");
+      assert.ok(translation.length > 3200, `Suspiciously short translation: ${id}`);
+      assert.ok(localized.md.startsWith("## Český přehled pravidel"), `Missing Czech summary: ${id}`);
+      assert.ok(localized.md.includes("## Úplné znění pravidel v češtině"));
+      assert.ok(localized.md.includes(translation), `Translation not wired into reader: ${id}`);
+      assert.ok(localized.md.endsWith(original.md), `Changed original English rules: ${id}`);
+    }
+    const { CZECH_FULL_RULES_1 } = await import("../src/lib/rulebook/czech-full-rules-1.ts");
+    const { CZECH_FULL_RULES_2 } = await import("../src/lib/rulebook/czech-full-rules-2.ts");
+    const { CZECH_FULL_RULES_3 } = await import("../src/lib/rulebook/czech-full-rules-3.ts");
+    const ids = [CZECH_FULL_RULES_1, CZECH_FULL_RULES_2, CZECH_FULL_RULES_3,
+      CZECH_FULL_RULES_4, CZECH_FULL_RULES_5].flatMap((batch) => Object.keys(batch));
+    assert.equal(ids.length, 19);
+    assert.equal(new Set(ids).size, 19, "Duplicated full Czech rule page");
+  });
+
+  await test("translated poison mechanics and magic item limits match canonical numbers", async () => {
+    const { CZECH_FULL_RULES_4 } = await import("../src/lib/rulebook/czech-full-rules-4.ts");
+    const { CZECH_FULL_RULES_5 } = await import("../src/lib/rulebook/czech-full-rules-5.ts");
+    const mounts = CZECH_FULL_RULES_4["mounts-and-vehicles"];
+    for (const name of ["Velbloud", "Osel nebo mezek", "Slon", "Tažný kůň",
+      "Jezdecký kůň", "Doga", "Poník", "Válečný kůň"]) {
+      assert.ok(mounts.includes(`| ${name} |`), `Missing mount table row: ${name}`);
+    }
+    assert.match(mounts, /pětinásobku své základní nosnosti/);
+    assert.match(mounts, /\| Galéra \| 30 000 zl \| 4 míle\/h \|/);
+    assert.match(CZECH_FULL_RULES_4.tools, /\| Zlodějské náčiní \| 25 zl \| 1 libra \|/);
+    assert.match(CZECH_FULL_RULES_4.tools, /zdatnost/i);
+    assert.match(CZECH_FULL_RULES_4["magic-items"], /nejvýše se třemi kouzelnými předměty/);
+    assert.match(CZECH_FULL_RULES_4["magic-items"], /více než 100 stop/);
+    assert.match(CZECH_FULL_RULES_4["magic-items"], /24 hodin/);
+    assert.match(CZECH_FULL_RULES_4["magic-items"], /nespotřebuje žádnou pozici kouzla uživatele/);
+    const poisons = CZECH_FULL_RULES_5.poisons;
+    for (const name of ["Vrahova krev", "Výpary spáleného othuru", "Hlen plíživce",
+      "Drowský jed", "Éterická esence", "Zlovůle", "Půlnoční slzy",
+      "Taggitův olej", "Bledá tinktura", "Jed purpurového červa",
+      "Hadí jed", "Malátnost", "Sérum pravdy", "Jed wyverny"]) {
+      assert.ok(poisons.includes(`***${name} (`), `Poison effect not translated: ${name}`);
+    }
+    for (const n of ["SO 10", "SO 11", "SO 13", "SO 15", "SO 16", "SO 17", "SO 19"]) {
+      assert.ok(poisons.includes(n), `Missing poison saving throw: ${n}`);
+    }
+    const sentient = CZECH_FULL_RULES_5["sentient-magic-items"];
+    assert.match(sentient, /4k6/);
+    assert.match(sentient, /1k12 hodin/);
+    assert.match(sentient, /SO 12 \+ oprava Charismatu předmětu/);
+    for (const n of ["| 01–15 |", "| 97–100 |", "| 10 | **Hledač tvůrce"]) {
+      assert.ok(sentient.includes(n), `Missing sentient-item table row: ${n}`);
+    }
+  });
+
+  await test("three complete Czech SRD translations cover armor, madness and planes", async () => {
+    const { CZECH_FULL_RULES_6 } = await import("../src/lib/rulebook/czech-full-rules-6.ts");
+    const { CZECH_FULL_RULES_7 } = await import("../src/lib/rulebook/czech-full-rules-7.ts");
+    const { CZECH_FULL_RULES_8 } = await import("../src/lib/rulebook/czech-full-rules-8.ts");
+    assert.deepEqual(Object.keys(CZECH_FULL_RULES_6), ["armor"]);
+    assert.deepEqual(Object.keys(CZECH_FULL_RULES_7), ["madness"]);
+    assert.deepEqual(Object.keys(CZECH_FULL_RULES_8), ["the-planes-of-existence"]);
+    for (const [id, translated] of Object.entries({
+      ...CZECH_FULL_RULES_6, ...CZECH_FULL_RULES_7, ...CZECH_FULL_RULES_8,
+    })) {
+      const original = rulebookPage(id, "en")?.page;
+      const localized = rulebookPage(id, "cs")?.page;
+      assert.ok(original && localized, `Missing source or Czech rules page: ${id}`);
+      assert.equal(localized.id, original.id);
+      assert.equal(localized.kind, "rules");
+      assert.ok(translated.length > 5000, `Unexpectedly short Czech rules page: ${id}`);
+      assert.ok(localized.md.startsWith("## Český přehled pravidel"));
+      assert.ok(localized.md.includes("## Úplné znění pravidel v češtině"));
+      assert.ok(localized.md.includes(translated), `Full Czech rules not connected: ${id}`);
+      assert.ok(localized.md.endsWith(original.md), `English canonical SRD changed: ${id}`);
+    }
+    const modules = await Promise.all([1, 2, 3, 4, 5, 6, 7, 8]
+      .map((batch) => import(`../src/lib/rulebook/czech-full-rules-${batch}.ts`)));
+    const ids = modules.flatMap((module, idx) => Object.keys(module[`CZECH_FULL_RULES_${idx + 1}`]));
+    assert.equal(ids.length, 22);
+    assert.equal(new Set(ids).size, 22, "Duplicated full Czech rules translation");
+  });
+
+  await test("Czech armor and madness tables preserve the 2014 SRD mechanical values", async () => {
+    const { CZECH_FULL_RULES_6: batch6 } = await import("../src/lib/rulebook/czech-full-rules-6.ts");
+    const { CZECH_FULL_RULES_7: batch7 } = await import("../src/lib/rulebook/czech-full-rules-7.ts");
+    const { CZECH_FULL_RULES_8: batch8 } = await import("../src/lib/rulebook/czech-full-rules-8.ts");
+    const armor = batch6.armor;
+    for (const row of [
+      "| Vycpávaná | 5 zl | 11 + oprava Obr |",
+      "| Kožená | 10 zl | 11 + oprava Obr |",
+      "| Pobíjená kožená | 45 zl | 12 + oprava Obr |",
+      "| Kožešinová | 10 zl | 12 + oprava Obr (max. +2) |",
+      "| Kroužková košile | 50 zl | 13 + oprava Obr (max. +2) |",
+      "| Šupinová | 50 zl | 14 + oprava Obr (max. +2) |",
+      "| Kyrys | 400 zl | 14 + oprava Obr (max. +2) |",
+      "| Poloviční plátová | 750 zl | 15 + oprava Obr (max. +2) |",
+      "| Kroužková | 30 zl | 14 |",
+      "| Kroužková brň | 75 zl | 16 | Sil 13 |",
+      "| Pásová | 200 zl | 17 | Sil 15 |",
+      "| Plátová | 1 500 zl | 18 | Sil 15 |",
+      "| Štít | 10 zl | +2 |",
+      "| Lehká zbroj | 1 minuta | 1 minuta |",
+      "| Střední zbroj | 5 minut | 1 minuta |",
+      "| Těžká zbroj | 10 minut | 5 minut |",
+      "| Štít | 1 akce | 1 akce |",
+    ]) {
+      assert.ok(armor.includes(row), `Missing armor rule/table row: ${row}`);
+    }
+    assert.ok(armor.includes("rychlost o 10 stop"));
+    assert.ok(armor.includes("S pomocí dalšího tvora se zkrátí na polovinu"));
+    const madness = batch7.madness;
+    assert.ok(madness.includes("1k10 minut"));
+    assert.ok(madness.includes("*Mluva sfér*"), "Madness rules must use established Czech spell title");
+    assert.ok(madness.includes("1k10 × 10 hodin"));
+    for (const range of [
+      "01–20", "21–30", "31–40", "41–50", "51–60", "61–70",
+      "71–75", "76–80", "81–90", "91–100",
+      "01–10", "11–20", "41–45", "46–55", "56–65",
+      "66–75", "76–85", "86–90", "91–95", "96–100",
+      "01–15", "16–25", "26–30", "31–35", "36–45", "46–50",
+      "51–55", "56–70", "71–80", "81–85", "86–95",
+    ]) {
+      assert.ok(madness.includes(`| ${range} |`), `Missing madness range: ${range}`);
+    }
+    assert.ok(madness.includes("SO 15"));
+    const planes = batch8["the-planes-of-existence"];
+    for (const term of [
+      "Materiální sféra", "Éterická sféra", "Astrální sféra",
+      "Vnitřní sféry", "Vnější sféry", "Horní sféry",
+      "Dolní sféry", "Živelný chaos", "Polosféry",
+    ]) {
+      assert.ok(planes.includes(term), `Missing cosmology section: ${term}`);
+    }
+    assert.ok(planes.includes("šestnácti sfér"));
+    assert.ok(planes.includes("*Spatři neviditelné*"));
+    assert.ok(planes.includes("*Pravdivé vidění*"));
+    assert.ok(madness.includes("*Mocné navrácení*"));
+  });
+
+  await test("complete Czech multiclassing and background rules remain source-faithful", async () => {
+    const { CZECH_FULL_RULES_9 } = await import("../src/lib/rulebook/czech-full-rules-9.ts");
+    const { CZECH_FULL_RULES_10 } = await import("../src/lib/rulebook/czech-full-rules-10.ts");
+    assert.deepEqual(Object.keys(CZECH_FULL_RULES_9), ["multiclassing"]);
+    assert.equal(rulebookPage("multiclassing", "cs")?.page?.title, "Multipovolání");
+    assert.ok(CZECH_FULL_RULES_9.multiclassing.startsWith("Multipovolání umožňuje"));
+    assert.deepEqual(Object.keys(CZECH_FULL_RULES_10), ["backgrounds"]);
+    const translated = { ...CZECH_FULL_RULES_9, ...CZECH_FULL_RULES_10 };
+    for (const [id, content] of Object.entries(translated)) {
+      const en = rulebookPage(id, "en")?.page;
+      const cs = rulebookPage(id, "cs")?.page;
+      assert.ok(en && cs, `Canonical page missing: ${id}`);
+      assert.equal(en.id, cs.id);
+      assert.equal(en.kind, "rules");
+      assert.ok(content.length > 6000, `Incomplete Czech translation: ${id}`);
+      assert.ok(cs.md.startsWith("## Český přehled pravidel"));
+      assert.ok(cs.md.includes("## Úplné znění pravidel v češtině"));
+      assert.ok(cs.md.includes(content));
+      assert.ok(cs.md.endsWith(en.md), `Original English rule altered: ${id}`);
+    }
+    const batches = await Promise.all([1, 2, 3, 4, 5, 6, 7, 8, 9, 10].map(
+      async (n) => {
+        const module = await import(`../src/lib/rulebook/czech-full-rules-${n}.ts`);
+        return module[`CZECH_FULL_RULES_${n}`];
+      },
+    ));
+    const ids = batches.flatMap((batch) => Object.keys(batch));
+    assert.equal(ids.length, 24);
+    assert.equal(new Set(ids).size, 24, "Duplicate page ID in full Czech rules dictionaries");
+  });
+
+  await test("Czech multiclassing and acolyte preserve every numeric table and rule", async () => {
+    const { CZECH_FULL_RULES_9 } = await import("../src/lib/rulebook/czech-full-rules-9.ts");
+    const { CZECH_FULL_RULES_10 } = await import("../src/lib/rulebook/czech-full-rules-10.ts");
+    const multi = CZECH_FULL_RULES_9.multiclassing;
+    const backgrounds = CZECH_FULL_RULES_10.backgrounds;
+    for (const klass of ["Barbar", "Bard", "Klerik", "Druid", "Bojovník",
+      "Mnich", "Paladin", "Hraničář", "Tulák", "Čaroděj",
+      "Černokněžník", "Kouzelník"]) {
+      assert.ok(multi.includes(`| ${klass} |`), `Missing multiclass prerequisite: ${klass}`);
+    }
+    for (let level = 1; level <= 20; level++) {
+      assert.ok(multi.includes(`| ${level} |`), `Multiclass spell slot table missing level ${level}`);
+    }
+    assert.ok(multi.includes("| 20 | 4 | 3 | 3 | 3 | 3 | 2 | 2 | 1 | 1 |"));
+    assert.ok(multi.includes("polovinu úrovní paladina a hraničáře, zaokrouhlenou dolů"));
+    assert.ok(multi.includes("Usměrnění božské energie"));
+    assert.ok(multi.includes("Paktová magie"));
+    assert.ok(backgrounds.includes("**Zdatnosti v dovednostech:** Vhled, Náboženství"));
+    assert.ok(backgrounds.includes("**15 zlatými**"));
+    assert.ok(backgrounds.includes("### Schopnost: Útočiště věřících"));
+    assert.ok(backgrounds.includes("## Akolyta"));
+    for (let n = 1; n <= 8; n++) {
+      assert.ok(backgrounds.includes(`| ${n} |`), `Missing akolyte personality trait ${n}`);
+    }
+    for (const table of ["| k6 | Ideál |", "| k6 | Pouto |", "| k6 | Vada |"]) {
+      assert.ok(backgrounds.includes(table), `Missing background characteristic table: ${table}`);
+    }
+  });
+
+  await test("complete Czech weapons and expenses retain every canonical SRD rule and ID", async () => {
+    const { CZECH_FULL_RULES_11 } = await import("../src/lib/rulebook/czech-full-rules-11.ts");
+    const { CZECH_FULL_RULES_12 } = await import("../src/lib/rulebook/czech-full-rules-12.ts");
+    assert.deepEqual(Object.keys(CZECH_FULL_RULES_11), ["weapons"]);
+    assert.deepEqual(Object.keys(CZECH_FULL_RULES_12), ["expenses"]);
+    for (const [id, translated] of Object.entries({ ...CZECH_FULL_RULES_11, ...CZECH_FULL_RULES_12 })) {
+      const en = rulebookPage(id, "en")?.page;
+      const cs = rulebookPage(id, "cs")?.page;
+      assert.ok(en && cs, `Missing canonical translated page: ${id}`);
+      assert.equal(en.id, cs.id);
+      assert.equal(en.kind, "rules");
+      assert.ok(translated.length > 7000, `Unexpectedly short Czech page: ${id}`);
+      assert.ok(cs.md.startsWith("## Český přehled pravidel"), `Missing Czech summary: ${id}`);
+      assert.ok(cs.md.includes("## Úplné znění pravidel v češtině"));
+      assert.ok(cs.md.includes(translated), `Missing complete Czech text: ${id}`);
+      assert.ok(cs.md.endsWith(en.md), `Canonical English SRD changed: ${id}`);
+    }
+    const batches = await Promise.all(Array.from({ length: 12 }, (_, i) => import(
+      `../src/lib/rulebook/czech-full-rules-${i + 1}.ts`,
+    )));
+    const ids = batches.flatMap((mod, i) => Object.keys(mod[`CZECH_FULL_RULES_${i + 1}`]));
+    assert.equal(ids.length, 26, "Expected 26 complete Czech rules chapters");
+    assert.equal(new Set(ids).size, 26, "Duplicate canonical SRD page in full translations");
+  });
+
+  await test("Czech weapon table preserves all 37 weapons, prices, damage dice and ranges", async () => {
+    const { CZECH_FULL_RULES_11 } = await import("../src/lib/rulebook/czech-full-rules-11.ts");
+    const weapons = CZECH_FULL_RULES_11.weapons;
+    const rows = weapons.split("\n").filter((line) => /^\| .+ \|/.test(line));
+    const names = ["Kyj", "Dýka", "Velký kyj", "Ruční sekera", "Oštěp", "Lehké kladivo",
+      "Palcát", "Hůl", "Srp", "Kopí", "Lehká kuše", "Šipka", "Krátký luk", "Prak",
+      "Bojová sekera", "Cep", "Sudlice", "Obouruční sekera", "Obouruční meč",
+      "Halapartna", "Jezdecké kopí", "Dlouhý meč", "Obouruční kladivo",
+      "Jitřenka", "Píka", "Rapír", "Šavle", "Krátký meč", "Trojzubec",
+      "Válečný krumpáč", "Válečné kladivo", "Bič", "Foukačka", "Ruční kuše",
+      "Těžká kuše", "Dlouhý luk", "Síť"];
+    assert.equal(names.length, 37);
+    for (const name of names) {
+      assert.ok(rows.some((line) => line.startsWith(`| ${name} |`)), `Missing weapon ${name}`);
+    }
+    assert.ok(weapons.includes("| **Jednoduché zbraně na blízko** |"));
+    assert.ok(weapons.includes("| **Jednoduché zbraně na dálku** |"));
+    assert.ok(weapons.includes("| **Válečné zbraně na blízko** |"));
+    assert.ok(weapons.includes("| **Válečné zbraně na dálku** |"));
+    assert.ok(weapons.includes("| Dýka | 2 zl | 1k4 bodné | 1 |"));
+    assert.ok(weapons.includes("| Obouruční meč | 50 zl | 2k6 sečné | 6 |"));
+    assert.ok(weapons.includes("| Dlouhý luk | 50 zl | 1k8 bodné | 2 |"));
+    assert.ok(weapons.includes("dosah 150/600"));
+    assert.ok(weapons.includes("5 bodů sečného zranění"));
+    assert.ok(weapons.includes("100 zl"));
+    assert.ok(weapons.includes("1k4 zranění"));
+  });
+
+  await test("Czech living expenses have complete lifestyle, lodging and hireling price tables", async () => {
+    const { CZECH_FULL_RULES_12 } = await import("../src/lib/rulebook/czech-full-rules-12.ts");
+    const expenses = CZECH_FULL_RULES_12.expenses;
+    for (const [lifestyle, price] of [
+      ["Bídný", "—"], ["Zanedbaný", "1 st"], ["Chudý", "2 st"], ["Skromný", "1 zl"],
+      ["Pohodlný", "2 zl"], ["Bohatý", "4 zl"], ["Aristokratický", "10 zl nejméně"],
+    ]) {
+      assert.ok(expenses.includes(`| ${lifestyle} | ${price} |`),
+        `Incorrect lifestyle expenses: ${lifestyle}`);
+    }
+    for (const row of [
+      "| ~ Zanedbaný | 7 md |", "| ~ Chudý | 1 st |", "| ~ Skromný | 5 st |",
+      "| ~ Pohodlný | 8 st |", "| ~ Bohatý | 2 zl |", "| ~ Aristokratický | 4 zl |",
+      "| ~ Zdatný | 2 zl za den |", "| ~ Nekvalifikovaný | 2 st za den |",
+      "| Přeprava lodí | 1 st za míli |", "| Posel | 2 md za míli |",
+    ]) {
+      assert.ok(expenses.includes(row), `Missing translated price: ${row}`);
+    }
+    assert.ok(expenses.includes("Zdatnost v Přežití"));
+    assert.ok(expenses.includes("10 až 50 zlatých"));
+    assert.ok(expenses.includes("**Tabulka – Jídlo, pití a ubytování**"));
+  });
+
+  await test("Czech spell lists preserve every SRD spell and its class and spell level", async () => {
+    const { CZECH_FULL_RULES_13 } = await import("../src/lib/rulebook/czech-full-rules-13.ts");
+    const { CZECH_SPELLS } = await import("../src/lib/rulebook/czech-terms.ts");
+    assert.deepEqual(Object.keys(CZECH_FULL_RULES_13), ["spell-lists"]);
+    // Only isolated spell titles are aligned with the Czech 2014 D&D grimoire.
+    const spellNames2014 = {
+      Friends: "Přátelé",
+      Haste: "Rychlost",
+      "Hold Person": "Znehybni osobu",
+      Cloudkill: "Oblak smrti",
+      "Tree Stride": "Chůze stromy",
+      Passwall: "Projdi zdí",
+      "Insect Plague": "Hmyzí zhouba",
+      "Storm of Vengeance": "Bouře odplaty",
+      "Contact Other Plane": "Mluva sfér",
+      "Flesh to Stone": "Zkamenění",
+      "Mass Cure Wounds": "Hromadné zhojení zranění",
+      "Conjure Celestial": "Vyvolej nebešťana",
+      "Conjure Fey": "Vyvolej vílu",
+      "Create Undead": "Stvoř nemrtvé",
+      "Dispel Evil and Good": "Rozptyl zlo a dobro",
+      "Power Word Kill": "Slovo moci „ZABIJ“",
+      "Power Word Stun": "Slovo moci „OCHROM“",
+      "Alter Self": "Změň svůj tvar",
+      Polymorph: "Proměň tvora",
+      Seeming: "Hromadné přestrojení",
+      "Wall of Force": "Zeď síly",
+      Harm: "Zraň",
+      "Planar Binding": "Sférická vazba",
+      "Magic Jar": "Schránka života",
+      "True Seeing": "Pravdivé vidění",
+      Sunburst: "Sluneční záblesk",
+      "Prismatic Spray": "Spektrální sprška",
+      Feeblemind: "Slabomyslnost",
+      "Mind Blank": "Ukryj mysl",
+    };
+    for (const [englishName, czechName] of Object.entries(spellNames2014)) {
+      assert.equal(CZECH_SPELLS[englishName], czechName,
+        `Czech 2014 grimoire title mismatch: ${englishName}`);
+    }
+    const source = rulebookPage("spell-lists", "en")?.page;
+    const localized = rulebookPage("spell-lists", "cs")?.page;
+    assert.ok(source && localized);
+    assert.equal(localized.id, source.id);
+    assert.equal(localized.kind, "rules");
+    const original = source.md.split("\n");
+    const translated = CZECH_FULL_RULES_13["spell-lists"].split("\n");
+    assert.equal(translated.length, original.length, "Missing lines in Czech spell lists");
+    let items = 0, headings = 0, levels = 0;
+    for (let i = 0; i < original.length; i++) {
+      const line = original[i], cz = translated[i];
+      if (line.startsWith("- ")) {
+        const name = line.slice(2).trim();
+        assert.ok(CZECH_SPELLS[name], `Unknown Czech spell name: ${name}`);
+        assert.equal(cz, `- ${CZECH_SPELLS[name]}`, `Wrong class/level spell at line ${i + 1}`);
+        items++;
+      } else if (line.startsWith("## ")) {
+        assert.ok(cz.startsWith("## Kouzla "), `Untranslated class heading: ${cz}`);
+        headings++;
+      } else if (line.startsWith("#### ")) {
+        assert.ok(cz.startsWith("#### ") && (cz.includes("úroveň") || cz.includes("Triky")),
+          `Untranslated spell level: ${cz}`);
+        levels++;
+      } else {
+        assert.equal(cz, line, `Nonspell content changed at line ${i + 1}`);
+      }
+    }
+    assert.equal(items, 778);
+    assert.equal(headings, 8);
+    assert.equal(levels, 70);
+    assert.ok(localized.md.includes("## Úplné znění pravidel v češtině"));
+    assert.ok(localized.md.includes(CZECH_FULL_RULES_13["spell-lists"]));
+    assert.ok(localized.md.endsWith(source.md), "English spell lists altered");
+  });
+
+  await test("Czech multiverse pantheons preserve all 67 canonical deities and alignments", async () => {
+    const { CZECH_FULL_RULES_14 } = await import("../src/lib/rulebook/czech-full-rules-14.ts");
+    assert.deepEqual(Object.keys(CZECH_FULL_RULES_14), ["gods-of-the-multiverse"]);
+    const source = rulebookPage("gods-of-the-multiverse", "en")?.page;
+    const localized = rulebookPage("gods-of-the-multiverse", "cs")?.page;
+    assert.ok(source && localized);
+    const original = source.md.split("\n");
+    const translated = CZECH_FULL_RULES_14["gods-of-the-multiverse"];
+    const sourceDeities = original.filter((line) => /^\| (?:The Daghdha|[A-Za-z]+)/.test(line))
+      .map((line) => line.split("|")[1].trim())
+      .filter((cell) => cell.includes(", god ") || cell.includes(", goddess "));
+    assert.equal(sourceDeities.length, 67);
+    const translatedDeities = translated.split("\n").filter(
+      (line) => /^\| (?:The Daghdha|[A-Za-z]+)/.test(line) &&
+        (line.includes(", bůh ") || line.includes(", bohyně ")),
+    ).map((line) => line.split("|")[1].trim());
+    assert.equal(translatedDeities.length, 67);
+    for (let i = 0; i < 67; i++) {
+      const name = sourceDeities[i].split(",")[0];
+      assert.ok(translatedDeities[i].startsWith(name + ", "), `Deity order/identity changed: ${name}`);
+    }
+    for (const heading of ["Keltský panteon", "Řecký panteon", "Egyptský panteon",
+      "Severský panteon", "Keltská božstva", "Řecká božstva",
+      "Egyptská božstva", "Severská božstva"]) {
+      assert.ok(translated.includes(heading), `Missing translated pantheon: ${heading}`);
+    }
+    assert.ok(translated.includes("| The Daghdha, bůh počasí a úrody | ChD | Příroda, Šalba |"));
+    assert.ok(translated.includes("| Re-Horakhty, bůh slunce a vládce bohů | ZD | Život, Světlo |"));
+    assert.ok(localized.md.includes("## Úplné znění pravidel v češtině"));
+    assert.ok(localized.md.includes(translated));
+    assert.ok(localized.md.endsWith(source.md), "Original English deity tables changed");
+    const batches = await Promise.all(Array.from({ length: 21 }, (_, i) =>
+      import(`../src/lib/rulebook/czech-full-rules-${i + 1}.ts`)));
+    const ids = batches.flatMap((mod, i) => Object.keys(mod[`CZECH_FULL_RULES_${i + 1}`]));
+    assert.equal(ids.length, 35);
+    assert.equal(new Set(ids).size, 35, "Duplicate SRD rules page with full Czech text");
+  });
+
+  await test("Czech traps include eight fully translated mechanical and magical examples", async () => {
+    const { CZECH_FULL_RULES_15 } = await import("../src/lib/rulebook/czech-full-rules-15.ts");
+    assert.deepEqual(Object.keys(CZECH_FULL_RULES_15), ["traps"]);
+    const translated = CZECH_FULL_RULES_15.traps;
+    const en = rulebookPage("traps", "en").page;
+    const cs = rulebookPage("traps", "cs").page;
+    assert.ok(translated.length > 12000, "Traps text is unexpectedly short");
+    assert.equal(cs.id, en.id, "The canonical rule ID is preserved");
+    assert.ok(cs.md.includes("## Úplné znění pravidel v češtině"));
+    assert.ok(cs.md.includes(translated), "Czech traps are wired into the reader");
+    assert.ok(cs.md.endsWith(en.md), "The original English SRD remains unchanged");
+    const examples = [
+      "Hroutící se strop",
+      "Padající síť",
+      "Socha chrlící oheň",
+      "Jámy",
+      "Otrávené šipky",
+      "Otrávená jehla",
+      "Valící se kamenná koule",
+      "Sféra anihilace",
+    ];
+    for (const name of examples) {
+      assert.ok(translated.includes("### " + name), "Missing Czech sample trap: " + name);
+    }
+    for (const clause of [
+      "| 1.–4. | 1k10 | 2k10 | 4k10 |",
+      "| 17.–20. | 10k10 | 18k10 | 24k10 |",
+      "22 (4k10) ohnivého zranění",
+      "55 (10k10) drtivého zranění",
+      "SO 18",
+      "bonus +8",
+      "20 liber",
+    ]) {
+      assert.ok(translated.includes(clause), "Missing canonical trap mechanic: " + clause);
+    }
+  });
+
+  await test("complete Czech spellcasting preserves every core 2014 SRD constraint", async () => {
+    const { CZECH_FULL_RULES_16 } = await import("../src/lib/rulebook/czech-full-rules-16.ts");
+    assert.deepEqual(Object.keys(CZECH_FULL_RULES_16), ["spellcasting"]);
+    const translated = CZECH_FULL_RULES_16.spellcasting;
+    const original = rulebookPage("spellcasting", "en").page;
+    const localized = rulebookPage("spellcasting", "cs").page;
+    assert.ok(translated.length > 15000, "Spellcasting full translation is unexpectedly short");
+    assert.equal(original.id, localized.id);
+    assert.ok(localized.md.includes("## Úplné znění pravidel v češtině"));
+    assert.ok(localized.md.includes(translated), "Czech spellcasting chapter must be connected to the reader");
+    assert.ok(localized.md.endsWith(original.md), "English canonical SRD must remain unchanged");
+    for (const section of [
+      "# Co je kouzlo?", "## Pozice kouzel", "# Triky", "# Rituály",
+      "## Doba sesílání", "## Složky kouzla", "## Trvání",
+      "### Soustředění", "## Cíle kouzel", "## Oblasti účinku",
+      "# Záchranné hody proti kouzlům", "# Útočné hody kouzly",
+      "# Kombinování magických účinků",
+    ]) {
+      assert.ok(translated.includes(section), "Missing Czech spellcasting section: " + section);
+    }
+    for (const school of [
+      "Vymítání", "Vyvolávání", "Věštění", "Očarování",
+      "Zaklínání", "Iluze", "Nekromancie", "Transmutace",
+    ]) {
+      assert.ok(translated.includes("**" + school + " ("), "Missing translated school: " + school);
+    }
+    for (const clause of [
+      "17. úrovně postavy", "čtyři pozice 1. úrovně a dvě pozice 2. úrovně",
+      "o 10 minut déle", "trik, jehož doba seslání je jedna akce",
+      "SO je 10 nebo polovina utrpěného zranění",
+      "samostatný záchranný hod za každý zdroj zranění",
+      "SO záchranného hodu proti tvému kouzlu = 8",
+      "Bonus k útoku kouzlem =", "Účinky **téhož kouzla seslaného vícekrát se však nesčítají**",
+    ]) {
+      assert.ok(translated.includes(clause), "Missing spellcasting rule: " + clause);
+    }
+  });
+
+  await test("Czech Adventuring retains all SRD 5.1 travel, environment, rests and downtime rules", async () => {
+    const { CZECH_FULL_RULES_17 } = await import("../src/lib/rulebook/czech-full-rules-17.ts");
+    assert.deepEqual(Object.keys(CZECH_FULL_RULES_17), ["adventuring"]);
+    const translated = CZECH_FULL_RULES_17.adventuring;
+    const source = rulebookPage("adventuring", "en").page;
+    const localized = rulebookPage("adventuring", "cs").page;
+    assert.ok(translated.length > 17000, "Adventuring translation unexpectedly short");
+    assert.equal(localized.id, source.id);
+    assert.equal(localized.kind, "rules");
+    assert.ok(localized.md.includes("## Úplné znění pravidel v češtině"));
+    assert.ok(localized.md.includes(translated));
+    assert.ok(localized.md.endsWith(source.md), "The canonical English chapter changed");
+    for (const heading of [
+      "# Čas", "# Pohyb", "## Rychlost", "### Cestovní tempo",
+      "### Obtížný terén", "### Skákání", "# Prostředí",
+      "## Pád", "## Dušení", "## Vidění a světlo",
+      "### Slepozrak", "### Vidění ve tmě", "### Pravé vidění",
+      "## Jídlo a voda", "### Jídlo", "### Voda",
+      "## Zacházení s předměty", "# Odpočinek",
+      "## Krátký odpočinek", "## Dlouhý odpočinek",
+      "# Mezi dobrodružstvími", "## Činnosti v mezidobí",
+      "### Výroba předmětů", "### Výkon povolání",
+      "### Zotavování", "### Bádání", "### Výcvik",
+    ]) {
+      assert.ok(translated.includes(heading), "Missing Czech Adventuring section: " + heading);
+    }
+    for (const clause of [
+      "| Rychlé | 400 stop | 4 míle | 30 mil |",
+      "| Běžné | 300 stop | 3 míle | 24 mil |",
+      "| Pomalé | 200 stop | 2 míle | 18 mil |",
+      "SO 10 + 1 za každou hodinu nad osmou",
+      "3 + oprava Síly", "1k6 drtivého zranění",
+      "20k6", "1 + oprava Odolnosti minut",
+      "3 + oprava Odolnosti", "SO 15",
+      "nejméně 8 hodin", "spát alespoň 6 hodin",
+      "nejvýše 2 hodiny lehkou činností",
+      "jednoho dlouhého odpočinku během 24 hodin",
+      "1 500 zl", "300 dní výroby", "100 dní",
+      "750 zl", "250 dní",
+    ]) {
+      assert.ok(translated.includes(clause), "Missing canonical Adventuring mechanic: " + clause);
+    }
+  });
+
+  await test("Czech Adventuring Gear preserves all 103 item prices, 13 container capacities, seven packs and special mechanics", async () => {
+    const { CZECH_FULL_RULES_18 } = await import("../src/lib/rulebook/czech-full-rules-18.ts");
+    assert.deepEqual(Object.keys(CZECH_FULL_RULES_18), ["adventuring-gear"]);
+    const translated = CZECH_FULL_RULES_18["adventuring-gear"];
+    const en = rulebookPage("adventuring-gear", "en").page;
+    const cs = rulebookPage("adventuring-gear", "cs").page;
+    assert.equal(cs.id, en.id);
+    assert.equal(cs.kind, "rules");
+    assert.ok(translated.length > 17000, "Czech gear translation unexpectedly short");
+    assert.ok(cs.md.includes("## Úplné znění pravidel v češtině"));
+    assert.ok(cs.md.includes(translated), "Full gear translation must be wired to the Czech reader");
+    assert.ok(cs.md.endsWith(en.md), "Original English gear chapter must be unchanged");
+    for (const title of [
+      "## Vybavení se zvláštními pravidly",
+      "## Výbavové balíčky",
+      "## Tabulka – Dobrodružné vybavení",
+      "## Tabulka – Kapacita nádob",
+    ]) {
+      assert.ok(translated.includes(title), "Missing gear section: " + title);
+    }
+    for (const pack of [
+      "Lupičský balíček (16 zl)",
+      "Diplomatický balíček (39 zl)",
+      "Jeskyňářský balíček (12 zl)",
+      "Zábavní balíček (40 zl)",
+      "Průzkumnický balíček (10 zl)",
+      "Kněžský balíček (19 zl)",
+      "Badatelský balíček (40 zl)",
+    ]) {
+      assert.ok(translated.includes(pack), "Missing pack: " + pack);
+    }
+    const lines = translated.split("\n");
+    const itemStart = lines.indexOf("| Předmět | Cena | Hmotnost |");
+    const itemEnd = lines.indexOf("| Brousek | 1 md | 1 lb |");
+    const containerStart = lines.indexOf("| Nádoba | Kapacita |");
+    const containerEnd = lines.indexOf("| Měch na vodu | 4 pinty tekutiny |");
+    assert.ok(itemStart > 0 && itemEnd > itemStart);
+    assert.equal(itemEnd - itemStart - 1, 103, "Every item price table row should be present");
+    assert.ok(containerStart > itemEnd && containerEnd > containerStart);
+    assert.equal(containerEnd - containerStart - 1, 13, "Every container capacity should be present");
+    for (const clause of [
+      "2k6 kyselinového zranění",
+      "1k4 ohnivého zranění na začátku každého svého tahu",
+      "záchranném hodu na Obratnost proti SO 15",
+      "10 použití",
+      "2k6 zářivého zranění",
+      "1k4 bodného zranění",
+      "6 hodin",
+      "záchranném hodu na Odolnost proti SO 10",
+      "2k4 + 2 životů",
+      "bonus +4 k ověření Síly",
+      "50 zl | ½ lb",
+      "1 000 zl | 1 lb",
+      "| Torna* | 1 krychlová stopa / 30 liber výbavy |",
+    ]) {
+      assert.ok(translated.includes(clause), "Missing canonical equipment mechanic: " + clause);
+    }
+  });
+
+  await test("Czech ability scores preserve six attributes, 18 skills, modifiers, checks and saving throws", async () => {
+    const { CZECH_FULL_RULES_19 } = await import("../src/lib/rulebook/czech-full-rules-19.ts");
+    assert.deepEqual(Object.keys(CZECH_FULL_RULES_19), ["using-ability-scores"]);
+    const translated = CZECH_FULL_RULES_19["using-ability-scores"];
+    const source = rulebookPage("using-ability-scores", "en").page;
+    const localized = rulebookPage("using-ability-scores", "cs").page;
+    assert.equal(localized.id, source.id);
+    assert.equal(localized.kind, "rules");
+    assert.ok(translated.length > 25000, "Full Czech ability scores translation unexpectedly short");
+    assert.ok(localized.md.includes("## Úplné znění pravidel v češtině"));
+    assert.ok(localized.md.includes(translated), "Czech reader must include full translated rules");
+    assert.ok(localized.md.endsWith(source.md), "Original English SRD source must be unchanged");
+    for (const section of [
+      "## Hodnoty vlastností a jejich opravy",
+      "# Výhoda a nevýhoda", "# Zdatnostní bonus", "# Ověření vlastností",
+      "## Konflikty", "## Dovednosti", "## Pasivní ověření",
+      "## Spolupráce", "### Skupinová ověření",
+      "### Síla", "### Obratnost", "### Odolnost",
+      "### Inteligence", "### Moudrost", "### Charisma",
+      "#### Volitelné pravidlo: Zatížení", "# Záchranné hody",
+    ]) {
+      assert.ok(translated.includes(section), "Missing ability rules: " + section);
+    }
+    for (const skill of [
+      "Atletika", "Akrobacie", "Čachry", "Nenápadnost",
+      "Mystika", "Historie", "Pátrání", "Příroda", "Náboženství",
+      "Ovládání zvířat", "Vhled", "Lékařství", "Vnímání",
+      "Přežití", "Klamání", "Zastrašování", "Umění",
+      "Přesvědčování",
+    ]) {
+      assert.ok(translated.includes(skill), "Missing Czech skill: " + skill);
+    }
+    for (const rule of [
+      "| 1 | −5 |", "| 10–11 | +0 |", "| 30 | +10 |",
+      "| Velmi snadný | 5 |", "| Téměř nemožný | 30 |",
+      "vzájemně se ruší", "házíš jen", "nejvýše jednou jej násobíš",
+      "Pasivní hodnota = 10 + všechny opravy",
+      "alespoň polovina skupiny", "30 × hodnota Síly",
+      "větší než 5 × hodnota Síly", "větší než 10 × hodnota Síly",
+      "sníží o 20 stop", "pasivní Vnímání 14",
+      "Inteligence (Mystika)", "Moudrost (Ovládání zvířat)",
+    ]) {
+      assert.ok(translated.includes(rule), "Missing canonical ability mechanic: " + rule);
+    }
+  });
+
+  await test("Czech combat includes all 2014 SRD attacks, actions, movement, damage, death and special environments", async () => {
+    const { CZECH_FULL_RULES_20 } = await import("../src/lib/rulebook/czech-full-rules-20.ts");
+    assert.deepEqual(Object.keys(CZECH_FULL_RULES_20), ["combat"]);
+    const translated = CZECH_FULL_RULES_20.combat;
+    const en = rulebookPage("combat", "en").page;
+    const cs = rulebookPage("combat", "cs").page;
+    assert.equal(cs.id, en.id);
+    assert.equal(cs.kind, "rules");
+    assert.ok(translated.length > 36000, "Full combat rules translation unexpectedly short");
+    assert.ok(cs.md.includes("## Úplné znění pravidel v češtině"));
+    assert.ok(cs.md.includes(translated), "Complete Czech combat must be visible in the reader");
+    assert.ok(cs.md.endsWith(en.md), "Original English combat rules must remain unchanged");
+    for (const heading of [
+      "## Překvapení", "## Iniciativa", "## Tvůj tah",
+      "## Bonusové akce", "# Reakce", "# Pohyb a pozice",
+      "## Rozdělení pohybu", "## Ležení na zemi",
+      "## Velikosti tvorů", "# Akce v boji",
+      "## Útok", "## Seslání kouzla", "## Sprint (Dash)",
+      "## Odpoutání se (Disengage)", "## Uhýbání (Dodge)",
+      "## Pomoc (Help)", "## Schování se (Hide)",
+      "## Příprava (Ready)", "## Hledání (Search)",
+      "## Použití předmětu (Use an Object)",
+      "# Zaútočení", "## Hody na útok",
+      "## Nevidění útočníci a cíle", "## Útoky na dálku",
+      "## Útoky na blízko", "#### Příležitostné útoky",
+      "### Boj se dvěma zbraněmi", "### Chvat",
+      "### Strčení tvora", "## Kryt", "## Zranění a léčení",
+      "### Kritické zásahy", "### Záchranné hody proti smrti",
+      "#### Stabilizování tvora", "## Dočasné životy",
+      "# Boj na jízdním zvířeti", "# Boj pod vodou",
+    ]) {
+      assert.ok(translated.includes(heading), "Missing translated combat section: " + heading);
+    }
+    for (const rule of [
+      "6 sekund", "jednu akci", "pasivní Moudrostí (Vnímání)",
+      "rychlost 0", "1 stopa plazení stojí 3 stopy",
+      "20 × 20 stop nebo větší",
+      "přirozená 20", "přirozená 1",
+      "1 + oprava Síly", "o 5 stop",
+      "bonus +2 k OČ", "bonus +5 k OČ",
+      "2k4 místo 1k4", "25 sníží na 20",
+      "poloviční zranění", "10 nebo více",
+      "třetím úspěchu", "třetím neúspěchu",
+      "dva neúspěchy", "SO 10", "1k4 hodinách",
+      "10 nebo 12", "nikdy však **22**",
+      "polovinu tvé rychlosti", "tři akce: Sprint, Odpoutání se a Uhýbání",
+      "automaticky mine cíl za běžným dostřelem",
+      "odolnost vůči ohnivému zranění",
+    ]) {
+      assert.ok(translated.includes(rule), "Missing 2014 combat mechanic: " + rule);
+    }
+    for (const damageType of [
+      "Kyselinové", "Drtivé", "Chladné", "Ohnivé",
+      "Silové", "Bleskové", "Nekrotické", "Bodné",
+      "Jedové", "Psychické", "Zářivé", "Sečné", "Hromové",
+    ]) {
+      assert.ok(translated.includes("***" + damageType + ".***"), "Missing translated damage type: " + damageType);
+    }
+  });
+
+  await test("full Czech monster-statistics chapter preserves CR mechanics, tables and legendary actions", async () => {
+    const { CZECH_FULL_RULES_21 } = await import("../src/lib/rulebook/czech-full-rules-21.ts");
+    assert.deepEqual(Object.keys(CZECH_FULL_RULES_21), ["monster-statistics"]);
+    const translated = CZECH_FULL_RULES_21["monster-statistics"];
+    const en = rulebookPage("monster-statistics", "en").page;
+    const cs = rulebookPage("monster-statistics", "cs").page;
+    assert.equal(cs.id, en.id);
+    assert.equal(cs.kind, "rules");
+    assert.ok(translated.length > 26000, "Monster statistics full Czech translation unexpectedly short");
+    assert.ok(cs.md.includes("## Úplné znění pravidel v češtině"));
+    assert.ok(cs.md.includes(translated), "Czech reader must render the full monster-statistics translation");
+    assert.ok(cs.md.endsWith(en.md), "Unmodified canonical English monster rules must remain below the translation");
+    for (const section of [
+      "## Velikost", "## Typ tvora", "### Štítky typů",
+      "## Přesvědčení", "## Obranné číslo", "## Životy",
+      "## Rychlost", "### Hrabání", "### Šplhání", "### Létání",
+      "### Plavání", "## Hodnoty vlastností", "## Záchranné hody",
+      "## Dovednosti", "## Zranitelnosti, odolnosti a imunity",
+      "## Smysly", "### Slepozrak", "### Vidění ve tmě",
+      "### Vnímání otřesů", "### Pravé vidění", "## Jazyky",
+      "### Telepatie", "## Stupeň nebezpečnosti",
+      "### Zkušenostní body", "## Zvláštní vlastnosti",
+      "### Vrozené sesílání kouzel", "### Sesílání kouzel",
+      "### Psionika", "## Akce", "### Útoky na blízko a na dálku",
+      "### Víceútok", "### Střelivo", "## Reakce",
+      "## Omezené použití", "## Vybavení",
+      "# Legendární tvorové", "## Legendární akce",
+      "## Doupě legendárního tvora", "### Akce doupěte",
+      "### Regionální účinky",
+    ]) {
+      assert.ok(translated.includes(section), "Missing Czech monster statistics section: " + section);
+    }
+    for (const type of [
+      "Zrůdy", "Zvířata", "Nebešťané", "Výtvory",
+      "Draci", "Elementálové", "Víly", "Běsové",
+      "Obři", "Humanoidi", "Obludy", "Slizové",
+      "Rostliny", "Nemrtví",
+    ]) {
+      assert.ok(translated.includes("**" + type + " ("), "Missing one of the 14 monster types: " + type);
+    }
+    for (const rule of [
+      "2k8 + 2 životů", "2k8 kostkami životů",
+      "| Gigantický | k20 | 10½ |",
+      "oprava příslušné vlastnosti", "zdatnostní bonus",
+      "nestvůra i zdroj otřesů se dotýkají stejné země",
+      "může telepatické zprávy vysílat ani přijímat",
+      "čtyř dobrodruhů", "SN 21 nebo vyšší",
+      "pozici kouzla vyšší úrovně",
+      "jiným kouzlem stejné úrovně ze seznamu téhož povolání",
+      "SO = 10 + oprava Síly (Atletika)",
+      "2k4 kusů střeliva", "2k10 kusů střeliva",
+      "Obnovení 5–6", "k6", "20",
+      "pouze na konci tahu jiného tvora",
+      "prohrává všechny shody v iniciativě",
+      "regionální účinky",
+    ]) {
+      assert.ok(translated.includes(rule), "Missing source mechanic in Czech chapter: " + rule);
+    }
+    const lines = translated.split("\n");
+    const between = (start, last) => {
+      const begin = lines.indexOf(start);
+      const end = lines.indexOf(last);
+      assert.ok(begin >= 0 && end > begin, "Cannot find table range: " + start);
+      return lines.slice(begin + 2, end + 1);
+    };
+    const sizeRows = between("| Velikost | Prostor | Příklady |", "| Gigantický | 20 × 20 stop nebo více | kraken, purpurový červ |");
+    const hitDiceRows = between("| Velikost nestvůry | Kostka životů | Průměr na kostku |", "| Gigantický | k20 | 10½ |");
+    const proficiencyRows = between("| Stupeň nebezpečnosti (SN) | Zdatnostní bonus |", "| 30 | +9 |");
+    const experienceRows = between("| Stupeň nebezpečnosti (SN) | Zkušenostní body (ZK) |", "| 30 | 155 000 |");
+    assert.equal(sizeRows.length, 6);
+    assert.equal(hitDiceRows.length, 6);
+    assert.equal(proficiencyRows.length, 34);
+    assert.equal(experienceRows.length, 34, "Every CR from 0, 1/8, 1/4, 1/2, and 1–30 needs XP");
+    for (const [cr, expectedXp] of [
+      [9, "5 000"], [10, "5 900"], [11, "7 200"],
+      [12, "8 400"], [13, "10 000"], [26, "90 000"],
+      [27, "105 000"], [28, "120 000"], [29, "135 000"],
+      [30, "155 000"],
+    ]) {
+      assert.ok(experienceRows.includes("| " + cr + " | " + expectedXp + " |"),
+        "Missing verified 2014 XP value for CR " + cr);
+    }
+  });
+
+  await test("Czech 2014 D&D glossary uses all 18 official skill names without copying rule prose", async () => {
+    const { CZECH_SKILLS } = await import("../src/lib/rulebook/czech-terms.ts");
+    const expected = {
+      Acrobatics: "Akrobacie",
+      "Animal Handling": "Ovládání zvířat",
+      Arcana: "Mystika",
+      Athletics: "Atletika",
+      Deception: "Klamání",
+      History: "Historie",
+      Insight: "Vhled",
+      Intimidation: "Zastrašování",
+      Investigation: "Pátrání",
+      Medicine: "Lékařství",
+      Nature: "Příroda",
+      Perception: "Vnímání",
+      Performance: "Umění",
+      Persuasion: "Přesvědčování",
+      Religion: "Náboženství",
+      "Sleight of Hand": "Čachry",
+      Stealth: "Nenápadnost",
+      Survival: "Přežití",
+    };
+    assert.deepEqual(CZECH_SKILLS, expected);
+    const { CZECH_CREATURE_TYPES } = await import("../src/lib/rulebook/czech-terms.ts");
+    assert.equal(CZECH_CREATURE_TYPES.aberration, "zrůda");
+    assert.equal(CZECH_CREATURE_TYPES.monstrosity, "obluda");
+    assert.equal(CZECH_CREATURE_TYPES.construct, "výtvor");
+    assert.equal(new Set(Object.values(CZECH_CREATURE_TYPES)).size, 14,
+      "Every English creature type must have a distinct Czech name");
+    const { CZECH_FULL_RULES_19 } = await import("../src/lib/rulebook/czech-full-rules-19.ts");
+    const abilities = CZECH_FULL_RULES_19["using-ability-scores"];
+    const { CZECH_FULL_RULES_21 } = await import("../src/lib/rulebook/czech-full-rules-21.ts");
+    const monsterRules = CZECH_FULL_RULES_21["monster-statistics"];
+    for (const title of [
+      "**Zrůdy (aberrations)**",
+      "**Obludy (monstrosities)**",
+      "**Výtvory (constructs)**",
+    ]) {
+      assert.ok(monsterRules.includes(title), "Wrong Czech monster type: " + title);
+    }
+    for (const term of Object.values(expected)) {
+      assert.ok(abilities.includes(term), "Missing Czech PHB skill name: " + term);
+    }
+    for (const old of [
+      "Zacházení se zvířaty", "Obratnost rukou",
+      "Plížení", "Vystupování", "Moudrost (Odhad)",
+      "Inteligence (Magie)",
+    ]) {
+      assert.ok(!abilities.includes(old), "Outdated Czech skill name: " + old);
+    }
+    const { CZECH_FULL_RULES_20 } = await import("../src/lib/rulebook/czech-full-rules-20.ts");
+    for (const action of [
+      "## Sprint (Dash)", "## Odpoutání se (Disengage)",
+      "## Uhýbání (Dodge)", "## Schování se (Hide)",
+      "## Příprava (Ready)", "### Chvat",
+    ]) {
+      assert.ok(CZECH_FULL_RULES_20.combat.includes(action), "Missing Czech PHB combat action: " + action);
+    }
+  });
+
+  await test("all 24 SRD 5.1 cantrips have full independent Czech texts without changing English content", async () => {
+    const { CZECH_FULL_SPELLS_1 } = await import("../src/lib/rulebook/czech-full-spells-1.ts");
+    const { CZECH_FULL_SPELLS_2 } = await import("../src/lib/rulebook/czech-full-spells-2.ts");
+    const translated = { ...CZECH_FULL_SPELLS_1, ...CZECH_FULL_SPELLS_2 };
+    const originalTricks = rulebookPages("en").filter(
+      (page) => page.kind === "spell" && page.meta?.toLowerCase().includes("cantrip"),
+    );
+    assert.equal(originalTricks.length, 24, "Unexpected SRD 5.1 cantrip count");
+    assert.equal(Object.keys(translated).length, 24, "Incomplete cantrip translation batch");
+    assert.deepEqual(Object.keys(translated), originalTricks.map((page) => page.id),
+      "Canonical spell IDs or spell ordering changed");
+    assert.equal(Object.keys(CZECH_FULL_SPELLS_1).length, 12);
+    assert.equal(Object.keys(CZECH_FULL_SPELLS_2).length, 12);
+
+    for (const source of originalTricks) {
+      const id = source.id;
+      const csText = translated[id];
+      const czech = rulebookPage(id, "cs")?.page;
+      const english = rulebookPage(id, "en")?.page;
+      assert.ok(czech && english, "Missing canonical cantrip page: " + id);
+      assert.equal(czech.kind, "spell");
+      assert.equal(czech.id, source.id);
+      assert.equal(czech.title, CZECH_SPELLS[source.title],
+        "A translated spell must use the central Czech spell glossary: " + id);
+      assert.ok(csText.length >= 200, "Missing Czech rules text for cantrip: " + id);
+      assert.ok(czech.md.includes("## Úplné znění pravidel v češtině"));
+      assert.ok(czech.md.includes(csText), "Complete Czech spell text not in reader: " + id);
+      assert.ok(czech.md.endsWith(english.md), "English SRD spell body altered: " + id);
+      assert.equal(english.md, source.md, "Original SRD spell data altered: " + id);
+      assert.equal(czech.originalMeta, source.meta, "Original spell metadata not preserved: " + id);
+
+      for (const [field, translatedField] of [
+        ["Casting Time", "Doba sesílání"],
+        ["Range", "Dosah"],
+        ["Components", "Složky"],
+        ["Duration", "Trvání"],
+      ]) {
+        assert.ok(source.md.includes("**" + field + ":**"));
+        assert.ok(csText.includes("**" + translatedField + ":**"),
+          "Missing cantrip casting field " + translatedField + ": " + id);
+      }
+      const englishComponents = source.md.match(/\*\*Components:\*\* ([VSM, ]+)/)?.[1]?.trim();
+      const czechComponents = csText.match(/\*\*Složky:\*\* ([VSM, ]+)/)?.[1]?.trim();
+      assert.equal(czechComponents, englishComponents,
+        "Changed verbal, somatic or material components: " + id);
+      const sourceDice = [...new Set(source.md.match(/\b(?:\d+)?d\d+\b/g) ?? [])];
+      for (const die of sourceDice) {
+        assert.ok(csText.includes(die.replace("d", "k")),
+          "Wrong or omitted cantrip damage/bonus die " + die + " in " + id);
+      }
+      const bulletCount = (md) => md.split("\n").filter((line) => line.startsWith("- ")).length;
+      assert.equal(bulletCount(csText), bulletCount(source.md),
+        "Incomplete list of cantrip effects: " + id);
+    }
+
+    for (const [id, requirements] of Object.entries({
+      "acid-splash": ["2k6", "3k6", "4k6", "záchranném hodu na Obratnost"],
+      "chill-touch": ["nemůže si obnovovat životy", "nevýhodu k hodům na útok"],
+      "dancing-lights": ["**čtyři vznášející se světla**", "**bonusovou akcí**", "20 stop"],
+      "eldritch-blast": ["**dva na 5. úrovni**", "**tři na 11. úrovni**", "**čtyři na 17. úrovni**"],
+      "fire-bolt": ["**hořlavý předmět**", "**vznítí se**"],
+      guidance: ["**jednou hodit k4**", "**jednomu ověření vlastnosti"],
+      light: ["**jasné světlo v okruhu 20 stop", "**záchranném hodu na Obratnost**"],
+      "mage-hand": ["**10 liber**", "**nemůže útočit"],
+      mending: ["**nedokáže takovému předmětu vrátit ztracenou magii**"],
+      message: ["**magické ticho**", "**tenká vrstva olova**", "**3 stopy dřeva**"],
+      "minor-illusion": ["**ověření Inteligence (Pátrání)**", "**matný přelud**"],
+      prestidigitation: ["**nejvýše tři jeho účinky"],
+      "produce-flame": ["**kouzlo okamžitě skončí**", "**30 stop (6 sáhů)**"],
+      "ray-of-frost": ["**rychlost se sníží o 10 stop"],
+      resistance: ["**jednomu záchrannému hodu"],
+      "sacred-flame": ["**nemá žádnou výhodu z krytu**"],
+      shillelagh: ["**Kostka zranění této zbraně se změní na k8.**", "**zbraň pustíš**"],
+      "shocking-grasp": ["**nemůže provádět reakce"],
+      "spare-the-dying": ["**0 životů**", "**nepůsobí na nemrtvé ani na výtvory**"],
+      thaumaturgy: ["**nejvýše tři z jeho účinků"],
+      "true-strike": ["**Ve svém dalším tahu**", "**kouzlo neskončilo**"],
+      "vicious-mockery": ["**cíl slyší**", "**nevýhodu k dalšímu hodu na útok**"],
+    })) {
+      for (const requirement of requirements) {
+        assert.ok(translated[id].includes(requirement),
+          "A key SRD 5.1 cantrip limitation was omitted: " + id + " / " + requirement);
+      }
+    }
+  });
+
+  await test("all nine SRD 5.1 races have full independent Czech traits with unchanged English pages", async () => {
+    const { CZECH_FULL_RACES_1 } = await import("../src/lib/rulebook/czech-full-races-1.ts");
+    const { CZECH_FULL_RACES_2 } = await import("../src/lib/rulebook/czech-full-races-2.ts");
+    const translatedRaces = { ...CZECH_FULL_RACES_1, ...CZECH_FULL_RACES_2 };
+    const englishRacePages = rulebookPages("en").filter((page) => page.kind === "race");
+    const expectedIds = [
+      "dwarf", "elf", "halfling", "human", "dragonborn",
+      "gnome", "half-elf", "half-orc", "tiefling",
+    ];
+    assert.deepEqual(Object.keys(translatedRaces), expectedIds);
+    assert.deepEqual(englishRacePages.map((page) => page.id).sort(), [...expectedIds].sort());
+
+    const { CZECH_RACES } = await import("../src/lib/rulebook/czech-terms.ts");
+    for (const id of expectedIds) {
+      const content = translatedRaces[id];
+      const english = rulebookPage(id, "en")?.page;
+      const czech = rulebookPage(id, "cs")?.page;
+      assert.ok(english && czech, "Missing race page: " + id);
+      assert.equal(english.kind, "race");
+      assert.equal(czech.kind, "race");
+      assert.equal(czech.id, english.id);
+      assert.equal(czech.title, CZECH_RACES[english.title]);
+      assert.ok(content.length > 800, "Incomplete Czech race traits: " + id);
+      assert.ok(czech.md.includes("## Úplné znění pravidel v češtině"));
+      assert.ok(czech.md.includes(content), "Missing Czech race rules in reader: " + id);
+      assert.ok(czech.md.endsWith(english.md), "English race source changed: " + id);
+
+      const headingLevels = (markdown) => markdown.split("\n")
+        .filter((line) => /^#{2,3} /.test(line)).map((line) => line.match(/^#+/)[0].length);
+      assert.deepEqual(headingLevels(content), headingLevels(english.md),
+        "Missing or extra SRD race/subrace sections: " + id);
+      const traitCount = (markdown) => markdown.split("\n")
+        .filter((line) => line.startsWith("***")).length;
+      assert.equal(traitCount(content), traitCount(english.md),
+        "Missing or extra racial traits: " + id);
+      assert.ok(content.includes("***Zvýšení hodnot vlastností.***"));
+      assert.ok(content.includes("***Rychlost.***"));
+      assert.ok(content.includes("***Jazyky.***"));
+    }
+
+    const dwarf = translatedRaces.dwarf;
+    assert.ok(dwarf.includes("## Kopcový trpaslík"));
+    assert.ok(dwarf.includes("***Trpasličí nezlomnost.***"));
+    assert.ok(dwarf.includes("***Trpasličí nezdolnost.***"));
+    assert.ok(dwarf.includes("25 stop (5 sáhů)"));
+    const elf = translatedRaces.elf;
+    assert.ok(elf.includes("## Vznešený elf"));
+    assert.ok(elf.includes("***Trans.***"));
+    assert.ok(elf.includes("**4 hodiny hlubokou meditací**"));
+    const halfling = translatedRaces.halfling;
+    assert.ok(halfling.includes("## Tichošlápek"));
+    assert.ok(halfling.includes("***Přirozená nenápadnost.***"));
+    assert.ok(halfling.includes("**Nový výsledek musíš použít**"));
+    const human = translatedRaces.human;
+    assert.ok(human.includes("**Každá ze šesti tvých vlastností se zvýší o 1**"));
+
+    const dragonborn = translatedRaces.dragonborn;
+    const ancestryNames = [
+      "Černý", "Modrý", "Mosazný", "Bronzový", "Měděný",
+      "Zlatý", "Zelený", "Rudý", "Stříbrný", "Bílý",
+    ];
+    for (const name of ancestryNames) {
+      assert.ok(dragonborn.includes("| " + name + " |"),
+        "Missing Draconic Ancestry table entry: " + name);
+    }
+    assert.equal(dragonborn.split("\n").filter((line) => /^\| (Černý|Modrý|Mosazný|Bronzový|Měděný|Zlatý|Zelený|Rudý|Stříbrný|Bílý) \|/.test(line)).length, 10);
+    for (const amount of ["2k6", "3k6", "4k6", "5k6"]) {
+      assert.ok(dragonborn.includes(amount), "Missing Breath Weapon damage step " + amount);
+    }
+    assert.ok(dragonborn.includes("8 + tvá oprava Odolnosti + tvůj zdatnostní bonus"));
+    const gnome = translatedRaces.gnome;
+    assert.ok(gnome.includes("## Skalní gnóm"));
+    for (const name of ["Mechanická hračka", "Zapalovač", "Hudební skříňka"]) {
+      assert.ok(gnome.includes("***" + name + ".***"), "Missing gnome tinkering device: " + name);
+    }
+    for (const value of ["**10 zl**", "**24 hodin**", "**nejvýše tři**"]) {
+      assert.ok(gnome.includes(value), "Missing Gnome Tinker limit: " + value);
+    }
+    const halfOrc = translatedRaces["half-orc"];
+    assert.ok(halfOrc.includes("***Zarytá houževnatost.***"));
+    assert.ok(halfOrc.includes("***Divoké útoky.***"));
+    assert.ok(translatedRaces["half-elf"].includes("***Dovednostní všestrannost.***"));
+    const tiefling = translatedRaces.tiefling;
+    assert.ok(tiefling.includes("***Pekelné dědictví.***"));
+    assert.ok(tiefling.includes("Od **3. úrovně**"));
+    assert.ok(tiefling.includes("Od **5. úrovně**"));
+    assert.ok(tiefling.includes("**dlouhého odpočinku**"));
+  });
+
+  await test("all twelve SRD 5.1 classes have full original Czech rules and unmodified English source", async () => {
+    const classIds = [
+      "fighter", "rogue", "barbarian", "bard", "cleric", "druid",
+      "monk", "paladin", "ranger", "sorcerer", "warlock", "wizard",
+    ];
+    const modules = await Promise.all(Array.from({ length: 12 }, (_, i) =>
+      import("../src/lib/rulebook/czech-full-classes-" + (i + 1) + ".ts")));
+    const allIds = modules.flatMap((mod, i) => Object.keys(mod["CZECH_FULL_CLASSES_" + (i + 1)]));
+    assert.deepEqual(allIds, classIds, "Every class has exactly one standalone Czech translation");
+
+    for (let i = 0; i < classIds.length; i++) {
+      const id = classIds[i];
+      const translated = modules[i]["CZECH_FULL_CLASSES_" + (i + 1)][id];
+      const source = rulebookPage(id, "en").page;
+      const localized = rulebookPage(id, "cs").page;
+      assert.equal(source.kind, "class");
+      assert.equal(localized.id, id);
+      assert.equal(localized.kind, "class");
+      assert.ok(translated.length > 5000, "Class translation unexpectedly short: " + id);
+      assert.ok(localized.md.includes("## Úplné znění pravidel v češtině"));
+      assert.ok(localized.md.includes(translated), "Complete Czech class not in reader: " + id);
+      assert.ok(localized.md.endsWith(source.md), "Canonical English SRD must be intact: " + id);
+      assert.ok(translated.includes("### Schopnosti povolání"), "Class introduction not localized: " + id);
+      assert.ok(translated.includes("#### Zdatnosti"), "Class proficiencies not localized: " + id);
+      assert.ok(translated.includes("#### Počáteční vybavení"), "Class starting equipment not localized: " + id);
+      const sourceHeadings = (source.md.match(/^#{2,5} /gm) ?? []).length;
+      const translatedHeadings = (translated.match(/^#{2,5} /gm) ?? []).length;
+      assert.equal(translatedHeadings, sourceHeadings,
+        "A class feature, subclass feature or rules section was omitted: " + id);
+      assert.ok(translated.includes("### Zvýšení hodnot vlastností"), "Ability score increase missing: " + id);
+      assert.ok(translated.includes("**Tabulka – "), "Class progression table missing: " + id);
+
+      const firstTableAt = translated.indexOf("| Úroveň |");
+      assert.ok(firstTableAt >= 0, "Class progression table header missing: " + id);
+      const firstTable = translated.slice(firstTableAt).split("\n\n")[0];
+      const localRows = firstTable.split("\n").filter((line) => /^\|\s*\d+\.\s*\|/.test(line));
+      const englishRows = source.md.split("\n").filter((line) => /^\|\s*\d+(st|nd|rd|th)\s*\|/.test(line)).slice(0, 20);
+      assert.equal(localRows.length, 20, "Expected full class progression 1–20: " + id);
+      assert.equal(englishRows.length, 20, "Expected source class progression: " + id);
+      for (let level = 1; level <= 20; level++) {
+        const enCells = englishRows[level - 1].split("|").slice(1, -1).map((cell) => cell.trim());
+        const csCells = localRows[level - 1].split("|").slice(1, -1).map((cell) => cell.trim());
+        assert.ok(csCells[0] === level + ".", "Class levels must be in ascending order: " + id);
+        assert.equal(csCells.length, enCells.length, "Progression table columns changed: " + id);
+        for (let col = 1; col < enCells.length; col++) {
+          if (/^(?:[+-]?\d+|[-–]|\d+d\d+|\+\d+\s*ft\.)$/.test(enCells[col])) {
+            const value = enCells[col].replace(/(\d+)d(\d+)/g, "$1k$2");
+            assert.equal(csCells[col], value,
+              "Changed slot count, proficiency, damage die or other value in " + id +
+              " level " + level + " column " + col);
+          }
+        }
+      }
+    }
+
+    const { CZECH_FULL_CLASSES_6 } = await import("../src/lib/rulebook/czech-full-classes-6.ts");
+    const druid = CZECH_FULL_CLASSES_6.druid;
+    for (const region of ["Arktida", "Pobřeží", "Poušť", "Hvozd", "Pláň", "Hory", "Bažina"]) {
+      assert.ok(druid.includes("**" + region + " – kouzla kruhu**"),
+        "Missing a Czech Circle of Land terrain spell list: " + region);
+    }
+    assert.ok(druid.includes("**Tabulka – Zvířecí podoby**"));
+    for (const spell of ["Rychlost", "Znehybni osobu", "Chůze stromy", "Projdi zdí", "Hmyzí zhouba"]) {
+      assert.ok(druid.includes("*" + spell + "*"), "Druid circle uses wrong Czech spell name: " + spell);
+    }
+    for (const old of ["Zrychlení", "Zadrž osobu", "Krok stromy", "Průchod zdí", "Hmyzí pohroma"]) {
+      assert.ok(!druid.includes("*" + old + "*"), "Obsolete Druid circle spell name: " + old);
+    }
+
+    const { CZECH_FULL_CLASSES_10 } = await import("../src/lib/rulebook/czech-full-classes-10.ts");
+    const sorcerer = CZECH_FULL_CLASSES_10.sorcerer;
+    for (const name of [
+      "Opatrné kouzlo", "Vzdálené kouzlo", "Posílené kouzlo", "Prodloužené kouzlo",
+      "Zostřené kouzlo", "Zrychlené kouzlo", "Záludné kouzlo", "Zdvojené kouzlo",
+    ]) {
+      assert.ok(sorcerer.includes("#### " + name), "Missing Metamagic option: " + name);
+    }
+    for (const price of [
+      "| 1. | 2 |", "| 2. | 3 |", "| 3. | 5 |",
+      "| 4. | 6 |", "| 5. | 7 |",
+    ]) assert.ok(sorcerer.includes(price), "Missing sorcery-point slot cost: " + price);
+
+    const { CZECH_FULL_CLASSES_11 } = await import("../src/lib/rulebook/czech-full-classes-11.ts");
+    const warlock = CZECH_FULL_CLASSES_11.warlock;
+    const invocations = warlock.split("### Seznam tajemných vzývání")[1].split("## Nadpozemští patroni")[0];
+    assert.equal((invocations.match(/^#### /gm) ?? []).length, 32,
+      "Every SRD 5.1 Eldritch Invocation needs an independently authored Czech description");
+    for (const pact of ["Pakt řetězu", "Pakt čepele", "Pakt rukověti"]) {
+      assert.ok(warlock.includes("#### " + pact), "Missing warlock Pact Boon: " + pact);
+    }
+
+    const { CZECH_FULL_CLASSES_12 } = await import("../src/lib/rulebook/czech-full-classes-12.ts");
+    // Terminology alone follows the Czech 2014 PHB; class mechanics remain from SRD 5.1.
+    const establishedClassLabels = {
+      fighter: ["Mimořádný atlet", "Dokonalejší kritický zásah", "Zarputilec"],
+      bard: ["Kolej znalostí", "Slovní výpad", "Nedostižná dovednost"],
+      cleric: ["Ničení nemrtvých", "Doménová kouzla"],
+      druid: ["Nestárnoucí tělo", "Kruhová kouzla", "Přírodní svatyně"],
+      monk: ["Klid", "Smrtící dlaň"],
+      paladin: ["Vnímání božství", "Přikládání rukou", "Boží úder", "Čistota duše", "Svatozář"],
+      ranger: ["Rozený průzkumník", "Pravěká ostražitost", "Zvířecí smysly", "Mimořádná lovcova obrana"],
+      sorcerer: ["Dračí nezlomnost", "Spřízněnost s živly", "Dračí vzhled"],
+    };
+    for (const [id, labels] of Object.entries(establishedClassLabels)) {
+      const index = classIds.indexOf(id);
+      const translated = modules[index]["CZECH_FULL_CLASSES_" + (index + 1)][id];
+      for (const label of labels) {
+        assert.ok(translated.includes(label), `Missing Czech 2014 class label in ${id}: ${label}`);
+      }
+    }
+    for (const [id, outdated] of Object.entries({
+      fighter: ["Pozoruhodný atlet", "Vynikající kritický zásah", "Přeživší"],
+      bard: ["Kolej vědění", "Jízlivá slova"],
+      druid: ["Ochrana přírody", "Útočiště přírody"],
+      monk: ["Poklid", "Chvějící se dlaň"],
+      paladin: ["Božský smysl", "Vkládání rukou", "Svatá záře"],
+      ranger: ["Průzkumník přírody", "Divoké smysly", "Skrývání na očích"],
+      sorcerer: ["Dračí odolnost", "Živelná příbuznost", "Dračí přítomnost"],
+    })) {
+      const index = classIds.indexOf(id);
+      const translated = modules[index]["CZECH_FULL_CLASSES_" + (index + 1)][id];
+      for (const label of outdated) {
+        assert.ok(!translated.includes(label), `Outdated Czech class label in ${id}: ${label}`);
+      }
+    }
+    const wizard = CZECH_FULL_CLASSES_12.wizard;
+    assert.ok(wizard.includes("### Škola zaklínání"));
+    assert.ok(wizard.includes("**Za každou úroveň kouzla to stojí 2 hodiny a 50 zl**"));
+    assert.ok(wizard.includes("**1 hodinu a 10 zl za každou úroveň kouzla**"));
   });
 
   // ---- the routes ----
