@@ -16,6 +16,7 @@ import { bridgeSessionForToken, type BridgeSession } from "@/lib/harness/bridge"
 import { resolveConnectionGrant, type ConnectionGrant } from "@/lib/agents/grants";
 import { workbenchCall, workbenchTools } from "@/lib/agents/workbench";
 import { recordAgentActivity, throttleAgent } from "@/lib/agents/activity";
+import { canonicalMcpToolArgs, CZECH_MCP_TERMINOLOGY_HINT } from "@/lib/agents/czech-tool-args";
 
 export const MAX_MCP_BODY_BYTES = 1_000_000;
 
@@ -47,9 +48,9 @@ function serverFor(grant: Grant): Server {
     {
       capabilities: { tools: {} },
       instructions:
-        grant.kind === "turn"
+        (grant.kind === "turn"
           ? "These tools are the Open Game Master rules engine for the turn you are narrating."
-          : connectionInstructions(grant.grant),
+          : connectionInstructions(grant.grant)) + " " + CZECH_MCP_TERMINOLOGY_HINT,
     },
   );
   server.setRequestHandler("tools/list", async () => ({
@@ -57,10 +58,14 @@ function serverFor(grant: Grant): Server {
   }));
   server.setRequestHandler("tools/call", async (request) => {
     const name = String(request.params.name ?? "");
-    const args =
+    // Normalize only recognized Czech rule names, not tool names, IDs or
+    // arbitrary prose. The same permission gates and schemas run afterwards.
+    const args = canonicalMcpToolArgs(
+      name,
       request.params.arguments && typeof request.params.arguments === "object"
         ? (request.params.arguments as Record<string, unknown>)
-        : {};
+        : {},
+    );
     const started = Date.now();
     if (grant.kind === "turn") {
       const meta = (request.params as { _meta?: Record<string, unknown> })._meta ?? {};
