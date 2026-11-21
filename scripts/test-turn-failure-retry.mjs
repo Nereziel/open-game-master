@@ -139,7 +139,7 @@ await test("A private-only whisper reply finishes in one AI call and never posts
   const sheet = world.sheet(kara.id);
   const sentId = insertPlayerWhisper(world.campaignId, sheet.userId, kara.id, "I privately ask about the locked cellar.");
   model.script([
-    reply({ calls: [call("send_whisper", { characterIds: [kara.id], message: "The key is under the old bench." })] }),
+    reply({ text: "Secret: the hidden vault key is under the old bench.", calls: [call("send_whisper", { characterIds: [kara.id], message: "The key is under the old bench." })] }),
   ]);
   requestDmTurn(world.campaignId);
   await settleQueue(world.campaignId);
@@ -151,6 +151,27 @@ await test("A private-only whisper reply finishes in one AI call and never posts
   assert.ok(whispers.some((entry) => entry.direction === "to_player" && entry.content.includes("key is under")), "the answer never reached the player");
   assert.ok(whispers.some((entry) => entry.id === sentId && entry.answered), "the private question was left pending");
   assert.equal(getDmStatus(world.campaignId), "idle");
+  model.close();
+  world.close();
+});
+
+await test("Private message prose without send_whisper never becomes public; the backstop answers privately", async () => {
+  const { world, kara, model } = await table();
+  world.say("dm", "The group makes camp near the river.");
+  const prior = narrations(world).length;
+  const sheet = world.sheet(kara.id);
+  insertPlayerWhisper(world.campaignId, sheet.userId, kara.id, "Can I quietly look for hidden tracks?");
+  model.script([
+    reply({ text: "Secret: Kara notices a second set of boot prints near the riverbank." }),
+    reply({ calls: [call("send_whisper", { characterIds: [kara.id], message: "You notice fresh boot prints by the riverbank." })] }),
+  ]);
+  requestDmTurn(world.campaignId);
+  await settleQueue(world.campaignId);
+  assert.equal(getDmTurn(getLatestDmTurnId(world.campaignId)).status, "done");
+  assert.equal(narrations(world).length, prior, "private model prose was posted as a public scene");
+  assert.ok(listWhispersForUser(world.campaignId, sheet.userId).some((entry) =>
+    entry.direction === "to_player" && entry.content.includes("boot prints by the riverbank")),
+  );
   model.close();
   world.close();
 });
