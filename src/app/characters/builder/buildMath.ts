@@ -367,7 +367,10 @@ export function knownSoFarRows({
     typeof t === "function" ? t(key, vars) : english;
   const className = klass ? contentName("classes", klass.name, locale) : "";
   const raceName = race ? contentName("species", race.name, locale) : "";
-  const abilityName = (ability: string) => typeof t === "function" ? t(ABILITY_NAMES[ability] ?? ability) : ABILITY_NAMES[ability] ?? ability;
+  const abilityName = (ability: string) => {
+    const english = ABILITY_NAMES[ability as Ability] ?? ability;
+    return typeof t === "function" ? t(english) : english;
+  };
   const bonuses = ABILITIES.flatMap((ability) =>
     racialBonus[ability] ? [`${abilityName(ability)} ${formatModifier(racialBonus[ability] ?? 0)}`] : [],
   );
