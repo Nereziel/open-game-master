@@ -590,12 +590,44 @@ jsou převzaty pouze ustálené názvy.
 Na Draft PR nebyly podle dohody spuštěny build ani testovací
 sada; kontroly jsou připravené k pozdějšímu spuštění.
 
+## Druhá dávka úplných kouzel 5. úrovně (21. 11. 2026)
+
+Soubor `src/lib/rulebook/czech-full-spells-19.ts` doplňuje **12 úplných
+nezávislých českých překladů kouzel 5. úrovně**, v pořadí originálního
+anglického SRD 5.1: **Rozptyl zlo a dobro, Podrob osobu, Sen,
+Plamenný úder, Magický příkaz, Mocné navrácení, Posvěcení,
+Znehybni nestvůru, Hmyzí zhouba, Poznání legend,
+Hromadné zhojení zranění a Klamná podoba**.
+
+Všechny texty zachovávají přesné účinky, včetně dvojího použití
+Rozptyl zlo a dobro, telepatických příkazů a záchran Podrob osobu,
+noční můry s postihem odpočinku u Snu, dávkování Magického příkazu,
+plného seznamu deseti voleb Posvěcení a dvou nezávislých efektů
+Klamné podoby.
+
+`czech-companion.ts` zapojuje nové popisy do české čtečky
+a ponechává původní anglické znění, kanonické identifikátory,
+metadata i MCP. V `scripts/test-rulebook.mjs` přibyl regresní
+test pro těchto dvanáct kouzel, včetně ověření kanonického
+pořadí, českých názvů, složek V/S/M, parametrů sesílání,
+kostek, významných herních omezení a anglického originálu.
+
+Pravidlové odstavce jsou vlastní překlady anglického
+SRD 5.1 (CC BY 4.0); komunitní čeština slouží pouze
+ke sjednocení názvů.
+
+**Stav: 224/319 úplných českých popisů kouzel**,
+včetně **24/37 kouzel 5. úrovně**.
+Zbývá **13 kouzel 5. úrovně a 95 kouzel celkem**.
+
+Build ani testovací sada nebyly podle dohody na Draft PR spuštěny.
+
 ## Stav
 
 - Stručné české přehledy: 932/933 kanonických stránek (výjimkou je atribuce).
 - Úplné české znění pravidlových stránek: **35/35 obsahových pravidlových stránek**.
 - Úplné české překlady jednotlivých ras: **9/9 rasových stránek SRD 5.1**, včetně všech podras obsažených ve zdrojovém SRD.
-- Úplné české popisy jednotlivých kouzel: **212/319** – všech **24/24 triků** a všech **49/49 kouzel 1. úrovně** a všech **54/54 kouzel 2. úrovně** a všech **42/42 kouzel 3. úrovně** a všech **31/31 kouzel 4. úrovně** a prvních **12/37 kouzel 5. úrovně**.
+- Úplné české popisy jednotlivých kouzel: **224/319** – všech **24/24 triků** a všech **49/49 kouzel 1. úrovně** a všech **54/54 kouzel 2. úrovně** a všech **42/42 kouzel 3. úrovně** a všech **31/31 kouzel 4. úrovně** a prvních **24/37 kouzel 5. úrovně**.
 - Dříve dokončené kapitoly zahrnují **Stavy, Nemoci, Objekty, Artefakty** a další pravidla.
 - V další dávce jsou úplně přeloženy kapitoly **Jízdní zvířata a dopravní prostředky, Nástroje, Kouzelné předměty, Jedy a Inteligentní kouzelné předměty**.
 - Následující dávka přeložila celé kapitoly **Zbroje**, **Šílenství** a

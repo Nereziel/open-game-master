@@ -3313,6 +3313,86 @@ try {
         "Missing fifth-level rules: " + id + "/" + needle);
   });
 
+
+  await test("fifth-level SRD spells 13–24 have full Czech descriptions and unchanged English originals", async () => {
+    const { CZECH_FULL_SPELLS_19 } = await import("../src/lib/rulebook/czech-full-spells-19.ts");
+    const expected = ["dispel-evil-and-good","dominate-person","dream","flame-strike","geas","greater-restoration","hallow","hold-monster","insect-plague","legend-lore","mass-cure-wounds","mislead"];
+    const originals = rulebookPages("en").filter((page) =>
+      page.kind === "spell" && page.meta?.startsWith("5th-level"));
+    assert.equal(originals.length, 37);
+    assert.deepEqual(Object.keys(CZECH_FULL_SPELLS_19), expected);
+    assert.deepEqual(originals.slice(12, 24).map((page) => page.id), expected,
+      "The second fifth-level Czech batch must follow the English SRD order");
+    const field = (md, label) => {
+      const prefix = "**" + label + ":** ";
+      return md.split("\n").find((line) => line.startsWith(prefix))?.slice(prefix.length);
+    };
+    const times = {
+      "1 action": "1 akce", "1 minute": "1 minuta",
+      "10 minutes": "10 minut", "24 hours": "24 hodin",
+    };
+    const range = {
+      Self: "Sesilatel", Touch: "Dotyk", "60 feet": "60 stop",
+      "90 feet": "90 stop", "300 feet": "300 stop",
+    };
+    const durations = {
+      Instantaneous: "Ihned", "30 days": "30 dnů",
+      "8 hours": "8 hodin", "Until dispelled": "Do rozptýlení",
+      "Concentration, up to 1 minute": "Soustředění, až 1 minuta",
+      "Concentration, up to 10 minutes": "Soustředění, až 10 minut",
+      "Concentration, up to 1 hour": "Soustředění, až 1 hodina",
+    };
+    for (const original of originals.slice(12, 24)) {
+      const full = CZECH_FULL_SPELLS_19[original.id];
+      const page = rulebookPage(original.id, "cs").page;
+      assert.ok(full?.length >= 220, "Missing complete Czech spell: " + original.id);
+      assert.equal(page.id, original.id);
+      assert.equal(page.title, CZECH_SPELLS[original.title]);
+      assert.equal(page.originalMeta, original.meta);
+      assert.ok(page.md.includes("## Úplné znění pravidel v češtině"));
+      assert.ok(page.md.includes(full), "Czech reader not linked: " + original.id);
+      assert.ok(page.md.endsWith(original.md), "English spell source modified: " + original.id);
+      for (const [en, cs] of [
+        ["Casting Time", "Doba sesílání"], ["Range", "Dosah"],
+        ["Components", "Složky"], ["Duration", "Trvání"],
+      ]) {
+        assert.ok(field(original.md, en), "English metadata absent: " + original.id + "/" + en);
+        assert.ok(field(full, cs), "Czech metadata absent: " + original.id + "/" + cs);
+      }
+      const englishComponents = field(original.md, "Components")?.match(/^[VSM, ]+/)?.[0]?.trim();
+      const czechComponents = field(full, "Složky")?.match(/^[VSM, ]+/)?.[0]?.trim();
+      assert.equal(czechComponents, englishComponents, "Component letters changed: " + original.id);
+      const castTime = field(original.md, "Casting Time");
+      if (times[castTime]) assert.equal(field(full, "Doba sesílání"), times[castTime]);
+      const spellRange = field(original.md, "Range");
+      if (range[spellRange])
+        assert.ok(field(full, "Dosah").startsWith(range[spellRange]),
+          "Incorrect range: " + original.id);
+      const duration = field(original.md, "Duration");
+      if (durations[duration])
+        assert.equal(field(full, "Trvání"), durations[duration], "Duration changed: " + original.id);
+      for (const [, count, sides] of original.md.matchAll(/\b(\d+)d(\d+)\b/g))
+        assert.ok(full.includes(count + "k" + sides), "Missing dice: " + original.id);
+    }
+    for (const [id, needles] of Object.entries({
+      "dispel-evil-and-good": ["Nebešťané", "elementálové", "Prolomení očarování", "Vypuzení", "Charisma", "Říše stínů"],
+      "dominate-person": ["Moudrost", "telepatické pouto", "reakci", "10 minut", "1 hodinu", "8 hodin"],
+      dream: ["8 hodin", "transu", "deseti slovech", "3k6", "nevýhodu", "stejné sféře"],
+      "flame-strike": ["4k6", "4k6 zářivého", "10 stop", "40 stop", "1k6"],
+      geas: ["30 dnů", "5k10", "nejvýše jednou za den", "1 rok", "Mocné navrácení"],
+      "greater-restoration": ["100 zl", "vyčerpání o 1", "zkameněl", "maximální počet životů"],
+      hallow: ["1 000 zl", "60 stop", "Charisma", "Odvaha", "Tma", "Denní světlo",
+               "Ochrana před energií", "Zranitelnost vůči energii", "Věčný klid",
+               "Zákaz cestování mezi sférami", "Strach", "Ticho", "Jazyky"],
+      "hold-monster": ["90 stop", "Moudrost", "nemrtvé", "30 stop"],
+      "insect-plague": ["300 stop", "20 stop", "4k10", "1k10", "obtížný terén"],
+      "legend-lore": ["250 zl", "50 zl", "legendární význam", "pravdivé"],
+      "mass-cure-wounds": ["šest tvorů", "30 stop", "3k8", "1k8", "nemrtvé"],
+      mislead: ["neviditelným", "dvojník", "dvojnásobek", "Bonusovou akcí", "oslepený a ohlušený"],
+    })) for (const needle of needles)
+      assert.ok(CZECH_FULL_SPELLS_19[id].includes(needle), "Omitted fifth-level mechanic: " + id + "/" + needle);
+  });
+
   // ---- the routes ----
   const { createUser } = await import("../src/lib/db/users.ts");
   const { mintSession } = await import("../src/lib/auth.ts");
