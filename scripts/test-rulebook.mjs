@@ -23,8 +23,9 @@ const { rulebookContents, rulebookPage, rulebookPages, rulebookSearch, localeFro
   "../src/lib/rulebook/book.ts"
 );
 const { crosswalkFor } = await import("../src/lib/rulebook/crosswalk.ts");
-const { CZECH_SKILLS, CZECH_ITEMS, CZECH_MONSTERS, CZECH_SPELLS, czechSrdTitle, czechSrdSpellGroup, czechSrdSpellMeta } =
+const { CZECH_SKILLS, CZECH_ITEMS, CZECH_MONSTERS, CZECH_SPELLS, czechSrdTitle, czechSrdSpellGroup, czechSrdSpellMeta, czechSrdMonsterMeta, czechSrdItemMeta } =
   await import("../src/lib/rulebook/czech-terms.ts");
+const { CZECH_SPELL_NOTES } = await import("../src/lib/rulebook/czech-spell-notes.ts");
 const { anchorSlug, blockText, inlineText, parseBook, parseInline, stripInline } = await import(
   "../src/lib/rulebook/markdown.ts"
 );
@@ -311,7 +312,8 @@ try {
     assert.equal(rulebookPage("halfling", "cs").page.title, "Hobit");
     assert.match(rulebookPage("combat", "cs").page.md, /Český přehled pravidel/);
     assert.ok(rulebookPage("combat", "cs").page.md.endsWith(rulebookPage("combat", "en").page.md));
-    assert.equal(rulebookPage("fireball", "cs").page.md, rulebookPage("fireball", "en").page.md);
+    assert.match(rulebookPage("fireball", "cs").page.md, /Český popis kouzla/);
+    assert.ok(rulebookPage("fireball", "cs").page.md.endsWith(rulebookPage("fireball", "en").page.md));
     assert.equal(rulebookPage("legal-information", "cs").page.md, rulebookPage("legal-information", "en").page.md);
     assert.equal(rulebookContents("cs").pageCount, rulebookContents("en").pageCount);
     assert.equal(rulebookContents("cs").source.license, "CC-BY-4.0");
@@ -354,6 +356,35 @@ try {
     assert.equal(spell.group, "3. úroveň");
     assert.equal(rulebookPage("fireball", "en").page.title, "Fireball");
     assert.equal(rulebookPage("fireball", "fr").page.title, "Boule de feu");
+  });
+
+  await test("Czech spell explanations cover common SRD spells with canonical English fallback", () => {
+    const english = rulebookPages("en");
+    const spellsByName = new Map(english.filter((page) => page.kind === "spell").map((page) => [page.title, page]));
+    assert.equal(Object.keys(CZECH_SPELL_NOTES).length, 44, "new Czech spell explanations");
+    for (const [name, note] of Object.entries(CZECH_SPELL_NOTES)) {
+      const spell = spellsByName.get(name);
+      assert.ok(spell, `Spell note is not a canonical SRD 5.1 spell: ${name}`);
+      assert.ok(note.length > 120, `Spell note is unexpectedly short: ${name}`);
+      const czech = rulebookPage(spell.id, "cs").page;
+      assert.match(czech.md, /Český popis kouzla/);
+      assert.ok(czech.md.includes(note));
+      assert.ok(czech.md.endsWith(spell.md), `Original SRD lost in ${name}`);
+      assert.ok(CZECH_SPELLS[name], `Czech title missing for ${name}`);
+    }
+    const fireball = rulebookSearch("Ohnivá koule", 5, "cs").hits;
+    assert.ok(fireball.some((hit) => hit.page === "fireball"), "Czech spell search finds canonical fireball id");
+  });
+
+  await test("Czech magic item and monster metadata are display-only and retain original metadata", () => {
+    assert.equal(czechSrdMonsterMeta("Huge dragon, chaotic evil"), "Obrovský drak, chaoticky zlý");
+    assert.equal(czechSrdMonsterMeta("Medium humanoid (goblinoid), neutral evil"), "Střední humanoid (goblinoid), neutrálně zlý");
+    assert.equal(czechSrdItemMeta("Wondrous item, uncommon (requires attunement)"), "Divotvorný předmět, neobvyklý (vyžaduje sladění)");
+    assert.equal(czechSrdItemMeta("Unknown item, rare"), "Unknown item, rare");
+    assert.equal(czechSrdMonsterMeta("unknown metadata"), "unknown metadata");
+    const drake = rulebookPage("adult-red-dragon-chromatic", "cs").page;
+    assert.equal(drake.meta, "Obrovský drak, chaoticky zlý");
+    assert.equal(drake.originalMeta, rulebookPage("adult-red-dragon-chromatic", "en").page.meta);
   });
 
   await test("Czech companion adds original rules summaries while preserving each full English page", () => {
