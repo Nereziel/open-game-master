@@ -1,5 +1,6 @@
 import { describe, expect, it } from "vitest";
 import { calculatorDisplayText } from "../reference/calculator-display";
+import { mathPartLabel, formatMathParts } from "../srd";
 import { APPEARANCE_THEMES } from "../appearance-themes";
 import { SHELF_TOUR, HUB_TOUR, SYSTEM_TOURS } from "../tours/workshop";
 import { PLAYER_TOUR, FIRST_TURN_TOUR, DM_TOUR } from "../tours/table";
@@ -94,6 +95,37 @@ describe("Czech localization", () => {
     expect(localeFromAcceptLanguage("cs-CZ,fr;q=0.9,en;q=0.5")).toBe("cs");
     expect(resolveLocale({ cookieHeader: "odm_locale=cs" })).toBe("cs");
     expect(localeTag("cs")).toBe("cs-CZ");
+  });
+
+  it("uses natural Czech D&D 5e ability modifiers and consistent proficiency bonus labels", () => {
+    const t = (key: string, vars?: Record<string, string | number>) => translate("cs", key, vars);
+    const expected = {
+      STR: "Oprava Síly",
+      DEX: "Oprava Obratnosti",
+      CON: "Oprava Odolnosti",
+      INT: "Oprava Inteligence",
+      WIS: "Oprava Moudrosti",
+      CHA: "Oprava Charismatu",
+    };
+    for (const [abbr, label] of Object.entries(expected)) {
+      expect(mathPartLabel(t, `${abbr} modifier`)).toBe(label);
+    }
+    expect(mathPartLabel(t, "proficiency")).toBe("zdatnostní bonus");
+    expect(formatMathParts(t, [
+      { label: "WIS modifier", value: 0 },
+      { label: "proficiency", value: 2 },
+    ], "cs")).toBe("Oprava Moudrosti: +0, zdatnostní bonus: +2");
+    expect(translate("cs", "Proficiency")).toBe("Zdatnostní bonus");
+    expect(translate("cs", "Proficiency bonus")).toBe("Zdatnostní bonus");
+    expect(translate("cs", "proficiency bonus")).toBe("zdatnostní bonus");
+    expect(translate("cs", "half proficiency")).toBe("polovina zdatnostního bonusu");
+    expect(translate("cs", "{ability} modifier", { ability: "Moudrost" })).toBe("Oprava vlastnosti: Moudrost");
+    expect(translatePlural("cs", "One skill proficiency", "{count} skill proficiencies", { count: 1 })).toBe("Jedna zdatnost v dovednosti");
+    expect(translatePlural("cs", "One skill proficiency", "{count} skill proficiencies", { count: 2 })).toBe("2 zdatnosti v dovednostech");
+    expect(formatMathParts((key, vars) => translate("en", key, vars), [
+      { label: "WIS modifier", value: 0 },
+      { label: "proficiency", value: 2 },
+    ], "en")).toBe("+0 WIS modifier, +2 proficiency bonus");
   });
 
   it("translates text with variables and preserves English fallback", () => {
