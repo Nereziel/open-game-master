@@ -33,6 +33,10 @@ const { CZECH_SPELL_NOTES_5 } = await import("../src/lib/rulebook/czech-spell-no
 const { CZECH_SPELL_NOTES_6 } = await import("../src/lib/rulebook/czech-spell-notes-6.ts");
 const { CZECH_SPELL_NOTES_6A } = await import("../src/lib/rulebook/czech-spell-notes-6a.ts");
 const { CZECH_SPELL_NOTES_6B } = await import("../src/lib/rulebook/czech-spell-notes-6b.ts");
+const { CZECH_SPELL_NOTES_7A } = await import("../src/lib/rulebook/czech-spell-notes-7a.ts");
+const { CZECH_SPELL_NOTES_7B } = await import("../src/lib/rulebook/czech-spell-notes-7b.ts");
+const { CZECH_SPELL_NOTES_7C } = await import("../src/lib/rulebook/czech-spell-notes-7c.ts");
+const { CZECH_SPELL_NOTES_7D } = await import("../src/lib/rulebook/czech-spell-notes-7d.ts");
 const { CZECH_MONSTER_NOTES, CZECH_ITEM_NOTES } = await import("../src/lib/rulebook/czech-bestiary-items.ts");
 const { CZECH_MONSTER_NOTES_2, CZECH_ITEM_NOTES_2 } = await import("../src/lib/rulebook/czech-bestiary-items-2.ts");
 const { CZECH_MONSTER_NOTES_3, CZECH_ITEM_NOTES_3 } = await import("../src/lib/rulebook/czech-bestiary-items-3.ts");
@@ -417,6 +421,12 @@ try {
       const byTitle = new Map(originals.filter((page) => page.kind === kind).map((page) => [page.title, page]));
       for (const [englishName, summary] of Object.entries(mapping)) {
         const source = byTitle.get(englishName);
+        // The character-builder catalogue also contains non-SRD PHB spells.
+        // Such notes do not create pages in the CC BY 4.0 SRD rulebook.
+        if (kind === "spell" && !source) {
+          assert.ok(titles[englishName], `Czech PHB spell name missing for ${englishName}`);
+          continue;
+        }
         assert.ok(source, `${kind} missing from canonical English 2014 SRD: ${englishName}`);
         assert.ok(titles[englishName], `Missing Czech title for ${englishName}`);
         assert.ok(summary.length >= 100, `Unexpectedly short summary for ${englishName}`);
@@ -545,6 +555,7 @@ try {
         assert.ok(group.names[name], `Missing Czech ${kind} title: ${name}`);
         assert.ok(note.length >= 120, `Unexpectedly short Czech ${kind} note: ${name}`);
         const source = sourceByTitle.get(name);
+        if (kind === "spell" && !source) continue; // PHB-only spell notes, not SRD pages
         assert.ok(source, `Missing canonical SRD ${kind} entry: ${name}`);
         const translated = rulebookPage(source.id, "cs").page;
         assert.equal(translated.id, source.id, `Changed canonical SRD identifier for ${name}`);
@@ -575,6 +586,7 @@ try {
       assert.ok(CZECH_SPELLS[englishName], `Missing Czech spell name: ${englishName}`);
       assert.ok(note.length >= 160, `Suspiciously short Czech spell description: ${englishName}`);
       const source = originals.get(englishName);
+      if (!source) continue; // Core PHB spell absent from the licensed SRD 5.1
       assert.ok(source, `No canonical 2014 SRD spell: ${englishName}`);
       const translated = rulebookPage(source.id, "cs").page;
       assert.equal(translated.id, source.id, `Page ID changed for ${englishName}`);
@@ -585,8 +597,8 @@ try {
     }
     for (const [query, englishName] of [
       ["Mihotání", "Blink"],
-      ["Aura života", "Aura of Life"],
-      ["Závratný úder", "Staggering Smite"],
+      ["Větrná zeď", "Wind Wall"],
+      ["Páchnoucí oblak", "Stinking Cloud"],
     ]) {
       const originalPage = originals.get(englishName);
       assert.ok(originalPage);
@@ -610,6 +622,7 @@ try {
       assert.ok(!previous.has(englishName), `Duplicated Czech spell notes: ${englishName}`);
       assert.ok(CZECH_SPELLS[englishName], `Missing canonical Czech spell title: ${englishName}`);
       const original = byTitle.get(englishName);
+      if (!original) continue; // Non-SRD spells remain valid builder-only reference names
       assert.ok(original, `Missing English SRD spell: ${englishName}`);
       assert.ok(summary.length >= 140, `Empty Czech spell description: ${englishName}`);
       const localized = rulebookPage(original.id, "cs").page;
@@ -618,6 +631,49 @@ try {
       assert.ok(localized.md.endsWith(original.md), `Changed English SRD mechanics: ${englishName}`);
     }
     assert.ok(Object.keys(CZECH_SPELLS).length >= 259);
+  });
+
+  await test("every one of the 319 SRD 5.1 spell pages has a canonical Czech title and summary", () => {
+    const spellPages = rulebookPages("en").filter((page) => page.kind === "spell");
+    assert.equal(spellPages.length, 319, "Expected full 2014 CC BY 4.0 SRD spellbook");
+    const batches = [
+      CZECH_SPELL_NOTES, CZECH_SPELL_NOTES_2, CZECH_SPELL_NOTES_3,
+      CZECH_SPELL_NOTES_4, CZECH_SPELL_NOTES_5, CZECH_SPELL_NOTES_6,
+      CZECH_SPELL_NOTES_6A, CZECH_SPELL_NOTES_6B,
+      CZECH_SPELL_NOTES_7A, CZECH_SPELL_NOTES_7B,
+      CZECH_SPELL_NOTES_7C, CZECH_SPELL_NOTES_7D,
+    ];
+    assert.equal(Object.keys(CZECH_SPELL_NOTES_7A).length, 22);
+    assert.equal(Object.keys(CZECH_SPELL_NOTES_7B).length, 26);
+    assert.equal(Object.keys(CZECH_SPELL_NOTES_7C).length, 25);
+    assert.equal(Object.keys(CZECH_SPELL_NOTES_7D).length, 35);
+    const notes = Object.assign({}, ...batches);
+    const byName = new Set();
+    for (const page of spellPages) {
+      assert.ok(!byName.has(page.title), `Duplicate SRD spell page title: ${page.title}`);
+      byName.add(page.title);
+      const note = notes[page.title];
+      const title = CZECH_SPELLS[page.title];
+      assert.ok(note && note.length >= 100, `Missing Czech summary for SRD spell: ${page.title}`);
+      assert.ok(title, `Missing Czech display name for SRD spell: ${page.title}`);
+      const translated = rulebookPage(page.id, "cs").page;
+      assert.equal(translated.id, page.id, `Changed canonical SRD identifier: ${page.title}`);
+      assert.equal(translated.title, title, `Czech spell title mismatch: ${page.title}`);
+      assert.ok(translated.md.includes("Český popis kouzla"), `Missing Czech heading: ${page.title}`);
+      assert.ok(translated.md.includes(note), `Missing Czech summary in page: ${page.title}`);
+      assert.ok(translated.md.endsWith(page.md), `Original English spell rules modified: ${page.title}`);
+    }
+    for (const [query, title] of [
+      ["Melfův kyselinový šíp", "Acid Arrow"],
+      ["Bigbyho ruka", "Arcane Hand"],
+      ["Meteorický roj", "Meteor Swarm"],
+      ["Přání", "Wish"],
+    ]) {
+      const original = spellPages.find((page) => page.title === title);
+      assert.ok(original, `Missing reference spell: ${title}`);
+      assert.ok(rulebookSearch(query, 15, "cs").hits.some((hit) => hit.page === original.id),
+        `Czech lookup failed: ${query}`);
+    }
   });
 
   await test("Czech magic item and monster metadata are display-only and retain original metadata", () => {
