@@ -30,6 +30,7 @@ const { CZECH_SPELL_NOTES_2 } = await import("../src/lib/rulebook/czech-spell-no
 const { CZECH_SPELL_NOTES_3 } = await import("../src/lib/rulebook/czech-spell-notes-3.ts");
 const { CZECH_SPELL_NOTES_4 } = await import("../src/lib/rulebook/czech-spell-notes-4.ts");
 const { CZECH_SPELL_NOTES_5 } = await import("../src/lib/rulebook/czech-spell-notes-5.ts");
+const { CZECH_SPELL_NOTES_6 } = await import("../src/lib/rulebook/czech-spell-notes-6.ts");
 const { CZECH_SPELL_NOTES_6A } = await import("../src/lib/rulebook/czech-spell-notes-6a.ts");
 const { CZECH_SPELL_NOTES_6B } = await import("../src/lib/rulebook/czech-spell-notes-6b.ts");
 const { CZECH_MONSTER_NOTES, CZECH_ITEM_NOTES } = await import("../src/lib/rulebook/czech-bestiary-items.ts");
@@ -592,6 +593,30 @@ try {
       assert.ok(rulebookSearch(query, 20, "cs").hits.some((hit) => hit.page === originalPage.id),
         `Czech lookup did not resolve ${query}`);
     }
+  });
+
+  await test("sixth wave: 31 Czech spell summaries preserve every canonical SRD page", () => {
+    const english = rulebookPages("en").filter((entry) => entry.kind === "spell");
+    const byTitle = new Map(english.map((entry) => [entry.title, entry]));
+    const keys = Object.keys(CZECH_SPELL_NOTES_6);
+    assert.equal(keys.length, 31, "New 3rd/4th-level spell batch count");
+    const previous = new Set([
+      ...Object.keys(CZECH_SPELL_NOTES), ...Object.keys(CZECH_SPELL_NOTES_2),
+      ...Object.keys(CZECH_SPELL_NOTES_3), ...Object.keys(CZECH_SPELL_NOTES_4),
+      ...Object.keys(CZECH_SPELL_NOTES_5),
+    ]);
+    for (const [englishName, summary] of Object.entries(CZECH_SPELL_NOTES_6)) {
+      assert.ok(!previous.has(englishName), `Duplicated Czech spell notes: ${englishName}`);
+      assert.ok(CZECH_SPELLS[englishName], `Missing canonical Czech spell title: ${englishName}`);
+      const original = byTitle.get(englishName);
+      assert.ok(original, `Missing English SRD spell: ${englishName}`);
+      assert.ok(summary.length >= 140, `Empty Czech spell description: ${englishName}`);
+      const localized = rulebookPage(original.id, "cs").page;
+      assert.equal(localized.id, original.id);
+      assert.ok(localized.md.includes(summary), `Czech summary not shown: ${englishName}`);
+      assert.ok(localized.md.endsWith(original.md), `Changed English SRD mechanics: ${englishName}`);
+    }
+    assert.ok(Object.keys(CZECH_SPELLS).length >= 238);
   });
 
   await test("Czech magic item and monster metadata are display-only and retain original metadata", () => {
