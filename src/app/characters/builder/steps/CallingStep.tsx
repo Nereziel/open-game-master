@@ -267,7 +267,7 @@ export function CallingStep({
               ) : null}
               <InfoButton
                 label={classDisplayNameFor(klass.id, locale)}
-                text={classInfoText(klass, t)}
+                text={classInfoText(klass, t, locale)}
                 reference={{ kind: "classes", slug: klass.id }}
               />
             </span>
