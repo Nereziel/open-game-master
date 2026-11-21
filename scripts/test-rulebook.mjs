@@ -565,7 +565,7 @@ try {
       }
     }
     assert.ok(Object.keys(CZECH_SPELLS).length >= 207, "Czech dictionary includes the new spell names");
-    assert.equal(Object.keys(CZECH_MONSTERS).length, 138, "Monster glossary retains every existing name");
+    assert.ok(Object.keys(CZECH_MONSTERS).length >= 138, "Monster glossary retains every existing name");
     const spell = original.find((page) => page.kind === "spell" && page.title === "Vicious Mockery");
     assert.ok(spell, "Vicious Mockery exists in SRD");
     assert.ok(rulebookSearch("Zlomyslný výsměch", 10, "cs").hits.some((hit) => hit.page === spell.id));
@@ -874,6 +874,16 @@ try {
     assert.equal(localizedArmor.title, "Oživlá zbroj");
     assert.ok(localizedArmor.md.includes("Český přehled nestvůry"));
     assert.ok(localizedArmor.md.endsWith(armor.md));
+  });
+
+  await test("Czech summaries are actually attached to 643 of 933 canonical SRD pages", () => {
+    const all = rulebookPages("cs");
+    assert.equal(all.length, 933);
+    const counts = Object.fromEntries(["rules", "race", "class", "spell", "item", "monster"].map((kind) => [
+      kind, all.filter((page) => page.kind === kind && page.md.startsWith("## Český ")).length,
+    ]));
+    assert.deepEqual(counts, { rules: 35, race: 9, class: 12, spell: 319, item: 96, monster: 172 });
+    assert.equal(Object.values(counts).reduce((sum, count) => sum + count, 0), 643);
   });
 
   // ---- the routes ----
