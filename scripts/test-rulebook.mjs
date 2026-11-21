@@ -1445,11 +1445,11 @@ try {
     assert.ok(localized.md.includes("## Úplné znění pravidel v češtině"));
     assert.ok(localized.md.includes(translated));
     assert.ok(localized.md.endsWith(source.md), "Original English deity tables changed");
-    const batches = await Promise.all(Array.from({ length: 18 }, (_, i) =>
+    const batches = await Promise.all(Array.from({ length: 19 }, (_, i) =>
       import(`../src/lib/rulebook/czech-full-rules-${i + 1}.ts`)));
     const ids = batches.flatMap((mod, i) => Object.keys(mod[`CZECH_FULL_RULES_${i + 1}`]));
-    assert.equal(ids.length, 32);
-    assert.equal(new Set(ids).size, 32, "Duplicate SRD rules page with full Czech text");
+    assert.equal(ids.length, 33);
+    assert.equal(new Set(ids).size, 33, "Duplicate SRD rules page with full Czech text");
   });
 
   await test("Czech traps include eight fully translated mechanical and magical examples", async () => {
@@ -1627,6 +1627,52 @@ try {
       "| Batoh* | 1 krychlová stopa / 30 liber výbavy |",
     ]) {
       assert.ok(translated.includes(clause), "Missing canonical equipment mechanic: " + clause);
+    }
+  });
+
+  await test("Czech ability scores preserve six attributes, 18 skills, modifiers, checks and saving throws", async () => {
+    const { CZECH_FULL_RULES_19 } = await import("../src/lib/rulebook/czech-full-rules-19.ts");
+    assert.deepEqual(Object.keys(CZECH_FULL_RULES_19), ["using-ability-scores"]);
+    const translated = CZECH_FULL_RULES_19["using-ability-scores"];
+    const source = rulebookPage("using-ability-scores", "en").page;
+    const localized = rulebookPage("using-ability-scores", "cs").page;
+    assert.equal(localized.id, source.id);
+    assert.equal(localized.kind, "rules");
+    assert.ok(translated.length > 25000, "Full Czech ability scores translation unexpectedly short");
+    assert.ok(localized.md.includes("## Úplné znění pravidel v češtině"));
+    assert.ok(localized.md.includes(translated), "Czech reader must include full translated rules");
+    assert.ok(localized.md.endsWith(source.md), "Original English SRD source must be unchanged");
+    for (const section of [
+      "## Hodnoty vlastností a jejich opravy",
+      "# Výhoda a nevýhoda", "# Bonus zdatnosti", "# Ověření vlastností",
+      "## Soutěžní ověření", "## Dovednosti", "## Pasivní ověření",
+      "## Spolupráce", "### Skupinová ověření",
+      "### Síla", "### Obratnost", "### Odolnost",
+      "### Inteligence", "### Moudrost", "### Charisma",
+      "#### Volitelné pravidlo: Zatížení", "# Záchranné hody",
+    ]) {
+      assert.ok(translated.includes(section), "Missing ability rules: " + section);
+    }
+    for (const skill of [
+      "Atletika", "Akrobacie", "Obratnost rukou", "Plížení",
+      "Magie", "Historie", "Pátrání", "Příroda", "Náboženství",
+      "Zacházení se zvířaty", "Odhad", "Lékařství", "Vnímání",
+      "Přežití", "Klamání", "Zastrašování", "Vystupování",
+      "Přesvědčování",
+    ]) {
+      assert.ok(translated.includes(skill), "Missing Czech skill: " + skill);
+    }
+    for (const rule of [
+      "| 1 | −5 |", "| 10–11 | +0 |", "| 30 | +10 |",
+      "| Velmi snadný | 5 |", "| Téměř nemožný | 30 |",
+      "vzájemně se ruší", "hodíš jen", "nejvýše jednou jej násobíš",
+      "Pasivní hodnota = 10 + všechny opravy",
+      "alespoň polovina skupiny", "30 × hodnota Síly",
+      "větší než 5 × hodnota Síly", "větší než 10 × hodnota Síly",
+      "sníží o 20 stop", "pasivní Vnímání 14",
+      "Inteligence (Magie)", "Moudrost (Zacházení se zvířaty)",
+    ]) {
+      assert.ok(translated.includes(rule), "Missing canonical ability mechanic: " + rule);
     }
   });
 
