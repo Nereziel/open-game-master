@@ -106,7 +106,7 @@ překladu nepřebírají. Interní názvy, klíče SRD a MCP API zůstávají an
 |---|---|
 | Bojovník | Mimořádný atlet; Dokonalejší kritický zásah; Zarputilec |
 | Bard | Kolej znalostí; Kolej odvahy; Slovní výpad; Nedostižná dovednost |
-| Klerik | Ničení nemrtvých |
+| Klerik | Ničení nemrtvých; Doménová kouzla |
 | Druid | Nestárnoucí tělo; Kruhová kouzla; Chůze krajem; Přírodní ochrana; Přírodní svatyně |
 | Mnich | Klid; Smrtící dlaň |
 | Paladin | Vnímání božství; Přikládání rukou; Boží úder; Čistota duše; Svatozář |
