@@ -1779,7 +1779,7 @@ try {
     for (const rule of [
       "2k8 + 2 životů", "2k8 kostkami životů",
       "| Gigantický | k20 | 10½ |",
-      "Oprava příslušné vlastnosti", "bonus zdatnosti",
+      "oprava příslušné vlastnosti", "bonus zdatnosti",
       "nestvůra i zdroj otřesů se dotýkají stejné země",
       "může telepatické zprávy vysílat ani přijímat",
       "čtyř dobrodruhů", "SN 21 nebo vyšší",
