@@ -405,12 +405,37 @@ Anglická ID, původní anglický obsah, metadata i MCP zůstávají beze změn.
 **Build a automatické testy nebyly na Draft PR spuštěny**, podle předchozí
 dohody. Regresní kontroly jsou připravené v repozitáři.
 
+## První kompletní překlady kouzel 3. úrovně SRD 5.1 (21. 11. 2026)
+
+Nový soubor `src/lib/rulebook/czech-full-spells-12.ts` přidává **12
+samostatných úplných českých překladů** prvních kouzel 3. úrovně
+v anglickém SRD 5.1: **Stvoř nemrtvého, Maják naděje, Uvrhni kletbu,
+Mihotání, Svolej blesky, Jasnozřivost, Vyvolej zvířata, Protikouzlo,
+Stvoř jídlo a vodu, Denní světlo, Rozptyl magii a Strach**.
+
+Překlady obsahují všechny pravidlové účinky, výjimky, seznamy možností,
+trvání při sesílání vyšší pozicí a součásti sesílání. `czech-companion.ts`
+je propojuje s čtečkou bez změny původních anglických textů, ID, metadat
+nebo MCP. Nový regresní test v `scripts/test-rulebook.mjs` prověřuje
+pořadí prvních 12 z celkem 42 kouzel 3. úrovně, názvy, parametry sesílání,
+složky, kostky, originální anglický obsah a důležité mechanické podmínky.
+
+Veškeré souvislé české texty jsou nezávislým překladem anglického SRD 5.1
+(CC BY 4.0); z komunitního českého překladu jsou použity jen
+ustálené názvy.
+
+**Stav: 139/319 úplných českých popisů kouzel**, včetně
+**12/42 kouzel 3. úrovně**. Zbývá **180 kouzel** (z toho
+**30 kouzel 3. úrovně**).
+
+Build a testovací sada na Draft PR nebyly spuštěny podle dohody.
+
 ## Stav
 
 - Stručné české přehledy: 932/933 kanonických stránek (výjimkou je atribuce).
 - Úplné české znění pravidlových stránek: **35/35 obsahových pravidlových stránek**.
 - Úplné české překlady jednotlivých ras: **9/9 rasových stránek SRD 5.1**, včetně všech podras obsažených ve zdrojovém SRD.
-- Úplné české popisy jednotlivých kouzel: **127/319** – všech **24/24 triků** a všech **49/49 kouzel 1. úrovně** a všech **54/54 kouzel 2. úrovně**.
+- Úplné české popisy jednotlivých kouzel: **139/319** – všech **24/24 triků** a všech **49/49 kouzel 1. úrovně** a všech **54/54 kouzel 2. úrovně** a prvních **12/42 kouzel 3. úrovně**.
 - Dříve dokončené kapitoly zahrnují **Stavy, Nemoci, Objekty, Artefakty** a další pravidla.
 - V další dávce jsou úplně přeloženy kapitoly **Jízdní zvířata a dopravní prostředky, Nástroje, Kouzelné předměty, Jedy a Inteligentní kouzelné předměty**.
 - Následující dávka přeložila celé kapitoly **Zbroje**, **Šílenství** a
