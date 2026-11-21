@@ -2358,7 +2358,13 @@ async function runAdvance(context: TurnContext, turn: DmTurn) {
       ...jsonSalvage.calls,
       ...salvage.calls,
     ];
-    const replyRead = !finalCall && Boolean(salvage.text.trim()) && !structuredCalls.some(resolvesOutcome);
+    const replyRead =
+      !finalCall &&
+      Boolean(salvage.text.trim()) &&
+      // Purely private messages have no public prose for the claims reader;
+      // don't spend another utility-model call (or parse secrets) on them.
+      !(privateOnly && structuredCalls.every((call) => call.name === "send_whisper")) &&
+      !structuredCalls.some(resolvesOutcome);
     const read = replyRead
       ? await readReply(campaign, sheets, turn, salvage.text, {
           inEncounter,
@@ -2424,7 +2430,7 @@ async function runAdvance(context: TurnContext, turn: DmTurn) {
     // own context. The final call's prose was not read above, so its asides
     // are read on their own: it goes to the table as it is.
     const narration = withoutOrphanClosers(
-      withoutAsides(prose, read ? claims : finalCall && prose ? await readAsides(campaign, sheets, turn, prose) : [], campaign.gameSettings.tableLanguage),
+      withoutAsides(prose, read ? claims : finalCall && prose && !privateOnly ? await readAsides(campaign, sheets, turn, prose) : [], campaign.gameSettings.tableLanguage),
     );
     // Nothing of the story left: the reply was only the model's plan. Beside
     // tool calls nothing of it is kept, and the turn owes the narration of
