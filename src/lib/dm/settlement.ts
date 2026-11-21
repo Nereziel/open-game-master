@@ -33,6 +33,7 @@ export function populateSettlement(campaign: Campaign, location: CampaignLocatio
     size: options.size,
     terrain: options.terrain,
     genre: campaign.gameSettings.genre,
+    language: campaign.gameSettings.tableLanguage === "czech" ? "czech" : "english",
     seed: options.seed ?? seedFromText(`${campaign.id}|${location.name}`),
   });
   let npcs = 0;
@@ -62,7 +63,7 @@ export function populateSettlement(campaign: Campaign, location: CampaignLocatio
   }
   insertRollTable({
     campaignId: campaign.id,
-    name: `Rumours in ${settlement.name}`,
+    name: campaign.gameSettings.tableLanguage === "czech" ? `Zvěsti z místa ${settlement.name}` : `Rumours in ${settlement.name}`,
     entries: settlement.rumours,
     createdByUserId: campaign.ownerUserId,
   });
