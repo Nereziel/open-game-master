@@ -22,6 +22,7 @@ import { textKey } from "@/lib/language/text-logic";
 import { matchResource } from "@/lib/srd/class-resources";
 import { resourceGuidance } from "@/lib/srd/class-resources-fr";
 import type { Locale } from "@/lib/messages-logic";
+import { translate } from "@/lib/i18n/translate";
 import { guidanceFor } from "@/lib/srd/feature-effects";
 import { subclassFeatureDescription } from "@/lib/srd/features";
 import { findOptionByFeatureName } from "@/lib/srd/options";
@@ -107,13 +108,14 @@ export function describeFeature(classId: string, subclass: string, name: string,
   // option list, before any of the feature tables are consulted.
   const option = findOptionByFeatureName(name);
   if (option) {
-    return option.req ? `${option.d} (Requires ${option.req}.)` : option.d;
+    const description = option.req ? `${option.d} (Requires ${option.req}.)` : option.d;
+    return locale === "cs" ? translate("cs", description) : description;
   }
   // A workshop subclass's pick ("Bloodline (Storm)") from the subclasses the
   // page registered (issue #833).
   const pick = subclassChoicePickDescription(name);
   if (pick) {
-    return pick;
+    return locale === "cs" ? translate("cs", pick) : pick;
   }
   // Written beside such a pick: the element its option deals in. The
   // element's sentence stays the engine's English: it quotes the subclass's
@@ -143,7 +145,8 @@ export function describeFeature(classId: string, subclass: string, name: string,
     (resource ? resourceGuidance(resource.id, locale) ?? resource.guidance : null) ??
     guidanceFor({ class: classId, features: [], feature: name }) ??
     looseSrdText(classId, name);
-  return stripLeadingLabel(found, name);
+  const description = stripLeadingLabel(found, name);
+  return description && locale === "cs" ? translate("cs", description) : description;
 }
 
 // Where a sheet's feature chip finds text the bundled tables do not hold: a
