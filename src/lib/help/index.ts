@@ -108,13 +108,14 @@ export function describeFeature(classId: string, subclass: string, name: string,
   // option list, before any of the feature tables are consulted.
   const option = findOptionByFeatureName(name);
   if (option) {
-    return option.req ? `${option.d} (Requires ${option.req}.)` : option.d;
+    const description = option.req ? `${option.d} (Requires ${option.req}.)` : option.d;
+    return locale === "cs" ? translate("cs", description) : description;
   }
   // A workshop subclass's pick ("Bloodline (Storm)") from the subclasses the
   // page registered (issue #833).
   const pick = subclassChoicePickDescription(name);
   if (pick) {
-    return pick;
+    return locale === "cs" ? translate("cs", pick) : pick;
   }
   // Written beside such a pick: the element its option deals in. The
   // element's sentence stays the engine's English: it quotes the subclass's
