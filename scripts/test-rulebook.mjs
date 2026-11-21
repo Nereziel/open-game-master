@@ -1975,6 +1975,7 @@ try {
       monk: ["Klid", "Smrtící dlaň"],
       paladin: ["Vnímání božství", "Přikládání rukou", "Boží úder", "Čistota duše", "Svatozář"],
       ranger: ["Rozený průzkumník", "Pravěká ostražitost", "Zvířecí smysly", "Mimořádná lovcova obrana"],
+      sorcerer: ["Dračí nezlomnost", "Spřízněnost s živly", "Dračí vzhled"],
     };
     for (const [id, labels] of Object.entries(establishedClassLabels)) {
       const index = classIds.indexOf(id);
@@ -1990,6 +1991,7 @@ try {
       monk: ["Poklid", "Chvějící se dlaň"],
       paladin: ["Božský smysl", "Vkládání rukou", "Svatá záře"],
       ranger: ["Průzkumník přírody", "Divoké smysly", "Skrývání na očích"],
+      sorcerer: ["Dračí odolnost", "Živelná příbuznost", "Dračí přítomnost"],
     })) {
       const index = classIds.indexOf(id);
       const translated = modules[index]["CZECH_FULL_CLASSES_" + (index + 1)][id];
