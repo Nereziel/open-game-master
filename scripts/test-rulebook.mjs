@@ -2624,7 +2624,7 @@ try {
       const originalComponents = componentLetters(original.md, "Components");
       assert.ok(originalComponents, "Original components missing: " + original.id);
       assert.equal(componentLetters(translated, "Složky"), originalComponents);
-      for (const [, count, die] of original.md.matchAll(/\\b(\\d+)d(\\d+)\\b/g))
+      for (const [, count, die] of original.md.matchAll(/\b(\d+)d(\d+)\b/g))
         assert.ok(translated.includes(count + "k" + die), "Missing dice: " + original.id);
     }
     for (const [id, needles] of Object.entries({
