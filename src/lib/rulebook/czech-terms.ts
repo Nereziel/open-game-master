@@ -5,6 +5,8 @@
 import { CZECH_MONSTER_TITLES_6, CZECH_ITEM_TITLES_4 } from "./czech-bestiary-items-4";
 import { CZECH_MONSTER_TITLES_7 } from "./czech-monster-notes-7";
 import { CZECH_ITEM_TITLES_5 } from "./czech-item-notes-5";
+import { CZECH_MONSTER_TITLES_8 } from "./czech-monster-notes-8";
+import { CZECH_ITEM_TITLES_6 } from "./czech-item-notes-6";
 
 export const CZECH_ABILITIES: Readonly<Record<string, string>> = {
   Strength: "Síla",
@@ -215,6 +217,7 @@ export const CZECH_MONSTERS: Readonly<Record<string, string>> = {
   Zombie: "Zombie",
   ...CZECH_MONSTER_TITLES_6,
   ...CZECH_MONSTER_TITLES_7,
+  ...CZECH_MONSTER_TITLES_8,
   "Animated Armor (Animated Object)": "Oživlá zbroj",
 };
 
@@ -643,6 +646,7 @@ export const CZECH_ITEMS: Readonly<Record<string, string>> = {
   "Wings of Flying": "Křídla létání",
   ...CZECH_ITEM_TITLES_4,
   ...CZECH_ITEM_TITLES_5,
+  ...CZECH_ITEM_TITLES_6,
 };
 
 export const CZECH_RULE_TERMS: Readonly<Record<string, string>> = {
