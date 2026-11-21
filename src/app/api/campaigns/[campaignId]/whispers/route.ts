@@ -12,6 +12,7 @@ import {
 import { getSheetForUser, ownLivingSheet } from "@/lib/db/sheets";
 import { requestDmTurn } from "@/lib/dm/loop";
 import { publishEphemeral } from "@/lib/events";
+import { recordDmTrace } from "@/lib/dm/trace";
 
 export const runtime = "nodejs";
 export const dynamic = "force-dynamic";
@@ -91,11 +92,16 @@ export async function POST(
     );
   }
 
-  insertPlayerWhisper(campaignId, user.id, sheet.id, parsed.data.message);
+  const whisperId = insertPlayerWhisper(campaignId, user.id, sheet.id, parsed.data.message);
   // Contentless ping; each client re-fetches its own filtered rows.
   publishEphemeral(campaignId, "whisper_activity", {});
   // Coalesced: never interrupts a running turn, at most one follow-up.
-  requestDmTurn(campaignId);
+  const queued = requestDmTurn(campaignId);
+  // IDs and status only: do not write private message content to console.
+  recordDmTrace("player_whisper_queued", { campaignId, whisperId, queued });
+  if (process.env.DM_DEBUG) {
+    console.debug(`[dm-debug] private DM message received; new AI turn queued=${queued}`);
+  }
 
   return Response.json({ ok: true }, { status: 202 });
 }
