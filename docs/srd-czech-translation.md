@@ -358,7 +358,7 @@ Levitace, Najdi zvířata a rostliny, Najdi předmět, Magická ústa,
 Magická zbraň, Zrcadlový obraz a Mlžný krok.
 
 - Nový soubor `src/lib/rulebook/czech-full-spells-10.ts` obsahuje kompletní
-  vlastní překlady kouzel č. 25–36 v pořadí 2. úrovně SRD 5.1.
+  vlastní překlady kouzel č. 26–37 v pořadí 2. úrovně SRD 5.1.
 - Překladová mapa je napojena do `czech-companion.ts`. Anglický
   originál, kanonická ID, metadata, mechanika hry a MCP se nemění.
 - Kontroly v `scripts/test-rulebook.mjs` zahrnují pořadí, všechny čtyři

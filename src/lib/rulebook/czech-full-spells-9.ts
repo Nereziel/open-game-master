@@ -1,4 +1,4 @@
-// Original independent Czech full descriptions of SRD 5.1 second-level spells 13–24.
+// Original independent Czech full descriptions of SRD 5.1 second-level spells 13–25.
 // Based on English CC BY 4.0 text; only established names may be sourced from Czech D&D glossaries.
 // English rulebook texts, metadata, spell identifiers and MCP/game mechanics remain unchanged.
 export const CZECH_FULL_SPELLS_9: Readonly<Record<string, string>> = {
