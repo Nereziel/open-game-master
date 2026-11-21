@@ -186,17 +186,20 @@ page. `scripts/test-rulebook.mjs` asserts the book is complete, that no page
 leaves markdown behind, and that the quick links a table uses mid-session
 (`QUICK_LINKS` in `src/lib/rulebook/book.ts`) point at anchors that exist.
 
-### Czech rulebook companion (partial)
+### Czech rulebook companion (all content pages)
 
 The rulebook API also accepts `cs` / `cs-CZ` (including `X-Odm-Locale: cs`).
 The Czech view uses the same SRD 5.1 page IDs, links, bookmarks, folios and
 full original English text. `src/lib/rulebook/czech-companion.ts` adds
-original Czech summaries on **783 of the 933 canonical SRD pages**:
-35 of 36 rules pages, all 319 SRD spells, 242 of 318 monsters,
-166 of 239 magic items, all 12 classes and all nine playable races.
-The separate note dictionaries contain 796 entries for these six categories
-(plus non-SRD character and spell aliases); 13 monster/item notes do not
+original Czech summaries on **932 of the 933 canonical SRD pages**:
+35 of 36 core rules pages, all 319 SRD spells, all 318 monsters,
+all 239 magic items, all 12 classes and all nine playable races.
+The sole exception is the CC BY 4.0 legal notice, which retains its full
+original English attribution verbatim, with a Czech display title.
+The note dictionaries additionally contain 14 monster/item notes that do not
 match standalone canonical 2014 SRD pages and are not counted as page coverage.
+These companion notes are concise Czech explanations, **not full Czech translations
+of the original source's every rule clause, stat block, or spell effect**.
 A known SRD title variant, `Animated Armor (Animated Object)`, reuses the
 existing Czech `Animated Armor` note and title. It also localizes recurring spell schools, creature size/type,
 item rarity and attunement text; the original English SRD stays attached to
@@ -207,12 +210,13 @@ names and canonical race IDs with Czech labels. This display-only mapping also
 corrects Hill Dwarf versus Mountain Dwarf and does not translate homebrew
 names or stored race identifiers. The titles, spell and monster names
 are based on the established d20.cz glossary, not copied full prose.
-The newest 2026-11-21 batches add 70 original Czech monster summaries
-(`czech-monster-notes-7.ts`) and 70 original Czech magic-item summaries
-(`czech-item-notes-5.ts`), each bound to exact canonical SRD titles with
-matching Czech names. Both preserve the full original English mechanics below
-the Czech companion note. The test suite checks coverage totals, each binding
-and unchanged English source text.
+The final 2026-11-21 batches add 76 Czech monster, beast and NPC summaries
+(`czech-monster-notes-8.ts`) and 73 original magic-item summaries
+(`czech-item-notes-6.ts`), on top of the prior 70+70 batch.
+All are bound to canonical English SRD pages using exact titles and
+independent Czech display names, preserving the original English mechanics.
+The test suite asserts 932/933 page coverage, each newly written name and note,
+and byte-for-byte preservation of the original CC BY 4.0 attribution.
 The character builder also presents Czech headings and explanations for all
 **126 distinct bundled racial trait descriptions** across its 46 playable
 races and subraces. These display-only translations are covered by a
@@ -222,7 +226,7 @@ not merely the number of spell descriptions written. Some extra PHB-only spell
 notes and alternative English capitalization aliases remain in source files
 for other parts of the app; they do not create SRD pages or alter game IDs.
 
-All remaining pages show the original English SRD, not a machine-generated
+The legal page shows only the original English attribution, not a machine-generated
 or third-party translation. The reader marks this
 partial coverage and links to https://dnd5esrd.d20.cz/ for readers who
 want the community's full Czech translation.
