@@ -123,7 +123,7 @@ Ověření názvů bylo přidáno do `scripts/test-rulebook.mjs`.
 - V další dávce jsou úplně přeloženy kapitoly **Jízdní zvířata a dopravní prostředky, Nástroje, Kouzelné předměty, Jedy a Inteligentní kouzelné předměty**.
 - Následující dávka přeložila celé kapitoly **Zbroje**, **Šílenství** a
   **Sféry existence**, včetně tabulek a konkrétních pravidlových omezení.
-- Aktuálně nově přeložené celé kapitoly **Kombinování povolání** a
+- Aktuálně nově přeložené celé kapitoly **Multipovolání** a
   **Zázemí**, včetně všech tabulek a všech 26 návrhů vlastností akolyty.
 - Nově přeloženy také celé kapitoly **Zbraně** a **Výdaje**, včetně
   všech 37 zbraní a tří tabulek životních nákladů, jídla a služeb.
