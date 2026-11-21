@@ -1970,7 +1970,7 @@ try {
     const establishedClassLabels = {
       fighter: ["Mimořádný atlet", "Dokonalejší kritický zásah", "Zarputilec"],
       bard: ["Kolej znalostí", "Slovní výpad", "Nedostižná dovednost"],
-      cleric: ["Ničení nemrtvých"],
+      cleric: ["Ničení nemrtvých", "Doménová kouzla"],
       druid: ["Nestárnoucí tělo", "Kruhová kouzla", "Přírodní svatyně"],
       monk: ["Klid", "Smrtící dlaň"],
       paladin: ["Vnímání božství", "Přikládání rukou", "Boží úder", "Čistota duše", "Svatozář"],
