@@ -309,12 +309,34 @@ Regresní kontrola pokrývající všech 49 kouzel je v
 **Build a automatické testy na Draft PR nebyly spuštěny**;
 výsledky se vztahují ke statickému porovnání zdrojů.
 
+## Zahájení úplných popisů kouzel 2. úrovně (21. 11. 2026)
+
+V PR #35 je doplněno prvních **12 kouzel 2. úrovně** (v pořadí anglického SRD):
+Melfův kyselinový šíp, Podpora, Změň svůj tvar, Zvířecí posel,
+Mystický zámek, Nystulova magická aura, Předvídání, Kůrokůže,
+Slepota nebo hluchota, Rozmazání, Cejchovací úder a Uklidni emoce.
+
+- Nový soubor `src/lib/rulebook/czech-full-spells-8.ts` obsahuje úplné nezávislé
+  české překlady včetně doby sesílání, dosahu, složek, trvání, volitelných
+  účinků, záchran a sesílání vyšší pozicí.
+- Napojeno do české čtečky v `czech-companion.ts` bez změn anglického
+  originálu, ID, metadat či herního/MCP rozhraní.
+- Nový regresní test v `scripts/test-rulebook.mjs` ověřuje všech 12 ID,
+  jejich pořadí, zobrazení, původní texty, složky a zásadní mechaniky.
+- České ustálené názvy zůstávají v `czech-terms.ts`; žádné souvislé
+  pasáže českého komunitního překladu nejsou přebírány.
+
+**Stav: 85/319 kompletních českých popisů kouzel** (24 triků,
+49 kouzel 1. úrovně, 12 kouzel 2. úrovně). Zbývá **234 kouzel**,
+z toho dalších **42 kouzel 2. úrovně**. Build a test suite nebyly
+podle dohody pro Draft PR spuštěny.
+
 ## Stav
 
 - Stručné české přehledy: 932/933 kanonických stránek (výjimkou je atribuce).
 - Úplné české znění pravidlových stránek: **35/35 obsahových pravidlových stránek**.
 - Úplné české překlady jednotlivých ras: **9/9 rasových stránek SRD 5.1**, včetně všech podras obsažených ve zdrojovém SRD.
-- Úplné české popisy jednotlivých kouzel: **73/319** – všech **24/24 triků** a všech **49/49 kouzel 1. úrovně**.
+- Úplné české popisy jednotlivých kouzel: **85/319** – všech **24/24 triků** a všech **49/49 kouzel 1. úrovně** a prvních **12 kouzel 2. úrovně**.
 - Dříve dokončené kapitoly zahrnují **Stavy, Nemoci, Objekty, Artefakty** a další pravidla.
 - V další dávce jsou úplně přeloženy kapitoly **Jízdní zvířata a dopravní prostředky, Nástroje, Kouzelné předměty, Jedy a Inteligentní kouzelné předměty**.
 - Následující dávka přeložila celé kapitoly **Zbroje**, **Šílenství** a

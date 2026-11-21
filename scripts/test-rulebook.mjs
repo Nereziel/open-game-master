@@ -2547,6 +2547,49 @@ try {
     assert.ok(wizard.includes("**1 hodinu a 10 zl za každou úroveň kouzla**"));
   });
 
+
+  await test("first 12 second-level SRD 5.1 spells have complete independent Czech rules", async () => {
+    const { CZECH_FULL_SPELLS_8 } = await import("../src/lib/rulebook/czech-full-spells-8.ts");
+    const ids = ["acid-arrow","aid","alter-self","animal-messenger","arcane-lock","arcanists-magic-aura","augury","barkskin","blindness-deafness","blur","branding-smite","calm-emotions"];
+    assert.deepEqual(Object.keys(CZECH_FULL_SPELLS_8), ids);
+    const originals = rulebookPages("en").filter((page) =>
+      page.kind === "spell" && page.meta?.startsWith("2nd-level"));
+    assert.deepEqual(originals.slice(0, ids.length).map((page) => page.id), ids,
+      "Second-level spell batch must follow the original SRD ordering");
+    for (const original of originals.slice(0, ids.length)) {
+      const fullText = CZECH_FULL_SPELLS_8[original.id];
+      const czPage = rulebookPage(original.id, "cs").page;
+      assert.ok(fullText.length >= 220, "Missing full Czech spell: " + original.id);
+      assert.equal(czPage.title, CZECH_SPELLS[original.title]);
+      assert.equal(czPage.id, original.id);
+      assert.equal(czPage.originalMeta, original.meta);
+      assert.ok(czPage.md.includes(fullText), "Czech reader missing text: " + original.id);
+      assert.ok(czPage.md.endsWith(original.md), "English SRD was changed: " + original.id);
+      for (const field of ["Doba sesílání", "Dosah", "Složky", "Trvání"]) {
+        assert.ok(fullText.includes("**" + field + ":**"), "Missing spell field: " + original.id + " / " + field);
+      }
+      const originalComponents = original.md.match(/\\*\\*Components:\\*\\* ([VSM, ]+)/)?.[1]?.trim();
+      const czComponents = fullText.match(/\\*\\*Složky:\\*\\* ([VSM, ]+)/)?.[1]?.trim();
+      assert.equal(czComponents, originalComponents, "Components differ: " + original.id);
+    }
+    for (const [id, tokens] of Object.entries({
+      "acid-arrow": ["4k4", "2k4", "1k4", "polovinu", "90 stop"],
+      aid: ["maximum životů o 5", "současný počet životů o 5", "8 hodin"],
+      "alter-self": ["žábry", "1k6", "bonus +1", "neozbrojené údery"],
+      "animal-messenger": ["25 slov", "50 mil", "25 mil", "48 hodin"],
+      "arcane-lock": ["25 zl", "1 minutu", "10 minut", "SO", "o 10"],
+      "arcanists-magic-aura": ["30 po sobě jdoucích dní", "Falešná aura", "Maska"],
+      augury: ["30 minut", "25 %", "dlouhým odpočinkem"],
+      barkskin: ["OČ nemůže být nižší než 16"],
+      "blindness-deafness": ["Odolnost", "na konci každého svého tahu", "dalšího tvora"],
+      blur: ["nevýhodu", "slepozrakost", "pravého vidění"],
+      "branding-smite": ["2k6", "5 stop", "neviditelným", "1k6"],
+      "calm-emotions": ["20 stop", "Charisma", "zmámený", "vystrašený"],
+    })) {
+      for (const token of tokens) assert.ok(CZECH_FULL_SPELLS_8[id].includes(token), "Missing 2nd-level spell mechanic: " + id + "/" + token);
+    }
+  });
+
   // ---- the routes ----
   const { createUser } = await import("../src/lib/db/users.ts");
   const { mintSession } = await import("../src/lib/auth.ts");
