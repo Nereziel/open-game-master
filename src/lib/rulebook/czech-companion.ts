@@ -5,6 +5,7 @@
 import type { RulebookData } from "./types";
 import { CZECH_RULE_NOTES } from "./czech-rule-extensions";
 import { CZECH_SPELL_NOTES } from "./czech-spell-notes";
+import { CZECH_SPELL_NOTES_2 } from "./czech-spell-notes-2";
 import { CZECH_MONSTER_NOTES, CZECH_ITEM_NOTES } from "./czech-bestiary-items";
 import { CZECH_ABILITIES, CZECH_CLASSES, CZECH_SKILLS, czechSrdItemMeta, czechSrdMonsterMeta, czechSrdSpellGroup, czechSrdSpellMeta, czechSrdTitle } from "./czech-terms";
 
@@ -178,8 +179,8 @@ export function czechCompanionBook(english: RulebookData): RulebookData {
         ? `${NOTES[page.id]}\n\n${SKILLS_REFERENCE}`
         : page.id === "beyond-1st-level"
           ? `${NOTES[page.id]}\n\n${CLASSES_REFERENCE}`
-          : page.kind === "spell" && CZECH_SPELL_NOTES[page.title]
-            ? CZECH_SPELL_NOTES[page.title]
+          : page.kind === "spell" && (CZECH_SPELL_NOTES[page.title] ?? CZECH_SPELL_NOTES_2[page.title])
+            ? CZECH_SPELL_NOTES[page.title] ?? CZECH_SPELL_NOTES_2[page.title]
             : page.kind === "monster" && CZECH_MONSTER_NOTES[page.title]
               ? CZECH_MONSTER_NOTES[page.title]
               : page.kind === "item" && CZECH_ITEM_NOTES[page.title]
