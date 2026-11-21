@@ -1710,7 +1710,7 @@ try {
       assert.ok(translated.includes(heading), "Missing translated combat section: " + heading);
     }
     for (const rule of [
-      "6 sekund", "jednu akci", "pasivní Moudrost (Vnímání)",
+      "6 sekund", "jednu akci", "pasivní Moudrostí (Vnímání)",
       "rychlost 0", "1 stopa plazení stojí 3 stopy",
       "20 × 20 stop nebo větší",
       "přirozená 20", "přirozená 1",
