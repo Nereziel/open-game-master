@@ -5,6 +5,7 @@
 import type { RulebookData } from "./types";
 import { CZECH_RULE_NOTES } from "./czech-rule-extensions";
 import { CZECH_SPELL_NOTES } from "./czech-spell-notes";
+import { CZECH_MONSTER_NOTES, CZECH_ITEM_NOTES } from "./czech-bestiary-items";
 import { CZECH_ABILITIES, CZECH_CLASSES, CZECH_SKILLS, czechSrdItemMeta, czechSrdMonsterMeta, czechSrdSpellGroup, czechSrdSpellMeta, czechSrdTitle } from "./czech-terms";
 
 const CHAPTERS: Record<string, string> = {
@@ -179,7 +180,11 @@ export function czechCompanionBook(english: RulebookData): RulebookData {
           ? `${NOTES[page.id]}\n\n${CLASSES_REFERENCE}`
           : page.kind === "spell" && CZECH_SPELL_NOTES[page.title]
             ? CZECH_SPELL_NOTES[page.title]
-            : NOTES[page.id] ?? CZECH_RULE_NOTES[page.id];
+            : page.kind === "monster" && CZECH_MONSTER_NOTES[page.title]
+              ? CZECH_MONSTER_NOTES[page.title]
+              : page.kind === "item" && CZECH_ITEM_NOTES[page.title]
+                ? CZECH_ITEM_NOTES[page.title]
+                : NOTES[page.id] ?? CZECH_RULE_NOTES[page.id];
       const title = PAGES[page.id] ?? czechSrdTitle(page.title, page.kind);
       const meta = page.meta && page.kind === "spell" ? czechSrdSpellMeta(page.meta)
         : page.meta && page.kind === "monster" ? czechSrdMonsterMeta(page.meta)
@@ -192,7 +197,7 @@ export function czechCompanionBook(english: RulebookData): RulebookData {
         ...(page.kind === "spell" && page.group ? { group: czechSrdSpellGroup(page.group) } : {}),
         ...(note
           ? {
-              md: `## ${page.kind === "spell" ? "Český popis kouzla" : "Český přehled pravidel"}
+              md: `## ${page.kind === "spell" ? "Český popis kouzla" : page.kind === "monster" ? "Český přehled nestvůry" : page.kind === "item" ? "Český přehled předmětu" : "Český přehled pravidel"}
 
 ${note}
 
