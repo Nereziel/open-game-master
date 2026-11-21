@@ -304,6 +304,9 @@ try {
     assert.deepEqual(cs.map((page) => page.id), en.map((page) => page.id));
     assert.deepEqual(cs.map((page) => page.chapter), en.map((page) => page.chapter));
     assert.equal(rulebookPage("combat", "cs").page.title, "Boj");
+    assert.equal(rulebookPage("fireball", "cs").page.title, "Ohnivá koule");
+    assert.equal(rulebookPage("dwarf", "cs").page.title, "Trpaslík");
+    assert.equal(rulebookPage("halfling", "cs").page.title, "Hobit");
     assert.match(rulebookPage("combat", "cs").page.md, /Český přehled pravidel/);
     assert.ok(rulebookPage("combat", "cs").page.md.endsWith(rulebookPage("combat", "en").page.md));
     assert.equal(rulebookPage("fireball", "cs").page.md, rulebookPage("fireball", "en").page.md);
@@ -326,6 +329,7 @@ try {
     assert.equal(localeFromAcceptLanguage("cs;q=0"), "en");
     assert.equal(crosswalkFor(rulebookPage("fireball", "cs").page, "cs").editor, "spell");
     assert.equal(crosswalkFor(rulebookPage("armor", "cs").page, "cs").support, "engine");
+    assert.equal(crosswalkFor(rulebookPage("fireball", "cs").page, "cs").support, crosswalkFor(rulebookPage("fireball", "en").page).support);
   });
 
   // ---- the French book ----
