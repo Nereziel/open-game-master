@@ -19,6 +19,7 @@ import { CZECH_FULL_RULES_12 } from "./czech-full-rules-12";
 import { CZECH_FULL_RULES_13 } from "./czech-full-rules-13";
 import { CZECH_FULL_RULES_14 } from "./czech-full-rules-14";
 import { CZECH_FULL_RULES_15 } from "./czech-full-rules-15";
+import { CZECH_FULL_RULES_16 } from "./czech-full-rules-16";
 import { CZECH_SPELL_NOTES } from "./czech-spell-notes";
 import { CZECH_SPELL_NOTES_2 } from "./czech-spell-notes-2";
 import { CZECH_SPELL_NOTES_3 } from "./czech-spell-notes-3";
@@ -245,7 +246,7 @@ export function czechCompanionBook(english: RulebookData): RulebookData {
         : page.id === "beyond-1st-level"
           ? `${NOTES[page.id]}\n\n${CLASSES_REFERENCE}`
           : kindNote ?? NOTES[page.id] ?? CZECH_RULE_NOTES[page.id];
-      const fullTranslation = CZECH_FULL_RULES_1[page.id] ?? CZECH_FULL_RULES_2[page.id] ?? CZECH_FULL_RULES_3[page.id] ?? CZECH_FULL_RULES_4[page.id] ?? CZECH_FULL_RULES_5[page.id] ?? CZECH_FULL_RULES_6[page.id] ?? CZECH_FULL_RULES_7[page.id] ?? CZECH_FULL_RULES_8[page.id] ?? CZECH_FULL_RULES_9[page.id] ?? CZECH_FULL_RULES_10[page.id] ?? CZECH_FULL_RULES_11[page.id] ?? CZECH_FULL_RULES_12[page.id] ?? CZECH_FULL_RULES_13[page.id] ?? CZECH_FULL_RULES_14[page.id] ?? CZECH_FULL_RULES_15[page.id];
+      const fullTranslation = CZECH_FULL_RULES_1[page.id] ?? CZECH_FULL_RULES_2[page.id] ?? CZECH_FULL_RULES_3[page.id] ?? CZECH_FULL_RULES_4[page.id] ?? CZECH_FULL_RULES_5[page.id] ?? CZECH_FULL_RULES_6[page.id] ?? CZECH_FULL_RULES_7[page.id] ?? CZECH_FULL_RULES_8[page.id] ?? CZECH_FULL_RULES_9[page.id] ?? CZECH_FULL_RULES_10[page.id] ?? CZECH_FULL_RULES_11[page.id] ?? CZECH_FULL_RULES_12[page.id] ?? CZECH_FULL_RULES_13[page.id] ?? CZECH_FULL_RULES_14[page.id] ?? CZECH_FULL_RULES_15[page.id] ?? CZECH_FULL_RULES_16[page.id];
       const czechText = fullTranslation
         ? `${note ?? ""}\n\n## Úplné znění pravidel v češtině\n\n${fullTranslation}`
         : note;
