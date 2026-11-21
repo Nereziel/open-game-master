@@ -64,6 +64,11 @@ function anchorsOf(blocks, out = []) {
 }
 
 try {
+  await test("all 318 SRD monsters and 239 magic items have complete Czech bodies and intact English originals", async () => {
+    const { assertCzechFullBestiary } = await import("./test-rulebook-cz-full.mjs");
+    assertCzechFullBestiary(rulebookPages);
+  });
+
   // ---- the book ----
   await test("the book holds every chapter of the SRD in order", () => {
     const { chapters, pageCount } = rulebookContents();
@@ -398,8 +403,8 @@ try {
     assert.equal(Object.keys(CZECH_MONSTER_NOTES).length, 27);
     assert.equal(Object.keys(CZECH_ITEM_NOTES).length, 20);
     for (const [kind, mapping, heading] of [
-      ["monster", CZECH_MONSTER_NOTES, "Český přehled nestvůry"],
-      ["item", CZECH_ITEM_NOTES, "Český přehled předmětu"],
+      ["monster", CZECH_MONSTER_NOTES, "Český popis nestvůry"],
+      ["item", CZECH_ITEM_NOTES, "Český popis předmětu"],
     ]) {
       const originals = new Map(english.filter((page) => page.kind === kind).map((page) => [page.title, page]));
       for (const [name, note] of Object.entries(mapping)) {
@@ -438,8 +443,8 @@ try {
       }
     };
     check("spell", CZECH_SPELL_NOTES_2, 42, "Český popis kouzla", CZECH_SPELLS);
-    check("monster", CZECH_MONSTER_NOTES_2, 26, "Český přehled nestvůry", CZECH_MONSTERS);
-    check("item", CZECH_ITEM_NOTES_2, 20, "Český přehled předmětu", CZECH_ITEMS);
+    check("monster", CZECH_MONSTER_NOTES_2, 26, "Český popis nestvůry", CZECH_MONSTERS);
+    check("item", CZECH_ITEM_NOTES_2, 20, "Český popis předmětu", CZECH_ITEMS);
     for (const name of Object.keys(CZECH_SPELL_NOTES_2)) {
       assert.ok(!Object.hasOwn(CZECH_SPELL_NOTES, name), `Duplicate spell summary in both batches: ${name}`);
     }
@@ -464,8 +469,8 @@ try {
     const titles = { spell: CZECH_SPELLS, monster: CZECH_MONSTERS, item: CZECH_ITEMS };
     const headings = {
       spell: "Český popis kouzla",
-      monster: "Český přehled nestvůry",
-      item: "Český přehled předmětu",
+      monster: "Český popis nestvůry",
+      item: "Český popis předmětu",
     };
     assert.equal(Object.keys(CZECH_SPELL_NOTES_3).length, 30);
     assert.equal(Object.keys(CZECH_MONSTER_NOTES_3).length, 22);
@@ -497,7 +502,7 @@ try {
     const english = rulebookPages("en");
     const byKind = {
       spell: { batch: CZECH_SPELL_NOTES_4, all: [CZECH_SPELL_NOTES, CZECH_SPELL_NOTES_2, CZECH_SPELL_NOTES_3, CZECH_SPELL_NOTES_4], heading: "Český popis kouzla", expected: 31 },
-      monster: { batch: CZECH_MONSTER_NOTES_4, all: [CZECH_MONSTER_NOTES, CZECH_MONSTER_NOTES_2, CZECH_MONSTER_NOTES_3, CZECH_MONSTER_NOTES_4], heading: "Český přehled nestvůry", expected: 26 },
+      monster: { batch: CZECH_MONSTER_NOTES_4, all: [CZECH_MONSTER_NOTES, CZECH_MONSTER_NOTES_2, CZECH_MONSTER_NOTES_3, CZECH_MONSTER_NOTES_4], heading: "Český popis nestvůry", expected: 26 },
       class: { batch: CZECH_CLASS_NOTES, all: [CZECH_CLASS_NOTES], heading: "Český přehled povolání", expected: 12 },
       race: { batch: CZECH_RACE_NOTES, all: [CZECH_RACE_NOTES], heading: "Český přehled rasy", expected: 9 },
     };
@@ -542,7 +547,7 @@ try {
         newNotes: CZECH_MONSTER_NOTES_5,
         priorNotes: [CZECH_MONSTER_NOTES, CZECH_MONSTER_NOTES_2, CZECH_MONSTER_NOTES_3, CZECH_MONSTER_NOTES_4],
         names: CZECH_MONSTERS,
-        heading: "Český přehled nestvůry",
+        heading: "Český popis nestvůry",
         expected: 37,
       },
     };
@@ -852,8 +857,8 @@ try {
     assert.equal(Object.keys(CZECH_MONSTER_NOTES_6).length, 41);
     assert.equal(Object.keys(CZECH_ITEM_NOTES_4).length, 45);
     for (const [kind, notes, titles, heading] of [
-      ["monster", CZECH_MONSTER_NOTES_6, CZECH_MONSTER_TITLES_6, "Český přehled nestvůry"],
-      ["item", CZECH_ITEM_NOTES_4, CZECH_ITEM_TITLES_4, "Český přehled předmětu"],
+      ["monster", CZECH_MONSTER_NOTES_6, CZECH_MONSTER_TITLES_6, "Český popis nestvůry"],
+      ["item", CZECH_ITEM_NOTES_4, CZECH_ITEM_TITLES_4, "Český popis předmětu"],
     ]) {
       const sourceByTitle = new Map(rulebookPages("en").filter((page) => page.kind === kind).map((page) => [page.title, page]));
       assert.deepEqual(Object.keys(notes).sort(), Object.keys(titles).sort());
@@ -872,7 +877,7 @@ try {
     assert.ok(armor);
     const localizedArmor = rulebookPage(armor.id, "cs").page;
     assert.equal(localizedArmor.title, "Oživlá zbroj");
-    assert.ok(localizedArmor.md.includes("Český přehled nestvůry"));
+    assert.ok(localizedArmor.md.includes("Český popis nestvůry"));
     assert.ok(localizedArmor.md.endsWith(armor.md));
   });
 
@@ -893,8 +898,8 @@ try {
     assert.equal(Object.keys(CZECH_MONSTER_NOTES_7).length, 70);
     assert.equal(Object.keys(CZECH_ITEM_NOTES_5).length, 70);
     for (const [kind, notes, titles, heading] of [
-      ["monster", CZECH_MONSTER_NOTES_7, CZECH_MONSTER_TITLES_7, "Český přehled nestvůry"],
-      ["item", CZECH_ITEM_NOTES_5, CZECH_ITEM_TITLES_5, "Český přehled předmětu"],
+      ["monster", CZECH_MONSTER_NOTES_7, CZECH_MONSTER_TITLES_7, "Český popis nestvůry"],
+      ["item", CZECH_ITEM_NOTES_5, CZECH_ITEM_TITLES_5, "Český popis předmětu"],
     ]) {
       const sourceByName = new Map(rulebookPages("en").filter((page) => page.kind === kind).map((page) => [page.title, page]));
       assert.deepEqual(Object.keys(notes).sort(), Object.keys(titles).sort());
@@ -962,7 +967,7 @@ try {
       assert.ok(localized, `Unlinked Czech monster: ${name}`);
       assert.equal(localized.id, source.id);
       assert.equal(localized.title, CZECH_MONSTER_TITLES_8[name]);
-      assert.ok(localized.md.startsWith("## Český přehled nestvůry"));
+      assert.ok(localized.md.startsWith("## Český popis nestvůry"));
       assert.ok(localized.md.includes(note));
       assert.ok(localized.md.endsWith(source.md), `Original English mechanics changed: ${name}`);
     }
@@ -981,7 +986,7 @@ try {
       assert.ok(localized, `Unlinked Czech item: ${name}`);
       assert.equal(localized.id, source.id);
       assert.equal(localized.title, CZECH_ITEM_TITLES_6[name]);
-      assert.ok(localized.md.startsWith("## Český přehled předmětu"));
+      assert.ok(localized.md.startsWith("## Český popis předmětu"));
       assert.ok(localized.md.includes(note));
       assert.ok(localized.md.endsWith(source.md), `Original English item mechanics changed: ${name}`);
     }
