@@ -194,6 +194,127 @@ full original English text. `src/lib/rulebook/czech-companion.ts` adds
 original Czech summaries on **932 of the 933 canonical SRD pages**:
 35 of 36 core rules pages, all 319 SRD spells, all 318 monsters,
 all 239 magic items, all 12 classes and all nine playable races.
+Full Czech translations now cover **all 35 of 35 nonlegal rules pages**
+and **all 12 of 12 core SRD class pages**.
+The twelve `czech-full-classes-1.ts` through `czech-full-classes-12.ts`
+modules add complete independently authored Czech class features, starting
+proficiencies and equipment, all twenty progression levels and spell-slot
+tables, and the single SRD 5.1 subclass available for each class:
+Champion, Thief, Berserker, College of Lore, Life Domain, Circle of Land,
+Way of the Open Hand, Oath of Devotion, Hunter, Draconic Bloodline,
+Fiend and School of Evocation. The Circle of Land includes all seven
+terrain spell tables, Sorcerer includes all eight Metamagic options
+and spell-slot exchange costs, Warlock includes all 32 Eldritch Invocations,
+and Wizard includes spellbook copying and replacement rules.
+The original English class data, canonical IDs and MCP tools remain
+unchanged. Only established Czech class, feature and spell names follow
+the Czech D&D 5e 2014 lexicon; the rule descriptions are newly written.
+The final `czech-full-rules-21.ts` translates **Monster Statistics**:
+six size categories, all 14 creature types, alignments, armor class,
+hit dice and average hit points, all movement modes, saving throws and skills,
+damage resistances and conditions, four special senses, languages and telepathy,
+challenge ratings, the complete 34-row proficiency and XP tables,
+innate and class-based spellcasting, psionics, monster attacks and grapples,
+multiattack, ammunition, limited-use and recharge abilities, equipment,
+and legendary creatures, legendary actions, lair actions and regional effects.
+The source importer omits XP rows for CR 9–13 and CR 26–30, and truncates
+the Spellcasting paragraph. These source gaps were restored in Czech against
+the official 2014 D&D Basic Rules while preserving the imported English JSON
+and canonical rulebook IDs.
+The new `czech-full-rules-20.ts` supplies a complete Czech translation
+of the **Combat** chapter: initiative, surprise, rounds and turns,
+movement and combat actions, reactions and opportunity attacks,
+all attack forms and combat contests, cover, 13 damage types,
+resistance, vulnerability, healing, death saving throws, stabilization,
+temporary hit points, mounted combat and underwater combat.
+The source SRD values and canonical English rules remain intact.
+The new `czech-full-rules-19.ts` adds the full **Using Ability Scores**
+chapter: all six abilities and 18 related skills, complete modifier and
+difficulty tables, advantage and disadvantage, proficiency rules,
+contests and passive checks, teamwork and group checks, skill variants,
+all ability-specific example checks, Strength carrying and optional
+encumbrance, Dexterity hiding and initiative, Constitution hit point
+rules, spellcasting abilities, and saving throws. The canonical English
+text and IDs remain unchanged in the reader.
+The new `czech-full-rules-18.ts` adds the complete **Adventuring Gear**
+chapter, with Czech descriptions of all equipment that has special mechanics,
+all seven class equipment packs, the 103-row source gear price and weight
+table, and all 13 container capacities. Original distances, dice, DCs,
+prices and weights are preserved, with optional metric explanations;
+the unmodified English SRD chapter remains below the Czech text.
+The imported SRD data contains a split numeral for the healing potion's
+50 gp price; the Czech table presents that price correctly as 50 zl.
+The new `czech-full-rules-17.ts` adds the full **Adventuring** chapter:
+time scales, movement and travel pace with the source distance units,
+forced marches and exhaustion, terrain, climbing/swimming/jumping,
+falling and suffocation, vision and lighting, food and water,
+interacting with objects, short and long rests, and downtime activities
+including crafting, working, recuperating, research, and training.
+Original English rules remain below the Czech text in the reader.
+The new `czech-full-rules-16.ts` adds a complete **Spellcasting** chapter:
+spell levels, known and prepared spells, spell slots and upcasting,
+armor restrictions, cantrips, rituals, eight schools of magic,
+casting times, spell ranges, V/S/M components, concentration and
+interruptions, targets, five areas of effect, spell save DCs, spell
+attacks, and combining spell effects. Czech terminology follows the
+project's existing spell glossary. The complete English source remains
+below the translation.
+The new `czech-full-rules-15.ts` translates the full **Traps** chapter, including
+triggering and disabling traps, severity tables, complex traps, and all eight
+sample traps with their saving throws, attack bonuses and damage values.
+The Czech reader retains the full English source directly below the translation.
+The newest full-text batch adds the complete **Spell Lists** and
+**Gods of the Multiverse** rule chapters. Every one of the **778 spell-list
+positions** across **8 spellcasting classes** and their 70 level groupings
+uses the established Czech spell terminology (covering all **319 unique
+canonical spells**). The Celtic, Greek, Egyptian and Norse pantheons
+have all narrative introductions and all **67 deity table rows** translated
+into Czech, including alignment, recommended domains and symbols.
+These translations live in `czech-full-rules-13.ts` and
+`czech-full-rules-14.ts`, with the English originals retained below.
+
+The latest full-text batch adds **Weapons** and **Expenses**. Weapons includes
+all 37 canonical weapons and four category groups, complete weapon-property
+rules (including ammunition, finesse, heavy, loading, range and reach),
+improvised weapons, silvering, nets and lances. Its Czech weapon table retains
+all prices, weights, damage dice, ammunition ranges and properties.
+Expenses includes every lifestyle, lodging and meal price, all hireling
+rates, self-sufficiency rules and spellcasting services, with three Czech
+price tables. These complete translations live in `czech-full-rules-11.ts`
+and `czech-full-rules-12.ts`, and preserve the English original below.
+
+The next full-text batch adds **Multiclassing** and **Backgrounds**.
+The multiclassing chapter includes all ability-score prerequisites, acquired
+proficiencies, feature interactions (Channel Divinity, Extra Attack, Unarmored
+Defense and Spellcasting), Pact Magic, and the exact 20-level spell-slot table.
+The backgrounds chapter includes the entire Acolyte example with equipment,
+feature and all 26 suggested personality, ideal, bond and flaw options.
+These are in `czech-full-rules-9.ts` and `czech-full-rules-10.ts`.
+Czech labels are matched against the existing in-app glossary.
+
+Another complete three-chapter batch adds **Armor**, **Madness** and
+**The Planes of Existence**. The full Czech Armor chapter includes every
+armor value, weight, stealth requirement, Strength threshold and don/doff
+time. Madness includes all 3 complete d100 effect tables, healing rules and
+durations. The cosmology chapter covers planar travel, the Ethereal and
+Astral transit planes, Inner/Outer Planes and demiplanes. These chapters
+are in `czech-full-rules-6.ts`, `czech-full-rules-7.ts`, and
+`czech-full-rules-8.ts` and each retains the original English source.
+
+The next batch adds the complete **Mounts and Vehicles**, **Tools**,
+**Magic Items**, **Poisons** and **Sentient Magic Items** sections, preserving
+all item and vehicle tables, 14 poison variants with mechanics, attunement
+limitations and the sentient-item communication and purpose tables.
+These full translations are in `czech-full-rules-4.ts` and
+`czech-full-rules-5.ts`, incorporated into the Czech reader while keeping
+every original English rule page below the translated text.
+
+The second batch translates the entire **Conditions, Diseases, Objects and
+Artifacts** sections, including exhaustion levels, disease mechanics,
+object material/HP tables and the Orb of Dragonkind.
+These translations are in `czech-full-rules-3.ts` and retain the original
+English SRD under the complete Czech text.
+
 The first complete Czech rules-text translation batch is now available for
 **10 rules pages**: racial traits, inspiration, languages, coinage,
 selling treasure, trade goods, feats (including Grappler), customizing NPCs,
@@ -203,9 +324,11 @@ were translated independently from the **English SRD 5.1 under CC BY 4.0**;
 they are **not** copied from the d20.cz/ShadoWWW fan translation.
 These 10 pages show the complete Czech text and tables after their brief
 Czech overview. The original English SRD content remains below for
-verification and exact reference. The remaining **25 nonlegal rules pages**
-and the spells, monster stat blocks, classes, races and items still need
-full detailed translations even though they all have Czech summaries.
+verification and exact reference. All 35 nonlegal rules pages and all 12 core SRD class pages now have
+complete Czech text. Individual spell descriptions, monster stat blocks,
+race pages and magic item pages still need full translations; their brief
+Czech summaries are not equivalent. Non-SRD or extra subclasses, if
+available elsewhere in the app, are outside the scope of this class batch.
 Source and translation licensing are documented in `docs/srd-czech-translation.md`.
 The sole exception is the CC BY 4.0 legal notice, which retains its full
 original English attribution verbatim, with a Czech display title.

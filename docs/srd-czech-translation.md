@@ -25,7 +25,7 @@ anglickém zobrazení a na konci české stránky.
 ## Co **není** převzato
 
 České texty na https://dnd5esrd.d20.cz/ vycházejí z komunitního překladu
-ShadoWWWa a dalších spolupracovníků. Stránka uvádí autorství, ale při kontrole
+ShadoWWW a dalších spolupracovníků. Stránka uvádí autorství, ale při kontrole
 nebylo nalezeno jednoznačné licenční oprávnění k automatickému převzetí
 kompletního českého znění do tohoto projektu. **Proto odtud nekopírujeme
 celé odstavce, tabulky, statbloky ani celé knihy.** Lze se inspirovat již
@@ -34,11 +34,934 @@ zavedenými českými názvy herních pojmů.
 Další cizí český překlad lze importovat, pokud jeho autor nebo platná
 licence převzetí výslovně dovolí, a za příslušných podmínek s atribucí.
 
+## Sjednocení názvů s českým D&D 5e (2014)
+
+**Jediné části, které se přebírají doslova z komunitního českého
+překladu, jsou samostatné názvy a ustálené herní termíny.**
+Všechny popisy, definice, vysvětlení, příklady a celé tabulky pravidel
+zůstávají naším vlastním překladem anglického SRD 5.1.
+Měníme jen terminologii a nutné vlastní gramatické vazby. Nepřebíráme
+delší pasáže ani odstavce cizího překladu.
+
+Srovnání je založeno na české **Příručce hráče D&D 5e (2014)**.
+**Jeskyně a draci** a překlad pravidel z roku 2024 jsou odlišné zdroje;
+jejich terminologii nemícháme s touto edicí.
+
+- Přehled českého D&D 5e: https://dnd5esrd.d20.cz/
+- Dovednosti a používání vlastností: https://dnd5esrd.d20.cz/prirucka-hrace/7-kapitola.html
+- Názvy bojových akcí a stavů: https://dnd5esrd.d20.cz/prirucka-hrace/9-kapitola.html
+- Názvy vybavení a balíčků: https://dnd5esrd.d20.cz/prirucka-hrace/5-kapitola.html
+- Názvy kouzel: https://dnd5esrd.d20.cz/grimoar/grimoar-jmen.html
+- Názvy typů a příklady nestvůr: https://dnd5esrd.d20.cz/bestiar/uvod.html
+
+| Anglický pojem | Dřívější název v aplikaci | Sjednocený název |
+|---|---|---|
+| Animal Handling | Zacházení se zvířaty | Ovládání zvířat |
+| Arcana | Magie | Mystika |
+| Insight | Odhad | Vhled |
+| Performance | Vystupování | Umění |
+| Sleight of Hand | Obratnost rukou | Čachry |
+| Stealth | Plížení | Nenápadnost |
+| Proficiency Bonus | bonus zdatnosti | Zdatnostní bonus |
+| Dash | Běh | Sprint |
+| Disengage | Odpoutání | Odpoutání se |
+| Dodge | Úhyb | Uhýbání |
+| Ready | Připravení akce | Příprava |
+| Hide | Ukrytí | Schování se |
+| Grapple | Chycení | Chvat |
+| Expertise (tulák) | Odbornost | Kvalifikace |
+| Cunning Action | Lstivá akce | Mazaná akce |
+| Aberration | aberace | zrůda |
+| Monstrosity | zrůda | obluda |
+| Construct | konstrukt | výtvor |
+
+Zároveň byly sjednoceny izolované názvy nestvůr z bestiáře,
+například **Abolet, Zřící, Slád, Kovatl, Skurut, Gobr,
+Neviditelný stopař, Vodní div, Ent, Tlející valivec, Diblík**.
+
+Názvy souvisejících předmětů byly sjednoceny také v kapitole
+`adventuring-gear`: například **Torna, Karimatka, Brašnička na suroviny,
+Ježci, Okovy, Nádobíčko** a názvy sedmi výbavových balíčků.
+
+Anglické identifikátory (`Stealth`, `Dash`, `monster-statistics` atd.),
+interní hodnoty a názvy MCP nástrojů se **nesmějí překladem měnit**.
+Český slovník dovedností je v `src/lib/rulebook/czech-terms.ts`.
+Regresní test v `scripts/test-rulebook.mjs` ověřuje všech 18 názvů.
+
+Zavedené české názvy povolání a schopností se používají pouze jako
+**názvosloví**. Úplné popisy povolání jsou nově napsány na základě
+anglického SRD 5.1 pod licencí CC BY 4.0; česká komunitní vysvětlení
+a odstavce nejsou kopírovány. Anglické zdroje zůstávají v čtečce pod
+českým textem a identifikátory povolání zůstávají nezměněné.
+
+## Terminologická revize povolání (2026-11-21)
+
+Všechny následující úpravy se týkají **pouze názvů schopností a podtříd**.
+Jejich česká podoba byla ověřena proti [3. kapitole české Příručky hráče
+D&D 5e (2014)](https://dnd5esrd.d20.cz/prirucka-hrace/3-kapitola.html).
+Vysvětlující texty, mechaniky, tabulky a jejich čísla se z komunitního
+překladu nepřebírají. Interní názvy, klíče SRD a MCP API zůstávají anglicky.
+
+| Povolání | Příklady sjednocených názvů |
+|---|---|
+| Bojovník | Mimořádný atlet; Dokonalejší kritický zásah; Zarputilec |
+| Bard | Kolej znalostí; Kolej odvahy; Slovní výpad; Nedostižná dovednost |
+| Klerik | Ničení nemrtvých; Doménová kouzla |
+| Druid | Nestárnoucí tělo; Kruhová kouzla; Chůze krajem; Přírodní ochrana; Přírodní svatyně |
+| Mnich | Klid; Smrtící dlaň |
+| Čaroděj | Dračí nezlomnost; Spřízněnost s živly; Dračí vzhled |
+| Paladin | Vnímání božství; Přikládání rukou; Boží úder; Čistota duše; Svatozář |
+| Hraničář | Rozený průzkumník; Pravěká ostražitost; Schování se přímo před zraky; Mimořádná lovcova obrana |
+| Kouzlící povolání | Sesílání rituálů; Sesílací ohniskový předmět |
+
+Ověření názvů bylo přidáno do `scripts/test-rulebook.mjs`.
+## Revize názvů kouzel a multipovolání (21. 11. 2026)
+
+Z českého [Abecedního grimoáru D&D 5e (2014)](https://dnd5esrd.d20.cz/grimoar/grimoar-jmen.html)
+byly ověřeny tyto **samostatné názvy kouzel**; jejich původní anglická
+ID a popisy kouzel zůstávají nezměněné:
+
+| Originální ID kouzla | Použitý český název |
+|---|---|
+| `Friends` | Přátelé |
+| `Haste` | Rychlost |
+| `Hold Person` | Znehybni osobu |
+| `Cloudkill` | Oblak smrti |
+| `Tree Stride` | Chůze stromy |
+| `Passwall` | Projdi zdí |
+| `Insect Plague` | Hmyzí zhouba |
+| `Storm of Vengeance` | Bouře odplaty |
+| `Contact Other Plane` | Mluva sfér |
+| `Flesh to Stone` | Zkamenění |
+| `Mass Cure Wounds` | Hromadné zhojení zranění |
+| `Conjure Celestial` | Vyvolej nebešťana |
+| `Conjure Fey` | Vyvolej vílu |
+| `Create Undead` | Stvoř nemrtvé |
+| `Dispel Evil and Good` | Rozptyl zlo a dobro |
+| `Power Word Kill` | Slovo moci „ZABIJ“ |
+| `Power Word Stun` | Slovo moci „OCHROM“ |
+
+Upraven byl centrální slovník `czech-terms.ts`, plný seznam kouzel
+`czech-full-rules-13.ts` a odpovídající tabulky druida.
+V tabulkách a odkazech se nemění pořadí, pozice ani původní anglické klíče.
+
+Následná revize dalších deseti názvů zahrnuje také odkaz na kouzlo
+*Mluva sfér* v kapitole Šílenství a doménové kouzlo
+*Hromadné zhojení zranění* u klerika. Prohledáno 21 úplných
+pravidlových kapitol, 12 úplných překladů povolání a 12 souborů
+stručných poznámek ke kouzlům; v těchto souborech nezůstávají
+staré varianty právě opravovaných deseti názvů.
+Jde o statickou kontrolu obsahu, nikoli spuštěnou testovací sadu.
+
+
+Název **Multipovolání** odpovídá české
+[6. kapitole Příručky hráče](https://dnd5esrd.d20.cz/prirucka-hrace/6-kapitola.html).
+Anglické pravidlové ID `multiclassing` zůstalo stejné.
+
+Regresní kontroly názvů jsou v `scripts/test-rulebook.mjs`.
+## Další ověřené názvy kouzel (21. 11. 2026)
+
+Následujících **10 individuálních názvů** bylo ověřeno podle českého
+[Abecedního grimoáru D&D 5e (2014)](https://dnd5esrd.d20.cz/grimoar/grimoar-jmen.html),
+pouze u položek označených *Příručka hráče*:
+
+| Anglické ID | Český název |
+|---|---|
+| `Alter Self` | Změň svůj tvar |
+| `Polymorph` | Proměň tvora |
+| `Seeming` | Hromadné přestrojení |
+| `Wall of Force` | Zeď síly |
+| `Harm` | Zraň |
+| `Planar Binding` | Sférická vazba |
+| `Magic Jar` | Schránka života |
+| `True Seeing` | Pravdivé vidění |
+| `Sunburst` | Sluneční záblesk |
+| `Prismatic Spray` | Spektrální sprška |
+| `Feeblemind` | Slabomyslnost |
+| `Mind Blank` | Ukryj mysl |
+
+Opravy jsou provedeny v `czech-terms.ts` a `czech-full-rules-13.ts`
+bez změny ID nebo pořadí kouzel. Také kapitola Sféry existence nyní
+používá názvy kouzel *Zeď síly* a *Pravdivé vidění*.
+
+**Pozor:** samostatný herní smysl *pravé vidění* (`truesight`)
+v kapitolách Dobrodružství a Statistiky nestvůr není názvem
+kouzla `True Seeing` a zůstává beze změny. Stejně tak obecné
+slovo *proměna* v pravidlech druida není názvem kouzla `Polymorph`.
+
+Kontroly v `scripts/test-rulebook.mjs` zahrnují nyní 29 individuálně
+ověřených názvů. Testovací sada ani build se pro Draft PR nespouštěly.
+## Úplné překlady ras SRD 5.1 (21. 11. 2026)
+
+V PR #35 jsou nově **úplné české překlady 9 z 9 samostatných rasových
+stránek** v anglickém SRD 5.1 (2014). Nejde pouze o stručné anotace.
+Zahrnují všechny rasové rysy, věk, přesvědčení, velikost, rychlost,
+jazyky, číselné hodnoty a všechny podrody skutečně uvedené v tomto SRD.
+
+| Anglické ID stránky | Česká rasa | Podrasa v SRD 5.1 |
+|---|---|---|
+| `dwarf` | Trpaslík | Kopcový trpaslík |
+| `elf` | Elf | Vznešený elf |
+| `halfling` | Hobit | Tichošlápek |
+| `human` | Člověk | – |
+| `dragonborn` | Drakorozený | Tabulka 10 dračích původů |
+| `gnome` | Gnóm | Skalní gnóm |
+| `half-elf` | Půlelf | – |
+| `half-orc` | Půlork | – |
+| `tiefling` | Tiefling | – |
+
+Základní text je **samostatně přeložen z anglického SRD 5.1 (CC BY 4.0)**.
+Z české [2. kapitoly Příručky hráče 2014](https://dnd5esrd.d20.cz/prirucka-hrace/2-kapitola.html)
+byly převzaty pouze ustálené názvy ras, rodů a schopností,
+nikoli souvislé popisy nebo vysvětlení.
+
+Překlad je rozdělen mezi `czech-full-races-1.ts` a
+`czech-full-races-2.ts`. Na každé stránce zůstává zachováno
+původní anglické ID a celé nezměněné anglické znění, které se zobrazí
+za českým překladem. Integrace je v `czech-companion.ts`.
+Statické porovnání s kanonickým anglickým JSON potvrdilo
+**9/9 ras**, shodné počty schopností a strukturu nadpisů u všech devíti.
+Tabulka dračího původu obsahuje všech **10 typů**, gnómský Kutil
+všechny **3 typy zařízení**.
+
+Byly přidány regresní kontroly v `scripts/test-rulebook.mjs`;
+sada testů ani build se na Draft PR podle dohody zatím nespouštěly.
+
+## Úplný překlad všech triků SRD 5.1 (21. 11. 2026)
+
+Prvních **24 úplných českých popisů kouzel** je dokončeno.
+Jde o **24/24 triků (0. úroveň)** v kanonickém anglickém SRD 5.1,
+tedy o 24 z celkových 319 jednotlivých stránek kouzel.
+
+- `src/lib/rulebook/czech-full-spells-1.ts`: Kyselinová koule,
+  Dotek smrti, Tančící světla, Druidství, Tajemný výšleh, Ohnivá střela,
+  Vedení, Světlo, Mágova ruka, Oprav, Zpráva, Drobná iluze.
+- `src/lib/rulebook/czech-full-spells-2.ts`: Jedová sprška,
+  Kejkle, Stvoř plamen, Mrazivý paprsek, Odolání, Posvátný plamen,
+  Sukovice, Šokující sevření, Ušetři umírajícího, Taumaturgie,
+  Přesný úder, Zlomyslný výsměch.
+
+**Každý překlad** obsahuje dobu sesílání, dosah, původní kombinaci
+složek V/S/M, české vysvětlení materiálních složek, trvání a úplný
+popis účinků, včetně omezení a případného vývoje podle úrovně.
+Vysvětlující pasáže jsou **samostatně přeložené z anglického SRD 5.1
+(CC BY 4.0)**; ze zavedené české terminologie se přebírají pouze
+samostatné názvy kouzel a pravidlové pojmy.
+
+Překlady se načítají prostřednictvím `czech-companion.ts`.
+Původní anglická ID, anglický obsah stránek, zdrojová metadata
+i herní/MCP klíče zůstávají zachované. Czech reader zobrazuje české
+znění před původním anglickým zněním.
+
+**Statická kontrola** všech 24 kouzel potvrdila shodu všech čtyř
+parametrů sesílání a kombinací složek V/S/M, zachování všech kostek
+zranění a bonusů, výčtů účinků i původního pořadí ID. Zároveň je
+zaveden test se specifickými kontrolami kouzel
+v `scripts/test-rulebook.mjs`.
+Build ani automatické testy na Draft PR podle dohody zatím
+nebyly spuštěny.
+
+## Úplné popisy kouzel 1. úrovně – první dvě dávky (21. 11. 2026)
+
+Po dokončení všech 24 triků jsou nyní přeloženy také **první 21 z 49 kouzel 1. úrovně**, přesně v pořadí původního anglického SRD 5.1. Celkový počet úplných překladů jednotlivých kouzel je tedy **45 z 319**.
+
+- `czech-full-spells-3.ts` – 13 kouzel: Poplach, Přátelství zvířat, Uřknutí, Požehnání, Hořící ruce, Zmam osobu, Barevná sprška, Rozkaz, Porozumění jazykům, Stvoř nebo znič vodu, Zhoj zranění, Najdi zlo a dobro, Najdi magii.
+- `czech-full-spells-4.ts` – dalších 8 kouzel: Najdi jed a nemoc, Přestrojení, Přízeň bohů, Zapletení, Spěšný ústup, Vílí oheň, Falešný život, Pomalý pád.
+
+Každá položka obsahuje původní kombinaci složek V/S/M a úplné nově formulované české podmínky sesílání, trvání a účinků včetně případného sesílání pozicí vyšší úrovně. Zavedené názvy odpovídají internímu slovníku a českému [Abecednímu grimoáru](https://dnd5esrd.d20.cz/grimoar/grimoar-jmen.html). Z tohoto webu přebíráme **pouze samostatné názvy, nikoli pravidlový text**. Úplný popis je přeložen výhradně z anglického SRD 5.1 pod licencí CC BY 4.0.
+
+Zápisy jsou propojeny v `czech-companion.ts` se čtečkou. Anglická ID, originální anglické tělo stránek, jejich metadata a herní/MCP identifikátory jsou zachované.
+
+**Statická kontrola:** 21/21 přeložených kouzel 1. úrovně odpovídá anglickému originálu v době sesílání, dosahu, trvání, kombinaci složek, všech původních kostkách a počtu pojmenovaných účinků. Kontroly doplňuje cílený regresní test v `scripts/test-rulebook.mjs`. **Testy a build zůstávají na Draft PR nespouštěné**.
+
+## Dokončená kouzla 1. úrovně SRD 5.1 (21. 11. 2026)
+
+V rámci PR #35 byly dokončeny **úplné české texty zbývajících 28 kouzel
+1. úrovně**, takže nyní mají český úplný text **všechna kouzla 1. úrovně
+(49/49)**. Spolu s 24 triky jde o **73/319 úplných českých popisů kouzel**.
+
+Nově vytvořené soubory:
+
+- `czech-full-spells-5.ts` (10 kouzel): Najdi přítelíčka, Tenserův
+  létající disk, Oblak mlhy, Dobrůvka, Sádlo, Naváděcí blesk, Léčivé slovo,
+  Pekelné pokárání, Hrdinství a Tašin děsivý smích.
+- `czech-full-spells-6.ts` (10 kouzel): Lovcova marka, Určení,
+  Iluzorní text, Způsob zranění, Skok, Dlouhokrok, Mágova zbroj,
+  Magická střela, Ochrana před zlem a dobrem a Očisti jídlo a pití.
+- `czech-full-spells-7.ts` (8 kouzel): Svatyně, Štít, Štít víry,
+  Tichý obraz, Spánek, Mluv se zvířaty, Hromová vlna a Neviditelný služebník.
+
+Všech **49 kouzel 1. úrovně** je napojeno přes `czech-companion.ts`.
+Původní anglická ID, údaje `meta`, anglický text za českou verzí
+a klíče pro herní mechaniku a MCP se nemění. České popisy vznikly
+samostatným překladem anglického SRD 5.1 pod licencí CC BY 4.0.
+Z komunitního českého D&D byly převzaty nanejvýš ustálené názvy,
+nikoli souvislé pasáže.
+
+**Statická kontrola podle anglického SRD:** všech **49/49** kouzel
+1. úrovně má správnou dobu sesílání, dosah, trvání a složky V/S/M,
+stejné kostky zranění a účinků, počet podúčinků a všechna ustanovení
+`At Higher Levels`. U nových 28 překladů bylo individuálně
+ověřeno také **52 klíčových pravidlových podmínek**.
+Regresní kontrola pokrývající všech 49 kouzel je v
+`scripts/test-rulebook.mjs`.
+
+**Build a automatické testy na Draft PR nebyly spuštěny**;
+výsledky se vztahují ke statickému porovnání zdrojů.
+
+## Zahájení úplných popisů kouzel 2. úrovně (21. 11. 2026)
+
+V PR #35 je doplněno prvních **12 kouzel 2. úrovně** (v pořadí anglického SRD):
+Melfův kyselinový šíp, Podpora, Změň svůj tvar, Zvířecí posel,
+Mystický zámek, Nystulova magická aura, Předvídání, Kůrokůže,
+Slepota nebo hluchota, Rozmazání, Cejchovací úder a Uklidni emoce.
+
+- Nový soubor `src/lib/rulebook/czech-full-spells-8.ts` obsahuje úplné nezávislé
+  české překlady včetně doby sesílání, dosahu, složek, trvání, volitelných
+  účinků, záchran a sesílání vyšší pozicí.
+- Napojeno do české čtečky v `czech-companion.ts` bez změn anglického
+  originálu, ID, metadat či herního/MCP rozhraní.
+- Nový regresní test v `scripts/test-rulebook.mjs` ověřuje všech 12 ID,
+  jejich pořadí, zobrazení, původní texty, složky a zásadní mechaniky.
+- České ustálené názvy zůstávají v `czech-terms.ts`; žádné souvislé
+  pasáže českého komunitního překladu nejsou přebírány.
+
+**Stav: 85/319 kompletních českých popisů kouzel** (24 triků,
+49 kouzel 1. úrovně, 12 kouzel 2. úrovně). Zbývá **234 kouzel**,
+z toho dalších **42 kouzel 2. úrovně**. Build a test suite nebyly
+podle dohody pro Draft PR spuštěny.
+
+## Druhá dávka kouzel 2. úrovně (21. 11. 2026)
+
+Přidáno dalších **12 úplných samostatných českých popisů**, od
+**Věčného plamene** po **Poryv větru** v pořadí anglického SRD 5.1:
+Věčný plamen, Tma, Vidění ve tmě, Odhal myšlenky, Zlepši vlastnost,
+Zvětšení nebo zmenšení, Fascinuj, Najdi pasti, Ohnivá čepel,
+Planoucí koule, Důstojný odpočinek a Poryv větru.
+
+Nový soubor `src/lib/rulebook/czech-full-spells-9.ts` je připojen v
+`czech-companion.ts`. Anglická ID, původní texty, metadata a MCP
+zůstávají nedotčené. Regresní kontrola v `scripts/test-rulebook.mjs`
+ověřuje původní pořadí, složky, kostky, české názvy, důležité podmínky
+a nezměněný anglický originál. Účinky jsou nezávisle přeložené z
+anglického SRD 5.1 (CC BY 4.0); česká komunitní terminologie je
+použita pouze pro ustálené názvy.
+
+**Stav: 97/319 úplných popisů kouzel; zbývá 222, z toho 30 kouzel
+2. úrovně.** Build ani automatické testy na Draft PR nebyly spuštěny.
+
+## Třetí dávka úplných kouzel 2. úrovně (21. 11. 2026)
+
+V PR #35 je nově dokončeno dalších **12 úplných českých popisů**:
+Rozpal kov, Znehybni osobu, Neviditelnost, Zaklep, Nižší navrácení,
+Levitace, Najdi zvířata a rostliny, Najdi předmět, Magická ústa,
+Magická zbraň, Zrcadlový obraz a Mlžný krok.
+
+- Nový soubor `src/lib/rulebook/czech-full-spells-10.ts` obsahuje kompletní
+  vlastní překlady kouzel č. 26–37 v pořadí 2. úrovně SRD 5.1.
+- Překladová mapa je napojena do `czech-companion.ts`. Anglický
+  originál, kanonická ID, metadata, mechanika hry a MCP se nemění.
+- Kontroly v `scripts/test-rulebook.mjs` zahrnují pořadí, všechny čtyři
+  údaje sesílání, složky V/S/M, doby trvání, dosahy, kostky, české
+  názvy, klíčové výjimky a zachování anglického znění.
+- České **názvy** vycházejí ze stávající terminologie projektu;
+  souvislé popisy jsou samostatné překlady z anglického SRD 5.1
+  (CC BY 4.0), nikoli převzaté z komunitního českého grimoáru.
+- **Celkem 109/319 úplných českých popisů kouzel**. Hotovo
+  **36/54 kouzel 2. úrovně**, zbývá jich **18** a celkově **210**.
+
+Build ani automatická testovací sada zatím nebyly spuštěny, podle
+dohody pro rozpracované Draft PR.
+
+## Kompletní české popisy všech kouzel 2. úrovně SRD 5.1 (21. 11. 2026)
+
+Dokončena všechna **54/54 kouzla 2. úrovně** podle původního anglického SRD 5.1.
+Předchozí dávky obsahovaly 36 úplných popisů. Při závěrečné kontrole
+bylo nalezeno vynechané kouzlo **Najdi oře (Find Steed)**, které bylo doplněno
+v původním pořadí do `czech-full-spells-9.ts` mezi `enthrall` a `find-traps`.
+Zbývajících 17 kouzel od **Měsíčního paprsku** po **Zónu pravdy** je nově
+přeloženo v `src/lib/rulebook/czech-full-spells-11.ts`.
+
+Nová dávka zahrnuje Měsíční paprsek, Projdi beze stop, Léčivá modlitba,
+Ochrana před jedem, Paprsek slabosti, Trik s lanem, Sežehující paprsek,
+Spatři neviditelné, Tříštění, Ticho, Pavoučí šplh, Trny, Duchovní zbraň,
+Sugesce, Strážné pouto, Pavučina a Zóna pravdy.
+
+Česká čtečka je rozšířena v `czech-companion.ts`. Nový regresní test
+v `scripts/test-rulebook.mjs` kontroluje **všech 54 ID v přesném kanonickém
+pořadí**, počty překladů ve 4 dávkách (12+13+12+17), české názvy, všechny
+čtyři parametry sesílání, rituály, složky V/S/M, kostky, výjimky jednotlivých
+kouzel a úplné zachování anglického textu. Opraveny též pořadové rozsahy
+starších testů druhé a třetí dávky.
+
+**Úplné české popisy kouzel: 127/319** (24 triků + 49 kouzel 1. úrovně
++ 54 kouzel 2. úrovně). **Zbývá 192 kouzel úrovní 3–9**.
+
+Texty jsou samostatným českým překladem původního anglického SRD 5.1
+(CC BY 4.0). České komunitní zdroje se používají pouze k pojmenování
+jednotlivých ustálených termínů, nikoli ke kopírování pravidlových pasáží.
+Anglická ID, původní anglický obsah, metadata i MCP zůstávají beze změn.
+
+**Build a automatické testy nebyly na Draft PR spuštěny**, podle předchozí
+dohody. Regresní kontroly jsou připravené v repozitáři.
+
+## První kompletní překlady kouzel 3. úrovně SRD 5.1 (21. 11. 2026)
+
+Nový soubor `src/lib/rulebook/czech-full-spells-12.ts` přidává **12
+samostatných úplných českých překladů** prvních kouzel 3. úrovně
+v anglickém SRD 5.1: **Stvoř nemrtvého, Maják naděje, Uvrhni kletbu,
+Mihotání, Svolej blesky, Jasnozřivost, Vyvolej zvířata, Protikouzlo,
+Stvoř jídlo a vodu, Denní světlo, Rozptyl magii a Strach**.
+
+Překlady obsahují všechny pravidlové účinky, výjimky, seznamy možností,
+trvání při sesílání vyšší pozicí a součásti sesílání. `czech-companion.ts`
+je propojuje s čtečkou bez změny původních anglických textů, ID, metadat
+nebo MCP. Nový regresní test v `scripts/test-rulebook.mjs` prověřuje
+pořadí prvních 12 z celkem 42 kouzel 3. úrovně, názvy, parametry sesílání,
+složky, kostky, originální anglický obsah a důležité mechanické podmínky.
+
+Veškeré souvislé české texty jsou nezávislým překladem anglického SRD 5.1
+(CC BY 4.0); z komunitního českého překladu jsou použity jen
+ustálené názvy.
+
+**Stav: 139/319 úplných českých popisů kouzel**, včetně
+**12/42 kouzel 3. úrovně**. Zbývá **180 kouzel** (z toho
+**30 kouzel 3. úrovně**).
+
+Build a testovací sada na Draft PR nebyly spuštěny podle dohody.
+
+## Druhá dávka úplných kouzel 3. úrovně (21. 11. 2026)
+
+Nový soubor `src/lib/rulebook/czech-full-spells-13.ts` doplňuje **12 úplných
+nezávislých českých překladů**: **Ohnivá koule, Leť, Mlžná podoba,
+Strážný znak, Rychlost, Hypnotický vzor, Blesk, Magický kruh,
+Velký obraz, Hromadné léčivé slovo, Splyň s kamenem a Nezjistitelnost**.
+
+Překlady zahrnují úplné pravidlové účinky, přesné plošné rozsahy,
+volby sesilatele, hody, výjimky, spotřebovávané materiály, rituál,
+koncentraci i změny při vyšších pozicích. Samostatný český text vychází
+z anglického SRD 5.1 (CC BY 4.0); z českých komunitních zdrojů jsou
+přejímány pouze ustálené názvy.
+
+Kouzla jsou připojena do `czech-companion.ts` se zachováním originálního
+anglického znění, kanonických ID, metadat a MCP. Přibyl regresní test
+v `scripts/test-rulebook.mjs`, který ověřuje přesných 12 ID v pořadí
+SRD, české názvy, zobrazení v čtečce, čtyři parametry sesílání, složky
+V/S/M, rituál, kostky a významné mechanické účinky.
+
+**Stav: 151/319 úplných českých kouzel.** Dokončeno **24/42 kouzel
+3. úrovně**, zbývá 18 této úrovně a **168 kouzel celkem**.
+
+Build ani testovací sada nebyly spuštěny na Draft PR podle dohody.
+
+## Dokončení všech kouzel 3. úrovně (21. 11. 2026)
+
+Přeloženo všech **42/42 kouzel 3. úrovně** anglického SRD 5.1
+(CC BY 4.0). Soubor `src/lib/rulebook/czech-full-spells-14.ts` přidává
+posledních **18 úplných, nezávisle napsaných českých popisů**:
+
+Přízračný oř, Růst rostlin, Ochrana před energií, Sejmi kletbu,
+Obrození, Poselství, Zmrzlý déšť, Zpomalení, Mluv s mrtvými,
+Mluv s rostlinami, Přízrační strážci, Páchnoucí oblak,
+Leomundova chatka, Jazyky, Upíří dotyk, Vodní dech,
+Chůze po vodě a Větrná zeď.
+
+Plné české popisy všech 42 kouzel jsou propojené s čtečkou
+v `czech-companion.ts`. Anglický originál, ID, metadata, názvy
+klíčů a MCP zůstávají zachované. Samostatný regresní test
+v `scripts/test-rulebook.mjs` kontroluje **42 unikátních kanonických
+ID v úplném pořadí**, dávky 12+12+18, pojmenování, metadata
+sesílání, složky V/S/M, rituály, kostky, původní text a klíčové
+mechaniky všech posledních 18 kouzel.
+
+Český komunitní překlad byl použit jen k převzetí ustálených
+**názvů**; pravidlové odstavce jsou vlastní překlady původního
+anglického SRD 5.1.
+
+**Celkový stav: 169/319 úplných českých popisů kouzel**:
+24/24 triků, 49/49 kouzel 1. úrovně, 54/54 kouzel 2. úrovně
+a 42/42 kouzel 3. úrovně. **Zbývá 150 kouzel úrovní 4–9.**
+
+Statická kontrola ověřila 18 položek a napojení do čtečky.
+Build a testovací sady se na Draft PR nespouštějí podle dohody.
+
+## První dávka úplných kouzel 4. úrovně SRD 5.1 (21. 11. 2026)
+
+Nový soubor `src/lib/rulebook/czech-full-spells-15.ts` obsahuje úplné
+samostatné české překlady prvních **12/31 kouzel 4. úrovně**:
+**Mystické oko, Vypuzení, Evardova černá chapadla, Hniloba, Nutkání,
+Zmatek, Vyvolej nižší elementály, Vyvolej lesní bytosti, Ovládni vodu,
+Znamení proti smrti, Dimenzionální dveře a Věštění**.
+
+Každý záznam zachovává všechny čtyři údaje sesílání a kompletní
+pravidlové účinky. Zvláštní pozornost je věnována úplné tabulce k10
+u Zmatku, všem čtyřem účinkům Ovládni vodu, trvání Vypuzení
+a podmínkám přenosu Dimenzionálními dveřmi.
+
+`czech-companion.ts` propojuje nové texty s českou čtečkou;
+anglický originál, ID, metadata a herní/MCP rozhraní zůstávají
+nezměněné. Regresní test v `scripts/test-rulebook.mjs` kontroluje
+12 zdrojových ID v pořadí, české názvy, dobu sesílání, dosahy,
+složky V/S/M, trvání, rituály, kostky, důležité účinky a
+zachování anglických originálních popisů.
+
+Popisy jsou vlastní překlady z anglického SRD 5.1 (CC BY 4.0);
+české komunitní zdroje poskytují pouze ustálené názvy.
+
+**Úplné české popisy kouzel: 181/319**. Hotovo **12/31
+kouzel 4. úrovně**, zbývá **19** této úrovně a **138**
+kouzel celkem.
+
+Regresní test je připraven, ale **build ani testovací sada nebyly
+spuštěny**, jak je domluveno pro Draft PR.
+
+## Úplné české texty všech kouzel 4. úrovně (21. 11. 2026)
+
+Dokončeno všech **31/31 kouzel 4. úrovně** původního anglického
+SRD 5.1. Prvních 12 textů bylo přidáno dříve v
+`src/lib/rulebook/czech-full-spells-15.ts`. Nyní přibylo
+**19 samostatných úplných překladů** ve dvou souborech:
+
+- `src/lib/rulebook/czech-full-spells-16.ts` (10 kouzel): Podrob zvíře,
+  Zhotov, Mordenkainenův věrný pes, Ohnivý štít, Volnost,
+  Obří hmyz, Mocná neviditelnost, Strážce víry, Klamný prostor
+  a Ledová bouře.
+- `src/lib/rulebook/czech-full-spells-17.ts` (9 kouzel): Najdi tvora,
+  Fantóm, Proměň tvora, Mordenkainenova soukromá svatyně,
+  Otilukeho odolná koule, Leomundova tajná truhla,
+  Tvaruj kámen, Kamenná kůže a Ohnivá zeď.
+
+České pravidlové texty zachovávají všechny specifické podmínky,
+například proměnu a návrat životů, denní kumulativní šanci na
+ztrátu tajné truhly, 60 bodů zranění Strážce víry, magické
+ochrany soukromé svatyně a volbu zraňující strany Ohnivé zdi.
+Česká čtečka v `czech-companion.ts` je propojená se všemi
+31 kouzly bez změny anglických ID, originálních textů,
+metadat a herního/MCP rozhraní.
+
+Nová regresní kontrola v `scripts/test-rulebook.mjs` porovnává
+**31 unikátních ID v kanonickém pořadí** ze tří dávek (12+10+9),
+ověřuje české názvy, všechny čtyři údaje sesílání, složky V/S/M,
+ritualitu, kostky, důležité herní mechaniky a zachování anglického
+originálu. Popisy jsou vlastní překlady anglického SRD 5.1
+(CC BY 4.0); z českých komunitních překladů se přebírají
+pouze ustálené názvy.
+
+**Celkem dokončeno 200/319 úplných českých popisů kouzel.**
+Zbývá **119 kouzel úrovní 5–9**.
+
+Podle dohody se na Draft PR **nespouštěl build ani testovací sada**;
+regresní kontroly jsou pouze připravené v repozitáři.
+
+## První úplná česká kouzla 5. úrovně (21. 11. 2026)
+
+Ve zdrojovém anglickém SRD 5.1 je **37 samostatných kouzel 5. úrovně**.
+Vyhledávání původně obsahovalo také dva zásahy z nižších úrovní
+(`Conjure Animals`, `Dominate Beast`), protože popisují sesílání na
+vyšší pozici; nebyly započítány jako kouzla 5. úrovně.
+
+Nový `src/lib/rulebook/czech-full-spells-18.ts` obsahuje první
+**12/37 úplných nezávislých českých popisů**: Oživlé předměty,
+Ochranná sféra proti životu, Bigbyho ruka, Probuzení,
+Oblak smrti, Rozmluva s božstvem, Spojení s přírodou,
+Kužel chladu, Vyvolej elementála, Mluva sfér, Nákaza a Stvoření.
+
+Překlady mají úplnou tabulku statistik Oživlých předmětů,
+všechny čtyři režimy Bigbyho ruky, pravidla ztráty soustředění
+u vyvolaného elementála, šest nemocí u Nákazy, dva rituály
+Rozmluva s božstvem / Spojení s přírodou a další rituál
+Mluva sfér, i tabulku trvání materiálů u Stvoření.
+Anglická ID, metadata, celé původní anglické znění a
+herní/MCP rozhraní zůstávají nedotčené.
+
+Nové texty jsou připojené do české čtečky v
+`src/lib/rulebook/czech-companion.ts`. Regresní test v
+`scripts/test-rulebook.mjs` kontroluje 12 ID v pořadí, české
+názvy, čtyři údaje sesílání, komponenty, kostky, rituály,
+hlavní mechaniky a zachování celého původního textu;
+u Nákazy zohledňuje chybný singulár `Component` v originálu.
+
+**Stav: 212/319 úplných českých textů kouzel**;
+**12/37 kouzel 5. úrovně**, zbývá 25 této úrovně a
+**107 kouzel celkem**. Texty jsou původní překlady anglického
+SRD 5.1 (CC BY 4.0); z komunitního českého překladu
+jsou převzaty pouze ustálené názvy.
+
+Na Draft PR nebyly podle dohody spuštěny build ani testovací
+sada; kontroly jsou připravené k pozdějšímu spuštění.
+
+## Druhá dávka úplných kouzel 5. úrovně (21. 11. 2026)
+
+Soubor `src/lib/rulebook/czech-full-spells-19.ts` doplňuje **12 úplných
+nezávislých českých překladů kouzel 5. úrovně**, v pořadí originálního
+anglického SRD 5.1: **Rozptyl zlo a dobro, Podrob osobu, Sen,
+Plamenný úder, Magický příkaz, Mocné navrácení, Posvěcení,
+Znehybni nestvůru, Hmyzí zhouba, Poznání legend,
+Hromadné zhojení zranění a Klamná podoba**.
+
+Všechny texty zachovávají přesné účinky, včetně dvojího použití
+Rozptyl zlo a dobro, telepatických příkazů a záchran Podrob osobu,
+noční můry s postihem odpočinku u Snu, dávkování Magického příkazu,
+plného seznamu deseti voleb Posvěcení a dvou nezávislých efektů
+Klamné podoby.
+
+`czech-companion.ts` zapojuje nové popisy do české čtečky
+a ponechává původní anglické znění, kanonické identifikátory,
+metadata i MCP. V `scripts/test-rulebook.mjs` přibyl regresní
+test pro těchto dvanáct kouzel, včetně ověření kanonického
+pořadí, českých názvů, složek V/S/M, parametrů sesílání,
+kostek, významných herních omezení a anglického originálu.
+
+Pravidlové odstavce jsou vlastní překlady anglického
+SRD 5.1 (CC BY 4.0); komunitní čeština slouží pouze
+ke sjednocení názvů.
+
+**Stav: 224/319 úplných českých popisů kouzel**,
+včetně **24/37 kouzel 5. úrovně**.
+Zbývá **13 kouzel 5. úrovně a 95 kouzel celkem**.
+
+Build ani testovací sada nebyly podle dohody na Draft PR spuštěny.
+
+## Dokončení úplných kouzel 5. úrovně SRD 5.1 (21. 11. 2026)
+
+**Všech 37/37 kouzel 5. úrovně** má vlastní úplný český překlad
+podle anglického SRD 5.1 (CC BY 4.0). Zbývajících **13 kouzel**
+bylo přidáno ve dvou souborech:
+
+- `src/lib/rulebook/czech-full-spells-20.ts` (7 kouzel): Změna paměti,
+  Projdi zdí, Sférická vazba, Vzkříšení, Reinkarnace,
+  Sledování a Hromadné přestrojení.
+- `src/lib/rulebook/czech-full-spells-21.ts` (6 kouzel): Telekineze,
+  Raryho telepatické pouto, Teleportační kruh, Chůze stromy,
+  Zeď síly a Kamenná zeď.
+
+Zachovány jsou přesné podmínky, časová omezení a náklady,
+obě tabulky Sledování, čtrnáct řádků ras Reinkarnace podle
+k100, souboje vlastností Telekineze, hranice telepatického
+pouta, sigily a trvalé kruhy, fyzikální vlastnosti Zdi síly
+i zničitelnost a podmínky trvalé Kamenné zdi.
+
+V `czech-companion.ts` jsou napojené všechny české texty
+kouzel 5. úrovně bez zásahů do kanonických ID,
+metadat, herního/MCP rozhraní a původního anglického
+obsahu. Regresní kontrola v `scripts/test-rulebook.mjs`
+porovnává všech **37 unikátních ID** proti anglickému SRD
+v přesném pořadí, čtyři dávky 12+12+7+6, názvy,
+složky V/S/M, rituály, dobu sesílání, dosah, trvání,
+kostky, podstatné mechaniky a úplné anglické originály.
+U Nákazy zohledňuje originální označení `Component`
+v jednotném čísle.
+
+**Celkem 237/319 úplných českých popisů kouzel.**
+Hotové všechny triky a kouzla 1.–5. úrovně;
+**zbývá 82 kouzel 6.–9. úrovně**.
+
+Pravidlové odstavce jsou samostatně vytvořené překlady
+anglického SRD 5.1; z českých komunitních překladů
+jsou přejímány jen ustálené názvy.
+
+Build ani automatická testovací sada nebyly na Draft PR
+podle dohody spuštěny.
+
+## Prvních 12 úplných kouzel 6. úrovně SRD 5.1 (21. 11. 2026)
+
+Anglické SRD 5.1 obsahuje **31 skutečných kouzel 6. úrovně**.
+Vyhledávání názvu „6th-level“ zahrnuje dalších pět kouzel nižších
+úrovní s pravidly sesílání do vyšší pozice; ta se nezapočítávají.
+
+Nový soubor `src/lib/rulebook/czech-full-spells-22.ts` obsahuje
+**12/31 úplných nezávislých českých překladů**: Bariéra čepelí,
+Řetězový blesk, Kruh smrti, Vyvolej vílu, Podmíněné kouzlo,
+Stvoř nemrtvé, Rozklad, Zlé oko, Najdi cestu, Zkamenění,
+Zákaz vstupu a Otilukeho mrazivá koule.
+
+Překlady zachovávají přesné rozměry účinků, zranění a všechny
+zvláštní podmínky – například tříčtvrteční kryt Bariéry čepelí,
+ztrátu kontroly při vyvolání víly, spotřebu obou pozic u Podmíněného
+kouzla, ovládání a vyšší úrovně Stvoř nemrtvé, rozklad nemagických
+předmětů, tři varianty Zlého oka, opakované záchrany u Zkamenění,
+trvalý Zákaz vstupu po 30 dnech a odložený výbuch mrazivé koule.
+
+`czech-companion.ts` přidává plné texty do české čtečky
+se zachováním původních anglických popisů, ID, metadat
+i herního/MCP rozhraní. `scripts/test-rulebook.mjs`
+nově obsahuje regresní kontrolu 12 ID a kanonického pořadí,
+českých názvů, všech čtyř polí sesílání, V/S/M,
+rituálů, kostek a zásadních mechanik.
+
+Úplné texty jsou samostatně napsané překlady
+anglického SRD 5.1 (CC BY 4.0); z komunitního českého
+překladu jsou přejaty pouze ustálené názvy.
+
+**Stav 249/319 úplných českých popisů kouzel**,
+z toho **12/31 kouzel 6. úrovně**. Zbývá **19 kouzel
+6. úrovně a 70 kouzel celkem**.
+
+Podle dohody se na Draft PR nesestavuje build ani
+nespouštějí automatické testy.
+
+## Dokončení úplných kouzel 6. úrovně SRD 5.1 (21. 11. 2026)
+
+Všech **31/31 kouzel 6. úrovně** anglického SRD 5.1
+má vlastní úplný český překlad. Posledních **19 kouzel**
+je ve dvou dávkových souborech:
+
+- `src/lib/rulebook/czech-full-spells-23.ts` (10 kouzel): Koule
+  nezranitelnosti, Stráže a ochrany, Zraň, Uzdrav, Hostina hrdinů,
+  Drawmijovo okamžité přivolání, Ottův neodolatelný tanec,
+  Schránka života, Hromadná sugesce a Přemístění zeminy.
+- `src/lib/rulebook/czech-full-spells-24.ts` (9 kouzel): Sférický
+  spojenec, Naprogramovaná iluze, Sluneční paprsek, Přesun
+  rostlinami, Pravdivé vidění, Ledová zeď, Trnová zeď,
+  Chůze větrem a Slovo návratu.
+
+Překlady zachovávají kompletní podmínky a herní mechaniky,
+zejména všechna zabezpečení Stráže a ochrany, omezení maximálních
+životů Zraň, hodinu potřebnou k hostině, přivolání předmětu
+pomocí safíru, úplná pravidla posednutí a návratu duší
+u Schránky života, rozpočty a podmínky Sférického spojence,
+opakované spouštění naprogramované iluze, oba typy zranění
+Ledové zdi a Trnové zdi i pád při ukončení Chůze větrem.
+
+`czech-companion.ts` propojuje všech 31 překladů 6. úrovně
+s českou čtečkou; původní anglické znění, kanonické ID,
+metadata a herní/MCP rozhraní zůstávají zachované.
+Nový souhrnný regresní test v `scripts/test-rulebook.mjs`
+ověřuje **31 jedinečných ID v původním pořadí** ze tří
+dávek (12+10+9), české názvy, všechny čtyři údaje
+sesílání, V/S/M, rituály, kostky, vybrané mechanické
+podmínky a originální anglický text v čtečce.
+
+Veškeré české pravidlové odstavce jsou samostatné překlady
+anglického SRD 5.1 (CC BY 4.0). Český komunitní překlad
+slouží pouze k převzetí ustálených názvů.
+
+**Celkový stav: 268/319 úplných českých popisů kouzel.**
+Hotové jsou všechny triky a kouzla 1.–6. úrovně.
+**Zbývá 51 kouzel 7.–9. úrovně.**
+
+Build a automatická testovací sada nebyly podle dohody
+na Draft PR spuštěny.
+
+## Prvních 12 úplných kouzel 7. úrovně (21. 11. 2026)
+
+Anglické SRD 5.1 obsahuje **20 kouzel 7. úrovně**.
+Při hledání textu „7th-level“ vyšlo 25 souborů;
+pět z nich jsou kouzla nižších úrovní zmiňující
+použití vyšší pozice.
+
+Nový soubor `src/lib/rulebook/czech-full-spells-25.ts`
+přidává **prvních 12/20 úplných českých pravidlových popisů**:
+Mordenkainenův meč, Vyvolej nebešťana, Zpožděná ohnivá koule,
+Božské slovo, Éteričnost, Prst smrti, Ohnivá bouře, Silová klec,
+Mordenkainenův velkolepý dům, Magická fata morgána,
+Přesun mezi sférami a Spektrální sprška.
+
+Kompletně přeloženy jsou jejich podmínky sesílání,
+zranění, záchranné hody, omezení a tabulky. Spektrální
+sprška obsahuje všech osm výsledků k8 včetně opakovaných
+záchran a vypuzení do jiné sféry. Silová klec zachovává
+oba možné tvary vězení, mezery, nepropustnost,
+interakci s éterem a pravidla teleportace.
+Éteričnost zachovává možnosti návratu a případného
+silového zranění. Velkolepý dům obsahuje pravidla
+portálu, prostorových limitů, služebníků a vybavení.
+
+Texty jsou napojené na českou čtečku přes
+`czech-companion.ts`; kanonická anglická ID,
+metadata, anglické originály a herní/MCP rozhraní
+zůstávají nedotčené. Regresní test v
+`scripts/test-rulebook.mjs` pokrývá prvních 12 ID
+a jejich pořadí, české názvy, všechny údaje sesílání,
+V/S/M, kostky a zásadní mechanické výjimky.
+
+Jde o vlastní překlady původního anglického
+SRD 5.1 (CC BY 4.0); z českých komunitních
+zdrojů byly převzaty pouze zavedené názvy.
+
+**Stav: 280/319 úplných českých popisů kouzel**,
+z toho **12/20 kouzel 7. úrovně**.
+Zbývá **8 kouzel 7. úrovně a 39 kouzel celkem**.
+
+Podle dohody se na Draft PR nespustil build
+ani automatické testovací sady.
+
+## Dokončení kouzel 7. úrovně SRD 5.1 (21. 11. 2026)
+
+**Všech 20/20 kouzel 7. úrovně** má nyní vlastní úplný
+český pravidlový popis z anglického SRD 5.1 (CC BY 4.0).
+Po prvních 12 kouzlech v `czech-full-spells-25.ts`
+zbývajících **8** obsahuje
+`src/lib/rulebook/czech-full-spells-26.ts`:
+**Projekce obrazu, Regenerace, Zmrtvýchvstání,
+Obrácení gravitace, Skrytí, Simulakrum, Symbol
+a Teleportace**.
+
+Nové texty zachovávají kompletní pravidla včetně
+vzdáleného iluzorního dvojníka, postupné regenerace
+a okamžitého spojení končetiny, nákladů a postihů
+Zmrtvýchvstání, pádu vzhůru i dolů u Obrácení gravitace,
+podmíněného ukončení Skrytí a alchymistické opravy Simulakra.
+U Symbolu je obsaženo **všech osm samostatných účinků**
+se záchrannými hody, spouštěči a trváním; Teleportace
+obsahuje **úplnou sedmiřádkovou tabulku k100** se všemi
+výsledky pro různé stupně znalosti cíle včetně opakovaných
+nehod, odchylky a podobných oblastí.
+
+Česká čtečka přes `czech-companion.ts` poskytuje
+všech 20 úplných překladů 7. úrovně bez změny
+kanonických ID, původního anglického textu,
+metadat nebo herního/MCP rozhraní. Regresní test
+v `scripts/test-rulebook.mjs` kontroluje všech **20
+jedinečných ID v přesném pořadí anglického SRD**
+ve dvou dávkách (12+8), čtyři položky sesílání,
+složky V/S/M, rituální označení, kostky, klíčové
+mechanické účinky a zachování originálního anglického
+popisu na českých stránkách.
+
+Souvislé texty jsou vlastní české překlady
+anglického SRD 5.1; z komunitních zdrojů jsou
+převzaty pouze ustálené názvy.
+
+**Stav úplných českých kouzel: 288/319.**
+Dokončeny všechny triky a kouzla **1.–7. úrovně**.
+**Zbývá 31 kouzel 8.–9. úrovně.**
+
+PR zůstává Draft, bez sloučení a bez spuštění
+buildu nebo automatických testů podle dohody.
+
+## Všechna kouzla 8. úrovně dokončena (21. 11. 2026)
+
+Všech **16/16 skutečných kouzel 8. úrovně** původního
+anglického SRD 5.1 má nyní vlastní úplný český popis.
+Pět dalších záznamů nalezených při vyhledávání výrazu
+„8th-level“ jsou kouzla nižších úrovní, která jen
+zmiňují sesílání vyšší pozicí.
+
+Přidány dva soubory s nezávislými českými překlady:
+
+- `src/lib/rulebook/czech-full-spells-27.ts` (8): Zvířecí podoby,
+  Antimagické pole, Antipatie nebo sympatie, Klon, Ovládání
+  počasí, Polosféra, Ovládnutí nestvůry a Zemětřesení.
+- `src/lib/rulebook/czech-full-spells-28.ts` (8): Slabomyslnost,
+  Výmluvnost, Svatá aura, Ohnivý mrak, Bludiště,
+  Ukryj mysl, Slovo moci „OCHROM“ a Sluneční záblesk.
+
+Zachována jsou všechna pravidlová omezení, tabulky
+a účinky – zejména souběh zranění a navrácení životů
+u Zvířecích podob, veškeré výjimky Antimagického
+pole, oba účinky Antipatie nebo sympatie a jejich
+opakované záchrany, 120denní zrání klonu, všechny
+tři tabulky Ovládání počasí (5+6+5 stupňů), trhliny
+a zranění staveb při Zemětřesení, záchrany po
+30 dnech u Slabomyslnosti, navázané omráčení
+a účinky slunečního světla.
+
+`czech-companion.ts` propojuje úplné české texty
+všech 16 kouzel se čtečkou. Původní anglické
+stránky, kanonická ID, metadata a herní/MCP rozhraní
+zůstávají zachovány.
+
+V `scripts/test-rulebook.mjs` přibyl souhrnný regresní
+test: **16 jedinečných ID v pořadí SRD (8+8)**,
+úplné texty v české čtečce, zachování anglického
+originálu, sesílací údaje V/S/M, dosahy, trvání,
+kostky, klíčové mechaniky a všech 16 řádků
+počasových tabulek.
+
+Překlady jsou samostatně napsané podle anglického
+SRD 5.1 (CC BY 4.0). Z českých komunitních
+překladů přebíráme pouze zavedené názvy.
+
+**Úplné české popisy kouzel: 304/319.**
+Hotové jsou triky a všechny úrovně **1.–8.**.
+**Zbývá 15 kouzel 9. úrovně.**
+
+Build ani automatické testy se podle dohody
+na Draft PR nespouštějí.
+
+## Dokončení všech úplných českých popisů kouzel SRD 5.1 (21. 11. 2026)
+
+**Všech 319/319 kouzel SRD 5.1** má nyní **samostatně
+napsaný úplný český popis pravidel** podle anglického
+SRD 5.1 (CC BY 4.0). Jsou dokončeny **všechny triky
+a kouzla 1.–9. úrovně**. Původní anglické stránky,
+jejich identifikátory, metadata a herní/MCP rozhraní
+zůstávají zachovány.
+
+Poslední dva soubory obsahují **15/15 kouzel 9. úrovně**:
+
+- `src/lib/rulebook/czech-full-spells-29.ts` (8 kouzel):
+  Astrální projekce, Předtucha, Brána, Uvěznění,
+  Hromadné uzdravení, Meteorický roj,
+  Slovo moci „ZABIJ“ a Duhová zeď.
+- `src/lib/rulebook/czech-full-spells-30.ts` (7 kouzel):
+  Proměna podoby, Bouře odplaty, Zastavení času,
+  Skutečná proměna, Znovuzrození,
+  Přízračná noční můra a Přání.
+
+Zachovány jsou také náklady na složky a všechna
+speciální pravidla. Uvěznění má všech **pět forem
+a způsoby ukončení**; Duhová zeď obsahuje všech
+**sedm barevných vrstev, jejich obranu i správný
+postup ničení**; Bouře odplaty popisuje **všechna
+kola 1.–10.**; Skutečná proměna pokrývá **všechny tři
+typy proměny** a Přání obsahuje **všech pět
+alternativních účinků, výjimky, omezení i 33% riziko
+trvalé ztráty sesílání**.
+
+`src/lib/rulebook/czech-companion.ts` napojuje oba
+nové soubory do české čtečky. V
+`scripts/test-rulebook.mjs` byl připraven souhrnný
+regresní test **všech 15 kouzel 9. úrovně** v přesném
+kanonickém pořadí (8+7), názvů, V/S/M, čtyř údajů
+sesílání, kostek, herních podmínek a původních
+anglických textů. Nový globální regresní test
+vyžaduje **319 unikátních anglických kouzel**
+a u všech **kompletní český popis se zachovaným
+anglickým originálem**.
+
+**Stav: 319/319 úplných českých kouzel (100 %).**
+Jde o dokončení popisů kouzel; **neznamená to, že
+jsou automaticky dokončeny úplné popisy nestvůr,
+předmětů či všech dalších sekcí SRD**.
+
+Úplné texty jsou nezávislé české překlady
+anglického SRD 5.1; z komunitních českých
+zdrojů se přebírají pouze ustálené názvy.
+
+Dle dohody **PR zůstává Draft**, bez sloučení;
+**build ani automatické testy nebyly spuštěny**.
+
 ## Stav
 
 - Stručné české přehledy: 932/933 kanonických stránek (výjimkou je atribuce).
-- Úplné české znění pravidlových stránek: **10/35 obsahových pravidlových stránek**.
-- Úplné české texty kouzel, statistiky nestvůr, předmětů, ras a povolání:
-  zbývá dopracovat; přehledy nejsou totéž co plné překlady.
+- Úplné české znění pravidlových stránek: **35/35 obsahových pravidlových stránek**.
+- Úplné české překlady jednotlivých ras: **9/9 rasových stránek SRD 5.1**, včetně všech podras obsažených ve zdrojovém SRD.
+- Úplné české popisy jednotlivých kouzel: **319/319** – všech **24/24 triků** a všech **49/49 kouzel 1. úrovně** a všech **54/54 kouzel 2. úrovně** a všech **42/42 kouzel 3. úrovně** a všech **31/31 kouzel 4. úrovně** a všech **37/37 kouzel 5. úrovně** a všech **31/31 kouzel 6. úrovně** a všech **20/20 kouzel 7. úrovně** a všech **16/16 kouzel 8. úrovně** a všech **15/15 kouzel 9. úrovně**.
+- Dříve dokončené kapitoly zahrnují **Stavy, Nemoci, Objekty, Artefakty** a další pravidla.
+- V další dávce jsou úplně přeloženy kapitoly **Jízdní zvířata a dopravní prostředky, Nástroje, Kouzelné předměty, Jedy a Inteligentní kouzelné předměty**.
+- Následující dávka přeložila celé kapitoly **Zbroje**, **Šílenství** a
+  **Sféry existence**, včetně tabulek a konkrétních pravidlových omezení.
+- Aktuálně nově přeložené celé kapitoly **Multipovolání** a
+  **Zázemí**, včetně všech tabulek a všech 26 návrhů vlastností akolyty.
+- Nově přeloženy také celé kapitoly **Zbraně** a **Výdaje**, včetně
+  všech 37 zbraní a tří tabulek životních nákladů, jídla a služeb.
+- Nově přeložena celá kapitola **Seznamy kouzel**: **778 výskytů**
+  **319 jedinečných kouzel**, v seznamech osmi povolání a 70 skupinách úrovní,
+  všechny podle existujícího českého slovníku.
+- Také kapitola **Božstva mnohovesmíru**: všechny úvodní popisy i **67 božstev**
+  keltského, řeckého, egyptského a severského panteonu, včetně všech tabulkových hodnot.
+- Dokončené základní kapitoly zahrnují také **Dobrodružství**, **Dobrodružné vybavení**, **Používání vlastností**, **Boj** a **Statistiky nestvůr**, čímž je uzavřeno všech **35/35** nelegálních pravidlových kapitol.
+- Úplné české texty **všech 12 povolání SRD 5.1 (2014)** jsou nyní v
+  `src/lib/rulebook/czech-full-classes-1.ts` až `czech-full-classes-12.ts`:
+  obsahují zdatnosti, počáteční vybavení, 20 úrovní, kouzelné pozice, všechny
+  vypsané schopnosti a **jednu úplně popsanou podtřídu na povolání**.
+- U druida je zahrnuto **7 tabulek kouzel krajin**, u čaroděje všech
+  **8 možností Metamagie**, u černokněžníka všech **32 mystických invokací**
+  a u kouzelníka pravidla knihy kouzel.
+- Úplné české texty jednotlivých kouzel, statbloků nestvůr, magických
+  předmětů a ras je stále nutné dopracovat. **Další podtřídy mimo výchozí
+  SRD 5.1** nejsou součástí této dokončené dávky povolání.
 - Testy ověřují dostupnost úplných textů a zachování originálu, ale před
   sloučením je třeba samostatně spustit build a test suite.

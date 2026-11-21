@@ -6,6 +6,69 @@ import type { RulebookData } from "./types";
 import { CZECH_RULE_NOTES } from "./czech-rule-extensions";
 import { CZECH_FULL_RULES_1 } from "./czech-full-rules-1";
 import { CZECH_FULL_RULES_2 } from "./czech-full-rules-2";
+import { CZECH_FULL_RULES_3 } from "./czech-full-rules-3";
+import { CZECH_FULL_RULES_4 } from "./czech-full-rules-4";
+import { CZECH_FULL_RULES_5 } from "./czech-full-rules-5";
+import { CZECH_FULL_RULES_6 } from "./czech-full-rules-6";
+import { CZECH_FULL_RULES_7 } from "./czech-full-rules-7";
+import { CZECH_FULL_RULES_8 } from "./czech-full-rules-8";
+import { CZECH_FULL_RULES_9 } from "./czech-full-rules-9";
+import { CZECH_FULL_RULES_10 } from "./czech-full-rules-10";
+import { CZECH_FULL_RULES_11 } from "./czech-full-rules-11";
+import { CZECH_FULL_RULES_12 } from "./czech-full-rules-12";
+import { CZECH_FULL_RULES_13 } from "./czech-full-rules-13";
+import { CZECH_FULL_RULES_14 } from "./czech-full-rules-14";
+import { CZECH_FULL_RULES_15 } from "./czech-full-rules-15";
+import { CZECH_FULL_RULES_16 } from "./czech-full-rules-16";
+import { CZECH_FULL_RULES_17 } from "./czech-full-rules-17";
+import { CZECH_FULL_RULES_18 } from "./czech-full-rules-18";
+import { CZECH_FULL_RULES_19 } from "./czech-full-rules-19";
+import { CZECH_FULL_RULES_20 } from "./czech-full-rules-20";
+import { CZECH_FULL_RULES_21 } from "./czech-full-rules-21";
+import { CZECH_FULL_CLASSES_1 } from "./czech-full-classes-1";
+import { CZECH_FULL_CLASSES_2 } from "./czech-full-classes-2";
+import { CZECH_FULL_CLASSES_3 } from "./czech-full-classes-3";
+import { CZECH_FULL_CLASSES_4 } from "./czech-full-classes-4";
+import { CZECH_FULL_CLASSES_5 } from "./czech-full-classes-5";
+import { CZECH_FULL_CLASSES_6 } from "./czech-full-classes-6";
+import { CZECH_FULL_CLASSES_7 } from "./czech-full-classes-7";
+import { CZECH_FULL_CLASSES_8 } from "./czech-full-classes-8";
+import { CZECH_FULL_CLASSES_9 } from "./czech-full-classes-9";
+import { CZECH_FULL_CLASSES_10 } from "./czech-full-classes-10";
+import { CZECH_FULL_CLASSES_11 } from "./czech-full-classes-11";
+import { CZECH_FULL_CLASSES_12 } from "./czech-full-classes-12";
+import { CZECH_FULL_RACES_1 } from "./czech-full-races-1";
+import { CZECH_FULL_RACES_2 } from "./czech-full-races-2";
+import { CZECH_FULL_SPELLS_1 } from "./czech-full-spells-1";
+import { CZECH_FULL_SPELLS_2 } from "./czech-full-spells-2";
+import { CZECH_FULL_SPELLS_3 } from "./czech-full-spells-3";
+import { CZECH_FULL_SPELLS_4 } from "./czech-full-spells-4";
+import { CZECH_FULL_SPELLS_5 } from "./czech-full-spells-5";
+import { CZECH_FULL_SPELLS_6 } from "./czech-full-spells-6";
+import { CZECH_FULL_SPELLS_7 } from "./czech-full-spells-7";
+import { CZECH_FULL_SPELLS_8 } from "./czech-full-spells-8";
+import { CZECH_FULL_SPELLS_9 } from "./czech-full-spells-9";
+import { CZECH_FULL_SPELLS_10 } from "./czech-full-spells-10";
+import { CZECH_FULL_SPELLS_11 } from "./czech-full-spells-11";
+import { CZECH_FULL_SPELLS_12 } from "./czech-full-spells-12";
+import { CZECH_FULL_SPELLS_13 } from "./czech-full-spells-13";
+import { CZECH_FULL_SPELLS_14 } from "./czech-full-spells-14";
+import { CZECH_FULL_SPELLS_15 } from "./czech-full-spells-15";
+import { CZECH_FULL_SPELLS_16 } from "./czech-full-spells-16";
+import { CZECH_FULL_SPELLS_17 } from "./czech-full-spells-17";
+import { CZECH_FULL_SPELLS_18 } from "./czech-full-spells-18";
+import { CZECH_FULL_SPELLS_19 } from "./czech-full-spells-19";
+import { CZECH_FULL_SPELLS_20 } from "./czech-full-spells-20";
+import { CZECH_FULL_SPELLS_21 } from "./czech-full-spells-21";
+import { CZECH_FULL_SPELLS_22 } from "./czech-full-spells-22";
+import { CZECH_FULL_SPELLS_23 } from "./czech-full-spells-23";
+import { CZECH_FULL_SPELLS_24 } from "./czech-full-spells-24";
+import { CZECH_FULL_SPELLS_25 } from "./czech-full-spells-25";
+import { CZECH_FULL_SPELLS_26 } from "./czech-full-spells-26";
+import { CZECH_FULL_SPELLS_27 } from "./czech-full-spells-27";
+import { CZECH_FULL_SPELLS_28 } from "./czech-full-spells-28";
+import { CZECH_FULL_SPELLS_29 } from "./czech-full-spells-29";
+import { CZECH_FULL_SPELLS_30 } from "./czech-full-spells-30";
 import { CZECH_SPELL_NOTES } from "./czech-spell-notes";
 import { CZECH_SPELL_NOTES_2 } from "./czech-spell-notes-2";
 import { CZECH_SPELL_NOTES_3 } from "./czech-spell-notes-3";
@@ -94,7 +157,7 @@ const BLURBS: Record<string, string> = {
 const PAGES: Record<string, string> = {
   "racial-traits": "Rasové vlastnosti",
   "beyond-1st-level": "Postup na vyšší úrovně",
-  multiclassing: "Kombinování povolání",
+  multiclassing: "Multipovolání",
   alignment: "Přesvědčení",
   languages: "Jazyky",
   inspiration: "Inspirace",
@@ -135,9 +198,9 @@ const NOTES: Record<string, string> = {
 
   "beyond-1st-level": `Za překonané výzvy postavy získávají zkušenosti (XP). Na vyšších úrovních přibývají životy a schopnosti povolání.
 
-**Bonus zdatnosti** závisí na celkové úrovni: +2 na úrovních 1–4, +3 na 5–8, +4 na 9–12, +5 na 13–16 a +6 na 17–20. Běžné zvýšení hodnot vlastností přidává +2 k jedné vlastnosti nebo +1 ke dvěma různým, zpravidla nejvýše na 20.`,
+**Zdatnostní bonus** závisí na celkové úrovni: +2 na úrovních 1–4, +3 na 5–8, +4 na 9–12, +5 na 13–16 a +6 na 17–20. Běžné zvýšení hodnot vlastností přidává +2 k jedné vlastnosti nebo +1 ke dvěma různým, zpravidla nejvýše na 20.`,
 
-  multiclassing: `Kombinování povolání je volitelné pravidlo. Při postupu na úroveň může postava získat úroveň dalšího povolání, pokud splňuje předepsané hodnoty vlastností původního i nového povolání. Schopnosti se získávají podle úrovní v jednotlivých povoláních; bonus zdatnosti se řídí celkovou úrovní. Pro sesílání kouzel platí zvláštní tabulka.`,
+  multiclassing: `Multipovolání je volitelné pravidlo. Při postupu na úroveň může postava získat úroveň dalšího povolání, pokud splňuje předepsané hodnoty vlastností původního i nového povolání. Schopnosti se získávají podle úrovní v jednotlivých povoláních; zdatnostní bonus se řídí celkovou úrovní. Pro sesílání kouzel platí zvláštní tabulka.`,
 
   inspiration: `Inspiraci uděluje Pán jeskyně za hraní charakteru a rozhodnutí postavy. Postava může mít pouze jednu inspiraci najednou. Její spotřebování poskytne **výhodu** k jednomu hodu na útok, ověření vlastnosti nebo záchrannému hodu. Inspiraci lze také předat jiné postavě.`,
 
@@ -145,13 +208,13 @@ const NOTES: Record<string, string> = {
 
 Zbroj, se kterou postava není zdatná, omezuje hody založené na Síle a Obratnosti a znemožňuje sesílání kouzel. Některá těžká zbroj při nedostatečné Síle snižuje rychlost. Konkrétní hodnoty najdete v původní tabulce.`,
 
-  weapons: `Zbraně jsou jednoduché nebo válečné a slouží k boji na blízko nebo na dálku. Zdatná postava přičítá k hodu na útok svůj bonus zdatnosti.
+  weapons: `Zbraně jsou jednoduché nebo válečné a slouží k boji na blízko nebo na dálku. Zdatná postava přičítá k hodu na útok svůj zdatnostní bonus.
 
-Útok zbraní na blízko obvykle používá Sílu, útok zbraní na dálku Obratnost. Obratná zbraň dovoluje použít Sílu nebo Obratnost. Kostky zranění a vlastnosti jako dosah, těžká, dvouruční či vrhací určuje konkrétní zbraň.`,
+Útok zbraní na blízko obvykle používá Sílu, útok zbraní na dálku Obratnost. Vytříbená zbraň dovoluje použít Sílu nebo Obratnost. Kostky zranění a vlastnosti jako dosah, těžká, dvouruční či vrhací určuje konkrétní zbraň.`,
 
   feats: `Odbornosti jsou volitelnou alternativou k některým zvýšením hodnot vlastností. Postava musí splnit předpoklady dané odbornosti. Účinky se řídí textem konkrétní odbornosti; odbornosti zpravidla nelze získávat opakovaně, pokud to výslovně neumožňují.`,
 
-  "using-ability-scores": `Pro **ověření vlastnosti** hoďte k20 a přičtěte opravu příslušné vlastnosti. Pokud má postava odpovídající zdatnost, přičte také bonus zdatnosti. Pán jeskyně stanovuje obtížnost (DC); hod musí dosáhnout této hodnoty nebo ji překročit.
+  "using-ability-scores": `Pro **ověření vlastnosti** hoďte k20 a přičtěte opravu příslušné vlastnosti. Pokud má postava odpovídající zdatnost, přičte také zdatnostní bonus. Pán jeskyně stanovuje obtížnost (DC); hod musí dosáhnout této hodnoty nebo ji překročit.
 
 **Výhoda** znamená hodit dvěma k20 a použít vyšší výsledek; **nevýhoda** znamená použít nižší. Více výhod se nesčítá a výhoda s nevýhodou se navzájem ruší.
 
@@ -232,7 +295,7 @@ export function czechCompanionBook(english: RulebookData): RulebookData {
         : page.id === "beyond-1st-level"
           ? `${NOTES[page.id]}\n\n${CLASSES_REFERENCE}`
           : kindNote ?? NOTES[page.id] ?? CZECH_RULE_NOTES[page.id];
-      const fullTranslation = CZECH_FULL_RULES_1[page.id] ?? CZECH_FULL_RULES_2[page.id];
+      const fullTranslation = CZECH_FULL_RULES_1[page.id] ?? CZECH_FULL_RULES_2[page.id] ?? CZECH_FULL_RULES_3[page.id] ?? CZECH_FULL_RULES_4[page.id] ?? CZECH_FULL_RULES_5[page.id] ?? CZECH_FULL_RULES_6[page.id] ?? CZECH_FULL_RULES_7[page.id] ?? CZECH_FULL_RULES_8[page.id] ?? CZECH_FULL_RULES_9[page.id] ?? CZECH_FULL_RULES_10[page.id] ?? CZECH_FULL_RULES_11[page.id] ?? CZECH_FULL_RULES_12[page.id] ?? CZECH_FULL_RULES_13[page.id] ?? CZECH_FULL_RULES_14[page.id] ?? CZECH_FULL_RULES_15[page.id] ?? CZECH_FULL_RULES_16[page.id] ?? CZECH_FULL_RULES_17[page.id] ?? CZECH_FULL_RULES_18[page.id] ?? CZECH_FULL_RULES_19[page.id] ?? CZECH_FULL_RULES_20[page.id] ?? CZECH_FULL_RULES_21[page.id] ?? CZECH_FULL_CLASSES_1[page.id] ?? CZECH_FULL_CLASSES_2[page.id] ?? CZECH_FULL_CLASSES_3[page.id] ?? CZECH_FULL_CLASSES_4[page.id] ?? CZECH_FULL_CLASSES_5[page.id] ?? CZECH_FULL_CLASSES_6[page.id] ?? CZECH_FULL_CLASSES_7[page.id] ?? CZECH_FULL_CLASSES_8[page.id] ?? CZECH_FULL_CLASSES_9[page.id] ?? CZECH_FULL_CLASSES_10[page.id] ?? CZECH_FULL_CLASSES_11[page.id] ?? CZECH_FULL_CLASSES_12[page.id] ?? CZECH_FULL_RACES_1[page.id] ?? CZECH_FULL_RACES_2[page.id] ?? CZECH_FULL_SPELLS_1[page.id] ?? CZECH_FULL_SPELLS_2[page.id] ?? CZECH_FULL_SPELLS_3[page.id] ?? CZECH_FULL_SPELLS_4[page.id] ?? CZECH_FULL_SPELLS_5[page.id] ?? CZECH_FULL_SPELLS_6[page.id] ?? CZECH_FULL_SPELLS_7[page.id] ?? CZECH_FULL_SPELLS_8[page.id] ?? CZECH_FULL_SPELLS_9[page.id] ?? CZECH_FULL_SPELLS_10[page.id] ?? CZECH_FULL_SPELLS_11[page.id] ?? CZECH_FULL_SPELLS_12[page.id] ?? CZECH_FULL_SPELLS_13[page.id] ?? CZECH_FULL_SPELLS_14[page.id] ?? CZECH_FULL_SPELLS_15[page.id] ?? CZECH_FULL_SPELLS_16[page.id] ?? CZECH_FULL_SPELLS_17[page.id] ?? CZECH_FULL_SPELLS_18[page.id] ?? CZECH_FULL_SPELLS_19[page.id] ?? CZECH_FULL_SPELLS_20[page.id] ?? CZECH_FULL_SPELLS_21[page.id] ?? CZECH_FULL_SPELLS_22[page.id] ?? CZECH_FULL_SPELLS_23[page.id] ?? CZECH_FULL_SPELLS_24[page.id] ?? CZECH_FULL_SPELLS_25[page.id] ?? CZECH_FULL_SPELLS_26[page.id] ?? CZECH_FULL_SPELLS_27[page.id] ?? CZECH_FULL_SPELLS_28[page.id] ?? CZECH_FULL_SPELLS_29[page.id] ?? CZECH_FULL_SPELLS_30[page.id];
       const czechText = fullTranslation
         ? `${note ?? ""}\n\n## Úplné znění pravidel v češtině\n\n${fullTranslation}`
         : note;
