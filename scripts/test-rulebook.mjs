@@ -911,14 +911,19 @@ try {
     }
   });
 
-  await test("Czech summaries now cover 783 of the 933 canonical SRD pages", () => {
+  await test("the earlier Czech translation coverage was at least 783 canonical SRD pages", () => {
     const all = rulebookPages("cs");
     assert.equal(all.length, 933);
     const counts = Object.fromEntries(["rules", "race", "class", "spell", "item", "monster"].map((kind) => [
       kind, all.filter((page) => page.kind === kind && page.md.startsWith("## Český ")).length,
     ]));
-    assert.deepEqual(counts, { rules: 35, race: 9, class: 12, spell: 319, item: 166, monster: 242 });
-    assert.equal(Object.values(counts).reduce((sum, count) => sum + count, 0), 783);
+    assert.equal(counts.rules, 35);
+    assert.equal(counts.race, 9);
+    assert.equal(counts.class, 12);
+    assert.equal(counts.spell, 319);
+    assert.ok(counts.item >= 166);
+    assert.ok(counts.monster >= 242);
+    assert.ok(Object.values(counts).reduce((sum, count) => sum + count, 0) >= 783);
   });
 
   await test("established Czech monster and magic-item names remain stable", () => {
@@ -942,6 +947,70 @@ try {
       assert.equal(rulebookPage(original.id, "cs").page.title, czech);
       assert.equal(czechSrdTitle(english, kind), czech);
     }
+  });
+
+  await test("all 76 remaining SRD monster and NPC pages have Czech titles and notes", async () => {
+    const { CZECH_MONSTER_NOTES_8, CZECH_MONSTER_TITLES_8 } =
+      await import("../src/lib/rulebook/czech-monster-notes-8.ts");
+    assert.equal(Object.keys(CZECH_MONSTER_NOTES_8).length, 76);
+    assert.deepEqual(Object.keys(CZECH_MONSTER_NOTES_8).sort(), Object.keys(CZECH_MONSTER_TITLES_8).sort());
+    const originals = new Map(rulebookPages("en").filter((page) => page.kind === "monster").map((page) => [page.title, page]));
+    for (const [name, note] of Object.entries(CZECH_MONSTER_NOTES_8)) {
+      const source = originals.get(name);
+      assert.ok(source, `Monster must belong to the canonical SRD: ${name}`);
+      const localized = rulebookPage(source.id, "cs")?.page;
+      assert.ok(localized, `Unlinked Czech monster: ${name}`);
+      assert.equal(localized.id, source.id);
+      assert.equal(localized.title, CZECH_MONSTER_TITLES_8[name]);
+      assert.ok(localized.md.startsWith("## Český přehled nestvůry"));
+      assert.ok(localized.md.includes(note));
+      assert.ok(localized.md.endsWith(source.md), `Original English mechanics changed: ${name}`);
+    }
+  });
+
+  await test("all 73 remaining canonical magic items have Czech titles and notes", async () => {
+    const { CZECH_ITEM_NOTES_6, CZECH_ITEM_TITLES_6 } =
+      await import("../src/lib/rulebook/czech-item-notes-6.ts");
+    assert.equal(Object.keys(CZECH_ITEM_NOTES_6).length, 73);
+    assert.deepEqual(Object.keys(CZECH_ITEM_NOTES_6).sort(), Object.keys(CZECH_ITEM_TITLES_6).sort());
+    const originals = new Map(rulebookPages("en").filter((page) => page.kind === "item").map((page) => [page.title, page]));
+    for (const [name, note] of Object.entries(CZECH_ITEM_NOTES_6)) {
+      const source = originals.get(name);
+      assert.ok(source, `Item must belong to canonical SRD: ${name}`);
+      const localized = rulebookPage(source.id, "cs")?.page;
+      assert.ok(localized, `Unlinked Czech item: ${name}`);
+      assert.equal(localized.id, source.id);
+      assert.equal(localized.title, CZECH_ITEM_TITLES_6[name]);
+      assert.ok(localized.md.startsWith("## Český přehled předmětu"));
+      assert.ok(localized.md.includes(note));
+      assert.ok(localized.md.endsWith(source.md), `Original English item mechanics changed: ${name}`);
+    }
+  });
+
+  await test("Czech companion summaries cover 932 of 933 SRD pages; English CC BY notice stays identical", () => {
+    const original = rulebookPages("en");
+    const localized = rulebookPages("cs");
+    assert.equal(original.length, 933);
+    assert.equal(localized.length, 933);
+    const covered = localized.filter((page) => page.md.startsWith("## Český "));
+    assert.equal(covered.length, 932);
+    const byKind = Object.fromEntries(["rules", "race", "class", "spell", "monster", "item"].map((kind) => [
+      kind, covered.filter((page) => page.kind === kind).length,
+    ]));
+    assert.deepEqual(byKind, { rules: 35, race: 9, class: 12, spell: 319, monster: 318, item: 239 });
+    const sourceById = new Map(original.map((page) => [page.id, page]));
+    for (const page of localized) {
+      const source = sourceById.get(page.id);
+      assert.ok(source, `Czech page without original ID: ${page.id}`);
+      assert.equal(page.chapter, source.chapter);
+      assert.ok(page.md.endsWith(source.md), `Canonical SRD changed: ${page.id}`);
+    }
+    const legalOriginal = rulebookPage("legal-information", "en")?.page;
+    const legalCzech = rulebookPage("legal-information", "cs")?.page;
+    assert.ok(legalOriginal && legalCzech);
+    assert.equal(legalCzech.md, legalOriginal.md);
+    assert.equal(legalCzech.title, "Licenční informace");
+    assert.ok(!legalCzech.md.startsWith("## Český "));
   });
 
   // ---- the routes ----
