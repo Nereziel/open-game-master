@@ -52,6 +52,7 @@ jejich terminologii nemícháme s touto edicí.
 - Názvy bojových akcí a stavů: https://dnd5esrd.d20.cz/prirucka-hrace/9-kapitola.html
 - Názvy vybavení a balíčků: https://dnd5esrd.d20.cz/prirucka-hrace/5-kapitola.html
 - Názvy kouzel: https://dnd5esrd.d20.cz/grimoar/grimoar-jmen.html
+- Názvy typů a příklady nestvůr: https://dnd5esrd.d20.cz/bestiar/uvod.html
 
 | Anglický pojem | Dřívější název v aplikaci | Sjednocený název |
 |---|---|---|
@@ -70,6 +71,13 @@ jejich terminologii nemícháme s touto edicí.
 | Grapple | Chycení | Chvat |
 | Expertise (tulák) | Odbornost | Kvalifikace |
 | Cunning Action | Lstivá akce | Mazaná akce |
+| Aberration | aberace | zrůda |
+| Monstrosity | zrůda | obluda |
+| Construct | konstrukt | výtvor |
+
+Zároveň byly sjednoceny izolované názvy nestvůr z bestiáře,
+například **Abolet, Zřící, Slád, Kovatl, Skurut, Gobr,
+Neviditelný stopař, Vodní div, Ent, Tlející valivec, Diblík**.
 
 Názvy souvisejících předmětů byly sjednoceny také v kapitole
 `adventuring-gear`: například **Torna, Karimatka, Brašnička na suroviny,
