@@ -156,7 +156,7 @@
       "fr": "Test de caractéristique",
       "cs": "Ověření vlastnosti",
       "shortCs": "Hod k20 plus oprava vlastnosti, když není jisté, jak něco dopadne.",
-      "longCs": "PJ stanoví obtížnost, které musíš hodem dosáhnout nebo ji překonat. Šplhání po zdi je ověření Síly, odhalení léčky ověření Moudrosti. Pokud ovládáš příslušnou dovednost, přidáš i bonus zdatnosti."
+      "longCs": "PJ stanoví obtížnost, které musíš hodem dosáhnout nebo ji překonat. Šplhání po zdi je ověření Síly, odhalení léčky ověření Moudrosti. Pokud ovládáš příslušnou dovednost, přidáš i zdatnostní bonus."
     },
     {
       "id": "saving_throw",
@@ -168,7 +168,7 @@
       "fr": "Jet de sauvegarde",
       "cs": "Záchranný hod",
       "shortCs": "Hod k20, kterým odoláváš nebezpečí, místo abys něco sám prováděl.",
-      "longCs": "Drak chrlí oheň a ty házíš záchranný hod na Obratnost, abys utrpěl méně zranění. Upír tě chce okouzlit a ty odoláváš Moudrostí. Každé povolání ovládá dva z šesti typů záchranných hodů a přidává k nim bonus zdatnosti."
+      "longCs": "Drak chrlí oheň a ty házíš záchranný hod na Obratnost, abys utrpěl méně zranění. Upír tě chce okouzlit a ty odoláváš Moudrostí. Každé povolání ovládá dva z šesti typů záchranných hodů a přidává k nim zdatnostní bonus."
     },
     {
       "id": "proficiency_bonus",
@@ -178,7 +178,7 @@
       "long": "It applies to attacks with weapons you are proficient with, skills you are proficient in, your two saving throw proficiencies, and your spell save DC. It is +2 at levels 1 to 4 and rises by 1 every four levels after that.",
       "longFr": "Il s'applique aux attaques avec les armes que tu maîtrises, aux compétences que tu maîtrises, à tes deux maîtrises de jets de sauvegarde et à ton DD de sauvegarde des sorts. Il vaut +2 aux niveaux 1 à 4 et monte de 1 tous les quatre niveaux ensuite.",
       "fr": "Bonus de maîtrise",
-      "cs": "Bonus zdatnosti",
+      "cs": "Zdatnostní bonus",
       "shortCs": "Bonus k činnostem, které ovládáš. S úrovní roste od +2 do +6.",
       "longCs": "Přičítá se k útokům zbraněmi, které ovládáš, k ovládaným dovednostem, příslušným záchranným hodům a k obtížnosti záchrany před tvými kouzly. Na úrovních 1 až 4 je +2 a každé další čtyři úrovně se zvýší o 1."
     },
@@ -263,7 +263,7 @@
       "longFr": "Fais au moins la CA et tu touches ; lance ensuite les dégâts de l'arme ou du sort. Un 20 naturel touche toujours et double les dés de dégâts, et un 1 naturel échoue toujours.",
       "fr": "Jet d'attaque",
       "cs": "Hod na útok",
-      "shortCs": "Hod k20 plus oprava vlastnosti a případný bonus zdatnosti proti třídě zbroje cíle.",
+      "shortCs": "Hod k20 plus oprava vlastnosti a případný zdatnostní bonus proti třídě zbroje cíle.",
       "longCs": "Pokud hod dosáhne třídy zbroje cíle nebo ji překročí, zasáhneš a házíš na zranění zbraně nebo kouzla. Přirozená 20 vždy zasáhne a zdvojnásobí kostky zranění; přirozená 1 vždy mine."
     },
     {
@@ -312,7 +312,7 @@
       "fr": "DD de sauvegarde des sorts",
       "cs": "Obtížnost záchrany před kouzlem",
       "shortCs": "Číslo, kterého musí cíl dosáhnout při záchranném hodu proti tvému kouzlu.",
-      "longCs": "Vypočítá se jako 8 + bonus zdatnosti + oprava vlastnosti, kterou používáš k sesílání kouzel. Aplikace ji vypočítává a zobrazuje na deníku."
+      "longCs": "Vypočítá se jako 8 + zdatnostní bonus + oprava vlastnosti, kterou používáš k sesílání kouzel. Aplikace ji vypočítává a zobrazuje na deníku."
     },
     {
       "id": "concentration",
@@ -480,7 +480,7 @@
       "fr": "Compétence",
       "cs": "Dovednost",
       "shortCs": "Konkrétní oblast schopností navázaná na vlastnost, například Plížení nebo Přesvědčování.",
-      "longCs": "Pokud dovednost ovládáš, přidáváš k příslušným ověřením bonus zdatnosti. Zkusit ji můžeš i bez ovládání, ale se zdatností máš větší šanci na úspěch."
+      "longCs": "Pokud dovednost ovládáš, přidáváš k příslušným ověřením zdatnostní bonus. Zkusit ji můžeš i bez ovládání, ale se zdatností máš větší šanci na úspěch."
     },
     {
       "id": "expertise",
@@ -491,8 +491,8 @@
       "longFr": "Les roublards et les bardes l'ont. Sur une compétence que tu maîtrises déjà, ça fait de toi le spécialiste clair du groupe.",
       "fr": "Expertise",
       "cs": "Odbornost",
-      "shortCs": "Dvojnásobný bonus zdatnosti ke zvolené dovednosti.",
-      "longCs": "Odbornost získávají například tuláci a bardi. U dovednosti, kterou už ovládáš, zdvojnásobuje bonus zdatnosti a dělá z tebe skutečného specialistu."
+      "shortCs": "Dvojnásobný zdatnostní bonus ke zvolené dovednosti.",
+      "longCs": "Odbornost získávají například tuláci a bardi. U dovednosti, kterou už ovládáš, zdvojnásobuje zdatnostní bonus a dělá z tebe skutečného specialistu."
     },
     {
       "id": "level",
