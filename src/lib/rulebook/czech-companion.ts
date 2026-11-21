@@ -3,7 +3,7 @@
 // The source SRD 5.1 is CC BY 4.0; untranslated original passages stay in English.
 // All page ids and original English headings stay intact for deep links.
 import type { RulebookData } from "./types";
-import { CZECH_ABILITIES, CZECH_CLASSES, CZECH_SKILLS, czechSrdTitle } from "./czech-terms";
+import { CZECH_ABILITIES, CZECH_CLASSES, CZECH_SKILLS, czechSrdSpellGroup, czechSrdSpellMeta, czechSrdTitle } from "./czech-terms";
 
 const CHAPTERS: Record<string, string> = {
   races: "Rasy",
@@ -94,7 +94,7 @@ const NOTES: Record<string, string> = {
 
   inspiration: `Inspiraci uděluje Pán jeskyně za hraní charakteru a rozhodnutí postavy. Postava může mít pouze jednu inspiraci najednou. Její spotřebování poskytne **výhodu** k jednomu hodu na útok, ověření vlastnosti nebo záchrannému hodu. Inspiraci lze také předat jiné postavě.`,
 
-  armor: `**Obranné číslo (OČ, anglicky AC)** určuje, jak náročné je postavu zasáhnout útokem. Lehká zbroj započítává opravu Obratnosti; střední zbroj zpravidla nejvýše +2 a těžká zbroj bonus Obratnosti nezapočítává. Štít běžně zvyšuje TZ o 2.
+  armor: `**Obranné číslo (OČ, anglicky AC)** určuje, jak náročné je postavu zasáhnout útokem. Lehká zbroj započítává opravu Obratnosti; střední zbroj zpravidla nejvýše +2 a těžká zbroj bonus Obratnosti nezapočítává. Štít běžně zvyšuje OČ o 2.
 
 Zbroj, se kterou postava není zdatná, omezuje hody založené na Síle a Obratnosti a znemožňuje sesílání kouzel. Některá těžká zbroj při nedostatečné Síle snižuje rychlost. Konkrétní hodnoty najdete v původní tabulce.`,
 
@@ -180,6 +180,8 @@ export function czechCompanionBook(english: RulebookData): RulebookData {
       return {
         ...page,
         title,
+        ...(page.kind === "spell" && page.meta ? { meta: czechSrdSpellMeta(page.meta) } : {}),
+        ...(page.kind === "spell" && page.group ? { group: czechSrdSpellGroup(page.group) } : {}),
         ...(note
           ? {
               md: `## Český přehled pravidel
