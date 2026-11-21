@@ -9,7 +9,7 @@ Když nosíš tento prsten, můžeš stát na jakékoli kapalné hladině a pohy
 Když nosíš tento prsten, můžeš jako akci vyslovit jeho příkazové slovo. Poté po dobu 1 minuty vidíš do pevných látek i skrze ně. Toto vidění má dosah 30 stop. Pevné předměty v tomto dosahu se ti jeví průhledné a nebrání průchodu světla. Vidění pronikne 1 stopou kamene, 1 palcem běžného kovu nebo až 3 stopami dřeva či hlíny. Silnější vrstvy mu brání, stejně jako tenký olověný plát.
 
 Pokaždé, když prsten použiješ znovu před dokončením dlouhého odpočinku, musíš uspět v záchranném hodu na Odolnost se SO 15, jinak získáš jeden stupeň vyčerpání.`,
-  "robe-of-eyes": `*Podivuhodný předmět, vzácný (vyžaduje sladění)*
+  "robe-of-eyes": `*Divotvorný předmět, vzácný (vyžaduje sladění)*
 
 Toto roucho zdobí vzory připomínající oči. Když je nosíš, získáš následující výhody:
 
@@ -20,17 +20,17 @@ Toto roucho zdobí vzory připomínající oči. Když je nosíš, získáš ná
 Oči na rouchu nelze zavřít ani odvrátit. I když můžeš zavřít nebo odvrátit vlastní oči, při nošení roucha se nikdy nepovažuješ za tvora, který to udělal.
 
 Kouzlo *světlo* seslané na roucho nebo kouzlo *denní světlo* seslané do vzdálenosti 5 stop od roucha způsobí, že oslepneš na 1 minutu. Na konci každého svého tahu můžeš opakovat záchranný hod na Odolnost (SO 11 pro *světlo*, SO 15 pro *denní světlo*); při úspěchu oslepnutí skončí.`,
-  "robe-of-scintillating-colors": `*Podivuhodný předmět, velmi vzácný (vyžaduje sladění)*
+  "robe-of-scintillating-colors": `*Divotvorný předmět, velmi vzácný (vyžaduje sladění)*
 
 Toto roucho má 3 náboje a každý den za úsvitu si obnoví 1k3 spotřebovaných nábojů. Když je nosíš, můžeš jako akci utratit 1 náboj a nechat roucho až do konce svého příštího tahu zobrazovat proměnlivé obrazce oslnivých barev. Po tuto dobu vydává jasné světlo v okruhu 30 stop a šero dalších 30 stop. Tvorové, kteří tě vidí, mají nevýhodu k hodům na útok proti tobě. Navíc každý tvor v jasném světle, který tě vidí v okamžiku aktivace moci roucha, musí uspět v záchranném hodu na Moudrost se SO 15, jinak je omráčený až do konce účinku.`,
-  "robe-of-stars": `*Podivuhodný předmět, velmi vzácný (vyžaduje sladění)*
+  "robe-of-stars": `*Divotvorný předmět, velmi vzácný (vyžaduje sladění)*
 
 Toto černé nebo tmavomodré roucho je vyšité drobnými bílými či stříbrnými hvězdami. Když je nosíš, získáváš bonus +1 k záchranným hodům.
 
-Šest hvězd na horní přední části roucha je obzvlášť velkých. Když roucho nosíš, můžeš jako akci jednu z těchto hvězd utrhnout a použít ji k seslání *magické střely* jako kouzla 5. stupně. Denně za soumraku se na rouchu znovu objeví 1k6 odstraněných hvězd.
+Šest hvězd na horní přední části roucha je obzvlášť velkých. Když roucho nosíš, můžeš jako akci jednu z těchto hvězd utrhnout a použít ji k seslání kouzla *magická střela* jako kouzla 5. stupně. Denně za soumraku se na rouchu znovu objeví 1k6 odstraněných hvězd.
 
 Když máš roucho na sobě, můžeš jako akci vstoupit do Astrální sféry společně se vším, co máš na sobě a neseš. Zůstáváš tam, dokud pomocí akce neprovedeš návrat do sféry, ve které jsi byl předtím. Objevíš se na posledním místě, které jsi v ní zaujímal, nebo na nejbližším neobsazeném místě, pokud už je původní místo obsazené.`,
-  "robe-of-the-archmagi": `*Podivuhodný předmět, legendární (vyžaduje sladění čarodějem, černokněžníkem nebo kouzelníkem)*
+  "robe-of-the-archmagi": `*Divotvorný předmět, legendární (vyžaduje sladění čarodějem, černokněžníkem nebo kouzelníkem)*
 
 Tento elegantní oděv je zhotoven z nádherné bílé, šedé nebo černé látky a zdobí ho stříbřité runy. Barva roucha odpovídá přesvědčení, pro které bylo vytvořeno: bílé pro dobré, šedé pro neutrální a černé pro zlé. Nemůžeš se sladit s *rouchem arcimága*, které neodpovídá tvému přesvědčení.
 
@@ -39,7 +39,7 @@ Když roucho nosíš, získáváš tyto výhody:
 - Pokud nemáš na sobě zbroj, je tvé základní OČ rovno 15 + tvá oprava Obratnosti.
 - Máš výhodu k záchranným hodům proti kouzlům a jiným magickým účinkům.
 - Tvé SO záchrany proti kouzlům i bonus k útoku kouzlem se zvýší o 2.`,
-  "robe-of-useful-items": `*Podivuhodný předmět, neobvyklý*
+  "robe-of-useful-items": `*Divotvorný předmět, neobvyklý*
 
 Toto roucho pokrývají látkové záplaty různých tvarů a barev. Když ho nosíš, můžeš jako akci jednu ze záplat odtrhnout; promění se v předmět nebo tvora, kterého znázorňuje. Po odstranění poslední záplaty se roucho stane obyčejným oděvem.
 
@@ -86,7 +86,7 @@ Toto žezlo má hlavici s výstupky a následující vlastnosti.
 
 ***Ostražitost.*** Když žezlo držíš, máš výhodu k ověřením Moudrosti (Vnímání) a k hodům na iniciativu.
 
-***Kouzla.*** Když žezlo držíš, můžeš jako akci seslat jedno z následujících kouzel: *odhal zlo a dobro*, *odhal magii*, *odhal jed a nemoc* nebo *vidění neviditelného*.
+***Kouzla.*** Když žezlo držíš, můžeš jako akci seslat jedno z následujících kouzel: *najdi zlo a dobro*, *najdi magii*, *najdi jed a nemoc* nebo *vidění neviditelného*.
 
 ***Ochranná aura.*** Jako akci můžeš spodní konec žezla zabodnout do země. Hlavice poté vydává jasné světlo v okruhu 60 stop a šero dalších 60 stop. Dokud jsi ty nebo kterýkoli tvor, který je k tobě přátelský, v tomto jasném světle, máte bonus +1 k OČ a záchranným hodům a dokážete vycítit polohu každého neviditelného nepřátelského tvora, který se také nachází v jasném světle.
 
