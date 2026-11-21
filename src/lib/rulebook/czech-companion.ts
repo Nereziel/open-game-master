@@ -21,6 +21,7 @@ import { CZECH_MONSTER_NOTES_2, CZECH_ITEM_NOTES_2 } from "./czech-bestiary-item
 import { CZECH_MONSTER_NOTES_3, CZECH_ITEM_NOTES_3 } from "./czech-bestiary-items-3";
 import { CZECH_MONSTER_NOTES_4 } from "./czech-monster-notes-4";
 import { CZECH_MONSTER_NOTES_5 } from "./czech-monster-notes-5";
+import { CZECH_MONSTER_NOTES_6, CZECH_ITEM_NOTES_4 } from "./czech-bestiary-items-4";
 import { CZECH_CLASS_NOTES, CZECH_RACE_NOTES } from "./czech-character-notes";
 import { CZECH_ABILITIES, CZECH_CLASSES, CZECH_SKILLS, czechSrdItemMeta, czechSrdMonsterMeta, czechSrdSpellGroup, czechSrdSpellMeta, czechSrdTitle } from "./czech-terms";
 
@@ -213,9 +214,9 @@ export function czechCompanionBook(english: RulebookData): RulebookData {
       const kindNote = page.kind === "spell"
         ? CZECH_SPELL_NOTE_MAP.get(page.title.toLowerCase())
         : page.kind === "monster"
-          ? CZECH_MONSTER_NOTES[page.title] ?? CZECH_MONSTER_NOTES_2[page.title] ?? CZECH_MONSTER_NOTES_3[page.title] ?? CZECH_MONSTER_NOTES_4[page.title] ?? CZECH_MONSTER_NOTES_5[page.title]
+          ? CZECH_MONSTER_NOTES[page.title] ?? CZECH_MONSTER_NOTES_2[page.title] ?? CZECH_MONSTER_NOTES_3[page.title] ?? CZECH_MONSTER_NOTES_4[page.title] ?? CZECH_MONSTER_NOTES_5[page.title] ?? CZECH_MONSTER_NOTES_6[page.title] ?? (page.title === "Animated Armor (Animated Object)" ? CZECH_MONSTER_NOTES["Animated Armor"] : undefined)
           : page.kind === "item"
-            ? CZECH_ITEM_NOTES[page.title] ?? CZECH_ITEM_NOTES_2[page.title] ?? CZECH_ITEM_NOTES_3[page.title]
+            ? CZECH_ITEM_NOTES[page.title] ?? CZECH_ITEM_NOTES_2[page.title] ?? CZECH_ITEM_NOTES_3[page.title] ?? CZECH_ITEM_NOTES_4[page.title]
             : page.kind === "class" ? CZECH_CLASS_NOTES[page.title]
             : page.kind === "race" ? CZECH_RACE_NOTES[page.title]
             : undefined;
