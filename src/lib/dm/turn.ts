@@ -2014,6 +2014,14 @@ async function runAdvance(context: TurnContext, turn: DmTurn) {
   const markBefore = storyMarkFor(campaignId);
   let failed = "";
   let spotlightSet = false;
+  // A private message sent after the last GM passage is not another public
+  // action. Avoid demanding fresh narration after send_whisper has already
+  // answered it: that extra full-model call can hold every later turn in
+  // this campaign's serialized queue.
+  const privateOnly = Boolean(
+    turn.playerWhisperIds.length &&
+    listRecentMessages(campaignId, 1).at(-1)?.authorType === "dm",
+  );
 
   const imageEnabled =
     campaign.settings.imageGenerationEnabled && campaign.settings.autoImages;
@@ -2455,6 +2463,14 @@ async function runAdvance(context: TurnContext, turn: DmTurn) {
     const readCardCalls = runnable.filter((toolCall) => toolCall.name === "read_card");
     const noteCalls = runnable.filter((toolCall) => toolCall.name === "write_campaign_note");
     const whisperCalls = runnable.filter((toolCall) => toolCall.name === "send_whisper");
+    // Only the private-tool result, no other actions, no public narration:
+    // all required work is done once send_whisper runs. The closing backstop
+    // still handles any private recipients the model forgot.
+    const privateWhisperOnlyReply =
+      privateOnly &&
+      toolCalls.length > 0 &&
+      whisperCalls.length === toolCalls.length &&
+      !turn.narrationParts.length;
     const checkCalls = runnable.filter((toolCall) =>
       (CHECK_TOOL_NAMES as readonly string[]).includes(toolCall.name),
     );
@@ -2733,10 +2749,10 @@ async function runAdvance(context: TurnContext, turn: DmTurn) {
       moreToolsResults.size > 0 ||
       // A reply that was only a plan beside its calls told the table
       // nothing of them, whatever the turn already narrated.
-      planBesideCalls ||
+      (planBesideCalls && !privateWhisperOnlyReply) ||
       ((locationCalls.length > 0 ||
         eventCalls.length > 0 ||
-        whisperCalls.length > 0 ||
+        (whisperCalls.length > 0 && !privateWhisperOnlyReply) ||
         noteCalls.length > 0 ||
         setNpcCalls.length > 0 ||
         npcStateCalls.length > 0) &&
@@ -2975,7 +2991,7 @@ async function runAdvance(context: TurnContext, turn: DmTurn) {
       // turn on the empty-turn line. A reply of other calls that need no
       // follow-up (complete_beat, generate_image, a tool that does not
       // exist) and no prose ended the same way, and is narrated the same way.
-      if ((spotlightSet || toolCalls.length > 0) && !turn.narrationParts.length && !finalCall) {
+      if ((spotlightSet || toolCalls.length > 0) && !turn.narrationParts.length && !finalCall && !privateWhisperOnlyReply) {
         turn.conversation.push({
           role: "assistant",
           ...carried,
