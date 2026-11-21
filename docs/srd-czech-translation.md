@@ -109,6 +109,7 @@ překladu nepřebírají. Interní názvy, klíče SRD a MCP API zůstávají an
 | Klerik | Ničení nemrtvých; Doménová kouzla |
 | Druid | Nestárnoucí tělo; Kruhová kouzla; Chůze krajem; Přírodní ochrana; Přírodní svatyně |
 | Mnich | Klid; Smrtící dlaň |
+| Čaroděj | Dračí nezlomnost; Spřízněnost s živly; Dračí vzhled |
 | Paladin | Vnímání božství; Přikládání rukou; Boží úder; Čistota duše; Svatozář |
 | Hraničář | Rozený průzkumník; Pravěká ostražitost; Schování se přímo před zraky; Mimořádná lovcova obrana |
 | Kouzlící povolání | Sesílání rituálů; Sesílací ohniskový předmět |
