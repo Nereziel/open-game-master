@@ -1299,6 +1299,82 @@ try {
     }
   });
 
+  await test("complete Czech weapons and expenses retain every canonical SRD rule and ID", async () => {
+    const { CZECH_FULL_RULES_11 } = await import("../src/lib/rulebook/czech-full-rules-11.ts");
+    const { CZECH_FULL_RULES_12 } = await import("../src/lib/rulebook/czech-full-rules-12.ts");
+    assert.deepEqual(Object.keys(CZECH_FULL_RULES_11), ["weapons"]);
+    assert.deepEqual(Object.keys(CZECH_FULL_RULES_12), ["expenses"]);
+    for (const [id, translated] of Object.entries({ ...CZECH_FULL_RULES_11, ...CZECH_FULL_RULES_12 })) {
+      const en = rulebookPage(id, "en")?.page;
+      const cs = rulebookPage(id, "cs")?.page;
+      assert.ok(en && cs, `Missing canonical translated page: ${id}`);
+      assert.equal(en.id, cs.id);
+      assert.equal(en.kind, "rules");
+      assert.ok(translated.length > 7000, `Unexpectedly short Czech page: ${id}`);
+      assert.ok(cs.md.startsWith("## Český přehled pravidel"), `Missing Czech summary: ${id}`);
+      assert.ok(cs.md.includes("## Úplné znění pravidel v češtině"));
+      assert.ok(cs.md.includes(translated), `Missing complete Czech text: ${id}`);
+      assert.ok(cs.md.endsWith(en.md), `Canonical English SRD changed: ${id}`);
+    }
+    const batches = await Promise.all(Array.from({ length: 12 }, (_, i) => import(
+      `../src/lib/rulebook/czech-full-rules-${i + 1}.ts`,
+    )));
+    const ids = batches.flatMap((mod, i) => Object.keys(mod[`CZECH_FULL_RULES_${i + 1}`]));
+    assert.equal(ids.length, 26, "Expected 26 complete Czech rules chapters");
+    assert.equal(new Set(ids).size, 26, "Duplicate canonical SRD page in full translations");
+  });
+
+  await test("Czech weapon table preserves all 37 weapons, prices, damage dice and ranges", async () => {
+    const { CZECH_FULL_RULES_11 } = await import("../src/lib/rulebook/czech-full-rules-11.ts");
+    const weapons = CZECH_FULL_RULES_11.weapons;
+    const rows = weapons.split("\n").filter((line) => /^\| .+ \|/.test(line));
+    const names = ["Kyj", "Dýka", "Velký kyj", "Ruční sekera", "Oštěp", "Lehké kladivo",
+      "Palcát", "Hůl", "Srp", "Kopí", "Lehká kuše", "Šipka", "Krátký luk", "Prak",
+      "Bojová sekera", "Cep", "Sudlice", "Obouruční sekera", "Obouruční meč",
+      "Halapartna", "Jezdecké kopí", "Dlouhý meč", "Obouruční kladivo",
+      "Jitřenka", "Píka", "Rapír", "Šavle", "Krátký meč", "Trojzubec",
+      "Válečný krumpáč", "Válečné kladivo", "Bič", "Foukačka", "Ruční kuše",
+      "Těžká kuše", "Dlouhý luk", "Síť"];
+    assert.equal(names.length, 37);
+    for (const name of names) {
+      assert.ok(rows.some((line) => line.startsWith(`| ${name} |`)), `Missing weapon ${name}`);
+    }
+    assert.ok(weapons.includes("| **Jednoduché zbraně na blízko** |"));
+    assert.ok(weapons.includes("| **Jednoduché zbraně na dálku** |"));
+    assert.ok(weapons.includes("| **Válečné zbraně na blízko** |"));
+    assert.ok(weapons.includes("| **Válečné zbraně na dálku** |"));
+    assert.ok(weapons.includes("| Dýka | 2 zl | 1k4 bodné | 1 |"));
+    assert.ok(weapons.includes("| Obouruční meč | 50 zl | 2k6 sečné | 6 |"));
+    assert.ok(weapons.includes("| Dlouhý luk | 50 zl | 1k8 bodné | 2 |"));
+    assert.ok(weapons.includes("dosah 150/600"));
+    assert.ok(weapons.includes("5 bodů sečného zranění"));
+    assert.ok(weapons.includes("100 zl"));
+    assert.ok(weapons.includes("1k4 zranění"));
+  });
+
+  await test("Czech living expenses have complete lifestyle, lodging and hireling price tables", async () => {
+    const { CZECH_FULL_RULES_12 } = await import("../src/lib/rulebook/czech-full-rules-12.ts");
+    const expenses = CZECH_FULL_RULES_12.expenses;
+    for (const [lifestyle, price] of [
+      ["Bídný", "—"], ["Zanedbaný", "1 st"], ["Chudý", "2 st"], ["Skromný", "1 zl"],
+      ["Pohodlný", "2 zl"], ["Bohatý", "4 zl"], ["Aristokratický", "10 zl nejméně"],
+    ]) {
+      assert.ok(expenses.includes(`| ${lifestyle} | ${price} |`),
+        `Incorrect lifestyle expenses: ${lifestyle}`);
+    }
+    for (const row of [
+      "| ~ Zanedbaný | 7 md |", "| ~ Chudý | 1 st |", "| ~ Skromný | 5 st |",
+      "| ~ Pohodlný | 8 st |", "| ~ Bohatý | 2 zl |", "| ~ Aristokratický | 4 zl |",
+      "| ~ Zdatný | 2 zl za den |", "| ~ Nekvalifikovaný | 2 st za den |",
+      "| Přeprava lodí | 1 st za míli |", "| Posel | 2 md za míli |",
+    ]) {
+      assert.ok(expenses.includes(row), `Missing translated price: ${row}`);
+    }
+    assert.ok(expenses.includes("Zdatnost v Přežití"));
+    assert.ok(expenses.includes("10 až 50 zlatých"));
+    assert.ok(expenses.includes("**Tabulka – Jídlo, pití a ubytování**"));
+  });
+
   // ---- the routes ----
   const { createUser } = await import("../src/lib/db/users.ts");
   const { mintSession } = await import("../src/lib/auth.ts");
