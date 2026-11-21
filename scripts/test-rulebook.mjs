@@ -29,10 +29,12 @@ const { CZECH_SPELL_NOTES } = await import("../src/lib/rulebook/czech-spell-note
 const { CZECH_SPELL_NOTES_2 } = await import("../src/lib/rulebook/czech-spell-notes-2.ts");
 const { CZECH_SPELL_NOTES_3 } = await import("../src/lib/rulebook/czech-spell-notes-3.ts");
 const { CZECH_SPELL_NOTES_4 } = await import("../src/lib/rulebook/czech-spell-notes-4.ts");
+const { CZECH_SPELL_NOTES_5 } = await import("../src/lib/rulebook/czech-spell-notes-5.ts");
 const { CZECH_MONSTER_NOTES, CZECH_ITEM_NOTES } = await import("../src/lib/rulebook/czech-bestiary-items.ts");
 const { CZECH_MONSTER_NOTES_2, CZECH_ITEM_NOTES_2 } = await import("../src/lib/rulebook/czech-bestiary-items-2.ts");
 const { CZECH_MONSTER_NOTES_3, CZECH_ITEM_NOTES_3 } = await import("../src/lib/rulebook/czech-bestiary-items-3.ts");
 const { CZECH_MONSTER_NOTES_4 } = await import("../src/lib/rulebook/czech-monster-notes-4.ts");
+const { CZECH_MONSTER_NOTES_5 } = await import("../src/lib/rulebook/czech-monster-notes-5.ts");
 const { CZECH_CLASS_NOTES, CZECH_RACE_NOTES } = await import("../src/lib/rulebook/czech-character-notes.ts");
 const { anchorSlug, blockText, inlineText, parseBook, parseInline, stripInline } = await import(
   "../src/lib/rulebook/markdown.ts"
@@ -511,6 +513,48 @@ try {
     const spiritGuardians = english.find((page) => page.kind === "spell" && page.title === "Spirit Guardians");
     assert.ok(spiritGuardians);
     assert.ok(rulebookSearch("Přízrační strážci", 15, "cs").hits.some((hit) => hit.page === spiritGuardians.id));
+  });
+
+  await test("fifth Czech batch binds 48 spells and 37 creatures to canonical 2014 SRD pages", () => {
+    const original = rulebookPages("en");
+    const groups = {
+      spell: {
+        newNotes: CZECH_SPELL_NOTES_5,
+        priorNotes: [CZECH_SPELL_NOTES, CZECH_SPELL_NOTES_2, CZECH_SPELL_NOTES_3, CZECH_SPELL_NOTES_4],
+        names: CZECH_SPELLS,
+        heading: "Český popis kouzla",
+        expected: 48,
+      },
+      monster: {
+        newNotes: CZECH_MONSTER_NOTES_5,
+        priorNotes: [CZECH_MONSTER_NOTES, CZECH_MONSTER_NOTES_2, CZECH_MONSTER_NOTES_3, CZECH_MONSTER_NOTES_4],
+        names: CZECH_MONSTERS,
+        heading: "Český přehled nestvůry",
+        expected: 37,
+      },
+    };
+    for (const [kind, group] of Object.entries(groups)) {
+      assert.equal(Object.keys(group.newNotes).length, group.expected);
+      const priorKeys = new Set(group.priorNotes.flatMap((mapping) => Object.keys(mapping)));
+      const sourceByTitle = new Map(original.filter((page) => page.kind === kind).map((page) => [page.title, page]));
+      for (const [name, note] of Object.entries(group.newNotes)) {
+        assert.ok(!priorKeys.has(name), `Duplicate ${kind} note: ${name}`);
+        assert.ok(group.names[name], `Missing Czech ${kind} title: ${name}`);
+        assert.ok(note.length >= 120, `Unexpectedly short Czech ${kind} note: ${name}`);
+        const source = sourceByTitle.get(name);
+        assert.ok(source, `Missing canonical SRD ${kind} entry: ${name}`);
+        const translated = rulebookPage(source.id, "cs").page;
+        assert.equal(translated.id, source.id, `Changed canonical SRD identifier for ${name}`);
+        assert.ok(translated.md.includes(group.heading), `Missing Czech heading for ${name}`);
+        assert.ok(translated.md.includes(note), `Missing Czech note for ${name}`);
+        assert.ok(translated.md.endsWith(source.md), `English SRD text modified for ${name}`);
+      }
+    }
+    assert.ok(Object.keys(CZECH_SPELLS).length >= 207, "Czech dictionary includes the new spell names");
+    assert.equal(Object.keys(CZECH_MONSTERS).length, 138, "Monster glossary retains every existing name");
+    const spell = original.find((page) => page.kind === "spell" && page.title === "Vicious Mockery");
+    assert.ok(spell, "Vicious Mockery exists in SRD");
+    assert.ok(rulebookSearch("Zlomyslný výsměch", 10, "cs").hits.some((hit) => hit.page === spell.id));
   });
 
   await test("Czech magic item and monster metadata are display-only and retain original metadata", () => {
