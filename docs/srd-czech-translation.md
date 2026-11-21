@@ -177,6 +177,8 @@ pouze u položek označených *Příručka hráče*:
 | `True Seeing` | Pravdivé vidění |
 | `Sunburst` | Sluneční záblesk |
 | `Prismatic Spray` | Spektrální sprška |
+| `Feeblemind` | Slabomyslnost |
+| `Mind Blank` | Ukryj mysl |
 
 Opravy jsou provedeny v `czech-terms.ts` a `czech-full-rules-13.ts`
 bez změny ID nebo pořadí kouzel. Také kapitola Sféry existence nyní
@@ -187,7 +189,7 @@ v kapitolách Dobrodružství a Statistiky nestvůr není názvem
 kouzla `True Seeing` a zůstává beze změny. Stejně tak obecné
 slovo *proměna* v pravidlech druida není názvem kouzla `Polymorph`.
 
-Kontroly v `scripts/test-rulebook.mjs` zahrnují nyní 27 individuálně
+Kontroly v `scripts/test-rulebook.mjs` zahrnují nyní 29 individuálně
 ověřených názvů. Testovací sada ani build se pro Draft PR nespouštěly.
 ## Stav
 
