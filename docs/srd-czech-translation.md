@@ -159,6 +159,36 @@ Název **Multipovolání** odpovídá české
 Anglické pravidlové ID `multiclassing` zůstalo stejné.
 
 Regresní kontroly názvů jsou v `scripts/test-rulebook.mjs`.
+## Další ověřené názvy kouzel (21. 11. 2026)
+
+Následujících **10 individuálních názvů** bylo ověřeno podle českého
+[Abecedního grimoáru D&D 5e (2014)](https://dnd5esrd.d20.cz/grimoar/grimoar-jmen.html),
+pouze u položek označených *Příručka hráče*:
+
+| Anglické ID | Český název |
+|---|---|
+| `Alter Self` | Změň svůj tvar |
+| `Polymorph` | Proměň tvora |
+| `Seeming` | Hromadné přestrojení |
+| `Wall of Force` | Zeď síly |
+| `Harm` | Zraň |
+| `Planar Binding` | Sférická vazba |
+| `Magic Jar` | Schránka života |
+| `True Seeing` | Pravdivé vidění |
+| `Sunburst` | Sluneční záblesk |
+| `Prismatic Spray` | Spektrální sprška |
+
+Opravy jsou provedeny v `czech-terms.ts` a `czech-full-rules-13.ts`
+bez změny ID nebo pořadí kouzel. Také kapitola Sféry existence nyní
+používá názvy kouzel *Zeď síly* a *Pravdivé vidění*.
+
+**Pozor:** samostatný herní smysl *pravé vidění* (`truesight`)
+v kapitolách Dobrodružství a Statistiky nestvůr není názvem
+kouzla `True Seeing` a zůstává beze změny. Stejně tak obecné
+slovo *proměna* v pravidlech druida není názvem kouzla `Polymorph`.
+
+Kontroly v `scripts/test-rulebook.mjs` zahrnují nyní 27 individuálně
+ověřených názvů. Testovací sada ani build se pro Draft PR nespouštěly.
 ## Stav
 
 - Stručné české přehledy: 932/933 kanonických stránek (výjimkou je atribuce).
