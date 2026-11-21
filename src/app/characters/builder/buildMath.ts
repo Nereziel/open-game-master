@@ -12,6 +12,8 @@ import type { Ability } from "@/lib/schemas/sheet";
 import { pickedVariant, type SpeciesVariantGroup } from "@/lib/content/species-variants";
 import { SRD_SKILLS, findSkill, formatModifier, mathPartLabel, proficiencyBonus, skillLabel, type DerivedPart } from "@/lib/srd";
 import { ABILITY_NAMES } from "@/lib/srd/legality/types";
+import { contentName } from "@/lib/content/names";
+import type { Locale } from "@/lib/i18n/translate";
 import { armorClassLine, hitPointsLine } from "./derivedReasons";
 import { casterLevelFor } from "@/lib/srd/multiclass";
 import type { BuilderDerived } from "./useBuilderDerived";
@@ -341,6 +343,7 @@ export function knownSoFarRows({
   racialBonus,
   proficientSkills,
   t,
+  locale = "en",
 }: {
   level: number;
   klass: { name: string; hitDie: number; saves: string[] } | undefined;
@@ -358,11 +361,15 @@ export function knownSoFarRows({
   // The reader's words (builder.math.known*); without it the test-pinned
   // English stands.
   t?: Translator;
+  locale?: Locale;
 }): BuildMathRow[] {
   const say = (key: string, vars: Record<string, string | number> = {}, english: string) =>
     typeof t === "function" ? t(key, vars) : english;
+  const className = klass ? contentName("classes", klass.name, locale) : "";
+  const raceName = race ? contentName("species", race.name, locale) : "";
+  const abilityName = (ability: string) => typeof t === "function" ? t(ABILITY_NAMES[ability] ?? ability) : ABILITY_NAMES[ability] ?? ability;
   const bonuses = ABILITIES.flatMap((ability) =>
-    racialBonus[ability] ? [`${ABILITY_NAMES[ability]} ${formatModifier(racialBonus[ability] ?? 0)}`] : [],
+    racialBonus[ability] ? [`${abilityName(ability)} ${formatModifier(racialBonus[ability] ?? 0)}`] : [],
   );
   // The bumps the race leaves to the player (a half-elf's two +1s) that are
   // not placed yet: a placed one is in racialBonus beyond the race's own.
@@ -392,7 +399,7 @@ export function knownSoFarRows({
   const variant = race?.variants ? pickedVariant(race) : null;
   const skills = proficientSkills.flatMap((id) => {
     const skill = findSkill(id);
-    return skill ? [skill.name] : [];
+    return skill ? [skillLabel(id, locale)] : [];
   });
   // The level's bonus: a character being built is attuned to nothing yet
   // (attuning takes a short rest in play), so no Ioun Stone of Mastery adds.
@@ -405,11 +412,11 @@ export function knownSoFarRows({
     },
     ...(klass
       ? [
-          { id: "hit-die", label: say("Hit die", {}, "Hit die"), value: `d${klass.hitDie}`, working: klass.name },
+          { id: "hit-die", label: say("Hit die", {}, "Hit die"), value: `d${klass.hitDie}`, working: className },
           {
             id: "save-proficiencies",
             label: say("Proficient saves", {}, "Proficient saves"),
-            value: klass.saves.map((save) => ABILITY_NAMES[save] ?? save).join(", "),
+            value: klass.saves.map((save) => abilityName(save)).join(", "),
             working: klass.name,
           },
         ]
@@ -420,7 +427,7 @@ export function knownSoFarRows({
             id: "species-choice",
             label: race.variants.label,
             value: variant?.name ?? say("still to choose", {}, "still to choose"),
-            working: race.name,
+            working: raceName,
           },
         ]
       : []),
