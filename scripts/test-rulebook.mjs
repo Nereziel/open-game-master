@@ -2644,6 +2644,80 @@ try {
       assert.ok(CZECH_FULL_SPELLS_9[id].includes(needle), "Missing mechanic: " + id + "/" + needle);
   });
 
+
+  await test("second-level SRD spells 25–36 have complete Czech rules with preserved source fields", async () => {
+    const { CZECH_FULL_SPELLS_10 } = await import("../src/lib/rulebook/czech-full-spells-10.ts");
+    const expected = ["heat-metal","hold-person","invisibility","knock","lesser-restoration","levitate","locate-animals-or-plants","locate-object","magic-mouth","magic-weapon","mirror-image","misty-step"];
+    assert.deepEqual(Object.keys(CZECH_FULL_SPELLS_10), expected);
+    const originals = rulebookPages("en").filter((page) =>
+      page.kind === "spell" && page.meta?.startsWith("2nd-level"));
+    assert.deepEqual(originals.slice(24, 36).map((page) => page.id), expected,
+      "Second-level spell translations must keep SRD source order");
+    function getField(markdown, label) {
+      const prefix = "**" + label + ":** ";
+      return markdown.split("\n").find((line) => line.startsWith(prefix))?.slice(prefix.length);
+    }
+    const ranges = {
+      "60 feet": "60 stop", "30 feet": "30 stop", "120 feet": "120 stop",
+      Touch: "Dotyk", Self: "Sesilatel",
+    };
+    const durations = {
+      "Instantaneous": "Ihned", "1 minute": "1 minuta",
+      "Until dispelled": "Do rozptýlení",
+      "Concentration, up to 1 minute": "Soustředění, až 1 minuta",
+      "Concentration, up to 10 minutes": "Soustředění, až 10 minut",
+      "Concentration, up to 1 hour": "Soustředění, až 1 hodina",
+    };
+    for (const original of originals.slice(24, 36)) {
+      const text = CZECH_FULL_SPELLS_10[original.id];
+      const localized = rulebookPage(original.id, "cs").page;
+      assert.ok(text && text.length >= 200, "Full spell text missing: " + original.id);
+      assert.equal(localized.id, original.id);
+      assert.equal(localized.title, CZECH_SPELLS[original.title]);
+      assert.equal(localized.originalMeta, original.meta);
+      assert.ok(localized.md.includes("## Úplné znění pravidel v češtině"));
+      assert.ok(localized.md.includes(text), "Czech reader missing spell: " + original.id);
+      assert.ok(localized.md.endsWith(original.md), "Changed original English rules: " + original.id);
+      for (const [english, czech] of [
+        ["Casting Time", "Doba sesílání"], ["Range", "Dosah"],
+        ["Components", "Složky"], ["Duration", "Trvání"],
+      ]) {
+        assert.ok(getField(original.md, english), "Missing source metadata: " + original.id + "/" + english);
+        assert.ok(getField(text, czech), "Missing Czech metadata: " + original.id + "/" + czech);
+      }
+      const originalComponents = getField(original.md, "Components").match(/^[VSM, ]+/)?.[0].trim();
+      const czechComponents = getField(text, "Složky").match(/^[VSM, ]+/)?.[0].trim();
+      assert.equal(czechComponents, originalComponents, "Changed spell components: " + original.id);
+      const range = getField(original.md, "Range");
+      if (ranges[range]) assert.ok(getField(text, "Dosah").startsWith(ranges[range]), "Wrong range: " + original.id);
+      const duration = getField(original.md, "Duration");
+      if (durations[duration]) assert.ok(getField(text, "Trvání").startsWith(durations[duration]), "Wrong duration: " + original.id);
+      const time = getField(original.md, "Casting Time");
+      if (time === "1 action") assert.equal(getField(text, "Doba sesílání"), "1 akce");
+      if (time === "1 bonus action") assert.equal(getField(text, "Doba sesílání"), "1 bonusová akce");
+      if (time === "1 minute") assert.equal(getField(text, "Doba sesílání"), "1 minuta");
+      for (const [, number, die] of original.md.matchAll(/\b(\d+)d(\d+)\b/g)) {
+        assert.ok(text.includes(number + "k" + die), "Missing original dice in " + original.id);
+      }
+    }
+    for (const [id, expected] of Object.entries({
+      "heat-metal": ["2k8", "1k8", "bonusovou akcí", "záchranném hodu na Odolnost"],
+      "hold-person": ["paralyzovaný", "Moudrost", "30 stop", "dalšího humanoida"],
+      invisibility: ["neviditelným", "zaútočí nebo sešle kouzlo"],
+      knock: ["pouze jeden", "10 minut", "300 stop"],
+      "lesser-restoration": ["oslepený", "ohlušený", "paralyzovaný", "otrávený"],
+      levitate: ["500 liber", "20 stop", "Odolnost", "svou akci"],
+      "locate-animals-or-plants": ["5 mil", "jako rituál"],
+      "locate-object": ["1 000 stop", "30 stop", "olova"],
+      "magic-mouth": ["25 slov", "10 minut", "10 zl", "30 stop", "jako rituál"],
+      "magic-weapon": ["+1", "+2", "+3", "4. nebo vyšší", "6. nebo vyšší"],
+      "mirror-image": ["tři iluzorní dvojníci", "6 nebo více", "8 nebo více", "11 nebo více", "10 + tvoje oprava Obratnosti"],
+      "misty-step": ["1 bonusová akce", "30 stop", "neobsazené místo"],
+    })) {
+      for (const needle of expected) assert.ok(CZECH_FULL_SPELLS_10[id].includes(needle), "Missing detail: " + id + "/" + needle);
+    }
+  });
+
   // ---- the routes ----
   const { createUser } = await import("../src/lib/db/users.ts");
   const { mintSession } = await import("../src/lib/auth.ts");

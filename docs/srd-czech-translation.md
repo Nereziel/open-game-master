@@ -350,12 +350,35 @@ použita pouze pro ustálené názvy.
 **Stav: 97/319 úplných popisů kouzel; zbývá 222, z toho 30 kouzel
 2. úrovně.** Build ani automatické testy na Draft PR nebyly spuštěny.
 
+## Třetí dávka úplných kouzel 2. úrovně (21. 11. 2026)
+
+V PR #35 je nově dokončeno dalších **12 úplných českých popisů**:
+Rozpal kov, Znehybni osobu, Neviditelnost, Zaklep, Nižší navrácení,
+Levitace, Najdi zvířata a rostliny, Najdi předmět, Magická ústa,
+Magická zbraň, Zrcadlový obraz a Mlžný krok.
+
+- Nový soubor `src/lib/rulebook/czech-full-spells-10.ts` obsahuje kompletní
+  vlastní překlady kouzel č. 25–36 v pořadí 2. úrovně SRD 5.1.
+- Překladová mapa je napojena do `czech-companion.ts`. Anglický
+  originál, kanonická ID, metadata, mechanika hry a MCP se nemění.
+- Kontroly v `scripts/test-rulebook.mjs` zahrnují pořadí, všechny čtyři
+  údaje sesílání, složky V/S/M, doby trvání, dosahy, kostky, české
+  názvy, klíčové výjimky a zachování anglického znění.
+- České **názvy** vycházejí ze stávající terminologie projektu;
+  souvislé popisy jsou samostatné překlady z anglického SRD 5.1
+  (CC BY 4.0), nikoli převzaté z komunitního českého grimoáru.
+- **Celkem 109/319 úplných českých popisů kouzel**. Hotovo
+  **36/54 kouzel 2. úrovně**, zbývá jich **18** a celkově **210**.
+
+Build ani automatická testovací sada zatím nebyly spuštěny, podle
+dohody pro rozpracované Draft PR.
+
 ## Stav
 
 - Stručné české přehledy: 932/933 kanonických stránek (výjimkou je atribuce).
 - Úplné české znění pravidlových stránek: **35/35 obsahových pravidlových stránek**.
 - Úplné české překlady jednotlivých ras: **9/9 rasových stránek SRD 5.1**, včetně všech podras obsažených ve zdrojovém SRD.
-- Úplné české popisy jednotlivých kouzel: **97/319** – všech **24/24 triků** a všech **49/49 kouzel 1. úrovně** a prvních **24 kouzel 2. úrovně**.
+- Úplné české popisy jednotlivých kouzel: **109/319** – všech **24/24 triků** a všech **49/49 kouzel 1. úrovně** a prvních **36 kouzel 2. úrovně**.
 - Dříve dokončené kapitoly zahrnují **Stavy, Nemoci, Objekty, Artefakty** a další pravidla.
 - V další dávce jsou úplně přeloženy kapitoly **Jízdní zvířata a dopravní prostředky, Nástroje, Kouzelné předměty, Jedy a Inteligentní kouzelné předměty**.
 - Následující dávka přeložila celé kapitoly **Zbroje**, **Šílenství** a
