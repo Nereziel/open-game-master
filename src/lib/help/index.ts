@@ -139,7 +139,7 @@ export function describeFeature(classId: string, subclass: string, name: string,
     exactSrdText(classId, name) ??
     // The background's feature sits on the sheet as "Shelter of the
     // Faithful (Acolyte)"; the bare name finds its text.
-    describeBackgroundFeature(baseName(name)) ??
+    describeBackgroundFeature(baseName(name), locale) ??
     (resource ? resourceGuidance(resource.id, locale) ?? resource.guidance : null) ??
     guidanceFor({ class: classId, features: [], feature: name }) ??
     looseSrdText(classId, name);
