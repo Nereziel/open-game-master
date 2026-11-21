@@ -4,8 +4,10 @@
 import source from "./srd-5.1.json";
 
 type SourcePage = { id: string; kind: string; md: string };
-const monsterPages = new Map(
-  (source.pages as SourcePage[]).filter((page) => page.kind === "monster").map((page) => [page.id, page.md]),
+const monsterPages = new Map<string, string>(
+  (source.pages as SourcePage[])
+    .filter((page) => page.kind === "monster")
+    .map((page): [string, string] => [page.id, page.md]),
 );
 
 const labels: Record<string, string> = {
