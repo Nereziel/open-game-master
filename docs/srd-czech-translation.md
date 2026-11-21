@@ -830,12 +830,62 @@ Dokončeny všechny triky a kouzla **1.–7. úrovně**.
 PR zůstává Draft, bez sloučení a bez spuštění
 buildu nebo automatických testů podle dohody.
 
+## Všechna kouzla 8. úrovně dokončena (21. 11. 2026)
+
+Všech **16/16 skutečných kouzel 8. úrovně** původního
+anglického SRD 5.1 má nyní vlastní úplný český popis.
+Pět dalších záznamů nalezených při vyhledávání výrazu
+„8th-level“ jsou kouzla nižších úrovní, která jen
+zmiňují sesílání vyšší pozicí.
+
+Přidány dva soubory s nezávislými českými překlady:
+
+- `src/lib/rulebook/czech-full-spells-27.ts` (8): Zvířecí podoby,
+  Antimagické pole, Antipatie nebo sympatie, Klon, Ovládání
+  počasí, Polosféra, Ovládnutí nestvůry a Zemětřesení.
+- `src/lib/rulebook/czech-full-spells-28.ts` (8): Slabomyslnost,
+  Výmluvnost, Svatá aura, Ohnivý mrak, Bludiště,
+  Ukryj mysl, Slovo moci „OCHROM“ a Sluneční záblesk.
+
+Zachována jsou všechna pravidlová omezení, tabulky
+a účinky – zejména souběh zranění a navrácení životů
+u Zvířecích podob, veškeré výjimky Antimagického
+pole, oba účinky Antipatie nebo sympatie a jejich
+opakované záchrany, 120denní zrání klonu, všechny
+tři tabulky Ovládání počasí (5+6+5 stupňů), trhliny
+a zranění staveb při Zemětřesení, záchrany po
+30 dnech u Slabomyslnosti, navázané omráčení
+a účinky slunečního světla.
+
+`czech-companion.ts` propojuje úplné české texty
+všech 16 kouzel se čtečkou. Původní anglické
+stránky, kanonická ID, metadata a herní/MCP rozhraní
+zůstávají zachovány.
+
+V `scripts/test-rulebook.mjs` přibyl souhrnný regresní
+test: **16 jedinečných ID v pořadí SRD (8+8)**,
+úplné texty v české čtečce, zachování anglického
+originálu, sesílací údaje V/S/M, dosahy, trvání,
+kostky, klíčové mechaniky a všech 16 řádků
+počasových tabulek.
+
+Překlady jsou samostatně napsané podle anglického
+SRD 5.1 (CC BY 4.0). Z českých komunitních
+překladů přebíráme pouze zavedené názvy.
+
+**Úplné české popisy kouzel: 304/319.**
+Hotové jsou triky a všechny úrovně **1.–8.**.
+**Zbývá 15 kouzel 9. úrovně.**
+
+Build ani automatické testy se podle dohody
+na Draft PR nespouštějí.
+
 ## Stav
 
 - Stručné české přehledy: 932/933 kanonických stránek (výjimkou je atribuce).
 - Úplné české znění pravidlových stránek: **35/35 obsahových pravidlových stránek**.
 - Úplné české překlady jednotlivých ras: **9/9 rasových stránek SRD 5.1**, včetně všech podras obsažených ve zdrojovém SRD.
-- Úplné české popisy jednotlivých kouzel: **288/319** – všech **24/24 triků** a všech **49/49 kouzel 1. úrovně** a všech **54/54 kouzel 2. úrovně** a všech **42/42 kouzel 3. úrovně** a všech **31/31 kouzel 4. úrovně** a všech **37/37 kouzel 5. úrovně** a všech **31/31 kouzel 6. úrovně** a všech **20/20 kouzel 7. úrovně**.
+- Úplné české popisy jednotlivých kouzel: **304/319** – všech **24/24 triků** a všech **49/49 kouzel 1. úrovně** a všech **54/54 kouzel 2. úrovně** a všech **42/42 kouzel 3. úrovně** a všech **31/31 kouzel 4. úrovně** a všech **37/37 kouzel 5. úrovně** a všech **31/31 kouzel 6. úrovně** a všech **20/20 kouzel 7. úrovně** a všech **16/16 kouzel 8. úrovně**.
 - Dříve dokončené kapitoly zahrnují **Stavy, Nemoci, Objekty, Artefakty** a další pravidla.
 - V další dávce jsou úplně přeloženy kapitoly **Jízdní zvířata a dopravní prostředky, Nástroje, Kouzelné předměty, Jedy a Inteligentní kouzelné předměty**.
 - Následující dávka přeložila celé kapitoly **Zbroje**, **Šílenství** a

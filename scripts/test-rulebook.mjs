@@ -3781,6 +3781,71 @@ try {
         assert.ok(fullTexts[id].includes(marker),"Missing 7th-level mechanics: "+id+"/"+marker);
   });
 
+
+  await test("all 16 eighth-level SRD 5.1 spells have full Czech texts and preserved originals", async () => {
+    const [{ CZECH_FULL_SPELLS_27 }, { CZECH_FULL_SPELLS_28 }] = await Promise.all([
+      import("../src/lib/rulebook/czech-full-spells-27.ts"),
+      import("../src/lib/rulebook/czech-full-spells-28.ts"),
+    ]);
+    const batches = [CZECH_FULL_SPELLS_27, CZECH_FULL_SPELLS_28];
+    assert.deepEqual(batches.map(batch => Object.keys(batch).length), [8,8]);
+    assert.deepEqual(Object.keys(CZECH_FULL_SPELLS_27), ["animal-shapes","antimagic-field","antipathy-sympathy","clone","control-weather","demiplane","dominate-monster","earthquake"]);
+    assert.deepEqual(Object.keys(CZECH_FULL_SPELLS_28), ["feeblemind","glibness","holy-aura","incendiary-cloud","maze","mind-blank","power-word-stun","sunburst"]);
+    const ids = batches.flatMap(batch => Object.keys(batch));
+    assert.equal(new Set(ids).size, 16, "Eighth-level spell IDs must be unique");
+    const originals = rulebookPages("en").filter(page =>
+      page.kind === "spell" && page.meta?.startsWith("8th-level"));
+    assert.equal(originals.length, 16, "English 8th-level SRD spell count changed");
+    assert.deepEqual(ids, originals.map(page => page.id), "Eighth-level Czech spells are not in canonical SRD order");
+    const translations = Object.assign({}, ...batches);
+    const field = (md, key) => {
+      const prefix = "**" + key + ":** ";
+      return md.split("\n").find(line => line.startsWith(prefix))?.slice(prefix.length);
+    };
+    const times = {"1 action":"1 akce","1 hour":"1 hodina","10 minutes":"10 minut"};
+    const ranges = {"30 feet":"30 stop","60 feet":"60 stop",
+      "150 feet":"150 stop","500 feet":"500 stop",Touch:"Dotyk",Self:"Sesilatel"};
+    const durations = {"Instantaneous":"Ihned","1 hour":"1 hodina","10 days":"10 dnů",
+      "24 hours":"24 hodin","Concentration, up to 1 minute":"Soustředění, až 1 minuta",
+      "Concentration, up to 10 minutes":"Soustředění, až 10 minut",
+      "Concentration, up to 1 hour":"Soustředění, až 1 hodina",
+      "Concentration, up to 8 hours":"Soustředění, až 8 hodin",
+      "Concentration, up to 24 hours":"Soustředění, až 24 hodin"};
+    for (const original of originals) {
+      const full = translations[original.id], page = rulebookPage(original.id, "cs").page;
+      assert.ok(full?.length >= 170, "Missing full eighth-level Czech spell: " + original.id);
+      assert.equal(page.id, original.id);
+      assert.equal(page.title, CZECH_SPELLS[original.title]);
+      assert.equal(page.originalMeta, original.meta);
+      assert.ok(page.md.includes("## Úplné znění pravidel v češtině"));
+      assert.ok(page.md.includes(full), "Czech spell reader missing text: " + original.id);
+      assert.ok(page.md.endsWith(original.md), "Original English SRD content altered: " + original.id);
+      for (const [en,cz] of [["Casting Time","Doba sesílání"],
+        ["Range","Dosah"],["Components","Složky"],["Duration","Trvání"]])
+        assert.ok(field(original.md,en) && field(full,cz), "Missing spell field: " + original.id + "/" + cz);
+      const enComponents=field(original.md,"Components")?.match(/^[VSM, ]+/)?.[0]?.trim();
+      const czComponents=field(full,"Složky")?.match(/^[VSM, ]+/)?.[0]?.trim();
+      assert.ok(enComponents,"Missing English casting components: "+original.id);
+      assert.equal(czComponents,enComponents,"Spell components altered: "+original.id);
+      const cast=field(original.md,"Casting Time"),range=field(original.md,"Range"),
+        duration=field(original.md,"Duration");
+      if(times[cast])assert.equal(field(full,"Doba sesílání"),times[cast],"Casting time changed: "+original.id);
+      if(ranges[range])assert.ok(field(full,"Dosah").startsWith(ranges[range]),"Range changed: "+original.id);
+      if(durations[duration])assert.equal(field(full,"Trvání"),durations[duration],"Duration changed: "+original.id);
+      for(const [,number,sides] of original.md.matchAll(/\b(\d+)d(\d+)\b/g))
+        assert.ok(full.includes(number+"k"+sides),"Missing dice from English source: "+original.id);
+    }
+    const rules = {"animal-shapes":["24 hodin","nebezpečností nejvýše 4","Velké","0 životů","Inteligence, Moudrosti a Charismatu","přebytečné zranění","vybavení splyne"],"antimagic-field":["10 stop","artefaktem nebo božstvem","pozice se spotřebuje","Zacílené účinky","Oblasti magie","Aktivní kouzla","Magické předměty","Magické cestování","Magicky vytvoření tvorové a předměty","Rozptýlení magie"],"antipathy-sympathy":["200 stop","60 stop","10 dnů","Antipatie","Sympatie","Moudrost","24 hodin","1 minutu"],"clone":["1 000 zl","2 000 zl","120 dnech","mladší podobu","duše","vybavení"],"control-weather":["5 mil","1k4 × 10 minut","Srážky","Teplota","Vítr","Arktický mráz","Bouře","8 hodin"],"demiplane":["30 × 30 × 30 stop","dveře zmizí","uvězněni","novou polosféru","cizí polosférou"],"dominate-monster":["Moudrost","telepatické pouto","vlastní reakci","zranění","8 hodin"],"earthquake":["500 stop","100 stop","1k6 trhlin","1k10 × 10 stop","50 drtivého zranění","5k6","SO 20","Odolnost","Obratnost"],"feeblemind":["4k6","Inteligence a Charismatu","30 dnů","Mocné navrácení","Uzdrav","Přání"],"glibness":["Charismatu","15","pravdu","1 hodina"],"holy-aura":["30 stop","5 stop","výhodu ke všem záchranným hodům","nevýhodu k hodům na útok","Odolnost","oslepený"],"incendiary-cloud":["20 stop","10k8","10 stop","za rohy","16 km/h"],"maze":["SO 20","Inteligence","Minotaurus nebo goristro","nejbližším neobsazeném"],"mind-blank":["24 hodin","psychickému zranění","věšteckým kouzlům","zmámený","Přání"],"power-word-stun":["150 životů","omráčeným","Odolnost","na konci každého"],"sunburst":["12k6","60 stop","Odolnost","Nemrtví a slizy","rozptýlí veškerou tmu"]};
+    for(const [id,markers] of Object.entries(rules))
+      for(const marker of markers)
+        assert.ok(translations[id].includes(marker),"Missing eighth-level rule: "+id+"/"+marker);
+    const controlWeather = translations["control-weather"];
+    for(const table of ["Srážky","Teplota","Vítr"])
+      assert.ok(controlWeather.includes("**"+table+":**"),"Weather table missing: "+table);
+    assert.equal((controlWeather.match(/^\| \*\*\d+\*\* \|/gm)||[]).length, 16,
+      "Weather should have 5+6+5 stage rows");
+  });
+
   // ---- the routes ----
   const { createUser } = await import("../src/lib/db/users.ts");
   const { mintSession } = await import("../src/lib/auth.ts");
