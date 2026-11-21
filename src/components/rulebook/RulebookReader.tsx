@@ -248,7 +248,7 @@ export function RulebookReader({
     seenLocale.current = locale;
     cache.current.clear();
     void loadContents();
-    const current = shownRef.current?.data.page.id;
+    const current = shownRef.current?.data.page.id ?? shown?.data.page.id;
     // Invalidate the old-language page before calling open(): otherwise its
     // same-page shortcut reuses the English/French text after a locale switch.
     shownRef.current = null;
