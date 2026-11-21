@@ -1,0 +1,157 @@
+// Original Czech companion notes for the 2014 SRD 5.1.
+// This is NOT a copy of the community DnD 5e translation on d20.cz.
+// The source SRD 5.1 is CC BY 4.0; untranslated original passages stay in English.
+// All page ids and original English headings stay intact for deep links.
+import type { RulebookData } from "./types";
+
+const CHAPTERS: Record<string, string> = {
+  races: "Rasy",
+  classes: "Povolání",
+  "beyond-1st-level": "Postup na vyšší úrovně",
+  "personality-and-background": "Osobnost a zázemí",
+  equipment: "Vybavení",
+  feats: "Odbornosti",
+  "using-ability-scores": "Používání vlastností",
+  adventuring: "Dobrodružství",
+  combat: "Boj",
+  spellcasting: "Sesílání kouzel",
+  spells: "Kouzla",
+  "running-the-game": "Vedení hry",
+  "magic-items": "Kouzelné předměty",
+  monsters: "Nestvůry",
+  creatures: "Tvorové",
+  npcs: "Nehráčské postavy",
+  appendix: "Dodatky",
+};
+
+const PAGES: Record<string, string> = {
+  "racial-traits": "Rasové vlastnosti",
+  "beyond-1st-level": "Postup na vyšší úrovně",
+  multiclassing: "Kombinování povolání",
+  alignment: "Přesvědčení",
+  languages: "Jazyky",
+  inspiration: "Inspirace",
+  backgrounds: "Zázemí",
+  coinage: "Měna",
+  "selling-treasure": "Prodej pokladů",
+  armor: "Zbroje",
+  weapons: "Zbraně",
+  "adventuring-gear": "Dobrodružné vybavení",
+  tools: "Nástroje",
+  "mounts-and-vehicles": "Jízdní zvířata a dopravní prostředky",
+  "trade-goods": "Obchodní zboží",
+  expenses: "Výdaje",
+  feats: "Odbornosti",
+  "using-ability-scores": "Používání vlastností",
+  adventuring: "Dobrodružství",
+  combat: "Boj",
+  spellcasting: "Sesílání kouzel",
+  "spell-lists": "Seznamy kouzel",
+  traps: "Pasti",
+  diseases: "Nemoci",
+  madness: "Šílenství",
+  objects: "Objekty",
+  poisons: "Jedy",
+  "magic-items": "Kouzelné předměty",
+  "sentient-magic-items": "Inteligentní kouzelné předměty",
+  artifacts: "Artefakty",
+  "monster-statistics": "Statistiky nestvůr",
+  "nonplayer-characters": "Nehráčské postavy",
+  conditions: "Stavy",
+};
+
+// These original short explanations make core rules accessible immediately.
+// They do not replace the full rules, which follow each note in English.
+const NOTES: Record<string, string> = {
+  "racial-traits": `Rasa určuje základní rysy postavy: například velikost, rychlost, jazyky a jedinečné schopnosti. Tyto výhody se kombinují s povoláním a zázemím. Přesné číselné hodnoty a volby vždy určuje konkrétní rasa.`,
+
+  "beyond-1st-level": `Za překonané výzvy postavy získávají zkušenosti (XP). Na vyšších úrovních přibývají životy a schopnosti povolání.
+
+**Bonus zdatnosti** závisí na celkové úrovni: +2 na úrovních 1–4, +3 na 5–8, +4 na 9–12, +5 na 13–16 a +6 na 17–20. Běžné zvýšení hodnot vlastností přidává +2 k jedné vlastnosti nebo +1 ke dvěma různým, zpravidla nejvýše na 20.`,
+
+  multiclassing: `Kombinování povolání je volitelné pravidlo. Při postupu na úroveň může postava získat úroveň dalšího povolání, pokud splňuje předepsané hodnoty vlastností původního i nového povolání. Schopnosti se získávají podle úrovní v jednotlivých povoláních; bonus zdatnosti se řídí celkovou úrovní. Pro sesílání kouzel platí zvláštní tabulka.`,
+
+  inspiration: `Inspiraci uděluje Pán jeskyně za hraní charakteru a rozhodnutí postavy. Postava může mít pouze jednu inspiraci najednou. Její spotřebování poskytne **výhodu** k jednomu hodu na útok, ověření vlastnosti nebo záchrannému hodu. Inspiraci lze také předat jiné postavě.`,
+
+  armor: `**Třída zbroje (TZ, anglicky AC)** určuje, jak náročné je postavu zasáhnout útokem. Lehká zbroj započítává opravu Obratnosti; střední zbroj zpravidla nejvýše +2 a těžká zbroj bonus Obratnosti nezapočítává. Štít běžně zvyšuje TZ o 2.
+
+Zbroj, se kterou postava není zdatná, omezuje hody založené na Síle a Obratnosti a znemožňuje sesílání kouzel. Některá těžká zbroj při nedostatečné Síle snižuje rychlost. Konkrétní hodnoty najdete v původní tabulce.`,
+
+  weapons: `Zbraně jsou jednoduché nebo válečné a slouží k boji na blízko nebo na dálku. Zdatná postava přičítá k hodu na útok svůj bonus zdatnosti.
+
+Útok zbraní na blízko obvykle používá Sílu, útok zbraní na dálku Obratnost. Obratná zbraň dovoluje použít Sílu nebo Obratnost. Kostky zranění a vlastnosti jako dosah, těžká, dvouruční či vrhací určuje konkrétní zbraň.`,
+
+  feats: `Odbornosti jsou volitelnou alternativou k některým zvýšením hodnot vlastností. Postava musí splnit předpoklady dané odbornosti. Účinky se řídí textem konkrétní odbornosti; odbornosti zpravidla nelze získávat opakovaně, pokud to výslovně neumožňují.`,
+
+  "using-ability-scores": `Pro **ověření vlastnosti** hoďte k20 a přičtěte opravu příslušné vlastnosti. Pokud má postava odpovídající zdatnost, přičte také bonus zdatnosti. Pán jeskyně stanovuje obtížnost (DC); hod musí dosáhnout této hodnoty nebo ji překročit.
+
+**Výhoda** znamená hodit dvěma k20 a použít vyšší výsledek; **nevýhoda** znamená použít nižší. Více výhod se nesčítá a výhoda s nevýhodou se navzájem ruší.
+
+**Záchranné hody** používají k20, opravu vlastnosti a případnou zdatnost v záchranném hodu. **Pasivní ověření** má základ 10 plus příslušné opravy.`,
+
+  adventuring: `Při cestování se sleduje čas, vzdálenost, tempo a podmínky prostředí. Pro vidění je důležité jasné světlo, šero a tma.
+
+**Krátký odpočinek** trvá nejméně hodinu a umožňuje využít kostky životů k léčení. **Dlouhý odpočinek** trvá nejméně osm hodin a obvykle obnoví všechny životy, část utracených kostek životů a zdroje, které se obnovují dlouhým odpočinkem. Podrobnosti o přerušení odpočinku a výjimkách určuje původní SRD.`,
+
+  combat: `## Základy boje
+
+Na začátku boje se určí **iniciativa** hodem k20 s opravou Obratnosti. Postavy a nestvůry jednají v pořadí iniciativy. Jedno kolo představuje přibližně šest sekund herního času.
+
+V každém tahu se můžete **pohnout** až do své rychlosti a obvykle provést **jednu akci**. Některé schopnosti umožňují bonusovou akci nebo reakci.
+
+## Útoky a zranění
+
+Útok zpravidla znamená hod k20 s opravou vlastnosti a případným bonusem zdatnosti proti **třídě zbroje (AC)** cíle. Při úspěchu se hodí zranění. Přirozená 20 zasáhne kriticky: házejí se dvakrát kostky zranění útoku. Přirozená 1 při útoku vždy mine.
+
+## Ztráta vědomí a smrt
+
+Při poklesu na 0 životů postava obvykle upadne do bezvědomí. Na začátku svého tahu hází záchranný hod proti smrti: 10 a více je úspěch, 9 a méně neúspěch. Tři úspěchy znamenají stabilizaci, tři neúspěchy smrt. Další poškození nebo léčení mohou stav změnit.`,
+
+  spellcasting: `## Sesílání kouzel
+
+Kouzlo má úroveň, dobu seslání, dosah, složky a trvání. Sesilatel musí splňovat požadavky kouzla. **Pozice kouzla** se při běžném seslání spotřebuje; kouzla 0. úrovně (triky) ji nepotřebují. Některá kouzla získávají silnější účinek při seslání z vyšší pozice.
+
+**Soustředění** lze udržovat jen na jednom kouzlu najednou. Při utrpění zranění sesilatel obvykle hází záchranný hod na Odolnost proti obtížnosti 10 nebo polovině utrpěného zranění (podle toho, která hodnota je vyšší). Ztráta soustředění ukončí odpovídající kouzlo.
+
+Kouzla s označením **rituál** lze za příslušných podmínek seslat o deset minut déle bez spotřeby pozice kouzla.`,
+
+  conditions: `## Přehled stavů
+
+Stavy mění, co může tvor dělat a jaké hody provádí. Patří mezi ně například **oslepený, okouzlený, ohlušený, vystrašený, uchvácený, neschopný, neviditelný, ochromený, zkamenělý, otrávený, sražený, zadržený, omráčený a v bezvědomí**.
+
+Jednotlivé stavy mají různé mechanické účinky. Například tvor **sražený na zem** se pohybuje plazením, jeho vlastní útoky mají nevýhodu a útoky vedené proti němu z bezprostřední blízkosti mají výhodu. Přesné účinky a výjimky jsou v anglických pravidlech níže.`,
+};
+
+export function czechCompanionBook(english: RulebookData): RulebookData {
+  return {
+    source: english.source,
+    parts: english.parts.map((part) => ({
+      ...part,
+      title: part.id === "players" ? "Hráči" : part.id === "dungeon-master" ? "Pán jeskyně" : part.id === "monsters" ? "Nestvůry" : part.title,
+    })),
+    chapters: english.chapters.map((chapter) => ({
+      ...chapter,
+      title: CHAPTERS[chapter.id] ?? chapter.title,
+    })),
+    pages: english.pages.map((page) => {
+      const note = NOTES[page.id];
+      return {
+        ...page,
+        title: PAGES[page.id] ?? page.title,
+        ...(note
+          ? {
+              md: `## Český přehled pravidel
+
+${note}
+
+---
+
+**Úplné původní znění SRD 5.1 v angličtině:**
+
+${page.md}`,
+            }
+          : {}),
+      };
+    }),
+  };
+}
