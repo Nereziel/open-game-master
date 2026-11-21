@@ -78,6 +78,24 @@ test("names follow the genre's feel", () => {
   assert.equal(generateSettlement({ size: "nonsense", terrain: "moon", seed: 1 }).size, "village");
 });
 
+test("Czech table generates Czech shop names, villagers, rumours, layout and plot hooks", () => {
+  const input = { name: "Náves Marrowova Brodu", size: "village", terrain: "river", genre: "high_fantasy", seed: 25, language: "czech" };
+  const settlement = generateSettlement(input);
+  assert.deepEqual(generateSettlement(input), settlement, "Czech generation must remain deterministic");
+  assert.equal(settlement.name, input.name, "do not translate an established proper place name");
+  assert.equal(settlement.npcs.length, 6);
+  assert.equal(new Set(settlement.npcs.map((npc) => npc.name)).size, 6);
+  assert.ok(settlement.npcs.every((npc) => /[a-zá-ž]+/iu.test(npc.name)));
+  assert.ok(settlement.npcs.every((npc) => !/Ashcombe|Greaves|Blackwood|Redwater/.test(npc.name)));
+  assert.equal(settlement.shops.length, 2);
+  assert.ok(settlement.shops.every((shop) => !/The Crooked|The Old|Smithy|Provisions/.test(shop.name)), settlement.shops.map((s) => s.name).join(", "));
+  assert.ok(!/A debt in|The missing|The lights under/.test(settlement.hook.title));
+  assert.ok(!/A debt|The collector|The party|A reward/.test(settlement.hook.body));
+  assert.ok(settlement.rumours.every((rumour) => !/Something has been|A rider came/.test(rumour.text)));
+  assert.match(settlement.layoutDescription, /leží na obou březích řeky/);
+  assert.equal(generateSettlement({ ...input, language: "english" }).name, input.name);
+});
+
 const dm = createUser("dm", "x");
 const campaign = createCampaign(dm.id, { title: "T", description: "", theme: "", maxPlayers: 4, startingLevel: 3, difficulty: "normal" });
 const place = insertKnownLocation({ campaignId: campaign.id, name: "Thornhollow", layoutDescription: "" });
