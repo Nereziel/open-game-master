@@ -7,9 +7,12 @@ import { CZECH_RULE_NOTES } from "./czech-rule-extensions";
 import { CZECH_SPELL_NOTES } from "./czech-spell-notes";
 import { CZECH_SPELL_NOTES_2 } from "./czech-spell-notes-2";
 import { CZECH_SPELL_NOTES_3 } from "./czech-spell-notes-3";
+import { CZECH_SPELL_NOTES_4 } from "./czech-spell-notes-4";
 import { CZECH_MONSTER_NOTES, CZECH_ITEM_NOTES } from "./czech-bestiary-items";
 import { CZECH_MONSTER_NOTES_2, CZECH_ITEM_NOTES_2 } from "./czech-bestiary-items-2";
 import { CZECH_MONSTER_NOTES_3, CZECH_ITEM_NOTES_3 } from "./czech-bestiary-items-3";
+import { CZECH_MONSTER_NOTES_4 } from "./czech-monster-notes-4";
+import { CZECH_CLASS_NOTES, CZECH_RACE_NOTES } from "./czech-character-notes";
 import { CZECH_ABILITIES, CZECH_CLASSES, CZECH_SKILLS, czechSrdItemMeta, czechSrdMonsterMeta, czechSrdSpellGroup, czechSrdSpellMeta, czechSrdTitle } from "./czech-terms";
 
 const CHAPTERS: Record<string, string> = {
@@ -178,17 +181,20 @@ export function czechCompanionBook(english: RulebookData): RulebookData {
       blurb: BLURBS[chapter.id] ?? chapter.blurb,
     })),
     pages: english.pages.map((page) => {
+      const kindNote = page.kind === "spell"
+        ? CZECH_SPELL_NOTES[page.title] ?? CZECH_SPELL_NOTES_2[page.title] ?? CZECH_SPELL_NOTES_3[page.title] ?? CZECH_SPELL_NOTES_4[page.title]
+        : page.kind === "monster"
+          ? CZECH_MONSTER_NOTES[page.title] ?? CZECH_MONSTER_NOTES_2[page.title] ?? CZECH_MONSTER_NOTES_3[page.title] ?? CZECH_MONSTER_NOTES_4[page.title]
+          : page.kind === "item"
+            ? CZECH_ITEM_NOTES[page.title] ?? CZECH_ITEM_NOTES_2[page.title] ?? CZECH_ITEM_NOTES_3[page.title]
+            : page.kind === "class" ? CZECH_CLASS_NOTES[page.title]
+            : page.kind === "race" ? CZECH_RACE_NOTES[page.title]
+            : undefined;
       const note = page.id === "using-ability-scores"
         ? `${NOTES[page.id]}\n\n${SKILLS_REFERENCE}`
         : page.id === "beyond-1st-level"
           ? `${NOTES[page.id]}\n\n${CLASSES_REFERENCE}`
-          : page.kind === "spell" && (CZECH_SPELL_NOTES[page.title] ?? CZECH_SPELL_NOTES_2[page.title] ?? CZECH_SPELL_NOTES_3[page.title])
-            ? CZECH_SPELL_NOTES[page.title] ?? CZECH_SPELL_NOTES_2[page.title] ?? CZECH_SPELL_NOTES_3[page.title]
-            : page.kind === "monster" && (CZECH_MONSTER_NOTES[page.title] ?? CZECH_MONSTER_NOTES_2[page.title] ?? CZECH_MONSTER_NOTES_3[page.title])
-              ? CZECH_MONSTER_NOTES[page.title] ?? CZECH_MONSTER_NOTES_2[page.title] ?? CZECH_MONSTER_NOTES_3[page.title]
-              : page.kind === "item" && (CZECH_ITEM_NOTES[page.title] ?? CZECH_ITEM_NOTES_2[page.title] ?? CZECH_ITEM_NOTES_3[page.title])
-                ? CZECH_ITEM_NOTES[page.title] ?? CZECH_ITEM_NOTES_2[page.title] ?? CZECH_ITEM_NOTES_3[page.title]
-                : NOTES[page.id] ?? CZECH_RULE_NOTES[page.id];
+          : kindNote ?? NOTES[page.id] ?? CZECH_RULE_NOTES[page.id];
       const title = PAGES[page.id] ?? czechSrdTitle(page.title, page.kind);
       const meta = page.meta && page.kind === "spell" ? czechSrdSpellMeta(page.meta)
         : page.meta && page.kind === "monster" ? czechSrdMonsterMeta(page.meta)
@@ -201,7 +207,7 @@ export function czechCompanionBook(english: RulebookData): RulebookData {
         ...(page.kind === "spell" && page.group ? { group: czechSrdSpellGroup(page.group) } : {}),
         ...(note
           ? {
-              md: `## ${page.kind === "spell" ? "Český popis kouzla" : page.kind === "monster" ? "Český přehled nestvůry" : page.kind === "item" ? "Český přehled předmětu" : "Český přehled pravidel"}
+              md: `## ${page.kind === "spell" ? "Český popis kouzla" : page.kind === "monster" ? "Český přehled nestvůry" : page.kind === "item" ? "Český přehled předmětu" : page.kind === "class" ? "Český přehled povolání" : page.kind === "race" ? "Český přehled rasy" : "Český přehled pravidel"}
 
 ${note}
 
