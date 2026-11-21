@@ -19,22 +19,22 @@ export const CZECH_ABILITIES: Readonly<Record<string, string>> = {
 
 export const CZECH_SKILLS: Readonly<Record<string, string>> = {
   Acrobatics: "Akrobacie",
-  "Animal Handling": "Zacházení se zvířaty",
-  Arcana: "Magie",
+  "Animal Handling": "Ovládání zvířat",
+  Arcana: "Mystika",
   Athletics: "Atletika",
   Deception: "Klamání",
   History: "Historie",
-  Insight: "Odhad",
+  Insight: "Vhled",
   Intimidation: "Zastrašování",
   Investigation: "Pátrání",
   Medicine: "Lékařství",
   Nature: "Příroda",
   Perception: "Vnímání",
-  Performance: "Vystupování",
+  Performance: "Umění",
   Persuasion: "Přesvědčování",
   Religion: "Náboženství",
-  "Sleight of Hand": "Obratnost rukou",
-  Stealth: "Plížení",
+  "Sleight of Hand": "Čachry",
+  Stealth: "Nenápadnost",
   Survival: "Přežití",
 };
 
