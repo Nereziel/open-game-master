@@ -19,6 +19,7 @@ import { isTack, onMount } from "@/lib/srd/tack";
 import { oneOfKind, wornButIdle } from "@/lib/srd/wear-slots";
 import { magicItemBonus, rowName, srdNameWithBonus } from "@/lib/srd/item-row";
 import { backgroundFeatureName, classFeatureName, contentName, speciesTraitName } from "@/lib/content/names";
+import { languageLabel } from "@/lib/content/languages-cs";
 import { matchWeapon } from "@/lib/srd/weapons";
 import { cardArtwork } from "@/lib/battlemap/card-art";
 import { ITEM_CATEGORY_LABEL, itemCategory, itemToneStyle, type CategoryItem } from "@/lib/srd/item-category-logic";
@@ -270,6 +271,7 @@ export function TrainingLines({
   conditional?: Array<{ skill: string; by: string; while: string; active: boolean }>;
 }) {
   const t = useT();
+  const locale = useLocale();
   const nice = (value: string) =>
     // A word's first letter, or the letter after a quote that opens one: never
     // the "s" after a possessive's apostrophe ("Alchemist'S Supplies").
@@ -284,7 +286,7 @@ export function TrainingLines({
     return title;
   };
   const rows: Array<[string, string[]]> = [
-    [t("Languages"), proficiencies.languages],
+    [t("Languages"), proficiencies.languages.map((language) => languageLabel(language, locale))],
     [t("Tools"), proficiencies.tools],
     [t("Armor"), proficiencies.armor],
     [t("Weapons", { context: "sheet.training.weapons" }), proficiencies.weapons],
