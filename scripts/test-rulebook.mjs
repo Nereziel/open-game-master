@@ -2598,19 +2598,19 @@ try {
   });
 
 
-  await test("second-level SRD spells 13–24 have complete Czech descriptions", async () => {
+  await test("second-level SRD spells 13–25 have complete Czech descriptions", async () => {
     const { CZECH_FULL_SPELLS_9 } = await import("../src/lib/rulebook/czech-full-spells-9.ts");
-    const expected = ["continual-flame","darkness","darkvision","detect-thoughts","enhance-ability","enlarge-reduce","enthrall","find-traps","flame-blade","flaming-sphere","gentle-repose","gust-of-wind"];
+    const expected = ["continual-flame","darkness","darkvision","detect-thoughts","enhance-ability","enlarge-reduce","enthrall","find-steed","find-traps","flame-blade","flaming-sphere","gentle-repose","gust-of-wind"];
     assert.deepEqual(Object.keys(CZECH_FULL_SPELLS_9), expected);
     const originals = rulebookPages("en").filter((page) =>
       page.kind === "spell" && page.meta?.startsWith("2nd-level"));
-    assert.deepEqual(originals.slice(12, 24).map((page) => page.id), expected);
+    assert.deepEqual(originals.slice(12, 25).map((page) => page.id), expected);
     function componentLetters(markdown, label) {
       const prefix = "**" + label + ":** ";
       return markdown.split("\n").find((line) => line.startsWith(prefix))
         ?.slice(prefix.length).match(/^[VSM, ]+/)?.[0].trim();
     }
-    for (const original of originals.slice(12, 24)) {
+    for (const original of originals.slice(12, 25)) {
       const translated = CZECH_FULL_SPELLS_9[original.id];
       const displayed = rulebookPage(original.id, "cs").page;
       assert.ok(translated?.length >= 220, "Missing spell: " + original.id);
@@ -2635,6 +2635,7 @@ try {
       "enhance-ability": ["Medvědí odolnost", "Býčí síla", "Kočičí ladnost", "Orlí nádhera", "Liščí vychytralost", "Soví moudrost", "2k6"],
       "enlarge-reduce": ["osminásobek", "jednu osminu", "1k4", "nejméně 1 zranění"],
       enthrall: ["imunní vůči zmámení", "Moudrosti (Vnímání)"],
+      "find-steed": ["válečný kůň", "Inteligence na 6", "1 míli", "telepaticky"],
       "find-traps": ["120 stop", "Neodhalíš přesnou polohu"],
       "flame-blade": ["3k6", "4. nebo vyšší"],
       "flaming-sphere": ["2k6", "30 stop", "10 stop", "20 stop"],
@@ -2645,13 +2646,13 @@ try {
   });
 
 
-  await test("second-level SRD spells 25–36 have complete Czech rules with preserved source fields", async () => {
+  await test("second-level SRD spells 26–37 have complete Czech rules with preserved source fields", async () => {
     const { CZECH_FULL_SPELLS_10 } = await import("../src/lib/rulebook/czech-full-spells-10.ts");
     const expected = ["heat-metal","hold-person","invisibility","knock","lesser-restoration","levitate","locate-animals-or-plants","locate-object","magic-mouth","magic-weapon","mirror-image","misty-step"];
     assert.deepEqual(Object.keys(CZECH_FULL_SPELLS_10), expected);
     const originals = rulebookPages("en").filter((page) =>
       page.kind === "spell" && page.meta?.startsWith("2nd-level"));
-    assert.deepEqual(originals.slice(24, 36).map((page) => page.id), expected,
+    assert.deepEqual(originals.slice(25, 37).map((page) => page.id), expected,
       "Second-level spell translations must keep SRD source order");
     function getField(markdown, label) {
       const prefix = "**" + label + ":** ";
@@ -2668,7 +2669,7 @@ try {
       "Concentration, up to 10 minutes": "Soustředění, až 10 minut",
       "Concentration, up to 1 hour": "Soustředění, až 1 hodina",
     };
-    for (const original of originals.slice(24, 36)) {
+    for (const original of originals.slice(25, 37)) {
       const text = CZECH_FULL_SPELLS_10[original.id];
       const localized = rulebookPage(original.id, "cs").page;
       assert.ok(text && text.length >= 200, "Full spell text missing: " + original.id);
@@ -2715,6 +2716,96 @@ try {
       "misty-step": ["1 bonusová akce", "30 stop", "neobsazené místo"],
     })) {
       for (const needle of expected) assert.ok(CZECH_FULL_SPELLS_10[id].includes(needle), "Missing detail: " + id + "/" + needle);
+    }
+  });
+
+
+  await test("all 54 second-level SRD spells have full Czech descriptions and retained English originals", async () => {
+    const [{ CZECH_FULL_SPELLS_8 }, { CZECH_FULL_SPELLS_9 }, { CZECH_FULL_SPELLS_10 }, { CZECH_FULL_SPELLS_11 }] = await Promise.all([
+      import("../src/lib/rulebook/czech-full-spells-8.ts"),
+      import("../src/lib/rulebook/czech-full-spells-9.ts"),
+      import("../src/lib/rulebook/czech-full-spells-10.ts"),
+      import("../src/lib/rulebook/czech-full-spells-11.ts"),
+    ]);
+    const batches = [CZECH_FULL_SPELLS_8, CZECH_FULL_SPELLS_9, CZECH_FULL_SPELLS_10, CZECH_FULL_SPELLS_11];
+    assert.deepEqual(batches.map((batch) => Object.keys(batch).length), [12, 13, 12, 17]);
+    const ids = batches.flatMap((batch) => Object.keys(batch));
+    assert.equal(new Set(ids).size, 54, "A second-level spell was duplicated");
+    const originals = rulebookPages("en").filter((page) =>
+      page.kind === "spell" && page.meta?.startsWith("2nd-level"));
+    assert.equal(originals.length, 54, "Unexpected 2nd-level source spell count");
+    assert.deepEqual(ids, originals.map((page) => page.id), "Missing or out-of-order SRD second-level spell");
+    const all = Object.assign({}, ...batches);
+    function field(markdown, label) {
+      const prefix = "**" + label + ":** ";
+      return markdown.split("\n").find((line) => line.startsWith(prefix))?.slice(prefix.length);
+    }
+    const ranges = {
+      Touch: "Dotyk", Self: "Sesilatel",
+      "30 feet": "30 stop", "60 feet": "60 stop", "120 feet": "120 stop",
+      "150 feet": "150 stop",
+    };
+    const times = {
+      "1 action": "1 akce", "1 bonus action": "1 bonusová akce",
+      "1 minute": "1 minuta", "10 minutes": "10 minut",
+    };
+    const durations = {
+      Instantaneous: "Ihned", "1 minute": "1 minuta", "10 minutes": "10 minut",
+      "1 hour": "1 hodina", "8 hours": "8 hodin",
+      "Concentration, up to 1 minute": "Soustředění, až 1 minuta",
+      "Concentration, up to 10 minutes": "Soustředění, až 10 minut",
+      "Concentration, up to 1 hour": "Soustředění, až 1 hodina",
+      "Concentration, up to 8 hours": "Soustředění, až 8 hodin",
+      "Until dispelled": "Do rozptýlení",
+    };
+    for (const original of originals) {
+      const full = all[original.id];
+      const localized = rulebookPage(original.id, "cs").page;
+      assert.ok(full?.length >= 190, "Full Czech spell description absent: " + original.id);
+      assert.equal(localized.id, original.id);
+      assert.equal(localized.title, CZECH_SPELLS[original.title], "Wrong established spell name: " + original.id);
+      assert.equal(localized.originalMeta, original.meta);
+      assert.ok(localized.md.includes(full), "Czech reader missing complete spell: " + original.id);
+      assert.ok(localized.md.endsWith(original.md), "Canonical English spell changed: " + original.id);
+      for (const label of ["Doba sesílání", "Dosah", "Složky", "Trvání"])
+        assert.ok(field(full, label), "Missing Czech spell field: " + original.id + "/" + label);
+      const originalComponents = field(original.md, "Components")?.match(/^[VSM, ]+/)?.[0]?.trim();
+      assert.ok(originalComponents, "Original component letters unavailable: " + original.id);
+      assert.equal(field(full, "Složky")?.match(/^[VSM, ]+/)?.[0]?.trim(), originalComponents,
+        "Spell component letters mismatch: " + original.id);
+      const time = field(original.md, "Casting Time");
+      if (times[time]) assert.equal(field(full, "Doba sesílání"), times[time], "Casting time mismatch: " + original.id);
+      const range = field(original.md, "Range");
+      if (ranges[range]) assert.ok(field(full, "Dosah").startsWith(ranges[range]), "Range mismatch: " + original.id);
+      const duration = field(original.md, "Duration")?.replace(/\.$/, "");
+      if (durations[duration]) assert.ok(field(full, "Trvání").startsWith(durations[duration]), "Duration mismatch: " + original.id);
+      for (const [, count, die] of original.md.matchAll(/\b(\d+)d(\d+)\b/g))
+        assert.ok(full.includes(count + "k" + die), "Missing original dice: " + original.id + "/" + count + "k" + die);
+      const englishRitual = /\*2nd-level [^\n]*\(ritual\)\*/.test(original.md);
+      if (englishRitual) assert.ok(full.includes("(rituál)"), "Ritual not marked: " + original.id);
+    }
+    for (const [id, needles] of Object.entries({
+      "find-steed": ["válečný kůň", "Inteligence na 6", "telepaticky", "1 míli"],
+      moonbeam: ["2k10", "1k10", "40 stop", "nevýhodu", "60 stop"],
+      "pass-without-trace": ["+10", "Nenápadnosti", "nelze stopovat"],
+      "prayer-of-healing": ["šest tvorů", "2k8", "1k8", "10 minut"],
+      "protection-from-poison": ["jeden náhodně", "výhodu", "odolnost"],
+      "ray-of-enfeeblement": ["poloviční zranění", "Sílu", "Odolnost"],
+      "rope-trick": ["osm tvorů", "60 stop", "Útoky ani kouzla", "1 hodina"],
+      "scorching-ray": ["tři ohnivé paprsky", "2k6", "jeden další paprsek"],
+      "see-invisibility": ["neviditelné tvory", "Éterické sféry"],
+      shatter: ["3k8", "1k8", "anorganického", "Nemagické předměty"],
+      silence: ["(rituál)", "20 stop", "verbální složku", "ohlušení"],
+      "spider-climb": ["po stropech", "rychlost šplhání"],
+      "spike-growth": ["150 stop", "2k4", "5 stop", "Vnímání"],
+      "spiritual-weapon": ["1k8", "20 stop", "bonusovou akcí", "dvě celé úrovně"],
+      suggestion: ["jedné či dvou větách", "8 hodin", "Moudrost", "zranění"],
+      "warding-bond": ["50 zl", "bonus +1", "všem druhům zranění", "60 stop"],
+      web: ["20 stop", "5 stop", "2k4", "zadržený", "Síly"],
+      "zone-of-truth": ["15 stop", "Charisma", "odmítnout odpovídat"],
+    })) {
+      for (const needle of needles)
+        assert.ok(all[id].includes(needle), "Missing second-level spell rule: " + id + "/" + needle);
     }
   });
 
