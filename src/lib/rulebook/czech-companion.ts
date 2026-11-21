@@ -12,6 +12,10 @@ import { CZECH_SPELL_NOTES_5 } from "./czech-spell-notes-5";
 import { CZECH_SPELL_NOTES_6 } from "./czech-spell-notes-6";
 import { CZECH_SPELL_NOTES_6A } from "./czech-spell-notes-6a";
 import { CZECH_SPELL_NOTES_6B } from "./czech-spell-notes-6b";
+import { CZECH_SPELL_NOTES_7A } from "./czech-spell-notes-7a";
+import { CZECH_SPELL_NOTES_7B } from "./czech-spell-notes-7b";
+import { CZECH_SPELL_NOTES_7C } from "./czech-spell-notes-7c";
+import { CZECH_SPELL_NOTES_7D } from "./czech-spell-notes-7d";
 import { CZECH_MONSTER_NOTES, CZECH_ITEM_NOTES } from "./czech-bestiary-items";
 import { CZECH_MONSTER_NOTES_2, CZECH_ITEM_NOTES_2 } from "./czech-bestiary-items-2";
 import { CZECH_MONSTER_NOTES_3, CZECH_ITEM_NOTES_3 } from "./czech-bestiary-items-3";
@@ -187,7 +191,7 @@ export function czechCompanionBook(english: RulebookData): RulebookData {
     })),
     pages: english.pages.map((page) => {
       const kindNote = page.kind === "spell"
-        ? CZECH_SPELL_NOTES[page.title] ?? CZECH_SPELL_NOTES_2[page.title] ?? CZECH_SPELL_NOTES_3[page.title] ?? CZECH_SPELL_NOTES_4[page.title] ?? CZECH_SPELL_NOTES_5[page.title] ?? CZECH_SPELL_NOTES_6[page.title] ?? CZECH_SPELL_NOTES_6A[page.title] ?? CZECH_SPELL_NOTES_6B[page.title]
+        ? CZECH_SPELL_NOTES[page.title] ?? CZECH_SPELL_NOTES_2[page.title] ?? CZECH_SPELL_NOTES_3[page.title] ?? CZECH_SPELL_NOTES_4[page.title] ?? CZECH_SPELL_NOTES_5[page.title] ?? CZECH_SPELL_NOTES_6[page.title] ?? CZECH_SPELL_NOTES_6A[page.title] ?? CZECH_SPELL_NOTES_6B[page.title] ?? CZECH_SPELL_NOTES_7A[page.title] ?? CZECH_SPELL_NOTES_7B[page.title] ?? CZECH_SPELL_NOTES_7C[page.title] ?? CZECH_SPELL_NOTES_7D[page.title]
         : page.kind === "monster"
           ? CZECH_MONSTER_NOTES[page.title] ?? CZECH_MONSTER_NOTES_2[page.title] ?? CZECH_MONSTER_NOTES_3[page.title] ?? CZECH_MONSTER_NOTES_4[page.title] ?? CZECH_MONSTER_NOTES_5[page.title]
           : page.kind === "item"
