@@ -18,7 +18,7 @@ import { BUNDLED_PERSONA, GENERAL_PERSONA } from "../backgrounds/persona-data";
 import { SRD_BACKGROUNDS, skillLabel } from "../srd";
 import { STANDARD_LANGUAGES } from "../content/mechanics";
 import { languageLabel } from "../content/languages-cs";
-import { backgroundInfoText } from "../app/characters/builder/usePickerGroups";
+import { backgroundInfoText } from "../../app/characters/builder/usePickerGroups";
 import { CUSTOM_BACKGROUNDS, describeBackgroundFeature } from "../backgrounds";
 import { resourceDisplayName, resourceGuidance } from "../srd/class-resources-fr";
 import { resourceName } from "../srd/class-resources";
@@ -82,7 +82,7 @@ describe("Czech localization", () => {
     expect(acolyte?.featureDesc).toBeTruthy();
     expect(acolyte?.blurb).toBeTruthy();
     if (!acolyte?.featureDesc || !acolyte.blurb) throw new Error("Missing Acolyte source descriptions");
-    const shown = backgroundInfoText(acolyte, "cs", (text) => translate("cs", text));
+    const shown = backgroundInfoText(acolyte, "cs", (text: string) => translate("cs", text));
     expect(shown).toContain("Útočiště věrných");
     expect(shown).toContain("Schopnost:");
     expect(shown).not.toContain("Feature:");
