@@ -1375,6 +1375,83 @@ try {
     assert.ok(expenses.includes("**Tabulka – Jídlo, pití a ubytování**"));
   });
 
+  await test("Czech spell lists preserve every SRD spell and its class and spell level", async () => {
+    const { CZECH_FULL_RULES_13 } = await import("../src/lib/rulebook/czech-full-rules-13.ts");
+    const { CZECH_SPELLS } = await import("../src/lib/rulebook/czech-terms.ts");
+    assert.deepEqual(Object.keys(CZECH_FULL_RULES_13), ["spell-lists"]);
+    const source = rulebookPage("spell-lists", "en")?.page;
+    const localized = rulebookPage("spell-lists", "cs")?.page;
+    assert.ok(source && localized);
+    assert.equal(localized.id, source.id);
+    assert.equal(localized.kind, "rules");
+    const original = source.md.split("\n");
+    const translated = CZECH_FULL_RULES_13["spell-lists"].split("\n");
+    assert.equal(translated.length, original.length, "Missing lines in Czech spell lists");
+    let items = 0, headings = 0, levels = 0;
+    for (let i = 0; i < original.length; i++) {
+      const line = original[i], cz = translated[i];
+      if (line.startsWith("- ")) {
+        const name = line.slice(2).trim();
+        assert.ok(CZECH_SPELLS[name], `Unknown Czech spell name: ${name}`);
+        assert.equal(cz, `- ${CZECH_SPELLS[name]}`, `Wrong class/level spell at line ${i + 1}`);
+        items++;
+      } else if (line.startsWith("## ")) {
+        assert.ok(cz.startsWith("## Kouzla povolání "), `Untranslated class heading: ${cz}`);
+        headings++;
+      } else if (line.startsWith("#### ")) {
+        assert.ok(cz.startsWith("#### ") && (cz.includes("úroveň") || cz.includes("Triky")),
+          `Untranslated spell level: ${cz}`);
+        levels++;
+      } else {
+        assert.equal(cz, line, `Nonspell content changed at line ${i + 1}`);
+      }
+    }
+    assert.equal(items, 778);
+    assert.equal(headings, 8);
+    assert.equal(levels, 70);
+    assert.ok(localized.md.includes("## Úplné znění pravidel v češtině"));
+    assert.ok(localized.md.includes(CZECH_FULL_RULES_13["spell-lists"]));
+    assert.ok(localized.md.endsWith(source.md), "English spell lists altered");
+  });
+
+  await test("Czech multiverse pantheons preserve all 67 canonical deities and alignments", async () => {
+    const { CZECH_FULL_RULES_14 } = await import("../src/lib/rulebook/czech-full-rules-14.ts");
+    assert.deepEqual(Object.keys(CZECH_FULL_RULES_14), ["gods-of-the-multiverse"]);
+    const source = rulebookPage("gods-of-the-multiverse", "en")?.page;
+    const localized = rulebookPage("gods-of-the-multiverse", "cs")?.page;
+    assert.ok(source && localized);
+    const original = source.md.split("\n");
+    const translated = CZECH_FULL_RULES_14["gods-of-the-multiverse"];
+    const sourceDeities = original.filter((line) => /^\| (?:The Daghdha|[A-Za-z]+)/.test(line))
+      .map((line) => line.split("|")[1].trim())
+      .filter((cell) => cell.includes(", god ") || cell.includes(", goddess "));
+    assert.equal(sourceDeities.length, 67);
+    const translatedDeities = translated.split("\n").filter(
+      (line) => /^\| (?:The Daghdha|[A-Za-z]+)/.test(line) &&
+        (line.includes(", bůh ") || line.includes(", bohyně ")),
+    ).map((line) => line.split("|")[1].trim());
+    assert.equal(translatedDeities.length, 67);
+    for (let i = 0; i < 67; i++) {
+      const name = sourceDeities[i].split(",")[0];
+      assert.ok(translatedDeities[i].startsWith(name + ", "), `Deity order/identity changed: ${name}`);
+    }
+    for (const heading of ["Keltský panteon", "Řecký panteon", "Egyptský panteon",
+      "Severský panteon", "Keltská božstva", "Řecká božstva",
+      "Egyptská božstva", "Severská božstva"]) {
+      assert.ok(translated.includes(heading), `Missing translated pantheon: ${heading}`);
+    }
+    assert.ok(translated.includes("| The Daghdha, bůh počasí a úrody | ChD | Příroda, Šalba |"));
+    assert.ok(translated.includes("| Re-Horakhty, bůh slunce a vládce bohů | ZD | Život, Světlo |"));
+    assert.ok(localized.md.includes("## Úplné znění pravidel v češtině"));
+    assert.ok(localized.md.includes(translated));
+    assert.ok(localized.md.endsWith(source.md), "Original English deity tables changed");
+    const batches = await Promise.all(Array.from({ length: 14 }, (_, i) =>
+      import(`../src/lib/rulebook/czech-full-rules-${i + 1}.ts`)));
+    const ids = batches.flatMap((mod, i) => Object.keys(mod[`CZECH_FULL_RULES_${i + 1}`]));
+    assert.equal(ids.length, 28);
+    assert.equal(new Set(ids).size, 28, "Duplicate SRD rules page with full Czech text");
+  });
+
   // ---- the routes ----
   const { createUser } = await import("../src/lib/db/users.ts");
   const { mintSession } = await import("../src/lib/auth.ts");
