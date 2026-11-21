@@ -24,6 +24,26 @@ const CHAPTERS: Record<string, string> = {
   appendix: "Dodatky",
 };
 
+const BLURBS: Record<string, string> = {
+  races: "Rasy a jejich vlastnosti pro tvorbu postavy.",
+  classes: "Povolání, schopnosti a postup na vyšší úrovně.",
+  "beyond-1st-level": "Zkušenosti, postup na úroveň a kombinování povolání.",
+  "personality-and-background": "Osobnost, přesvědčení, inspirace a zázemí postavy.",
+  equipment: "Zbraně, zbroje, výbava, ceny a hmotnost.",
+  feats: "Volitelné odbornosti a jejich předpoklady.",
+  "using-ability-scores": "Ověření vlastností, výhoda, nevýhoda a záchranné hody.",
+  adventuring: "Pohyb, cestování, světlo, odpočinek a prostředí.",
+  combat: "Iniciativa, akce, útoky, zranění a umírání.",
+  spellcasting: "Sesílání kouzel, pozice, složky a soustředění.",
+  spells: "Seznam kouzel a jejich přesné účinky.",
+  "running-the-game": "Pokyny pro Pána jeskyně a zvláštní situace.",
+  "magic-items": "Kouzelné předměty, jejich schopnosti a omezení.",
+  monsters: "Nestvůry pro boj a dobrodružství.",
+  creatures: "Další tvorové a pomocné statistiky.",
+  npcs: "Statistiky nehráčských postav.",
+  appendix: "Doplňující informace a licence.",
+};
+
 const PAGES: Record<string, string> = {
   "racial-traits": "Rasové vlastnosti",
   "beyond-1st-level": "Postup na vyšší úrovně",
@@ -128,10 +148,12 @@ export function czechCompanionBook(english: RulebookData): RulebookData {
     parts: english.parts.map((part) => ({
       ...part,
       title: part.id === "players" ? "Hráči" : part.id === "dungeon-master" ? "Pán jeskyně" : part.id === "monsters" ? "Nestvůry" : part.title,
+      blurb: part.id === "players" ? "Tvorba a hraní postav, vlastnosti, boj a kouzla." : part.id === "dungeon-master" ? "Vedení hry a kouzelné předměty." : part.id === "monsters" ? "Nestvůry a další protivníci." : part.blurb,
     })),
     chapters: english.chapters.map((chapter) => ({
       ...chapter,
       title: CHAPTERS[chapter.id] ?? chapter.title,
+      blurb: BLURBS[chapter.id] ?? chapter.blurb,
     })),
     pages: english.pages.map((page) => {
       const note = NOTES[page.id];
