@@ -154,6 +154,23 @@ export const CZECH_MONSTERS: Readonly<Record<string, string>> = {
   Zombie: "Zombie",
 };
 
+export const CZECH_SPELLS: Readonly<Record<string, string>> = {
+  "Antimagic Field": "Antimagické pole",
+  "Antipathy/Sympathy": "Antipatie nebo sympatie",
+  "Astral Projection": "Astrální projekce",
+  "Cure Wounds": "Zhoj zranění",
+  "Delayed Blast Fireball": "Časovaná ohnivá koule",
+  "Eldritch Blast": "Tajemný výšleh",
+  "Fire Shield": "Ohnivý štít",
+  Fireball: "Ohnivá koule",
+  "Healing Word": "Léčivé slovo",
+  "Magic Missile": "Magická střela",
+  "Mass Cure Wounds": "Hromadné zhojení zranění",
+  "Mass Healing Word": "Hromadné léčivé slovo",
+  Shield: "Štít",
+  "Shield of Faith": "Štít víry",
+};
+
 export const CZECH_RULE_TERMS: Readonly<Record<string, string>> = {
   "Armor Class": "Obranné číslo",
   "Ability Check": "Ověření vlastnosti",
@@ -177,6 +194,7 @@ const TITLES: Readonly<Record<string, Readonly<Record<string, string>>>> = {
   class: CZECH_CLASSES,
   race: CZECH_RACES,
   monster: CZECH_MONSTERS,
+  spell: CZECH_SPELLS,
 };
 
 // Titles are display-only. Kind prevents a name shared by a class and a
