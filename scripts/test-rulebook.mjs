@@ -1905,6 +1905,10 @@ try {
       assert.ok(translated.includes("### Schopnosti povolání"), "Class introduction not localized: " + id);
       assert.ok(translated.includes("#### Zdatnosti"), "Class proficiencies not localized: " + id);
       assert.ok(translated.includes("#### Počáteční vybavení"), "Class starting equipment not localized: " + id);
+      const sourceHeadings = (source.md.match(/^#{2,5} /gm) ?? []).length;
+      const translatedHeadings = (translated.match(/^#{2,5} /gm) ?? []).length;
+      assert.equal(translatedHeadings, sourceHeadings,
+        "A class feature, subclass feature or rules section was omitted: " + id);
       assert.ok(translated.includes("### Zvýšení hodnot vlastností"), "Ability score increase missing: " + id);
       assert.ok(translated.includes("**Tabulka – "), "Class progression table missing: " + id);
 
