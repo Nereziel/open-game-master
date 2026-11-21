@@ -85,7 +85,7 @@ export function IdentityStep({
             onChange={(event) => state.setName(event.target.value)}
             required
             maxLength={60}
-            placeholder={pack?.nameHints || "Thornwick Ashvale"}
+            placeholder={locale === "cs" ? "Radovan Záleský" : pack?.nameHints || "Thornwick Ashvale"}
             className={inputClass}
             aria-label={t("Name")}
           />
@@ -95,7 +95,7 @@ export function IdentityStep({
             type="button"
             onClick={() =>
               state.setName(
-                rollHeroName({ raceId: state.raceId, packNames: pack?.nameSeeds.people ?? [], current: state.name }),
+                rollHeroName({ raceId: state.raceId, packNames: pack?.nameSeeds.people ?? [], current: state.name, locale }),
               )
             }
             aria-label={t("Roll a name")}
