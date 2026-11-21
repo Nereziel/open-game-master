@@ -88,6 +88,12 @@ interní hodnoty a názvy MCP nástrojů se **nesmějí překladem měnit**.
 Český slovník dovedností je v `src/lib/rulebook/czech-terms.ts`.
 Regresní test v `scripts/test-rulebook.mjs` ověřuje všech 18 názvů.
 
+Zavedené české názvy povolání a schopností se používají pouze jako
+**názvosloví**. Úplné popisy povolání jsou nově napsány na základě
+anglického SRD 5.1 pod licencí CC BY 4.0; česká komunitní vysvětlení
+a odstavce nejsou kopírovány. Anglické zdroje zůstávají v čtečce pod
+českým textem a identifikátory povolání zůstávají nezměněné.
+
 ## Stav
 
 - Stručné české přehledy: 932/933 kanonických stránek (výjimkou je atribuce).
@@ -106,7 +112,15 @@ Regresní test v `scripts/test-rulebook.mjs` ověřuje všech 18 názvů.
 - Také kapitola **Božstva mnohovesmíru**: všechny úvodní popisy i **67 božstev**
   keltského, řeckého, egyptského a severského panteonu, včetně všech tabulkových hodnot.
 - Dokončené základní kapitoly zahrnují také **Dobrodružství**, **Dobrodružné vybavení**, **Používání vlastností**, **Boj** a **Statistiky nestvůr**, čímž je uzavřeno všech **35/35** nelegálních pravidlových kapitol.
-- Úplné české texty jednotlivých kouzel, statistiky nestvůr, předmětů, ras a povolání:
-  zbývá dopracovat; přehledy nejsou totéž co plné překlady.
+- Úplné české texty **všech 12 povolání SRD 5.1 (2014)** jsou nyní v
+  `src/lib/rulebook/czech-full-classes-1.ts` až `czech-full-classes-12.ts`:
+  obsahují zdatnosti, počáteční vybavení, 20 úrovní, kouzelné pozice, všechny
+  vypsané schopnosti a **jednu úplně popsanou podtřídu na povolání**.
+- U druida je zahrnuto **7 tabulek kouzel krajin**, u čaroděje všech
+  **8 možností Metamagie**, u černokněžníka všech **32 mystických invokací**
+  a u kouzelníka pravidla knihy kouzel.
+- Úplné české texty jednotlivých kouzel, statbloků nestvůr, magických
+  předmětů a ras je stále nutné dopracovat. **Další podtřídy mimo výchozí
+  SRD 5.1** nejsou součástí této dokončené dávky povolání.
 - Testy ověřují dostupnost úplných textů a zachování originálu, ale před
   sloučením je třeba samostatně spustit build a test suite.
