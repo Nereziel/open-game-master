@@ -553,12 +553,49 @@ Zbývá **119 kouzel úrovní 5–9**.
 Podle dohody se na Draft PR **nespouštěl build ani testovací sada**;
 regresní kontroly jsou pouze připravené v repozitáři.
 
+## První úplná česká kouzla 5. úrovně (21. 11. 2026)
+
+Ve zdrojovém anglickém SRD 5.1 je **37 samostatných kouzel 5. úrovně**.
+Vyhledávání původně obsahovalo také dva zásahy z nižších úrovní
+(`Conjure Animals`, `Dominate Beast`), protože popisují sesílání na
+vyšší pozici; nebyly započítány jako kouzla 5. úrovně.
+
+Nový `src/lib/rulebook/czech-full-spells-18.ts` obsahuje první
+**12/37 úplných nezávislých českých popisů**: Oživlé předměty,
+Ochranná sféra proti životu, Bigbyho ruka, Probuzení,
+Oblak smrti, Rozmluva s božstvem, Spojení s přírodou,
+Kužel chladu, Vyvolej elementála, Mluva sfér, Nákaza a Stvoření.
+
+Překlady mají úplnou tabulku statistik Oživlých předmětů,
+všechny čtyři režimy Bigbyho ruky, pravidla ztráty soustředění
+u vyvolaného elementála, šest nemocí u Nákazy, dva rituály
+Rozmluva s božstvem / Spojení s přírodou a další rituál
+Mluva sfér, i tabulku trvání materiálů u Stvoření.
+Anglická ID, metadata, celé původní anglické znění a
+herní/MCP rozhraní zůstávají nedotčené.
+
+Nové texty jsou připojené do české čtečky v
+`src/lib/rulebook/czech-companion.ts`. Regresní test v
+`scripts/test-rulebook.mjs` kontroluje 12 ID v pořadí, české
+názvy, čtyři údaje sesílání, komponenty, kostky, rituály,
+hlavní mechaniky a zachování celého původního textu;
+u Nákazy zohledňuje chybný singulár `Component` v originálu.
+
+**Stav: 212/319 úplných českých textů kouzel**;
+**12/37 kouzel 5. úrovně**, zbývá 25 této úrovně a
+**107 kouzel celkem**. Texty jsou původní překlady anglického
+SRD 5.1 (CC BY 4.0); z komunitního českého překladu
+jsou převzaty pouze ustálené názvy.
+
+Na Draft PR nebyly podle dohody spuštěny build ani testovací
+sada; kontroly jsou připravené k pozdějšímu spuštění.
+
 ## Stav
 
 - Stručné české přehledy: 932/933 kanonických stránek (výjimkou je atribuce).
 - Úplné české znění pravidlových stránek: **35/35 obsahových pravidlových stránek**.
 - Úplné české překlady jednotlivých ras: **9/9 rasových stránek SRD 5.1**, včetně všech podras obsažených ve zdrojovém SRD.
-- Úplné české popisy jednotlivých kouzel: **200/319** – všech **24/24 triků** a všech **49/49 kouzel 1. úrovně** a všech **54/54 kouzel 2. úrovně** a všech **42/42 kouzel 3. úrovně** a všech **31/31 kouzel 4. úrovně**.
+- Úplné české popisy jednotlivých kouzel: **212/319** – všech **24/24 triků** a všech **49/49 kouzel 1. úrovně** a všech **54/54 kouzel 2. úrovně** a všech **42/42 kouzel 3. úrovně** a všech **31/31 kouzel 4. úrovně** a prvních **12/37 kouzel 5. úrovně**.
 - Dříve dokončené kapitoly zahrnují **Stavy, Nemoci, Objekty, Artefakty** a další pravidla.
 - V další dávce jsou úplně přeloženy kapitoly **Jízdní zvířata a dopravní prostředky, Nástroje, Kouzelné předměty, Jedy a Inteligentní kouzelné předměty**.
 - Následující dávka přeložila celé kapitoly **Zbroje**, **Šílenství** a

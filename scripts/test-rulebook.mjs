@@ -3234,6 +3234,85 @@ try {
         assert.ok(fullTranslations[id].includes(marker), "Missing fourth-level rule: " + id + "/" + marker);
   });
 
+
+  await test("fifth-level SRD 5.1 spells 1–12 have full Czech descriptions, tables and preserved original pages", async () => {
+    const { CZECH_FULL_SPELLS_18 } = await import("../src/lib/rulebook/czech-full-spells-18.ts");
+    const expected = ["animate-objects","antilife-shell","arcane-hand","awaken","cloudkill","commune","commune-with-nature","cone-of-cold","conjure-elemental","contact-other-plane","contagion","creation"];
+    const originalSpells = rulebookPages("en").filter((page) =>
+      page.kind === "spell" && page.meta?.startsWith("5th-level"));
+    assert.equal(originalSpells.length, 37, "Fifth-level SRD sources changed");
+    assert.deepEqual(Object.keys(CZECH_FULL_SPELLS_18), expected);
+    assert.deepEqual(originalSpells.slice(0, 12).map((page) => page.id), expected,
+      "Spell IDs must follow canonical fifth-level source ordering");
+
+    function field(md, label) {
+      const prefix = "**" + label + ":** ";
+      return md.split("\n").find((line) => line.startsWith(prefix))?.slice(prefix.length);
+    }
+    const times = { "1 action": "1 akce", "1 minute": "1 minuta", "8 hours": "8 hodin" };
+    const ranges = {
+      Touch: "Dotyk", Self: "Sesilatel", "30 feet": "30 stop",
+      "90 feet": "90 stop", "120 feet": "120 stop",
+    };
+    const durations = {
+      Instantaneous: "Ihned", "1 minute": "1 minuta",
+      "7 days": "7 dní", Special: "Zvláštní",
+      "Concentration, up to 1 minute": "Soustředění, až 1 minuta",
+      "Concentration, up to 10 minutes": "Soustředění, až 10 minut",
+      "Concentration, up to 1 hour": "Soustředění, až 1 hodina",
+    };
+    for (const original of originalSpells.slice(0, 12)) {
+      const full = CZECH_FULL_SPELLS_18[original.id];
+      const page = rulebookPage(original.id, "cs").page;
+      assert.ok(full?.length >= 300, "Missing full fifth-level Czech spell: " + original.id);
+      assert.equal(page.id, original.id);
+      assert.equal(page.title, CZECH_SPELLS[original.title]);
+      assert.equal(page.originalMeta, original.meta);
+      assert.ok(page.md.includes("## Úplné znění pravidel v češtině"));
+      assert.ok(page.md.includes(full));
+      assert.ok(page.md.endsWith(original.md), "Original English SRD content changed: " + original.id);
+      for (const [en, cs] of [
+        ["Casting Time", "Doba sesílání"], ["Range", "Dosah"],
+        ["Duration", "Trvání"],
+      ]) assert.ok(field(original.md, en) && field(full, cs),
+        "Spell metadata missing: " + original.id + "/" + en);
+      // The upstream Contagion file uses the singular label "**Component:**".
+      const originalParts = field(original.md, "Components") ?? field(original.md, "Component");
+      const englishComponents = originalParts?.match(/^[VSM, ]+/)?.[0]?.trim();
+      const czechComponents = field(full, "Složky")?.match(/^[VSM, ]+/)?.[0]?.trim();
+      assert.ok(englishComponents, "Original spell components absent: " + original.id);
+      assert.equal(czechComponents, englishComponents, "Spell components changed: " + original.id);
+      const casting = field(original.md, "Casting Time");
+      if (times[casting]) assert.equal(field(full, "Doba sesílání"), times[casting]);
+      const range = field(original.md, "Range");
+      if (ranges[range])
+        assert.ok(field(full, "Dosah").startsWith(ranges[range]), "Spell range mismatch: " + original.id);
+      const duration = field(original.md, "Duration");
+      if (durations[duration])
+        assert.equal(field(full, "Trvání"), durations[duration], "Spell duration mismatch: " + original.id);
+      if (/^\*5th-level [^\n]*\(ritual\)\*/m.test(original.md))
+        assert.ok(full.includes("(rituál)"), "Ritual marker missing: " + original.id);
+      for (const [, count, sides] of original.md.matchAll(/\b(\d+)d(\d+)\b/g))
+        assert.ok(full.includes(count + "k" + sides), "Source dice absent: " + original.id);
+    }
+    for (const [id, needles] of Object.entries({
+      "animate-objects": ["500 stop", "20 | 18", "25 | 16", "40 | 13", "50 | 10", "80 | 10", "1k4", "1k8", "2k6", "2k10", "2k12", "slepovidění"],
+      "antilife-shell": ["10 stop", "nemrtvých a výtvorů", "střelnými zbraněmi", "kouzlo"],
+      "arcane-hand": ["OČ 20", "Sílu 26", "4k8", "2k6", "2k8", "poloviční kryt", "60 stop"],
+      awaken: ["1 000 zl", "Inteligenci 10", "30 dnů", "probuzený strom"],
+      cloudkill: ["5k8", "1k8", "20 stop", "10 stop", "zadržují dech"],
+      commune: ["(rituál)", "tři otázky", "25%", "nejasné"],
+      "commune-with-nature": ["(rituál)", "3 mil", "300 stop", "tři skutečnosti", "Budovy"],
+      "cone-of-cold": ["60 stop", "8k8", "1k8", "zmrzlou sochu"],
+      "conjure-elemental": ["nebezpečností nejvýše 5", "1 hodinu", "ztratíš soustředění", "nepřátelským"],
+      "contact-other-plane": ["(rituál)", "SO 15", "6k6", "pět otázek", "Vyšší navrácení"],
+      contagion: ["tři úspěchy", "tři neúspěchy", "Oslepující nemoc", "Špinavá horečka", "Hniloba masa", "Mozkový žár", "Záchvaty", "Slizký rozklad"],
+      creation: ["1 den", "12 hodin", "1 hodina", "10 minut", "1 minuta", "5 stop", "materiální složka"],
+    })) for (const needle of needles)
+      assert.ok(CZECH_FULL_SPELLS_18[id].includes(needle),
+        "Missing fifth-level rules: " + id + "/" + needle);
+  });
+
   // ---- the routes ----
   const { createUser } = await import("../src/lib/db/users.ts");
   const { mintSession } = await import("../src/lib/auth.ts");
