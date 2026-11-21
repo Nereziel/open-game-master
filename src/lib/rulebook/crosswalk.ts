@@ -137,7 +137,9 @@ function enTitleOf(id: string): string | undefined {
 
 export function crosswalkFor(page: Pick<RulebookPage, "id" | "kind" | "title">, locale: BookLocale = "en"): Crosswalk {
   const french = locale === "fr";
-  const walk = crosswalkEn(french ? { ...page, title: enTitleOf(page.id) ?? page.title } : page);
+  // The mechanics and workshop catalogs always use English canonical names;
+  // never feed Czech or French display titles into their lookup functions.
+  const walk = crosswalkEn(locale === "en" ? page : { ...page, title: enTitleOf(page.id) ?? page.title });
   if (!french) return walk;
   const fr = WHERE_FR[page.id];
   if (fr) return { ...walk, where: fr.where, ...(fr.template ? { template: fr.template } : {}) };
