@@ -5,7 +5,7 @@ export const CZECH_ITEM_NOTES_6: Readonly<Record<string, string>> = {
   "Potion of Water Breathing": "Lektvar umožní **jednu hodinu dýchat pod vodou**. Neuděluje automaticky rychlost plavání ani schopnost vidět v temných hlubinách.",
   "Restorative Ointment": "Dávka léčivé masti použitá jako akce **obnoví životy** a ukončí **otravu i nemoc**. Ve sklenici je několik dávek; každá se použitím spotřebuje.",
   "Ring of Animal Influence": "Prsten má náboje na kouzla **Přátelství zvířat, Strach** cílený na méně inteligentní zvířata a **Mluv se zvířaty**. Náboje se po úsvitu částečně obnovují.",
-  "Ring of Djinni Summoning": "Legendární prsten přivolá konkrétního **džina ze Sféra vzduchu**. Džin plní příkazy po omezenou dobu, dokud trvá soustředění; po návratu jej nelze znovu vyvolat po stanovený čas.",
+  "Ring of Djinni Summoning": "Legendární prsten přivolá konkrétního **džina ze Sféry vzduchu**. Džin plní příkazy po omezenou dobu, dokud trvá soustředění; po návratu jej nelze znovu vyvolat po stanovený čas.",
   "Ring of Elemental Command": "Legendární prsten je spjat s jednou **živelnou sférou**. Poskytuje výhody proti odpovídajícím elementálům a z nábojů umožňuje vyvolávat kouzla či zvláštní živelnou moc. Konkrétní schopnosti závisejí na typu prstenu.",
   "Ring of Evasion": "Pokud neuspěješ v **záchranném hodu na Obratnost**, můžeš reakcí utratit náboj prstenu a změnit neúspěch na úspěch. Náboje se obnovují za úsvitu.",
   "Ring of Feather Falling": "Při pádu nositel automaticky **klesá zpomaleně** a neutrpí zranění z pádu. Účinek funguje při nošení prstenu a nevyžaduje samostatné seslání kouzla.",
