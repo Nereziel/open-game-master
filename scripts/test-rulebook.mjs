@@ -3631,6 +3631,81 @@ try {
         assert.ok(translations[id].includes(marker), "Missing sixth-level rule: " + id + "/" + marker);
   });
 
+
+  await test("seventh-level SRD spells 1–12 have complete Czech text and preserve English originals", async () => {
+    const { CZECH_FULL_SPELLS_25 } = await import("../src/lib/rulebook/czech-full-spells-25.ts");
+    const expected = ["arcane-sword","conjure-celestial","delayed-blast-fireball","divine-word","etherealness","finger-of-death","fire-storm","forcecage","magnificent-mansion","mirage-arcane","plane-shift","prismatic-spray"];
+    const originals = rulebookPages("en").filter(page =>
+      page.kind === "spell" && page.meta?.startsWith("7th-level"));
+    assert.equal(originals.length, 20, "Expected 20 seventh-level SRD spells");
+    assert.deepEqual(Object.keys(CZECH_FULL_SPELLS_25), expected);
+    assert.deepEqual(originals.slice(0,12).map(page => page.id), expected,
+      "Seventh-level ID order must match canonical English SRD");
+
+    function field(md, name) {
+      const prefix = "**" + name + ":** ";
+      return md.split("\n").find(line => line.startsWith(prefix))?.slice(prefix.length);
+    }
+    const times = { "1 action":"1 akce", "1 bonus action":"1 bonusová akce",
+      "1 minute":"1 minuta", "10 minutes":"10 minut" };
+    const ranges = { "60 feet":"60 stop", "90 feet":"90 stop",
+      "100 feet":"100 stop", "150 feet":"150 stop", "300 feet":"300 stop",
+      Touch:"Dotyk", Self:"Sesilatel", Sight:"Dohled" };
+    const durations = { Instantaneous:"Ihned", "1 hour":"1 hodina",
+      "10 days":"10 dnů", "24 hours":"24 hodin", "Up to 8 hours":"Až 8 hodin",
+      "Concentration, up to 1 minute":"Soustředění, až 1 minuta",
+      "Concentration, up to 1 hour":"Soustředění, až 1 hodina" };
+    for (const original of originals.slice(0,12)) {
+      const full = CZECH_FULL_SPELLS_25[original.id];
+      const localized = rulebookPage(original.id, "cs").page;
+      assert.ok(full?.length >= 220, "Seventh-level Czech description absent: " + original.id);
+      assert.equal(localized.id, original.id);
+      assert.equal(localized.title, CZECH_SPELLS[original.title]);
+      assert.equal(localized.originalMeta, original.meta);
+      assert.ok(localized.md.includes("## Úplné znění pravidel v češtině"));
+      assert.ok(localized.md.includes(full), "Full Czech spell absent in reader: " + original.id);
+      assert.ok(localized.md.endsWith(original.md), "English spell text changed: " + original.id);
+      for (const [english, czech] of [
+        ["Casting Time","Doba sesílání"],["Range","Dosah"],
+        ["Components","Složky"],["Duration","Trvání"]
+      ]) {
+        assert.ok(field(original.md,english), "Missing original field: " + original.id+"/"+english);
+        assert.ok(field(full,czech), "Missing Czech field: " + original.id+"/"+czech);
+      }
+      assert.equal(field(full,"Složky").match(/^[VSM, ]+/)?.[0]?.trim(),
+        field(original.md,"Components").match(/^[VSM, ]+/)?.[0]?.trim(),
+        "Component letters changed: "+original.id);
+      const time = field(original.md,"Casting Time"),range = field(original.md,"Range"),
+        duration = field(original.md,"Duration");
+      if (times[time]) assert.equal(field(full,"Doba sesílání"),times[time],
+        "Casting time changed: "+original.id);
+      if (ranges[range]) assert.ok(field(full,"Dosah").startsWith(ranges[range]),
+        "Range changed: "+original.id);
+      if (durations[duration]) assert.equal(field(full,"Trvání"),durations[duration],
+        "Duration changed: "+original.id);
+      for (const [,number,sides] of original.md.matchAll(/\b(\d+)d(\d+)\b/g))
+        assert.ok(full.includes(number+"k"+sides), "Damage dice from original absent: "+original.id);
+    }
+    const checks = {
+      "arcane-sword":["250 zl","5 stop","3k10","20 stop","bonusovou akcí"],
+      "conjure-celestial":["nebezpečností 4","0 životů","iniciativu","9. úrovně","nebezpečností 5"],
+      "delayed-blast-fireball":["12k6","1k6","20 stop","40 stop","soustředění","Obratnost"],
+      "divine-word":["bonusová akce","50 životů","40 životů","30 životů","20 životů","24 hodin","Přání"],
+      etherealness:["8 hodin","60 stop","dvojnásobku","Éterické sféře","tři ochotné"],
+      "finger-of-death":["7k8 + 30","Odolnost","zombie","trvale","následujícího tahu"],
+      "fire-storm":["deseti krychlí","10 stop","7k10","rostliny","Obratnost"],
+      forcecage:["1 500 zl","20 stop","10 stop","1/2 palce","Charisma","Éterické sféry","Rozptyl magii"],
+      "magnificent-mansion":["300 stop","50 krychlí","100 osob","100 téměř","30 stop","24 hodin"],
+      "mirage-arcane":["čtvereční míle","10 dnů","hmatové","pravdivým viděním","fyzicky interagovat"],
+      "plane-shift":["250 zl","osm ochotných","sigilů","Charisma","náhodné místo"],
+      "prismatic-spray":["k8","10k6","Indigová","Fialová","třech úspěších","třech neúspěších","dvakrát","Moudrost"],
+    };
+    for (const [id,markers] of Object.entries(checks))
+      for (const marker of markers)
+        assert.ok(CZECH_FULL_SPELLS_25[id].includes(marker),
+          "Critical seventh-level mechanic missing: "+id+"/"+marker);
+  });
+
   // ---- the routes ----
   const { createUser } = await import("../src/lib/db/users.ts");
   const { mintSession } = await import("../src/lib/auth.ts");
