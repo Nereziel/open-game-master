@@ -119,13 +119,15 @@ export function RulebookReader({
   );
 
   const loadContents = useCallback(async () => {
+    const requestedLocale = localeRef.current;
     setContentsFailed(false);
     try {
-      const response = await fetch("/api/rulebook", { headers: { "Accept-Language": localeRef.current, ...odmLocaleHeaders() } });
+      const response = await fetch("/api/rulebook", { headers: { "Accept-Language": requestedLocale, ...odmLocaleHeaders() } });
       if (!response.ok) throw new Error(String(response.status));
-      setContents(await response.json());
+      const data: Contents = await response.json();
+      if (localeRef.current === requestedLocale) setContents(data);
     } catch {
-      setContentsFailed(true);
+      if (localeRef.current === requestedLocale) setContentsFailed(true);
     }
     // Reads the live locale; stable on purpose so the arrival effect's
     // closure cannot pin a stale language.
@@ -133,13 +135,16 @@ export function RulebookReader({
 
   const fetchPage = useCallback(
     async (id: string): Promise<RulebookPageResponse | null> => {
-      const cached = cache.current.get(`${localeRef.current}:${id}`);
+      const requestedLocale = localeRef.current;
+      const key = `${requestedLocale}:${id}`;
+      const cached = cache.current.get(key);
       if (cached) return cached;
       try {
-        const response = await fetch(`/api/rulebook/pages/${encodeURIComponent(id)}`, { headers: { "Accept-Language": localeRef.current, ...odmLocaleHeaders() } });
+        const response = await fetch(`/api/rulebook/pages/${encodeURIComponent(id)}`, { headers: { "Accept-Language": requestedLocale, ...odmLocaleHeaders() } });
         if (!response.ok) return null;
         const data: RulebookPageResponse = await response.json();
-        cache.current.set(`${localeRef.current}:${id}`, data);
+        if (localeRef.current !== requestedLocale) return null;
+        cache.current.set(key, data);
         return data;
       } catch {
         return null;
@@ -244,6 +249,9 @@ export function RulebookReader({
     cache.current.clear();
     void loadContents();
     const current = shownRef.current?.data.page.id;
+    // Invalidate the old-language page before calling open(): otherwise its
+    // same-page shortcut reuses the English/French text after a locale switch.
+    shownRef.current = null;
     if (current) void open(current, undefined, [], { animate: false, quiet: true });
     // Only on a locale change: the reader's own navigation is not a handler
     // of this effect, and the first locale needs no turn.
