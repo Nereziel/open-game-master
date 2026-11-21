@@ -28,9 +28,12 @@ const { CZECH_SKILLS, CZECH_ITEMS, CZECH_MONSTERS, CZECH_SPELLS, czechSrdTitle, 
 const { CZECH_SPELL_NOTES } = await import("../src/lib/rulebook/czech-spell-notes.ts");
 const { CZECH_SPELL_NOTES_2 } = await import("../src/lib/rulebook/czech-spell-notes-2.ts");
 const { CZECH_SPELL_NOTES_3 } = await import("../src/lib/rulebook/czech-spell-notes-3.ts");
+const { CZECH_SPELL_NOTES_4 } = await import("../src/lib/rulebook/czech-spell-notes-4.ts");
 const { CZECH_MONSTER_NOTES, CZECH_ITEM_NOTES } = await import("../src/lib/rulebook/czech-bestiary-items.ts");
 const { CZECH_MONSTER_NOTES_2, CZECH_ITEM_NOTES_2 } = await import("../src/lib/rulebook/czech-bestiary-items-2.ts");
 const { CZECH_MONSTER_NOTES_3, CZECH_ITEM_NOTES_3 } = await import("../src/lib/rulebook/czech-bestiary-items-3.ts");
+const { CZECH_MONSTER_NOTES_4 } = await import("../src/lib/rulebook/czech-monster-notes-4.ts");
+const { CZECH_CLASS_NOTES, CZECH_RACE_NOTES } = await import("../src/lib/rulebook/czech-character-notes.ts");
 const { anchorSlug, blockText, inlineText, parseBook, parseInline, stripInline } = await import(
   "../src/lib/rulebook/markdown.ts"
 );
@@ -473,6 +476,41 @@ try {
     assert.ok(spell, "Polymorph exists in SRD 5.1");
     assert.ok(rulebookSearch("Proměna", 10, "cs").hits.some((hit) => hit.page === spell.id), "Czech search resolves Polymorph");
     assert.equal(rulebookPage("polymorph", "en").page.title, "Polymorph");
+  });
+
+  await test("fourth Czech translation batch keeps 31 spells, 26 monsters and 21 character guides on canonical SRD pages", () => {
+    const english = rulebookPages("en");
+    const byKind = {
+      spell: { batch: CZECH_SPELL_NOTES_4, all: [CZECH_SPELL_NOTES, CZECH_SPELL_NOTES_2, CZECH_SPELL_NOTES_3, CZECH_SPELL_NOTES_4], heading: "Český popis kouzla", expected: 31 },
+      monster: { batch: CZECH_MONSTER_NOTES_4, all: [CZECH_MONSTER_NOTES, CZECH_MONSTER_NOTES_2, CZECH_MONSTER_NOTES_3, CZECH_MONSTER_NOTES_4], heading: "Český přehled nestvůry", expected: 26 },
+      class: { batch: CZECH_CLASS_NOTES, all: [CZECH_CLASS_NOTES], heading: "Český přehled povolání", expected: 12 },
+      race: { batch: CZECH_RACE_NOTES, all: [CZECH_RACE_NOTES], heading: "Český přehled rasy", expected: 9 },
+    };
+    const uniqueTitles = { spell: CZECH_SPELLS, monster: CZECH_MONSTERS };
+    for (const [kind, config] of Object.entries(byKind)) {
+      assert.equal(Object.keys(config.batch).length, config.expected, `Wrong Czech ${kind} batch size`);
+      const names = config.all.flatMap((mapping) => Object.keys(mapping));
+      assert.equal(new Set(names).size, names.length, `Duplicate ${kind} translation across batches`);
+      const byTitle = new Map(english.filter((page) => page.kind === kind).map((page) => [page.title, page]));
+      for (const [title, description] of Object.entries(config.batch)) {
+        const original = byTitle.get(title);
+        assert.ok(original, `Missing canonical SRD ${kind}: ${title}`);
+        assert.ok(description.length >= 150, `Unexpectedly short Czech summary: ${title}`);
+        if (uniqueTitles[kind]) {
+          assert.ok(uniqueTitles[kind][title], `Missing Czech glossary title: ${title}`);
+        }
+        const translated = rulebookPage(original.id, "cs").page;
+        assert.equal(translated.id, original.id);
+        assert.ok(translated.md.includes(config.heading), `Missing Czech heading: ${title}`);
+        assert.ok(translated.md.includes(description), `Czech summary not attached: ${title}`);
+        assert.ok(translated.md.endsWith(original.md), `Original English SRD modified: ${title}`);
+      }
+    }
+    assert.equal(rulebookPage("fighter", "cs").page.title, "Bojovník");
+    assert.equal(rulebookPage("half-orc", "cs").page.title, "Půlork");
+    const spiritGuardians = english.find((page) => page.kind === "spell" && page.title === "Spirit Guardians");
+    assert.ok(spiritGuardians);
+    assert.ok(rulebookSearch("Přízrační strážci", 15, "cs").hits.some((hit) => hit.page === spiritGuardians.id));
   });
 
   await test("Czech magic item and monster metadata are display-only and retain original metadata", () => {
