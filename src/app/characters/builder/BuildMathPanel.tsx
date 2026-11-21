@@ -52,6 +52,7 @@ export function BuildMathPanel({
   gender: BuilderState["gender"];
 }) {
   const t = useT();
+  const locale = useLocale();
   const headingId = useId();
   const bodyId = useId();
   const [open, setOpen] = useState(false);
@@ -184,6 +185,7 @@ export function BuildMathPanel({
               racialBonus: derived.racialBonus,
               proficientSkills: derived.proficientSkills,
               t,
+              locale,
             })}
             klass={klass}
             race={race}
@@ -273,7 +275,7 @@ function PicksSoFar({
           <InfoBody
             large
             meta={classDetailsMeta(t, { id: klass.id, saves: klass.saves, reading: classRoles(klass), locale }).join(" · ")}
-            text={classInfoText(klass, t)}
+            text={classInfoText(klass, t, locale)}
             reference={{ kind: "classes", slug: klass.id, name: klass.name }}
           />
         </div>

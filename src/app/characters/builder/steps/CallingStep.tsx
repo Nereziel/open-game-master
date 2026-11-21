@@ -267,7 +267,7 @@ export function CallingStep({
               ) : null}
               <InfoButton
                 label={classDisplayNameFor(klass.id, locale)}
-                text={classInfoText(klass, t)}
+                text={classInfoText(klass, t, locale)}
                 reference={{ kind: "classes", slug: klass.id }}
               />
             </span>
@@ -538,7 +538,7 @@ export function classDetailsMeta(
   return [
     meta,
     saves?.length ? t("Saves {list}", { list: saves.map((ability) => t(abilityName(ability))).join(", ") }) : "",
-    reading ? t("Role: {roles}", { roles: reading.roles.map((role) => ({ "tank": t("Tank"), "dps": t("DPS"), "healer": t("Healer"), "support": t("Support"), "control": t("Control"), "utility": t("Utility") } as Record<string, string>)[textKey(role)] ?? role).join(" / ") }) : "",
+    reading ? t("Role: {roles}", { roles: reading.roles.map((role) => ({ "tank": t("Tank"), "dps": locale === "cs" ? "Útočník" : t("DPS"), "healer": t("Healer"), "support": t("Support"), "control": t("Control"), "utility": t("Utility") } as Record<string, string>)[textKey(role)] ?? role).join(" / ") }) : "",
     reading
       ? reading.playsLike.toLowerCase() === id.toLowerCase()
         ? t("One of the core four")

@@ -18,7 +18,9 @@ import { BUNDLED_PERSONA, GENERAL_PERSONA } from "../backgrounds/persona-data";
 import { SRD_BACKGROUNDS, skillLabel } from "../srd";
 import { STANDARD_LANGUAGES } from "../content/mechanics";
 import { languageLabel } from "../content/languages-cs";
-import { backgroundInfoText } from "../../app/characters/builder/usePickerGroups";
+import { backgroundInfoText, classInfoText } from "../../app/characters/builder/usePickerGroups";
+import { CZECH_BUILDER_CLASS_RULES } from "../../app/characters/builder/classRulesCs";
+import { knownSoFarRows } from "../../app/characters/builder/buildMath";
 import { CUSTOM_BACKGROUNDS, describeBackgroundFeature } from "../backgrounds";
 import { resourceDisplayName, resourceGuidance } from "../srd/class-resources-fr";
 import { resourceName } from "../srd/class-resources";
@@ -76,6 +78,33 @@ describe("Czech localization", () => {
     expect(contentName("backgrounds", "Corpo Dropout", "cs")).toBe("Odpadlík korporace");
   });
 
+
+  it("shows complete Czech class descriptions and localized known-pick sources in character details", () => {
+    expect(Object.keys(CZECH_BUILDER_CLASS_RULES)).toHaveLength(12);
+    const barbarian = {
+      id: "barbarian",
+      name: "Barbarian",
+      blurb: "A fierce warrior who rages into battle, shrugging off blows that would fell anyone else.",
+      desc: "In battle, you fight with primal ferocity.",
+    };
+    const czech = classInfoText(barbarian, (key) => translate("cs", key), "cs");
+    expect(czech).toContain("Zuřivost");
+    expect(czech).toContain("####");
+    expect(czech).not.toContain(barbarian.desc);
+    expect(classInfoText(barbarian, (key) => translate("en", key), "en")).toContain(barbarian.desc);
+    const rows = knownSoFarRows({
+      level: 1,
+      klass: { name: "Barbarian", hitDie: 12, saves: ["str", "con"] },
+      race: undefined,
+      racialBonus: {},
+      proficientSkills: [],
+      t: (key, vars) => translate("cs", key, vars),
+      locale: "cs",
+    });
+    expect(rows.find((row) => row.id === "hit-die")?.working).toBe("Barbar");
+    expect(rows.find((row) => row.id === "save-proficiencies")?.value).toBe("Síla, Odolnost");
+    expect(rows.find((row) => row.id === "save-proficiencies")?.working).toBe("Barbar");
+  });
 
   it("shows localized bundled background details and skill labels", () => {
     const acolyte = SRD_BACKGROUNDS.find((row) => row.id === "acolyte");
