@@ -1445,11 +1445,11 @@ try {
     assert.ok(localized.md.includes("## Úplné znění pravidel v češtině"));
     assert.ok(localized.md.includes(translated));
     assert.ok(localized.md.endsWith(source.md), "Original English deity tables changed");
-    const batches = await Promise.all(Array.from({ length: 19 }, (_, i) =>
+    const batches = await Promise.all(Array.from({ length: 20 }, (_, i) =>
       import(`../src/lib/rulebook/czech-full-rules-${i + 1}.ts`)));
     const ids = batches.flatMap((mod, i) => Object.keys(mod[`CZECH_FULL_RULES_${i + 1}`]));
-    assert.equal(ids.length, 33);
-    assert.equal(new Set(ids).size, 33, "Duplicate SRD rules page with full Czech text");
+    assert.equal(ids.length, 34);
+    assert.equal(new Set(ids).size, 34, "Duplicate SRD rules page with full Czech text");
   });
 
   await test("Czech traps include eight fully translated mechanical and magical examples", async () => {
@@ -1673,6 +1673,66 @@ try {
       "Inteligence (Magie)", "Moudrost (Zacházení se zvířaty)",
     ]) {
       assert.ok(translated.includes(rule), "Missing canonical ability mechanic: " + rule);
+    }
+  });
+
+  await test("Czech combat includes all 2014 SRD attacks, actions, movement, damage, death and special environments", async () => {
+    const { CZECH_FULL_RULES_20 } = await import("../src/lib/rulebook/czech-full-rules-20.ts");
+    assert.deepEqual(Object.keys(CZECH_FULL_RULES_20), ["combat"]);
+    const translated = CZECH_FULL_RULES_20.combat;
+    const en = rulebookPage("combat", "en").page;
+    const cs = rulebookPage("combat", "cs").page;
+    assert.equal(cs.id, en.id);
+    assert.equal(cs.kind, "rules");
+    assert.ok(translated.length > 36000, "Full combat rules translation unexpectedly short");
+    assert.ok(cs.md.includes("## Úplné znění pravidel v češtině"));
+    assert.ok(cs.md.includes(translated), "Complete Czech combat must be visible in the reader");
+    assert.ok(cs.md.endsWith(en.md), "Original English combat rules must remain unchanged");
+    for (const heading of [
+      "## Překvapení", "## Iniciativa", "## Tvůj tah",
+      "## Bonusové akce", "# Reakce", "# Pohyb a pozice",
+      "## Rozdělení pohybu", "## Ležení na zemi",
+      "## Velikosti tvorů", "# Akce v boji",
+      "## Útok", "## Seslání kouzla", "## Běh (Dash)",
+      "## Odpoutání (Disengage)", "## Úhyb (Dodge)",
+      "## Pomoc (Help)", "## Ukrytí (Hide)",
+      "## Připravení akce (Ready)", "## Hledání (Search)",
+      "## Použití předmětu (Use an Object)",
+      "# Provedení útoku", "## Hody na útok",
+      "## Nevidění útočníci a cíle", "## Útoky na dálku",
+      "## Útoky na blízko", "#### Příležitostné útoky",
+      "### Boj se dvěma zbraněmi", "### Chycení",
+      "### Strčení tvora", "## Kryt", "## Zranění a léčení",
+      "### Kritické zásahy", "### Záchranné hody proti smrti",
+      "#### Stabilizování tvora", "## Dočasné životy",
+      "# Boj na jízdním zvířeti", "# Boj pod vodou",
+    ]) {
+      assert.ok(translated.includes(heading), "Missing translated combat section: " + heading);
+    }
+    for (const rule of [
+      "6 sekund", "jednu akci", "pasivní Moudrost (Vnímání)",
+      "rychlost 0", "1 stopa plazení stojí 3 stopy",
+      "20 × 20 stop nebo větší",
+      "přirozená 20", "přirozená 1",
+      "1 + oprava Síly", "o 5 stop",
+      "bonus +2 k OČ", "bonus +5 k OČ",
+      "2k4 místo 1k4", "25 sníží na 20",
+      "poloviční zranění", "10 nebo více",
+      "třetím úspěchu", "třetím neúspěchu",
+      "dva neúspěchy", "SO 10", "1k4 hodinách",
+      "10 nebo 12", "nikdy však **22**",
+      "polovinu tvé rychlosti", "tři akce: Běh, Odpoutání a Úhyb",
+      "automaticky mine cíl za běžným dostřelem",
+      "odolnost vůči ohnivému zranění",
+    ]) {
+      assert.ok(translated.includes(rule), "Missing 2014 combat mechanic: " + rule);
+    }
+    for (const damageType of [
+      "Kyselinové", "Drtivé", "Chladné", "Ohnivé",
+      "Silové", "Bleskové", "Nekrotické", "Bodné",
+      "Jedové", "Psychické", "Zářivé", "Sečné", "Hromové",
+    ]) {
+      assert.ok(translated.includes("***" + damageType + ".***"), "Missing translated damage type: " + damageType);
     }
   });
 
