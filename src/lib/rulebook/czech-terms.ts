@@ -2,6 +2,8 @@
 // The server keeps the English SRD 5.1 page IDs and canonical mechanics names.
 // Terminology reference: https://dnd5esrd.d20.cz/prirucka-hrace/
 // and https://dnd5esrd.d20.cz/pruvodce-pana-jeskyne/dodatek-B.html
+import { CZECH_MONSTER_TITLES_6, CZECH_ITEM_TITLES_4 } from "./czech-bestiary-items-4";
+
 export const CZECH_ABILITIES: Readonly<Record<string, string>> = {
   Strength: "Síla",
   Dexterity: "Obratnost",
@@ -209,6 +211,8 @@ export const CZECH_MONSTERS: Readonly<Record<string, string>> = {
   Wraith: "Přízrak",
   Wyvern: "Vyverna",
   Zombie: "Zombie",
+  ...CZECH_MONSTER_TITLES_6,
+  "Animated Armor (Animated Object)": "Oživlá zbroj",
 };
 
 export const CZECH_SPELLS: Readonly<Record<string, string>> = {
@@ -634,6 +638,7 @@ export const CZECH_ITEMS: Readonly<Record<string, string>> = {
   "Wand of Wonder": "Hůlka divů",
   "Weapon of Warning": "Zbraň varování",
   "Wings of Flying": "Křídla létání",
+  ...CZECH_ITEM_TITLES_4,
 };
 
 export const CZECH_RULE_TERMS: Readonly<Record<string, string>> = {
