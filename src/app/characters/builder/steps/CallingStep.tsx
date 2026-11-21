@@ -325,7 +325,7 @@ export function CallingStep({
                   </span>
                   <InfoButton
                     label={contentName("subclasses", subclass, locale)}
-                    text={chosenArchetype?.desc || subclassBlurb(klass?.id ?? "", subclass) ? t(chosenArchetype?.desc || subclassBlurb(klass?.id ?? "", subclass)) : undefined}
+                    text={chosenArchetype?.desc || subclassBlurb(klass?.id ?? "", subclass) ? t(chosenArchetype?.desc || subclassBlurb(klass?.id ?? "", subclass) || "") : undefined}
                     reference={
                       chosenArchetype ? { kind: "archetypes", slug: chosenArchetype.id } : undefined
                     }
