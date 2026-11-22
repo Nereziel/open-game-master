@@ -307,7 +307,7 @@ export async function GET(
   // slug, descriptions and mechanics are still used for every game action.
   if (locale === "cs") {
     results = (results as Array<Parameters<typeof withCatalogDisplay>[1]>)
-      .map((row) => withCatalogDisplay(kind, row, locale, { includeDescription: url.searchParams.get("lite") !== "1" }));
+      .map((row) => withCatalogDisplay(kind, row, locale, { includeDescription: mechanics && url.searchParams.get("lite") !== "1" }));
   }
   return Response.json({ results, packInstalled, unadmitted: unadmittedNames(scope, user.id, kind, originalQuery, url.searchParams.get("class") ?? "") });
 }
