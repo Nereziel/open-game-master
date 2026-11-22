@@ -30,7 +30,7 @@ import { findLostCreate, readLoad, readWrite, useLoadStatus } from "@/lib/load-s
 import { FACTION_ATTITUDES, REPUTATION_MAX, REPUTATION_MIN, attitudeLabel, reputationLabel, type FactionAttitude } from "@/lib/dm/faction-logic";
 import { DictateField } from "@/components/DictateField";
 import { appendDictation } from "@/lib/dictation";
-import { useT } from "@/lib/locale";
+import { useLocale, useT } from "@/lib/locale";
 
 // Factions (docs/vtt-parity-implementation-plan.md section 6): a card per
 // faction with its crest, its stance, the party's standing on a ladder
@@ -80,6 +80,7 @@ export function FactionsPanel({
   workshop?: boolean;
 }) {
   const t = useT();
+  const locale = useLocale();
   const showsStanding = !workshop;
   const [factions, setFactions] = useState<FactionView[] | null>(null);
   const [editing, setEditing] = useState<string | "new" | null>(null);
@@ -311,7 +312,7 @@ export function FactionsPanel({
                     {faction.power !== undefined ? <span className="text-[11px] font-normal text-violet-300">{t("Power", { context: "faction.powerLabel" })} {faction.power}</span> : null}
                   </p>
                   {faction.blurb ? <p className="reveal text-xs leading-5 text-stone-400">{faction.blurb}</p> : null}
-                  {faction.goal ? <p className="reveal text-xs italic leading-5 text-violet-300/80">Goal: {faction.goal}</p> : null}
+                  {faction.goal ? <p className="reveal text-xs italic leading-5 text-violet-300/80">{locale === "cs" ? "Cíl:" : "Goal:"} {faction.goal}</p> : null}
                   {showsStanding ? (
                     <div className="mt-1 flex items-center gap-1" title={t("The party is {word} to them", { word: reputationLabel(t, faction.standing) })}>
                       {Array.from({ length: REPUTATION_MAX - REPUTATION_MIN + 1 }, (_, index) => REPUTATION_MIN + index).map((step) => (
@@ -320,7 +321,7 @@ export function FactionsPanel({
                           type="button"
                           disabled={!steersStory}
                           onClick={() => void setStanding(faction, step)}
-                          aria-label={`Standing ${step}`}
+                          aria-label={locale === "cs" ? `Vztah družiny: ${step}` : `Standing ${step}`}
                           aria-pressed={step === faction.standing}
                           className={cn(
                             "bar-ease h-2.5 w-3.5 rounded-sm enabled:hover:brightness-125 motion-press",
@@ -332,7 +333,7 @@ export function FactionsPanel({
                     </div>
                   ) : null}
                   {faction.members.length ? (
-                    <p className="reveal mt-1 text-[11px] text-stone-500">Members: {faction.members.map((member) => member.name).join(", ")}</p>
+                    <p className="reveal mt-1 text-[11px] text-stone-500">{locale === "cs" ? "Členové:" : "Members:"} {faction.members.map((member) => member.name).join(", ")}</p>
                   ) : null}
                 </div>
                 {steersStory ? (
@@ -340,7 +341,7 @@ export function FactionsPanel({
                     <KitButton onClick={() => startEdit(faction)}>
                       <Pencil className="size-3" /> {t("Edit")}
                     </KitButton>
-                    <KitButton tone="iconDanger" always onClick={() => void remove(faction)} aria-label={`Remove ${faction.name}`}>
+                    <KitButton tone="iconDanger" always onClick={() => void remove(faction)} aria-label={locale === "cs" ? `Odstranit: ${faction.name}` : `Remove ${faction.name}`}>
                       <Trash2 className="size-3.5" />
                     </KitButton>
                   </span>
