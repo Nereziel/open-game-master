@@ -1,4 +1,4 @@
-import { displayDiceNotation } from "../language/dice-notation";
+import { displayDiceNotation } from "../language/dice-notation.ts";
 export type Locale = "en" | "fr" | "cs";
 
 export type TranslateVars = Record<string, string | number> & {
