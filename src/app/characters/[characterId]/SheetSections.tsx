@@ -102,11 +102,11 @@ export function SheetSections({ sheet, level = 1 }: { sheet: CreateSheetInput; l
               // (speedFor), not the raw base on the sheet.
               {
                 glyph: "rest-speed",
-                label: t("Speed"),
+                label: <GameTerm id="speed">Speed</GameTerm>,
                 value: locale === "cs" ? `${speedFor(sheet)} stop` : `${speedFor(sheet)} ft`,
                 title: speedFor(sheet) === sheet.speed ? t("Their walking speed.", { context: "characters.sheet.speedTitle" }) : locale === "cs" ? `Základní rychlost ${sheet.speed} stop, upravená vybavením a schopnostmi.` : t("Base {speed} ft, changed by what they wear and their features.", { speed: sheet.speed }),
               },
-              { glyph: "coin-gp", label: t("Coin"), value: formatPrice(purseCopper(sheet)) },
+              { glyph: "coin-gp", label: <GameTerm id="coins">Coin</GameTerm>, value: formatPrice(purseCopper(sheet)) },
               {
                 glyph: "rest-initiative",
                 label: <GameTerm id="initiative">Initiative</GameTerm>,
@@ -119,9 +119,9 @@ export function SheetSections({ sheet, level = 1 }: { sheet: CreateSheetInput; l
                 value: derived.passivePerception,
                 title: explain(derived.parts.passivePerception),
               },
-              { glyph: "rest-proficiency", label: t("Proficiency"), value: formatModifier(derived.proficiencyBonus) },
+              { glyph: "rest-proficiency", label: <GameTerm id="proficiency_bonus">Proficiency</GameTerm>, value: formatModifier(derived.proficiencyBonus) },
               ...(derived.spellSaveDc
-                ? [{ glyph: "rest-spell-slot", label: t("Spell save DC", { context: "characters.sheet.spellSaveDc" }), value: derived.spellSaveDc, title: explain(derived.parts.spellSaveDc) }]
+                ? [{ glyph: "rest-spell-slot", label: <GameTerm id="spell_save_dc">Spell save DC</GameTerm>, value: derived.spellSaveDc, title: explain(derived.parts.spellSaveDc) }]
                 : []),
             ]}
           />
