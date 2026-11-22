@@ -8,6 +8,10 @@ on:
       - "src/lib/srd/ability-short-label*"
       - "src/lib/srd/skill-help-cs*"
       - "src/app/characters/builder/AbilityText.tsx"
+      - "src/app/campaigns/**/CharacterSheetDialog.tsx"
+      - "src/app/campaigns/**/lead-edit-cs.test.ts"
+      - "src/components/sheet/sheet-state.ts"
+      - "src/components/sheet/sheet-state-locale.test.ts"
       - ".github/workflows/terminology-web-pdf.yml"
   workflow_dispatch:
 
@@ -33,7 +37,7 @@ jobs:
           cache: npm
       - run: npm ci
       - name: Czech/English/French terminology and character PDF regressions
-        run: npm test -- src/lib/srd/ability-short-label.test.ts src/lib/srd/skill-help-cs.test.ts src/lib/pdf/character-sheet-pdf.test.ts src/lib/i18n/game-text.test.ts src/lib/battlemap/condition-notes-locale.test.ts
+        run: npm test -- src/lib/srd/ability-short-label.test.ts src/lib/srd/skill-help-cs.test.ts src/lib/pdf/character-sheet-pdf.test.ts src/lib/i18n/game-text.test.ts src/lib/battlemap/condition-notes-locale.test.ts src/components/sheet/sheet-state-locale.test.ts src/app/campaigns/[campaignId]/lead-edit-cs.test.ts
       - name: TypeScript
         run: npx tsc --noEmit --incremental false
       - name: Build
