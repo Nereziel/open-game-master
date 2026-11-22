@@ -69,6 +69,8 @@ export function LeadEditDialog({
 }) {
   const t = useT();
   const locale = useLocale();
+  const localizedLevelMeta = (entry: { level?: number }) =>
+    locale === "cs" ? (entry.level === undefined ? "" : entry.level === 0 ? "trik" : `${entry.level}. úroveň`) : levelMeta(entry);
   const [currentHp, setCurrentHp] = useState(String(sheet.currentHp));
   const [tempHp, setTempHp] = useState(String(sheet.tempHp));
   const [maxHp, setMaxHp] = useState(String(sheet.maxHp));
@@ -516,7 +518,7 @@ export function LeadEditDialog({
                     addCantrips(entries);
                     setKnown((list) => [...list, ...spellNamesOf(entries)]);
                   }}
-                  renderMeta={levelMeta}
+                  renderMeta={localizedLevelMeta}
                 />
               </div>
               ) : null}
@@ -539,7 +541,7 @@ export function LeadEditDialog({
                       addCantrips(entries);
                       setSpellbook((list) => [...list, ...spellNamesOf(entries)]);
                     }}
-                    renderMeta={levelMeta}
+                    renderMeta={localizedLevelMeta}
                   />
                 </div>
               ) : null}
@@ -566,7 +568,7 @@ export function LeadEditDialog({
                       setSpellbook((list) => [...list, ...names.filter((name) => !list.includes(name))]);
                     }
                   }}
-                  renderMeta={levelMeta}
+                  renderMeta={localizedLevelMeta}
                 />
               </div>
               ) : null}
