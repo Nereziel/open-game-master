@@ -27,6 +27,7 @@ import { bundledClassRows } from "@/lib/workshop/class-catalog";
 import { bookLocaleOf, rulebookPage } from "@/lib/rulebook/book";
 import { withCatalogDisplay } from "@/lib/content/translations/catalog-display";
 import { canonicalSrdSearchQuery } from "@/lib/content/translations/srd-5.1/catalog-query";
+import { appendExactSrdAlias } from "@/lib/content/translations/srd-5.1/search-alias";
 
 export const runtime = "nodejs";
 export const dynamic = "force-dynamic";
@@ -238,16 +239,8 @@ export async function GET(
           ...(ITEM_KINDS.has(url.searchParams.get("kind") ?? "")
             ? { kind: url.searchParams.get("kind") as ItemEntry["kind"] } : {}),
         });
-    const originalIds = new Set((results as Array<{ slug: string; documentSlug?: string }>).map(
-      (entry) => JSON.stringify([entry.documentSlug, entry.slug]),
-    ));
-    const aliases = aliasMatches.filter((entry) =>
-      entry.source === "open5e" && entry.documentSlug === "wotc-srd"
-      && textKey(entry.name) === textKey(canonicalQuery)
-      && !originalIds.has(JSON.stringify([entry.documentSlug, entry.slug])),
-    );
-    const canonicalAliases = kind === "items"
-      ? (aliases as ItemEntry[]).map((entry) => {
+    const aliases = kind === "items"
+      ? (aliasMatches as ItemEntry[]).map((entry) => {
           const listed = srdNameFor(withoutBonus(entry.name), "items");
           return {
             ...entry,
@@ -255,17 +248,17 @@ export async function GET(
             ...("srdName" in listed && listed.srdName ? { srdName: listed.srdName } : {}),
           };
         })
-      : aliases;
-    results = [...results, ...canonicalAliases];
-    // A server without Open5e still exposes its bundled SRD for this alias.
+      : aliasMatches;
+    type SearchAliasRow = { source: "open5e" | "homebrew" | "srd" | "bundled"; documentSlug?: string; name: string; slug: string };
+    results = appendExactSrdAlias(results as SearchAliasRow[], aliases, canonicalQuery);
     if (!packInstalled && kind === "spells") {
-      results = [...results, ...notFiled(results, bundledSpellRows(canonicalQuery).filter(
-        (entry) => textKey(entry.name) === textKey(canonicalQuery),
-      ))];
+      results = appendExactSrdAlias(
+        results as SearchAliasRow[], bundledSpellRows(canonicalQuery), canonicalQuery,
+      );
     } else if (!packInstalled && kind === "items") {
-      results = [...results, ...notFiled(results, bundledItemRows(canonicalQuery).filter(
-        (entry) => textKey(entry.name) === textKey(canonicalQuery),
-      ))];
+      results = appendExactSrdAlias(
+        results as SearchAliasRow[], bundledItemRows(canonicalQuery), canonicalQuery,
+      );
     }
   }
 
