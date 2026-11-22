@@ -265,6 +265,22 @@ const VAULT_OF_MAGIC_ITEM_NOTES: Readonly<Record<string, string>> = {
   "Entrenching Mattock": "Magický krumpáč +1 má proti tvorům z kamene a země bonus +3. Bonusovou akcí vytvoří podél země zeď až 30 stop dlouhou, tři stopy vysokou a jednu stopu silnou, která poskytuje poloviční kryt; obnoví se za úsvitu.",
   "Everflowing Bowl": "Kamenná mísa o objemu asi jeden půllitr se po položení na zem sama naplní vodou během hodiny, v suché či pouštní krajině během osmi hodin. Nepřetéká.",
   "Exsanguinating Blade": "Magická dýka +1 získá při přirozené dvacítce proti krvácejícímu tvorovi jeden náboj. Bonusovou akcí lze náboj utratit za léčení 2k8 životů nebo další 2k8 nekrotického zranění při příštím zásahu.",
+  "Angry Hornet": "Magická střela se za letu rozmnoží o 2k4 kopií. Za každou další střelu se hází samostatný útok; kopie po zásahu či minutí zmizí. Pokud všechny střely minou, původní munice zůstane magická.",
+  "Armor of the Ngobou": "Zbroj z kůže pravěkého ngobou dává +1 k TZ. Poznáš, zda do 90 stop během posledních 24 hodin prošel slon, a máš výhodu k Vnímání a Přežití při jeho hledání.",
+  "Asp's Kiss": "Magická dvoučepelová zbraň dává +2 k útokům a zranění. Po sladění poskytuje imunitu vůči jedu a posiluje Běh; při útoku umožňuje bonusový útok hrotem záštity. Dokáže také na minutu otrávit své čepele.",
+  "Baba Yaga's Cinderskull": "Popelavá lebka svítí slabým oranžovým světlem do 30 stop. Po sladění potřebuješ jen polovinu obvyklého jídla a vody a automaticky odoláváš extrémním teplotám.",
+  "Big Dipper": "Medová hůl má sedm nábojů na zvláštní schopnosti. Za úsvitu obnovuje 1k6 + 1 nábojů. Při spotřebování posledního může při hodu 1 na k20 roztát v obyčejný med; utrácení nábojů vytváří také jedlý med.",
+  "Blade of the Temple Guardian": "Magický krátký meč umožňuje mnichovi používat při Smršti úderů bonusové útoky mečem místo neozbrojených úderů. Pokud jím sníží životy cíle na nulu, obnoví jeden utracený bod ki.",
+  "Blood-Soaked Hide": "Tvor, který začne tah ve tvém prostoru, musí uspět v záchraně na Odolnost SO 15, jinak ztratí 3k6 životů a ty si obnovíš polovinu ztracených životů. Neúčinkuje na konstrukty a nemrtvé kromě upírů; obnovuje se za úsvitu.",
+  "Book of Ebon Tides": "Stínová kniha má patnáct nábojů a za soumraku před úsvitem obnovuje 2k6 + 3. Obsahuje zvláštní stínovou magii a kouzla; při utracení posledního náboje může přijít o schopnost sesílat kouzla.",
+  "Boots of the Grandmother": "Boty dávají zdatnost v Nenápadnosti a zdvojnásobují její zdatnostní bonus. Po pokropení čerstvou krví můžeš na 1k6 hodin sobě a spojencům do 30 stop umožnit ignorovat obtížný terén; obnoví se za úsvitu.",
+  "Boots of the Swift Striker": "Boty zvyšují rychlost chůze o deset stop. Při akci Běh můžeš na konci pohybu jednou zaútočit zbraní, ale poté již v tomto tahu nesmíš pokračovat v pohybu.",
+  "Bracelet of the Fire Tender": "Náramek z opálených šišek odstraňuje nevýhodu k ověřením Vnímání zrakem v oblastech lehce zahalených nemagickým kouřem nebo mlhou.",
+  "Braid Whip Clasp": "Spona promění alespoň tři stopy dlouhý cop bonusovou akcí v magický bič +1 k útoku a zranění. Proměnu lze používat celkem deset minut, potom se obnoví za úsvitu.",
+  "Brawn Armor": "Zbroj z medvědí kůže dává +1 k TZ a výhodu při uchopování. Má tři náboje; za jeden můžeš bonusovou akcí způsobit drženému tvorovi zranění neozbrojeným úderem. Náboje se obnovují za úsvitu.",
+  "Brazen Band": "Mosazný prsten vypustí miniaturního mechanického dráčka, který se pokusí odemknout zámek do deseti stop. Používá tvůj zdatnostní bonus a má výhodu; další použití je možné až po západu slunce.",
+  "Broken Fang Talisman": "Talisman umožňuje akcí seslat kouzlo Encrypt / Decrypt z knihy Deep Magic. Po použití se obnoví za jednu hodinu.",
+  "Brotherhood of Fezzes": "Tři fezy fungují jen při nošení třemi stejně velkými tvory do 60 stop od sebe. Každý může seslat Změň svůj tvar bez omezení, ale proměna vzhledu zasáhne současně všechny tři nositele stejně.",
 };
 
 const VAULT_BY_NAME = Object.fromEntries(
