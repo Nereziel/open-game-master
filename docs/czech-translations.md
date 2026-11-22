@@ -20,6 +20,20 @@ Tento dokument popisuje **společné zdroje překladů**. Překlady se vytváře
 5. **Výpočty:** zobrazení herního údaje může být přeloženo, herní mechanika nikoli. Zápis hodů zůstává `1d8`, `2d6`, nikoli `k`.
 6. **EN/FR:** zachovávej jazykové mutace a bezpečné anglické fallbacky u homebrew neznámých názvů.
 
+
+## Systémové události, stavové štítky a bezpečný překlad
+
+Události ukládej ve strojově čitelné podobě (typ + parametry), pokud to existující schéma umožňuje. Čtenářská část sestaví lokalizovanou větu až podle aktuálního jazyka; **neukládej českou větu místo původního `delta`**.
+
+- Historie kampaně: `src/app/campaigns/[campaignId]/event-log-logic.ts` přijímá lokalizovaný `t` z `useT()`. Zároveň překládá známé názvy z `delta` přes `contentName("items" | "spells" | "conditions" | "monsters", name, locale)`. Název neznámého domácího předmětu, kouzla nebo nestvůry zachovej beze změny.
+- Historie postavy: `src/lib/characters/event-summary-cs.ts` rozpoznává pouze bezpečné historické šablony (`Acquired {item}`); nesmí rozpoznávat vícerádkový příběh.
+- Nápověda stavů: `src/lib/battlemap/condition-notes.ts` používá `abilityShortLabel()` pro záchranné hody a `contentName("spells", ...)` pro známý zdrojový název kouzla; vlastní spouštěč připravené akce se nepřekládá.
+- Když předáváš překladač jiné pomocné funkci, zachovej `t.locale`, pokud podle něj funkce lokalizuje obsahové názvy. Samotný obyčejný callback bez informace o locale používá bezpečný anglický fallback.
+
+**Nedělej** plošný `replace()` anglických frází na celém deníku, v databázi ani v odpovědích AI; změnit lze pouze pevně vymezené systémové šablony. Při testování ověř vždy češtinu, angličtinu, francouzštinu, placeholdery, neznámý homebrew název i neměnnost uloženého vstupu.
+
+Relevantní testy: `src/app/campaigns/[campaignId]/event-log-localization.test.ts`, `src/lib/battlemap/condition-notes-locale.test.ts`, `src/lib/characters/event-summary-cs.test.ts`, `src/lib/pdf/character-sheet-pdf.test.ts`.
+
 ## Kontrola
 
 - `npm run i18n:cs:report` — existující přehled pokrytí katalogu.
