@@ -6,9 +6,9 @@ import type { Locale } from "@/lib/i18n/translate";
 // The original stored summary remains untouched for language switching.
 export function characterEventSummary(summary: string, kind: string, locale: Locale): string {
   if (locale !== "cs" || kind !== "item") return summary;
-  const acquired = /^Acquired\s+(.+?)(\.)?$/i.exec(summary.trim());
+  const acquired = /^Acquired\s+(.+)$/i.exec(summary.trim());
   if (!acquired) return summary;
-  const item = acquired[1].trim();
+  const item = acquired[1].trim().replace(/\.$/, "");
   if (!item) return summary;
   return `Získaný předmět: ${contentName("items", item, locale)}.`;
 }
