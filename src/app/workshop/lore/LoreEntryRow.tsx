@@ -7,6 +7,7 @@ import { ContextMenu, type ContextMenuItem } from "@/components/ui/ContextMenu";
 import { GameIcon } from "@/components/ui/GameIcon";
 import { RowMenu } from "@/app/workshop/kit";
 import { useEffect, useState } from "react";
+import { useLocale } from "@/lib/locale";
 import type { LoreLinkTarget, LoreMention } from "@/lib/dm/world-lore-logic";
 import { LoreEntryActions } from "@/app/workshop/lore/LoreEntryActions";
 import { LoreBody } from "@/app/workshop/lore/LoreFields";
@@ -26,6 +27,7 @@ export function MentionedIn({
   entryId: string;
   onOpen: (target: LoreLinkTarget) => void;
 }) {
+  const locale = useLocale();
   const [mentions, setMentions] = useState<LoreMention[] | null>(null);
   useEffect(() => {
     let cancelled = false;
@@ -46,7 +48,7 @@ export function MentionedIn({
   }
   return (
     <p className="flex flex-wrap items-center gap-1 text-[11px] text-stone-500">
-      Mentioned in
+      {locale === "cs" ? "Zmíněno v" : "Mentioned in"}
       {mentions.map((mention) => (
         <button
           key={`${mention.kind}-${mention.id}`}
@@ -86,18 +88,19 @@ export function LoreEntryRow({
   onDuplicate: () => void;
   onDelete: () => void;
 }) {
+  const locale = useLocale();
   const [expanded, setExpanded] = useState(false);
   // The same doors the opened entry shows as buttons, for a right-click, a
   // long press or the kebab, so an entry can be pinned without opening it.
   const items: ContextMenuItem[] = [
-    { id: "read", label: expanded ? "Close" : "Read", glyph: "system-lore", onSelect: () => setExpanded((current) => !current) },
-    ...(onShow ? [{ id: "show", label: "Show this now", glyph: "tab-handout", onSelect: onShow }] : []),
+    { id: "read", label: expanded ? (locale === "cs" ? "Zavřít" : "Close") : (locale === "cs" ? "Číst" : "Read"), glyph: "system-lore", onSelect: () => setExpanded((current) => !current) },
+    ...(onShow ? [{ id: "show", label: locale === "cs" ? "Ukázat hráčům nyní" : "Show this now", glyph: "tab-handout", onSelect: onShow }] : []),
     ...(steersStory
       ? [
-          { id: "edit", label: "Edit", glyph: "ui-edit", onSelect: onEdit },
-          { id: "pin", label: entry.pinned ? "Unpin" : "Pin", glyph: "ui-pin", onSelect: onPin },
-          { id: "duplicate", label: "Duplicate", glyph: "ui-duplicate", onSelect: onDuplicate },
-          { id: "delete", label: "Delete", glyph: "ui-delete", tone: "danger" as const, separated: true, onSelect: onDelete },
+          { id: "edit", label: locale === "cs" ? "Upravit" : "Edit", glyph: "ui-edit", onSelect: onEdit },
+          { id: "pin", label: entry.pinned ? (locale === "cs" ? "Odepnout" : "Unpin") : (locale === "cs" ? "Připnout" : "Pin"), glyph: "ui-pin", onSelect: onPin },
+          { id: "duplicate", label: locale === "cs" ? "Duplikovat" : "Duplicate", glyph: "ui-duplicate", onSelect: onDuplicate },
+          { id: "delete", label: locale === "cs" ? "Odstranit" : "Delete", glyph: "ui-delete", tone: "danger" as const, separated: true, onSelect: onDelete },
         ]
       : []),
   ];
@@ -134,7 +137,7 @@ export function LoreEntryRow({
               onClick={onShow}
               className={cn(ui.btnSecondary, "h-9")}
             >
-              <Presentation className="size-3.5" /> Show this now
+              <Presentation className="size-3.5" /> {locale === "cs" ? "Ukázat hráčům nyní" : "Show this now"}
             </button>
           ) : null}
           {steersStory ? (
