@@ -22,6 +22,21 @@ describe("explicit spell provenance selection (#107)", () => {
     expect(updateChosenSpellReference({}, "Light", ref)).toEqual({ Light: ref });
   });
 
+  it("keeps only spells remaining in any active multiclass list", () => {
+    const light = selectedSpellReference("Light", [
+      { name: "Light", level: 0, source: "open5e", documentSlug: "wotc-srd", slug: "light" },
+    ])!;
+    const shield = selectedSpellReference("Shield", [
+      { name: "Shield", level: 1, source: "open5e", documentSlug: "wotc-srd", slug: "shield" },
+    ])!;
+    expect(keepChosenSpellReferences({ Light: light, Shield: shield }, ["Shield", "light"])).toEqual({
+      Light: light, Shield: shield,
+    });
+    expect(keepChosenSpellReferences({ Light: light, Shield: shield }, ["Shield"])).toEqual({
+      Shield: shield,
+    });
+  });
+
   it("preserves old name-only lists and drops provenance for removed spells", () => {
     const ref = selectedSpellReference("Light", [light])!;
     expect(keepChosenSpellReferences({ Light: ref }, ["Shield"])).toEqual({});
