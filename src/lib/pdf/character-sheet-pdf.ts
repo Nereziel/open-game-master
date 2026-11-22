@@ -44,6 +44,7 @@ import { matchWeapon } from "@/lib/srd/weapons";
 import { formatPrice, purseCopper } from "@/lib/srd/currency";
 import { personaLine } from "@/lib/backgrounds/persona-logic";
 import { abilityShortLabel } from "@/lib/srd/ability-short-label";
+import { damageWords, damageTypeWord } from "@/lib/dm/damage-logic";
 
 // The subset of a character the sheet renders. The runtime CharacterSheet is
 // structurally assignable to this, so the in-session dialog passes its `sheet`
@@ -440,7 +441,7 @@ function drawCombat(ctx: Ctx, c: PdfCharacter, derived: ReturnType<typeof comput
     const a = attacks[i];
     field(ctx, x + 4, ry, w - 84, 11, a ? pdfItem(ctx, a.name) : "", { size: 8 });
     field(ctx, x + w - 80, ry, 20, 11, a ? formatModifier(a.toHit) : "", { size: 8, align: TextAlignment.Center });
-    field(ctx, x + w - 58, ry, 54, 11, a ? `${a.damage} ${translate(ctx.locale, a.type)}`.trim() : "", { size: 7 });
+    field(ctx, x + w - 58, ry, 54, 11, a ? `${damageWords(a.damage, ctx.locale)} ${damageTypeWord(a.type, ctx.locale)}`.trim() : "", { size: 7 });
     ry -= 12;
   }
   y -= rowsH + 8;
