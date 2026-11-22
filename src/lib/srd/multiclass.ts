@@ -250,26 +250,36 @@ export function describeGrantT(t: T, grant: MulticlassGrant, locale: Locale = "e
 // Whether the character may take a first level in a NEW class. RAW checks
 // both directions: they must meet the new class's prerequisite AND the
 // prerequisites of every class they already have.
+// The English error remains for server callers. UI readers use reason
+// and relatedClassId to render the same refusal in their own language.
+export type MulticlassCheck = {
+  ok: boolean;
+  error?: string;
+  reason?: "unknown" | "already" | "limit" | "new_prereq" | "held_prereq";
+  relatedClassId?: string;
+};
+
 export function canMulticlassInto(
   sheet: ClassListSource & { abilities: AbilityScores },
   classId: string,
-): { ok: boolean; error?: string } {
+): MulticlassCheck {
   const klass = findClass(classId);
   if (!klass) {
-    return { ok: false, error: `Unknown class "${classId}".` };
+    return { ok: false, error: `Unknown class "${classId}".`, reason: "unknown" };
   }
   const classList = classListFor(sheet);
   const wanted = classId.trim().toLowerCase();
   if (classList.some((entry) => entry.id.toLowerCase() === wanted)) {
-    return { ok: false, error: `They already have levels in ${klass.name}.` };
+    return { ok: false, error: `They already have levels in ${klass.name}.`, reason: "already" };
   }
   if (classList.length >= MULTICLASS_CAP) {
-    return { ok: false, error: `At most ${MULTICLASS_CAP} classes per character.` };
+    return { ok: false, error: `At most ${MULTICLASS_CAP} classes per character.`, reason: "limit" };
   }
   if (!meetsPrereq(sheet.abilities, classId)) {
     return {
       ok: false,
       error: `Multiclassing into ${klass.name} requires ${describePrereq(classId)}.`,
+      reason: "new_prereq",
     };
   }
   for (const entry of classList) {
@@ -278,6 +288,8 @@ export function canMulticlassInto(
       return {
         ok: false,
         error: `Leaving ${held} for another class requires ${describePrereq(entry.id)} (RAW checks both directions).`,
+        reason: "held_prereq",
+        relatedClassId: entry.id,
       };
     }
   }
