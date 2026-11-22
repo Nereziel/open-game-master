@@ -27,7 +27,7 @@ export {
 export function ItemFlags({ item }: { item: EquipmentItem }) {
   const t = useT();
   const flags = [
-    item.equipped ? (item.layered ? "worn beside another (GM's call)" : "worn") : null,
+    item.equipped ? (item.layered ? t("worn beside another, on the GM's say") : t("worn")) : null,
     item.attuned ? t("attuned") : item.attuning ? t("attunes at the next rest") : null,
     item.identified === false ? t("unidentified") : null,
     item.charges !== undefined ? t("{count} charges", { count: item.charges }) : null,
