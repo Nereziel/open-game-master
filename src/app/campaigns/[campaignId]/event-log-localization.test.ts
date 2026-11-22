@@ -124,18 +124,14 @@ describe("historical event-log system phrases follow the reader's locale", () =>
     expect(delta).toEqual({ revived: "Revivify", currentHp: 1 });
   });
 
-  it("translates standard damage types through the shared UI catalog, not custom ones", () => {
-    const withFire = { kind: "apply_damage", delta: { amount: 3, type: "fire" } };
-    const withCustom = { kind: "apply_damage", delta: { amount: 3, type: "dreamfire" } };
-    const customT = Object.assign(
-      (key: string, vars?: Record<string, string | number>) =>
-        key === "fire" ? "ohněm" : translate("en", key, vars),
-      { locale: "cs" as const },
-    );
-    expect(describeKnownEntry(customT, withFire, "Mara")).toContain("(ohněm)");
-    expect(describeKnownEntry(customT, withCustom, "Mara")).toContain("(dreamfire)");
-    expect(say("en", "apply_damage", withFire.delta)).toContain("(fire)");
-    expect(withFire.delta).toEqual({ amount: 3, type: "fire" });
+  it("uses the canonical damage-type vocabulary in every language and preserves homebrew", () => {
+    const fire = { amount: 3, type: "fire" };
+    expect(say("cs", "apply_damage", fire)).toContain("(Ohnivé)");
+    expect(say("fr", "apply_damage", fire)).toContain("(Feu)");
+    expect(say("en", "apply_damage", fire)).toContain("(fire)");
+    expect(say("cs", "apply_damage", { amount: 3, type: "dreamfire" })).toContain("(dreamfire)");
+    expect(say("cs", "apply_damage", { amount: 3, type: "cold" })).toContain("(Chladné)");
+    expect(fire).toEqual({ amount: 3, type: "fire" });
   });
 
   it("translates a known used item while preserving custom item descriptions", () => {
