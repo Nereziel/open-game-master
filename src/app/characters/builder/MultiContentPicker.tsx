@@ -9,6 +9,7 @@ import { useContentSearch, type PickerEntry } from "./useContentSearch";
 import { textKey } from "@/lib/language/text-logic";
 import { useLocale, useT, useTp } from "@/lib/locale";
 import { contentName } from "@/lib/content/names";
+import { sourceRowIdentity } from "./pickerRows";
 
 // `level` rides along for spells, so a cantrip picked here lands in the
 // cantrip list rather than among the levelled spells.
@@ -43,7 +44,7 @@ export default function MultiContentPicker({
   const rowName = (entry: PickerEntry) => entry.display?.name ?? displayName(entry.name, entry.source);
   const { query, setQuery, results, setResults, open, setOpen, loading, unavailable, failed, unadmitted } =
     useContentSearch(kind, extraParams);
-  const [pending, setPending] = useState<Array<MultiPick & { displayLabel?: string }>>([]);
+  const [pending, setPending] = useState<Array<MultiPick & { source?: string; documentSlug?: string; kind?: string; displayLabel?: string }>>([]);
   const container = useRef<HTMLDivElement>(null);
 
   // The browse list opens on focus, so clicking elsewhere must collapse it
@@ -60,15 +61,15 @@ export default function MultiContentPicker({
 
   const selectedLower = new Set(selectedNames.map((name) => textKey(name)));
   const pendingLower = new Set(pending.map((pick) => textKey(pick.name)));
-  const pendingIds = new Set(pending.map((pick) => pick.slug ?? `custom:${textKey(pick.name)}`));
+  const pendingIds = new Set(pending.map((pick) => sourceRowIdentity(pick)));
   const trimmedQuery = query.trim();
 
   function togglePending(entry: PickerEntry) {
-    const identity = entry.slug ?? `custom:${textKey(entry.name)}`;
+    const identity = sourceRowIdentity(entry);
     setPending((picks) =>
-      picks.some((pick) => (pick.slug ?? `custom:${textKey(pick.name)}`) === identity)
-        ? picks.filter((pick) => (pick.slug ?? `custom:${textKey(pick.name)}`) !== identity)
-        : [...picks, { name: entry.name, slug: entry.slug, level: entry.level, displayLabel: rowName(entry) }],
+      picks.some((pick) => sourceRowIdentity(pick) === identity)
+        ? picks.filter((pick) => sourceRowIdentity(pick) !== identity)
+        : [...picks, { name: entry.name, slug: entry.slug, level: entry.level, source: entry.source, documentSlug: entry.documentSlug, kind: entry.kind, displayLabel: rowName(entry) }],
     );
   }
 
@@ -114,7 +115,7 @@ export default function MultiContentPicker({
           {results.map((entry) => {
             const key = textKey(entry.name);
             const alreadyOn = selectedLower.has(key);
-            const picked = pendingIds.has(entry.slug ?? `custom:${key}`);
+            const picked = pendingIds.has(sourceRowIdentity(entry));
             return (
               <li
                 key={entry.slug}
@@ -189,14 +190,14 @@ export default function MultiContentPicker({
         <div className="mt-1.5 flex flex-wrap items-center gap-1.5">
           {pending.map((pick) => (
             <span
-              key={pick.slug ?? pick.name}
+              key={sourceRowIdentity(pick)}
               className="flex items-center gap-1 rounded-full bg-stone-800 px-2 py-0.5 text-xs text-stone-200"
             >
               {pick.displayLabel ?? displayName(pick.name)}
               <button
                 type="button"
                 onClick={() =>
-                  setPending((picks) => picks.filter((entry) => (entry.slug ?? entry.name) !== (pick.slug ?? pick.name)))
+                  setPending((picks) => picks.filter((entry) => sourceRowIdentity(entry) !== sourceRowIdentity(pick)))
                 }
                 aria-label={t("Remove {name}", { name: pick.displayLabel ?? displayName(pick.name) })}
                 className="text-stone-500 hover:text-red-400"
