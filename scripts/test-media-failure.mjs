@@ -179,6 +179,21 @@ try {
     assert.deepEqual(updates.map((place) => [place.mapPending, place.mapFailed]), [[true, null], [false, live.data.reason]], "open clients get the place as stored, waiting and then failed");
   });
 
+  await test("a refused map ends quietly without a rejected queue job or stack trace", async () => {
+    setScript(DECLINE);
+    const errors = [];
+    const original = console.error;
+    console.error = (...args) => { errors.push(args); };
+    try {
+      await enqueueLocationMap(getCampaignById(campaign.id), location.id);
+    } finally {
+      console.error = original;
+    }
+    assert.deepEqual(errors, [], "a handled image API failure reached the queue error logger");
+    assert.equal(getLocation(location.id).mapPending, false);
+    assert.ok(getLocation(location.id).mapFailed);
+  });
+
   await test("a redraw clears the failure while it waits, and the map it paints shows under the narration", async () => {
     setScript(PAINT);
     const drawn = enqueueLocationMap(getCampaignById(campaign.id), location.id);
