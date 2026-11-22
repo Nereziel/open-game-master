@@ -108,7 +108,7 @@ export function buildMathSections({ t, derived, scores, klass, atTable }: BuildM
     first: parts.firstLevel,
   });
   const featurePart = parts.featureHp ? [t("features {bonus}", { bonus: formatModifier(parts.featureHp) })] : [];
-  const levelsWord = (levels: number) => (levels === 1 ? t("level") : t("levels"));
+  const levelsWord = (levels: number) => pluralOf(t)("level", "levels", { count: levels });
   const hpWorking = preview.hpKept
     ? hpLine.reason
     : split
