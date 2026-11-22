@@ -44,6 +44,10 @@ console.log("Missing: " + count("message") + " messages, " + count("context") + 
 const tokens = (s) => (s.match(/\{[a-zA-Z_][\w]*\}/g) ?? []).sort().join("\u0001");
 const protectedParts = (s) => (s.match(/<[/!]?[a-zA-Z][^>]*>|https?:\/\/[^\s)]+/g) ?? []).sort().join("\u0001");
 function verify(source, candidate) {
+  // The source catalog intentionally contains an empty UI key. An empty
+  // translation for that key is valid; every nonempty source still requires
+  // actual translated text (and the same protected placeholders/markup).
+  if (source === "" && candidate === "") return;
   if (typeof candidate !== "string" || !candidate.trim()) throw new Error("Empty translation: " + source.slice(0, 70));
   if (tokens(source) !== tokens(candidate)) throw new Error("Changed placeholders in: " + source.slice(0, 70));
   if (protectedParts(source) !== protectedParts(candidate)) throw new Error("Changed HTML or URL in: " + source.slice(0, 70));
