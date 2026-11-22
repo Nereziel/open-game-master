@@ -1,10 +1,15 @@
 import type { AuditEntry } from "@/app/campaigns/[campaignId]/useCampaignStream";
 import type { CharacterEvent } from "@/lib/db/character-events";
+import { contentName, type FrNamesTable } from "@/lib/content/names";
+import { resourceDisplayName } from "@/lib/srd/class-resources-fr";
+import { skillLabel } from "@/lib/srd";
+import type { Locale } from "@/lib/i18n/translate";
 import type { ClockTurn } from "@/lib/db/clock-moves";
 import type { TurnChangeView } from "@/lib/db/turn-changes";
-import { quietTick } from "@/lib/sheet-audit-logic";
+import { quietTick, knownFieldWords } from "@/lib/sheet-audit-logic";
 import { translate } from "@/lib/messages-logic";
 import { COPPER_PER_GOLD, formatPrice } from "@/lib/srd/currency";
+import { damageTypeWord } from "@/lib/dm/damage-logic";
 import { pluralOf } from "@/lib/messages-logic";
 
 // What the event log lists and which turns it offers to revert. Pure, so a
@@ -125,7 +130,7 @@ export function revertableTurns(auditLog: AuditEntry[], clockTurns: ClockTurn[] 
 type Delta = Record<string, unknown>;
 
 // The translator a caller binds to its own locale (useT in a component).
-type Say = (key: string, vars?: Record<string, string | number>) => string;
+type Say = ((key: string, vars?: Record<string, string | number>) => string) & { locale?: Locale };
 
 // English, for the callers that carry no translator (the test suite, an old
 // reader): the same words the dictionaries hold.
@@ -146,11 +151,36 @@ const words = (value: unknown): string[] => (Array.isArray(value) ? value.map(wo
 const times = (qty: number | null) => (qty !== null && qty > 1 ? ` x${qty}` : "");
 const gold = (t: Say, copper: number) => t("{amount} gold", { amount: Math.round(copper) / 100 });
 
+// Only recognized rulebook names are localized. Player-defined names, event
+// payloads, and custom content remain unchanged; useT carries the locale.
+const displayName = (t: Say, table: FrNamesTable | "items", raw: string) =>
+  contentName(table, raw, t.locale ?? "en");
+
+// A resource's stored ID has an official display label in the installed
+// character-sheet catalog. A free-form resource name never gets rewritten.
+const displayResource = (t: Say, raw: string) =>
+  resourceDisplayName(raw, t.locale ?? "en") ?? raw;
+
+// Translate only recognized internal sheet field identifiers. A custom sheet
+// key must not be silently rewritten as if it were a system-owned field.
+const displaySheetField = (t: Say, key: string) => {
+  const label = knownFieldWords(key);
+  return label ? t(label) : key;
+};
+
+// Training subjects can be an SRD skill ID or its canonical English name.
+// Other subjects are free text entered by the GM and stay exactly as written.
+const displayTrainingSubject = (t: Say, raw: string) => {
+  const skillId = raw.trim().toLowerCase().replace(/[ -]+/g, "_");
+  const label = skillLabel(skillId, t.locale ?? "en");
+  return label === skillId ? raw : label;
+};
+
 function deathState(t: Say, name: string, delta: Delta): string {
   const tp = pluralOf(t);
   const revived = word(delta.revived);
   if (revived) {
-    return t("{name} is brought back by {by}", { name, by: revived });
+    return t("{name} is brought back by {by}", { name, by: displayName(t, "spells", revived) });
   }
   const track = delta.deathSaves as { successes?: unknown; failures?: unknown; stable?: unknown; dead?: unknown } | null | undefined;
   if (!track || typeof track !== "object") {
@@ -193,21 +223,22 @@ export function describeKnownEntry(
 function knownEntryText(t: Say, entry: { kind: string; delta: Delta }, name: string): string | null {
   const tp = pluralOf(t);
   const delta = entry.delta ?? {};
-  const item = word(delta.name) ?? word(delta.item) ?? t("an item");
+  const item = displayName(t, "items", word(delta.name) ?? word(delta.item) ?? t("an item"));
   const qty = amount(delta.qty);
   switch (entry.kind) {
     case "apply_damage": {
       // Wild Shape: the blow landed on the beast form, not the druid.
       const form = word(delta.form);
       if (form) {
+        const formName = displayName(t, "monsters", form);
         const carryover = amount(delta.carryover) ?? 0;
         if (delta.reverted) {
-          return carryover > 0 ? t("{name}'s {form} form breaks, {carryover} damage carrying through", { name, form, carryover }) : t("{name}'s {form} form breaks", { name, form });
+          return carryover > 0 ? t("{name}'s {form} form breaks, {carryover} damage carrying through", { name, form: formName, carryover }) : t("{name}'s {form} form breaks", { name, form: formName });
         }
         const beastHp = amount(delta.beastHp);
         return beastHp !== null
-          ? t("{name}'s {form} form takes {amount} damage ({hp} beast HP)", { name, form, amount: amount(delta.amount) ?? t("some"), hp: beastHp })
-          : t("{name}'s {form} form takes {amount} damage", { name, form, amount: amount(delta.amount) ?? t("some") });
+          ? t("{name}'s {form} form takes {amount} damage ({hp} beast HP)", { name, form: formName, amount: amount(delta.amount) ?? t("some"), hp: beastHp })
+          : t("{name}'s {form} form takes {amount} damage", { name, form: formName, amount: amount(delta.amount) ?? t("some") });
       }
       if (delta.relentlessEndurance) return t("{name} holds on at 1 HP (Relentless Endurance)", { name });
       if (delta.undyingSentinel) return t("{name} holds on at 1 HP (Undying Sentinel)", { name });
@@ -219,15 +250,16 @@ function knownEntryText(t: Say, entry: { kind: string; delta: Delta }, name: str
       const hp = amount(delta.currentHp);
       const dmg = amount(delta.amount);
       const line = dmg !== null ? t("{name} takes {amount} damage", { name, amount: dmg }) : t("{name} takes some damage", { name });
-      return `${line}${type ? t(" ({type})", { type }) : ""}${hp !== null ? t(" ({hp} HP)", { hp }) : ""}`;
+      return `${line}${type ? t(" ({type})", { type: damageTypeWord(type, t.locale ?? "en") }) : ""}${hp !== null ? t(" ({hp} HP)", { hp }) : ""}`;
     }
     case "heal": {
       const form = word(delta.form);
       const healed = amount(delta.amount);
       if (form) {
+        const formName = displayName(t, "monsters", form);
         const beastHp = amount(delta.beastHp);
         const taken = healed ?? t("some");
-        return beastHp !== null ? t("{name}'s {form} form heals {amount} ({hp} beast HP)", { name, form, amount: taken, hp: beastHp }) : t("{name}'s {form} form heals {amount}", { name, form, amount: taken });
+        return beastHp !== null ? t("{name}'s {form} form heals {amount} ({hp} beast HP)", { name, form: formName, amount: taken, hp: beastHp }) : t("{name}'s {form} form heals {amount}", { name, form: formName, amount: taken });
       }
       const hp = amount(delta.newHp);
       return healed !== null ? `${t("{name} heals {amount}", { name, amount: healed })}${hp !== null ? t(" ({hp} HP)", { hp }) : ""}` : t("{name} is healed", { name });
@@ -241,7 +273,9 @@ function knownEntryText(t: Say, entry: { kind: string; delta: Delta }, name: str
     case "set_effect": {
       const max = amount(delta.maxHp);
       const hp = amount(delta.currentHp);
-      return max !== null ? `${name}'s hit point maximum is now ${max}${hp !== null ? ` (${hp} HP)` : ""}` : `${name}'s hit point maximum changes`;
+      return max !== null
+        ? `${t("{name}'s hit point maximum is now {max}", { name, max })}${hp !== null ? t(" ({hp} HP)", { hp }) : ""}`
+        : t("{name}'s hit point maximum changes", { name });
     }
     case "award_xp": {
       const xp = amount(delta.amount);
@@ -271,13 +305,13 @@ function knownEntryText(t: Say, entry: { kind: string; delta: Delta }, name: str
     case "reveal_item": {
       const from = word(delta.from);
       const to = word(delta.to);
-      return from && to ? t("{name}'s {from} turns out to be {to}", { name, from, to }) : t("{name} learns what an item they carry is", { name });
+      return from && to ? t("{name}'s {from} turns out to be {to}", { name, from: displayName(t, "items", from), to: displayName(t, "items", to) }) : t("{name} learns what an item they carry is", { name });
     }
     // A pact's gift or its price (src/lib/dm/pact-fire.ts).
     case "item": {
       const added = word(delta.added);
       const removed = word(delta.removed);
-      return added ? t("{name} receives {item}{times}", { name, item: added, times: "" }) : removed ? t("{name} gives up {item}", { name, item: removed }) : t("{name}'s pack changes", { name });
+      return added ? t("{name} receives {item}{times}", { name, item: displayName(t, "items", added), times: "" }) : removed ? t("{name} gives up {item}", { name, item: displayName(t, "items", removed) }) : t("{name}'s pack changes", { name });
     }
     case "trade": {
       const partner = word(delta.with);
@@ -301,14 +335,17 @@ function knownEntryText(t: Say, entry: { kind: string; delta: Delta }, name: str
       const created = word(delta.created);
       const bonded = word(delta.bonded);
       const unbonded = word(delta.unbonded);
-      if (created) return `${name} creates a pact weapon: ${created}`;
-      if (bonded) return `${name} bonds with ${bonded} as a pact weapon`;
-      if (unbonded) return `${name} breaks the pact bond with ${unbonded}`;
-      return `${name} dismisses ${word(delta.dismissed) ?? "the pact weapon"}`;
+      if (created) return t("{name} creates a pact weapon: {item}", { name, item: displayName(t, "items", created) });
+      if (bonded) return t("{name} bonds with {item} as a pact weapon", { name, item: displayName(t, "items", bonded) });
+      if (unbonded) return t("{name} breaks the pact bond with {item}", { name, item: displayName(t, "items", unbonded) });
+      const dismissed = word(delta.dismissed);
+      return t("{name} dismisses {item}", { name, item: dismissed ? displayName(t, "items", dismissed) : t("the pact weapon") });
     }
     // Pact of the Tome: a new book, the old one gone with it.
     case "book_of_shadows":
-      return delta.replaced === true ? `${name} makes a new Book of Shadows, and the old one is gone` : `${name} makes a Book of Shadows`;
+      return delta.replaced === true
+        ? t("{name} makes a new Book of Shadows, and the old one is gone", { name })
+        : t("{name} makes a Book of Shadows", { name });
     case "hand_item": {
       const to = word(delta.to);
       const from = word(delta.from);
@@ -327,7 +364,7 @@ function knownEntryText(t: Say, entry: { kind: string; delta: Delta }, name: str
       return t("{name} picks up {item}{times}", { name, item, times: times(amount(delta.taken)) });
     case "use_item": {
       const used = word(delta.item);
-      return used ? t("{name} uses {item}", { name, item: used }) : t("{name} spends charges from an item", { name });
+      return used ? t("{name} uses {item}", { name, item: displayName(t, "items", used) }) : t("{name} spends charges from an item", { name });
     }
     case "dawn_recharge":
       return t("{name}'s items regain charges at dawn", { name });
@@ -339,14 +376,16 @@ function knownEntryText(t: Say, entry: { kind: string; delta: Delta }, name: str
       if (inside !== null)
         return t("{name} has dealt {who} {amount} damage from inside this turn", { name, who: word(delta.swallower) ?? t("what swallowed them"), amount: inside });
       const condition = word(delta.condition);
-      return condition ? t("{name} is {condition}", { name, condition }) : t("{name} gains a condition", { name });
+      return condition ? t("{name} is {condition}", { name, condition: displayName(t, "conditions", condition) }) : t("{name} gains a condition", { name });
     }
     case "clear_condition": {
       const level = amount(delta.level);
       if (word(delta.condition) === "exhaustion" && level !== null) {
         return t("{name}'s exhaustion falls to level {level}", { name, level });
       }
-      const ended = word(delta.condition) ?? (words(delta.ended).join(" or ") || null);
+      const condition = word(delta.condition);
+      const ended = (condition ? [condition] : words(delta.ended))
+        .map((value) => displayName(t, "conditions", value)).join(` ${t("or")} `);
       return ended ? t("{name} is no longer {ended}", { name, ended }) : t("{name} is rid of a condition", { name });
     }
     case "exhaustion": {
@@ -360,16 +399,16 @@ function knownEntryText(t: Say, entry: { kind: string; delta: Delta }, name: str
     // The once-a-turn mark of Spirit Projection's Form of Dread heal
     // (spirit-projection.ts), written apart from the heal itself.
     case "spirit_projection":
-      return `${name} draws on Form of Dread for this turn`;
+      return t("{name} draws on Form of Dread for this turn", { name });
     case "condition_clock": {
       const ended = words(delta.ended);
-      return ended.length ? t("{name} is no longer {ended}", { name, ended: ended.join(" or ") }) : t("Time runs on {name}'s conditions", { name });
+      return ended.length ? t("{name} is no longer {ended}", { name, ended: ended.map((condition) => displayName(t, "conditions", condition)).join(` ${t("or")} `) }) : t("Time runs on {name}'s conditions", { name });
     }
     case "concentration_clock":
-      return t("Time runs on {name}'s {spell}", { name, spell: word(delta.spell) ?? t("spell") });
+      return t("Time runs on {name}'s {spell}", { name, spell: displayName(t, "spells", word(delta.spell) ?? t("spell")) });
     case "concentration": {
       const spell = word(delta.concentratingOn);
-      return spell ? t("{name} concentrates on {spell}", { name, spell }) : t("{name} stops concentrating", { name });
+      return spell ? t("{name} concentrates on {spell}", { name, spell: displayName(t, "spells", spell) }) : t("{name} stops concentrating", { name });
     }
     case "supplies": {
       const level = amount(delta.exhaustion);
@@ -377,7 +416,7 @@ function knownEntryText(t: Say, entry: { kind: string; delta: Delta }, name: str
     }
     case "training": {
       const subject = word(delta.subject);
-      return subject ? t("{name} learns {subject}", { name, subject }) : t("{name} finishes their training", { name });
+      return subject ? t("{name} learns {subject}", { name, subject: displayTrainingSubject(t, subject) }) : t("{name} finishes their training", { name });
     }
     case "use_spell_slot": {
       const level = amount(delta.level);
@@ -386,17 +425,19 @@ function knownEntryText(t: Say, entry: { kind: string; delta: Delta }, name: str
     // What a reaction itself did to the sheet (reaction-refund.ts reactionPatch).
     case "reaction": {
       const what = word(delta.reaction);
-      return what ? `${name}: ${what}` : `${name} takes a reaction`;
+      // A named reaction is author- or feature-provided: preserve it verbatim.
+      return what ? `${name}: ${what}` : t("{name} takes a reaction", { name });
     }
     case "use_resource": {
-      const resource = word(delta.resource) ?? t("a feature");
+      const rawResource = word(delta.resource);
+      const resource = rawResource ? displayResource(t, rawResource) : t("a feature");
       const from = word(delta.from);
       if (from) return t("{name} receives {item}{times} from {from}", { name, item: resource, times: "", from });
       const spent = amount(delta.spent) ?? 1;
       return spent > 1 ? tp("{name} spends {count} use of {resource}", "{name} spends {count} uses of {resource}", { name, count: spent, resource }) : t("{name} spends {resource}", { name, resource });
     }
     case "learn_spell": {
-      const spell = word(delta.spell) ?? t("a spell");
+      const spell = displayName(t, "spells", word(delta.spell) ?? t("a spell"));
       return delta.action === "remove" ? t("{name} loses the spell {spell}", { name, spell }) : t("{name} learns the spell {spell}", { name, spell });
     }
     case "divine_intervention":
@@ -407,7 +448,7 @@ function knownEntryText(t: Say, entry: { kind: string; delta: Delta }, name: str
     case "death_moment":
       return t("The moment {name} died is written down", { name });
     case "spirit_anchor":
-      return `${name}'s spirit is held by Anchor of the Living`;
+      return t("{name}'s spirit is held by Anchor of the Living", { name });
     case "stabilize": {
       const healer = word(delta.healer);
       const woke = amount(delta.currentHp) === 1;
@@ -421,17 +462,17 @@ function knownEntryText(t: Say, entry: { kind: string; delta: Delta }, name: str
       return t("{name} attunes to an item over a rest", { name });
     case "update_sheet": {
       const changed = Object.keys(delta);
-      return t("The GM rewrites {name}'s sheet{fields}", { name, fields: changed.length ? t(" ({fields})", { fields: changed.join(", ") }) : "" });
+      return t("The GM rewrites {name}'s sheet{fields}", { name, fields: changed.length ? t(" ({fields})", { fields: changed.map((key) => displaySheetField(t, key)).join(", ") }) : "" });
     }
     case "undo":
       return t("Party lead undid a change to {name}", { name });
     case "lead_edit": {
       const changed = Object.keys(delta).filter((key) => key !== "reason");
-      return t("Party lead corrected {name}{fields}", { name, fields: changed.length ? t(" ({fields})", { fields: changed.join(", ") }) : "" });
+      return t("Party lead corrected {name}{fields}", { name, fields: changed.length ? t(" ({fields})", { fields: changed.map((key) => displaySheetField(t, key)).join(", ") }) : "" });
     }
     case "player_adjust": {
       const changed = Object.keys(delta);
-      return t("{name}'s player adjusted their counters{fields}", { name, fields: changed.length ? t(" ({fields})", { fields: changed.join(", ") }) : "" });
+      return t("{name}'s player adjusted their counters{fields}", { name, fields: changed.length ? t(" ({fields})", { fields: changed.map((key) => displaySheetField(t, key)).join(", ") }) : "" });
     }
     default:
       return null;

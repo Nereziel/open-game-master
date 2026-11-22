@@ -6,7 +6,8 @@ import { translate, type Locale } from "@/lib/i18n/translate";
 // The original stored summary remains untouched for language switching.
 export function characterEventSummary(summary: string, kind: string, locale: Locale): string {
   if (locale !== "cs" || kind !== "item") return summary;
-  const acquired = /^Acquired\s+(.+)$/i.exec(summary.trim());
+  // Historical item events are single-line templates. Do not mistake multiline prose for one.
+  const acquired = /^Acquired[ \t]+([^\r\n]+)$/i.exec(summary.trim());
   if (!acquired) return summary;
   const item = acquired[1].trim().replace(/\.$/, "");
   if (!item) return summary;

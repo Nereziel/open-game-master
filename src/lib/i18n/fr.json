@@ -1,5 +1,17 @@
 {
   "messages": {
+    "{name}'s hit point maximum is now {max}": "Le maximum de points de vie de {name} est désormais de {max}",
+    "{name}'s hit point maximum changes": "Le maximum de points de vie de {name} change",
+    "{name} creates a pact weapon: {item}": "{name} crée une arme de pacte : {item}",
+    "{name} bonds with {item} as a pact weapon": "{name} lie {item} comme arme de pacte",
+    "{name} breaks the pact bond with {item}": "{name} rompt le lien de pacte avec {item}",
+    "{name} dismisses {item}": "{name} fait disparaître {item}",
+    "the pact weapon": "l'arme de pacte",
+    "{name} makes a new Book of Shadows, and the old one is gone": "{name} crée un nouveau Livre des ombres et l'ancien disparaît",
+    "{name} makes a Book of Shadows": "{name} crée un Livre des ombres",
+    "{name} draws on Form of Dread for this turn": "{name} tire parti de la Forme d'effroi pendant ce tour",
+    "{name} takes a reaction": "{name} utilise une réaction",
+    "{name}'s spirit is held by Anchor of the Living": "L'esprit de {name} est retenu par l'Ancre des vivants",
     "Remove portrait": "Retirer le portrait",
     "Used to paint your character's portrait if you don't add a photo or choose one from the gallery.": "Sert à créer le portrait de ton personnage avec l’IA si tu n’importes pas de photo et ne choisis pas d’image dans la galerie.",
     "Choose from gallery": "Choisir dans la galerie",
