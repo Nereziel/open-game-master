@@ -2,7 +2,7 @@
 // Only trusted SRD provenance is eligible; never infer a source from the name.
 import type { RulebookPage } from "../../../rulebook/types";
 import { PAGE_CATALOG_NAMES } from "../../../rulebook/catalog-rows";
-import { translationSourceId, type ContentType, type SourceRecord } from "../registry";
+import { translationSourceId, type SourceRecord } from "../registry";
 
 export type SrdCatalogRecord = SourceRecord & Readonly<{
   kind: "spells" | "items" | "monsters" | "classes" | "races";
@@ -31,7 +31,7 @@ export function srdPageIdForCatalogRecord(
     const page = byId.get(explicitId);
     if (!page) return null;
     // A stale/wrong rulebook pointer must not silently overwrite another item.
-    if (record.source === "open5e" && record.rulebook && !matchesCatalogTitle(page, record.name)) return null;
+    if (!matchesCatalogTitle(page, record.name)) return null;
     return page.id;
   }
 
