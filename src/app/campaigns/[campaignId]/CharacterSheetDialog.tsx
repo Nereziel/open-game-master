@@ -326,7 +326,7 @@ export function CharacterSheetDialog({
                   glyph: "rest-ac",
                   label: <GameTerm id="armor_class">{t("Armor class", { context: "table.sheet.armorClass" })}</GameTerm>,
                   value: acView(sheet).ac,
-                  title: acView(sheet, t).note ?? (sheet.acOverride ? t("Set by hand; armor does not change it.") : armor.parts.join(" + ")),
+                  title: acView(sheet, t).note ?? (sheet.acOverride ? t("Set by hand; armor does not change it.") : localizeAcParts(armor.parts, t, locale).join(" + ")),
                 },
                 {
                   glyph: "rest-speed",
