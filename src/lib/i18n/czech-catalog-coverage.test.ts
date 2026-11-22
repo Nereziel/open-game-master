@@ -12,6 +12,41 @@ describe("Czech UI catalog completeness", () => {
     );
   });
 
+  it("keeps physical hit-die instructions and controls in the central Czech catalog", () => {
+    expect(czech.messages["Your hit die roll"]).toBe("Hod kostkou životů");
+    expect(czech.messages["Heal with this roll"]).toBe("Vyléčit podle hodu");
+    expect(czech.messages["The {die} is from {from}."]).toBe("Kostka {die} pochází z {from}.");
+    expect(czech.messages["Roll digitally instead"]).toBe("Místo toho hodit digitálně");
+    expect(czech.messages["Roll {summary}. Your assigned dice fill in on their own."])
+      .toContain("Přiřazené kostky");
+    expect(czech.messages["Roll {summary} at your table and enter each die below.{note} The game waits for your result."])
+      .toContain("zadej výsledky");
+  });
+
+  it("covers Czech multiclass tool selection and screen-reader labels", () => {
+    expect(czech.messages["Choose tools for {class} ({count}):"])
+      .toBe("Vyber nástroje pro povolání {class} (počet: {count}):");
+    expect(czech.messages["Tool choices for {class}"])
+      .toBe("Výběr nástrojů pro povolání {class}");
+  });
+
+  it("covers typed Czech multiclass refusals without altering their placeholders", () => {
+    for (const key of [
+      'Unknown class "{name}".',
+      "This character already has levels in {class}.",
+      "To take {class}, prerequisites: {prereq}.",
+      "To multiclass, the existing {class} also requires {prereq}.",
+    ] as const) {
+      const localized = czech.messages[key];
+      expect(localized).toBeTruthy();
+      for (const match of key.matchAll(/\\{[a-z]+\\}/g)) {
+        expect(localized).toContain(match[0]);
+      }
+    }
+    expect(czech.messages["A character holds at most {count} classes here."])
+      .toContain("{count}");
+  });
+
   it("covers all source messages, contexts and plural entries", () => {
     // The empty source key represents an empty UI string, not untranslated text.
     const sourceMessages = Object.keys(source.messages).filter(Boolean);

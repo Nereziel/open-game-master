@@ -5,11 +5,14 @@ import { localizeAcParts } from "@/app/characters/builder/derivedReasons";
 import { contentName } from "@/lib/content/names";
 import { CS_NAMES_BY_TABLE } from "@/lib/content/names-cs";
 import { installCsTables } from "@/lib/i18n/cs-tables";
+import catalog from "@/lib/i18n/cs.json";
+import { installCatalog } from "@/lib/i18n/translate";
 import { translate } from "@/lib/i18n/translate";
 import { skillLabel } from "@/lib/srd";
 import { abilityShortLabel } from "@/lib/srd/ability-short-label";
 
 installCsTables({ names: CS_NAMES_BY_TABLE });
+installCatalog("cs", catalog);
 
 describe("Campaign character adjustments in Czech", () => {
   it("translates every displayed source in a scale-mail armor calculation", () => {

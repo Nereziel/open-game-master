@@ -11409,6 +11409,7 @@
     }
   },
   "plurals": {
+    "level\u0000levels": ["niveau","niveaux"],
     "{count} place\u0000{count} places": [
       "{count} lieu",
       "{count} lieux"
