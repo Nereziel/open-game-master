@@ -29,7 +29,7 @@ import {
   type SlotEdits,
 } from "./LeadEditParts";
 import { coinCorrection, coinFields, earnedExpertise, expertiseOverCap, skillLevelsOf, trainingFrom, type SkillLevel } from "./lead-edit-logic";
-import { acBreakdownFor, effectiveAcFor, SRD_SKILLS } from "@/lib/srd";
+import { acBreakdownFor, effectiveAcFor, SRD_SKILLS, skillLabel } from "@/lib/srd";
 import { isCantripName } from "@/lib/srd/spell-lists";
 import { spellStyleFor } from "@/lib/srd/spell-prep";
 import { priceText } from "@/lib/srd/currency";
@@ -39,7 +39,6 @@ import { hostOffers, useCapabilities } from "@/lib/use-capabilities";
 import { useLocale, useT } from "@/lib/locale";
 import { contentName } from "@/lib/content/names";
 import { abilityShortLabel } from "@/lib/srd/ability-short-label";
-import { skillLabel } from "@/lib/srd";
 import { GameTerm } from "@/components/ui/GameTerm";
 import { localizeAcParts } from "@/app/characters/builder/derivedReasons";
 
