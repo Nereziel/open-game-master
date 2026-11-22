@@ -1,9 +1,12 @@
 import { describe, expect, it } from "vitest";
 import { installCsTables } from "@/lib/i18n/cs-tables";
+import catalog from "@/lib/i18n/cs.json";
+import { installCatalog } from "@/lib/i18n/translate";
 import { CS_NAMES_BY_TABLE } from "@/lib/content/names-cs";
 import { characterEventSummary } from "./event-summary-cs";
 
 installCsTables({ names: CS_NAMES_BY_TABLE });
+installCatalog("cs", catalog);
 
 describe("Character history milestones in Czech", () => {
   it("localizes stored English acquired entries, including already-translated item names", () => {
