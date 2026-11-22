@@ -15,7 +15,7 @@ describe("Czech equipment and spell tooltips", () => {
 
   it("translates the shared missing-description prompt", () => {
     const prompt = "Select the mark beside it for the full entry.";
-    expect(translate("cs", prompt)).toContain("Úplný popis");
+    expect(translate("cs", prompt)).toContain("Podrobný popis");
     expect(translate("en", prompt)).toBe(prompt);
   });
 
