@@ -56,3 +56,20 @@ fork's `main`. Do not reset or force-push `main` to upstream.
 
 After this release, compare against the **latest** upstream main again before
 starting the next update. Keep future changes in separate reviewed batches.
+
+## Upstream release 0.39.0 integration (2026-11-22)
+
+- Fork baseline: `b029cee01fc99b242c582ff8f0c84f5ed6f970cb`.
+- Upstream release: `63fad13fde90184a463a5238b3767c2fdbda3fd2` (v0.39.0).
+- Three-way comparison against `3ca600b914f70bef95d85b1cd82a52d48d285866`
+  found 139 upstream-changed files and 8 files edited by both branches.
+  The overlapping text edits were reconciled, keeping both the fork's Czech
+  changes and upstream behavior; package metadata keeps the fork's fontkit
+  dependency while updating its release version.
+- Includes enemy riders, Large-mount map footprints, unified dice records,
+  paperdoll drag-and-drop, Gothic corner assets, and upstream regression tests.
+- Adds Czech wording for the new paperdoll drag instruction and a translation
+  regression check. Existing Czech catalog and PDF fonts are retained.
+- GitHub Actions are still configured for `main` rather than automatic PR
+  checks; build, lint and runtime tests must be verified after merge or in a
+  separately triggered environment. No test pass is implied by this note.

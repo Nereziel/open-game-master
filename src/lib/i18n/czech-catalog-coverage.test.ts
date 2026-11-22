@@ -5,6 +5,13 @@ import czech from "./cs.json";
 // A larger Czech file does not prove full coverage: only matching English
 // source keys count. Guard every catalog family against untranslated fallbacks.
 describe("Czech UI catalog completeness", () => {
+  it("translates the paperdoll drag-and-drop instruction", () => {
+    const message = "Drag an item from the list above onto its place to put it on, or press a place to see what goes there.";
+    expect(czech.messages[message as keyof typeof czech.messages]).toBe(
+      "Přetáhni předmět ze seznamu výše na příslušné místo na figuríně, abys ho vybavil, nebo na místo klikni a zjisti, co tam patří.",
+    );
+  });
+
   it("covers all source messages, contexts and plural entries", () => {
     // The empty source key represents an empty UI string, not untranslated text.
     const sourceMessages = Object.keys(source.messages).filter(Boolean);

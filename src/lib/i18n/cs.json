@@ -1,5 +1,6 @@
 {
   "messages": {
+    "Drag an item from the list above onto its place to put it on, or press a place to see what goes there.": "Přetáhni předmět ze seznamu výše na příslušné místo na figuríně, abys ho vybavil, nebo na místo klikni a zjisti, co tam patří.",
     "The browser could not read this passage aloud.": "Prohlížeč nedokázal tuto pasáž přečíst nahlas.",
     "This switch controls server-generated narration for the table. Each player can separately choose free browser speech under Settings > Playback, even when server narration is off.": "Tento přepínač ovládá serverové předčítání pro celý herní stůl. Každý hráč si může zvlášť zvolit bezplatné předčítání v prohlížeči v Nastavení → Přehrávání, i když je serverové předčítání vypnuté.",
     "Narration playback": "Způsob předčítání",
