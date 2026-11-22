@@ -37,6 +37,15 @@ Události ukládej ve strojově čitelné podobě (typ + parametry), pokud to ex
 
 Relevantní testy: `src/app/campaigns/[campaignId]/event-log-localization.test.ts`, `src/lib/battlemap/condition-notes-locale.test.ts`, `src/lib/characters/event-summary-cs.test.ts`, `src/lib/pdf/character-sheet-pdf.test.ts`.
 
+## Český deník postavy a knihy kouzel
+
+- Dlaždice šesti vlastností a popisky v editoru i PDF získávají zkratky **výhradně** přes `abilityShortLabel()`. Exportovaný `CS_ABILITY_ABBR` v `SheetParts.tsx` je jen kompatibilní odvozený pohled, ne druhý slovník.
+- Nápověda portrétu používá `contentName("classes", ...)`, záložka kouzel z odborností využívá UI klíč `Feats`. Jména custom povolání a kouzel se neukládají přeložená.
+- `SpellBook.tsx` vyhledává podle zobrazeného českého i původního anglického názvu; uživatel může zadat český dotaz bez diakritiky. Výběry a požadavky API vždy posílají původní jméno. Testuje `spell-name-search.test.ts`.
+- Formulář fyzického hodu životovou kostkou (`SheetState.tsx`) používá `useT()` pro instrukce, tlačítka a `aria-label`. Nové UI klíče se přidávají **pouze do `cs.json`**, nikoli jako české podmínky v JSX. Kontroluje `czech-catalog-coverage.test.ts`.
+
+Při pokračování Issue #100 je cílem **čeština a funkční angličtina**. Francouzský katalog se aktivně nerozšiřuje; zůstává pouze technická kompatibilita a neporušený fallback.
+
 ## Kontrola
 
 - `npm run i18n:cs:report` — existující přehled pokrytí katalogu.
