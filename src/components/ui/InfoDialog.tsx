@@ -378,6 +378,7 @@ function ItemBody({ reference }: { reference: ContentRef }) {
 
   const localizedArmorRows = armorRows.map(({ label, text }) => ({ label: detail(label), text: text ? detail(text) : null }));
   const localizedWeaponRows = weaponRows.map(({ label, text }) => ({ label: detail(label), text: text ? detail(text) : null }));
+  const shownDescription = itemDescriptionCs(reference.name ?? reference.slug, sheet.description, locale);
 
   return (
     <div className="space-y-4">
@@ -409,9 +410,9 @@ function ItemBody({ reference }: { reference: ContentRef }) {
           <RuleList rows={localizedWeaponRows} />
         </ItemSection>
       ) : null}
-      {sheet.description ? (
+      {shownDescription ? (
         <ItemSection title={detail("Description")}>
-          <div className="space-y-2 border-t border-stone-800 pt-2">{renderRules(itemDescriptionCs(reference.name ?? reference.slug, sheet.description, locale) ?? "")}</div>
+          <div className="space-y-2 border-t border-stone-800 pt-2">{renderRules(shownDescription)}</div>
         </ItemSection>
       ) : null}
     </div>
