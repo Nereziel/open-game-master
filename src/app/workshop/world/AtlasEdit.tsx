@@ -157,7 +157,7 @@ export function MapSettings({ api, atlas, region, onClose }: { api: WorldApi; at
       if (!apply) setPlan(answer);
       else {
         setPlan(null);
-        region.setNotice({ text: `${atlas.name} now sits in its new box.${answer.placements.length ? ` ${answer.placements.length === 1 ? "One place" : `${answer.placements.length} places`} moved with ${answer.placements.length === 1 ? "its pin" : "their pins"} on the Region.` : ""}` });
+        region.setNotice({ text: t("{name} now sits in its new box.", { name: atlas.name }) + (answer.placements.length ? t(" {count} places moved with their pins on the Region.", { count: answer.placements.length }) : "") });
       }
     } finally {
       setBusy(false);
@@ -239,8 +239,8 @@ export function MapSettings({ api, atlas, region, onClose }: { api: WorldApi; at
         {plan ? (
           <div className="flex flex-col gap-1 rounded-md border border-stone-700/60 p-2" data-testid="atlas-frame-review">
             <p>
-              {plan.moved ? `${plan.moved} ${plan.moved === 1 ? "pin or corner moves" : "pins and corners move"} in the box to stay on the picture.` : "No pin or corner moves in the box."}
-              {plan.outside ? ` ${plan.outside} of them fall outside the new box and wait at its nearest edge.` : ""}
+              {plan.moved ? t("{count} pins or corners move to stay on the picture.", { count: plan.moved }) : t("No pin or corner moves in the box.")}
+              {plan.outside ? t(" {count} of them fall outside the new box and wait at its nearest edge.", { count: plan.outside }) : ""}
             </p>
             {plan.placements.length ? <PlacementList placements={plan.placements} /> : null}
             {plan.notes.map((note) => (
@@ -318,17 +318,17 @@ export function DeleteReview({ remover, onDeleted }: { remover: ReturnType<typeo
   const { ask } = remover;
   if (!ask) return null;
   const { impact, notes } = ask.plan;
-  const what = impact.kind === "map" ? "the map" : impact.kind === "pin" ? "the pin" : "the region";
+  const what = impact.kind === "map" ? t("the map") : impact.kind === "pin" ? t("the pin") : t("the region");
   const lines: string[] = [];
-  if (impact.kind === "map") lines.push(impact.pins ? `Its ${impact.pins === 1 ? "pin goes" : `${impact.pins} pins go`} with it.` : "It has no pins.");
-  if (impact.openers.length) lines.push(`${impact.openers.length === 1 ? "A pin on another map opens" : `${impact.openers.length} pins on other maps open`} it and will open nothing: ${impact.openers.join(", ")}.`);
-  if (impact.nested.length) lines.push(`Drawn inside ${impact.kind === "pin" ? "this pin" : "its pins"}, and moving to the top of the list: ${impact.nested.join(", ")}.`);
-  if (impact.bound) lines.push(`${impact.bound === 1 ? "A pin that moves its place" : `${impact.bound} pins that move their places`} on the Region ${impact.bound === 1 ? "goes" : "go"}. The places stay where they are.`);
-  if (impact.kind === "pin" && !lines.length) lines.push("Nothing else is touched.");
+  if (impact.kind === "map") lines.push(impact.pins ? t("Its {count} pins go with it.", { count: impact.pins }) : t("It has no pins."));
+  if (impact.openers.length) lines.push(t("{count} pins on other maps open it and will open nothing: {names}.", { count: impact.openers.length, names: impact.openers.join(", ") }));
+  if (impact.nested.length) lines.push(t("Nested maps move to the top level: {names}.", { names: impact.nested.join(", ") }));
+  if (impact.bound) lines.push(t("{count} pins linked to the Region will disappear. The places will stay where they are.", { count: impact.bound }));
+  if (impact.kind === "pin" && !lines.length) lines.push(t("Nothing else is touched."));
   return (
-    <div className="panel motion-pop flex flex-col gap-2 rounded-lg border border-ember-700/40 p-3 text-xs text-stone-300" role="dialog" aria-label={`Delete ${what} ${impact.name}?`} data-testid="atlas-delete-review">
+    <div className="panel motion-pop flex flex-col gap-2 rounded-lg border border-ember-700/40 p-3 text-xs text-stone-300" role="dialog" aria-label={t("Delete {what} {name}?", { what, name: impact.name })} data-testid="atlas-delete-review">
       <span className="text-sm text-amber-100">
-        Delete {what} {impact.name}?
+        {t("Delete {what} {name}?", { what, name: impact.name })}
       </span>
       {lines.map((line) => (
         <p key={line}>{line}</p>
