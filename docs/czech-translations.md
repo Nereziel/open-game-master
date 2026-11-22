@@ -44,6 +44,10 @@ Relevantní testy: `src/app/campaigns/[campaignId]/event-log-localization.test.t
 - `SpellBook.tsx` vyhledává podle zobrazeného českého i původního anglického názvu; uživatel může zadat český dotaz bez diakritiky. Výběry a požadavky API vždy posílají původní jméno. Testuje `spell-name-search.test.ts`.
 - Formulář fyzického hodu životovou kostkou (`SheetState.tsx`) používá `useT()` pro instrukce, tlačítka a `aria-label`. Nové UI klíče se přidávají **pouze do `cs.json`**, nikoli jako české podmínky v JSX. Kontroluje `czech-catalog-coverage.test.ts`.
 
+- Průvodce zvyšováním úrovně zobrazuje povolání a specializace přes `contentName("classes", ...)` a `subclassName()`; dovednosti přes `skillLabel()`. Hledání povolání podporuje český název bez diakritiky. Parametry odesílané do API zůstávají anglické.
+- Výběr nástrojů používá `toolLabel(tool, t)` a centralizované texty v `cs.json`. Výpis požadavků a získaných zdatností zobrazuje `describePrereqT()` a `describeGrantT(t, grant, locale)` se sdílenými českými kategoriemi zbrojí a zbraní.
+- `canMulticlassInto()` nechává **původní anglické chyby** pro pravidlový engine, ale vrací také stabilní `reason` a případně `relatedClassId`. Web překládá důvod přes `multiclassRefusalLabel()` bez parsování anglické věty. Pokrývá `multiclass-locale.test.ts`. Homebrew a pravidlová data se nemění.
+
 Při pokračování Issue #100 je cílem **čeština a funkční angličtina**. Francouzský katalog se aktivně nerozšiřuje; zůstává pouze technická kompatibilita a neporušený fallback.
 
 ## Kontrola
