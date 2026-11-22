@@ -123,10 +123,10 @@ export function CatalogStart({
                     const icon = homebrewIcon(kind, entry.name, entry.data as Record<string, unknown>);
                     return icon ? <GameIcon icon={icon} size="size-6" /> : null;
                   })()}
-                  <span className="truncate">{entry.name}</span>
+                  <span className="truncate">{entry.display?.name ?? entry.name}</span>
                 </span>
                 <span className="flex shrink-0 flex-col items-end text-[11px] text-stone-500">
-                  <span>{entry.level !== undefined ? t("level {level}", { level: entry.level }) : entry.rarity || entry.kind || ""}</span>
+                  <span>{entry.level !== undefined ? t("level {level}", { level: entry.level }) : entry.display?.rarity ?? entry.rarity ?? entry.display?.category ?? entry.kind ?? ""}</span>
                   {/* Where the row is from, so a pack's version and the SRD's are told apart. */}
                   <span className="text-[10px] text-stone-600">
                     {entry.source === "homebrew" ? t("your homebrew") : entry.document || (entry.source === "srd" || entry.source === "bundled" ? "SRD 5.1" : "")}
@@ -134,9 +134,9 @@ export function CatalogStart({
                 </span>
               </button>
               <InfoButton
-                label={entry.name}
-                meta={kind === "spell" ? spellSummary(entry.data) : undefined}
-                text={describeContentEntry(entry.data)}
+                label={entry.display?.name ?? entry.name}
+                meta={entry.display?.meta ?? (kind === "spell" ? spellSummary(entry.data) : undefined)}
+                text={entry.display?.description ?? describeContentEntry(entry.data)}
               />
             </li>
           ))}
