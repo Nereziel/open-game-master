@@ -12,6 +12,7 @@
 
 import glossaryJson from "@/lib/help/glossary.json";
 import srdFeaturesJson from "@/lib/help/srd-features.json";
+import { SRD_FEATURE_DESCRIPTIONS_CS } from "@/lib/help/srd-feature-descriptions-cs";
 import starterSpellsJson from "@/lib/help/starter-spells.json";
 import skillsJson from "@/lib/srd/skills.json";
 import { describeBackgroundFeature } from "@/lib/backgrounds";
@@ -144,6 +145,7 @@ export function describeFeature(classId: string, subclass: string, name: string,
   const found =
     localizedResource ??
     subclassFeatureDescription(classId, subclass, name) ??
+    (locale === "cs" ? SRD_FEATURE_DESCRIPTIONS_CS[name] ?? null : null) ??
     classFeatureDescription(classId, name) ??
     exactSrdText(classId, name) ??
     // The background's feature sits on the sheet as "Shelter of the
@@ -153,6 +155,13 @@ export function describeFeature(classId: string, subclass: string, name: string,
     guidanceFor({ class: classId, features: [], feature: name }) ??
     looseSrdText(classId, name);
   const description = stripLeadingLabel(found, name);
+  if (locale === "cs" && name === "Timeless Body") {
+    return classId === "druid"
+      ? "Stárneš desetkrát pomaleji než obvykle."
+      : classId === "monk"
+        ? "Navenek přestáváš stárnout a nepotřebuješ jídlo ani vodu."
+        : (description ? translate("cs", description) : null);
+  }
   return description && locale === "cs" ? translate("cs", description) : description;
 }
 
