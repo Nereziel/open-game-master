@@ -235,3 +235,24 @@ spell from different sources still cannot be represented independently
 by this optional name-keyed map; conflicting references must remain
 unresolved until the long-term casting model uses per-entry identifiers.
 Never backfill the source of old name-only entries based on titles.
+
+### Campaign editor persistence
+
+The campaign party-lead editor now receives the same optional
+`contentRef` from the shared multi-picker. Adding an item keeps the
+canonical English name/slug and selected source; renaming it to free
+text clears the old catalog slug, source reference and homebrew
+mechanical snapshot.
+
+The spell editor records refs only from clicked catalog rows, preserves
+refs for existing retained spells and prunes obsolete names before
+saving. `fullPatchSheetSchema` continues accepting legacy sheet values
+without any refs. The campaign PATCH endpoint previously merged
+`spellcasting` recursively: it now treats an **explicit** `contentRefs`
+map as a replacement, including `{}` for removing the final reference,
+while missing `contentRefs` from an old client preserves the stored map.
+`reference-merge.test.ts` exercises all three cases.
+
+Remaining: other game actions and sheet update paths may still write
+name-only spell lists; they must be audited separately rather than
+retroactively guessing book origins.
