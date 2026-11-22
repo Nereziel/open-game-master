@@ -296,7 +296,7 @@ export function ArchetypeFields({
                   <input
                     value={row.feature.n}
                     aria-label={t("Feature name")}
-                    placeholder="Reed Walker"
+                    placeholder={t("Reed Walker")}
                     maxLength={80}
                     onChange={(event) => write(flat.map((entry, at) => (at === index ? { ...entry, feature: { ...entry.feature, n: event.target.value } } : entry)))}
                     className={cn(ui.input, "w-full text-sm sm:w-56")}
@@ -310,7 +310,7 @@ export function ArchetypeFields({
                 <textarea
                   value={row.feature.d}
                   aria-label={t("What it does")}
-                  placeholder="Marsh terrain costs no extra movement."
+                  placeholder={t("Marsh terrain costs no extra movement.")}
                   maxLength={1500}
                   rows={2}
                   onChange={(event) => write(flat.map((entry, at) => (at === index ? { ...entry, feature: { ...entry.feature, d: event.target.value } } : entry)))}

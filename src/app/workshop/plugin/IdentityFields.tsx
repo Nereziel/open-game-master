@@ -27,7 +27,7 @@ export function NameFields({ draft, onDraft }: SectionProps) {
         value={draft.name}
         onChange={(name) => set({ name })}
         maxLength={70}
-        placeholder="The Sunken Coast"
+        placeholder={t("The Sunken Coast")}
         className="sm:col-span-2"
         required
       />
@@ -36,7 +36,7 @@ export function NameFields({ draft, onDraft }: SectionProps) {
         value={draft.blurb}
         onChange={(blurb) => set({ blurb })}
         maxLength={200}
-        placeholder="A drowned dwarven kingdom and the tide-cults that kept living in it."
+        placeholder={t("A drowned dwarven kingdom and the tide-cults that kept living in it.")}
         hint={t("What the picker shows under the name.")}
         className="sm:col-span-2"
         required
@@ -71,7 +71,7 @@ export function OriginFields({ draft, onDraft }: SectionProps) {
         value={draft.inspiredBy}
         onChange={(inspiredBy) => set({ inspiredBy })}
         maxLength={200}
-        placeholder="An original world, or the setting this is a homage to"
+        placeholder={t("An original world, or the setting this is a homage to")}
         className="sm:col-span-2"
         required
       />
@@ -80,7 +80,7 @@ export function OriginFields({ draft, onDraft }: SectionProps) {
         value={draft.rightsHolder}
         onChange={(rightsHolder) => set({ rightsHolder })}
         maxLength={120}
-        placeholder="Leave empty if this is your own world"
+        placeholder={t("Leave empty if this is your own world")}
         hint={t("Who owns the setting you are referencing. Filling it in turns the notice below into a proper non-affiliation disclaimer.")}
         className="sm:col-span-2"
       />
@@ -94,7 +94,7 @@ export function OriginFields({ draft, onDraft }: SectionProps) {
         value={draft.franchise}
         onChange={(franchise) => set({ franchise })}
         maxLength={60}
-        placeholder="Defaults to the name"
+        placeholder={t("Defaults to the name")}
         hint={t("The group the picker files it under. One pack per era: 'Final Fantasy' with an edition of 'VII'.")}
       />
       <TextField
@@ -102,7 +102,7 @@ export function OriginFields({ draft, onDraft }: SectionProps) {
         value={draft.edition}
         onChange={(edition) => set({ edition })}
         maxLength={60}
-        placeholder="Empty for a single-era world"
+        placeholder={t("Empty for a single-era world")}
       />
       <div className="block">
         <span className="mb-1 block font-display text-[11px] tracking-[0.1em] text-amber-300/85">{t("Edition order")}</span>
@@ -143,7 +143,7 @@ export function WorldFields({ draft, onDraft }: SectionProps) {
         value={draft.theme}
         onChange={(theme) => set({ theme })}
         maxLength={120}
-        placeholder="Salvage, faith and the things under the water"
+        placeholder={t("Salvage, faith and the things under the water")}
         hint={t("Seeds the campaign's theme line.")}
         required
       />
@@ -153,7 +153,7 @@ export function WorldFields({ draft, onDraft }: SectionProps) {
         onChange={(premise) => set({ premise })}
         maxLength={500}
         rows={3}
-        placeholder="Where a new campaign in this world starts, in a paragraph."
+        placeholder={t("Where a new campaign in this world starts, in a paragraph.")}
         hint={t("Seeds the campaign description.")}
         className="sm:col-span-2"
       />
@@ -184,7 +184,7 @@ export function VoiceFields({ draft, onDraft }: SectionProps) {
         onChange={(dmFlavor) => set({ dmFlavor })}
         maxLength={1400}
         rows={6}
-        placeholder="Tone, what magic feels like, what the stakes are, what the narrator must never do."
+        placeholder={t("Tone, what magic feels like, what the stakes are, what the narrator must never do.")}
         hint={
           thin
             ? t("The highest-leverage field in the pack. {floor} characters or more is what steers the narrator; this is {count}.", { floor: DM_FLAVOR_FLOOR, count: draft.dmFlavor.trim().length })
@@ -197,7 +197,7 @@ export function VoiceFields({ draft, onDraft }: SectionProps) {
         value={draft.portraitStyle}
         onChange={(portraitStyle) => set({ portraitStyle })}
         maxLength={300}
-        placeholder="Painted, weathered, brine-stained leathers"
+        placeholder={t("Painted, weathered, brine-stained leathers")}
         hint={t("Art-style words for portraits.")}
       />
       <TextField
@@ -205,7 +205,7 @@ export function VoiceFields({ draft, onDraft }: SectionProps) {
         value={draft.mapStyle}
         onChange={(mapStyle) => set({ mapStyle })}
         maxLength={300}
-        placeholder="Inked nautical charts, kelp-green wash"
+        placeholder={t("Inked nautical charts, kelp-green wash")}
         hint={t("Art-style words for maps.")}
       />
       <TextField
@@ -213,7 +213,7 @@ export function VoiceFields({ draft, onDraft }: SectionProps) {
         value={draft.sceneStyle}
         onChange={(sceneStyle) => set({ sceneStyle })}
         maxLength={300}
-        placeholder="Salt-washed illustration, grey overcast light"
+        placeholder={t("Salt-washed illustration, grey overcast light")}
         hint={t("Art-style words for scene pictures: the look, not what is in them.")}
       />
       <TextField
@@ -221,7 +221,7 @@ export function VoiceFields({ draft, onDraft }: SectionProps) {
         value={draft.nameHints}
         onChange={(nameHints) => set({ nameHints })}
         maxLength={300}
-        placeholder="Dwarven names with tide-words; surnames are the ship they were born on"
+        placeholder={t("Dwarven names with tide-words; surnames are the ship they were born on")}
         hint={t("One line for the story-setup pass.")}
       />
       <TextField
@@ -229,7 +229,7 @@ export function VoiceFields({ draft, onDraft }: SectionProps) {
         value={draft.raceHint}
         onChange={(raceHint) => set({ raceHint })}
         maxLength={300}
-        placeholder="Most people are dwarves or sea-elves; humans are traders from upriver"
+        placeholder={t("Most people are dwarves or sea-elves; humans are traders from upriver")}
         hint={t("One line for the companion tools.")}
       />
       <div className="sm:col-span-2">

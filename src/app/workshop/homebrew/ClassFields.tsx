@@ -164,7 +164,7 @@ function Features({ data, set }: { data: Data; set: (patch: Data) => void }) {
                 <input
                   value={row.feature.n}
                   aria-label={t("Feature name")}
-                  placeholder="Arcane Strike"
+                  placeholder={t("Arcane Strike")}
                   maxLength={80}
                   onChange={(event) => write(flat.map((entry, at) => (at === index ? { ...entry, feature: { ...entry.feature, n: event.target.value } } : entry)))}
                   className={cn(ui.input, "w-full text-sm sm:w-56")}
@@ -178,7 +178,7 @@ function Features({ data, set }: { data: Data; set: (patch: Data) => void }) {
               <textarea
                 value={row.feature.d}
                 aria-label={t("What it does")}
-                placeholder="Once a turn, a weapon hit deals an extra 1d8 force damage."
+                placeholder={t("Once a turn, a weapon hit deals an extra 1d8 force damage.")}
                 maxLength={1500}
                 rows={2}
                 onChange={(event) => write(flat.map((entry, at) => (at === index ? { ...entry, feature: { ...entry.feature, d: event.target.value } } : entry)))}

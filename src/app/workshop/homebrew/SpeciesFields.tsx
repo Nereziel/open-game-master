@@ -258,7 +258,7 @@ export function SpeciesFields({ data, set }: Props) {
           label={t("Vision")}
           value={String(data.vision ?? "")}
           onChange={(vision) => set({ vision })}
-          placeholder="Darkvision 60 ft"
+          placeholder={t("Darkvision 60 ft")}
           maxLength={120}
           suggestions={VISION_SUGGESTIONS}
         />

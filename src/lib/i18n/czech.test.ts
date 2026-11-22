@@ -45,6 +45,16 @@ installCatalog("cs", catalog);
 installCsTables({ names: CS_NAMES_BY_TABLE, guidance: RESOURCE_CS_GUIDANCE });
 
 describe("Czech localization", () => {
+  it("translates previously hardcoded WorldForge and workshop editor labels", () => {
+    expect(translate("cs", "Make the map")).toBe("Vytvořit mapu");
+    expect(translate("cs", "The rolled map")).toBe("Náhodně vytvořená mapa");
+    expect(translate("cs", "The answer cites no passage. Check it against the world before you use it."))
+      .toBe("Odpověď neuvádí žádný zdrojový úryvek. Před použitím ji ověř podle záznamů světa.");
+    expect(translate("cs", "The Wall Breaks")).toBe("Pád hradeb");
+    expect(translate("cs", "A flooded crypt with two ways in")).toBe("Zatopená krypta se dvěma vstupy");
+    expect(translate("en", "Make the map")).toBe("Make the map");
+  });
+
   it("renders Czech campaign status badges instead of English Active", () => {
     const t = (key: string) => key;
     const campaign = (status: "active" | "lobby" | "ended") =>

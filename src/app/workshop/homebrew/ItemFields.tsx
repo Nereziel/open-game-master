@@ -503,7 +503,7 @@ function SentienceBlock({ data, set }: { data: Data; set: (patch: Data) => void 
           />
           <TextField label={t("Alignment")} value={String(mind.alignment ?? "")} onChange={(alignment) => put({ alignment })} maxLength={40} />
           <TextField label={t("Senses")} value={String(mind.senses ?? "")} onChange={(senses) => put({ senses })} maxLength={120} className="sm:col-span-3" />
-          <TextField label={t("Special purpose")} value={String(mind.purpose ?? "")} onChange={(purpose) => put({ purpose })} maxLength={200} className="col-span-2 sm:col-span-4" placeholder="Slay every dragon it meets" />
+          <TextField label={t("Special purpose")} value={String(mind.purpose ?? "")} onChange={(purpose) => put({ purpose })} maxLength={200} className="col-span-2 sm:col-span-4" placeholder={t("Slay every dragon it meets")} />
           <TextField label={t("Personality")} value={String(mind.personality ?? "")} onChange={(personality) => put({ personality })} maxLength={400} className="col-span-2 sm:col-span-4" />
         </div>
       ) : null}

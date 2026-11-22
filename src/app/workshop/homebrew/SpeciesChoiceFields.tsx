@@ -245,7 +245,7 @@ export function SpeciesChoiceFields({ data, set }: Props) {
           label={t("What the player chooses")}
           value={String(group.label ?? "")}
           onChange={(label) => putGroup({ label })}
-          placeholder="Draconic ancestry, Bloodline"
+          placeholder={t("Draconic ancestry, Bloodline")}
           maxLength={L.label}
           hint={t("The builder asks for it under this name, and the sheet records the pick as it.", { context: "workshop.homebrew.speciesChoice.whatPlayerChoosesHint" })}
         />

@@ -161,7 +161,7 @@ export function AtlasView({
 
   async function finishRegion(points: XY[] = drawing) {
     if (!atlas || points.length < 3) return;
-    const region: Region = { id: newId("rg"), name: "A region", points, color: nextRegionColor(atlas.regions), ref: "", notes: "" };
+    const region: Region = { id: newId("rg"), name: t("A region"), points, color: nextRegionColor(atlas.regions), ref: "", notes: "" };
     // A refused shape keeps its corners, to close again.
     if (!(await saveRegions([...atlas.regions, region]))) return;
     setDrawing([]);
@@ -173,12 +173,12 @@ export function AtlasView({
     making ? (
       <form className="panel motion-pop flex flex-col gap-2 rounded-lg p-3" onSubmit={(event) => { event.preventDefault(); void makeMap(parentPin); }}>
         {/* eslint-disable-next-line jsx-a11y/no-autofocus -- the form opens because the author just asked for a new map */}
-        <input className={ui.input} placeholder={parentPin ? `Inside ${parentPin.name || "this pin"}` : "The Saltmarch"} aria-label="Map name" maxLength={80} value={making.name} onChange={(event) => setMaking({ ...making, name: event.target.value })} autoFocus />
+        <input className={ui.input} placeholder={parentPin ? t("Inside {name}", { name: parentPin.name || t("this pin") }) : t("The Saltmarch")} aria-label={t("Map name")} maxLength={80} value={making.name} onChange={(event) => setMaking({ ...making, name: event.target.value })} autoFocus />
         <LoreImageField imagePath={making.image} onChange={(image) => setMaking({ ...making, image })} />
         {makeFailed ? <NotSaved onRetry={() => void makeMap(parentPin)} what="The name and picture" /> : null}
         <div className="flex justify-end gap-1.5">
-          <KitButton tone="small" onClick={() => { setMaking(null); setMakeFailed(false); }}><X className="size-3.5" /> Cancel</KitButton>
-          <KitButton tone="primary" type="submit" disabled={!making.name.trim()}>Make the map</KitButton>
+          <KitButton tone="small" onClick={() => { setMaking(null); setMakeFailed(false); }}><X className="size-3.5" /> {t("Cancel")}</KitButton>
+          <KitButton tone="primary" type="submit" disabled={!making.name.trim()}>{t("Make the map")}</KitButton>
         </div>
       </form>
     ) : null;
@@ -208,20 +208,20 @@ export function AtlasView({
 
   return (
     <div className="grid gap-4 @4xl:grid-cols-[14rem_minmax(0,1fr)]">
-      <aside className="flex flex-col gap-1" aria-label="Maps">
-        <span className="eyebrow text-[10px] text-stone-500">Maps</span>
+      <aside className="flex flex-col gap-1" aria-label={t("Maps")}>
+        <span className="eyebrow text-[10px] text-stone-500">{t("Maps")}</span>
         {mapTree(doc.maps, doc.pins).map(({ map: entry, depth }) => (
           <button key={entry.id} type="button" onClick={() => { setMapId(entry.id); setSelected(null); setDrawing([]); }} className={cn("flex items-center gap-1.5 rounded-md px-1.5 py-1 text-left text-xs motion-press", entry.id === atlas.id ? "bg-amber-400/10 text-amber-100" : "text-stone-400 hover:text-stone-200")} style={{ paddingLeft: `${0.375 + depth * 0.75}rem` }}>
             <MapIcon className="size-3.5 shrink-0" /> {entry.name}
-            {entry.role === "region" ? <Globe2 className="ml-auto size-3 shrink-0 text-emerald-300" aria-label="Over the Region" /> : null}
+            {entry.role === "region" ? <Globe2 className="ml-auto size-3 shrink-0 text-emerald-300" aria-label={t("Over the Region")} /> : null}
           </button>
         ))}
-        {making && !selectedPin ? newMapForm() : <KitButton tone="link" onClick={() => setMaking({ name: "", image: "" })}><Plus className="size-3.5" /> New map</KitButton>}
+        {making && !selectedPin ? newMapForm() : <KitButton tone="link" onClick={() => setMaking({ name: "", image: "" })}><Plus className="size-3.5" /> {t("New map")}</KitButton>}
       </aside>
 
       <div className="flex min-w-0 flex-col gap-2">
         <div className="flex flex-wrap items-center gap-2">
-          <nav className="flex items-center gap-1 text-sm" aria-label="Where in the atlas">
+          <nav className="flex items-center gap-1 text-sm" aria-label={t("Where in the atlas")}>
             {trail.map((entry, index) => (
               <span key={entry.id} className="flex items-center gap-1">
                 {index ? <ChevronRight className="size-3.5 text-stone-600" /> : null}
@@ -229,7 +229,7 @@ export function AtlasView({
               </span>
             ))}
           </nav>
-          <div className="ml-auto flex gap-1" role="radiogroup" aria-label="What a click does">
+          <div className="ml-auto flex gap-1" role="radiogroup" aria-label={t("What a click does")}>
             {([["look", MousePointer2, t("Look", { context: "atlas.mode.look" })], ["pin", MapPin, t("Place a pin")], ["region", Hexagon, t("Draw a region")]] as const).map(([value, Icon, label]) => (
               <button key={value} type="button" role="radio" aria-checked={mode === value} onClick={() => { setMode(value); setDrawing([]); }} className={cn(ui.btnSmall, "px-2 py-1 text-xs", mode === value && "border-amber-500/60 bg-amber-400/10 text-amber-100")}>
                 <Icon className="size-3.5" /> {label}
@@ -245,7 +245,7 @@ export function AtlasView({
         </div>
         {mode === "region" ? (
           <p className="motion-pop text-xs text-stone-400">
-            Click the map to set each corner. {drawing.length >= 3 ? <button type="button" onClick={() => void finishRegion()} className="text-amber-200 underline underline-offset-2">Close the shape ({drawing.length} corners)</button> : `${3 - drawing.length} more to make a shape.`}{" "}
+            {t("Click the map to set each corner.")} {drawing.length >= 3 ? <button type="button" onClick={() => void finishRegion()} className="text-amber-200 underline underline-offset-2">{t("Close the shape ({count} corners)", { count: drawing.length })}</button> : t("{count} more corners needed.", { count: 3 - drawing.length })}{" "}
             Or{" "}
             <button type="button" onClick={() => void finishRegion([{ x: 0.4, y: 0.4 }, { x: 0.6, y: 0.4 }, { x: 0.5, y: 0.6 }])} className="text-amber-200 underline underline-offset-2" data-testid="atlas-region-by-numbers">
               start with three corners in the middle
@@ -302,7 +302,7 @@ export function AtlasView({
             // eslint-disable-next-line @next/next/no-img-element
             <img src={atlas.image} alt="" className={cn("absolute inset-0 size-full", frame.fit === "contain" ? "object-contain" : "object-cover")} draggable={false} />
           ) : (
-            <div className="absolute inset-0 grid place-items-center bg-[radial-gradient(circle_at_center,rgba(212,171,58,0.08),transparent_70%)] text-xs text-stone-600">No picture yet: pins still work.</div>
+            <div className="absolute inset-0 grid place-items-center bg-[radial-gradient(circle_at_center,rgba(212,171,58,0.08),transparent_70%)] text-xs text-stone-600">{t("No picture yet: pins still work.")}</div>
           )}
           <svg viewBox="0 0 1 1" preserveAspectRatio="none" className="absolute inset-0 size-full">
             {atlas.regions.map((region, index) => (
@@ -363,7 +363,7 @@ export function AtlasView({
             regionActions={selectedPin ? <PinRegionActions region={region} pin={selectedPin} atlas={atlas} /> : null}
             position={
               selectedPin ? (
-                <PointFields at={selectedPin} label="Pin" onCommit={(to) => movePin(selectedPin.id, to)} />
+                <PointFields at={selectedPin} label={t("Pin")} onCommit={(to) => movePin(selectedPin.id, to)} />
               ) : selectedRegion ? (
                 <CornerEditor points={selectedRegion.points} onSave={(points) => void saveRegions(atlas.regions.map((entry) => (entry.id === selectedRegion.id ? { ...entry, points } : entry)))} />
               ) : null
@@ -417,7 +417,7 @@ function InsidePlace({ place, onOpen, onOpenPrep }: { place: WorldEntity; onOpen
           <BookOpenText className="size-3.5" /> Give {place.name} a battle map
         </KitButton>
       )}
-      <span className="w-full text-[11px] text-stone-500">This picture is for finding your way. Walls, doors and light are drawn on a battle map, never read from a picture.</span>
+      <span className="w-full text-[11px] text-stone-500">{t("This picture is for finding your way. Walls, doors and light are drawn on a battle map, never read from a picture.")}</span>
     </div>
   );
 }
