@@ -111,7 +111,7 @@ const TOME_OF_HEROES_SPELLS: Readonly<Record<string, string>> = {
   "Forced Reposition": "Nucený přesun",
   "Frenzied Bolt": "Zběsilá střela",
   "Furious Wail": "Zuřivý nářek",
-  "Fuse Armor": "Spojení zbroje",
+  "Fuse Armor": "Zatavení zbroje",
   "Gale": "Vichřice",
   "Gird the Spirit": "Posil ducha",
   "Glare": "Výhružný pohled",
