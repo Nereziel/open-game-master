@@ -173,7 +173,7 @@ export function AtlasView({
     making ? (
       <form className="panel motion-pop flex flex-col gap-2 rounded-lg p-3" onSubmit={(event) => { event.preventDefault(); void makeMap(parentPin); }}>
         {/* eslint-disable-next-line jsx-a11y/no-autofocus -- the form opens because the author just asked for a new map */}
-        <input className={ui.input} placeholder={parentPin ? t("Inside {name}", { name: parentPin.name || t("this pin") }) : "The Saltmarch"} aria-label={t("Map name")} maxLength={80} value={making.name} onChange={(event) => setMaking({ ...making, name: event.target.value })} autoFocus />
+        <input className={ui.input} placeholder={parentPin ? t("Inside {name}", { name: parentPin.name || t("this pin") }) : t("The Saltmarch")} aria-label={t("Map name")} maxLength={80} value={making.name} onChange={(event) => setMaking({ ...making, name: event.target.value })} autoFocus />
         <LoreImageField imagePath={making.image} onChange={(image) => setMaking({ ...making, image })} />
         {makeFailed ? <NotSaved onRetry={() => void makeMap(parentPin)} what="The name and picture" /> : null}
         <div className="flex justify-end gap-1.5">
