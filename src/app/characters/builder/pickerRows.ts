@@ -33,14 +33,19 @@ export function uniqueByName<T extends { name: string; kind?: string }>(rows: T[
 export function uniqueBySource<T extends { name: string; slug?: string; source?: string; documentSlug?: string; kind?: string }>(rows: T[]): T[] {
   const seen = new Set<string>();
   return rows.filter((entry) => {
-    const key = JSON.stringify([
-      entry.source ?? "",
-      entry.documentSlug ?? "",
-      entry.kind ?? "",
-      entry.slug || textKey(entry.name),
-    ]);
+    const key = sourceRowIdentity(entry);
     if (seen.has(key)) return false;
     seen.add(key);
     return true;
   });
+}
+
+/** An entry's identity is scoped to its content pack, not its printed title. */
+export function sourceRowIdentity(entry: { name: string; slug?: string; source?: string; documentSlug?: string; kind?: string }): string {
+  return JSON.stringify([
+    entry.source ?? "",
+    entry.documentSlug ?? "",
+    entry.kind ?? "",
+    entry.slug || textKey(entry.name),
+  ]);
 }
