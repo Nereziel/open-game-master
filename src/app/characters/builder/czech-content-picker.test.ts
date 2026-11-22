@@ -7,6 +7,7 @@ import { builtinFeatSummaryCs } from "@/lib/help/feat-summary-cs";
 import { officialCzechSpellPageId } from "@/lib/help/official-cs-reference";
 import { itemPickerKindLabel, itemPickerMeta, itemPickerRarityLabel } from "@/lib/help/item-picker-labels";
 import { featPickerKey, uniquePlayableFeatRows } from "./feat-picker-logic";
+import { czechPickerQueries } from "./czech-picker-search";
 
 installCsTables({ names: CS_NAMES_BY_TABLE });
 
@@ -60,6 +61,18 @@ describe("Czech campaign content pickers", () => {
     expect(itemPickerMeta({ kind: "gear", cost: "2 gp" }, "cs", x => x)).toBe("Dobrodružná výbava · 2 gp");
     expect(itemPickerMeta({ kind: "magic_item", rarity: "rare" }, "en", x => x)).toBe("magic_item · rare");
     expect(itemPickerKindLabel("aether_tool", "cs")).toBe("aether_tool");
+  });
+
+  it("searches Czech spell, item and feat names against canonical English IDs", () => {
+    expect(czechPickerQueries("spells", "leceni", CS_NAMES_BY_TABLE))
+      .toContain("cure wounds");
+    expect(czechPickerQueries("items", "dlouhy mec", CS_NAMES_BY_TABLE))
+      .toContain("longsword");
+    expect(czechPickerQueries("feats", "ostrostrelec", CS_NAMES_BY_TABLE))
+      .toContain("sharpshooter");
+    expect(czechPickerQueries("feats", "a", CS_NAMES_BY_TABLE)).toEqual([]);
+    expect(czechPickerQueries("unrecognized", "leceni", CS_NAMES_BY_TABLE)).toEqual([]);
+    expect(czechPickerQueries("spells", "nejaka-vlastni-homebrew", CS_NAMES_BY_TABLE)).toEqual([]);
   });
 
   it("collapses only explicitly equivalent feats and retains distinct homebrew feats", () => {
