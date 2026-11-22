@@ -15,6 +15,8 @@ export interface TourStep {
   // fingerprint (scripts/test-tours.mjs) hashes only these English fields.
   titleFr?: string;
   bodyFr?: string;
+  titleCs?: string;
+  bodyCs?: string;
   // data-tour values to point at, best first. An empty list is a centred
   // card with no spotlight (a welcome or a closing word).
   anchors: string[];
