@@ -8,6 +8,7 @@ import { thirdPartyItemSummaryCs } from "@/lib/help/third-party-item-summary-cs"
 import { contentRefMatches, sameContentDocument } from "@/lib/help/content-ref-match";
 import { thirdPartySpellSummaryCs, localizedThirdPartySpellDescription } from "@/lib/help/third-party-spell-summary-cs";
 import { thirdPartyFeatDescriptionCs } from "@/lib/help/third-party-feat-description-cs";
+import { thirdPartyFullRulesCs, THIRD_PARTY_FULL_RULES_CS_COUNTS } from "@/lib/help/third-party-full-rules-cs";
 import { thirdPartyCzechPickerQueries } from "@/lib/content/third-party-names-cs";
 import { officialCzechSpellPageId } from "@/lib/help/official-cs-reference";
 import { itemPickerKindLabel, itemPickerMeta, itemPickerRarityLabel } from "@/lib/help/item-picker-labels";
@@ -163,6 +164,39 @@ describe("Czech campaign content pickers", () => {
     expect(thirdPartyItemSummaryCs(vaultRef, "en")).toBeNull();
     expect(contentName("spells", { name: "Heart to Heart", source: "open5e", documentSlug: "toh" }, "cs")).toBe("Heart to Heart");
     expect(thirdPartySpellSummaryCs({ kind: "spells", name: "Instant Snare", source: "open5e", documentSlug: "toh" }, "cs")).toBeNull();
+  });
+
+  it("delivers complete Czech supplement rules only for the exact book, kind and language", () => {
+    expect(THIRD_PARTY_FULL_RULES_CS_COUNTS).toEqual({ tomeSpells: 14, vaultItems: 15 });
+    const tome = { kind: "spells", name: "Spite", source: "open5e", documentSlug: "toh" };
+    const text = thirdPartyFullRulesCs(tome, "cs");
+    expect(text).toContain("Vyvolání:");
+    expect(text).toContain("Složky:");
+    expect(text).toContain("Trvání:");
+    expect(text).toContain("Na vyšších úrovních.");
+    expect(text).toContain("1k6");
+    expect(thirdPartyFullRulesCs({ ...tome, documentSlug: "deepm" }, "cs")).toBeNull();
+    expect(thirdPartyFullRulesCs({ ...tome, source: "homebrew" }, "cs")).toBeNull();
+    expect(thirdPartyFullRulesCs({ ...tome, kind: "items" }, "cs")).toBeNull();
+    expect(thirdPartyFullRulesCs(tome, "en")).toBeNull();
+
+    const vault = { kind: "items", name: "Broom of Sweeping", source: "open5e", documentSlug: "vom" };
+    expect(thirdPartyFullRulesCs(vault, "cs")).toContain("5 krychlových stop");
+    expect(thirdPartyFullRulesCs({ ...vault, documentSlug: "toh" }, "cs")).toBeNull();
+    expect(thirdPartyFullRulesCs({ ...vault, name: "Nonexistent" }, "cs")).toBeNull();
+    expect(thirdPartyFullRulesCs(vault, "en")).toBeNull();
+
+    const completeTomeSpells = [
+      "Lance", "Feint", "Sneer", "Spite", "Misdirection", "Oversized Paws",
+      "Sightburst", "Stone Aegis", "Less Fool, I", "Retribution",
+      "Sacrifice Pawn", "Sacrificial Healing", "Crown of Thorns", "Convey Inner Peace",
+    ];
+    for (const name of completeTomeSpells) {
+      const complete = thirdPartyFullRulesCs({ ...tome, name }, "cs");
+      expect(complete?.length, name).toBeGreaterThan(140);
+      expect(complete, name).toContain("Vyvolání:");
+      expect(complete, name).toContain("Dosah:");
+    }
   });
 
   it("reads the official Czech spell book only for official spell refs", () => {
