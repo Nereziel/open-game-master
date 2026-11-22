@@ -165,7 +165,9 @@ export function LeadEditDialog({
       if (patch.name !== undefined && patch.name !== row.name) {
         // Renaming a catalog item makes it free text. Do not retain its
         // former book identity while keeping wear/attunement flags intact.
-        const { slug: _oldSlug, contentRef: _oldRef, ...base } = row.base;
+        const base = { ...row.base };
+        delete base.slug;
+        delete base.contentRef;
         return { ...row, ...patch, base };
       }
       return { ...row, ...patch };
