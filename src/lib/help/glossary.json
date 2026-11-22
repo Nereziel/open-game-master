@@ -207,6 +207,24 @@
       "longCs": "Nevýhodu máš například při útoku na velkou vzdálenost, boji poslepu nebo když jsi otrávený či vystrašený. Jedna výhoda nevýhodu zruší a naopak."
     },
     {
+      "id": "speed",
+      "term": "Speed",
+      "short": "How far you can move on your turn, measured in feet.",
+      "long": "Your walking speed tells you how many feet you can normally move with your movement during a turn. Armor, conditions and class or species features can change it. Moving through difficult terrain usually costs twice as much movement.",
+      "cs": "Rychlost",
+      "shortCs": "Vzdálenost, kterou můžeš během svého tahu urazit pohybem, obvykle ve stopách.",
+      "longCs": "Rychlost chůze určuje, kolik stop se můžeš běžně pohnout během jednoho tahu. Zbroj, stavy a schopnosti postavy ji mohou změnit. Pohyb v obtížném terénu obvykle stojí dvojnásobek pohybu."
+    },
+    {
+      "id": "coins",
+      "term": "Coin",
+      "short": "The money carried by your character, shown as a combined value.",
+      "long": "D&D currency includes copper (cp), silver (sp), electrum (ep), gold (gp) and platinum (pp). Ten copper make one silver, ten silver make one gold, and ten gold make one platinum. The character sheet sums your purse into a single readable amount.",
+      "cs": "Mince",
+      "shortCs": "Peníze, které postava nese; deník ukazuje jejich celkovou hodnotu.",
+      "longCs": "Měnou jsou měďáky (md), stříbrňáky (st), elektrony (el), zlaťáky (zl) a platiňáky (pl). Deset měďáků má hodnotu jednoho stříbrňáku, deset stříbrňáků jednoho zlaťáku a deset zlaťáků jednoho platiňáku. Deník vypočítává celkovou hodnotu tvého měšce."
+    },
+    {
       "id": "initiative",
       "term": "Initiative",
       "short": "A Dexterity roll at the start of a fight that sets the turn order.",
@@ -310,9 +328,9 @@
       "long": "It is 8 plus your proficiency bonus plus your spellcasting ability modifier. The app calculates it for you and shows it on your sheet.",
       "longFr": "C'est 8 plus ton bonus de maîtrise plus le modificateur de ta caractéristique d'incantation. L'appli le calcule pour toi et l'affiche sur ta fiche.",
       "fr": "DD de sauvegarde des sorts",
-      "cs": "Obtížnost záchrany před kouzlem",
-      "shortCs": "Číslo, kterého musí cíl dosáhnout při záchranném hodu proti tvému kouzlu.",
-      "longCs": "Vypočítá se jako 8 + zdatnostní bonus + oprava vlastnosti, kterou používáš k sesílání kouzel. Aplikace ji vypočítává a zobrazuje na deníku."
+      "cs": "SO kouzel",
+      "shortCs": "Stupeň obtížnosti záchranného hodu proti tvému kouzlu. Cíl musí tohoto čísla dosáhnout nebo ho překonat.",
+      "longCs": "SO kouzel = 8 + zdatnostní bonus + oprava sesílací vlastnosti (například Charismatu, Inteligence či Moudrosti). Pokud máš zdatnostní bonus +3 a opravu Charismatu +4, tvoje SO je 15. Protivník musí při záchranném hodu dosáhnout alespoň 15."
     },
     {
       "id": "concentration",
