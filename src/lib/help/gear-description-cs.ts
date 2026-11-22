@@ -262,13 +262,14 @@ function key(name: string): string {
 export function canonicalGearDescriptionCs(name: string): string | null {
   const normalized = key(name);
   const gearTitle = GEAR_NAMES[normalized];
-  if (gearTitle) return GEAR.get(gearTitle) ?? PLAIN_GEAR[normalized] ?? null;
   const armorTitle = ARMOR_NAMES[normalized];
-  if (armorTitle) return ARMOR.get(armorTitle) ?? null;
-  if (normalized === "shield") return "Štít se drží v jedné ruce a poskytuje bonus +2 k obrannému číslu (OČ). Současně lze využít pouze jeden štít.";
-  if (normalized === "lance") return WEAPONS.get("jezdecké kopí (lance)") ?? null;
-  if (normalized === "net") return WEAPONS.get("síť (net)") ?? null;
-  const description = PLAIN_GEAR[normalized] ?? VARIANTS[normalized] ?? WEAPON_NOTES[normalized] ?? null;
+  const description =
+    (gearTitle ? GEAR.get(gearTitle) ?? PLAIN_GEAR[normalized] : null) ??
+    (armorTitle ? ARMOR.get(armorTitle) : null) ??
+    (normalized === "shield" ? "Štít se drží v jedné ruce a poskytuje bonus +2 k obrannému číslu (OČ). Současně lze využít pouze jeden štít." : null) ??
+    (normalized === "lance" ? WEAPONS.get("jezdecké kopí (lance)") : null) ??
+    (normalized === "net" ? WEAPONS.get("síť (net)") : null) ??
+    PLAIN_GEAR[normalized] ?? VARIANTS[normalized] ?? WEAPON_NOTES[normalized] ?? null;
   return description ? displayDiceNotation(description) : null;
 }
 
