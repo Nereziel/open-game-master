@@ -7,7 +7,8 @@ import { GameIcon } from "@/components/ui/GameIcon";
 import type { IconRef } from "@/lib/icons";
 import { useEffect, useState, type CSSProperties, type ReactNode } from "react";
 import { cn } from "@/lib/cn";
-import { useT } from "@/lib/locale";
+import { useLocale, useT } from "@/lib/locale";
+import { itemDetailCs, itemRangeCs, itemWeightCs } from "@/lib/help/item-detail-cs";
 import { Dialog } from "@/components/ui/Dialog";
 import type { ItemSheet } from "@/lib/help/item-sheet";
 import { firstSentence, parseRulesBlocks, parseRulesTable } from "@/lib/help/rules-text";
@@ -260,6 +261,8 @@ function RuleList({ rows }: { rows: Array<{ label: string; text: string | null }
 // row with no stats and a genre item the pack lacks all get a full card.
 function ItemBody({ reference }: { reference: ContentRef }) {
   const campaignId = useContentCampaign();
+  const locale = useLocale();
+  const detail = (value: string | null | undefined) => itemDetailCs(value, locale);
   const [state, setState] = useState<{ sheet: ItemSheet | null; loading: boolean }>({
     sheet: null,
     loading: true,
@@ -316,22 +319,22 @@ function ItemBody({ reference }: { reference: ContentRef }) {
     sheet.rarity,
     sheet.attunement ? "Requires attunement" : null,
     sheet.bonus ? `+${sheet.bonus} magic` : null,
-  ].filter((tag): tag is string => Boolean(tag));
+  ].filter((tag): tag is string => Boolean(tag)).map(detail);
   const tiles: Array<{ label: string; value: string | null; note?: string | null }> = [
-    { label: "Weight", value: sheet.weight },
-    { label: "Value", value: sheet.cost },
+    { label: detail("Weight"), value: itemWeightCs(sheet.weight, locale) },
+    { label: detail("Value"), value: sheet.cost },
   ];
   if (sheet.armor) {
-    tiles.push({ label: sheet.armor.shield ? "AC bonus" : "Armor class", value: sheet.armor.ac });
+    tiles.push({ label: detail(sheet.armor.shield ? "AC bonus" : "Armor class"), value: sheet.armor.ac });
   }
   if (sheet.weapon) {
     tiles.push({
-      label: "Damage",
-      value: sheet.weapon.damage ?? "None",
-      note: sheet.weapon.damageType,
+      label: detail("Damage"),
+      value: sheet.weapon.damage ?? detail("None"),
+      note: detail(sheet.weapon.damageType ? capitalize(sheet.weapon.damageType) : null),
     });
     if (sheet.weapon.range) {
-      tiles.push({ label: "Range", value: sheet.weapon.range });
+      tiles.push({ label: detail("Range"), value: itemRangeCs(sheet.weapon.range, locale) });
     }
   }
 
@@ -372,11 +375,14 @@ function ItemBody({ reference }: { reference: ContentRef }) {
     }
   }
 
+  const localizedArmorRows = armorRows.map(({ label, text }) => ({ label: detail(label), text: text ? detail(text) : null }));
+  const localizedWeaponRows = weaponRows.map(({ label, text }) => ({ label: detail(label), text: text ? detail(text) : null }));
+
   return (
     <div className="space-y-4">
       {sheet.type || tags.length ? (
         <div className="flex flex-wrap items-center gap-1.5">
-          {sheet.type ? <span className="text-sm font-medium text-stone-200">{sheet.type}</span> : null}
+          {sheet.type ? <span className="text-sm font-medium text-stone-200">{detail(sheet.type)}</span> : null}
           {tags.map((tag) => (
             <span
               key={tag}
@@ -393,18 +399,18 @@ function ItemBody({ reference }: { reference: ContentRef }) {
         ))}
       </div>
       {armorRows.length ? (
-        <ItemSection title="Armor">
-          <RuleList rows={armorRows} />
+        <ItemSection title={detail("Armor")}>
+          <RuleList rows={localizedArmorRows} />
         </ItemSection>
       ) : null}
       {weaponRows.length ? (
-        <ItemSection title="Weapon">
-          <RuleList rows={weaponRows} />
+        <ItemSection title={detail("Weapon")}>
+          <RuleList rows={localizedWeaponRows} />
         </ItemSection>
       ) : null}
       {sheet.description ? (
-        <ItemSection title="Description">
-          <div className="space-y-2 border-t border-stone-800 pt-2">{renderRules(sheet.description)}</div>
+        <ItemSection title={detail("Description")}>
+          <div className="space-y-2 border-t border-stone-800 pt-2">{renderRules(detail(sheet.description))}</div>
         </ItemSection>
       ) : null}
     </div>

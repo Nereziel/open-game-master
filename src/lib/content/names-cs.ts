@@ -169,6 +169,7 @@ export const CS_NAMES_BY_TABLE: Record<string, Record<string, string>> = {
     "splint": "Pásová zbroj",
     "plate": "Plátová zbroj",
     "shield": "Štít",
+    "spiked-armor": "Bodcová zbroj",
     "mage-armor": "Mágova zbroj",
     "draconic-resilience": "Dračí odolnost",
     "unarmored-defense-barbarian": "Obrana beze zbroje",
