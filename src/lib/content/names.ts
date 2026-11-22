@@ -152,7 +152,7 @@ export function contentName(
   locale: Locale,
 ): string {
   const row: NamedRow = typeof ref === "string" ? { name: ref } : ref;
-  if (locale === "en" || !row.name || (row.source && row.source !== "open5e")) {
+  if (locale === "en" || !row.name || row.source === "homebrew" || (row.source && !["open5e", "srd", "bundled"].includes(row.source))) {
     return row.name;
   }
   // Acolyte's kit contains incense sticks, not the SRD's incense blocks.
