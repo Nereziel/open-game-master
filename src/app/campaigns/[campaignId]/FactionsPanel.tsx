@@ -243,7 +243,7 @@ export function FactionsPanel({
             ))}
           </div>
           <div className="flex items-center gap-2 text-xs text-stone-400">
-            <span>Power</span>
+            <span>{t("Power", { context: "faction.powerLabel" })}</span>
             <Slider min={0} max={5} value={draft.power} onChange={(power) => setDraft({ ...draft, power })} label={t("Power", { context: "faction.powerLabel" })} className="min-w-0 flex-1" />
             <span key={draft.power} className="count-pop w-4 text-right tabular-nums text-stone-200">{draft.power}</span>
           </div>
@@ -259,7 +259,7 @@ export function FactionsPanel({
                 setError("");
               }}
             >
-              <X className="size-3.5" /> Cancel
+              <X className="size-3.5" /> {t("Cancel")}
             </KitButton>
             {onWorldEntry && editing !== "new" ? <WorldEntryLink onOpen={() => onWorldEntry(editing)} /> : null}
           </div>
@@ -308,7 +308,7 @@ export function FactionsPanel({
                   <p className="flex flex-wrap items-center gap-x-1.5 gap-y-0.5 text-sm font-medium text-stone-100">
                     <span className="min-w-0 truncate">{faction.name}</span>
                     <GlyphChip glyph={attitudeGlyph(faction.attitude)} className="capitalize">{attitudeLabel(t, faction.attitude)}</GlyphChip>
-                    {faction.power !== undefined ? <span className="text-[11px] font-normal text-violet-300">power {faction.power}</span> : null}
+                    {faction.power !== undefined ? <span className="text-[11px] font-normal text-violet-300">{t("Power", { context: "faction.powerLabel" })} {faction.power}</span> : null}
                   </p>
                   {faction.blurb ? <p className="reveal text-xs leading-5 text-stone-400">{faction.blurb}</p> : null}
                   {faction.goal ? <p className="reveal text-xs italic leading-5 text-violet-300/80">Goal: {faction.goal}</p> : null}
@@ -338,7 +338,7 @@ export function FactionsPanel({
                 {steersStory ? (
                   <span className="flex shrink-0 flex-col items-center gap-0.5">
                     <KitButton onClick={() => startEdit(faction)}>
-                      <Pencil className="size-3" /> Edit
+                      <Pencil className="size-3" /> {t("Edit")}
                     </KitButton>
                     <KitButton tone="iconDanger" always onClick={() => void remove(faction)} aria-label={`Remove ${faction.name}`}>
                       <Trash2 className="size-3.5" />
