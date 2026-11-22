@@ -75,11 +75,11 @@ async function pdfFontBytes(file: "LiberationSans-Regular.ttf" | "LiberationSans
   return new Uint8Array(await response.arrayBuffer());
 }
 
-export async function downloadCharacterSheetPdf(character: PdfCharacter): Promise<void> {
+export async function downloadCharacterSheetPdf(character: PdfCharacter, requestedLocale?: "en" | "fr" | "cs"): Promise<void> {
   // pdf-lib and its fonts only load when someone asks for the sheet, so
   // the table and the character page do not carry them up front.
   const { buildCharacterSheetPdf } = await import("./character-sheet-pdf");
-  const locale = parseLocale(document.documentElement.lang.split("-")[0]) ?? "en";
+  const locale = requestedLocale ?? parseLocale(document.documentElement.lang.split("-")[0]) ?? "en";
   const [fontBytes, boldFontBytes, imageBytes] = await Promise.all([
     pdfFontBytes("LiberationSans-Regular.ttf"),
     pdfFontBytes("LiberationSans-Bold.ttf"),
