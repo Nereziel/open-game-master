@@ -81,7 +81,6 @@ export function PairList<T extends Record<string, string>>({
   empty: string;
   max?: number;
 }) {
-  const locale = useLocale();
   return (
     <div className="space-y-1.5">
       {items.length === 0 ? <p className="reveal text-xs italic text-stone-500">{empty}</p> : null}
