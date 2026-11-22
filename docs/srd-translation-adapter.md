@@ -216,7 +216,22 @@ retains it through the creation payload. Switching books for an already
 present English item name replaces its source reference instead of
 silently combining incompatible mechanics.
 
-**Not yet complete:** spell pickers and multiclass spell lists do not yet
-populate `spellcasting.contentRefs`; editor/campaign mutation endpoints and
-all PDF/help consumers still require a provenance audit. Do not guess the
-source for old name-only entries; preserve them as unresolved legacy rows.
+**Updated spell integration:** The builder now tracks `spellContentRefs`
+across drafts and loaded character sheets. Clicking an available spell or
+cantrip, swapping a known spell, or choosing one from an any-list grant
+captures a reference only when the named catalog row has explicit
+provenance and there is no competing same-name source. Removing or
+replacing the spell removes its previous reference; unpreparing alone
+does not. At submit, references are filtered against the actual retained
+spell and cantrip names across all active caster desks before being
+written to `spellcasting.contentRefs`. English names continue driving
+the existing 2014 engine. Quick-build and other automatically granted
+name-only spells are intentionally not assigned a guessed source.
+
+**Still pending:** campaign editor mutation endpoints, table spell
+management and PDF/help consumers need their own provenance-aware
+integration and tests. Multiclass instances of an identical English
+spell from different sources still cannot be represented independently
+by this optional name-keyed map; conflicting references must remain
+unresolved until the long-term casting model uses per-entry identifiers.
+Never backfill the source of old name-only entries based on titles.
