@@ -25,7 +25,7 @@ describe("SRD 5.1 Czech companion adapter (#107 phase 2)", () => {
       name: "Světlo", description: "Český kompletní text",
       metadata: { meta: "Evokační trik" },
     });
-    expect(coverage).toEqual({ total: 1, fullRulePages: 0, translated: { spells: 1 }, missingIds: [] });
+    expect(coverage).toEqual({ total: 1, fullRulePages: 0, fullText: {}, incompleteIds: ["light"], translated: { spells: 1 }, missingIds: [] });
     expect(source.md).toBe("Original English rules");
   });
 
@@ -57,6 +57,16 @@ describe("SRD 5.1 Czech companion adapter (#107 phase 2)", () => {
     expect(coverage.total).toBe(english.length);
     expect(coverage.translated.rules).toBe(english.filter((page) => page.kind === "rules").length);
     expect(coverage.fullRulePages).toBe(35);
+    // A complete translation must contain the full-text marker, not merely
+    // a localized title, metadata or short Czech overview.
+    for (const kind of ["classes", "monsters", "items"] as const) {
+      expect(coverage.fullText[kind]).toBe(english.filter((p) => ({
+        class: "classes", monster: "monsters", item: "items",
+      } as Record<string, string>)[p.kind] === kind).length);
+    }
+    const allFullyTranslated = Object.values(coverage.fullText).reduce((sum, count) => sum + count, 0);
+    expect(allFullyTranslated + coverage.incompleteIds.length + 1).toBe(english.length);
+    expect(coverage.incompleteIds).not.toContain("legal-information");
     expect(coverage.translated.classes).toBe(12);
     expect(coverage.translated.monsters).toBe(318);
     expect(coverage.translated.items).toBe(239);
