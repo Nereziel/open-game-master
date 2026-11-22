@@ -129,10 +129,6 @@ const INK = rgb(0.12, 0.11, 0.1);
 const LINE = rgb(0.55, 0.5, 0.44);
 const FILL = rgb(0.98, 0.97, 0.95);
 
-function titleCase(value: string): string {
-  return value.replace(/[-_]/g, " ").replace(/\b\w/g, (letter) => letter.toUpperCase());
-}
-
 // Localize display values, not the stored canonical IDs used by the rules engine.
 function pdfContent(ctx: Ctx, table: Parameters<typeof contentName>[0], value: string): string {
   return contentName(table, value, ctx.locale);
