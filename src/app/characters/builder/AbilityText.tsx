@@ -4,12 +4,10 @@ import { useLocale, useT } from "@/lib/locale";
 import { abilityShortLabel } from "@/lib/srd/ability-short-label";
 import { abilityName } from "./lineage";
 
-// A card's words with each ability code ("CON +2", "INT caster") printed as
-// it is and spoken as the ability's name (backlog F11): the code is hidden
-// from a screen reader and the name sits beside it for one only, so "CON +2"
-// is heard as "Constitution +2". The name reads in the reader's language
-// (sheet.ability.*); the abbreviation's title shows it to a pointer that
-// rests on it.
+// A card keeps canonical codes in its source text ("CON +2", "INT caster"),
+// but displays locale-aware abbreviations (ODL, INT in Czech). Screen readers
+// hear the full localized ability name instead of the abbreviation, and the
+// same full name appears in the hover title.
 const CODE = /\b(STR|DEX|CON|INT|WIS|CHA)\b/;
 const ABILITY_KEYS: Record<string, string> = {
   STR: "Strength",
