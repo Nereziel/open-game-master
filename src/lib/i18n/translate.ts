@@ -13,7 +13,7 @@ type Catalog = {
 // Small patches for missing Czech UI keys while the large generated catalog
 // remains unchanged. Only apply when the catalog would display English.
 const CZECH_LABEL_FALLBACKS: Record<string, string> = {
-  "{name} is ready": "{name} je připravená postava",
+  "{name} is ready": "Postava {name} je připravena",
   "Level {level}": "{level}. úroveň",
   "Three things to try on your turn": "Tři věci, které můžeš vyzkoušet ve svém tahu",
   "Your sheet lists everything you can do once you sit down at a table.": "Na deníku postavy najdeš všechny své možnosti pro hru.",
