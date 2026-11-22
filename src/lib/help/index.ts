@@ -142,18 +142,22 @@ export function describeFeature(classId: string, subclass: string, name: string,
   const localizedResource = czechResource
     ? resourceGuidance(czechResource.id, locale)
     : null;
-  const found =
-    localizedResource ??
-    subclassFeatureDescription(classId, subclass, name) ??
-    (locale === "cs" ? SRD_FEATURE_DESCRIPTIONS_CS[name] ?? null : null) ??
-    classFeatureDescription(classId, name) ??
-    exactSrdText(classId, name) ??
-    // The background's feature sits on the sheet as "Shelter of the
-    // Faithful (Acolyte)"; the bare name finds its text.
-    describeBackgroundFeature(baseName(name), locale) ??
-    (resource ? resourceGuidance(resource.id, locale) ?? resource.guidance : null) ??
-    guidanceFor({ class: classId, features: [], feature: name }) ??
-    looseSrdText(classId, name);
+  // Try each possible source in priority order. Keeping the Czech SRD
+  // fallback as a separate candidate avoids an ambiguous nested ?? chain.
+  const candidates: Array<string | null | undefined> = [
+    localizedResource,
+    subclassFeatureDescription(classId, subclass, name),
+    locale === "cs" ? SRD_FEATURE_DESCRIPTIONS_CS[name] : null,
+    classFeatureDescription(classId, name),
+    exactSrdText(classId, name),
+    // A background feature such as "Shelter of the Faithful (Acolyte)"
+    // resolves from its unqualified name.
+    describeBackgroundFeature(baseName(name), locale),
+    resource ? resourceGuidance(resource.id, locale) ?? resource.guidance : null,
+    guidanceFor({ class: classId, features: [], feature: name }),
+    looseSrdText(classId, name),
+  ];
+  const found = candidates.find((candidate) => candidate != null) ?? null;
   const description = stripLeadingLabel(found, name);
   if (locale === "cs" && name === "Timeless Body") {
     return classId === "druid"
