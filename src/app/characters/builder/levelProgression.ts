@@ -196,7 +196,7 @@ export function levelProgressionRows(input: ProgressionInput, t: T = enT, locale
       // The class table's row: the level's bonus, before any item.
       proficiency: proficiencyBonus(level),
       features,
-      subclass: pickLevel === level ? { pick: input.subclass.trim() || null } : null,
+      subclass: pickLevel === level ? { pick: input.subclass.trim() ? subclassName(input.classId, input.subclass, locale) : null } : null,
       improvement:
         slotIndex >= 0 ? { pick: choice ? improvementWordsT(t, choice, locale) : null, takenInPlay: takenInPlay && !choice } : null,
       slots,
