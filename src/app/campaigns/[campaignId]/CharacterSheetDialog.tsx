@@ -205,7 +205,7 @@ export function CharacterSheetDialog({
   async function handleDownloadPdf() {
     setPdfBusy(true);
     try {
-      await downloadCharacterSheetPdf(sheet);
+      await downloadCharacterSheetPdf(sheet, locale);
     } finally {
       setPdfBusy(false);
     }
