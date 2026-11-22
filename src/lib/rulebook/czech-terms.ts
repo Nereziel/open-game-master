@@ -781,7 +781,3 @@ export function czechSrdTitle(title: string, kind: string): string {
   return TITLES[kind]?.[title] ?? title;
 }
 
-// Keep English search / italics references pointing at the same canonical ID.
-export function czechSrdEnglishAliases(kind: string): Readonly<Record<string, string>> {
-  return TITLES[kind] ?? {};
-}
