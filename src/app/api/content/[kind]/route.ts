@@ -211,7 +211,7 @@ export async function GET(
       return Response.json({
         results: [...searchHomebrewHazards(base), ...hazardCatalog(q)],
         packInstalled,
-        unadmitted: unadmittedNames(scope, user.id, kind, q, url.searchParams.get("class") ?? ""),
+        unadmitted: unadmittedNames(scope, user.id, kind, originalQuery, url.searchParams.get("class") ?? ""),
       });
     default:
       return Response.json({ error: "Unknown content kind." }, { status: 404 });
@@ -248,5 +248,5 @@ export async function GET(
     results = (results as Array<Parameters<typeof withCatalogDisplay>[1]>)
       .map((row) => withCatalogDisplay(kind, row, locale));
   }
-  return Response.json({ results, packInstalled, unadmitted: unadmittedNames(scope, user.id, kind, q, url.searchParams.get("class") ?? "") });
+  return Response.json({ results, packInstalled, unadmitted: unadmittedNames(scope, user.id, kind, originalQuery, url.searchParams.get("class") ?? "") });
 }
