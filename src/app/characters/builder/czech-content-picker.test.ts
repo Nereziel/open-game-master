@@ -141,6 +141,30 @@ describe("Czech campaign content pickers", () => {
     expect(thirdPartyFeatDescriptionCs({ kind: "spells", name: "Diehard", source: "open5e", documentSlug: "toh" }, "cs")).toBeNull();
   });
 
+  it("keeps complete Tome of Heroes names and descriptions, plus verified partial supplements", () => {
+    const tohItems = [
+      "Axespear", "Clockwork Crossbow", "Khopesh", "Wrist Knife",
+      "Esquire's Rowels", "Soulbound Wraps", "Stasis Stone", "Victory Banner",
+      "Dwarven Arquebus", "Brigandine", "Stonesteel",
+    ];
+    for (const name of tohItems) {
+      const ref = { source: "open5e", documentSlug: "toh", name };
+      expect(contentName("items", ref, "cs"), name).not.toBe(name);
+      expect(thirdPartyItemSummaryCs(ref, "cs")?.length, name).toBeGreaterThan(35);
+    }
+    const deepRef = { kind: "spells", name: "Acid Gate", source: "open5e", documentSlug: "dmag" };
+    expect(contentName("spells", deepRef, "cs")).toBe("Kyselinová brána");
+    expect(thirdPartySpellSummaryCs(deepRef, "cs")).toContain("portál");
+    expect(thirdPartySpellSummaryCs({ ...deepRef, documentSlug: "deepm" }, "cs")).toContain("portál");
+    expect(thirdPartySpellSummaryCs({ ...deepRef, documentSlug: "toh" }, "cs")).toBeNull();
+    const vaultRef = { name: "Bloodthirsty Weapon", source: "open5e", documentSlug: "vom" };
+    expect(thirdPartyItemSummaryCs(vaultRef, "cs")).toContain("2k6");
+    expect(thirdPartyItemSummaryCs({ ...vaultRef, documentSlug: "toh" }, "cs")).toBeNull();
+    expect(thirdPartyItemSummaryCs(vaultRef, "en")).toBeNull();
+    expect(contentName("spells", { name: "Heart to Heart", source: "open5e", documentSlug: "toh" }, "cs")).toBe("Heart to Heart");
+    expect(thirdPartySpellSummaryCs({ kind: "spells", name: "Instant Snare", source: "open5e", documentSlug: "toh" }, "cs")).toBeNull();
+  });
+
   it("reads the official Czech spell book only for official spell refs", () => {
     expect(officialCzechSpellPageId({
       kind: "spells", slug: "srd:acid-splash", name: "Acid Splash", source: "srd", rulebook: "acid-splash",
