@@ -138,10 +138,18 @@ export function isWithinDirectory(parent, candidate, pathApi = { relative, isAbs
   return rest === "" || (rest !== ".." && !rest.startsWith(".." + pathApi.sep) && !pathApi.isAbsolute(rest));
 }
 
+export function auditableSourceFile(filename) {
+  return /\.tsx?$/.test(filename) && !/\.(?:test|spec|stories)\.tsx?$/.test(filename);
+}
+
 function filesBelow(directory) {
   return readdirSync(directory, { withFileTypes: true }).flatMap((item) => {
     const path = join(directory, item.name);
-    return item.isDirectory() ? filesBelow(path) : item.isFile() && /\.tsx?$/.test(path) ? [path] : [];
+    if (item.isDirectory()) {
+      // Test fixtures and mocks often contain intentionally untranslated keys.
+      return /^(?:__tests__|__fixtures__|__mocks__|fixtures)$/.test(item.name) ? [] : filesBelow(path);
+    }
+    return item.isFile() && auditableSourceFile(item.name) ? [path] : [];
   });
 }
 
@@ -172,6 +180,10 @@ function selfTest() {
   const duplicates = duplicateCatalogKeys('{"messages":{"Ready":"Ano","Ready":"Hotovo"}}');
   assert.equal(duplicates.length, 1);
   assert.equal(duplicates[0].key, "messages / Ready");
+  assert.equal(auditableSourceFile("CharacterBuilder.tsx"), true);
+  assert.equal(auditableSourceFile("character-logic.ts"), true);
+  assert.equal(auditableSourceFile("character-logic.test.ts"), false);
+  assert.equal(auditableSourceFile("Sheet.stories.tsx"), false);
   assert.equal(isWithinDirectory("/srv/app/src", "/srv/app/src/components"), true);
   assert.equal(isWithinDirectory("/srv/app/src", "/srv/app/src-other"), false);
   assert.equal(isWithinDirectory("C:\\game\\src", "C:\\game\\src\\components", win32), true);
