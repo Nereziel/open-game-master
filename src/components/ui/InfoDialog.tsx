@@ -347,6 +347,8 @@ function ItemBody({ reference }: { reference: ContentRef }) {
   }
   const sheet = state.sheet;
   if (!sheet) {
+    const complete = thirdPartyFullRulesCs(reference, locale);
+    if (complete) return <div className="space-y-2 text-sm text-stone-300">{renderRules(complete)}</div>;
     const fallback = itemDescriptionCs(reference.name ?? reference.slug, null, locale, reference.slug);
     if (fallback) return <div className="space-y-2 text-sm text-stone-300">{renderRules(fallback)}</div>;
     return (
