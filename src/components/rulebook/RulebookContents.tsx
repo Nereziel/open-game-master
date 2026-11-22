@@ -230,8 +230,8 @@ export function RulebookContents({
 
       {locale === "cs" ? (
         <p className="rb-legal">
-          Česká verze obsahuje stručné české popisy všech 319 kouzel SRD 5.1 a vybraných pravidel, nestvůr a magických předmětů.
-          Nejde zatím o úplný překlad SRD 5.1; původní anglické znění je u položek zachováno.{" "}
+          Česká verze postupně nabízí úplné překlady pravidel, povolání, ras, kouzel, nestvůr a magických předmětů SRD 5.1.
+          U dosud nepřeložených položek může být k dispozici český přehled a původní anglické znění. Anglický originál zůstává dostupný pro porovnání.{" "}
           <a href="https://dnd5esrd.d20.cz/" target="_blank" rel="noreferrer">
             Komunitní český překlad na d20.cz
           </a>
