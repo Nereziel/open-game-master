@@ -157,6 +157,17 @@ function ContentBody({ reference }: { reference: ContentRef }) {
       try {
         const { describeContentEntry } = await import("@/lib/help");
         const { needsNote } = await import("@/lib/content/levelup-logic");
+        const builtinFeat = locale === "cs" && reference.kind === "feats"
+          && (reference.documentSlug === "odm-expanded" || reference.documentSlug === "wotc-srd"
+            || reference.source === "srd" || reference.source === "bundled");
+        if (builtinFeat) {
+          const { builtinFeatSummaryCs } = await import("@/lib/help/feat-summary-cs");
+          const summary = builtinFeatSummaryCs(reference.name ?? "");
+          if (summary) {
+            if (!cancelled) setState({ text: `**Stručný přehled:** ${summary}`, loading: false });
+            return;
+          }
+        }
         const srdSpellPage = locale === "cs" ? officialCzechSpellPageId(reference) : null;
         if (srdSpellPage) {
           const pageResponse = await fetch(`/api/rulebook/pages/${encodeURIComponent(srdSpellPage)}`, { headers: { "X-Odm-Locale": "cs" } });
