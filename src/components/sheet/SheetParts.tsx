@@ -283,7 +283,24 @@ export function TrainingLines({
     // A word's first letter, or the letter after a quote that opens one: never
     // the "s" after a possessive's apostrophe ("Alchemist'S Supplies").
     value.replace(/[-_]/g, " ").replace(/(^|\s)(['‘]?)([a-z])/g, (_, before: string, quote: string, letter: string) => `${before}${quote}${letter.toUpperCase()}`);
-  const localizeValue = (value: string) => {
+  const localizeValue = (value: string, kind?: "armor" | "weapons") => {
+    // Generic translations are ambiguous here: "light" can mean illumination,
+    // but in armor proficiency it means light armor.
+    if (locale === "cs" && kind) {
+      const key = value.trim().toLowerCase().replace(/[-_]/g, " ").replace(/\\s+/g, " ");
+      const armor: Record<string, string> = {
+        light: "Lehká", "light armor": "Lehká zbroj",
+        medium: "Střední", "medium armor": "Střední zbroj",
+        heavy: "Těžká", "heavy armor": "Těžká zbroj",
+        shield: "Štít", shields: "Štíty",
+      };
+      const weapons: Record<string, string> = {
+        simple: "Jednoduché", "simple weapons": "Jednoduché zbraně",
+        martial: "Vojenské", "martial weapons": "Vojenské zbraně",
+      };
+      const translated = (kind === "armor" ? armor : weapons)[key];
+      if (translated) return translated;
+    }
     const title = nice(value);
     const hit = t(title);
     if (hit !== title) return hit;
@@ -303,7 +320,7 @@ export function TrainingLines({
       {rows.map(([label, values]) => (
         <div key={label} className="contents">
           <dt className="text-stone-500">{label}</dt>
-          <dd className="text-stone-200">{values.length ? [...new Set(values.map((value) => label === t("Languages") ? languageLabel(nice(value), locale) : localizeValue(value)))].join(", ") : <span className="text-stone-400">{t("none", { context: "sheet.training.none" })}</span>}</dd>
+          <dd className="text-stone-200">{values.length ? [...new Set(values.map((value) => label === t("Languages") ? languageLabel(nice(value), locale) : localizeValue(value, label === t("Armor") ? "armor" : label === t("Weapons", { context: "sheet.training.weapons" }) ? "weapons" : undefined)))].join(", ") : <span className="text-stone-400">{t("none", { context: "sheet.training.none" })}</span>}</dd>
         </div>
       ))}
       {conditional.length ? (
