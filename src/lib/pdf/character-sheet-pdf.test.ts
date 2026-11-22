@@ -170,6 +170,13 @@ describe("fillable character-sheet PDF localization", () => {
     expect(pdfLabel("cs", "Successes")).toBe("Úspěchy");
     expect(pdfLabel("cs", "Failures")).toBe("Neúspěchy");
     expect(pdfLabel("cs", "Damage / Type")).toBe("Zran. / typ");
+    expect(pdfLabel("cs", "WIS")).toBe("MDR");
+    expect(pdfLabel("cs", "STR")).toBe("SÍL");
+    expect(pdfLabel("cs", "Arcana")).toBe("Magie");
+    expect(pdfLabel("cs", "Stealth")).toBe("Plížení");
+    expect(pdfLabel("fr", "WIS")).toBe("SAG");
+    expect(pdfLabel("fr", "Arcana")).toBe("Arcanes");
+    expect(pdfLabel("en", "Arcana")).toBe("Arcana");
     expect(pdfLabel("fr", "Successes")).toBe("Réussites");
     expect(pdfLabel("en", "Character Name")).toBe("Character Name");
   });
