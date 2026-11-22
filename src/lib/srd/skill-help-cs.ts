@@ -1,6 +1,7 @@
 // Player-facing explanations of the eighteen SRD skills. Only display text;
 // skill IDs, governing abilities and roll modifiers remain unchanged.
 import { skillLabel } from "@/lib/srd";
+import { abilityShortLabel } from "@/lib/srd/ability-short-label";
 import type { Locale } from "@/lib/i18n/translate";
 
 const CS_SKILL_USES: Record<string, string> = {
@@ -36,7 +37,7 @@ export function skillHelpText(
 ): string {
   const name = skillLabel(skillId, locale);
   if (locale !== "cs") {
-    return `${name} uses ${ability.toUpperCase()}. The result of a skill check includes the ability modifier and, if proficient, the proficiency bonus.`;
+    return `${name} uses ${abilityShortLabel(ability, locale)}. The result of a skill check includes the ability modifier and, if proficient, the proficiency bonus.`;
   }
   const use = CS_SKILL_USES[skillId] ?? "Ověření toho, co se postava pokouší udělat.";
   const governing = CS_ABILITIES[ability] ?? ability;

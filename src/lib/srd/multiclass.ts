@@ -8,6 +8,9 @@ import spellSlotsJson from "@/lib/srd/spell-slots.json";
 import { findClass, spellSlotsFor } from "@/lib/srd";
 import { isThirdCaster, type ThirdCasterSetting } from "@/lib/srd/third-caster";
 import type { Ability, AbilityScores, ClassEntry } from "@/lib/schemas/sheet";
+import type { Locale } from "@/lib/i18n/translate";
+import { trainingProficiencyLabel } from "@/lib/content/proficiency-labels";
+import { toolLabel } from "@/lib/srd/tool-choices";
 
 // UI sanity cap: RAW is unbounded, but nobody at this table needs four.
 export const MULTICLASS_CAP = 3;
@@ -230,8 +233,14 @@ export function describePrereqT(t: T, classId: string): string {
 }
 
 // The proficiencies a second class grants, in the reader's words.
-export function describeGrantT(t: T, grant: MulticlassGrant): string {
-  const parts = [...grant.armor, ...grant.weapons, ...grant.tools];
+export function describeGrantT(t: T, grant: MulticlassGrant, locale: Locale = "en"): string {
+  // Read from the same category catalog as the sheet and its PDF. The
+  // underlying grant remains in English for the multiclass rule engine.
+  const parts = [
+    ...grant.armor.map((entry) => trainingProficiencyLabel(entry, "armor", locale, true) ?? t(entry)),
+    ...grant.weapons.map((entry) => trainingProficiencyLabel(entry, "weapons", locale, true) ?? t(entry)),
+    ...grant.tools.map((entry) => locale === "cs" ? toolLabel(entry, t) : t(entry)),
+  ];
   if (grant.skillChoice) {
     parts.push(t(grant.skillChoice.from.length ? "one skill from its class list" : "one skill of your choice"));
   }
@@ -241,26 +250,36 @@ export function describeGrantT(t: T, grant: MulticlassGrant): string {
 // Whether the character may take a first level in a NEW class. RAW checks
 // both directions: they must meet the new class's prerequisite AND the
 // prerequisites of every class they already have.
+// The English error remains for server callers. UI readers use reason
+// and relatedClassId to render the same refusal in their own language.
+export type MulticlassCheck = {
+  ok: boolean;
+  error?: string;
+  reason?: "unknown" | "already" | "limit" | "new_prereq" | "held_prereq";
+  relatedClassId?: string;
+};
+
 export function canMulticlassInto(
   sheet: ClassListSource & { abilities: AbilityScores },
   classId: string,
-): { ok: boolean; error?: string } {
+): MulticlassCheck {
   const klass = findClass(classId);
   if (!klass) {
-    return { ok: false, error: `Unknown class "${classId}".` };
+    return { ok: false, error: `Unknown class "${classId}".`, reason: "unknown" };
   }
   const classList = classListFor(sheet);
   const wanted = classId.trim().toLowerCase();
   if (classList.some((entry) => entry.id.toLowerCase() === wanted)) {
-    return { ok: false, error: `They already have levels in ${klass.name}.` };
+    return { ok: false, error: `They already have levels in ${klass.name}.`, reason: "already" };
   }
   if (classList.length >= MULTICLASS_CAP) {
-    return { ok: false, error: `At most ${MULTICLASS_CAP} classes per character.` };
+    return { ok: false, error: `At most ${MULTICLASS_CAP} classes per character.`, reason: "limit" };
   }
   if (!meetsPrereq(sheet.abilities, classId)) {
     return {
       ok: false,
       error: `Multiclassing into ${klass.name} requires ${describePrereq(classId)}.`,
+      reason: "new_prereq",
     };
   }
   for (const entry of classList) {
@@ -269,6 +288,8 @@ export function canMulticlassInto(
       return {
         ok: false,
         error: `Leaving ${held} for another class requires ${describePrereq(entry.id)} (RAW checks both directions).`,
+        reason: "held_prereq",
+        relatedClassId: entry.id,
       };
     }
   }

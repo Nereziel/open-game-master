@@ -1,14 +1,13 @@
 "use client";
 
-import { useT } from "@/lib/locale";
+import { useLocale, useT } from "@/lib/locale";
+import { abilityShortLabel } from "@/lib/srd/ability-short-label";
 import { abilityName } from "./lineage";
 
-// A card's words with each ability code ("CON +2", "INT caster") printed as
-// it is and spoken as the ability's name (backlog F11): the code is hidden
-// from a screen reader and the name sits beside it for one only, so "CON +2"
-// is heard as "Constitution +2". The name reads in the reader's language
-// (sheet.ability.*); the abbreviation's title shows it to a pointer that
-// rests on it.
+// A card keeps canonical codes in its source text ("CON +2", "INT caster"),
+// but displays locale-aware abbreviations (ODL, INT in Czech). Screen readers
+// hear the full localized ability name instead of the abbreviation, and the
+// same full name appears in the hover title.
 const CODE = /\b(STR|DEX|CON|INT|WIS|CHA)\b/;
 const ABILITY_KEYS: Record<string, string> = {
   STR: "Strength",
@@ -21,6 +20,7 @@ const ABILITY_KEYS: Record<string, string> = {
 
 export function AbilityText({ text }: { text: string }) {
   const t = useT();
+  const locale = useLocale();
   const parts = text.split(CODE);
   if (parts.length === 1) {
     return text;
@@ -30,9 +30,10 @@ export function AbilityText({ text }: { text: string }) {
       return part;
     }
     const name = ABILITY_KEYS[part] ? t(ABILITY_KEYS[part]) : abilityName(part.toLowerCase());
+    const code = abilityShortLabel(part.toLowerCase(), locale);
     return (
       <abbr key={index} title={name} className="no-underline">
-        <span aria-hidden="true">{part}</span>
+        <span aria-hidden="true">{code}</span>
         <span className="sr-only">{name}</span>
       </abbr>
     );

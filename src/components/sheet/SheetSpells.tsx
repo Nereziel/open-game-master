@@ -229,7 +229,7 @@ function CasterBook({
   return (
     <div>
       {showClass ? (
-        <p className="eyebrow mb-1.5 text-[10px] text-amber-400/80">{contentName("classes", titleCase(view.classId), locale)}</p>
+        <p className="eyebrow mb-1.5 text-[10px] text-amber-400/80">{view.classId === "feats" ? t("Feats") : contentName("classes", titleCase(view.classId), locale)}</p>
       ) : null}
       <SpellBook
         tiles={tiles}

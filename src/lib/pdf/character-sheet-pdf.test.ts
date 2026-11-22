@@ -4,6 +4,8 @@ import { PDFDocument } from "pdf-lib";
 import { createSheetSchema } from "@/lib/schemas/sheet";
 import { buildCharacterSheetPdf, libraryToPdfCharacter } from "./character-sheet-pdf";
 import { pdfLabel } from "./labels";
+import { abilityShortLabel } from "@/lib/srd/ability-short-label";
+import { SRD_SKILLS, skillLabel } from "@/lib/srd";
 import { installCsTables } from "@/lib/i18n/cs-tables";
 import { installCatalog } from "@/lib/i18n/translate";
 
@@ -93,7 +95,7 @@ describe("fillable character-sheet PDF localization", () => {
       name: sheet.name, race: sheet.race, class: sheet.class,
       subclass: "", background: "soldier", level: 1, sheet,
     });
-    async function values(locale: "cs" | "en") {
+    async function values(locale: "cs" | "en" | "fr") {
       const bytes = await buildCharacterSheetPdf(character, {
         fontBytes: new Uint8Array(regular),
         boldFontBytes: new Uint8Array(bold),
@@ -110,10 +112,14 @@ describe("fillable character-sheet PDF localization", () => {
     expect(cs).toContain("Voják");
     expect(cs.some((value) => value?.includes("Dlouhý meč") && value.includes("Batoh ×2"))).toBe(true);
     expect(cs.some((value) => value?.includes("Druhý dech"))).toBe(true);
+    expect(cs.some((value) => value?.includes("Sečné"))).toBe(true);
     const en = await values("en");
     expect(en).toContain("Fighter 1");
     expect(en).toContain("human");
     expect(en.some((value) => value?.includes("Longsword") && value.includes("Backpack"))).toBe(true);
+    expect(en.some((value) => value?.includes("slashing"))).toBe(true);
+    const fr = await values("fr");
+    expect(fr.some((value) => value?.includes("Tranchants"))).toBe(true);
   });
 
   it("translates race-feature explanations, armor/weapon groups and personality in Czech", async () => {
@@ -165,8 +171,30 @@ describe("fillable character-sheet PDF localization", () => {
     expect(en).toContain('trait "I offer a blessing to strangers whether they want one or not."');
   });
 
+  it("uses the same six ability abbreviations as the character sheet in every locale", () => {
+    for (const locale of ["cs", "fr", "en"] as const) {
+      for (const ability of ["str", "dex", "con", "int", "wis", "cha"]) {
+        expect(pdfLabel(locale, ability.toUpperCase())).toBe(abilityShortLabel(ability, locale));
+      }
+    }
+    expect(pdfLabel("cs", "WIS")).toBe("MDR");
+    expect(pdfLabel("cs", "DEX")).toBe("OBR");
+  });
+
+  it("uses the shared names of all 18 skills rather than a duplicate PDF dictionary", () => {
+    for (const locale of ["cs", "fr", "en"] as const) {
+      for (const skill of SRD_SKILLS) {
+        expect(pdfLabel(locale, skill.name), skill.id).toBe(skillLabel(skill.id, locale));
+      }
+    }
+    expect(pdfLabel("cs", "Arcana")).toBe("Magie");
+    expect(pdfLabel("cs", "Stealth")).toBe("Plížení");
+    expect(pdfLabel("cs", "Acrobatics")).toBe("Akrobacie");
+  });
+
   it("translates all key PDF captions and keeps English as the default", () => {
     expect(pdfLabel("cs", "Character Name")).toBe("Jméno postavy");
+    expect(pdfLabel("cs", "Class & Level")).toBe("Povolání a úroveň");
     expect(pdfLabel("cs", "Successes")).toBe("Úspěchy");
     expect(pdfLabel("cs", "Failures")).toBe("Neúspěchy");
     expect(pdfLabel("cs", "Damage / Type")).toBe("Zran. / typ");

@@ -46,7 +46,7 @@ import { speciesSpellsShown } from "@/lib/srd/species-spell-view";
 import { SummonDoor } from "@/app/campaigns/[campaignId]/SummonDoor";
 import { DefensesLine, HitDiceSpend, StateTags } from "@/components/sheet/SheetState";
 import { SheetBetween } from "@/components/sheet/SheetBetween";
-import { acView, conditionDetail, hitDiceLine, itemStatus, maxHpView, otherSpeedsLine, speedView, wearableGear } from "@/components/sheet/sheet-state";
+import { acView, conditionDetail, hitDiceLine, itemStatus, localizeDefenseTypes, maxHpView, otherSpeedsLine, speedView, wearableGear } from "@/components/sheet/sheet-state";
 import { FeatureChoicePicker, OtherSpeeds } from "@/components/sheet/SheetChoices";
 import { OwedPicks } from "@/components/sheet/OwedPicks";
 import { wearQuestion, type PendingWear } from "@/components/sheet/SheetGearRow";
@@ -66,6 +66,7 @@ import { SheetPersonality } from "@/app/campaigns/[campaignId]/SheetPersonality"
 import { classWordsAfterLevel, isSplit } from "@/lib/characters/class-words";
 import { contentName, subclassName } from "@/lib/content/names";
 import { resourceDisplayName, resourceGuidance } from "@/lib/srd/class-resources-fr";
+import { abilityShortLabel } from "@/lib/srd/ability-short-label";
 import { useLocale } from "@/lib/locale";
 
 function titleCase(value: string) {
@@ -326,7 +327,7 @@ export function CharacterSheetDialog({
                   glyph: "rest-ac",
                   label: <GameTerm id="armor_class">{t("Armor class", { context: "table.sheet.armorClass" })}</GameTerm>,
                   value: acView(sheet).ac,
-                  title: acView(sheet, t).note ?? (sheet.acOverride ? t("Set by hand; armor does not change it.") : armor.parts.join(" + ")),
+                  title: acView(sheet, t).note ?? (sheet.acOverride ? t("Set by hand; armor does not change it.") : localizeAcParts(armor.parts, t, locale).join(" + ")),
                 },
                 {
                   glyph: "rest-speed",
@@ -395,7 +396,7 @@ export function CharacterSheetDialog({
               <span className="font-mono text-xs">
                 {t("{hp}/{max} beast HP", { hp: sheet.wildShape.beastHp, max: sheet.wildShape.beastMaxHp })}
               </span>
-              <span className="font-mono text-xs">AC {sheet.wildShape.beastAc}</span>
+              <span className="font-mono text-xs">{t("AC")} {sheet.wildShape.beastAc}</span>
               <span className="w-full text-xs text-lime-400/80">
                 {t("Damage hits the beast's hit points first. The {current}/{max} HP above is what {name} returns to when the form breaks.", { current: sheet.currentHp, max: hp.max, name: sheet.name })}
               </span>
@@ -634,12 +635,12 @@ export function CharacterSheetDialog({
                     <p className="reveal text-[11px] text-sky-400/80">
                       {t("Active magic:")}{" "}
                       {[
-                        magic.acBonus ? `+${magic.acBonus} AC` : null,
-                        magic.saveBonus ? `+${magic.saveBonus} saves` : null,
+                        magic.acBonus ? `+${magic.acBonus} ${t("AC")}` : null,
+                        magic.saveBonus ? `+${magic.saveBonus} ${t("Saving throws")}` : null,
                         ...Object.entries(magic.abilitySet).map(
-                          ([ability, score]) => `${ability.toUpperCase()} ${score}`,
+                          ([ability, score]) => `${abilityShortLabel(ability, locale)} ${score}`,
                         ),
-                        magic.resistances.length ? `resist ${magic.resistances.join(", ")}` : null,
+                        magic.resistances.length ? `${t("Resists")} ${localizeDefenseTypes(magic.resistances.join(", "), locale)}` : null,
                       ]
                         .filter(Boolean)
                         .join(" \u00b7 ") || "worn"}

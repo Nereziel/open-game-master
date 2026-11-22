@@ -1,8 +1,19 @@
 import { describe, expect, it } from "vitest";
+import { installCsTables } from "@/lib/i18n/cs-tables";
+import { CS_NAMES_BY_TABLE } from "@/lib/content/names-cs";
 import { installCatalog } from "./translate";
 import { gameFeature, gameName, gamePersonalityLine, gameProficiency } from "./game-text";
 
 describe("shared game translation entry point", () => {
+  it("reuses one canonical set of spell, armor and item names and keeps homebrew intact", () => {
+    installCsTables({ names: CS_NAMES_BY_TABLE });
+    expect(gameName("spells", "Cure Wounds", "cs")).toBe("Léčení zranění");
+    expect(gameName("armor", "Scale Mail", "cs")).toBe("Šupinová zbroj");
+    expect(gameName("items", "Scale Mail", "cs")).toBe("Šupinová zbroj");
+    expect(gameName("spells", "Cure Wounds", "en")).toBe("Cure Wounds");
+    expect(gameName("items", "Custom Dragon Mail", "cs")).toBe("Custom Dragon Mail");
+  });
+
   it("uses the same vocabulary for the game and PDF", () => {
     expect(gameProficiency("martial", "weapons", "cs")).toBe("Vojenské");
     expect(gameProficiency("martial weapons", "weapons", "cs", true)).toBe("Vojenské zbraně");

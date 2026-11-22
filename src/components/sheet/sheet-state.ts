@@ -28,6 +28,8 @@ import { UNLIMITED_USES, resourceDef } from "@/lib/srd/class-resources";
 import { resourceGuidance } from "@/lib/srd/class-resources-fr";
 import { translate, type Locale } from "@/lib/messages-logic";
 import { chargeMax, chargeRuleOf, chargesLeft } from "@/lib/srd/item-charge-rules";
+import { contentName } from "@/lib/content/names";
+import { damageTypeWord } from "@/lib/dm/damage-logic";
 import { gearDefFor } from "@/lib/srd/magic-gear";
 import { matchMagicItem } from "@/lib/srd/magic-items";
 import { oneOfKind, wearSlotOf, wornButIdle } from "@/lib/srd/wear-slots";
@@ -43,7 +45,7 @@ import { pluralOf } from "@/lib/messages-logic";
 
 // The caller's translator (home/types.ts agoLabel pattern): the sentences
 // these views build follow the reader's language.
-type Translator = (key: string, vars?: Record<string, string | number>) => string;
+type Translator = ((key: string, vars?: Record<string, string | number>) => string) & { locale?: Locale };
 
 // ---- hit points ----
 
@@ -76,10 +78,11 @@ export function acView(
   t: Translator = (key, vars) => translate("en", key, vars),
 ): { ac: number; note: string | null } {
   const ac = effectiveAcFor(sheet);
+  const beastName = sheet.wildShape ? contentName("monsters", sheet.wildShape.form, t.locale ?? "en") : null;
   const note = sheet.wildShape
     ? ac !== sheet.wildShape.beastAc
-      ? t("The {form}'s armor class, {beastAc} before the spells on it; {name}'s own is {ac}.", { form: sheet.wildShape.form, beastAc: sheet.wildShape.beastAc, name: sheet.name, ac: sheet.ac })
-      : t("The {form}'s armor class; {name}'s own is {ac}.", { form: sheet.wildShape.form, name: sheet.name, ac: sheet.ac })
+      ? t("The {form}'s armor class, {beastAc} before the spells on it; {name}'s own is {ac}.", { form: beastName ?? sheet.wildShape.form, beastAc: sheet.wildShape.beastAc, name: sheet.name, ac: sheet.ac })
+      : t("The {form}'s armor class; {name}'s own is {ac}.", { form: beastName ?? sheet.wildShape.form, name: sheet.name, ac: sheet.ac })
     : ac !== sheet.ac
       ? t("Spells on them change it from {ac}.", { ac: sheet.ac })
       : null;
@@ -105,7 +108,7 @@ export function speedView(
   }
   if (conditioned !== worn) {
     const zeroing = sheet.conditions.find((entry) => ZEROING.includes(entry.trim().toLowerCase()));
-    notes.push(zeroing ? t("{condition}: speed 0.", { condition: zeroing }) : t("Effects on them change it to {speed} ft.", { speed: conditioned }));
+    notes.push(zeroing ? t("{condition}: speed 0.", { condition: contentName("conditions", zeroing, t.locale ?? "en") }) : t("Effects on them change it to {speed} ft.", { speed: conditioned }));
   }
   if (speed !== conditioned) {
     notes.push(exhaustion >= 5 ? t("Exhaustion {level}: speed 0.", { level: exhaustion }) : t("Exhaustion {level}: speed halved.", { level: exhaustion }));
@@ -147,7 +150,7 @@ export function stateTags(t: Translator, sheet: CharacterSheet): StateTag[] {
   if (stopped && sheet.currentHp > 0) {
     tags.push({
       id: "incapacitated",
-      label: t("Cannot act ({what})", { what: stopped }),
+      label: t("Cannot act ({what})", { what: contentName("conditions", stopped, t.locale ?? "en") }),
       tone: "harm",
       note: t("{name} can take no actions or reactions while this lasts.", { name: sheet.name }),
     });
@@ -164,7 +167,7 @@ export function stateTags(t: Translator, sheet: CharacterSheet): StateTag[] {
   if (sheet.concentratingOn) {
     tags.push({
       id: "concentration",
-      label: t("Concentrating: {spell}", { spell: sheet.concentratingOn }),
+      label: t("Concentrating: {spell}", { spell: contentName("spells", sheet.concentratingOn, t.locale ?? "en") }),
       tone: "bless",
       note: t("Damage calls for a CON save (DC 10 or half the damage); another concentration spell, or falling unconscious, ends it."),
     });
@@ -234,8 +237,22 @@ export function hitDiceLine(sheet: CharacterSheet): string {
 
 // ---- defenses ----
 
-export function defensesView(sheet: CharacterSheet): { resist: string; immune: string } {
-  return { resist: pcResistances(sheet), immune: pcImmunities(sheet) };
+// The engine returns comma-delimited damage words. Translate only whole
+// canonical type tokens and preserve punctuation and custom descriptors.
+export function localizeDefenseTypes(raw: string, locale: Locale): string {
+  if (locale === "en" || !raw) return raw;
+  return raw.replace(/[^,]+/g, (part) => {
+    const token = part.trim();
+    const display = damageTypeWord(token, locale);
+    return display === token ? part : part.replace(token, display);
+  });
+}
+
+export function defensesView(sheet: CharacterSheet, locale: Locale = "en"): { resist: string; immune: string } {
+  return {
+    resist: localizeDefenseTypes(pcResistances(sheet), locale),
+    immune: localizeDefenseTypes(pcImmunities(sheet), locale),
+  };
 }
 
 // ---- gear ----

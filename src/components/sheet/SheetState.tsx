@@ -7,7 +7,7 @@ import { cn } from "@/lib/cn";
 import { ui } from "@/lib/ui";
 import { Tooltip } from "@/components/ui/Tooltip";
 import { GameIcon } from "@/components/ui/GameIcon";
-import { useT } from "@/lib/locale";
+import { useLocale, useT } from "@/lib/locale";
 import { FaceInputs, flatTotalOf, useFaceEntry } from "@/components/dice/FaceEntry";
 import type { CharacterSheet } from "@/lib/schemas/sheet";
 import { defensesView, hitDiceRows, stateTags, type StateTag } from "@/components/sheet/sheet-state";
@@ -66,7 +66,8 @@ export function StateTags({ sheet, className }: { sheet: CharacterSheet; classNa
 // pcImmunities): race, features, rage, spells, worn magic items.
 export function DefensesLine({ sheet }: { sheet: CharacterSheet }) {
   const t = useT();
-  const { resist, immune } = defensesView(sheet);
+  const locale = useLocale();
+  const { resist, immune } = defensesView(sheet, locale);
   if (!resist && !immune) return null;
   return (
     <p className="reveal mt-2 flex flex-wrap items-center gap-x-3 gap-y-0.5 text-xs text-stone-300">
@@ -104,6 +105,7 @@ function HitDieFaces({
   busy: boolean;
   onSpend: (faces?: Array<number | "digital">) => void;
 }) {
+  const t = useT();
   const entry = useFaceEntry(ask.expression, true);
   const { faces, complete, fullyAutomatic, values, submissionDice } = entry;
   // Dice that fill themselves (a Pixels die, a shape the player has the
@@ -122,15 +124,14 @@ function HitDieFaces({
   }, [fullyAutomatic, complete, busy, faces, values]);
 
   const flat = flatTotalOf(ask.expression);
-  const one = faces.length === 1;
   return (
-    <div role="group" aria-label="Your hit die roll" className="hit-dice-entry animate-fade-up rounded-lg border border-stone-800 bg-stone-950/40 px-2.5 py-2">
+    <div role="group" aria-label={t("Your hit die roll")} className="hit-dice-entry animate-fade-up rounded-lg border border-stone-800 bg-stone-950/40 px-2.5 py-2">
       <p className="text-xs text-stone-300">
         {fullyAutomatic
-          ? `Roll ${entry.diceSummary}. Your assigned dice fill in on their own.`
-          : `Roll ${entry.diceSummary} at your table and enter ${one ? "it" : "each die"} below.`}
-        {flat ? ` Enter the bare die number${one ? "" : "s"}; your Constitution's ${flat > 0 ? `+${flat}` : flat} is added for you.` : ""}
-        {ask.extras.map((extra) => ` The ${extra.die} is from ${extra.from}.`).join("")}
+          ? t("Roll {summary}. Your assigned dice fill in on their own.", { summary: entry.diceSummary })
+          : t("Roll {summary} at your table and enter each die below.{note} The game waits for your result.", { summary: entry.diceSummary, note: "" })}
+        {flat ? ` ${t("Enter the bare die numbers; the {mod} is added for you.", { mod: flat > 0 ? `+${flat}` : flat })}` : ""}
+        {ask.extras.map((extra) => ` ${t("The {die} is from {from}.", { die: extra.die, from: extra.from })}`).join("")}
       </p>
       <div className="mt-1.5 flex flex-wrap items-end gap-2">
         <FaceInputs entry={entry} dimClass="text-stone-400" />
@@ -141,10 +142,10 @@ function HitDieFaces({
           className={cn(ui.btnSmall, "hit-dice-submit min-h-10 border-amber-500/50 text-amber-100 sm:min-h-8")}
         >
           {busy ? <Loader2 className="size-3.5 animate-spin" /> : null}
-          Heal with this roll
+          {t("Heal with this roll")}
         </button>
         <button type="button" disabled={busy} onClick={() => onSpend()} className={cn(ui.btnSmall, "hit-dice-digital min-h-10 sm:min-h-8")}>
-          Roll digitally instead
+          {t("Roll digitally instead")}
         </button>
       </div>
     </div>

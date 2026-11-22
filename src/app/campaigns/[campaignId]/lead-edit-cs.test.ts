@@ -10,11 +10,56 @@ import { installCatalog } from "@/lib/i18n/translate";
 import { translate } from "@/lib/i18n/translate";
 import { skillLabel } from "@/lib/srd";
 import { abilityShortLabel } from "@/lib/srd/ability-short-label";
+import { CS_ABILITY_ABBR } from "@/components/sheet/SheetParts";
+import { ABILITIES } from "@/lib/schemas/sheet";
 
 installCsTables({ names: CS_NAMES_BY_TABLE });
 installCatalog("cs", catalog);
 
 describe("Campaign character adjustments in Czech", () => {
+  it("localizes level-up class, skill, subclass and tool choices without changing their IDs", () => {
+    const dialog = readFileSync(path.join(process.cwd(), "src/app/campaigns/[campaignId]/LevelUpDialog.tsx"), "utf8");
+    expect(contentName("classes", "Fighter", "cs")).toBe("Bojovník");
+    expect(skillLabel("acrobatics", "cs")).toBe("Akrobacie");
+    expect(dialog).toContain('contentName("classes", option.name, locale)');
+    expect(dialog).toContain('searchKey(contentName("classes", option.name, locale))');
+    expect(dialog).toContain("skillLabel(skillId, locale)");
+    expect(dialog).toContain('subclassName(classChoice, name, locale)');
+    expect(dialog).toContain("toolLabel(tool, t)");
+    expect(dialog).toContain('t("Choose tools for {class} ({count}):"');
+    expect(dialog).toContain('aria-label={t("Close", { context: "action.close" })}');
+    expect(dialog).not.toContain(' of your choice. Pick {toolCount');
+  });
+
+  it("uses common Czech names for portrait class hints and feat spellbook headings", () => {
+    expect(contentName("classes", "fighter", "cs")).toBe("Bojovník");
+    const parts = readFileSync(path.join(process.cwd(), "src/components/sheet/SheetParts.tsx"), "utf8");
+    const spells = readFileSync(path.join(process.cwd(), "src/components/sheet/SheetSpells.tsx"), "utf8");
+    expect(parts).toContain('title={contentName("classes", classId, locale)}');
+    expect(spells).toContain('view.classId === "feats" ? t("Feats")');
+    expect(spells).not.toContain('>{contentName("classes", titleCase(view.classId), locale)}</p>');
+  });
+
+  it("uses the locale catalog for hit-die roll instructions and actions", () => {
+    const state = readFileSync(path.join(process.cwd(), "src/components/sheet/SheetState.tsx"), "utf8");
+    expect(state).toContain('aria-label={t("Your hit die roll")}');
+    expect(state).toContain('t("Heal with this roll")');
+    expect(state).toContain('t("Roll digitally instead")');
+    expect(state).toContain('t("Roll {summary}. Your assigned dice fill in on their own."');
+    expect(state).toContain('t("Enter the bare die numbers; the {mod} is added for you."');
+    expect(state).not.toContain('aria-label="Your hit die roll"');
+    expect(state).not.toContain('>Heal with this roll<');
+  });
+
+  it("keeps the shared ability labels in character tiles and the PDF", () => {
+    for (const ability of ABILITIES) {
+      expect(CS_ABILITY_ABBR[ability]).toBe(abilityShortLabel(ability, "cs"));
+    }
+    const parts = readFileSync(path.join(process.cwd(), "src/components/sheet/SheetParts.tsx"), "utf8");
+    expect(parts).toContain("{abilityShortLabel(ability, locale)}");
+    expect(parts).not.toContain('locale === "cs" ? CS_ABILITY_ABBR[ability]');
+  });
+
   it("translates every displayed source in a scale-mail armor calculation", () => {
     const parts = ["Scale Mail 14", "DEX -1", "Shield +2"];
     const t = (key: string) => translate("cs", key);
@@ -56,8 +101,13 @@ describe("Campaign character adjustments in Czech", () => {
   it("keeps the campaign editor wired to the shared translations and help", () => {
     const editor = readFileSync(path.join(process.cwd(), "src/app/campaigns/[campaignId]/LeadEditDialog.tsx"), "utf8");
     const parts = readFileSync(path.join(process.cwd(), "src/app/campaigns/[campaignId]/LeadEditParts.tsx"), "utf8");
+    const sheetDialog = readFileSync(path.join(process.cwd(), "src/app/campaigns/[campaignId]/CharacterSheetDialog.tsx"), "utf8");
     expect(editor).toContain('<GameTerm id="armor_class">');
     expect(editor).toContain("localizeAcParts(derived.parts, t, locale)");
+    expect(sheetDialog).toContain('localizeAcParts(armor.parts, t, locale).join(" + ")');
+    expect(sheetDialog).not.toContain('armor.parts.join(" + ")');
+    expect(sheetDialog).toContain("abilityShortLabel(ability, locale)");
+    expect(sheetDialog).toContain('localizeDefenseTypes(magic.resistances.join(", "), locale)');
     expect(editor).toContain("skillLabel(skill.id, locale)");
     expect(editor).toContain("LocalizedItemNameInput");
     expect(editor).toContain('t("Prepared spells")');
