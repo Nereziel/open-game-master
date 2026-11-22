@@ -23,7 +23,7 @@ import { asciiSlugOf } from "@/lib/language/text-logic";
 // ever asked for by name.
 
 const DEFAULT_BASE_URL = "https://api.openai.com/v1";
-const GENERATE_TIMEOUT_MS = 4 * 60 * 1000;
+const GENERATE_TIMEOUT_MS = 2 * 60 * 1000;
 
 // The story backend's key, but only when that backend IS OpenAI. Images are a
 // different API on the same account, so a table already paying OpenAI for its
