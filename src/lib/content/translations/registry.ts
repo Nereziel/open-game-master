@@ -35,7 +35,9 @@ export type TranslationResolution = Readonly<{
 // record still carries its canonical English ID throughout the app.
 export function translationSourceId(record: SourceRecord): string | null {
   if (record.source === "homebrew") return null; // User-authored content is never silently translated.
-  if (record.source === "srd" || record.source === "bundled") return "srd-5.1";
+  if (record.source === "srd") return "srd-5.1";
+  // "bundled" is not necessarily SRD; keep unverified ODM rows untouched.
+  if (record.source === "bundled") return record.documentSlug === "wotc-srd" ? "srd-5.1" : null;
   if (record.source !== "open5e") return null;
   switch (record.documentSlug) {
     case "wotc-srd": return "srd-5.1";
