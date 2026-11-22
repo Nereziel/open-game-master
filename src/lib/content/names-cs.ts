@@ -105,7 +105,12 @@ export const CS_NAMES_BY_TABLE: Record<string, Record<string, string>> = {
     "sage": "Učenec",
     "sailor": "Námořník",
     "soldier": "Voják",
-    "urchin": "Dítě ulice"
+    "urchin": "Dítě ulice",
+    "knight": "Rytíř",
+    "pirate": "Pirát",
+    "spy": "Špion",
+    "gladiator": "Gladiátor",
+    "guild-merchant": "Cechovní obchodník"
   },
   "weapons": {
     "club": "Kyj",
