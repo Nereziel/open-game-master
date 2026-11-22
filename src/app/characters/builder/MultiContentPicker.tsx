@@ -162,13 +162,13 @@ export default function MultiContentPicker({
                 onClick={addCustom}
                 className="flex w-full items-center gap-1.5 px-3 py-1.5 text-left text-sm text-amber-300 hover:bg-stone-800"
               >
-                <Plus className="size-3.5 shrink-0" /> Add &quot;{trimmedQuery}&quot; as custom
+                <Plus className="size-3.5 shrink-0" />{locale === "cs" ? `Přidat „${trimmedQuery}“ jako vlastní položku` : <>Add &quot;{trimmedQuery}&quot; as custom</>}
               </button>
             </li>
           ) : null}
           {failed ? (
             <li role="alert" className="px-3 py-1.5 text-xs text-amber-300/90">
-              Could not reach the server to search; type again to retry, or add entries by name.
+              {locale === "cs" ? "Nepodařilo se načíst výsledky hledání. Zkus to znovu nebo zadej vlastní název." : "Could not reach the server to search; type again to retry, or add entries by name."}
             </li>
           ) : unavailable ? (
             <li className="px-3 py-1.5 text-xs text-stone-500">
@@ -207,7 +207,7 @@ export default function MultiContentPicker({
             onClick={commit}
             className="rounded-full bg-amber-300 px-2.5 py-0.5 text-xs font-medium text-stone-950 hover:bg-amber-200"
           >
-            Add {pending.length}
+            {locale === "cs" ? `Přidat (${pending.length})` : `Add ${pending.length}`}
           </button>
         </div>
       ) : null}
