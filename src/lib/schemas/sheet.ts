@@ -7,6 +7,7 @@ import { GENDERS, storedGender, type Gender } from "@/lib/gender";
 import { ATTRACTION_NOTE_MAX, normalizeAttraction, type Attraction } from "@/lib/attraction";
 import { conditionMetaSchema, ROUND_CEILING, type ConditionMetaMap } from "@/lib/schemas/condition-meta";
 import { textKey } from "@/lib/language/text-logic";
+import { storedContentReferenceSchema } from "@/lib/content/translations/stored-reference";
 
 export { ABILITIES, type Ability } from "@/lib/schemas/abilities";
 export type { ConditionMetaMap } from "@/lib/schemas/condition-meta";
@@ -193,6 +194,8 @@ export const equipmentItemSchema = z.object({
   // Optional link to a content-db entry (Open5e slug or "homebrew:<id>");
   // free-text items stay valid.
   slug: z.string().trim().max(80).optional(),
+  // Optional stable source identity. Earlier saved sheets retain their slug/name.
+  contentRef: storedContentReferenceSchema.optional(),
   // Worn/wielded right now: drives the derived AC (src/lib/srd/armor.ts).
   // Optional so rows written before the field keep validating; when NO item
   // on a sheet carries it, the AC engine treats everything as worn.
@@ -418,6 +421,9 @@ export const spellcastingSchema = z
     // Spells known (for known-casters); prepared casters leave this empty
     // and use `prepared` alone.
     known: z.array(z.string().trim().min(1).max(80)).max(80).default([]),
+    // Optional provenance for named spells. Names still drive the 2014 engine;
+    // missing refs on older character sheets are valid.
+    contentRefs: z.record(z.string().trim().min(1).max(80), storedContentReferenceSchema).optional(),
     // Cantrips, apart from both lists above: they are neither prepared nor
     // counted against spells known. Older sheets carried them inside
     // prepared/known; the row reader moves them here (spell-lists.ts).
