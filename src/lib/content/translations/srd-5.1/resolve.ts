@@ -3,6 +3,7 @@
 import type { RulebookPage } from "../../../rulebook/types";
 import { TranslationRegistry, type TranslationEntry } from "../registry";
 import { srdPageIdForCatalogRecord, type SrdCatalogRecord } from "./crosswalk";
+import { srdStructuredMetadataCs } from "./structured-metadata";
 
 export type SrdCatalogTranslation = Readonly<{
   pageId: string | null;
@@ -28,5 +29,22 @@ export function resolveSrdCatalogTranslation(
     contentId: pageId,
     locale,
   }, original);
-  return { pageId, translated: result.status === "translated", display: result.entry };
+  const display = result.entry;
+  // Translate the catalog's *separate display fields* too, not just the
+  // rulebook subtitle. The canonical source record is never changed.
+  if ((row.kind === "spells" || row.kind === "items") && display.metadata) {
+    return {
+      pageId,
+      translated: result.status === "translated",
+      display: {
+        ...display,
+        metadata: srdStructuredMetadataCs(
+          { source: row.source, documentSlug: row.documentSlug, kind: row.kind },
+          display.metadata,
+          locale,
+        ),
+      },
+    };
+  }
+  return { pageId, translated: result.status === "translated", display };
 }
