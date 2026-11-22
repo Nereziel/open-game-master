@@ -1,10 +1,13 @@
 import { describe, expect, it } from "vitest";
 import cs from "@/lib/i18n/cs.json";
+import { CS_NAMES_BY_TABLE } from "@/lib/content/names-cs";
+import { installCsTables } from "@/lib/i18n/cs-tables";
 import { installCatalog, translate, type Locale } from "@/lib/i18n/translate";
 import { canMulticlassInto, describeGrantT, describePrereqT, type MulticlassGrant } from "./multiclass";
 import { multiclassRefusalLabel } from "./multiclass-labels";
 
 installCatalog("cs", cs);
+installCsTables({ names: CS_NAMES_BY_TABLE });
 
 const reader = (locale: Locale) => (key: string, vars?: Record<string, string | number>) =>
   translate(locale, key, vars);
