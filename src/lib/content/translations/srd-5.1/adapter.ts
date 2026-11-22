@@ -17,6 +17,9 @@ export type SrdTranslationCoverage = Readonly<{
   total: number;
   // Fully translated rules chapters; the legal/attribution page is separate.
   fullRulePages: number;
+  // Pages with a complete Czech rules text, not merely a short localized note.
+  fullText: Readonly<Partial<Record<ContentType, number>>>;
+  incompleteIds: readonly string[];
   translated: Readonly<Partial<Record<ContentType, number>>>;
   missingIds: readonly string[];
 }>;
@@ -40,6 +43,8 @@ export function srdTranslationPack(
   const entries: Partial<Record<ContentType, Record<string, TranslationEntry>>> = {};
   const translated: Partial<Record<ContentType, number>> = {};
   const missingIds: string[] = [];
+  const incompleteIds: string[] = [];
+  const fullText: Partial<Record<ContentType, number>> = {};
   let fullRulePages = 0;
 
   for (const original of originals) {
@@ -52,8 +57,13 @@ export function srdTranslationPack(
       throw new Error(`Czech SRD page changed kind/chapter: ${original.id}`);
     }
     const kind = TYPE[original.kind];
-    if (kind === "rules" && localized.md.includes("## Úplné znění pravidel v češtině")) {
-      fullRulePages += 1;
+    const complete = localized.md.includes("## Úplné znění pravidel v češtině");
+    if (complete) {
+      fullText[kind] = (fullText[kind] ?? 0) + 1;
+      if (kind === "rules") fullRulePages += 1;
+    } else if (original.id !== "legal-information") {
+      // A short Czech overview is NOT counted as a full translation.
+      incompleteIds.push(original.id);
     }
     const name = localized.title !== original.title ? localized.title : undefined;
     const metadata = localized.meta !== original.meta && localized.meta
@@ -85,6 +95,6 @@ export function srdTranslationPack(
 
   return {
     pack: { sourceId: "srd-5.1", locale: "cs", entries },
-    coverage: { total: originals.length, fullRulePages, translated, missingIds },
+    coverage: { total: originals.length, fullRulePages, fullText, incompleteIds, translated, missingIds },
   };
 }
