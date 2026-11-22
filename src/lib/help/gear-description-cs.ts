@@ -1,3 +1,4 @@
+import { displayDiceNotation } from "@/lib/language/dice-notation";
 // Reuse the already-reviewed Czech SRD 5.1 chapters as the authoritative
 // descriptions for basic gear. These strings are display-only; rule mechanics,
 // canonical English IDs, content-pack data, and English output remain intact.
@@ -267,7 +268,8 @@ export function canonicalGearDescriptionCs(name: string): string | null {
   if (normalized === "shield") return "Štít se drží v jedné ruce a poskytuje bonus +2 k obrannému číslu (OČ). Současně lze využít pouze jeden štít.";
   if (normalized === "lance") return WEAPONS.get("jezdecké kopí (lance)") ?? null;
   if (normalized === "net") return WEAPONS.get("síť (net)") ?? null;
-  return PLAIN_GEAR[normalized] ?? VARIANTS[normalized] ?? WEAPON_NOTES[normalized] ?? null;
+  const description = PLAIN_GEAR[normalized] ?? VARIANTS[normalized] ?? WEAPON_NOTES[normalized] ?? null;
+  return description ? displayDiceNotation(description) : null;
 }
 
 export const CANONICAL_GEAR_NAMES_CS = Object.freeze([
