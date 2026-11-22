@@ -19,6 +19,8 @@ export const SHELF_TOUR: TourStep[] = [
   {
     id: "welcome",
     title: "The workshop shelf",
+    titleCs: "Přehled dílen",
+    bodyCs: "Dílna slouží k přípravě hry bez hráčů a bez běžícího příběhu. Vytváříš tu mapy, postavy, nestvůry, střetnutí, tabulky a pravidla, která později přeneseš do kampaně. Každá dílna v přehledu je samostatná.",
     titleFr: "L’étagère de l’atelier",
     body: "A workshop is a prep space with no players and no story running: maps, people, monsters, fights, tables and rules built on your own time, then brought into a campaign when the table sits down. Each one on this shelf stands alone.",
     bodyFr: "Un atelier est un espace de préparation sans joueurs et sans histoire en cours : des cartes, des gens, des monstres, des combats, des tables et des règles bâtis à ton rythme, puis amenés dans une campagne quand la table s’assoit. Chacun, sur cette étagère, se suffit à lui-même.",
@@ -27,6 +29,8 @@ export const SHELF_TOUR: TourStep[] = [
   {
     id: "new",
     title: "Start a workshop",
+    titleCs: "Založení dílny",
+    bodyCs: "Pojmenuj dílnu a nastav velikost a úroveň družiny, pro kterou připravuješ hru. Výpočty obtížnosti střetnutí a odhad šancí se pak řídí touto družinou, i když ještě nemáš vytvořené skutečné postavy.",
     titleFr: "Créer un atelier",
     body: "Name it and say what party it is built for. Every encounter budget and odds preview inside measures against that party, so difficulty readouts mean something before real characters exist.",
     bodyFr: "Donne-lui un nom et dis pour quel groupe il est préparé. Chaque budget de rencontre et chaque aperçu de probabilités à l’intérieur se mesure à ce groupe, pour que les lectures de difficulté aient un sens avant même que de vrais personnages existent.",
@@ -35,6 +39,8 @@ export const SHELF_TOUR: TourStep[] = [
   {
     id: "import",
     title: "Import a bundle",
+    titleCs: "Importovat balíček",
+    bodyCs: "Balíček obsahuje celou dílnu v jediném souboru. Může pocházet ze Sdílení nebo z jiného serveru. Stejně lze otevřít celý svět ze souboru WorldForge: jeho záznamy se převedou mezi postavy světa, místa, frakce a znalosti, ostatní obsah najdeš ve WorldForge. Import vytvoří novou dílnu a nezmění žádnou kampaň.",
     titleFr: "Importer un paquet",
     body: "A bundle is a whole workshop as one file, exported from the Share tool here or on another server. A world exported from WorldForge opens the same way, whole: its entries become the Cast, places, factions and lore, and the rest lands in the workshop's WorldForge tool. Importing makes a new workshop of your own; nothing is written into a campaign.",
     bodyFr: "Un paquet est un atelier entier en un seul fichier, exporté depuis l’outil Partage ici ou sur un autre serveur. Un monde exporté de WorldForge s’ouvre de la même façon, en entier : ses entrées deviennent le Cast, les lieux, les factions et le lore, et le reste atterrit dans l’outil WorldForge de l’atelier. Importer crée un nouvel atelier à toi ; rien n’est écrit dans une campagne.",
@@ -43,6 +49,8 @@ export const SHELF_TOUR: TourStep[] = [
   {
     id: "list",
     title: "Your workshops",
+    titleCs: "Tvoje dílny",
+    bodyCs: "Kliknutím dílnu otevřeš. Pomocí volby Duplikovat vytvoříš kopii veškerého obsahu včetně osnovy příběhu, takže můžeš připravit jinou verzi stejné oblasti bez zásahu do originálu.",
     titleFr: "Tes ateliers",
     body: "Tap one to open it. Duplicate copies everything in it, board included, for a second version of the same region without risking the first.",
     bodyFr: "Touche l’un pour l’ouvrir. « Dupliquer » copie tout ce qu’il contient, storyboard compris, pour une seconde version de la même région sans risquer la première.",
@@ -51,6 +59,8 @@ export const SHELF_TOUR: TourStep[] = [
   {
     id: "help",
     title: "Help and tours",
+    titleCs: "Nápověda a průvodci",
+    bodyCs: "Každý nástroj dílny má vlastní psaný návod a prohlídku ovládání. Otevřeš je tímto tlačítkem nebo stejným tlačítkem přímo v nástroji.",
     titleFr: "Aide et visites",
     body: "Every tool inside a workshop has a written guide and a tour of its own. Open them from this button, or from the same button inside any tool.",
     bodyFr: "Chaque outil d’un atelier a un guide écrit et une visite à lui. Ouvre-les depuis ce bouton, ou depuis le même bouton dans n’importe quel outil.",
@@ -62,6 +72,8 @@ export const HUB_TOUR: TourStep[] = [
   {
     id: "welcome",
     title: "Inside a workshop",
+    titleCs: "Uvnitř dílny",
+    bodyCs: "Tady připravuješ vše potřebné pro hraní. Každý vytvořený prvek patří do konkrétního nástroje, kde ho můžeš dál upravovat. Do hry se dostane po importu dílny do kampaně. Před hraním nemusíš vyplnit všechno. Při prvním otevření každého nástroje se nabídne krátká prohlídka.",
     titleFr: "Dans un atelier",
     body: "Prep for a game, made before the table sits down. Whatever you make here lands in one tool, which says where it lives and what you can do with it, and reaches a table when a campaign brings the workshop in. Nothing has to be filled in before you play. Each tool opens with a short tour of its own the first time.",
     bodyFr: "La préparation d’une partie, faite avant que la table ne s’assoit. Ce que tu crées ici atterrit dans un outil, qui dit où ça vit et ce que tu peux en faire, et atteint une table quand une campagne amène l’atelier. Rien n’a à être rempli avant de jouer. Chaque outil s’ouvre avec une courte visite à lui, la première fois.",
@@ -70,6 +82,8 @@ export const HUB_TOUR: TourStep[] = [
   {
     id: "create",
     title: "Start from what you want",
+    titleCs: "Začni tím, co potřebuješ",
+    bodyCs: "Ve Vytvořit zvolíš, co chceš připravit: střetnutí, bojovou mapu, NPC, nestvůru, předmět nebo celý svět. Dílna tě přesměruje do odpovídajícího nástroje. Obsah můžeš vytvořit ručně nebo zkopírovat. Pokud je na serveru dostupný textový model, můžeš také využít návrh pomocí AI nebo navrhnout svět podle nápadu.",
     titleFr: "Partir de ce que tu veux obtenir",
     body: "Create asks what you want to end up with (a fight, a battle map, an NPC, a monster, an item or a whole world), says where it will live, and opens the tool that makes it. Make it by hand or copy one that exists; with a text model on the server, Draft with AI and Draft a world from an idea are offered too.",
     bodyFr: "Créer demande ce que tu veux obtenir (un combat, une carte de combat, un PNJ, un monstre, un objet ou un monde entier), dit où il vivra, et ouvre l’outil qui le fabrique. Fais-le à la main ou copie-en un qui existe ; avec un modèle de texte sur le serveur, « Ébaucher avec l’IA » et « Bâtir un monde depuis une idée » sont proposés aussi.",
@@ -78,6 +92,8 @@ export const HUB_TOUR: TourStep[] = [
   {
     id: "party",
     title: "Who it is built for",
+    titleCs: "Pro jakou družinu tvoříš",
+    bodyCs: "Jde o vzorovou družinu používanou pro přípravu hry. Změníš-li počet hrdinů nebo jejich úroveň, obtížnost všech soubojů ve Střetnutích se přepočítá. Nastavení družiny zůstává dostupné v každém nástroji.",
     titleFr: "Pour qui c’est préparé",
     body: "The stand-in party. Change the size or level and every fight in Encounters is rebudgeted against it. It stays pinned inside every tool.",
     bodyFr: "Le groupe fictif. Change la taille ou le niveau et chaque combat dans Rencontres est rebudgété sur lui. Il reste épinglé dans chaque outil.",
@@ -86,6 +102,8 @@ export const HUB_TOUR: TourStep[] = [
   {
     id: "systems",
     title: "The tools",
+    titleCs: "Nástroje dílny",
+    bodyCs: "WorldForge je encyklopedie světa; stejné záznamy upravují také Postavy světa, Oblast, Frakce a Historie a znalosti světa. Záznam může odkazovat na statistiky nestvůry, předmět, bojovou mapu nebo střetnutí. Osnova příběhu plánuje děj. Družina, Bojové mapy, Střetnutí, Bestiář, Vlastní tvorba a Náhodné tabulky připravují obsah pro hru. Pravidla obsahují domácí a volitelná pravidla, Balíček světa vytváří instalovatelný obsah a Sdílení vše zabalí do souboru.",
     titleFr: "Les outils",
     body: "WorldForge is the world's wiki: its people, places, factions and lore are the same records Cast, Region, Factions and Lore edit, and an entry can link to the stat block, item, battle map or fight it is about. Storyboard plans the arc. Party, Battle maps, Encounters, Bestiary, Homebrew and Tables each build one kind of thing the table plays with. Rules holds the house and variant rules. Plugin turns the workshop into a world pack; Share packs it all up as a bundle.",
     bodyFr: "WorldForge est le wiki du monde : ses gens, lieux, factions et lore sont les mêmes fiches que Cast, Région, Factions et Lore éditent, et une entrée peut pointer vers le statblock, l’objet, la carte de combat ou le combat dont elle parle. Storyboard planifie l’arc. Groupe, Cartes de combat, Rencontres, Bestiaire, Homebrew et Tables construisent chacun un type de chose que la table fait jouer. Règles garde les règles de maison et les variantes. Plugin transforme l’atelier en pack de monde ; Partage range le tout en un paquet.",
@@ -94,6 +112,8 @@ export const HUB_TOUR: TourStep[] = [
   {
     id: "to-table",
     title: "How it reaches a table",
+    titleCs: "Jak obsah přenést do kampaně",
+    bodyCs: "Dílnu můžeš importovat při zakládání kampaně, z její předsíně nebo později z nastavení herního stolu. Vybereš, co se má přenést, a před potvrzením uvidíš související obsah. WorldForge přenese své záznamy, vlastní nestvůry a předměty se zkopírují do Bestiáře a Vlastní tvorby dané kampaně. Kampaň dostane nezávislou kopii; původní dílna zůstane zachována.",
     titleFr: "Comment ça parvient à une table",
     body: "A campaign brings a workshop in when it is created, from its lobby, or later from the table's Settings. You tick what comes, and the review says what each pick brings along: WorldForge brings the records it describes, and the hand-built monsters and items your prep uses are copied into that table's Bestiary and Homebrew. The campaign gets its own copy; the workshop keeps its own.",
     bodyFr: "Une campagne amène un atelier à sa création, depuis son salon, ou plus tard depuis les réglages de la table. Tu coches ce qui vient, et la revue dit ce que chaque choix amène avec lui : WorldForge amène les fiches qu’il décrit, et les monstres et objets façonnés à la main que ta préparation utilise sont copiés dans le Bestiaire et le Homebrew de cette table. La campagne reçoit sa propre copie ; l’atelier garde la sienne.",
@@ -102,6 +122,8 @@ export const HUB_TOUR: TourStep[] = [
   {
     id: "actions",
     title: "Rename, copy, delete",
+    titleCs: "Přejmenovat, kopírovat, odstranit",
+    bodyCs: "Ikona tužky přejmenuje stávající dílnu. Tlačítko kopírování vytvoří úplnou kopii obsahu. Odstranění dílny je nevratné, ale obsah dříve importovaný do kampaní zůstane zachován.",
     titleFr: "Renommer, copier, supprimer",
     body: "The pencil renames the workshop in place. The copy button duplicates it with everything inside. Delete is final for the workshop, though anything already imported into a campaign stays there.",
     bodyFr: "Le crayon renomme l’atelier sur place. Le bouton copier le duplique avec tout son contenu. « Supprimer » est définitif pour l’atelier, mais ce qui a déjà été importé dans une campagne y reste.",
@@ -110,6 +132,8 @@ export const HUB_TOUR: TourStep[] = [
   {
     id: "import",
     title: "Import a bundle",
+    titleCs: "Importovat balíček",
+    bodyCs: "Načte soubor balíčku z jiné dílny nebo serveru a vytvoří z něj novou samostatnou dílnu.",
     titleFr: "Importer un paquet",
     body: "Reads a bundle file from another workshop or server into a new workshop of its own.",
     bodyFr: "Lit un fichier paquet venu d’un autre atelier ou serveur dans un nouvel atelier à part.",
@@ -118,6 +142,8 @@ export const HUB_TOUR: TourStep[] = [
   {
     id: "help",
     title: "Guides and tours",
+    titleCs: "Návody a prohlídky",
+    bodyCs: "Tlačítko nápovědy otevře návody k jednotlivým nástrojům a umožní znovu spustit kteroukoli prohlídku. Najdeš ho zde i uvnitř každého nástroje.",
     titleFr: "Guides et visites",
     body: "The help button opens a guide for every tool and replays any tour. It is on this page and inside each tool.",
     bodyFr: "Le bouton d’aide ouvre le guide de chaque outil et rejoue n’importe quelle visite. Il est sur cette page et dans chaque outil.",
