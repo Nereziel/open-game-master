@@ -149,7 +149,7 @@ export function stateTags(t: Translator, sheet: CharacterSheet): StateTag[] {
   if (stopped && sheet.currentHp > 0) {
     tags.push({
       id: "incapacitated",
-      label: t("Cannot act ({what})", { what: stopped }),
+      label: t("Cannot act ({what})", { what: contentName("conditions", stopped, t.locale ?? "en") }),
       tone: "harm",
       note: t("{name} can take no actions or reactions while this lasts.", { name: sheet.name }),
     });
@@ -166,7 +166,7 @@ export function stateTags(t: Translator, sheet: CharacterSheet): StateTag[] {
   if (sheet.concentratingOn) {
     tags.push({
       id: "concentration",
-      label: t("Concentrating: {spell}", { spell: sheet.concentratingOn }),
+      label: t("Concentrating: {spell}", { spell: contentName("spells", sheet.concentratingOn, t.locale ?? "en") }),
       tone: "bless",
       note: t("Damage calls for a CON save (DC 10 or half the damage); another concentration spell, or falling unconscious, ends it."),
     });
