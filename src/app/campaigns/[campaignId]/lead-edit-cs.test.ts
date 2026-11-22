@@ -14,6 +14,15 @@ import { ABILITIES } from "@/lib/schemas/sheet";
 installCsTables({ names: CS_NAMES_BY_TABLE });
 
 describe("Campaign character adjustments in Czech", () => {
+  it("uses common Czech names for portrait class hints and feat spellbook headings", () => {
+    expect(contentName("classes", "fighter", "cs")).toBe("Bojovník");
+    const parts = readFileSync(path.join(process.cwd(), "src/components/sheet/SheetParts.tsx"), "utf8");
+    const spells = readFileSync(path.join(process.cwd(), "src/components/sheet/SheetSpells.tsx"), "utf8");
+    expect(parts).toContain('title={contentName("classes", classId, locale)}');
+    expect(spells).toContain('view.classId === "feats" ? t("Feats")');
+    expect(spells).not.toContain('>{contentName("classes", titleCase(view.classId), locale)}</p>');
+  });
+
   it("keeps the shared ability labels in character tiles and the PDF", () => {
     for (const ability of ABILITIES) {
       expect(CS_ABILITY_ABBR[ability]).toBe(abilityShortLabel(ability, "cs"));
