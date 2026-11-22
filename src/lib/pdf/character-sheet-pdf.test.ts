@@ -5,6 +5,7 @@ import { createSheetSchema } from "@/lib/schemas/sheet";
 import { buildCharacterSheetPdf, libraryToPdfCharacter } from "./character-sheet-pdf";
 import { pdfLabel } from "./labels";
 import { installCsTables } from "@/lib/i18n/cs-tables";
+import { installCatalog } from "@/lib/i18n/translate";
 
 const FONT_DIR = "../../../public/pdfjs/standard_fonts/";
 const [regular, bold] = await Promise.all([
@@ -113,6 +114,55 @@ describe("fillable character-sheet PDF localization", () => {
     expect(en).toContain("Fighter 1");
     expect(en).toContain("human");
     expect(en.some((value) => value?.includes("Longsword") && value.includes("Backpack"))).toBe(true);
+  });
+
+  it("translates race-feature explanations, armor/weapon groups and personality in Czech", async () => {
+    installCatalog("cs", {
+      messages: {
+        "Personality trait": "Osobnostní rys",
+        "I offer a blessing to strangers whether they want one or not.":
+          "Cizincům žehnám, ať o požehnání stojí, nebo ne.",
+      },
+      contexts: {}, plurals: {},
+    });
+    const sheet = createSheetSchema.parse({
+      name: "Aasimar",
+      race: "aasimar",
+      class: "fighter",
+      abilities: { str: 16, dex: 12, con: 14, int: 10, wis: 10, cha: 10 },
+      maxHp: 12, ac: 16,
+      hitDice: { die: "d10", total: 1, spent: 0 },
+      proficiencies: {
+        saves: ["str"], skills: [], languages: [], tools: [],
+        armor: ["light", "medium", "heavy", "shields"],
+        weapons: ["simple", "martial"],
+      },
+      features: [{ source: "race", name: "Light Bearer (the light cantrip)" }],
+      persona: { trait: "I offer a blessing to strangers whether they want one or not." },
+    });
+    const character = libraryToPdfCharacter({
+      name: sheet.name, race: sheet.race, class: sheet.class,
+      subclass: "", background: "acolyte", level: 1, sheet,
+    });
+    const getTexts = async (locale: "cs" | "en") => {
+      const pdf = await PDFDocument.load(await buildCharacterSheetPdf(character, {
+        fontBytes: new Uint8Array(regular), boldFontBytes: new Uint8Array(bold), locale,
+      }));
+      return pdf.getForm().getFields().flatMap((field) =>
+        "getText" in field && typeof field.getText === "function" ? [field.getText() ?? ""] : [],
+      );
+    };
+    const cs = (await getTexts("cs")).join("\\n");
+    expect(cs).toContain("Nositel světla");
+    expect(cs).toContain("Znáš trik Světlo.");
+    expect(cs).not.toContain("the light cantrip");
+    expect(cs).toContain("lehká zbroj, střední zbroj, těžká zbroj, štíty");
+    expect(cs).toContain("jednoduché zbraně, válečné zbraně");
+    expect(cs).toContain('Osobnostní rys: "Cizincům žehnám, ať o požehnání stojí, nebo ne."');
+    const en = (await getTexts("en")).join("\\n");
+    expect(en).toContain("Light Bearer (the light cantrip)");
+    expect(en).toContain("light, medium, heavy, shields");
+    expect(en).toContain('trait "I offer a blessing to strangers whether they want one or not."');
   });
 
   it("translates all key PDF captions and keeps English as the default", () => {
