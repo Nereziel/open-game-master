@@ -43,7 +43,7 @@ export default function MultiContentPicker({
   const rowName = (entry: PickerEntry) => entry.display?.name ?? displayName(entry.name, entry.source);
   const { query, setQuery, results, setResults, open, setOpen, loading, unavailable, failed, unadmitted } =
     useContentSearch(kind, extraParams);
-  const [pending, setPending] = useState<MultiPick[]>([]);
+  const [pending, setPending] = useState<Array<MultiPick & { displayLabel?: string }>>([]);
   const container = useRef<HTMLDivElement>(null);
 
   // The browse list opens on focus, so clicking elsewhere must collapse it
@@ -68,7 +68,7 @@ export default function MultiContentPicker({
     setPending((picks) =>
       picks.some((pick) => (pick.slug ?? `custom:${textKey(pick.name)}`) === identity)
         ? picks.filter((pick) => (pick.slug ?? `custom:${textKey(pick.name)}`) !== identity)
-        : [...picks, { name: entry.name, slug: entry.slug, level: entry.level }],
+        : [...picks, { name: entry.name, slug: entry.slug, level: entry.level, displayLabel: rowName(entry) }],
     );
   }
 
@@ -87,7 +87,8 @@ export default function MultiContentPicker({
     if (!pending.length) {
       return;
     }
-    onAdd(pending);
+    // Only canonical fields leave this UI; localized labels are ephemeral.
+    onAdd(pending.map(({ displayLabel: _label, ...canonical }) => canonical));
     setPending([]);
     setQuery("");
     setResults([]);
@@ -191,13 +192,13 @@ export default function MultiContentPicker({
               key={pick.slug ?? pick.name}
               className="flex items-center gap-1 rounded-full bg-stone-800 px-2 py-0.5 text-xs text-stone-200"
             >
-              {displayName(pick.name)}
+              {pick.displayLabel ?? displayName(pick.name)}
               <button
                 type="button"
                 onClick={() =>
                   setPending((picks) => picks.filter((entry) => (entry.slug ?? entry.name) !== (pick.slug ?? pick.name)))
                 }
-                aria-label={t("Remove {name}", { name: displayName(pick.name) })}
+                aria-label={t("Remove {name}", { name: pick.displayLabel ?? displayName(pick.name) })}
                 className="text-stone-500 hover:text-red-400"
               >
                 <X className="size-3" />
