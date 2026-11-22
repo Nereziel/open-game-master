@@ -40,7 +40,7 @@ export function gamePersonalityLine(value: string, locale: Locale): string {
     trait: "Personality trait", ideal: "Ideal", bond: "Bond", flaw: "Flaw",
   };
   return value.split("; ").map((part) => {
-    const match = /^(trait|ideal|bond|flaw) "([\\s\\S]*)"$/.exec(part);
+    const match = /^(trait|ideal|bond|flaw) "([\s\S]*)"$/.exec(part);
     if (!match) return translate(locale, part);
     return `${translate(locale, labels[match[1]])}: "${translate(locale, match[2])}"`;
   }).join("; ");
