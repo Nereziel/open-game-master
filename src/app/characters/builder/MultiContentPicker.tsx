@@ -9,7 +9,7 @@ import { useContentSearch, type PickerEntry } from "./useContentSearch";
 import { textKey } from "@/lib/language/text-logic";
 import { useLocale, useT, useTp } from "@/lib/locale";
 import { contentName } from "@/lib/content/names";
-import { sourceRowIdentity } from "./pickerRows";
+import { sourceRowIdentity, togglePendingSourceRow } from "./pickerRows";
 
 // `level` rides along for spells, so a cantrip picked here lands in the
 // cantrip list rather than among the levelled spells.
@@ -65,18 +65,12 @@ export default function MultiContentPicker({
   const trimmedQuery = query.trim();
 
   function togglePending(entry: PickerEntry) {
-    const identity = sourceRowIdentity(entry);
-    setPending((picks) =>
-      picks.some((pick) => sourceRowIdentity(pick) === identity)
-        ? picks.filter((pick) => sourceRowIdentity(pick) !== identity)
-        : [
-            // Until a save format stores provenance, a single character
-            // cannot keep two independent entries with the same name.
-            // Choosing another book version replaces the pending one.
-            ...picks.filter((pick) => textKey(pick.name) !== textKey(entry.name)),
-            { name: entry.name, slug: entry.slug, level: entry.level, source: entry.source, documentSlug: entry.documentSlug, kind: entry.kind, displayLabel: rowName(entry) },
-          ],
-    );
+    const choice = {
+      name: entry.name, slug: entry.slug, level: entry.level,
+      source: entry.source, documentSlug: entry.documentSlug,
+      kind: entry.kind, displayLabel: rowName(entry),
+    };
+    setPending((picks) => togglePendingSourceRow(picks, choice));
   }
 
   function addCustom() {
