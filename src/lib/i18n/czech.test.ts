@@ -23,6 +23,9 @@ import { CZECH_BUILDER_CLASS_RULES } from "../../app/characters/builder/classRul
 import { GENRE_CLASS_CS } from "../classes/genre-class-cs";
 import { GENRE_CLASS_FEATURES_CS, genreFeatureCs, genreSubclassNameCs, genreSubclassDescriptionCs } from "../classes/feature-help-cs";
 import genreFeatureNames from "../classes/feature-names.json";
+import { FIGHTING_STYLES_CS } from "../srd/fighting-style-cs";
+import { FIGHTING_STYLES } from "../srd/feature-effects";
+import { SRD_SKILLS } from "../srd";
 import { knownSoFarRows } from "../../app/characters/builder/buildMath";
 import { CUSTOM_BACKGROUNDS, describeBackgroundFeature } from "../backgrounds";
 import { resourceDisplayName, resourceGuidance } from "../srd/class-resources-fr";
@@ -81,6 +84,22 @@ describe("Czech localization", () => {
     expect(contentName("backgrounds", "Corpo Dropout", "cs")).toBe("Odpadlík korporace");
   });
 
+
+  it("localizes all 18 skills and all six fighting styles without changing their stored IDs", () => {
+    expect(SRD_SKILLS).toHaveLength(18);
+    for (const skill of SRD_SKILLS) {
+      expect(skillLabel(skill.id, "cs"), skill.id).not.toBe(skill.name);
+      expect(skillLabel(skill.id, "en")).toBe(skill.name);
+    }
+    expect(FIGHTING_STYLES).toHaveLength(6);
+    expect(Object.keys(FIGHTING_STYLES_CS)).toHaveLength(6);
+    for (const style of FIGHTING_STYLES) {
+      const czech = FIGHTING_STYLES_CS[style.id];
+      expect(czech?.name, style.id).toBeTruthy();
+      expect(czech?.name).not.toBe(style.name);
+      expect(czech?.description).not.toBe(style.description);
+    }
+  });
 
   it("translates all 733 authored genre-class features and all 36 subclasses without changing English keys", () => {
     const catalog = genreFeatureNames as { classes: Record<string, {
