@@ -171,10 +171,11 @@ const displayResource = (t: Say, raw: string) =>
 
 // Training subjects can be an SRD skill ID or its canonical English name.
 // Other subjects are free text entered by the GM and stay exactly as written.
-const displayTrainingSubject = (t: Say, raw: string) =>
-  skillLabel(raw.trim().replace(/[ -]+/g, "_"), t.locale ?? "en") === raw.trim().replace(/[ -]+/g, "_")
-    ? raw
-    : skillLabel(raw.trim().replace(/[ -]+/g, "_"), t.locale ?? "en");
+const displayTrainingSubject = (t: Say, raw: string) => {
+  const skillId = raw.trim().toLowerCase().replace(/[ -]+/g, "_");
+  const label = skillLabel(skillId, t.locale ?? "en");
+  return label === skillId ? raw : label;
+};
 
 function deathState(t: Say, name: string, delta: Delta): string {
   const tp = pluralOf(t);
@@ -429,7 +430,8 @@ function knownEntryText(t: Say, entry: { kind: string; delta: Delta }, name: str
       return what ? `${name}: ${what}` : t("{name} takes a reaction", { name });
     }
     case "use_resource": {
-      const resource = word(delta.resource) ? displayResource(t, word(delta.resource)!) : t("a feature");
+      const rawResource = word(delta.resource);
+      const resource = rawResource ? displayResource(t, rawResource) : t("a feature");
       const from = word(delta.from);
       if (from) return t("{name} receives {item}{times} from {from}", { name, item: resource, times: "", from });
       const spent = amount(delta.spent) ?? 1;
