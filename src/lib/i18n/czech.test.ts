@@ -21,7 +21,7 @@ import { languageLabel } from "../content/languages-cs";
 import { backgroundInfoText, classInfoText } from "../../app/characters/builder/usePickerGroups";
 import { CZECH_BUILDER_CLASS_RULES } from "../../app/characters/builder/classRulesCs";
 import { GENRE_CLASS_CS } from "../classes/genre-class-cs";
-import { GENRE_CLASS_FEATURES_CS, genreFeatureCs, genreSubclassNameCs, genreSubclassDescriptionCs } from "../classes/feature-help-cs";
+import { GENRE_CLASS_FEATURES_CS, genreClassRulesCs, genreFeatureCs, genreSubclassNameCs, genreSubclassDescriptionCs } from "../classes/feature-help-cs";
 import genreFeatureNames from "../classes/feature-names.json";
 import { FIGHTING_STYLES_CS } from "../srd/fighting-style-cs";
 import { FIGHTING_STYLES } from "../srd/feature-effects";
@@ -114,6 +114,9 @@ describe("Czech localization", () => {
         ...Object.values(entry.levels).flat(),
         ...Object.values(entry.subclass.levels).flat(),
       ];
+      const rules = genreClassRulesCs(classId);
+      expect(rules, classId).toContain("### Schopnosti povolání");
+      expect(rules, classId).toContain("### Podpovolání:");
       const translated = GENRE_CLASS_FEATURES_CS[classId];
       expect(translated, classId).toBeTruthy();
       expect(Object.keys(translated), classId).toHaveLength(sourceNames.length);
@@ -127,6 +130,7 @@ describe("Czech localization", () => {
         count++;
         const cs = genreFeatureCs(classId, english);
         expect(cs?.name, `${classId} / ${english}`).toBeTruthy();
+        expect(rules, `${classId} / ${english}`).toContain(cs?.description);
         expect(cs?.description, `${classId} / ${english}`).toBeTruthy();
         expect(cs?.name, `${classId} / ${english}`).not.toBe(english);
         expect(classFeatureName(classId, english, "cs")).toBe(cs?.name);
@@ -152,6 +156,8 @@ describe("Czech localization", () => {
     expect(contentName("classes", grave.name, "cs")).toBe("Hrobový rytíř");
     const czech = classInfoText(grave, (key) => translate("cs", key), "cs");
     expect(czech).toContain("Rytíř přísahající moci");
+    expect(czech).toContain("Čepel smrtelné úmluvy");
+    expect(czech).toContain("Dvůr zvadlé růže");
     expect(czech).not.toContain(grave.blurb);
     expect(classInfoText(grave, (key) => translate("en", key), "en")).toBe(grave.blurb);
     for (const [id, item] of Object.entries(GENRE_CLASS_CS)) {
