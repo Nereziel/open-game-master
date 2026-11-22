@@ -147,7 +147,7 @@ const CS_PROFICIENCIES: Record<string, string> = {
   shield: "štíty", shields: "štíty",
   "all armor": "veškerá zbroj",
   simple: "jednoduché zbraně", "simple weapons": "jednoduché zbraně",
-  martial: "válečné zbraně", "martial weapons": "válečné zbraně",
+  martial: "vojenské zbraně", "martial weapons": "vojenské zbraně",
 };
 function pdfProficiency(ctx: Ctx, value: string): string {
   if (ctx.locale === "cs") {
