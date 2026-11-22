@@ -6,6 +6,8 @@ describe("source-scoped translation registry (#107)", () => {
   it("maps actual Open5e document identifiers without changing engine IDs", () => {
     expect(translationSourceId({ source: "open5e", documentSlug: "wotc-srd" })).toBe("srd-5.1");
     expect(translationSourceId({ source: "bundled", documentSlug: "wotc-srd" })).toBe("srd-5.1");
+    expect(translationSourceId({ source: "bundled" })).toBeNull();
+    expect(translationSourceId({ source: "bundled", documentSlug: "custom-genre" })).toBeNull();
     expect(translationSourceId({ source: "open5e", documentSlug: "toh" })).toBe("tome-of-heroes");
     expect(translationSourceId({ source: "open5e", documentSlug: "deepm" })).toBe("deep-magic");
     expect(translationSourceId({ source: "open5e", documentSlug: "dmag" })).toBe("deep-magic");
@@ -63,6 +65,24 @@ describe("source-scoped translation registry (#107)", () => {
     expect(() => registry.register({ sourceId: "tome-of-heroes", locale: "cs", entries: {
       spells: { light: {} },
     } })).toThrow(/Empty translation entry/);
+  });
+
+  it("rejects duplicate canonical IDs within one pack and reports unknown IDs once", () => {
+    const registry = new TranslationRegistry();
+    expect(() => registry.register({
+      sourceId: "tome-of-heroes", locale: "cs", entries: {
+        spells: { shield: { name: "Štít" }, " shield ": { name: "Duplicitní štít" } },
+      },
+    })).toThrow(/Duplicate translation entry/);
+    registry.register({
+      sourceId: "tome-of-heroes", locale: "cs", entries: {
+        spells: { shield: { name: "Štít" } },
+      },
+    });
+    const key = { sourceId: "tome-of-heroes", contentType: "spells" as const, contentId: "unknown", locale: "cs" as const };
+    expect(registry.resolve(key, { name: "Unknown" }).entry.name).toBe("Unknown");
+    registry.resolve(key, { name: "Unknown" });
+    expect(registry.missingTranslations()).toEqual([key]);
   });
 
   it("uses 2014 d20.cz terminology consistently in common vocabulary", () => {
