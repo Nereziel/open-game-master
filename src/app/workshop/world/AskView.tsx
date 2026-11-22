@@ -70,6 +70,7 @@ export function AskView({ api, world, onOpen }: { api: WorldApi; world: WorldSta
 }
 
 function AnswerCard({ entry, named, onOpen }: { entry: Answer; named: Named[]; onOpen: (ref: string) => void }) {
+  const t = useT();
   const cited = useMemo(() => new Set(entry.sources.map((source) => source.n)), [entry.sources]);
   const sourceId = (n: number) => `ask-${entry.key}-source-${n}`;
   const goTo = (n: number) => {
@@ -111,8 +112,8 @@ function AnswerCard({ entry, named, onOpen }: { entry: Answer; named: Named[]; o
     <li className="panel motion-pop rounded-lg p-3">
       <p className="text-xs text-amber-200/90">{entry.question}</p>
       <p className="mt-1.5 whitespace-pre-wrap text-sm leading-6 text-stone-200">{body}</p>
-      <section aria-label="Sources" className="mt-2.5 border-t border-stone-800/80 pt-2">
-        <h4 className="text-[11px] uppercase tracking-[0.12em] text-stone-500">Sources</h4>
+      <section aria-label={t("Sources")} className="mt-2.5 border-t border-stone-800/80 pt-2">
+        <h4 className="text-[11px] uppercase tracking-[0.12em] text-stone-500">{t("Sources")}</h4>
         {entry.sources.length ? (
           <ol className="mt-1.5 flex flex-col gap-2">
             {entry.sources.map((source) => (
@@ -122,7 +123,7 @@ function AnswerCard({ entry, named, onOpen }: { entry: Answer; named: Named[]; o
             ))}
           </ol>
         ) : (
-          <p className="mt-1 text-xs text-stone-400">The answer cites no passage. Check it against the world before you use it.</p>
+          <p className="mt-1 text-xs text-stone-400">{t("The answer cites no passage. Check it against the world before you use it.")}</p>
         )}
         {entry.omitted.count ? (
           <p className="mt-2 text-xs text-stone-400">{omittedLine(entry.omitted)} Ask about one of them by name to read it.</p>
