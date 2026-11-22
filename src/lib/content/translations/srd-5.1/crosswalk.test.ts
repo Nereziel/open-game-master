@@ -1,5 +1,6 @@
 import { describe, expect, it } from "vitest";
 import { rulebookPages } from "../../../rulebook/book";
+import { bundledSpellRows, bundledItemRows } from "../../../rulebook/catalog-rows";
 import type { RulebookPage } from "../../../rulebook/types";
 import { srdPageIdForCatalogRecord } from "./crosswalk";
 
@@ -43,6 +44,18 @@ describe("SRD catalog-to-reader identity crosswalk (#107)", () => {
       kind: "spells", slug: "wrong-slug", name: "Not Shield", rulebook: "shield",
       source: "open5e", documentSlug: "wotc-srd",
     }, pages)).toBeNull();
+  });
+
+  it("maps every real bundled spell and magic item row to its own page", () => {
+    const originals = rulebookPages("en");
+    const rows = [
+      ...bundledSpellRows().map((row) => ({ ...row, kind: "spells" as const })),
+      ...bundledItemRows().map((row) => ({ ...row, kind: "items" as const })),
+    ];
+    expect(rows.length).toBeGreaterThan(500);
+    for (const row of rows) {
+      expect(srdPageIdForCatalogRecord(row, originals)).toBe(row.rulebook);
+    }
   });
 
   it("maps real bundled spell and item IDs without mutating source data", () => {
