@@ -1,5 +1,5 @@
 import { describe, expect, it } from "vitest";
-import { sourceRowIdentity, uniqueBySource } from "./pickerRows";
+import { sourceRowIdentity, togglePendingSourceRow, uniqueBySource } from "./pickerRows";
 
 describe("source-specific picker identity (#107)", () => {
   it("preserves same-name rows from different books, and deduplicates only identical source IDs", () => {
@@ -19,6 +19,17 @@ describe("source-specific picker identity (#107)", () => {
     expect(sourceRowIdentity(spell)).not.toBe(sourceRowIdentity(extension));
     expect(sourceRowIdentity(extension)).not.toBe(sourceRowIdentity(homebrew));
     expect(sourceRowIdentity(spell)).toBe(sourceRowIdentity({ ...spell }));
+  });
+
+  it("keeps one canonical name pending until saved selections support book refs", () => {
+    const first = { source: "open5e", documentSlug: "wotc-srd", slug: "shield", name: "Shield" };
+    const second = { source: "open5e", documentSlug: "toh", slug: "shield", name: "Shield" };
+    let pending = togglePendingSourceRow([], first);
+    expect(pending).toEqual([first]);
+    pending = togglePendingSourceRow(pending, second);
+    expect(pending).toEqual([second]);
+    pending = togglePendingSourceRow(pending, second);
+    expect(pending).toEqual([]);
   });
 
   it("does not merge two unrelated IDs from the same book", () => {
