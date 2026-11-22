@@ -138,7 +138,7 @@ export function czechBundledSpeciesTrait(trait: string): CzechSpeciesTrait | nul
   // name, or a different English explanation in parentheses. The stable
   // Aasimar feature name still identifies the same trait; do not expose the
   // untranslated explanation in the player-facing chip.
-  if (/^celestial revelation(?:\\s*\\(|$)/i.test(trait.trim())) {
+  if (/^celestial revelation(?:\s*\(|$)/i.test(trait.trim())) {
     return CZECH_BUNDLED_SPECIES_TRAITS[
       "Celestial Revelation (from 3rd level, a bonus action: Heavenly Wings, Inner Radiance or Necrotic Shroud for a minute, with extra damage equal to your proficiency bonus once a turn, 1/long rest)"
     ];
