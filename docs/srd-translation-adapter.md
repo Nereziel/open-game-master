@@ -107,3 +107,12 @@ every bundled page, not only a few selected examples.
 creature-type, rarity, alignment, attunement or rule-prose translations are
 correct. Those terms still require glossary review against d20.cz and
 line-by-line comparison with the licensed English original.
+
+## Feat coverage boundary
+
+The bundled SRD publishes feats within the rules page with ID `feats`,
+rather than as independent `RulebookKind=feat` pages. The adapter verifies
+that this full Czech rules page exists. It does **not** claim individual
+completeness of the app's separate `odm-expanded` authored feat catalog
+(`src/lib/srd/authored-feats.json`), which is not the same book and will
+need its own provenance-aware localization check during consumer migration.
