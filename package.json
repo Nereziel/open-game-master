@@ -33,8 +33,7 @@
     "i18n:cs:report": "node scripts/generate-cs-localization.mjs --report",
     "i18n:cs:check": "node scripts/generate-cs-localization.mjs --check",
     "i18n:cs:generate": "node scripts/generate-cs-localization.mjs",
-    "i18n:cs:deepl": "node scripts/deepl-cs-localization.mjs",
-    "i18n:cs:items": "node scripts/translate-content-items-cs.mjs"
+    "i18n:cs:deepl": "node scripts/deepl-cs-localization.mjs"
   },
   "dependencies": {
     "@3d-dice/dice-box-threejs": "^0.0.12",
