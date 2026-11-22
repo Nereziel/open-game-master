@@ -1,5 +1,8 @@
 {
   "messages": {
+    "Your hit die roll": "Hod kostkou životů",
+    "Heal with this roll": "Vyléčit podle hodu",
+    "The {die} is from {from}.": "Kostka {die} pochází z {from}.",
     "Armor sets the AC: {ac}": "Zbroj určuje TZ: {ac}",
     "Prepared spells": "Připravená kouzla",
     "Reason for change (shown in the log)": "Důvod změny (zobrazí se v záznamu)",
