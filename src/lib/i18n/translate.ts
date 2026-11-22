@@ -288,10 +288,10 @@ export function translatePlural(
       // translation is optional so two-form catalogs still work.
       if (locale === "cs") {
         const form = vars.count === 1 ? 0 : vars.count >= 2 && vars.count <= 4 ? 1 : 2;
-        return interpolate(pair[form] ?? pair[1], vars);
+        return displayDiceNotation(interpolate(pair[form] ?? pair[1], vars));
       }
-      return interpolate(isOne ? pair[0] : pair[1], vars);
+      return displayDiceNotation(interpolate(isOne ? pair[0] : pair[1], vars));
     }
   }
-  return interpolate(isOne ? englishOne : englishOther, vars);
+  return displayDiceNotation(interpolate(isOne ? englishOne : englishOther, vars));
 }
