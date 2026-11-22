@@ -147,6 +147,7 @@ function ContentBody({ reference }: { reference: ContentRef }) {
   const [state, setState] = useState<{ text: string | null; loading: boolean }>({
     text: null,
     loading: true,
+    translatedDescriptionCs: null,
   });
 
   useEffect(() => {
@@ -264,7 +265,7 @@ function ItemBody({ reference }: { reference: ContentRef }) {
   const locale = useLocale();
   const detail = (value: string | null | undefined) => itemDetailCs(value, locale);
   const t = useT();
-  const [state, setState] = useState<{ sheet: ItemSheet | null; loading: boolean }>({
+  const [state, setState] = useState<{ sheet: ItemSheet | null; loading: boolean; translatedDescriptionCs: string | null }>({
     sheet: null,
     loading: true,
   });
@@ -275,22 +276,26 @@ function ItemBody({ reference }: { reference: ContentRef }) {
       const name = (reference.name ?? reference.slug).trim();
       const wanted = textKey(name);
       const readJson = async (response: Response) => (response.ok ? response.json() : null);
+      const withLocale = (url: string) => locale === "cs" ? `${url}${url.includes("?") ? "&" : "?"}locale=cs` : url;
       try {
         const [{ buildItemSheet }, direct, search] = await Promise.all([
           import("@/lib/help/item-sheet"),
-          fetch(`/api/content/items/${encodeURIComponent(reference.slug)}${scopeQuery(campaignId)}`).then(readJson).catch(() => null),
-          fetch(`/api/content/items?q=${encodeURIComponent(wanted)}&limit=20${scopeQuery(campaignId, "&")}`).then(readJson).catch(() => null),
+          fetch(withLocale(`/api/content/items/${encodeURIComponent(reference.slug)}${scopeQuery(campaignId)}`)).then(readJson).catch(() => null),
+          fetch(withLocale(`/api/content/items?q=${encodeURIComponent(wanted)}&limit=20${scopeQuery(campaignId, "&")}`)).then(readJson).catch(() => null),
         ]);
-        const hits = ((search?.results ?? []) as Array<{ name: string; data?: Record<string, unknown> }>)
-          .filter((entry) => textKey(entry.name) === wanted)
-          .map((entry) => entry.data);
-        const sheet = buildItemSheet(name, [direct?.entry?.data, ...hits]);
+        const matches = ((search?.results ?? []) as Array<{ name: string; data?: Record<string, unknown>; translatedDescriptionCs?: string }>)
+          .filter((entry) => textKey(entry.name) === wanted);
+        const sheet = buildItemSheet(name, [direct?.entry?.data, ...matches.map((entry) => entry.data)]);
+        const translatedDescriptionCs = locale === "cs"
+          ? (typeof direct?.entry?.translatedDescriptionCs === "string" ? direct.entry.translatedDescriptionCs
+            : matches.find((entry) => typeof entry.translatedDescriptionCs === "string")?.translatedDescriptionCs ?? null)
+          : null;
         if (!cancelled) {
-          setState({ sheet, loading: false });
+          setState({ sheet, loading: false, translatedDescriptionCs });
         }
       } catch {
         if (!cancelled) {
-          setState({ sheet: null, loading: false });
+          setState({ sheet: null, loading: false, translatedDescriptionCs: null });
         }
       }
     }
@@ -298,12 +303,12 @@ function ItemBody({ reference }: { reference: ContentRef }) {
     return () => {
       cancelled = true;
     };
-  }, [reference.slug, reference.name, campaignId]);
+  }, [reference.slug, reference.name, campaignId, locale]);
 
   if (state.loading) {
     return (
       <p className="flex items-center gap-2 text-sm text-stone-500">
-        <Loader2 className="size-4 animate-spin" /> Looking it up...
+        <Loader2 className="size-4 animate-spin" /> {t("Looking it up...")}
       </p>
     );
   }
@@ -380,7 +385,7 @@ function ItemBody({ reference }: { reference: ContentRef }) {
 
   const localizedArmorRows = armorRows.map(({ label, text }) => ({ label: detail(label), text: text ? detail(text) : null }));
   const localizedWeaponRows = weaponRows.map(({ label, text }) => ({ label: detail(label), text: text ? detail(text) : null }));
-  const shownDescription = itemDescriptionCs(reference.name ?? reference.slug, sheet.description, locale, reference.slug);
+  const shownDescription = state.translatedDescriptionCs ?? itemDescriptionCs(reference.name ?? reference.slug, sheet.description, locale, reference.slug);
 
   return (
     <div className="space-y-4">
