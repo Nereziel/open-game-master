@@ -178,10 +178,10 @@ const TOME_OF_HEROES_SPELLS: Readonly<Record<string, string>> = {
   "Sightburst": "Záblesk zraku",
 };
 
-export type ThirdPartyCsKind = "items" | "spells" | "feats";
+type ThirdPartyCsKind = "items" | "spells" | "feats";
 type Entries = Readonly<Partial<Record<ThirdPartyCsKind, Readonly<Record<string, string>>>>>;
 
-export const THIRD_PARTY_CS_NAMES: Readonly<Record<string, Entries>> = {
+const THIRD_PARTY_CS_NAMES: Readonly<Record<string, Entries>> = {
   // Open5e v1: document__slug=toh; v2 imports preserve this key.
   toh: { items: TOME_OF_HEROES_ITEMS, spells: TOME_OF_HEROES_SPELLS },
 };
