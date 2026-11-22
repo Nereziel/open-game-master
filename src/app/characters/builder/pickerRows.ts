@@ -25,3 +25,22 @@ export function uniqueByName<T extends { name: string; kind?: string }>(rows: T[
   }
   return order.map((key) => kept.get(key)!);
 }
+
+
+// Source-specific identity for catalogs: "Shield" from two distinct books
+// must remain two selectable entries. Keep legacy uniqueByName for places
+// whose saved game mechanic still explicitly expects one name.
+export function uniqueBySource<T extends { name: string; slug?: string; source?: string; documentSlug?: string; kind?: string }>(rows: T[]): T[] {
+  const seen = new Set<string>();
+  return rows.filter((entry) => {
+    const key = JSON.stringify([
+      entry.source ?? "",
+      entry.documentSlug ?? "",
+      entry.kind ?? "",
+      entry.slug || textKey(entry.name),
+    ]);
+    if (seen.has(key)) return false;
+    seen.add(key);
+    return true;
+  });
+}
