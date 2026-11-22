@@ -67,6 +67,24 @@ describe("source-scoped translation registry (#107)", () => {
     } })).toThrow(/Empty translation entry/);
   });
 
+  it("rejects duplicate canonical IDs within one pack and reports unknown IDs once", () => {
+    const registry = new TranslationRegistry();
+    expect(() => registry.register({
+      sourceId: "tome-of-heroes", locale: "cs", entries: {
+        spells: { shield: { name: "Štít" }, " shield ": { name: "Duplicitní štít" } },
+      },
+    })).toThrow(/Duplicate translation entry/);
+    registry.register({
+      sourceId: "tome-of-heroes", locale: "cs", entries: {
+        spells: { shield: { name: "Štít" } },
+      },
+    });
+    const key = { sourceId: "tome-of-heroes", contentType: "spells" as const, contentId: "unknown", locale: "cs" as const };
+    expect(registry.resolve(key, { name: "Unknown" }).entry.name).toBe("Unknown");
+    registry.resolve(key, { name: "Unknown" });
+    expect(registry.missingTranslations()).toEqual([key]);
+  });
+
   it("uses 2014 d20.cz terminology consistently in common vocabulary", () => {
     expect(CS_SKILLS["Animal Handling"]).toBe("Ovládání zvířat");
     expect(CS_SKILLS.Arcana).toBe("Mystika");
