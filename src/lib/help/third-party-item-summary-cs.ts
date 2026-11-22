@@ -20,13 +20,17 @@ const TOME_OF_HEROES_WEAPON_NOTES: Readonly<Record<string, string>> = {
   "Wormsilk Net": "Vrhací síť se zvláštními pravidly a dostřelem 10/20 stop.",
   "Wormsilk Whip": "Sečná zbraň s prodlouženým dosahem a vlastností vytříbená.",
   "Wrist Knife": "Lehká vytříbená čepel pro boj na blízko.",
+  "Esquire's Rowels": "Při jízdě na koni dávají ostruhy +1 k iniciativě a +2 k třídě zbroje jezdeckého zvířete. Jezdec i zvíře mají výhodu k záchranám na Odolnost proti vyčerpání z cestování delšího než osm hodin denně.",
+  "Soulbound Wraps": "Při zásahu neozbrojeným úderem můžeš snížit způsobené zranění až o 10. Za každých 10 neuděleného zranění získáš jeden bod ki. Po dosažení limitu obnovy rovného polovině zdatnostního bonusu se bandáže rozvinou až do příštího úsvitu.",
+  "Stasis Stone": "Krystal lze akcí hodit do vzdálenosti 30 stop. Při dopadu se rozbije a všichni tvorové do 10 stop podstoupí záchranu na Odolnost SO 15; při neúspěchu zkamení do konce svého příštího tahu.",
+  "Stormheart Bow": "Magický luk při zásahu způsobuje navíc 1k6 bleskového zranění. Má pět nábojů, z nichž 1k4 + 1 se obnoví za úsvitu; náboje umožňují zvláštní ledové a hromové zásahy.",
+  "Victory Banner": "Prapor má tři náboje a obnovuje je za úsvitu. Za jeden náboj získáš na minutu výhodu k útokům zbraní; při hodu přirozené 20 můžeš za náboj projít až svou rychlostí bez příležitostných útoků. Musíš být do 5 stop od praporu.",
 };
 const VAULT_OF_MAGIC_ITEM_NOTES: Readonly<Record<string, string>> = {
   "Air Seed": "Po použití uvolňuje dýchatelný vzduch, rozptyluje okolní plyny a pomáhá tvorům zadržet dech i pod vodou.",
   "Bag of Traps": "Magický vak vytváří náhodné mechanické pasti. Počet vyvolaných pastí je omezen na určité období.",
   "Eye of Horus": "Amulet pomáhá prohlédnout iluze a dává výhodu k záchranným hodům proti vystrašení.",
   "Cloak of the Rat": "Plášť poskytuje bonus +5 k pasivnímu Vnímání.",
-  "Bloodthirsty Longsword": "Zásah proti tvorovi s krví způsobuje kromě běžného zranění také dodatečnou ztrátu 2d6 životů.",
 };
 
 const VAULT_BY_NAME = Object.fromEntries(
