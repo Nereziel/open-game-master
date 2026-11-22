@@ -35,6 +35,7 @@ import {
   findClass,
   formatModifier,
   SRD_SKILLS,
+  skillLabel,
   XP_THRESHOLDS,
 } from "@/lib/srd";
 import { classListFor, slotTableFor } from "@/lib/srd/multiclass";
@@ -42,6 +43,7 @@ import { weaponAttackProfile, weaponOf } from "@/lib/dm/attack-logic";
 import { matchWeapon } from "@/lib/srd/weapons";
 import { formatPrice, purseCopper } from "@/lib/srd/currency";
 import { personaLine } from "@/lib/backgrounds/persona-logic";
+import { abilityShortLabel } from "@/lib/srd/ability-short-label";
 
 // The subset of a character the sheet renders. The runtime CharacterSheet is
 // structurally assignable to this, so the in-session dialog passes its `sheet`
@@ -324,7 +326,7 @@ function drawAbilities(ctx: Ctx, c: PdfCharacter, derived: ReturnType<typeof com
   const h = 52;
   for (const ability of ["str", "dex", "con", "int", "wis", "cha"] as const) {
     box(ctx, x, y - h, w, h, true);
-    caption(ctx, x + w / 2 - 9, y - 10, ability.toUpperCase(), 7);
+    caption(ctx, x + w / 2 - 9, y - 10, abilityShortLabel(ability, ctx.locale), 7);
     field(ctx, x + 6, y - 34, w - 12, 16, formatModifier(derived.abilityMods[ability]), {
       size: 15,
       align: TextAlignment.Center,
@@ -360,7 +362,7 @@ function drawSavesAndSkills(
   for (const ability of ["str", "dex", "con", "int", "wis", "cha"] as const) {
     checkbox(ctx, x + 5, ry, 8, c.proficiencies.saves.includes(ability));
     field(ctx, x + 16, ry - 2, 20, 12, formatModifier(derived.saves[ability]), { size: 8, align: TextAlignment.Center });
-    ctx.page.drawText(pdfLabel(ctx.locale, ability.toUpperCase()), { x: x + 40, y: ry, size: 7, font: ctx.font, color: INK });
+    ctx.page.drawText(abilityShortLabel(ability, ctx.locale), { x: x + 40, y: ry, size: 7, font: ctx.font, color: INK });
     ry -= 12;
   }
   y -= 106;
@@ -375,7 +377,7 @@ function drawSavesAndSkills(
     const proficient = c.proficiencies.skills.includes(skill.id) || expertise.includes(skill.id);
     checkbox(ctx, x + 5, ry, 8, proficient);
     field(ctx, x + 16, ry - 2, 20, 12, formatModifier(derived.skills[skill.id] ?? 0), { size: 8, align: TextAlignment.Center });
-    const skillLine = `${pdfLabel(ctx.locale, skill.name)} (${pdfLabel(ctx.locale, skill.ability.toUpperCase())})`;
+    const skillLine = `${skillLabel(skill.id, ctx.locale)} (${abilityShortLabel(skill.ability, ctx.locale)})`;
     // Long Czech skill names must still fit the narrow skills column.
     const naturalWidth = ctx.font.widthOfTextAtSize(skillLine, 6);
     const labelSize = Math.min(6, (6 * (w - 44)) / Math.max(naturalWidth, 1));
@@ -542,7 +544,7 @@ function drawSpellPage(ctx: Ctx, c: PdfCharacter, derived: ReturnType<typeof com
   box(ctx, MARGIN, y - 40, PAGE_W - MARGIN * 2, 40, true);
   field(ctx, MARGIN + 6, y - 28, 200, 20, `${casterName} ${pdfLabel(ctx.locale, "Spellcasting")}`, { size: 13 });
   const infoX = MARGIN + 230;
-  stat(ctx, infoX, y - 34, 90, 30, "Ability", pdfLabel(ctx.locale, sc.ability.toUpperCase()), 11);
+  stat(ctx, infoX, y - 34, 90, 30, "Ability", abilityShortLabel(sc.ability, ctx.locale), 11);
   stat(ctx, infoX + 96, y - 34, 90, 30, "Spell Save DC", String(derived.spellSaveDc ?? ""), 11);
   stat(ctx, infoX + 192, y - 34, 90, 30, "Spell Atk", formatModifier(derived.spellAttack ?? 0), 11);
   y -= 52;
