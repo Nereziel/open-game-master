@@ -116,3 +116,18 @@ that this full Czech rules page exists. It does **not** claim individual
 completeness of the app's separate `odm-expanded` authored feat catalog
 (`src/lib/srd/authored-feats.json`), which is not the same book and will
 need its own provenance-aware localization check during consumer migration.
+
+## Structured catalog display fields
+
+`srdStructuredMetadataCs` translates the known **display values** for
+spell school, magic item rarity and item category, using the existing
+SRD Czech terminology. It runs only for a verified SRD source and Czech
+locale. Unknown categories stay in the original language, not a guessed
+translation; the original model/data row and mechanics remain untouched.
+
+`resolveSrdCatalogTranslation` calls it only **after** successfully
+mapping an actual catalog row to a canonical SRD page ID. The result
+continues to carry a separate `display.metadata`, not a modified
+`data_json` or rules-engine field. The downstream editor, picker,
+character sheet and PDF still need explicit consumer-side integration
+in phase 4; the new bridge by itself does not replace their labels.
