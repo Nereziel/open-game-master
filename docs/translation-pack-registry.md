@@ -9,7 +9,8 @@ not replace the current SRD reader or install the translations from PR #106.
   the canonical entry identifier **within its source and content type**.
 - `translationSourceId` normalizes importer aliases: `wotc-srd` → `srd-5.1`,
   `toh` → `tome-of-heroes`, `deepm|dmag` → `deep-magic`,
-  `vom` → `vault-of-magic`. Homebrew is not silently translated.
+  `vom` → `vault-of-magic`. Homebrew is not silently translated. Unidentified
+  `bundled` rows are not presumed to belong to SRD.
 - A single pack supplies one source/locale combination. Registering the same
   pair twice throws; translation keys must be non-empty. Each entry has
   display-only `name`, `description` and/or `metadata`.
