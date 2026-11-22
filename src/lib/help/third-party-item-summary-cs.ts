@@ -21,6 +21,18 @@ const TOME_OF_HEROES_WEAPON_NOTES: Readonly<Record<string, string>> = {
   "Wormsilk Whip": "Sečná zbraň s prodlouženým dosahem a vlastností vytříbená.",
   "Wrist Knife": "Lehká vytříbená čepel pro boj na blízko.",
 };
+const VAULT_OF_MAGIC_ITEM_NOTES: Readonly<Record<string, string>> = {
+  "Air Seed": "Po použití uvolňuje dýchatelný vzduch, rozptyluje okolní plyny a pomáhá tvorům zadržet dech i pod vodou.",
+  "Bag of Traps": "Magický vak vytváří náhodné mechanické pasti. Počet vyvolaných pastí je omezen na určité období.",
+  "Eye of Horus": "Amulet pomáhá prohlédnout iluze a dává výhodu k záchranným hodům proti vystrašení.",
+  "Cloak of the Rat": "Plášť poskytuje bonus +5 k pasivnímu Vnímání.",
+  "Bloodthirsty Longsword": "Zásah proti tvorovi s krví způsobuje kromě běžného zranění také dodatečnou ztrátu 2d6 životů.",
+};
+
+const VAULT_BY_NAME = Object.fromEntries(
+  Object.entries(VAULT_OF_MAGIC_ITEM_NOTES).map(([english, czech]) => [textKey(english), czech]),
+);
+
 const BY_NAME = Object.fromEntries(
   Object.entries(TOME_OF_HEROES_WEAPON_NOTES).map(([english, czech]) => [textKey(english), czech]),
 );
@@ -29,6 +41,9 @@ export function thirdPartyItemSummaryCs(
   reference: { source?: string; documentSlug?: string; name?: string },
   locale: Locale,
 ): string | null {
-  if (locale !== "cs" || reference.source !== "open5e" || reference.documentSlug !== "toh") return null;
-  return BY_NAME[textKey(reference.name ?? "")] ?? null;
+  if (locale !== "cs" || reference.source !== "open5e") return null;
+  const key = textKey(reference.name ?? "");
+  if (reference.documentSlug === "toh") return BY_NAME[key] ?? null;
+  if (reference.documentSlug === "vom") return VAULT_BY_NAME[key] ?? null;
+  return null;
 }
