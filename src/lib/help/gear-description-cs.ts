@@ -140,6 +140,70 @@ const PLAIN_GEAR: Readonly<Record<string, string>> = {
   "whetstone": "Brousek pro ostření kovových čepelí.",
 };
 
+// SRD lists ammunition, arcane/druidic foci, and holy symbols as subrows.
+const VARIANTS: Readonly<Record<string, string>> = {
+  "arrows (20)": "Sada dvaceti šípů pro luky. Každý výstřel spotřebuje jeden šíp.",
+  "blowgun needles (50)": "Sada padesáti jehel pro foukačku.",
+  "crossbow bolts (20)": "Sada dvaceti šipek do kuše.",
+  "sling bullets (20)": "Sada dvaceti střel do praku.",
+  "crystal": "Krystal, který lze používat jako mystické sesílací ohnisko.",
+  "orb": "Koule, kterou lze používat jako mystické sesílací ohnisko.",
+  "rod": "Žezlo, které lze používat jako mystické sesílací ohnisko.",
+  "staff": "Hůl, kterou lze používat jako mystické sesílací ohnisko.",
+  "wand": "Hůlka, kterou lze používat jako mystické sesílací ohnisko.",
+  "sprig of mistletoe": "Snítka jmelí, kterou může druid používat jako sesílací ohnisko.",
+  "totem": "Posvátný totem, který může druid používat jako sesílací ohnisko.",
+  "wooden staff": "Dřevěná hůl, kterou může druid používat jako sesílací ohnisko.",
+  "yew wand": "Tisová hůlka, kterou může druid používat jako sesílací ohnisko.",
+  "amulet": "Amulet se znamením božstva. Klerik či paladin jej může používat jako sesílací ohnisko.",
+  "emblem": "Znak božstva, který lze nosit na štítu jako svatý symbol.",
+  "reliquary": "Schránka na posvátnou relikvii, kterou lze používat jako svatý symbol.",
+  "spikes, iron (10)": "Deset železných hřebů pro upevňování a zajišťování.",
+  "potion of healing 5": "Léčivý lektvar obnoví po vypití 2k4 + 2 životů. Vypití nebo podání lektvaru vyžaduje akci.",
+  "bottle": "Láhev pro uchovávání a přenášení tekutin.",
+};
+
+// Weapons already display their exact damage, reach and properties in the
+// structured item card. These notes identify their purpose in Czech without
+// duplicating dice or silently changing game mechanics.
+const WEAPON_NOTES: Readonly<Record<string, string>> = {
+  "club": "Kyj je jednoduchá lehká zbraň na blízko.",
+  "dagger": "Dýka je lehká obratná zbraň na blízko, kterou lze také vrhat.",
+  "greatclub": "Velký kyj je jednoduchá obouruční zbraň na blízko.",
+  "handaxe": "Ruční sekera je lehká zbraň na blízko, kterou lze také vrhat.",
+  "javelin": "Oštěp je jednoduchá vrhací zbraň na blízko.",
+  "light hammer": "Lehké kladivo je lehká vrhací zbraň na blízko.",
+  "mace": "Palcát je jednoduchá zbraň na blízko.",
+  "quarterstaff": "Hůl je jednoduchá zbraň na blízko, kterou můžeš držet jednou nebo oběma rukama.",
+  "sickle": "Srp je jednoduchá lehká zbraň na blízko.",
+  "spear": "Kopí je jednoduchá vrhací zbraň, kterou můžeš držet jednou nebo oběma rukama.",
+  "crossbow, light": "Lehká kuše je jednoduchá obouruční střelná zbraň vyžadující šipky.",
+  "dart": "Šipka je jednoduchá obratná vrhací zbraň na dálku.",
+  "shortbow": "Krátký luk je jednoduchá obouruční střelná zbraň vyžadující šípy.",
+  "sling": "Prak je jednoduchá střelná zbraň vyžadující střely.",
+  "battleaxe": "Válečná sekera je vojenská zbraň na blízko pro jednu nebo dvě ruce.",
+  "flail": "Řemdih je vojenská zbraň na blízko.",
+  "glaive": "Kůsa je těžká obouruční vojenská zbraň s prodlouženým dosahem.",
+  "greataxe": "Obouruční sekera je těžká vojenská zbraň vyžadující obě ruce.",
+  "greatsword": "Obouruční meč je těžká vojenská zbraň vyžadující obě ruce.",
+  "halberd": "Halapartna je těžká obouruční vojenská zbraň s prodlouženým dosahem.",
+  "longsword": "Dlouhý meč je vojenská zbraň na blízko. Způsobuje 1k8 sečného zranění, při držení oběma rukama 1k10.",
+  "maul": "Válečné kladivo s těžkou hlavicí je obouruční vojenská zbraň.",
+  "morningstar": "Jitřní hvězda je vojenská bodná zbraň na blízko.",
+  "pike": "Píka je těžká obouruční vojenská zbraň s prodlouženým dosahem.",
+  "rapier": "Rapír je obratná vojenská bodná zbraň na blízko.",
+  "scimitar": "Šavle je obratná lehká vojenská zbraň na blízko.",
+  "shortsword": "Krátký meč je obratná lehká vojenská zbraň na blízko.",
+  "trident": "Trojzubec je vojenská vrhací zbraň použitelná jednou i oběma rukama.",
+  "war pick": "Válečný krumpáč je vojenská bodná zbraň na blízko.",
+  "warhammer": "Válečné kladivo je vojenská zbraň na blízko použitelná jednou i oběma rukama.",
+  "whip": "Bič je obratná vojenská zbraň s prodlouženým dosahem.",
+  "blowgun": "Foukačka je vojenská střelná zbraň používající jehly.",
+  "crossbow, hand": "Ruční kuše je lehká vojenská střelná zbraň používající šipky.",
+  "crossbow, heavy": "Těžká kuše je těžká obouruční vojenská střelná zbraň.",
+  "longbow": "Dlouhý luk je těžká obouruční vojenská střelná zbraň používající šípy.",
+};
+
 function key(name: string): string {
   return name.trim().toLowerCase().replace(/\s+/g, " ").replace(/\s*\+\d+$/, "");
 }
@@ -153,10 +217,11 @@ export function canonicalGearDescriptionCs(name: string): string | null {
   if (normalized === "shield") return "Štít se drží v jedné ruce a poskytuje bonus +2 k obrannému číslu (OČ). Současně lze využít pouze jeden štít.";
   if (normalized === "lance") return WEAPONS.get("jezdecké kopí") ?? null;
   if (normalized === "net") return WEAPONS.get("síť") ?? null;
-  return PLAIN_GEAR[normalized] ?? null;
+  return PLAIN_GEAR[normalized] ?? VARIANTS[normalized] ?? WEAPON_NOTES[normalized] ?? null;
 }
 
 export const CANONICAL_GEAR_NAMES_CS = Object.freeze([
   ...Object.keys(GEAR_NAMES), ...Object.keys(ARMOR_NAMES), ...Object.keys(PLAIN_GEAR),
+  ...Object.keys(VARIANTS), ...Object.keys(WEAPON_NOTES),
   "shield", "lance", "net",
 ]);
