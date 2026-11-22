@@ -60,13 +60,14 @@ export default function MultiContentPicker({
 
   const selectedLower = new Set(selectedNames.map((name) => textKey(name)));
   const pendingLower = new Set(pending.map((pick) => textKey(pick.name)));
+  const pendingIds = new Set(pending.map((pick) => pick.slug ?? `custom:${textKey(pick.name)}`));
   const trimmedQuery = query.trim();
 
   function togglePending(entry: PickerEntry) {
-    const key = textKey(entry.name);
+    const identity = entry.slug ?? `custom:${textKey(entry.name)}`;
     setPending((picks) =>
-      picks.some((pick) => textKey(pick.name) === key)
-        ? picks.filter((pick) => textKey(pick.name) !== key)
+      picks.some((pick) => (pick.slug ?? `custom:${textKey(pick.name)}`) === identity)
+        ? picks.filter((pick) => (pick.slug ?? `custom:${textKey(pick.name)}`) !== identity)
         : [...picks, { name: entry.name, slug: entry.slug, level: entry.level }],
     );
   }
@@ -112,7 +113,7 @@ export default function MultiContentPicker({
           {results.map((entry) => {
             const key = textKey(entry.name);
             const alreadyOn = selectedLower.has(key);
-            const picked = pendingLower.has(key);
+            const picked = pendingIds.has(entry.slug ?? `custom:${key}`);
             return (
               <li
                 key={entry.slug}
@@ -187,14 +188,14 @@ export default function MultiContentPicker({
         <div className="mt-1.5 flex flex-wrap items-center gap-1.5">
           {pending.map((pick) => (
             <span
-              key={pick.name}
+              key={pick.slug ?? pick.name}
               className="flex items-center gap-1 rounded-full bg-stone-800 px-2 py-0.5 text-xs text-stone-200"
             >
               {displayName(pick.name)}
               <button
                 type="button"
                 onClick={() =>
-                  setPending((picks) => picks.filter((entry) => entry.name !== pick.name))
+                  setPending((picks) => picks.filter((entry) => (entry.slug ?? entry.name) !== (pick.slug ?? pick.name)))
                 }
                 aria-label={t("Remove {name}", { name: displayName(pick.name) })}
                 className="text-stone-500 hover:text-red-400"
