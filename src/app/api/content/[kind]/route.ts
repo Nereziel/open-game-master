@@ -1,5 +1,4 @@
 import { currentUser, unauthorized } from "@/lib/auth";
-import { externalItemTranslationCs } from "@/lib/content/external-item-cs";
 import { withBestEffort } from "@/lib/content/entry-labels";
 import { catalogPrices } from "@/lib/characters/catalog";
 import { contentPackInstalled } from "@/lib/content/db";
@@ -235,15 +234,6 @@ export async function GET(
   // A row the engine plays from mechanics it read and nobody checked says
   // so (issue #570).
   const classSlug = url.searchParams.get("class") ?? undefined;
-  results = results.map((row) => {
-    const displayed = withBestEffort(kind, row, { classSlug });
-    if (kind !== "items" || url.searchParams.get("locale") !== "cs") return displayed;
-    const sourceRow = row as { source?: string; slug?: string; documentSlug?: string; data?: Record<string, unknown> };
-    if (!sourceRow.source || !sourceRow.slug || !sourceRow.documentSlug || !sourceRow.data) return displayed;
-    const translatedDescriptionCs = externalItemTranslationCs({
-      source: sourceRow.source, slug: sourceRow.slug, documentSlug: sourceRow.documentSlug, data: sourceRow.data,
-    });
-    return translatedDescriptionCs ? { ...displayed, translatedDescriptionCs } : displayed;
-  });
+  results = results.map((row) => withBestEffort(kind, row, { classSlug }));
   return Response.json({ results, packInstalled, unadmitted: unadmittedNames(scope, user.id, kind, q, url.searchParams.get("class") ?? "") });
 }
