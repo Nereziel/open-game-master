@@ -12,3 +12,17 @@ export const FIGHTING_STYLES_CS: Readonly<Record<string, { name: string; descrip
 export function fightingStyleCs(id: string): {name: string;description:string} | null {
   return FIGHTING_STYLES_CS[id] ?? null;
 }
+
+const ENGLISH_STYLE_NAME_TO_ID: Readonly<Record<string, string>> = {
+  Archery: "archery",
+  Defense: "defense",
+  Dueling: "dueling",
+  "Great Weapon Fighting": "great_weapon_fighting",
+  Protection: "protection",
+  "Two-Weapon Fighting": "two_weapon_fighting",
+};
+
+export function fightingStyleNameCs(name: string): string {
+  const id = ENGLISH_STYLE_NAME_TO_ID[name];
+  return id ? FIGHTING_STYLES_CS[id]?.name ?? name : name;
+}
