@@ -1,0 +1,39 @@
+name: Shared game and PDF terminology
+
+on:
+  pull_request:
+    paths:
+      - "src/lib/pdf/**"
+      - "src/lib/srd/ability-short-label*"
+      - "src/lib/srd/skill-help-cs*"
+      - "src/app/characters/builder/AbilityText.tsx"
+      - ".github/workflows/terminology-web-pdf.yml"
+  workflow_dispatch:
+
+permissions:
+  contents: read
+
+env:
+  ONNXRUNTIME_NODE_INSTALL: skip
+
+concurrency:
+  group: ${{ github.workflow }}-${{ github.ref }}
+  cancel-in-progress: true
+
+jobs:
+  check:
+    runs-on: ubuntu-latest
+    timeout-minutes: 35
+    steps:
+      - uses: actions/checkout@v6
+      - uses: actions/setup-node@v6
+        with:
+          node-version: "24"
+          cache: npm
+      - run: npm ci
+      - name: Czech/English/French terminology and character PDF regressions
+        run: npm test -- src/lib/srd/ability-short-label.test.ts src/lib/srd/skill-help-cs.test.ts src/lib/pdf/character-sheet-pdf.test.ts
+      - name: TypeScript
+        run: npx tsc --noEmit --incremental false
+      - name: Build
+        run: npm run build
