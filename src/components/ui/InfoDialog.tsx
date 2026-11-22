@@ -309,7 +309,7 @@ function ItemBody({ reference }: { reference: ContentRef }) {
   }
   const sheet = state.sheet;
   if (!sheet) {
-    const fallback = itemDescriptionCs(reference.name ?? reference.slug, null, locale);
+    const fallback = itemDescriptionCs(reference.name ?? reference.slug, null, locale, reference.slug);
     if (fallback) return <div className="space-y-2 text-sm text-stone-300">{renderRules(fallback)}</div>;
     return (
       <p className="text-sm text-stone-500">
@@ -380,7 +380,7 @@ function ItemBody({ reference }: { reference: ContentRef }) {
 
   const localizedArmorRows = armorRows.map(({ label, text }) => ({ label: detail(label), text: text ? detail(text) : null }));
   const localizedWeaponRows = weaponRows.map(({ label, text }) => ({ label: detail(label), text: text ? detail(text) : null }));
-  const shownDescription = itemDescriptionCs(reference.name ?? reference.slug, sheet.description, locale);
+  const shownDescription = itemDescriptionCs(reference.name ?? reference.slug, sheet.description, locale, reference.slug);
 
   return (
     <div className="space-y-4">
