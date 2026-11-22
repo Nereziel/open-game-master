@@ -17,6 +17,8 @@ import { ammoKindForWeapon, findAmmo } from "@/lib/srd/ammunition";
 import { combatRiders } from "@/lib/srd/feature-effects";
 import { weaponAttackProfile } from "@/lib/dm/attack-logic";
 import { textKey } from "@/lib/language/text-logic";
+import { contentName } from "@/lib/content/names";
+import { damageWords } from "@/lib/dm/damage-logic";
 import { translate, type Locale } from "@/lib/messages-logic";
 import { ABILITIES, type Ability } from "@/lib/schemas/abilities";
 import type { IconRef } from "@/lib/icons";
@@ -202,7 +204,7 @@ function averageOf(expression: string | null): number {
   return total;
 }
 
-function attackTip(card: HandCard, sheet: CharacterSheet, t: T = enT): HeroTip {
+function attackTip(card: HandCard, sheet: CharacterSheet, t: T = enT, locale: Locale = "en"): HeroTip {
   // Sneak Attack is the limit worth knowing beside a swing, when the attack
   // engine says this weapon can carry it (a finesse or ranged weapon).
   const riders = combatRiders(sheet);
@@ -215,8 +217,8 @@ function attackTip(card: HandCard, sheet: CharacterSheet, t: T = enT): HeroTip {
   return {
     kind: "attack",
     text: t("{lead}: {detail}", {
-      lead: t(card.melee ? "Swing your {name}" : "Shoot your {name}", { name: card.name }),
-      detail: `${card.roll || t("{bonus} to hit", { bonus: formatModifier(card.toHit ?? 0) })}, ${damageOf(card)}`,
+      lead: t(card.melee ? "Swing your {name}" : "Shoot your {name}", { name: contentName("items", card.name, locale) }),
+      detail: `${t("{bonus} to hit", { bonus: formatModifier(card.toHit ?? 0) })}, ${damageWords(damageOf(card), locale)}`,
     }),
     note: sneak ? t("Sneak Attack: +{dice}d6 once a turn, when you have advantage or an ally is beside the target", { dice: riders.sneakAttackDice }) : "",
     icon: card.icon,
@@ -271,7 +273,7 @@ function spellTip(card: HandCard, sheet: CharacterSheet, t: T = enT, locale: Loc
   } else if (slotLevel === null) {
     note = t("A cantrip: no slot, cast it as often as you like");
   }
-  const cast = `${t("Cast {name}", { name: card.name, context: "tips.spell.cast" })}${how}`;
+  const cast = `${t("Cast {name}", { name: contentName("spells", card.name, locale), context: "tips.spell.cast" })}${how}`;
   return { kind: "spell", text: what ? t("{cast}: {detail}", { cast, detail: what }) : cast, note, icon: cardIcon(card) };
 }
 
@@ -288,13 +290,16 @@ function bestFeature(cards: HandCard[], sheet: CharacterSheet): { card: HandCard
   return null;
 }
 
-function featureTip(found: { card: HandCard; uses: number; recharge: "short" | "long" }, t: T = enT): HeroTip {
+function featureTip(found: { card: HandCard; uses: number; recharge: "short" | "long" }, t: T = enT, locale: Locale = "en"): HeroTip {
   const { card } = found;
   const how = card.cost === "bonus" ? t(" as a bonus action") : card.cost === "reaction" ? t(" as a reaction") : "";
-  const use = `${t("Use {name}", { name: card.name, context: "tips.feature.use" })}${how}`;
+  const namedFeature = locale === "cs" && textKey(card.name).startsWith("lay on hands")
+    ? "Vkládání rukou (zásoba životů)"
+    : t(card.name);
+  const use = `${t("Use {name}", { name: namedFeature, context: "tips.feature.use" })}${how}`;
   return {
     kind: "feature",
-    text: card.dice ? t("{use}: {detail}", { use, detail: card.dice }) : use,
+    text: card.dice ? t("{use}: {detail}", { use, detail: locale === "cs" ? card.dice.replace(/^heals up to (\d+)$/i, "obnoví až $1 životů") : card.dice }) : use,
     note: usesLine(found.uses, found.recharge, t),
     icon: card.icon,
   };
@@ -366,12 +371,12 @@ export function threeThingsToTry(sheet: CharacterSheet, spells: Record<string, S
   const skills = bestSkills(sheet, locale);
   // A caster whose cantrip out-hits the weapon they carry leads with the spell.
   if (spell && attack && sheet.spellcasting && (computeSheetDerived(sheet).spellAttack ?? -99) > (attack.toHit ?? 0)) {
-    tips.push(spellTip(spell, sheet, t, locale), attackTip(attack, sheet, t));
+    tips.push(spellTip(spell, sheet, t, locale), attackTip(attack, sheet, t, locale));
   } else {
-    if (attack) tips.push(attackTip(attack, sheet, t));
+    if (attack) tips.push(attackTip(attack, sheet, t, locale));
     if (spell) tips.push(spellTip(spell, sheet, t, locale));
   }
-  if (feature && tips.length < 3) tips.push(featureTip(feature, t));
+  if (feature && tips.length < 3) tips.push(featureTip(feature, t, locale));
   for (const skill of skills) {
     if (tips.length >= 3) break;
     tips.push(skillTip(skill, t, locale));
