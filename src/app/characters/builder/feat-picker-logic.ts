@@ -7,7 +7,7 @@ import { textKey } from "@/lib/language/text-logic";
 // with distinct rules and homebrew entries retain their own identity.
 export function featPickerKey(name: string, source?: string): string {
   const key = textKey(name);
-  return source === "homebrew" ? key : textKey(featTwinOf(name));
+  return source === "homebrew" ? `homebrew:${key}` : textKey(featTwinOf(name));
 }
 
 export function uniquePlayableFeatRows<T extends { name: string; source?: string }>(rows: T[]): T[] {
