@@ -153,7 +153,6 @@ export function SlotSteppers({
   slots: SlotEdits;
   onChange: (update: (previous: SlotEdits) => SlotEdits) => void;
 }) {
-  const locale = useLocale();
   const t = useT();
   const set = (level: string, key: "max" | "used", value: number) =>
     onChange((previous) => ({
@@ -163,15 +162,15 @@ export function SlotSteppers({
   return (
     <div className="stagger-pop flex flex-wrap gap-2">
       {levels.map((level) => {
-        const title = level === "pact" ? (locale === "cs" ? "Paktové pozice" : t("Pact")) : (locale === "cs" ? `${level}. úroveň` : `L${level}`);
-        const named = level === "pact" ? (locale === "cs" ? "Paktové pozice" : t("Pact")) : (locale === "cs" ? `Pozice ${level}. úrovně` : t("Level {level}", { level }));
+        const title = level === "pact" ? t("Pact spell slots") : t("Level {level}", { level });
+        const named = title;
         return (
           <div key={level} className="space-y-1">
-            <span className="text-stone-400">{title} · {locale === "cs" ? "spotřebováno / celkem" : "used / max"}</span>
+            <span className="text-stone-400">{title} · {t("Spell slots used / max")}</span>
             <div className="flex items-center gap-1">
-              <NumberStepper size="sm" min={0} value={Number(slots[level]?.used ?? "0") || 0} label={locale === "cs" ? `${named}: spotřebováno` : `${named} slots used`} onChange={(next) => set(level, "used", next)} />
+              <NumberStepper size="sm" min={0} value={Number(slots[level]?.used ?? "0") || 0} label={t("{name} slots used", { name: named })} onChange={(next) => set(level, "used", next)} />
               <span className="text-stone-500">/</span>
-              <NumberStepper size="sm" min={0} value={Number(slots[level]?.max ?? "0") || 0} label={locale === "cs" ? `${named}: celkem` : `${named} slots max`} onChange={(next) => set(level, "max", next)} />
+              <NumberStepper size="sm" min={0} value={Number(slots[level]?.max ?? "0") || 0} label={t("{name} slots max", { name: named })} onChange={(next) => set(level, "max", next)} />
             </div>
           </div>
         );
