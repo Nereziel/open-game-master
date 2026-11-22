@@ -152,7 +152,7 @@ export default function ContentPicker({
               <InfoButton
                 label={rowName(entry)}
                 meta={spellMeta}
-                text={entry.source === "homebrew" ? describeContentEntry(entry.data) : undefined}
+                text={locale === "cs" && entry.source !== "homebrew" ? undefined : describeContentEntry(entry.data)}
                 reference={entry.source === "homebrew" ? undefined : {
                   kind, slug: entry.slug, name: entry.name, source: entry.source,
                   documentSlug: entry.documentSlug, rulebook: entry.rulebook,
