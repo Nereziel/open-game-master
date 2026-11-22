@@ -1,0 +1,30 @@
+import { describe, expect, it } from "vitest";
+import {
+  selectedSpellReference, updateChosenSpellReference, keepChosenSpellReferences,
+} from "./spell-selection-reference";
+
+describe("explicit spell provenance selection (#107)", () => {
+  const light = { name: "Light", level: 0, source: "open5e" as const, documentSlug: "wotc-srd", slug: "light" };
+  it("derives only explicit, uniquely identified catalog rows", () => {
+    expect(selectedSpellReference("Light", [light])).toEqual({
+      sourceId: "srd-5.1", contentType: "spells", contentId: "light", documentSlug: "wotc-srd",
+    });
+    expect(selectedSpellReference("Light", [{ name: "Light", level: 0 }])).toBeNull();
+    expect(selectedSpellReference("Light", [light, { ...light, documentSlug: "toh" }])).toBeNull();
+    expect(selectedSpellReference("Light", [light, light])).toEqual(selectedSpellReference("Light", [light]));
+  });
+
+  it("refuses to keep the wrong source for a same-name spell", () => {
+    const ref = selectedSpellReference("Light", [light])!;
+    const other = selectedSpellReference("Light", [{ ...light, documentSlug: "toh" }])!;
+    expect(updateChosenSpellReference({ Light: ref }, "Light", other)).toEqual({});
+    expect(updateChosenSpellReference({ Light: ref }, "Light", null)).toEqual({});
+    expect(updateChosenSpellReference({}, "Light", ref)).toEqual({ Light: ref });
+  });
+
+  it("preserves old name-only lists and drops provenance for removed spells", () => {
+    const ref = selectedSpellReference("Light", [light])!;
+    expect(keepChosenSpellReferences({ Light: ref }, ["Shield"])).toEqual({});
+    expect(keepChosenSpellReferences({}, ["Light"])).toEqual({});
+  });
+});
