@@ -29,6 +29,7 @@ import { resourceGuidance } from "@/lib/srd/class-resources-fr";
 import { translate, type Locale } from "@/lib/messages-logic";
 import { chargeMax, chargeRuleOf, chargesLeft } from "@/lib/srd/item-charge-rules";
 import { contentName } from "@/lib/content/names";
+import { damageTypeWord } from "@/lib/dm/damage-logic";
 import { gearDefFor } from "@/lib/srd/magic-gear";
 import { matchMagicItem } from "@/lib/srd/magic-items";
 import { oneOfKind, wearSlotOf, wornButIdle } from "@/lib/srd/wear-slots";
@@ -236,8 +237,22 @@ export function hitDiceLine(sheet: CharacterSheet): string {
 
 // ---- defenses ----
 
-export function defensesView(sheet: CharacterSheet): { resist: string; immune: string } {
-  return { resist: pcResistances(sheet), immune: pcImmunities(sheet) };
+// The engine returns comma-delimited damage words. Translate only whole
+// canonical type tokens and preserve punctuation and custom descriptors.
+export function localizeDefenseTypes(raw: string, locale: Locale): string {
+  if (locale === "en" || !raw) return raw;
+  return raw.replace(/[^,]+/g, (part) => {
+    const token = part.trim();
+    const display = damageTypeWord(token, locale);
+    return display === token ? part : part.replace(token, display);
+  });
+}
+
+export function defensesView(sheet: CharacterSheet, locale: Locale = "en"): { resist: string; immune: string } {
+  return {
+    resist: localizeDefenseTypes(pcResistances(sheet), locale),
+    immune: localizeDefenseTypes(pcImmunities(sheet), locale),
+  };
 }
 
 // ---- gear ----
