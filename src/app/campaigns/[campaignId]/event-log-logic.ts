@@ -1,5 +1,7 @@
 import type { AuditEntry } from "@/app/campaigns/[campaignId]/useCampaignStream";
 import type { CharacterEvent } from "@/lib/db/character-events";
+import { contentName, type FrNamesTable } from "@/lib/content/names";
+import type { Locale } from "@/lib/i18n/translate";
 import type { ClockTurn } from "@/lib/db/clock-moves";
 import type { TurnChangeView } from "@/lib/db/turn-changes";
 import { quietTick } from "@/lib/sheet-audit-logic";
@@ -125,7 +127,7 @@ export function revertableTurns(auditLog: AuditEntry[], clockTurns: ClockTurn[] 
 type Delta = Record<string, unknown>;
 
 // The translator a caller binds to its own locale (useT in a component).
-type Say = (key: string, vars?: Record<string, string | number>) => string;
+type Say = ((key: string, vars?: Record<string, string | number>) => string) & { locale?: Locale };
 
 // English, for the callers that carry no translator (the test suite, an old
 // reader): the same words the dictionaries hold.
@@ -145,6 +147,11 @@ const amount = (value: unknown): number | null => (typeof value === "number" && 
 const words = (value: unknown): string[] => (Array.isArray(value) ? value.map(word).filter((entry): entry is string => entry !== null) : []);
 const times = (qty: number | null) => (qty !== null && qty > 1 ? ` x${qty}` : "");
 const gold = (t: Say, copper: number) => t("{amount} gold", { amount: Math.round(copper) / 100 });
+
+// Only recognized rulebook names are localized. Player-defined names, event
+// payloads, and custom content remain unchanged; useT carries the locale.
+const displayName = (t: Say, table: FrNamesTable | "items", raw: string) =>
+  contentName(table, raw, t.locale ?? "en");
 
 function deathState(t: Say, name: string, delta: Delta): string {
   const tp = pluralOf(t);
@@ -193,7 +200,7 @@ export function describeKnownEntry(
 function knownEntryText(t: Say, entry: { kind: string; delta: Delta }, name: string): string | null {
   const tp = pluralOf(t);
   const delta = entry.delta ?? {};
-  const item = word(delta.name) ?? word(delta.item) ?? t("an item");
+  const item = displayName(t, "items", word(delta.name) ?? word(delta.item) ?? t("an item"));
   const qty = amount(delta.qty);
   switch (entry.kind) {
     case "apply_damage": {
@@ -273,13 +280,13 @@ function knownEntryText(t: Say, entry: { kind: string; delta: Delta }, name: str
     case "reveal_item": {
       const from = word(delta.from);
       const to = word(delta.to);
-      return from && to ? t("{name}'s {from} turns out to be {to}", { name, from, to }) : t("{name} learns what an item they carry is", { name });
+      return from && to ? t("{name}'s {from} turns out to be {to}", { name, from: displayName(t, "items", from), to: displayName(t, "items", to) }) : t("{name} learns what an item they carry is", { name });
     }
     // A pact's gift or its price (src/lib/dm/pact-fire.ts).
     case "item": {
       const added = word(delta.added);
       const removed = word(delta.removed);
-      return added ? t("{name} receives {item}{times}", { name, item: added, times: "" }) : removed ? t("{name} gives up {item}", { name, item: removed }) : t("{name}'s pack changes", { name });
+      return added ? t("{name} receives {item}{times}", { name, item: displayName(t, "items", added), times: "" }) : removed ? t("{name} gives up {item}", { name, item: displayName(t, "items", removed) }) : t("{name}'s pack changes", { name });
     }
     case "trade": {
       const partner = word(delta.with);
@@ -303,10 +310,10 @@ function knownEntryText(t: Say, entry: { kind: string; delta: Delta }, name: str
       const created = word(delta.created);
       const bonded = word(delta.bonded);
       const unbonded = word(delta.unbonded);
-      if (created) return t("{name} creates a pact weapon: {item}", { name, item: created });
-      if (bonded) return t("{name} bonds with {item} as a pact weapon", { name, item: bonded });
-      if (unbonded) return t("{name} breaks the pact bond with {item}", { name, item: unbonded });
-      return t("{name} dismisses {item}", { name, item: word(delta.dismissed) ?? t("the pact weapon") });
+      if (created) return t("{name} creates a pact weapon: {item}", { name, item: displayName(t, "items", created) });
+      if (bonded) return t("{name} bonds with {item} as a pact weapon", { name, item: displayName(t, "items", bonded) });
+      if (unbonded) return t("{name} breaks the pact bond with {item}", { name, item: displayName(t, "items", unbonded) });
+      return t("{name} dismisses {item}", { name, item: word(delta.dismissed) ? displayName(t, "items", word(delta.dismissed)!) : t("the pact weapon") });
     }
     // Pact of the Tome: a new book, the old one gone with it.
     case "book_of_shadows":
@@ -343,14 +350,15 @@ function knownEntryText(t: Say, entry: { kind: string; delta: Delta }, name: str
       if (inside !== null)
         return t("{name} has dealt {who} {amount} damage from inside this turn", { name, who: word(delta.swallower) ?? t("what swallowed them"), amount: inside });
       const condition = word(delta.condition);
-      return condition ? t("{name} is {condition}", { name, condition }) : t("{name} gains a condition", { name });
+      return condition ? t("{name} is {condition}", { name, condition: displayName(t, "conditions", condition) }) : t("{name} gains a condition", { name });
     }
     case "clear_condition": {
       const level = amount(delta.level);
       if (word(delta.condition) === "exhaustion" && level !== null) {
         return t("{name}'s exhaustion falls to level {level}", { name, level });
       }
-      const ended = word(delta.condition) ?? (words(delta.ended).join(" or ") || null);
+      const ended = [word(delta.condition)].filter((value): value is string => !!value).concat(word(delta.condition) ? [] : words(delta.ended))
+        .map((condition) => displayName(t, "conditions", condition)).join(` ${t("or")} `) || null;
       return ended ? t("{name} is no longer {ended}", { name, ended }) : t("{name} is rid of a condition", { name });
     }
     case "exhaustion": {
@@ -367,13 +375,13 @@ function knownEntryText(t: Say, entry: { kind: string; delta: Delta }, name: str
       return t("{name} draws on Form of Dread for this turn", { name });
     case "condition_clock": {
       const ended = words(delta.ended);
-      return ended.length ? t("{name} is no longer {ended}", { name, ended: ended.join(" or ") }) : t("Time runs on {name}'s conditions", { name });
+      return ended.length ? t("{name} is no longer {ended}", { name, ended: ended.map((condition) => displayName(t, "conditions", condition)).join(` ${t("or")} `) }) : t("Time runs on {name}'s conditions", { name });
     }
     case "concentration_clock":
-      return t("Time runs on {name}'s {spell}", { name, spell: word(delta.spell) ?? t("spell") });
+      return t("Time runs on {name}'s {spell}", { name, spell: displayName(t, "spells", word(delta.spell) ?? t("spell")) });
     case "concentration": {
       const spell = word(delta.concentratingOn);
-      return spell ? t("{name} concentrates on {spell}", { name, spell }) : t("{name} stops concentrating", { name });
+      return spell ? t("{name} concentrates on {spell}", { name, spell: displayName(t, "spells", spell) }) : t("{name} stops concentrating", { name });
     }
     case "supplies": {
       const level = amount(delta.exhaustion);
@@ -401,7 +409,7 @@ function knownEntryText(t: Say, entry: { kind: string; delta: Delta }, name: str
       return spent > 1 ? tp("{name} spends {count} use of {resource}", "{name} spends {count} uses of {resource}", { name, count: spent, resource }) : t("{name} spends {resource}", { name, resource });
     }
     case "learn_spell": {
-      const spell = word(delta.spell) ?? t("a spell");
+      const spell = displayName(t, "spells", word(delta.spell) ?? t("a spell"));
       return delta.action === "remove" ? t("{name} loses the spell {spell}", { name, spell }) : t("{name} learns the spell {spell}", { name, spell });
     }
     case "divine_intervention":
