@@ -78,6 +78,23 @@ await test("new and preset campaigns default live voice chat to off", () => {
   assert.equal(fresh.voice?.enabled, false, "use app defaults should not enable live voice");
 });
 
+await test("all new campaign paths use short narration and consistent player permissions", () => {
+  const defaults = gameSettingsSchema.parse({});
+  assert.equal(defaults.narrationLength, "short", "API-created and preset campaigns should start with short narration");
+  assert.equal(gameSettingsSchema.parse({ narrationLength: "rich" }).narrationLength, "rich", "explicit narrator choice must be preserved");
+  assert.equal(DEFAULT_DRAFT.narrationLength, "short", "campaign creation UI should match the API");
+  assert.equal(defaults.midGameJoinOpen, false, "mid-game joining starts closed");
+  assert.equal(defaults.holdSubmissions, false, "player responses remain open");
+  assert.equal(defaults.waitForTable, true, "AI GM waits for the party");
+  assert.equal(defaults.inventoryApprovals, false, "item offers start off");
+  assert.equal(defaults.vitalsApprovals, false, "GM damage and healing apply automatically");
+  assert.equal(DEFAULT_DRAFT.midGameJoinOpen, defaults.midGameJoinOpen);
+  assert.equal(DEFAULT_DRAFT.holdSubmissions, defaults.holdSubmissions);
+  assert.equal(DEFAULT_DRAFT.inventoryApprovals, defaults.inventoryApprovals);
+  assert.equal(DEFAULT_DRAFT.vitalsApprovals, defaults.vitalsApprovals);
+  assert.equal(appDefaultSettings().narrationLength, "short");
+});
+
 await test("new campaign lengths start short and saved length choices survive", () => {
   assert.equal(DEFAULT_DRAFT.campaignLength, "short");
   assert.equal(DEFAULT_DRAFT.narrationLength, "short");
