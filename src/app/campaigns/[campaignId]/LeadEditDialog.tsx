@@ -36,9 +36,14 @@ import { priceText } from "@/lib/srd/currency";
 import MultiContentPicker from "@/app/characters/builder/MultiContentPicker";
 import { ABILITIES, type Ability, type CharacterSheet, type Proficiencies } from "@/lib/schemas/sheet";
 import { hostOffers, useCapabilities } from "@/lib/use-capabilities";
-import { useT } from "@/lib/locale";
+import { useLocale, useT } from "@/lib/locale";
+import { contentName } from "@/lib/content/names";
+import { skillLabel } from "@/lib/srd";
+import { GameTerm } from "@/components/ui/GameTerm";
+import { localizeAcParts } from "@/app/characters/builder/derivedReasons";
 
 const ABILITY_SHORT: Record<string, string> = { str: "STR", dex: "DEX", con: "CON", int: "INT", wis: "WIS", cha: "CHA" };
+const ABILITY_SHORT_CS: Record<string, string> = { str: "SÍL", dex: "OBR", con: "ODL", int: "INT", wis: "MDR", cha: "CHA" };
 
 // The training levels, their labels as message keys read with the dialog's
 // translator at draw time (the STATE_KEYS pattern, SpellBook.tsx).
@@ -62,6 +67,7 @@ export function LeadEditDialog({
   onClose: () => void;
 }) {
   const t = useT();
+  const locale = useLocale();
   const [currentHp, setCurrentHp] = useState(String(sheet.currentHp));
   const [tempHp, setTempHp] = useState(String(sheet.tempHp));
   const [maxHp, setMaxHp] = useState(String(sheet.maxHp));
@@ -343,7 +349,7 @@ export function LeadEditDialog({
             ) : (
               <p className="reveal text-[11px] text-stone-400">
                 {t("Armor sets it: {ac}", { ac: derived.ac })} <span className="text-stone-100"></span>
-                {derived.parts.length ? ` (${derived.parts.join(", ")})` : ""}
+                {derived.parts.length ? ` (${localizeAcParts(derived.parts, t, locale).join(", ")})` : ""}
               </p>
             )}
             {facing !== (pinned ? Number(ac) : derived.ac) ? (
@@ -409,14 +415,14 @@ export function LeadEditDialog({
                 {SRD_SKILLS.map((skill) => (
                   <li key={skill.id} className="flex items-center justify-between gap-2 py-1">
                     <span className="min-w-0 text-stone-200">
-                      {skill.name} <span className="text-stone-500">{ABILITY_SHORT[skill.ability]}</span>
+                      {skillLabel(skill.id, locale)} <span className="text-stone-500">{(locale === "cs" ? ABILITY_SHORT_CS : ABILITY_SHORT)[skill.ability]}</span>
                     </span>
                     <SegmentedControl
                       options={SKILL_LEVELS.map((level) => ({ ...level, label: t(level.label) }))}
                       value={skillLevels[skill.id] ?? "none"}
                       onChange={(level) => setSkillLevels((levels) => ({ ...levels, [skill.id]: level }))}
                       size="sm"
-                      label={skill.name}
+                      label={skillLabel(skill.id, locale)}
                       className="shrink-0"
                       optionClassName="pointer-coarse:min-h-10"
                     />
@@ -433,7 +439,7 @@ export function LeadEditDialog({
               <div className="flex items-center gap-2">
                 <GameIcon icon={{ kind: "item", key: row.name, family: "item-gear" }} size="size-6" className="shrink-0" />
                 {row.base.slug ? (
-                  <span className={cn(field, "truncate")}>{row.name}</span>
+                  <span className={cn(field, "min-w-0 truncate")}>{contentName("items", row.name, locale)}</span>
                 ) : (
                   <input
                     value={row.name}
@@ -538,7 +544,7 @@ export function LeadEditDialog({
               ) : null}
               {style !== "known" || prepared.length ? (
               <div className="space-y-1">
-                <span className="eyebrow text-[10px] text-amber-400/80">{t("Prepared")}</span>
+                <span className="eyebrow text-[10px] text-amber-400/80">{locale === "cs" ? "Připravená kouzla" : t("Prepared")}</span>
                 <ChipList
                   values={prepared}
                   onRemove={(value) =>
@@ -592,7 +598,7 @@ export function LeadEditDialog({
             />
           </div>
           <label className="mt-2 block space-y-1 text-xs">
-            <span className="text-stone-400">{t("Reason (shown in the log)")}</span>
+            <span className="text-stone-400">{locale === "cs" ? "Důvod změny (zobrazí se v záznamu)" : t("Reason (shown in the log)")}</span>
             <input
               value={reason}
               onChange={(event) => setReason(event.target.value)}
