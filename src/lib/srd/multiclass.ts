@@ -239,7 +239,7 @@ export function describeGrantT(t: T, grant: MulticlassGrant, locale: Locale = "e
   const parts = [
     ...grant.armor.map((entry) => trainingProficiencyLabel(entry, "armor", locale, true) ?? t(entry)),
     ...grant.weapons.map((entry) => trainingProficiencyLabel(entry, "weapons", locale, true) ?? t(entry)),
-    ...grant.tools.map((entry) => toolLabel(entry, t)),
+    ...grant.tools.map((entry) => locale === "cs" ? toolLabel(entry, t) : t(entry)),
   ];
   if (grant.skillChoice) {
     parts.push(t(grant.skillChoice.from.length ? "one skill from its class list" : "one skill of your choice"));
