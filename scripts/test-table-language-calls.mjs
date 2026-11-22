@@ -225,7 +225,7 @@ const CLASSIFIED = {
   // answers are listed values, and its note is read at the table when an
   // act's recap falls back on it) and the act recap; the beat judge answers
   // YES or NO.
-  "src/lib/dm/arc.ts": { prose: 17, machine: 1 },
+  "src/lib/dm/arc.ts": { prose: 18, machine: 1 },
   "src/lib/dm/ask.ts": { prose: 2, machine: 0 },
   "src/lib/dm/assist.ts": { prose: 2, machine: 0 },
   "src/lib/dm/beats.ts": { prose: 1, machine: 0 },
