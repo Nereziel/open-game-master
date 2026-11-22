@@ -40,6 +40,21 @@ describe("Czech labels for all bundled playable races", () => {
     expect(czechBundledSpeciesTrait("Stone's Endurance (reduce damage by 1d12 + CON, 1/short rest)")?.name).toBe("Kamenná výdrž");
   });
 
+  it("translates every bundled background including its five 2014 variants", () => {
+    installCsTables({ names: CS_NAMES_BY_TABLE });
+    const variants = [
+      ["Knight", "Rytíř"],
+      ["Spy", "Špion"],
+      ["Pirate", "Pirát"],
+      ["Gladiator", "Gladiátor"],
+      ["Guild Merchant", "Cechovní obchodník"],
+    ] as const;
+    for (const [english, czech] of variants) {
+      expect(contentName("backgrounds", english, "cs")).toBe(czech);
+      expect(contentName("backgrounds", english, "en")).toBe(english);
+    }
+  });
+
   it("distinguishes subraces and translates names in character creation", () => {
     installCsTables({ names: CS_NAMES_BY_TABLE });
     expect(contentName("species", "Dwarf (Hill)", "cs")).toBe("Kopcový trpaslík");
