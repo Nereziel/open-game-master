@@ -4,7 +4,8 @@ import type { CSSProperties } from "react";
 import { CountPop } from "@/components/ui/Reveal";
 import { Ribbon } from "@/components/ui/Ribbon";
 import { cn } from "@/lib/cn";
-import { useT } from "@/lib/locale";
+import { useT, useLocale } from "@/lib/locale";
+import { CS_ABILITY_ABBR } from "@/components/sheet/SheetParts";
 import { abilityMod, formatModifier } from "@/lib/srd";
 import type { Ability } from "@/lib/schemas/sheet";
 import { rollTier, summaryLine } from "./abilityDice";
@@ -29,9 +30,10 @@ export function AbilitySummary({
   hp?: HpExplainerInput | null;
 }) {
   const t = useT();
+  const locale = useLocale();
   const anyAdded = rows.some((row) => row.added !== 0);
   const head = anyAdded
-    ? [t("Ability"), t("Base"), t("Racial"), t("Added"), t("Final"), t("Mod")]
+    ? [t("Ability"), t("Base"), t("Racial"), t("Added"), t("Final"), locale === "cs" ? "Bonus" : t("Mod")]
     : [t("Ability"), t("Base"), t("Racial"), t("Final"), t("Mod")];
   let best: { label: string; final: number } | null = null;
   for (const row of rows) {
@@ -91,7 +93,7 @@ export function AbilitySummary({
                   className={cn(cell, "truncate pl-0 text-left font-display text-base font-semibold text-stone-100")}
                 >
                   <span className="font-mono text-[0.875rem] sm:hidden" aria-hidden="true">
-                    {row.ability.toUpperCase()}
+                    {locale === "cs" ? CS_ABILITY_ABBR[row.ability] : row.ability.toUpperCase()}
                   </span>
                   <span className="sr-only sm:not-sr-only">{row.label}</span>
                 </th>
