@@ -37,6 +37,21 @@ describe("Czech campaign content pickers", () => {
     expect(contentName("items", { name: "Longsword", source: "srd" }, "cs")).toBe("Dlouhý meč");
   });
 
+  it("localizes verified Tome of Heroes entries only for that Open5e document", () => {
+    const tohItem = { name: "Clockwork Crossbow", slug: "clockwork-crossbow", source: "open5e", documentSlug: "toh" };
+    const tohSpell = { name: "Fuse Armor", slug: "fuse-armor", source: "open5e", documentSlug: "toh" };
+    expect(contentName("items", tohItem, "cs")).toBe("Mechanická kuše");
+    expect(contentName("spells", tohSpell, "cs")).toBe("Spojení zbroje");
+    expect(contentName("items", { ...tohItem, documentSlug: "wotc-srd" }, "cs")).toBe("Clockwork Crossbow");
+    expect(contentName("items", { ...tohItem, documentSlug: "another-book" }, "cs")).toBe("Clockwork Crossbow");
+    expect(contentName("items", { ...tohItem, source: "homebrew" }, "cs")).toBe("Clockwork Crossbow");
+    expect(contentName("items", tohItem, "en")).toBe("Clockwork Crossbow");
+    expect(contentName("items", "Clockwork Crossbow", "cs")).toBe("Clockwork Crossbow");
+    expect(contentName("spells", { ...tohSpell, documentSlug: "other-book" }, "cs")).toBe("Fuse Armor");
+    expect(czechPickerQueries("items", "mechanicka kuse", CS_NAMES_BY_TABLE)).toContain("Clockwork Crossbow");
+    expect(czechPickerQueries("spells", "spojeni zbroje", CS_NAMES_BY_TABLE)).toContain("Fuse Armor");
+  });
+
   it("reads the official Czech spell book only for official spell refs", () => {
     expect(officialCzechSpellPageId({
       kind: "spells", slug: "srd:acid-splash", name: "Acid Splash", source: "srd", rulebook: "acid-splash",
