@@ -65,6 +65,10 @@ describe("Czech campaign content pickers", () => {
     expect(contentName("items", { name: "Air Seed", source: "open5e", documentSlug: "vom" }, "cs"))
       .toBe("Vzdušné semínko");
     expect(czechPickerQueries("items", "vak pasti", CS_NAMES_BY_TABLE)).toContain("Bag of Traps");
+    expect(thirdPartyItemSummaryCs({ name: "Air Seed", source: "open5e", documentSlug: "vom" }, "cs"))
+      .toContain("dýchatelný vzduch");
+    expect(thirdPartyItemSummaryCs({ name: "Air Seed", source: "homebrew", documentSlug: "vom" }, "cs"))
+      .toBeNull();
     expect(thirdPartyItemSummaryCs(tohItem, "cs")).toContain("šest střel");
     expect(thirdPartyItemSummaryCs({ ...tohItem, documentSlug: "other-book" }, "cs")).toBeNull();
     expect(thirdPartyItemSummaryCs(tohItem, "en")).toBeNull();
