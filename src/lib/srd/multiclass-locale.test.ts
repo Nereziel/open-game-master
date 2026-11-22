@@ -39,6 +39,6 @@ describe("multiclass terminology in Czech", () => {
 
   it("keeps unknown homebrew tool names intact", () => {
     const grant: MulticlassGrant = { armor: [], weapons: [], tools: ["aetherwright's kit"] };
-    expect(describeGrantT(reader("cs"), grant, "cs")).toContain("aetherwright's kit");
+    expect(describeGrantT(reader("cs"), grant, "cs")).toContain("Aetherwright's kit");
   });
 });
