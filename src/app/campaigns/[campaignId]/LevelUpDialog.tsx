@@ -96,6 +96,7 @@ import { TableScopeNote } from "@/app/characters/builder/TableScopeNote";
 import type { AsiChoice, CharacterSheet } from "@/lib/schemas/sheet";
 import { searchKey, textKey } from "@/lib/language/text-logic";
 import { contentName, subclassName } from "@/lib/content/names";
+import { multiclassRefusalLabel } from "@/lib/srd/multiclass-labels";
 import { levelUpChangeOffers, type LevelUpChange } from "@/lib/srd/level-up-changes";
 import { sheetCantrips } from "@/lib/srd/owed-picks-logic";
 import { LevelUpChangePick } from "./LevelUpChangePick";
@@ -1942,7 +1943,7 @@ function NewClassButton({
         <span className="text-xs text-stone-500">d{option.hitDie}</span>
       </span>
       <span className="block text-xs text-stone-400">
-        {check.ok ? t("Grants: {grant}", { grant: describeGrantT(t, multiclassGrantsFor(option.id), locale) }) : check.error}
+        {check.ok ? t("Grants: {grant}", { grant: describeGrantT(t, multiclassGrantsFor(option.id), locale) }) : multiclassRefusalLabel(t, check, option.id, locale)}
       </span>
       <span className="block text-[11px] text-stone-600">{t("Requires {prereq}", { prereq: describePrereqT(t, option.id) })}</span>
     </button>
