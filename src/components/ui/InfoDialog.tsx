@@ -18,6 +18,7 @@ import { thirdPartyItemSummaryCs } from "@/lib/help/third-party-item-summary-cs"
 import { sameContentDocument } from "@/lib/help/content-ref-match";
 import { localizedThirdPartySpellDescription } from "@/lib/help/third-party-spell-summary-cs";
 import { thirdPartyFeatDescriptionCs } from "@/lib/help/third-party-feat-description-cs";
+import { thirdPartyFullRulesCs } from "@/lib/help/third-party-full-rules-cs";
 
 // The "what does this do?" affordance, used everywhere a game term appears.
 //
@@ -161,6 +162,11 @@ function ContentBody({ reference }: { reference: ContentRef }) {
       try {
         const { describeContentEntry } = await import("@/lib/help");
         const { needsNote } = await import("@/lib/content/levelup-logic");
+        const fullSpellRules = thirdPartyFullRulesCs(reference, locale);
+        if (fullSpellRules) {
+          if (!cancelled) setState({ text: fullSpellRules, loading: false });
+          return;
+        }
         const licensedFeatTranslation = thirdPartyFeatDescriptionCs(reference, locale);
         if (licensedFeatTranslation) {
           if (!cancelled) setState({ text: licensedFeatTranslation, loading: false });
@@ -419,10 +425,11 @@ function ItemBody({ reference }: { reference: ContentRef }) {
     ? sheet.description
     : itemDescriptionCs(reference.name ?? reference.slug, sheet.description, locale, reference.slug);
 
-  const supplementSummary = thirdPartyItemSummaryCs(reference, locale);
-  const displayedDescription = supplementSummary
+  const fullCzechItemRules = thirdPartyFullRulesCs(reference, locale);
+  const supplementSummary = fullCzechItemRules ? null : thirdPartyItemSummaryCs(reference, locale);
+  const displayedDescription = fullCzechItemRules ?? (supplementSummary
     ? `**Stručný český přehled:** ${supplementSummary}${shownDescription ? `\n\n**Úplný pravidlový popis (anglicky):**\n\n${shownDescription}` : ""}`
-    : shownDescription;
+    : shownDescription);
 
   return (
     <div className="space-y-4">
