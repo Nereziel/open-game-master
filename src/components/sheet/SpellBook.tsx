@@ -449,7 +449,7 @@ export function SpellBook({
                     </span>
                     <span className="spell-tile-state block truncate text-[10px]">
                       {tile.homebrew ? t("homebrew · ") : tile.source ? `${tile.source} · ` : ""}
-                      {support ? `${spellSupportWord(support)} · ` : ""}
+                      {support ? `${t(spellSupportWord(support))} · ` : ""}
                       {tile.blocked ?? tile.note ?? t(STATE_KEYS[tile.state])}
                     </span>
                   </span>
@@ -458,7 +458,7 @@ export function SpellBook({
                   label={shownName(tile)}
                   meta={summary}
                   text={described ?? undefined}
-                  note={support ? `**${support.kind === "partial" ? "Partly by hand" : "Narrated"}.** ${support.manual}` : undefined}
+                  note={support ? `**${t(support.kind === "partial" ? "Partly by hand" : "Narrated")}.** ${locale === "cs" && tile.name.toLowerCase() === "light" ? "Pokud nepřátelský tvor drží nebo nosí předmět, může se účinku vyhnout úspěšným záchranným hodem na Obratnost. Tento hod vyhodnocuje PJ." : support.manual}` : undefined}
                   reference={
                     tile.homebrew
                       ? undefined
