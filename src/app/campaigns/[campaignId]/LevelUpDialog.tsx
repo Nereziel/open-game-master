@@ -45,8 +45,8 @@ import {
   MULTICLASS_CAP,
   canMulticlassInto,
   classListFor,
-  describeGrant,
-  describePrereq,
+  describeGrantT,
+  describePrereqT,
   multiclassGrantsFor,
 } from "@/lib/srd/multiclass";
 import {
@@ -1942,9 +1942,9 @@ function NewClassButton({
         <span className="text-xs text-stone-500">d{option.hitDie}</span>
       </span>
       <span className="block text-xs text-stone-400">
-        {check.ok ? t("Grants: {grant}", { grant: describeGrant(multiclassGrantsFor(option.id)) }) : check.error}
+        {check.ok ? t("Grants: {grant}", { grant: describeGrantT(t, multiclassGrantsFor(option.id), locale) }) : check.error}
       </span>
-      <span className="block text-[11px] text-stone-600">{t("Requires {prereq}", { prereq: describePrereq(option.id) })}</span>
+      <span className="block text-[11px] text-stone-600">{t("Requires {prereq}", { prereq: describePrereqT(t, option.id) })}</span>
     </button>
   );
 }
