@@ -22,6 +22,7 @@ import { magicItemBonus, rowName, srdNameWithBonus } from "@/lib/srd/item-row";
 import { backgroundFeatureName, classFeatureName, contentName, speciesTraitName } from "@/lib/content/names";
 import { czechBundledSpeciesTrait } from "@/lib/content/species-traits-cs";
 import { languageLabel } from "@/lib/content/languages-cs";
+import { gameProficiency } from "@/lib/i18n/game-text";
 import { matchWeapon } from "@/lib/srd/weapons";
 import { cardArtwork } from "@/lib/battlemap/card-art";
 import { ITEM_CATEGORY_LABEL, itemCategory, itemToneStyle, type CategoryItem } from "@/lib/srd/item-category-logic";
@@ -284,23 +285,8 @@ export function TrainingLines({
     // the "s" after a possessive's apostrophe ("Alchemist'S Supplies").
     value.replace(/[-_]/g, " ").replace(/(^|\s)(['‘]?)([a-z])/g, (_, before: string, quote: string, letter: string) => `${before}${quote}${letter.toUpperCase()}`);
   const localizeValue = (value: string, kind?: "armor" | "weapons") => {
-    // Generic translations are ambiguous here: "light" can mean illumination,
-    // but in armor proficiency it means light armor.
-    if (locale === "cs" && kind) {
-      const key = value.trim().toLowerCase().replace(/[-_]/g, " ").replace(/\s+/g, " ");
-      const armor: Record<string, string> = {
-        light: "Lehká", "light armor": "Lehká zbroj",
-        medium: "Střední", "medium armor": "Střední zbroj",
-        heavy: "Těžká", "heavy armor": "Těžká zbroj",
-        shield: "Štít", shields: "Štíty",
-      };
-      const weapons: Record<string, string> = {
-        simple: "Jednoduché", "simple weapons": "Jednoduché zbraně",
-        martial: "Vojenské", "martial weapons": "Vojenské zbraně",
-      };
-      const translated = (kind === "armor" ? armor : weapons)[key];
-      if (translated) return translated;
-    }
+    const proficiency = kind ? gameProficiency(value, kind, locale) : null;
+    if (proficiency) return proficiency;
     const title = nice(value);
     const hit = t(title);
     if (hit !== title) return hit;

@@ -157,7 +157,7 @@ describe("fillable character-sheet PDF localization", () => {
     expect(cs).toContain("Znáš trik Světlo.");
     expect(cs).not.toContain("the light cantrip");
     expect(cs).toContain("lehká zbroj, střední zbroj, těžká zbroj, štíty");
-    expect(cs).toContain("jednoduché zbraně, válečné zbraně");
+    expect(cs).toContain("jednoduché zbraně, vojenské zbraně");
     expect(cs).toContain('Osobnostní rys: "Cizincům žehnám, ať o požehnání stojí, nebo ne."');
     const en = (await getTexts("en")).join("\\n");
     expect(en).toContain("Light Bearer (the light cantrip)");
