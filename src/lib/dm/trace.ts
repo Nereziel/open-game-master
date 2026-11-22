@@ -109,7 +109,7 @@ function pruneFiles(directory: string, current: string) {
 export function recordDmTrace(event: string, payload: Record<string, unknown> = {}): void {
   if (!dmTraceEnabled()) return;
   try {
-    const directory = path.join(process.cwd(), "data", "dm-traces");
+    const directory = path.join(/*turbopackIgnore: true*/ process.cwd(), "data", "dm-traces");
     mkdirSync(directory, { recursive: true, mode: 0o700 });
     const date = new Date().toISOString().slice(0, 10);
     const file = path.join(directory, date + "-" + process.pid + ".jsonl");

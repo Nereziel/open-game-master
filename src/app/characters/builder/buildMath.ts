@@ -420,7 +420,7 @@ export function knownSoFarRows({
             id: "save-proficiencies",
             label: say("Proficient saves", {}, "Proficient saves"),
             value: klass.saves.map((save) => abilityName(save)).join(", "),
-            working: klass.name,
+            working: className,
           },
         ]
       : []),

@@ -33,6 +33,7 @@ const SKILL_ALIASES: Readonly<Record<string, string>> = {
   umění: "performance",
   čachry: "sleight_of_hand",
   nenápadnost: "stealth",
+  plížení: "stealth",
 };
 
 function reverseMap(values: Readonly<Record<string, string>>, canonical: (original: string) => string): Map<string, string> {

@@ -1284,8 +1284,8 @@ try {
     }
     const batches = await Promise.all([1, 2, 3, 4, 5, 6, 7, 8, 9, 10].map(
       async (n) => {
-        const module = await import(`../src/lib/rulebook/czech-full-rules-${n}.ts`);
-        return module[`CZECH_FULL_RULES_${n}`];
+        const rulesModule = await import(`../src/lib/rulebook/czech-full-rules-${n}.ts`);
+        return rulesModule[`CZECH_FULL_RULES_${n}`];
       },
     ));
     const ids = batches.flatMap((batch) => Object.keys(batch));

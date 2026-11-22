@@ -710,7 +710,7 @@ try {
     script.plans = [errand, errand];
     await generateStoryArc(stubborn.id);
     assert.equal(sent("plan").length, 2, "one retry, never a loop");
-    assert.equal(stubborn.arc().saga.sketches[0].boss.name, "Vicar Osseth", "a model that cannot fix it still leaves the table with its plan");
+    assert.equal(stubborn.arc().saga.sketches[0].boss, null, "an uncorrectable early final boss is deferred rather than fought before the finale");
 
     // Act 1 written as the whole saga in miniature is written once more.
     const miniature = {

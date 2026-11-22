@@ -122,7 +122,7 @@ Ze své ruky vypustíš oblak jedovatého plynu proti tvorovi, kterého vidíš.
 
 Provedeš drobný neškodný magický trik: okamžitý smyslový efekt, zapálení či zhasnutí malé ohně, vyčištění nebo zašpinění předmětu, ohřátí, ochlazení či ochucení neživého materiálu, malou značku či symbol nebo drobný předmět či iluzi, která se vejde do dlaně. Předměty vytvořené kouzlem nejsou cenné ani použitelné jako nástroje. Lze současně udržovat nejvýše **tři neokamžité účinky**.`,
 
-  "Protection From Energy": `**Vyvolání:** 1 akce. **Dosah:** dotyk. **Trvání:** soustředění, nejvýše 1 hodina.
+  "Protection from Energy": `**Vyvolání:** 1 akce. **Dosah:** dotyk. **Trvání:** soustředění, nejvýše 1 hodina.
 
 Ochotný tvor, kterého se dotkneš, získá po dobu trvání **odolání** vůči jednomu druhu zranění, který zvolíš při seslání: **kyselinovému, chladnému, ohnivému, bleskovému nebo hromovému**.`,
 

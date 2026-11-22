@@ -194,7 +194,7 @@ await test("the GM reads them every turn beside the backstory, and a blank panel
 await test("the builder asks on the Identity step, the sheet shows them and its owner edits them, on hosts that keep them", async () => {
   const step = read("src/app/characters/builder/steps/IdentityStep.tsx");
   assert.match(step, /<PersonalityFields/);
-  assert.match(step, /title="Personality \(optional\)"/);
+  assert.match(step, /title=\{t\("Personality \(optional\)"\)\}/);
   assert.match(read("src/app/characters/builder/submit.ts"), /persona: personaOrNothing\(state\.persona\)/);
   assert.match(read("src/app/characters/builder/useBuilderState.ts"), /useState<Persona>\(initial\?\.persona \?\? EMPTY_PERSONA\)/);
   assert.match(read("src/app/campaigns/[campaignId]/CharacterSheetDialog.tsx"), /<SheetPersonality sheet=\{sheet\} mine=\{mine\}/);

@@ -164,10 +164,7 @@ export function RulebookContents({
     const q = query.trim();
     const key = `${locale}:${q}`;
     asked.current = key;
-    if (!q) {
-      setSearching(false);
-      return;
-    }
+    if (!q) return;
     const timer = setTimeout(async () => {
       setSearching(true);
       try {
@@ -243,11 +240,11 @@ export function RulebookContents({
         <input
           ref={searchRef}
           value={query}
-          onChange={(event) => setQuery(event.target.value)}
+          onChange={(event) => { setSearching(false); setQuery(event.target.value); }}
           onKeyDown={(event) => {
             if (event.key === "Escape" && query) {
               event.stopPropagation();
-              setQuery("");
+              setSearching(false); setQuery("");
             }
             if (event.key === "Enter" && shown?.hits[0]) {
               const hit = shown.hits[0];
@@ -259,7 +256,7 @@ export function RulebookContents({
           spellCheck={false}
           enterKeyHint="search"
         />
-        {searching ? (
+        {searchingNow && searching ? (
           // eslint-disable-next-line @next/next/no-img-element
           <img src="/assets/ui/quill.webp" alt="" className="rb-quill" />
         ) : query ? (

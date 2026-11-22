@@ -130,7 +130,7 @@ test("a structured CLI completion ends with a JSON-only contract, unlike an ordi
     { role: "system", content: "Reply with ONLY a strict JSON array (the outermost value MUST start with [ and end with ]), no code fences. This is not a JSON object." },
     { role: "user", content: "Generate off-screen world arcs, not the main campaign story." },
   ]);
-  assert.match(worldClocks.prompt, /Start with \\[ and end with \\]/);
+  assert.match(worldClocks.prompt, /Start with \[ and end with \]/);
   assert.match(worldClocks.prompt, /Do NOT return an object/);
   assert.doesNotMatch(json.prompt, /Do NOT return an object/);
   const ordinary = renderCompletion([
