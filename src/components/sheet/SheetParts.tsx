@@ -4,6 +4,7 @@ import type { CSSProperties, ReactNode } from "react";
 import { ChevronRight } from "lucide-react";
 import { GameIcon } from "@/components/ui/GameIcon";
 import { GameTerm } from "@/components/ui/GameTerm";
+import { SkillHelpTerm } from "@/components/sheet/SkillHelpTerm";
 import { InfoChipList } from "@/components/ui/InfoDialog";
 import { CountPop } from "@/components/ui/Reveal";
 import { cn } from "@/lib/cn";
@@ -36,6 +37,10 @@ type Ability = (typeof ABILITIES)[number];
 
 // The abilities' names as message keys (sheet.ability.*), read with the
 // component's own translator; the tile's eyebrow keeps the short code.
+export const CS_ABILITY_ABBR: Record<Ability, string> = {
+  str: "SÍL", dex: "OBR", con: "ODL", int: "INT", wis: "MDR", cha: "CHA",
+};
+
 const ABILITY_KEYS: Record<Ability, string> = {
   str: "Strength",
   dex: "Dexterity",
@@ -121,6 +126,7 @@ export function AbilityTiles({
   explainSave?: (ability: Ability) => string;
 }) {
   const t = useT();
+  const locale = useLocale();
   return (
     <div className="stagger-up grid grid-cols-3 gap-2 sm:grid-cols-6">
       {ABILITIES.map((ability, index) => {
@@ -134,8 +140,8 @@ export function AbilityTiles({
             title={t(ABILITY_KEYS[ability])}
           >
             <GameIcon icon={{ kind: "glyph", key: `ability-${ability}` }} size="size-9" className="mx-auto" />
-            <p className="eyebrow mt-1 text-[10px] text-stone-400">{ability}</p>
-            <p className="sheet-ability-mod">{formatModifier(mods[ability])}</p>
+            <p className="eyebrow mt-1 text-[10px] text-stone-400">{locale === "cs" ? CS_ABILITY_ABBR[ability] : ability.toUpperCase()}</p>
+            <p className="sheet-ability-mod" title={locale === "cs" ? `Bonus z ${({ str: "Síly", dex: "Obratnosti", con: "Odolnosti", int: "Inteligence", wis: "Moudrosti", cha: "Charismatu" } as Record<Ability, string>)[ability]}` : t("Ability modifier")}>{formatModifier(mods[ability])}</p>
             <p className="sheet-ability-score">{abilities[ability]}</p>
             {saves ? (
               <p
@@ -335,7 +341,7 @@ export function SkillRows({
         return (
           <span key={skill.id} className={cn("sheet-skill", on && "sheet-skill-on")} title={explain?.(skill.id)}>
             <GameIcon icon={{ kind: "glyph", key: `skill-${skill.name}` }} size="size-5" />
-            <span className="grow truncate">{skillLabel(skill.id, locale)}</span>
+            <span className="min-w-0 grow truncate"><SkillHelpTerm id={skill.id} ability={skill.ability} /></span>
             <span className={cn("sheet-pip", on && "sheet-pip-on")} aria-hidden="true" />
             <span className="w-7 text-right font-mono">{formatModifier(skills[skill.id] ?? 0)}</span>
           </span>

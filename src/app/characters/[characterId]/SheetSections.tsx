@@ -103,8 +103,8 @@ export function SheetSections({ sheet, level = 1 }: { sheet: CreateSheetInput; l
               {
                 glyph: "rest-speed",
                 label: t("Speed"),
-                value: `${speedFor(sheet)} ft`,
-                title: speedFor(sheet) === sheet.speed ? t("Their walking speed.", { context: "characters.sheet.speedTitle" }) : t("Base {speed} ft, changed by what they wear and their features.", { speed: sheet.speed }),
+                value: locale === "cs" ? `${speedFor(sheet)} stop` : `${speedFor(sheet)} ft`,
+                title: speedFor(sheet) === sheet.speed ? t("Their walking speed.", { context: "characters.sheet.speedTitle" }) : locale === "cs" ? `Základní rychlost ${sheet.speed} stop, upravená vybavením a schopnostmi.` : t("Base {speed} ft, changed by what they wear and their features.", { speed: sheet.speed }),
               },
               { glyph: "coin-gp", label: t("Coin"), value: formatPrice(purseCopper(sheet)) },
               {
