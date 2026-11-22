@@ -12,7 +12,7 @@ import { MechGroup, list, num, sub, type Mech } from "@/app/workshop/homebrew/Me
 import { addChip, rowIcon } from "@/app/workshop/kit";
 import { textKey } from "@/lib/language/text-logic";
 import { hostOffers, useCapabilities } from "@/lib/use-capabilities";
-import { useT } from "@/lib/locale";
+import { useLocale, useT } from "@/lib/locale";
 
 // The rest of a magic item's magic, in the words the engines read the SRD's
 // by (src/lib/homebrew/item-magic-schema.ts): what a magic weapon adds to a
@@ -109,6 +109,7 @@ export function ArmorRidersBlock({ data, set }: Props) {
 
 export function ChargesBlock({ data, set }: Props) {
   const t = useT();
+  const locale = useLocale();
   const charges = sub(data.charges);
   const put = (patch: Mech) => set({ charges: clean({ ...charges, ...patch }) });
   const regain = String(charges.regain ?? "");
@@ -123,9 +124,9 @@ export function ChargesBlock({ data, set }: Props) {
         {regain ? <CheckField label={t("Comes back at dusk, not dawn")} checked={charges.regainAtDusk === true} onChange={(on) => put({ regainAtDusk: on || undefined })} /> : null}
       </div>
       {/* The staffs' last-charge d20 (SRD 5.1): a 1 can leave a plain item, a 20 refill it. */}
-      <TextField label={t("Last charge, on a 1 it becomes")} value={String(charges.lastChargeBecomes ?? "")} onChange={(item) => put({ lastChargeBecomes: item || undefined })} placeholder="Quarterstaff" maxLength={60} hint={t("The plain item left when the last charge's d20 shows 1. Leave empty if a 1 destroys it or does nothing.")} />
+      <TextField label={t("Last charge, on a 1 it becomes")} value={String(charges.lastChargeBecomes ?? "")} onChange={(item) => put({ lastChargeBecomes: item || undefined })} placeholder={locale === "cs" ? "Čtvrthůl" : "Quarterstaff"} maxLength={60} hint={t("The plain item left when the last charge's d20 shows 1. Leave empty if a 1 destroys it or does nothing.")} />
       <TextField label={t("Last charge, on a 20 it regains")} value={String(charges.lastChargeRegain ?? "")} onChange={(dice) => put({ lastChargeRegain: dice || undefined })} placeholder="1d8+2" maxLength={20} hint={t("Dice of charges back when the last charge's d20 shows 20.")} />
-      <TextField label={t("Once a day it can")} value={String(charges.daily ?? "")} onChange={(daily) => put({ daily: daily || undefined })} placeholder="turn resistance into immunity for 10 minutes" maxLength={200} className="col-span-2 sm:col-span-4" />
+      <TextField label={t("Once a day it can")} value={String(charges.daily ?? "")} onChange={(daily) => put({ daily: daily || undefined })} placeholder={locale === "cs" ? "na 10 minut změnit odolnost vůči zranění na imunitu" : "turn resistance into immunity for 10 minutes"} maxLength={200} className="col-span-2 sm:col-span-4" />
     </MechGroup>
   );
 }
