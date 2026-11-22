@@ -153,6 +153,15 @@ const gold = (t: Say, copper: number) => t("{amount} gold", { amount: Math.round
 const displayName = (t: Say, table: FrNamesTable | "items", raw: string) =>
   contentName(table, raw, t.locale ?? "en");
 
+// Damage types are fixed SRD identifiers, not arbitrary author text. The
+// translated words live in the UI catalog; this set only gates safe lookups.
+const SRD_DAMAGE_TYPES = new Set([
+  "acid", "bludgeoning", "cold", "fire", "force", "lightning", "necrotic",
+  "piercing", "poison", "psychic", "radiant", "slashing", "thunder",
+]);
+const displayDamageType = (t: Say, type: string) =>
+  SRD_DAMAGE_TYPES.has(type.toLowerCase()) ? t(type.toLowerCase()) : type;
+
 function deathState(t: Say, name: string, delta: Delta): string {
   const tp = pluralOf(t);
   const revived = word(delta.revived);
@@ -227,7 +236,7 @@ function knownEntryText(t: Say, entry: { kind: string; delta: Delta }, name: str
       const hp = amount(delta.currentHp);
       const dmg = amount(delta.amount);
       const line = dmg !== null ? t("{name} takes {amount} damage", { name, amount: dmg }) : t("{name} takes some damage", { name });
-      return `${line}${type ? t(" ({type})", { type }) : ""}${hp !== null ? t(" ({hp} HP)", { hp }) : ""}`;
+      return `${line}${type ? t(" ({type})", { type: displayDamageType(t, type) }) : ""}${hp !== null ? t(" ({hp} HP)", { hp }) : ""}`;
     }
     case "heal": {
       const form = word(delta.form);
