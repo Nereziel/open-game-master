@@ -313,7 +313,8 @@ function knownEntryText(t: Say, entry: { kind: string; delta: Delta }, name: str
       if (created) return t("{name} creates a pact weapon: {item}", { name, item: displayName(t, "items", created) });
       if (bonded) return t("{name} bonds with {item} as a pact weapon", { name, item: displayName(t, "items", bonded) });
       if (unbonded) return t("{name} breaks the pact bond with {item}", { name, item: displayName(t, "items", unbonded) });
-      return t("{name} dismisses {item}", { name, item: word(delta.dismissed) ? displayName(t, "items", word(delta.dismissed)!) : t("the pact weapon") });
+      const dismissed = word(delta.dismissed);
+      return t("{name} dismisses {item}", { name, item: dismissed ? displayName(t, "items", dismissed) : t("the pact weapon") });
     }
     // Pact of the Tome: a new book, the old one gone with it.
     case "book_of_shadows":
@@ -357,8 +358,9 @@ function knownEntryText(t: Say, entry: { kind: string; delta: Delta }, name: str
       if (word(delta.condition) === "exhaustion" && level !== null) {
         return t("{name}'s exhaustion falls to level {level}", { name, level });
       }
-      const ended = [word(delta.condition)].filter((value): value is string => !!value).concat(word(delta.condition) ? [] : words(delta.ended))
-        .map((condition) => displayName(t, "conditions", condition)).join(` ${t("or")} `) || null;
+      const condition = word(delta.condition);
+      const ended = (condition ? [condition] : words(delta.ended))
+        .map((value) => displayName(t, "conditions", value)).join(` ${t("or")} `);
       return ended ? t("{name} is no longer {ended}", { name, ended }) : t("{name} is rid of a condition", { name });
     }
     case "exhaustion": {
