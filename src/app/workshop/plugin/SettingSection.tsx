@@ -49,7 +49,7 @@ export function SettingSection({ draft, onDraft }: SectionProps) {
           onChange={(hooks) => onDraft({ ...draft, hooks })}
           maxLength={240}
           addLabel={t("Add a hook")}
-          placeholder="A tide-priest offers to pay for a relic nobody else will touch."
+          placeholder={t("A tide-priest offers to pay for a relic nobody else will touch.")}
           empty={t("No hooks yet.")}
         />
       </section>
