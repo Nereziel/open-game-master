@@ -8,6 +8,7 @@
 // pattern in home/types.ts), so a language switch rewords the review with
 // the rest of the builder. Pure otherwise: no React, no database.
 import { contentName } from "@/lib/content/names";
+import { abilityShortLabel } from "@/lib/srd/ability-short-label";
 import type { Locale } from "@/lib/messages-logic";
 import { fixedDieValue, type HpMethod } from "@/lib/srd/hit-points";
 import { formatPrice } from "@/lib/srd/currency";
@@ -77,18 +78,13 @@ export function hitPointsLine(t: Translator, input: {
   };
 }
 
-const ABILITY_ABBR_FR: Record<string, string> = { STR: "FOR", WIS: "SAG" };
-
 export function localizeAcPart(part: string, t: Translator, locale: Locale): string {
-  if (locale !== "fr") return part;
-  const match = /^(.+?)\s+(\+?\d+)$/.exec(part);
+  if (locale !== "fr" && locale !== "cs") return part;
+  const match = /^(.+?)\s+([+-]?\d+)$/.exec(part);
   if (!match) return part;
   const [, rawName, num] = match;
-  if (rawName === "STR" || rawName === "WIS") {
-    return `${ABILITY_ABBR_FR[rawName] ?? rawName} ${num}`;
-  }
-  if (rawName === "DEX" || rawName === "CON" || rawName === "INT" || rawName === "CHA") {
-    return part;
+  if (["STR", "DEX", "CON", "INT", "WIS", "CHA"].includes(rawName)) {
+    return `${abilityShortLabel(rawName, locale)} ${num}`;
   }
   const translated = t(rawName);
   const name = translated !== rawName ? translated : contentName("items", rawName, locale);

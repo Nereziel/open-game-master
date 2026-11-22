@@ -7,7 +7,8 @@ import { InfoButton } from "@/components/ui/InfoDialog";
 import { describeContentEntry, spellSummary } from "@/lib/help";
 import { useContentSearch, type PickerEntry } from "./useContentSearch";
 import { textKey } from "@/lib/language/text-logic";
-import { useT, useTp } from "@/lib/locale";
+import { useLocale, useT, useTp } from "@/lib/locale";
+import { contentName } from "@/lib/content/names";
 
 // `level` rides along for spells, so a cantrip picked here lands in the
 // cantrip list rather than among the levelled spells.
@@ -37,6 +38,8 @@ export default function MultiContentPicker({
 }) {
   const t = useT();
   const tp = useTp();
+  const locale = useLocale();
+  const displayName = (name: string, source?: string) => source === "homebrew" ? name : contentName(kind, name, locale);
   const { query, setQuery, results, setResults, open, setOpen, loading, unavailable, failed, unadmitted } =
     useContentSearch(kind, extraParams);
   const [pending, setPending] = useState<MultiPick[]>([]);
@@ -130,7 +133,7 @@ export default function MultiContentPicker({
                       <Plus className="size-3.5 shrink-0 text-stone-600" />
                     )}
                     <span className={cn(entry.source === "homebrew" && "text-amber-300")}>
-                      {entry.name}
+                      {displayName(entry.name, entry.source)}
                     </span>
                   </span>
                   <span className="shrink-0 text-xs text-stone-500">
@@ -142,7 +145,7 @@ export default function MultiContentPicker({
                   </span>
                 </button>
                 <InfoButton
-                  label={entry.name}
+                  label={displayName(entry.name, entry.source)}
                   meta={kind === "spells" ? spellSummary(entry.data) : undefined}
                   text={describeContentEntry(entry.data)}
                   reference={entry.source === "homebrew" ? undefined : { kind, slug: entry.slug }}
@@ -159,13 +162,13 @@ export default function MultiContentPicker({
                 onClick={addCustom}
                 className="flex w-full items-center gap-1.5 px-3 py-1.5 text-left text-sm text-amber-300 hover:bg-stone-800"
               >
-                <Plus className="size-3.5 shrink-0" /> Add &quot;{trimmedQuery}&quot; as custom
+                <Plus className="size-3.5 shrink-0" />{t('Add "{name}" as custom', { name: trimmedQuery })}
               </button>
             </li>
           ) : null}
           {failed ? (
             <li role="alert" className="px-3 py-1.5 text-xs text-amber-300/90">
-              Could not reach the server to search; type again to retry, or add entries by name.
+              {t("Could not reach the server to search; type again to retry, or add entries by name.")}
             </li>
           ) : unavailable ? (
             <li className="px-3 py-1.5 text-xs text-stone-500">
@@ -186,13 +189,13 @@ export default function MultiContentPicker({
               key={pick.name}
               className="flex items-center gap-1 rounded-full bg-stone-800 px-2 py-0.5 text-xs text-stone-200"
             >
-              {pick.name}
+              {displayName(pick.name)}
               <button
                 type="button"
                 onClick={() =>
                   setPending((picks) => picks.filter((entry) => entry.name !== pick.name))
                 }
-                aria-label={t("Remove {name}", { name: pick.name })}
+                aria-label={t("Remove {name}", { name: displayName(pick.name) })}
                 className="text-stone-500 hover:text-red-400"
               >
                 <X className="size-3" />
@@ -204,7 +207,7 @@ export default function MultiContentPicker({
             onClick={commit}
             className="rounded-full bg-amber-300 px-2.5 py-0.5 text-xs font-medium text-stone-950 hover:bg-amber-200"
           >
-            Add {pending.length}
+            {t("Add {count}", { count: pending.length })}
           </button>
         </div>
       ) : null}

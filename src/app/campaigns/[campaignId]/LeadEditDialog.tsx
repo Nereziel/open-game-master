@@ -16,29 +16,32 @@ import { KitButton, PanelError } from "./PanelKit";
 import { GiveStats, useUnknownGear } from "./GiveStats";
 import {
   ChipList,
+  LocalizedItemNameInput,
   ItemFlags,
   SlotSteppers,
   editedSpellSlots,
   equipmentFrom,
   highestStoredSlot,
   itemRowsOf,
-  levelMeta,
   spellListOf,
   syncCasterLists,
   type ItemRow,
   type SlotEdits,
 } from "./LeadEditParts";
 import { coinCorrection, coinFields, earnedExpertise, expertiseOverCap, skillLevelsOf, trainingFrom, type SkillLevel } from "./lead-edit-logic";
-import { acBreakdownFor, effectiveAcFor, SRD_SKILLS } from "@/lib/srd";
+import { acBreakdownFor, effectiveAcFor, SRD_SKILLS, skillLabel } from "@/lib/srd";
 import { isCantripName } from "@/lib/srd/spell-lists";
 import { spellStyleFor } from "@/lib/srd/spell-prep";
 import { priceText } from "@/lib/srd/currency";
 import MultiContentPicker from "@/app/characters/builder/MultiContentPicker";
 import { ABILITIES, type Ability, type CharacterSheet, type Proficiencies } from "@/lib/schemas/sheet";
 import { hostOffers, useCapabilities } from "@/lib/use-capabilities";
-import { useT } from "@/lib/locale";
+import { useLocale, useT } from "@/lib/locale";
+import { contentName } from "@/lib/content/names";
+import { abilityShortLabel } from "@/lib/srd/ability-short-label";
+import { GameTerm } from "@/components/ui/GameTerm";
+import { localizeAcParts } from "@/app/characters/builder/derivedReasons";
 
-const ABILITY_SHORT: Record<string, string> = { str: "STR", dex: "DEX", con: "CON", int: "INT", wis: "WIS", cha: "CHA" };
 
 // The training levels, their labels as message keys read with the dialog's
 // translator at draw time (the STATE_KEYS pattern, SpellBook.tsx).
@@ -62,6 +65,9 @@ export function LeadEditDialog({
   onClose: () => void;
 }) {
   const t = useT();
+  const locale = useLocale();
+  const localizedLevelMeta = (entry: { level?: number }) =>
+    entry.level === undefined ? "" : entry.level === 0 ? t("cantrip", { context: "lead.edit.cantripMeta" }) : t("Level {level}", { level: entry.level });
   const [currentHp, setCurrentHp] = useState(String(sheet.currentHp));
   const [tempHp, setTempHp] = useState(String(sheet.tempHp));
   const [maxHp, setMaxHp] = useState(String(sheet.maxHp));
@@ -329,7 +335,7 @@ export function LeadEditDialog({
           <div className="mt-2 space-y-1.5 rounded-lg border border-stone-700/50 bg-stone-950/40 p-2 text-xs">
             <div className="flex flex-wrap items-center justify-between gap-2">
               <span className="flex items-center gap-1 text-stone-400">
-                <GameIcon icon={{ kind: "glyph", key: "rest-ac" }} size="size-4" /> {t("AC")}
+                <GameIcon icon={{ kind: "glyph", key: "rest-ac" }} size="size-4" /> <GameTerm id="armor_class">{t("AC")}</GameTerm>
               </span>
               <Switch on={pinned} onChange={setPinned} label={t("Pin the armor class by hand")} />
             </div>
@@ -342,8 +348,8 @@ export function LeadEditDialog({
               </div>
             ) : (
               <p className="reveal text-[11px] text-stone-400">
-                {t("Armor sets it: {ac}", { ac: derived.ac })} <span className="text-stone-100"></span>
-                {derived.parts.length ? ` (${derived.parts.join(", ")})` : ""}
+                {t("Armor sets the AC: {ac}", { ac: derived.ac })}
+                {derived.parts.length ? ` (${localizeAcParts(derived.parts, t, locale).join(", ")})` : ""}
               </p>
             )}
             {facing !== (pinned ? Number(ac) : derived.ac) ? (
@@ -364,10 +370,10 @@ export function LeadEditDialog({
 
           <div className="mt-3 space-y-2 text-xs">
             <SectionHead title={t("Scores and training")} glyph="rest-level-up" level="h3" />
-            <div className="grid grid-cols-3 gap-2">
+            <div className="grid grid-cols-2 gap-3">
               {ABILITIES.map((ability) => (
-                <div key={ability} className="space-y-1">
-                  <span className="text-stone-400">{({ "str": t("Strength"), "dex": t("Dexterity"), "con": t("Constitution"), "int": t("Intelligence"), "wis": t("Wisdom"), "cha": t("Charisma") } as Record<string, string>)[ability] ?? String(ability)}</span>
+                <div key={ability} className="min-w-0 space-y-1">
+                  <span className="block truncate text-stone-400">{({ "str": t("Strength"), "dex": t("Dexterity"), "con": t("Constitution"), "int": t("Intelligence"), "wis": t("Wisdom"), "cha": t("Charisma") } as Record<string, string>)[ability] ?? String(ability)}</span>
                   <NumberStepper
                     size="sm"
                     value={abilities[ability]}
@@ -407,16 +413,16 @@ export function LeadEditDialog({
               </span>
               <ul className="divide-y divide-stone-800/60">
                 {SRD_SKILLS.map((skill) => (
-                  <li key={skill.id} className="flex items-center justify-between gap-2 py-1">
+                  <li key={skill.id} className="flex flex-col items-start gap-1.5 py-2 sm:flex-row sm:items-center sm:justify-between">
                     <span className="min-w-0 text-stone-200">
-                      {skill.name} <span className="text-stone-500">{ABILITY_SHORT[skill.ability]}</span>
+                      {skillLabel(skill.id, locale)} <span className="text-stone-500">{abilityShortLabel(skill.ability, locale)}</span>
                     </span>
                     <SegmentedControl
                       options={SKILL_LEVELS.map((level) => ({ ...level, label: t(level.label) }))}
                       value={skillLevels[skill.id] ?? "none"}
                       onChange={(level) => setSkillLevels((levels) => ({ ...levels, [skill.id]: level }))}
                       size="sm"
-                      label={skill.name}
+                      label={skillLabel(skill.id, locale)}
                       className="shrink-0"
                       optionClassName="pointer-coarse:min-h-10"
                     />
@@ -433,11 +439,11 @@ export function LeadEditDialog({
               <div className="flex items-center gap-2">
                 <GameIcon icon={{ kind: "item", key: row.name, family: "item-gear" }} size="size-6" className="shrink-0" />
                 {row.base.slug ? (
-                  <span className={cn(field, "truncate")}>{row.name}</span>
+                  <span className={cn(field, "min-w-0 truncate")}>{contentName("items", row.name, locale)}</span>
                 ) : (
-                  <input
-                    value={row.name}
-                    onChange={(event) => setItem(index, { name: event.target.value })}
+                  <LocalizedItemNameInput
+                    name={row.name}
+                    onChange={(name) => setItem(index, { name })}
                     placeholder={t("Item name")}
                     className={field}
                   />
@@ -509,7 +515,7 @@ export function LeadEditDialog({
                     addCantrips(entries);
                     setKnown((list) => [...list, ...spellNamesOf(entries)]);
                   }}
-                  renderMeta={levelMeta}
+                  renderMeta={localizedLevelMeta}
                 />
               </div>
               ) : null}
@@ -532,13 +538,13 @@ export function LeadEditDialog({
                       addCantrips(entries);
                       setSpellbook((list) => [...list, ...spellNamesOf(entries)]);
                     }}
-                    renderMeta={levelMeta}
+                    renderMeta={localizedLevelMeta}
                   />
                 </div>
               ) : null}
               {style !== "known" || prepared.length ? (
               <div className="space-y-1">
-                <span className="eyebrow text-[10px] text-amber-400/80">{t("Prepared")}</span>
+                <span className="eyebrow text-[10px] text-amber-400/80">{t("Prepared spells")}</span>
                 <ChipList
                   values={prepared}
                   onRemove={(value) =>
@@ -559,7 +565,7 @@ export function LeadEditDialog({
                       setSpellbook((list) => [...list, ...names.filter((name) => !list.includes(name))]);
                     }
                   }}
-                  renderMeta={levelMeta}
+                  renderMeta={localizedLevelMeta}
                 />
               </div>
               ) : null}
@@ -579,6 +585,7 @@ export function LeadEditDialog({
           <div className="mt-3 space-y-1 text-xs">
             <SectionHead title={t("Feats")} glyph="rest-level-up" level="h3" aside={feats.length || null} />
             <ChipList
+              kind="feats"
               values={feats}
               onRemove={(value) => setFeats((list) => list.filter((entry) => entry !== value))}
             />
@@ -592,7 +599,7 @@ export function LeadEditDialog({
             />
           </div>
           <label className="mt-2 block space-y-1 text-xs">
-            <span className="text-stone-400">{t("Reason (shown in the log)")}</span>
+            <span className="text-stone-400">{t("Reason for change (shown in the log)")}</span>
             <input
               value={reason}
               onChange={(event) => setReason(event.target.value)}

@@ -1,7 +1,10 @@
 "use client";
 
 import { X } from "lucide-react";
+import { useState } from "react";
 import { cn } from "@/lib/cn";
+import { useLocale, useT } from "@/lib/locale";
+import { contentName } from "@/lib/content/names";
 import { NumberStepper } from "@/components/ui/NumberStepper";
 import { KitButton } from "./PanelKit";
 import { casterViewsOf, withCasterViews } from "@/lib/srd/spell-prep";
@@ -23,11 +26,12 @@ export {
 // What the row holds besides its name, as small chips: the state the save
 // now keeps.
 export function ItemFlags({ item }: { item: EquipmentItem }) {
+  const t = useT();
   const flags = [
-    item.equipped ? (item.layered ? "worn beside another (GM's call)" : "worn") : null,
-    item.attuned ? "attuned" : item.attuning ? "attunes at the next rest" : null,
-    item.identified === false ? "unidentified" : null,
-    item.charges !== undefined ? `${item.charges} charges` : null,
+    item.equipped ? (item.layered ? t("worn beside another, on the GM's say") : t("worn")) : null,
+    item.attuned ? t("attuned") : item.attuning ? t("attunes at the next rest") : null,
+    item.identified === false ? t("unidentified") : null,
+    item.charges !== undefined ? t("{count} charges", { count: item.charges }) : null,
   ].filter((flag): flag is string => Boolean(flag));
   if (!flags.length) {
     return null;
@@ -43,9 +47,42 @@ export function ItemFlags({ item }: { item: EquipmentItem }) {
   );
 }
 
+// Existing inventory names are canonical English IDs. Show their translated
+// display names until a user edits the field, then expose the original value
+// so editing never accidentally saves a translated ID.
+export function LocalizedItemNameInput({
+  name,
+  onChange,
+  className,
+  placeholder,
+}: {
+  name: string;
+  onChange: (name: string) => void;
+  className?: string;
+  placeholder?: string;
+}) {
+  const [focused, setFocused] = useState(false);
+  const locale = useLocale();
+  const displayed = focused ? name : contentName("items", name, locale);
+  return (
+    <input
+      value={displayed}
+      onFocus={() => setFocused(true)}
+      onBlur={() => setFocused(false)}
+      onChange={(event) => onChange(event.target.value)}
+      aria-label={placeholder}
+      title={focused ? name : displayed}
+      placeholder={placeholder}
+      className={className}
+    />
+  );
+}
+
 // Removable name chips backing the spell and feat lists; adding goes
 // through the searchable multi-select pickers below each list.
-export function ChipList({ values, onRemove }: { values: string[]; onRemove: (value: string) => void }) {
+export function ChipList({ values, onRemove, kind = "spells" }: { values: string[]; onRemove: (value: string) => void; kind?: "spells" | "feats" }) {
+  const locale = useLocale();
+  const t = useT();
   if (!values.length) {
     return null;
   }
@@ -53,8 +90,8 @@ export function ChipList({ values, onRemove }: { values: string[]; onRemove: (va
     <div className="stagger-pop flex flex-wrap gap-1.5">
       {values.map((value) => (
         <span key={value} className={cn("pk-chip gap-0.5 py-0 pl-2 pr-0.5 text-xs text-stone-200")}>
-          {value}
-          <KitButton tone="iconDanger" always onClick={() => onRemove(value)} aria-label={`Remove ${value}`} className="p-1">
+          {contentName(kind, value, locale)}
+          <KitButton tone="iconDanger" always onClick={() => onRemove(value)} aria-label={t("Remove {name}", { name: contentName(kind, value, locale) })} className="p-1">
             <X className="size-3" />
           </KitButton>
         </span>
@@ -116,6 +153,7 @@ export function SlotSteppers({
   slots: SlotEdits;
   onChange: (update: (previous: SlotEdits) => SlotEdits) => void;
 }) {
+  const t = useT();
   const set = (level: string, key: "max" | "used", value: number) =>
     onChange((previous) => ({
       ...previous,
@@ -124,15 +162,15 @@ export function SlotSteppers({
   return (
     <div className="stagger-pop flex flex-wrap gap-2">
       {levels.map((level) => {
-        const title = level === "pact" ? "Pact" : `L${level}`;
-        const named = level === "pact" ? "Pact" : `Level ${level}`;
+        const title = level === "pact" ? t("Pact spell slots") : t("Level {level}", { level });
+        const named = title;
         return (
           <div key={level} className="space-y-1">
-            <span className="text-stone-400">{title} used/max</span>
+            <span className="text-stone-400">{title} · {t("Spell slots used / max")}</span>
             <div className="flex items-center gap-1">
-              <NumberStepper size="sm" min={0} value={Number(slots[level]?.used ?? "0") || 0} label={`${named} slots used`} onChange={(next) => set(level, "used", next)} />
+              <NumberStepper size="sm" min={0} value={Number(slots[level]?.used ?? "0") || 0} label={t("{name} slots used", { name: named })} onChange={(next) => set(level, "used", next)} />
               <span className="text-stone-500">/</span>
-              <NumberStepper size="sm" min={0} value={Number(slots[level]?.max ?? "0") || 0} label={`${named} slots max`} onChange={(next) => set(level, "max", next)} />
+              <NumberStepper size="sm" min={0} value={Number(slots[level]?.max ?? "0") || 0} label={t("{name} slots max", { name: named })} onChange={(next) => set(level, "max", next)} />
             </div>
           </div>
         );
