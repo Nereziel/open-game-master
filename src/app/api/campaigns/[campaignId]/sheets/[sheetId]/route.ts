@@ -9,6 +9,7 @@ import { insertSheetAudit, type SheetAuditEntry } from "@/lib/db/sheet-audit";
 import { auditRowCorrected, recordTurnCorrection } from "@/lib/db/turn-ledger";
 import { fullPatchSheetSchema } from "@/lib/schemas/sheet";
 import { layOver } from "@/lib/schemas/parse-keeping-valid";
+import { castingOverlayBase } from "@/lib/content/translations/reference-merge";
 import { publishPersisted } from "@/lib/events";
 
 export const runtime = "nodejs";
@@ -42,11 +43,7 @@ export async function PATCH(
     // recursive patch: an empty map means the last referenced spell was
     // removed. Older clients omitting contentRefs still retain the stored map.
     const castingEdit = raw.spellcasting as Record<string, unknown>;
-    const baseCasting = { ...(sheet.spellcasting ?? {}) };
-    if (Object.prototype.hasOwnProperty.call(castingEdit, "contentRefs")) {
-      delete baseCasting.contentRefs;
-    }
-    raw.spellcasting = layOver(baseCasting, castingEdit);
+    raw.spellcasting = layOver(castingOverlayBase(sheet.spellcasting ?? {}, castingEdit), castingEdit);
   }
   const parsed = fullPatchSheetSchema.safeParse(raw);
   if (!parsed.success) {
