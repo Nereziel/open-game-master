@@ -17,6 +17,7 @@ import { officialCzechSpellPageId } from "@/lib/help/official-cs-reference";
 import { thirdPartyItemSummaryCs } from "@/lib/help/third-party-item-summary-cs";
 import { sameContentDocument } from "@/lib/help/content-ref-match";
 import { localizedThirdPartySpellDescription } from "@/lib/help/third-party-spell-summary-cs";
+import { thirdPartyFeatDescriptionCs } from "@/lib/help/third-party-feat-description-cs";
 
 // The "what does this do?" affordance, used everywhere a game term appears.
 //
@@ -160,6 +161,11 @@ function ContentBody({ reference }: { reference: ContentRef }) {
       try {
         const { describeContentEntry } = await import("@/lib/help");
         const { needsNote } = await import("@/lib/content/levelup-logic");
+        const licensedFeatTranslation = thirdPartyFeatDescriptionCs(reference, locale);
+        if (licensedFeatTranslation) {
+          if (!cancelled) setState({ text: licensedFeatTranslation, loading: false });
+          return;
+        }
         const builtinFeat = locale === "cs" && reference.kind === "feats"
           && (reference.documentSlug === "odm-expanded" || reference.documentSlug === "wotc-srd"
             || reference.source === "srd" || reference.source === "bundled");
