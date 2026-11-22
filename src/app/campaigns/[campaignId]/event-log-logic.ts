@@ -9,6 +9,7 @@ import type { TurnChangeView } from "@/lib/db/turn-changes";
 import { quietTick, knownFieldWords } from "@/lib/sheet-audit-logic";
 import { translate } from "@/lib/messages-logic";
 import { COPPER_PER_GOLD, formatPrice } from "@/lib/srd/currency";
+import { damageTypeWord } from "@/lib/dm/damage-logic";
 import { pluralOf } from "@/lib/messages-logic";
 
 // What the event log lists and which turns it offers to revert. Pure, so a
@@ -155,15 +156,6 @@ const gold = (t: Say, copper: number) => t("{amount} gold", { amount: Math.round
 const displayName = (t: Say, table: FrNamesTable | "items", raw: string) =>
   contentName(table, raw, t.locale ?? "en");
 
-// Damage types are fixed SRD identifiers, not arbitrary author text. The
-// translated words live in the UI catalog; this set only gates safe lookups.
-const SRD_DAMAGE_TYPES = new Set([
-  "acid", "bludgeoning", "cold", "fire", "force", "lightning", "necrotic",
-  "piercing", "poison", "psychic", "radiant", "slashing", "thunder",
-]);
-const displayDamageType = (t: Say, type: string) =>
-  SRD_DAMAGE_TYPES.has(type.toLowerCase()) ? t(type.toLowerCase()) : type;
-
 // A resource's stored ID has an official display label in the installed
 // character-sheet catalog. A free-form resource name never gets rewritten.
 const displayResource = (t: Say, raw: string) =>
@@ -258,7 +250,7 @@ function knownEntryText(t: Say, entry: { kind: string; delta: Delta }, name: str
       const hp = amount(delta.currentHp);
       const dmg = amount(delta.amount);
       const line = dmg !== null ? t("{name} takes {amount} damage", { name, amount: dmg }) : t("{name} takes some damage", { name });
-      return `${line}${type ? t(" ({type})", { type: displayDamageType(t, type) }) : ""}${hp !== null ? t(" ({hp} HP)", { hp }) : ""}`;
+      return `${line}${type ? t(" ({type})", { type: damageTypeWord(type, t.locale ?? "en") }) : ""}${hp !== null ? t(" ({hp} HP)", { hp }) : ""}`;
     }
     case "heal": {
       const form = word(delta.form);
