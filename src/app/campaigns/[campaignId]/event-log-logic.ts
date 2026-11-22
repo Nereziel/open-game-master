@@ -188,7 +188,7 @@ function deathState(t: Say, name: string, delta: Delta): string {
   const tp = pluralOf(t);
   const revived = word(delta.revived);
   if (revived) {
-    return t("{name} is brought back by {by}", { name, by: revived });
+    return t("{name} is brought back by {by}", { name, by: displayName(t, "spells", revived) });
   }
   const track = delta.deathSaves as { successes?: unknown; failures?: unknown; stable?: unknown; dead?: unknown } | null | undefined;
   if (!track || typeof track !== "object") {
