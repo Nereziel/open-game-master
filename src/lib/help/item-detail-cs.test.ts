@@ -3,9 +3,12 @@ import { itemDetailCs, itemRangeCs, itemWeightCs } from "./item-detail-cs";
 
 describe("Czech item details", () => {
   it("fully localizes the longbow's category, properties and damage text", () => {
-    expect(itemDetailCs("Martial ranged weapon", "cs")).toBe("Válečná střelná zbraň");
-    expect(itemDetailCs("Ammunition (range 150/600)", "cs")).toBe("Munice (dostřel 150/600)");
+    expect(itemDetailCs("Martial ranged weapon", "cs")).toBe("Vojenská zbraň na dálku");
+    expect(itemDetailCs("Ammunition (range 150/600)", "cs")).toBe("Střelná (dostřel 150/600)");
     expect(itemDetailCs("Heavy", "cs")).toBe("Těžká");
+    expect(itemDetailCs("Reach", "cs")).toBe("Dlouhá");
+    expect(itemDetailCs("Versatile", "cs")).toBe("Jeden a půlruční");
+    expect(itemDetailCs("Loading", "cs")).toBe("Nabíjecí");
     expect(itemDetailCs("Two-handed", "cs")).toBe("Obouruční");
     expect(itemDetailCs("Piercing", "cs")).toBe("Bodné");
     expect(itemDetailCs("Needs both hands to attack with, so no shield or second weapon.", "cs"))
@@ -19,7 +22,7 @@ describe("Czech item details", () => {
     expect(itemDetailCs("Weight", "cs")).toBe("Hmotnost");
     expect(itemDetailCs("Value", "cs")).toBe("Cena");
     expect(itemDetailCs("Description", "cs")).toBe("Popis");
-    expect(itemDetailCs("Common clothes.", "cs")).toBe("Běžné oblečení.");
+    expect(itemDetailCs("Common clothes.", "cs")).toBe("Obyčejné oblečení.");
     expect(itemDetailCs("Slashing", "cs")).toBe("Sečné");
     expect(itemDetailCs("Bludgeoning", "cs")).toBe("Drtivé");
   });
