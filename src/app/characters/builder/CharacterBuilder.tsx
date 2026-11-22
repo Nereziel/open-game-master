@@ -28,6 +28,7 @@ import { ContentNotices, GenderField, LevelField } from "./steps/CallingSetup";
 import { ToolGrantPanels } from "./steps/ClassChoices";
 import { FinishStep, type BuilderRole } from "./steps/FinishStep";
 import { IdentityStep } from "./steps/IdentityStep";
+import { PortraitGalleryDialog } from "./PortraitGalleryDialog";
 import { SpellsGearStep } from "./steps/SpellsGearStep";
 import { OwedLine } from "./steps/shared";
 import { owedPicks } from "./owed";
@@ -376,6 +377,7 @@ function CharacterBuilderForm({
   // still shows, and keeps its classes there).
   const addsClasses = hostOffers(capabilities, "builderMulticlass");
   const [cropping, setCropping] = useState(false);
+  const [galleryOpen, setGalleryOpen] = useState(false);
   // This builder's own root, so the footer's "Show me" looks inside it and
   // not in another builder on the page.
   const rootId = useId();
@@ -840,6 +842,7 @@ function CharacterBuilderForm({
             background={background ?? null}
             paintsPortraits={paintsPortraits}
             onUploadPortrait={() => setCropping(true)}
+            onOpenGallery={() => setGalleryOpen(true)}
             alignmentGroups={pickers.alignmentGroups}
             alignmentInfo={pickers.alignmentInfo}
             onEditGender={() => changePick("gender")}
@@ -1062,6 +1065,17 @@ function CharacterBuilderForm({
             state.setPortrait({ id: image.id, name: image.name, type: image.type, url: image.url });
           }}
           onClose={() => setCropping(false)}
+        />
+      ) : null}
+      {galleryOpen ? (
+        <PortraitGalleryDialog
+          races={races}
+          classes={classes}
+          raceId={state.raceId}
+          classId={state.classId}
+          gender={state.gender}
+          onPicked={(portrait) => state.setPortrait(portrait)}
+          onClose={() => setGalleryOpen(false)}
         />
       ) : null}
     </div>
