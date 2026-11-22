@@ -15,6 +15,8 @@ import { firstSentence, parseRulesBlocks, parseRulesTable } from "@/lib/help/rul
 import { textKey } from "@/lib/language/text-logic";
 import { officialCzechSpellPageId } from "@/lib/help/official-cs-reference";
 import { thirdPartyItemSummaryCs } from "@/lib/help/third-party-item-summary-cs";
+import { sameContentDocument } from "@/lib/help/content-ref-match";
+import { thirdPartySpellSummaryCs } from "@/lib/help/third-party-spell-summary-cs";
 
 // The "what does this do?" affordance, used everywhere a game term appears.
 //
@@ -192,7 +194,8 @@ function ContentBody({ reference }: { reference: ContentRef }) {
         if (response.ok) {
           const data = await response.json();
           // A background's feature asked by name opens that feature.
-          const text = withNote(data?.entry, describeContentEntry(data?.entry?.data, reference.kind === "backgrounds" ? reference.name : undefined));
+          const entry = sameContentDocument(reference, data?.entry) ? data.entry : undefined;
+          const text = withNote(entry, describeContentEntry(entry?.data, reference.kind === "backgrounds" ? reference.name : undefined));
           if (text) {
             if (!cancelled) {
               setState({ text, loading: false });
@@ -208,7 +211,7 @@ function ContentBody({ reference }: { reference: ContentRef }) {
         );
         const results = search.ok ? ((await search.json()).results ?? []) : [];
         const hit = results.find(
-          (entry: { name: string }) => textKey(entry.name) === wanted,
+          (entry: { name: string; source?: string; documentSlug?: string }) => textKey(entry.name) === wanted && sameContentDocument(reference, entry),
         );
         if (!cancelled) {
           setState({ text: withNote(hit, describeContentEntry(hit?.data)), loading: false });
@@ -303,10 +306,11 @@ function ItemBody({ reference }: { reference: ContentRef }) {
           fetch(`/api/content/items/${encodeURIComponent(reference.slug)}${scopeQuery(campaignId)}`).then(readJson).catch(() => null),
           fetch(`/api/content/items?q=${encodeURIComponent(wanted)}&limit=20${scopeQuery(campaignId, "&")}`).then(readJson).catch(() => null),
         ]);
-        const hits = ((search?.results ?? []) as Array<{ name: string; data?: Record<string, unknown> }>)
-          .filter((entry) => textKey(entry.name) === wanted)
+        const hits = ((search?.results ?? []) as Array<{ name: string; source?: string; documentSlug?: string; data?: Record<string, unknown> }>)
+          .filter((entry) => textKey(entry.name) === wanted && sameContentDocument(reference, entry))
           .map((entry) => entry.data);
-        const sheet = buildItemSheet(name, [direct?.entry?.data, ...hits]);
+        const directData = sameContentDocument(reference, direct?.entry) ? direct.entry.data : undefined;
+        const sheet = buildItemSheet(name, [directData, ...hits]);
         if (!cancelled) {
           setState({ sheet, loading: false });
         }
@@ -320,7 +324,7 @@ function ItemBody({ reference }: { reference: ContentRef }) {
     return () => {
       cancelled = true;
     };
-  }, [reference.slug, reference.name, campaignId]);
+  }, [reference.slug, reference.name, reference.source, reference.documentSlug, campaignId]);
 
   if (state.loading) {
     return (
