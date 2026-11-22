@@ -64,6 +64,11 @@ describe("SRD 5.1 Czech companion adapter (#107 phase 2)", () => {
         class: "classes", monster: "monsters", item: "items",
       } as Record<string, string>)[p.kind] === kind).length);
     }
+    for (const [pageKind, registryKind] of [["spell", "spells"], ["race", "species"]] as const) {
+      const originalCount = english.filter((page) => page.kind === pageKind).length;
+      // A formerly present short overview is not sufficient for "complete".
+      expect(coverage.fullText[registryKind]).toBe(originalCount);
+    }
     const allFullyTranslated = Object.values(coverage.fullText).reduce((sum, count) => sum + count, 0);
     expect(allFullyTranslated + coverage.incompleteIds.length + 1).toBe(english.length);
     expect(coverage.incompleteIds).not.toContain("legal-information");
