@@ -13,6 +13,9 @@ type Catalog = {
 // Small patches for missing Czech UI keys while the large generated catalog
 // remains unchanged. Only apply when the catalog would display English.
 const CZECH_LABEL_FALLBACKS: Record<string, string> = {
+  "in hand": "v ruce",
+  "Looking it up...": "Načítání údajů…",
+  "No details available. The content pack may not be installed, or this item was added by hand.": "Podrobnosti nejsou k dispozici. Balíček obsahu možná není nainstalovaný nebo byl předmět přidán ručně.",
   "Melee weapon": "Zbraň na blízko",
   "Ranged weapon": "Zbraň na dálku",
   "Armor or shield": "Zbroj nebo štít",
