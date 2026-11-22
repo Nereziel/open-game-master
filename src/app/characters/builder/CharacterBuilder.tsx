@@ -841,6 +841,9 @@ function CharacterBuilderForm({
             pack={pack}
             initial={initial}
             background={background ?? null}
+            raceName={race ? contentName("species", race.name, locale) : undefined}
+            className={klass ? contentName("classes", klass.name, locale) : undefined}
+            backgroundName={background ? contentName("backgrounds", background.name, locale) : undefined}
             paintsPortraits={paintsPortraits}
             onUploadPortrait={() => setCropping(true)}
             onOpenGallery={() => setGalleryOpen(true)}
