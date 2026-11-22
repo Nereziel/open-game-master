@@ -155,4 +155,27 @@ describe("historical event-log system phrases follow the reader's locale", () =>
     expect(say("cs", "training", { subject: "Baking with dragons" })).toContain("Baking with dragons");
     expect(delta).toEqual({ subject: "Acrobatics" });
   });
+
+  it("uses the shared known sheet-field labels while retaining custom patch keys", () => {
+    const delta = { currentHp: 7, spellSlots: {}, myCustomCounter: 2 };
+    const customT = Object.assign(
+      (key: string, vars?: Record<string, string | number>) => {
+        const labels: Record<string, string> = {
+          "hit points": "životy",
+          "spell slots": "pozice kouzel",
+        };
+        return labels[key] ?? translate("en", key, vars);
+      },
+      { locale: "cs" as const },
+    );
+    for (const kind of ["update_sheet", "lead_edit", "player_adjust"]) {
+      const line = describeKnownEntry(customT, { kind, delta }, "Mara");
+      expect(line).toContain("životy");
+      expect(line).toContain("pozice kouzel");
+      expect(line).toContain("myCustomCounter");
+      expect(line).not.toContain("currentHp");
+      expect(line).not.toContain("spellSlots");
+    }
+    expect(delta).toEqual({ currentHp: 7, spellSlots: {}, myCustomCounter: 2 });
+  });
 });
