@@ -30,8 +30,8 @@ export type ContentRef = { kind: string; slug: string; name?: string };
 
 // Content-pack descriptions are markdown-ish: headings, bold, italics, tables.
 // The block structure comes from src/lib/help/rules-text.ts, which knows the
-// pack's quirks; this only turns each block into elements. Table rows keep
-// their pipes inside a monospace block.
+// pack's quirks; this only turns each block into elements. Valid Markdown
+// tables render as horizontally scrollable, accessible HTML tables.
 function renderInline(text: string, keyPrefix: string): ReactNode[] {
   const out: ReactNode[] = [];
   const pattern = /(\*\*[^*]+\*\*|\*[^*\s][^*]*\*|(?<![\w])_[^_\n]+_(?![\w]))/g;
