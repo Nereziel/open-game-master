@@ -69,6 +69,15 @@ await test("a draft saves only table settings, never the campaign's own fields o
   );
 });
 
+await test("new and preset campaigns default live voice chat to off", () => {
+  assert.equal(DEFAULT_DRAFT.voiceChat.enabled, false, "the campaign creator must start with live voice disabled");
+  assert.equal(gameSettingsSchema.parse({}).voice.enabled, false, "API-created and preset campaigns must default to disabled");
+  assert.equal(gameSettingsSchema.parse({ voice: {} }).voice.enabled, false, "a partial voice setup must not enable voice");
+  assert.equal(gameSettingsSchema.parse({ voice: { enabled: true } }).voice.enabled, true, "an explicit opt-in remains possible");
+  const fresh = appDefaultSettings();
+  assert.equal(fresh.voice?.enabled, false, "use app defaults should not enable live voice");
+});
+
 await test("new campaign lengths start short and saved length choices survive", () => {
   assert.equal(DEFAULT_DRAFT.campaignLength, "short");
   assert.equal(DEFAULT_DRAFT.narrationLength, "short");
