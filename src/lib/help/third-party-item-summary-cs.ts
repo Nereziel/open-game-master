@@ -253,6 +253,18 @@ const VAULT_OF_MAGIC_ITEM_NOTES: Readonly<Record<string, string>> = {
   "Elixir of Corruption": "Lektvar se tváří jako lektvar hrdinství. Po vypití může po neúspěšné záchraně na Odolnost SO 15 na týden odebrat imunitu vůči jedu a nemocem nebo způsobit zranitelnost vůči jedu.",
   "Elixir of Deep Slumber": "Po vypití usneš na hodinu hlubokým magickým spánkem. Po přirozeném probuzení získáš výhody dlouhého odpočinku; předčasné Prolom magii SO 13 účinek zruší.",
   "Elixir of Focus": "V následujících deseti minutách po vypití máš výhodu k příštímu ověření vlastnosti, které provedeš.",
+  "Elixir of Mimicry": "Na tři minuty po vypití dokážeš napodobit hlas jediného tvora, kterého jsi slyšel promluvit během posledních 24 hodin.",
+  "Elixir of Spike Skin": "Po vypití se na hodinu pokryješ kostěnými ostny. Útočník do pěti stop, který tě zasáhne zbraní na blízko, může utrpět 1k4 bodného zranění po neúspěšné záchraně na Obratnost SO 15. Ostré výrůstky také zraňují při uchopení.",
+  "Elixir of the Clear Mind": "Lektvar dává na hodinu výhodu k ověřením Moudrosti a jejím záchranám. Pokud neuspěješ v záchraně proti očarování či iluzi, můžeš ji změnit na úspěšnou, tím však účinek lektvaru skončí.",
+  "Elixir of the Deep": "Na hodinu dokážeš dýchat pod vodou, vidět do 60 stop i skrze běžný kal a máš výhodu k záchranám proti magii vílích tvorů spjatých s vodou.",
+  "Elixir of Wakefulness": "Po vypití osm hodin nemůžeš přirozeně usnout a máš výhodu k záchranám proti uspání. Pro vyhodnocení kouzla Spánek se tvé aktuální životy počítají o deset vyšší.",
+  "Elk Horn Rod": "Hůl z losího paroží může akcí dát dotčenému tvorovi na jedno kolo bonus +1 k záchranám proti magii. Při sesílání Prolom magii poskytuje +1 k ověření sesílací vlastnosti.",
+  "Encouraging Armor": "Zbroj poskytuje +1 k TZ. Přátelští tvorové do deseti stop, kteří tě vidí, mají +1 k útokům a záchranám; u paladina se schopností Aura odvahy se tento bonus zvyšuje na +2.",
+  "Enraging Ammunition": "Zasažený tvor podstoupí záchranu na Moudrost SO 13. Při neúspěchu je minutu rozzuřený, přibližuje se k útočníkovi a napadá jej, jakmile se dostane na dosah; záchranu opakuje na konci tahů.",
+  "Ensnaring Ammunition": "Střela způsobí při zásahu jen polovinu běžného zranění, ale její vlákna cíl znehybní. Akcí se může osvobodit ověřením Síly SO 13 nebo svázání rozbít.",
+  "Entrenching Mattock": "Magický krumpáč +1 má proti tvorům z kamene a země bonus +3. Bonusovou akcí vytvoří podél země zeď až 30 stop dlouhou, tři stopy vysokou a jednu stopu silnou, která poskytuje poloviční kryt; obnoví se za úsvitu.",
+  "Everflowing Bowl": "Kamenná mísa o objemu asi jeden půllitr se po položení na zem sama naplní vodou během hodiny, v suché či pouštní krajině během osmi hodin. Nepřetéká.",
+  "Exsanguinating Blade": "Magická dýka +1 získá při přirozené dvacítce proti krvácejícímu tvorovi jeden náboj. Bonusovou akcí lze náboj utratit za léčení 2k8 životů nebo další 2k8 nekrotického zranění při příštím zásahu.",
 };
 
 const VAULT_BY_NAME = Object.fromEntries(
