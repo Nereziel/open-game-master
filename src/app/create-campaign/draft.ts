@@ -117,7 +117,7 @@ export const DEFAULT_DRAFT: CampaignDraft = {
   ambienceAuto: true,
   boardDrawing: true,
   enemyIntent: true,
-  presentation: "plain",
+  presentation: "theatre",
   multiCharacter: "off",
   multiclassingEnabled: true,
   worldSimulation: true,

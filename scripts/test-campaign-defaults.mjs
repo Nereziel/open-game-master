@@ -95,6 +95,18 @@ await test("all new campaign paths use short narration and consistent player per
   assert.equal(appDefaultSettings().narrationLength, "short");
 });
 
+await test("theatre inserts start enabled for new, preset and saved-default campaigns", () => {
+  assert.equal(gameSettingsSchema.parse({}).presentation, "theatre", "API-created and preset campaign default");
+  assert.equal(DEFAULT_DRAFT.presentation, "theatre", "creator default");
+  assert.equal(appDefaultSettings().presentation, "theatre", "app default");
+  assert.equal(gameSettingsSchema.parse({ presentation: "plain" }).presentation, "plain", "the toggle can still be switched off");
+  assert.equal(
+    applyDefaults(structuredClone(DEFAULT_DRAFT), { presentation: "plain" }, null).draft.presentation,
+    "theatre",
+    "older saved presets must not silently reset the new on-by-default choice",
+  );
+});
+
 await test("new campaign lengths start short and saved length choices survive", () => {
   assert.equal(DEFAULT_DRAFT.campaignLength, "short");
   assert.equal(DEFAULT_DRAFT.narrationLength, "short");
