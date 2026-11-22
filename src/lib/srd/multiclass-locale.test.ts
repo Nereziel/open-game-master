@@ -34,7 +34,7 @@ describe("multiclass terminology in Czech", () => {
     const enText = describeGrantT(reader("en"), grant);
     expect(enText).toContain("light armor");
     expect(enText).toContain("simple weapons");
-    expect(enText).toContain("Flute");
+    expect(enText).toContain("flute");
     expect(grant).toEqual({
       armor: ["light armor"], weapons: ["simple weapons"], tools: ["flute"],
       skillChoice: { count: 1, from: [] },
