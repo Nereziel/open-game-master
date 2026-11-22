@@ -1,5 +1,9 @@
 {
   "messages": {
+    "Unknown class \"{name}\".": "Neznámé povolání „{name}“.",
+    "This character already has levels in {class}.": "Postava už má úrovně v povolání {class}.",
+    "To take {class}, prerequisites: {prereq}.": "Pro povolání {class} musí postava splňovat: {prereq}.",
+    "To multiclass, the existing {class} also requires {prereq}.": "Pro kombinování povolání musí postava splňovat také požadavky povolání {class}: {prereq}.",
     "Choose tools for {class} ({count}):": "Vyber nástroje pro povolání {class} (počet: {count}):",
     "Tool choices for {class}": "Výběr nástrojů pro povolání {class}",
     "Your hit die roll": "Hod kostkou životů",
