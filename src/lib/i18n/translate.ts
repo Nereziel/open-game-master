@@ -19,7 +19,7 @@ const CZECH_LABEL_FALLBACKS: Record<string, string> = {
   "Used up when used": "Spotřební předmět",
   "Magic item": "Magický předmět",
   "Gear": "Vybavení",
-  "Select the mark beside it for the full entry.": "Úplný popis otevřeš kliknutím na značku vedle předmětu.",
+  "Select the mark beside it for the full entry.": "Podrobný popis otevřeš kliknutím na značku vedle názvu.",
   "partly by hand": "část vyhodnocuje PJ",
   "narrated": "vyhodnocuje PJ",
   "Partly by hand": "Část vyhodnocuje PJ",

@@ -20,6 +20,7 @@ import { isTack, onMount } from "@/lib/srd/tack";
 import { oneOfKind, wornButIdle } from "@/lib/srd/wear-slots";
 import { magicItemBonus, rowName, srdNameWithBonus } from "@/lib/srd/item-row";
 import { backgroundFeatureName, classFeatureName, contentName, speciesTraitName } from "@/lib/content/names";
+import { czechBundledSpeciesTrait } from "@/lib/content/species-traits-cs";
 import { languageLabel } from "@/lib/content/languages-cs";
 import { matchWeapon } from "@/lib/srd/weapons";
 import { cardArtwork } from "@/lib/battlemap/card-art";
@@ -439,15 +440,19 @@ export function FeatureChips({
         name:
           feature.source === "story"
             ? feature.name
-            : feature.source === "race" && raceId
-              ? speciesTraitName(raceId, feature.name, locale)
-              : feature.source === "background"
-                ? backgroundFeatureName(feature.name, locale)
-                : classFeatureName(feature.classId ?? classId, feature.name, locale),
+            : locale === "cs" && czechBundledSpeciesTrait(feature.name)
+              ? czechBundledSpeciesTrait(feature.name)!.name
+              : feature.source === "race" && raceId
+                ? speciesTraitName(raceId, feature.name, locale)
+                : feature.source === "background"
+                  ? backgroundFeatureName(feature.name, locale)
+                  : classFeatureName(feature.classId ?? classId, feature.name, locale),
         icon: { kind: "feature" as const, key: feature.name, family: `class-${classId.toLowerCase()}` },
         note: feature.source === "story" ? t("(story)") : undefined,
         meta: feature.level ? t("Level {level}", { level: feature.level }) : undefined,
-        text: describeFeature(feature.classId ?? classId, subclass ?? "", feature.name, locale) ?? undefined,
+        text: (locale === "cs" && feature.source !== "story" ? czechBundledSpeciesTrait(feature.name)?.description : null)
+          ?? describeFeature(feature.classId ?? classId, subclass ?? "", feature.name, locale)
+          ?? undefined,
         reference: backgroundFeatureReference(feature, background, classId, subclass ?? "") ?? undefined,
       }))}
     />
