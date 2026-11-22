@@ -151,7 +151,7 @@ export default function MultiContentPicker({
                 <InfoButton
                   label={rowName(entry)}
                   meta={entry.display?.meta ?? (kind === "spells" ? spellSummary(entry.data) : undefined)}
-                  text={entry.display?.description ?? describeContentEntry(entry.data)}
+                  text={entry.display ? (entry.display.description ?? null) : describeContentEntry(entry.data)}
                   reference={entry.source === "homebrew" ? undefined : { kind, slug: entry.slug }}
                 />
               </li>
