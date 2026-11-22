@@ -4,11 +4,8 @@ import { CS_ITEM_CATEGORIES, CS_MAGIC_SCHOOLS, CS_RARITIES } from "../common/cs"
 import { translationSourceId, type SourceRecord } from "../registry";
 
 type MetadataKind = "spells" | "items";
-export type SrdStructuredMetadata = Readonly<{
-  school?: string;
-  rarity?: string;
-  category?: string;
-}>;
+// Preserve every arbitrary string field the catalog may carry.
+export type SrdStructuredMetadata = Readonly<Record<string, string>>;
 
 function lookup(table: Readonly<Record<string, string>>, value: string): string {
   // Open5e stores rarity and school as lowercase codes in some releases.
