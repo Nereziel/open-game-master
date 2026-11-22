@@ -155,6 +155,11 @@ export function contentName(
   if (locale === "en" || !row.name || (row.source && row.source !== "open5e")) {
     return row.name;
   }
+  // Acolyte's kit contains incense sticks, not the SRD's incense blocks.
+  // The full phrase is a stored inventory name, not a quantity parsed here.
+  if (locale === "cs" && table === "items" && row.name.trim().toLowerCase() === "5 sticks of incense") {
+    return "5 vonných tyčinek";
+  }
   if (locale === "cs" && table === "classes") {
     const id = (row.slug || slugKey(row.name)).replace(/-/g, "_");
     const bundled = genreClassCs(id);
