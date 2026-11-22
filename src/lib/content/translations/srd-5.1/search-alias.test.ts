@@ -1,10 +1,13 @@
 import { describe, expect, it } from "vitest";
 import { appendExactSrdAlias } from "./search-alias";
+import type { SourceRecord } from "../registry";
+
+type TestRow = SourceRecord & { slug: string; name: string };
 
 describe("source-safe Czech catalog search aliases (#107)", () => {
-  const own = { source: "homebrew" as const, documentSlug: "homebrew", slug: "homebrew:123", name: "Světlo" };
-  const srd = { source: "open5e" as const, documentSlug: "wotc-srd", slug: "light", name: "Light" };
-  const other = { source: "open5e" as const, documentSlug: "toh", slug: "light", name: "Light" };
+  const own: TestRow = { source: "homebrew", documentSlug: "homebrew", slug: "homebrew:123", name: "Světlo" };
+  const srd: TestRow = { source: "open5e", documentSlug: "wotc-srd", slug: "light", name: "Light" };
+  const other: TestRow = { source: "open5e", documentSlug: "toh", slug: "light", name: "Light" };
 
   it("keeps original Czech-named homebrew when adding the English SRD result", () => {
     expect(appendExactSrdAlias([own], [other, srd], "Light")).toEqual([own, srd]);
