@@ -1,6 +1,8 @@
 import type { AuditEntry } from "@/app/campaigns/[campaignId]/useCampaignStream";
 import type { CharacterEvent } from "@/lib/db/character-events";
 import { contentName, type FrNamesTable } from "@/lib/content/names";
+import { resourceDisplayName } from "@/lib/srd/class-resources-fr";
+import { skillLabel } from "@/lib/srd";
 import type { Locale } from "@/lib/i18n/translate";
 import type { ClockTurn } from "@/lib/db/clock-moves";
 import type { TurnChangeView } from "@/lib/db/turn-changes";
@@ -161,6 +163,18 @@ const SRD_DAMAGE_TYPES = new Set([
 ]);
 const displayDamageType = (t: Say, type: string) =>
   SRD_DAMAGE_TYPES.has(type.toLowerCase()) ? t(type.toLowerCase()) : type;
+
+// A resource's stored ID has an official display label in the installed
+// character-sheet catalog. A free-form resource name never gets rewritten.
+const displayResource = (t: Say, raw: string) =>
+  resourceDisplayName(raw, t.locale ?? "en") ?? raw;
+
+// Training subjects can be an SRD skill ID or its canonical English name.
+// Other subjects are free text entered by the GM and stay exactly as written.
+const displayTrainingSubject = (t: Say, raw: string) =>
+  skillLabel(raw.trim().replace(/[ -]+/g, "_"), t.locale ?? "en") === raw.trim().replace(/[ -]+/g, "_")
+    ? raw
+    : skillLabel(raw.trim().replace(/[ -]+/g, "_"), t.locale ?? "en");
 
 function deathState(t: Say, name: string, delta: Delta): string {
   const tp = pluralOf(t);
@@ -350,7 +364,7 @@ function knownEntryText(t: Say, entry: { kind: string; delta: Delta }, name: str
       return t("{name} picks up {item}{times}", { name, item, times: times(amount(delta.taken)) });
     case "use_item": {
       const used = word(delta.item);
-      return used ? t("{name} uses {item}", { name, item: used }) : t("{name} spends charges from an item", { name });
+      return used ? t("{name} uses {item}", { name, item: displayName(t, "items", used) }) : t("{name} spends charges from an item", { name });
     }
     case "dawn_recharge":
       return t("{name}'s items regain charges at dawn", { name });
@@ -402,7 +416,7 @@ function knownEntryText(t: Say, entry: { kind: string; delta: Delta }, name: str
     }
     case "training": {
       const subject = word(delta.subject);
-      return subject ? t("{name} learns {subject}", { name, subject }) : t("{name} finishes their training", { name });
+      return subject ? t("{name} learns {subject}", { name, subject: displayTrainingSubject(t, subject) }) : t("{name} finishes their training", { name });
     }
     case "use_spell_slot": {
       const level = amount(delta.level);
@@ -415,7 +429,7 @@ function knownEntryText(t: Say, entry: { kind: string; delta: Delta }, name: str
       return what ? `${name}: ${what}` : t("{name} takes a reaction", { name });
     }
     case "use_resource": {
-      const resource = word(delta.resource) ?? t("a feature");
+      const resource = word(delta.resource) ? displayResource(t, word(delta.resource)!) : t("a feature");
       const from = word(delta.from);
       if (from) return t("{name} receives {item}{times} from {from}", { name, item: resource, times: "", from });
       const spent = amount(delta.spent) ?? 1;
