@@ -91,6 +91,27 @@ export function itemDetailCs(value: string | null | undefined, locale: Locale): 
   return value;
 }
 
+// The bundled content pack can still supply English prose for ordinary SRD
+// equipment. Use original Czech descriptions of these canonical entries in
+// Czech UI only; do not change stored data or other locales. These are not
+// translations of homebrew item descriptions.
+const COMMON_SRD_DESCRIPTIONS_CS: Readonly<Record<string, string>> = {
+  "book": "Kniha může obsahovat básně, dějiny, náboženské texty, poznámky o určitém oboru nebo jiný psaný obsah. Její skutečné informace určuje Pán jeskyně.",
+  "longsword": "Dlouhý meč je vojenská zbraň na blízko. Způsobuje 1k8 sečného zranění, při držení oběma rukama 1k10. Má vlastnost jeden a půlruční.",
+  "shield": "Štít se drží v jedné ruce a při používání poskytuje bonus +2 k obrannému číslu (OČ). Současně lze využít bonus pouze jednoho štítu.",
+};
+
+export function itemDescriptionCs(name: string, description: string | null, locale: Locale): string | null {
+  if (!description || locale !== "cs") return description;
+  const canonical = name.toLowerCase().trim().replace(/\\s*\\+\\d+$/, "");
+  // Only replace text evidently supplied in English, not an existing Czech
+  // translation or a custom Czech description using the same item name.
+  if (!/\\b(the|with|contains|can|weapon|shield|book|this|you|your)\\b/i.test(description)) {
+    return description;
+  }
+  return COMMON_SRD_DESCRIPTIONS_CS[canonical] ?? itemDetailCs(description, locale);
+}
+
 export function itemWeightCs(value: string | null, locale: Locale): string | null {
   if (!value || locale !== "cs") return value;
   return value.replace(/\blb\./g, "libry");
