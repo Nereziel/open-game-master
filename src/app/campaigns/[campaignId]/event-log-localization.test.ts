@@ -103,4 +103,15 @@ describe("historical event-log system phrases follow the reader's locale", () =>
     expect(say("cs", "apply_damage", { form: "Custom Beast", amount: 3 })).toContain("Custom Beast");
     expect(delta).toEqual({ form: "Wolf", amount: 3, beastHp: 7 });
   });
+
+  it("localizes recognized conditions but leaves unknown condition names untouched", () => {
+    const known = contentName("conditions", "blinded", "cs");
+    expect(say("cs", "set_condition", { condition: "blinded" })).toContain(known);
+    const cleared = say("cs", "clear_condition", { ended: ["blinded", "My Homebrew Curse"] });
+    expect(cleared).toContain(known);
+    expect(cleared).toContain("My Homebrew Curse");
+    expect(say("cs", "condition_clock", { ended: ["blinded"] })).toContain(known);
+    expect(say("en", "set_condition", { condition: "blinded" })).toContain("blinded");
+    expect(say("cs", "set_condition", { condition: "My Homebrew Curse" })).toContain("My Homebrew Curse");
+  });
 });
