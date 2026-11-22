@@ -175,7 +175,7 @@ export function SpellMechFields({ data, onChange }: { data: Mech; onChange: (nex
           {["heal", "utility", "buff"].includes(resolution) ? <HealGroup {...props} /> : null}
           {["save", "utility", "buff"].includes(resolution) ? <AuraGroup {...props} /> : null}
           {["save", "utility"].includes(resolution) ? <PoolGroup {...props} /> : null}
-          <TextField label={t("Note for the GM")} value={String(mech.note ?? "")} onChange={(note) => setMech({ note: note || undefined })} placeholder="Up to three targets." maxLength={400} />
+          <TextField label={t("Note for the GM")} value={String(mech.note ?? "")} onChange={(note) => setMech({ note: note || undefined })} placeholder={t("Up to three targets.")} maxLength={400} />
           <AdvancedBlock mech={mech} onChange={(next) => onChange({ ...data, mech: next })} />
         </div>
       ) : null}
