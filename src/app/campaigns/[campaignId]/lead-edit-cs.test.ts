@@ -14,6 +14,20 @@ import { ABILITIES } from "@/lib/schemas/sheet";
 installCsTables({ names: CS_NAMES_BY_TABLE });
 
 describe("Campaign character adjustments in Czech", () => {
+  it("localizes level-up class, skill, subclass and tool choices without changing their IDs", () => {
+    const dialog = readFileSync(path.join(process.cwd(), "src/app/campaigns/[campaignId]/LevelUpDialog.tsx"), "utf8");
+    expect(contentName("classes", "Fighter", "cs")).toBe("Bojovník");
+    expect(skillLabel("acrobatics", "cs")).toBe("Akrobacie");
+    expect(dialog).toContain('contentName("classes", option.name, locale)');
+    expect(dialog).toContain('searchKey(contentName("classes", option.name, locale))');
+    expect(dialog).toContain("skillLabel(skillId, locale)");
+    expect(dialog).toContain('subclassName(classChoice, name, locale)');
+    expect(dialog).toContain("toolLabel(tool, t)");
+    expect(dialog).toContain('t("Choose tools for {class} ({count}):"');
+    expect(dialog).toContain('aria-label={t("Close", { context: "action.close" })}');
+    expect(dialog).not.toContain(' of your choice. Pick {toolCount');
+  });
+
   it("uses common Czech names for portrait class hints and feat spellbook headings", () => {
     expect(contentName("classes", "fighter", "cs")).toBe("Bojovník");
     const parts = readFileSync(path.join(process.cwd(), "src/components/sheet/SheetParts.tsx"), "utf8");
