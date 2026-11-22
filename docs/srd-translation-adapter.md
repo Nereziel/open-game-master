@@ -64,3 +64,16 @@ bridge between the Open5e catalog and this translated rulebook pack:
 The legacy `rulebookPageIdFor` helper performs broader page discovery,
 including fuzzy race sections; the new translator must not use that
 fuzziness to guess a canonical translation identity.
+
+## Display resolver (opt-in)
+
+`resolveSrdCatalogTranslation(registry, row, englishPages, original, locale)`
+combines the strict crosswalk with the source pack. It returns `pageId`,
+a `translated` flag, and localized `display` fields; it never modifies the
+original row or game mechanics. It is **not yet wired into the application**.
+Unmapped, non-SRD, user-authored and English-language entries retain their
+original display fields. The UI migration should use this bridge instead of
+calling `contentName` without provenance.
+
+Integration tests cover real bundled SRD spell/item rows, cross-book name
+collisions, ambiguous IDs, translated fields and unchanged English mechanics.
