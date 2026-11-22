@@ -190,7 +190,7 @@ export function CallingStep({
     const present = (values: string[]) => [...new Set(values)].sort().map((value) => ({ value, label: value }));
     const roleLabels: Record<string, string> = {
       Tank: t("Tank"),
-      DPS: t("DPS"),
+      DPS: locale === "cs" ? "Útočník" : t("DPS"),
       Healer: t("Healer"),
       Support: t("Support"),
       Control: t("Control"),
