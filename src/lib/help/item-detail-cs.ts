@@ -100,9 +100,11 @@ export function itemDescriptionCs(name: string, description: string | null, loca
   const canonical = canonicalMagicItemDescriptionCs(name, slug) ?? canonicalGearDescriptionCs(name);
   if (!description) return canonical;
   // Existing Czech text (including manually authored content) takes priority.
-  if (!/\b(the|with|contains|can|weapon|shield|book|this|you|your|takes|requires|damage)\b/i.test(description)) {
-    return description;
-  }
+  // English pack descriptions can be a short fragment without verbs, so
+  // detecting just a few English keywords would leave many untranslated.
+  const czechText = /[áčďéěíňóřšťúůýž]/i.test(description)
+    || /\b(je|jsou|jako|nebo|bez|kniha|zbroj|stity|mece)\b/i.test(description);
+  if (czechText) return description;
   return canonical ?? itemDetailCs(description, locale);
 }
 
