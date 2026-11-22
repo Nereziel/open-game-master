@@ -147,7 +147,7 @@ export function AbilityTiles({
           >
             <GameIcon icon={{ kind: "glyph", key: `ability-${ability}` }} size="size-9" className="mx-auto" />
             <p className="eyebrow mt-1 text-[10px] text-stone-400">{abilityShortLabel(ability, locale)}</p>
-            <p className="sheet-ability-mod" title={locale === "cs" ? `Bonus z ${({ str: "Síly", dex: "Obratnosti", con: "Odolnosti", int: "Inteligence", wis: "Moudrosti", cha: "Charismatu" } as Record<Ability, string>)[ability]}` : t("Ability modifier")}>{formatModifier(mods[ability])}</p>
+            <p className="sheet-ability-mod" title={`${t("Ability modifier")} (${t(ABILITY_KEYS[ability])})`}>{formatModifier(mods[ability])}</p>
             <p className="sheet-ability-score">{abilities[ability]}</p>
             {saves ? (
               <p
@@ -245,7 +245,7 @@ export function HpBar({
       <div className="min-w-0 grow">
         <div className="flex items-baseline justify-between gap-2">
           <span className="sheet-vital-label">
-            <GameTerm id="hit_points">Hit points</GameTerm>
+            <GameTerm id="hit_points">{t("Hit points")}</GameTerm>
           </span>
           <span className="font-display text-sm text-amber-50">
             {current}
