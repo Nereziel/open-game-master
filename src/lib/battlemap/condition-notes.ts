@@ -13,6 +13,7 @@ import { conditionEffectsFor } from "@/lib/srd/condition-effects";
 import { forPlayers } from "@/lib/language/player-text";
 import { translate } from "@/lib/messages-logic";
 import { abilityShortLabel } from "@/lib/srd/ability-short-label";
+import { contentName } from "@/lib/content/names";
 import type { Locale } from "@/lib/i18n/translate";
 
 type T = ((key: string, vars?: Record<string, string | number>) => string) & { locale?: Locale };
@@ -113,10 +114,13 @@ export function conditionNote(
     const who = nameOf(raw);
     source = who ? t("from {who}", { who }) : null;
   }
-  if (meta.spell && !source) {
-    source = meta.spell;
-  } else if (meta.spell && source && !source.includes(meta.spell)) {
-    source = `${source} (${meta.spell})`;
+  // The spell identifier is stored in English, just like the sheet. Translate
+  // only its known display name; never rewrite an unknown or authored spell.
+  const displayedSpell = meta.spell ? contentName("spells", meta.spell, t.locale ?? "en") : null;
+  if (displayedSpell && !source) {
+    source = displayedSpell;
+  } else if (displayedSpell && source && !source.includes(meta.spell!) && !source.includes(displayedSpell)) {
+    source = `${source} (${displayedSpell})`;
   }
   return { duration, counted, save, source, meaning };
 }
