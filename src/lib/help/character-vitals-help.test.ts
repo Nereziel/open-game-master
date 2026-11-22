@@ -5,7 +5,8 @@ import path from "node:path";
 
 describe("character vitals explanations", () => {
   const ids = ["speed", "coins", "proficiency_bonus", "spell_save_dc"];
-  const terms = new Map(glossary.terms.map((entry) => [entry.id, entry]));
+  type HelpTerm = { id: string; term: string; short: string; long?: string; cs?: string; shortCs?: string; longCs?: string };
+  const terms = new Map((glossary.terms as HelpTerm[]).map((entry) => [entry.id, entry]));
 
   it("has English and Czech text for all four vitals", () => {
     for (const id of ids) {
