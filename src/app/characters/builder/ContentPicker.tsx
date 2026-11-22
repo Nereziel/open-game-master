@@ -43,10 +43,9 @@ export default function ContentPicker({
   const t = useT();
   const tp = useTp();
   const locale = useLocale();
-  // A feat's row name reads in the reader's language (the official maps; a
-  // homebrew row stays its author's words) while the pick itself stores the
-  // row's own English name.
-  const rowName = (entry: PickerEntry) => (kind === "feats" ? contentName("feats", entry, locale) : entry.name);
+  // Display known official items, spells and feats in the reader's language.
+  // A picked row still carries its original name and IDs to the rules engine.
+  const rowName = (entry: PickerEntry) => contentName(kind, entry, locale);
   const { query, setQuery, results: found, setResults, open, setOpen, loading, unavailable, failed, unadmitted } =
     useContentSearch(kind, extraParams);
   const results = hide ? found.filter((entry) => !hide(entry)) : found;
@@ -108,6 +107,10 @@ export default function ContentPicker({
         <ul className="mt-1 max-h-64 w-full overflow-y-auto panel panel-smoke rounded-lg">
           {results.map((entry, index) => {
             const verdict = judge?.(entry) ?? null;
+            const spellMeta = kind !== "spells" ? undefined : locale === "cs"
+              ? (entry.level === 0 ? t("cantrip", { context: "lead.edit.cantripMeta" })
+                : entry.level !== undefined ? t("Level {level}", { level: entry.level }) : "")
+              : spellSummary(entry.data);
             return (
             <li key={entry.slug} className="flex items-center gap-1 pr-2 hover:bg-stone-800">
               <button
@@ -144,15 +147,16 @@ export default function ContentPicker({
                     : (renderMeta?.(entry) ?? "")}
                 </span>
               </button>
-              {/* The row already carries the full entry, so reading a spell
-                  before adding it costs no extra request. */}
+              {/* Official entries resolve localized details from the shared
+                  rulebook/help sources; homebrew retains its authored text. */}
               <InfoButton
                 label={rowName(entry)}
-                meta={kind === "spells" ? spellSummary(entry.data) : undefined}
-                text={describeContentEntry(entry.data)}
-                reference={
-                  entry.source === "homebrew" ? undefined : { kind, slug: entry.slug }
-                }
+                meta={spellMeta}
+                text={entry.source === "homebrew" ? describeContentEntry(entry.data) : undefined}
+                reference={entry.source === "homebrew" ? undefined : {
+                  kind, slug: entry.slug, name: entry.name, source: entry.source,
+                  documentSlug: entry.documentSlug, rulebook: entry.rulebook,
+                }}
               />
             </li>
             );
