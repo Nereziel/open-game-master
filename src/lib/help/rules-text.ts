@@ -158,7 +158,15 @@ export function firstSentence(text: string | null | undefined, max = 160): strin
   if (!plain) {
     return null;
   }
-  const stop = plain.search(/[.!?](\s|$)/);
+  // Czech ordinals ("Od 3. úrovně") must not terminate hover previews.
+  const candidates = /[.!?](?=\s|$)/g;
+  let stop = -1;
+  for (const match of plain.matchAll(candidates)) {
+    const index = match.index;
+    if (match[0] === "." && index > 0 && /\d/.test(plain[index - 1])) continue;
+    stop = index;
+    break;
+  }
   const line = stop > 0 ? plain.slice(0, stop + 1) : plain;
   return line.length > max ? `${line.slice(0, max - 3)}...` : line;
 }
