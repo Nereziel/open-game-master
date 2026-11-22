@@ -36,6 +36,8 @@ describe("Czech item details", () => {
       .toContain("OČ");
     expect(itemDescriptionCs("Book", "A book can contain poems or histories.", "en"))
       .toBe("A book can contain poems or histories.");
+    expect(itemDescriptionCs("Book", null, "cs")).toContain("Kniha může obsahovat");
+    expect(itemDescriptionCs("Book", null, "en")).toBeNull();
     expect(itemDescriptionCs("Book", "Vlastní tajemný rukopis.", "cs"))
       .toBe("Vlastní tajemný rukopis.");
   });
