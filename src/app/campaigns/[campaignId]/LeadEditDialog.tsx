@@ -23,7 +23,6 @@ import {
   equipmentFrom,
   highestStoredSlot,
   itemRowsOf,
-  levelMeta,
   spellListOf,
   syncCasterLists,
   type ItemRow,
@@ -39,12 +38,11 @@ import { ABILITIES, type Ability, type CharacterSheet, type Proficiencies } from
 import { hostOffers, useCapabilities } from "@/lib/use-capabilities";
 import { useLocale, useT } from "@/lib/locale";
 import { contentName } from "@/lib/content/names";
+import { abilityShortLabel } from "@/lib/srd/ability-short-label";
 import { skillLabel } from "@/lib/srd";
 import { GameTerm } from "@/components/ui/GameTerm";
 import { localizeAcParts } from "@/app/characters/builder/derivedReasons";
 
-const ABILITY_SHORT: Record<string, string> = { str: "STR", dex: "DEX", con: "CON", int: "INT", wis: "WIS", cha: "CHA" };
-const ABILITY_SHORT_CS: Record<string, string> = { str: "SÍL", dex: "OBR", con: "ODL", int: "INT", wis: "MDR", cha: "CHA" };
 
 // The training levels, their labels as message keys read with the dialog's
 // translator at draw time (the STATE_KEYS pattern, SpellBook.tsx).
@@ -70,7 +68,7 @@ export function LeadEditDialog({
   const t = useT();
   const locale = useLocale();
   const localizedLevelMeta = (entry: { level?: number }) =>
-    locale === "cs" ? (entry.level === undefined ? "" : entry.level === 0 ? "trik" : `${entry.level}. úroveň`) : levelMeta(entry);
+    entry.level === undefined ? "" : entry.level === 0 ? t("cantrip", { context: "lead.edit.cantripMeta" }) : t("Level {level}", { level: entry.level });
   const [currentHp, setCurrentHp] = useState(String(sheet.currentHp));
   const [tempHp, setTempHp] = useState(String(sheet.tempHp));
   const [maxHp, setMaxHp] = useState(String(sheet.maxHp));
@@ -351,7 +349,7 @@ export function LeadEditDialog({
               </div>
             ) : (
               <p className="reveal text-[11px] text-stone-400">
-                {locale === "cs" ? `Zbroj určuje TZ: ${derived.ac}` : t("Armor sets it: {ac}", { ac: derived.ac })}
+                {t("Armor sets the AC: {ac}", { ac: derived.ac })}
                 {derived.parts.length ? ` (${localizeAcParts(derived.parts, t, locale).join(", ")})` : ""}
               </p>
             )}
@@ -418,7 +416,7 @@ export function LeadEditDialog({
                 {SRD_SKILLS.map((skill) => (
                   <li key={skill.id} className="flex flex-col items-start gap-1.5 py-2 sm:flex-row sm:items-center sm:justify-between">
                     <span className="min-w-0 text-stone-200">
-                      {skillLabel(skill.id, locale)} <span className="text-stone-500">{(locale === "cs" ? ABILITY_SHORT_CS : ABILITY_SHORT)[skill.ability]}</span>
+                      {skillLabel(skill.id, locale)} <span className="text-stone-500">{abilityShortLabel(skill.ability, locale)}</span>
                     </span>
                     <SegmentedControl
                       options={SKILL_LEVELS.map((level) => ({ ...level, label: t(level.label) }))}
@@ -547,7 +545,7 @@ export function LeadEditDialog({
               ) : null}
               {style !== "known" || prepared.length ? (
               <div className="space-y-1">
-                <span className="eyebrow text-[10px] text-amber-400/80">{locale === "cs" ? "Připravená kouzla" : t("Prepared")}</span>
+                <span className="eyebrow text-[10px] text-amber-400/80">{t("Prepared spells")}</span>
                 <ChipList
                   values={prepared}
                   onRemove={(value) =>
@@ -602,7 +600,7 @@ export function LeadEditDialog({
             />
           </div>
           <label className="mt-2 block space-y-1 text-xs">
-            <span className="text-stone-400">{locale === "cs" ? "Důvod změny (zobrazí se v záznamu)" : t("Reason (shown in the log)")}</span>
+            <span className="text-stone-400">{t("Reason for change (shown in the log)")}</span>
             <input
               value={reason}
               onChange={(event) => setReason(event.target.value)}
