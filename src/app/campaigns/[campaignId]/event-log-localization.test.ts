@@ -128,4 +128,31 @@ describe("historical event-log system phrases follow the reader's locale", () =>
     expect(say("en", "apply_damage", withFire.delta)).toContain("(fire)");
     expect(withFire.delta).toEqual({ amount: 3, type: "fire" });
   });
+
+  it("translates a known used item while preserving custom item descriptions", () => {
+    const delta = { item: "Scale Mail" };
+    expect(say("cs", "use_item", delta)).toContain("Šupinová zbroj");
+    expect(say("en", "use_item", delta)).toContain("Scale Mail");
+    expect(say("cs", "use_item", { item: "My Alchemical Flask" })).toContain("My Alchemical Flask");
+    expect(delta).toEqual({ item: "Scale Mail" });
+  });
+
+  it("uses the same resource names as the character-sheet counters", () => {
+    const delta = { resource: "rage", spent: 2 };
+    expect(say("cs", "use_resource", delta)).toContain("Zuřivost");
+    expect(say("cs", "use_resource", { resource: "second_wind" })).toContain("Druhý dech");
+    expect(say("en", "use_resource", delta)).toContain("rage");
+    expect(say("cs", "use_resource", { resource: "My Custom Power" })).toContain("My Custom Power");
+    expect(delta).toEqual({ resource: "rage", spent: 2 });
+  });
+
+  it("translates only recognized skill training subjects", () => {
+    const delta = { subject: "Acrobatics" };
+    expect(say("cs", "training", delta)).toContain("Akrobacie");
+    expect(say("cs", "training", { subject: "animal_handling" })).toContain("Zacházení se zvířaty");
+    expect(say("cs", "training", { subject: "Arcana" })).toContain("Magie");
+    expect(say("en", "training", delta)).toContain("Acrobatics");
+    expect(say("cs", "training", { subject: "Baking with dragons" })).toContain("Baking with dragons");
+    expect(delta).toEqual({ subject: "Acrobatics" });
+  });
 });
