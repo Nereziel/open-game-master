@@ -401,7 +401,12 @@ function ItemBody({ reference }: { reference: ContentRef }) {
 
   const localizedArmorRows = armorRows.map(({ label, text }) => ({ label: detail(label), text: text ? detail(text) : null }));
   const localizedWeaponRows = weaponRows.map(({ label, text }) => ({ label: detail(label), text: text ? detail(text) : null }));
-  const shownDescription = itemDescriptionCs(reference.name ?? reference.slug, sheet.description, locale, reference.slug);
+  // A supplement may reuse an SRD item name but assign it different rules.
+  // Never substitute the SRD's Czech description for that separate entry.
+  const shownDescription = reference.source === "open5e"
+    && reference.documentSlug && reference.documentSlug !== "wotc-srd"
+    ? sheet.description
+    : itemDescriptionCs(reference.name ?? reference.slug, sheet.description, locale, reference.slug);
 
   return (
     <div className="space-y-4">
