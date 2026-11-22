@@ -53,7 +53,7 @@ export const CZECH_BUNDLED_SPECIES_TRAITS: Readonly<Record<string, CzechSpeciesT
   "Celestial Resistance (necrotic and radiant)": { name: "Nebeská odolnost", description: "Máš odolání vůči nekrotickému a zářivému zranění." },
   "Healing Hands (an action: a touched creature regains a number of d4s equal to your proficiency bonus, 1/long rest)": { name: "Léčivé ruce", description: "Akcí obnovíš dotykem počet k4 životů rovný svému zdatnostnímu bonusu; jednou za dlouhý odpočinek." },
   "Light Bearer (the light cantrip)": { name: "Nositel světla", description: "Znáš trik Světlo." },
-  "Celestial Revelation (from 3rd level, a bonus action: Heavenly Wings, Inner Radiance or Necrotic Shroud for a minute, with extra damage equal to your proficiency bonus once a turn, 1/long rest)": { name: "Nebeské zjevení", description: "Od 3. úrovně můžeš bonusovou akcí na minutu vyvolat jednu nebeskou podobu; jednou za dlouhý odpočinek, s přidaným zraněním podle zdatnostního bonusu." },
+  "Celestial Revelation (from 3rd level, a bonus action: Heavenly Wings, Inner Radiance or Necrotic Shroud for a minute, with extra damage equal to your proficiency bonus once a turn, 1/long rest)": { name: "Nebeské zjevení", description: "Od 3. úrovně můžeš bonusovou akcí na 1 minutu probudit jednu z podob svého nebeského původu. Schopnost můžeš použít jednou za dlouhý odpočinek.\n\n**Nebeská křídla:** Získáš rychlost létání rovnou své rychlosti chůze.\n\n**Vnitřní záře:** Vyzařuješ jasné světlo do vzdálenosti 10 stop a tlumené světlo dalších 10 stop. Na konci svého tahu můžeš způsobit zářivé zranění jednomu tvorovi do 10 stop ve výši svého zdatnostního bonusu.\n\n**Nekrotický závoj:** Při proměně mohou blízcí tvorové utrpět vystrašení podle záchranného hodu na Charisma.\n\nBěhem proměny můžeš navíc jednou za každý svůj tah při zásahu útokem nebo kouzlem způsobujícím zranění přidat jednomu cíli zranění rovné svému zdatnostnímu bonusu. Typ zranění závisí na podobě." },
   "Stone's Endurance (reduce damage by 1d12 + CON, 1/short rest)": { name: "Kamenná výdrž", description: "Reakcí snížíš zranění o 1k12 + opravu Odolnosti; jednou za krátký odpočinek." },
   "Powerful Build (count as one size larger for carrying)": { name: "Mohutná stavba", description: "Pro výpočet nosnosti a břemen se počítáš jako o velikost větší tvor." },
   "Mountain Born (cold and altitude adapted)": { name: "Dítě hor", description: "Jsi přizpůsobený chladu a vysokohorskému prostředí." },
@@ -132,5 +132,16 @@ export const CZECH_BUNDLED_SPECIES_TRAITS: Readonly<Record<string, CzechSpeciesT
 };
 
 export function czechBundledSpeciesTrait(trait: string): CzechSpeciesTrait | null {
-  return CZECH_BUNDLED_SPECIES_TRAITS[trait] ?? null;
+  const exact = CZECH_BUNDLED_SPECIES_TRAITS[trait.trim()];
+  if (exact) return exact;
+  // Older saved sheets and imported packs sometimes keep just the feature
+  // name, or a different English explanation in parentheses. The stable
+  // Aasimar feature name still identifies the same trait; do not expose the
+  // untranslated explanation in the player-facing chip.
+  if (/^celestial revelation(?:\\s*\\(|$)/i.test(trait.trim())) {
+    return CZECH_BUNDLED_SPECIES_TRAITS[
+      "Celestial Revelation (from 3rd level, a bonus action: Heavenly Wings, Inner Radiance or Necrotic Shroud for a minute, with extra damage equal to your proficiency bonus once a turn, 1/long rest)"
+    ];
+  }
+  return null;
 }
