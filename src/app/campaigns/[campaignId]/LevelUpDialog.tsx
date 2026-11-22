@@ -1074,7 +1074,7 @@ export function LevelUpDialog({
             </Dialog.Title>
             {/* Named, and a finger's size on a phone, as the other dialogs'
                 closes are (CharacterNotesDialog, LeadEditDialog). */}
-            <Dialog.Close aria-label="Close" className="pk-tap rounded p-1 text-stone-400 hover:bg-stone-900">
+            <Dialog.Close aria-label={t("Close", { context: "action.close" })} className="pk-tap rounded p-1 text-stone-400 hover:bg-stone-900">
               <X className="size-4" />
             </Dialog.Close>
           </div>
