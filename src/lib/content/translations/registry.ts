@@ -62,7 +62,6 @@ export class TranslationRegistry {
 
   register(pack: TranslationPack): void {
     const sourceId = exactKey(pack.sourceId, "sourceId");
-    if (pack.locale === "en") throw new Error("English is the canonical content, not a translation pack");
     const key = token(sourceId, pack.locale);
     if (this.packs.has(key)) throw new Error(`Duplicate translation pack: ${key}`);
     const seen = new Set<string>();
