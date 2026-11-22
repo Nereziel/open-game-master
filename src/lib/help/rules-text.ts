@@ -80,6 +80,65 @@ export function parseRulesBlocks(text: string): RulesBlock[] {
   return blocks;
 }
 
+// A table in a rules entry is GitHub-flavoured Markdown, not a preformatted
+// block. Leave badly formed table-like text untouched in the viewer rather
+// than silently discarding any rules or inventing column meanings.
+export type RulesTable = {
+  head: string[];
+  align: Array<"left" | "center" | "right" | null>;
+  rows: string[][];
+};
+
+function tableCells(line: string): string[] {
+  const text = line.trim();
+  const start = text.startsWith("|") ? 1 : 0;
+  const end = text.endsWith("|") && !text.endsWith("\\|") ? text.length - 1 : text.length;
+  const cells: string[] = [];
+  let cell = "";
+  for (let i = start; i < end; i += 1) {
+    if (text[i] === "\\" && text[i + 1] === "|") {
+      cell += "|";
+      i += 1;
+    } else if (text[i] === "|") {
+      cells.push(cell.trim());
+      cell = "";
+    } else {
+      cell += text[i];
+    }
+  }
+  cells.push(cell.trim());
+  return cells;
+}
+
+export function parseRulesTable(lines: readonly string[]): RulesTable | null {
+  if (lines.length < 2) return null;
+  const head = tableCells(lines[0]);
+  const separator = tableCells(lines[1]);
+  if (
+    head.length < 2 ||
+    separator.length !== head.length ||
+    !separator.every((cell) => /^:?-{2,}:?$/.test(cell))
+  ) {
+    return null;
+  }
+  const align = separator.map((cell) =>
+    cell.startsWith(":") && cell.endsWith(":") ? "center"
+    : cell.endsWith(":") ? "right"
+    : cell.startsWith(":") ? "left"
+    : null,
+  );
+  const rows = lines.slice(2).map((line) => {
+    const cells = tableCells(line);
+    // Missing trailing cells are empty. Extra cells are joined rather than
+    // lost, so even a typo in a rules entry keeps every original word.
+    if (cells.length > head.length) {
+      return [...cells.slice(0, head.length - 1), cells.slice(head.length - 1).join(" | ")];
+    }
+    return [...cells, ...Array<string>(head.length - cells.length).fill("")];
+  });
+  return { head, align, rows };
+}
+
 // The text with its markdown taken out, on one line.
 export function stripMarkdown(text: string): string {
   return normalizeRulesText(text)
