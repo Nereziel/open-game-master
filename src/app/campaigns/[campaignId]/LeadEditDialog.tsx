@@ -16,6 +16,7 @@ import { KitButton, PanelError } from "./PanelKit";
 import { GiveStats, useUnknownGear } from "./GiveStats";
 import {
   ChipList,
+  LocalizedItemNameInput,
   ItemFlags,
   SlotSteppers,
   editedSpellSlots,
@@ -348,7 +349,7 @@ export function LeadEditDialog({
               </div>
             ) : (
               <p className="reveal text-[11px] text-stone-400">
-                {t("Armor sets it: {ac}", { ac: derived.ac })} <span className="text-stone-100"></span>
+                {locale === "cs" ? `Zbroj určuje TZ: ${derived.ac}` : t("Armor sets it: {ac}", { ac: derived.ac })}
                 {derived.parts.length ? ` (${localizeAcParts(derived.parts, t, locale).join(", ")})` : ""}
               </p>
             )}
@@ -413,7 +414,7 @@ export function LeadEditDialog({
               </span>
               <ul className="divide-y divide-stone-800/60">
                 {SRD_SKILLS.map((skill) => (
-                  <li key={skill.id} className="flex items-center justify-between gap-2 py-1">
+                  <li key={skill.id} className="flex flex-col items-start gap-1.5 py-2 sm:flex-row sm:items-center sm:justify-between">
                     <span className="min-w-0 text-stone-200">
                       {skillLabel(skill.id, locale)} <span className="text-stone-500">{(locale === "cs" ? ABILITY_SHORT_CS : ABILITY_SHORT)[skill.ability]}</span>
                     </span>
@@ -441,9 +442,9 @@ export function LeadEditDialog({
                 {row.base.slug ? (
                   <span className={cn(field, "min-w-0 truncate")}>{contentName("items", row.name, locale)}</span>
                 ) : (
-                  <input
-                    value={row.name}
-                    onChange={(event) => setItem(index, { name: event.target.value })}
+                  <LocalizedItemNameInput
+                    name={row.name}
+                    onChange={(name) => setItem(index, { name })}
                     placeholder={t("Item name")}
                     className={field}
                   />
