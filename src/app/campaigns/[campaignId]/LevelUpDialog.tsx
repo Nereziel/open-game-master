@@ -1,6 +1,6 @@
 "use client";
 
-import { splitToolGrants } from "@/lib/srd/tool-choices";
+import { splitToolGrants, toolLabel } from "@/lib/srd/tool-choices";
 import {
   classFeaturesFor,
   subclassCastingProfileFor,
@@ -1383,19 +1383,9 @@ export function LevelUpDialog({
                   {needsToolPick ? (
                     <>
                       <p className="text-stone-300">
-                        {/* Named for its kind ("a musical instrument"), as the
-                            builder's tool panels name theirs. */}
-                        {chosenKlass?.name ?? classChoice} grants{" "}
-                        {toolChoicesOpen.length === 1
-                          ? toolCount === 1
-                            ? `a ${toolChoicesOpen[0].label}`
-                            : `${toolCount} ${toolChoicesOpen[0].label}s`
-                          : toolCount === 1
-                            ? "a tool"
-                            : `${toolCount} tools`}{" "}
-                        of your choice. Pick {toolCount === 1 ? "it" : "them"}:
+                        {t("Choose tools for {class} ({count}):", { class: contentName("classes", chosenKlass?.name ?? classChoice, locale), count: toolCount })}
                       </p>
-                      <div className="stagger-pop flex flex-wrap gap-1.5" role="group" aria-label={`${chosenKlass?.name ?? classChoice} tool proficiency`}>
+                      <div className="stagger-pop flex flex-wrap gap-1.5" role="group" aria-label={t("Tool choices for {class}", { class: contentName("classes", chosenKlass?.name ?? classChoice, locale) })}>
                         {toolOptions.map((tool) => {
                           const picked = toolPicks.some((entry) => textKey(entry) === textKey(tool));
                           const full = !picked && toolPicks.length >= toolCount;
@@ -1417,7 +1407,7 @@ export function LevelUpDialog({
                                   : "border-stone-700 hover:border-amber-800 hover:bg-stone-900 disabled:opacity-50",
                               )}
                             >
-                              {tool}
+                              {toolLabel(tool, t)}
                             </button>
                           );
                         })}
