@@ -141,7 +141,7 @@ export default function ContentPicker({
                 <span className="shrink-0 text-xs text-stone-500">
                   {entry.source === "homebrew"
                     ? t("homebrew")
-                    : [entry.display?.meta ?? (kind === "spells" ? entry.display?.school : entry.display?.rarity) ?? renderMeta?.(entry), entry.document].filter(Boolean).join(" · ")}
+                    : [renderMeta?.(entry), entry.display?.meta ?? (kind === "spells" ? entry.display?.school : entry.display?.rarity), entry.document].filter(Boolean).join(" · ")}
                 </span>
               </button>
               {/* The row already carries the full entry, so reading a spell
