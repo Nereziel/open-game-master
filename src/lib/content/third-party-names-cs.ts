@@ -178,12 +178,89 @@ const TOME_OF_HEROES_SPELLS: Readonly<Record<string, string>> = {
   "Sightburst": "Záblesk zraku",
 };
 
+// Other Open5e source tables may reuse an English name but not its rules.
+const TOME_OF_HEROES_FEATS: Readonly<Record<string, string>> = {
+  "Boundless Reserves": "Nevyčerpatelné zásoby",
+  "Diehard": "Nezdolný",
+  "Floriographer": "Znalec květomluvy",
+  "Forest Denizen": "Obyvatel lesa",
+  "Friend of the Forest": "Přítel lesa",
+  "Giant Foe": "Nepřítel obrů",
+  "Harrier": "Pronásledovatel",
+  "Inner Resilience": "Vnitřní odolnost",
+  "Part of the Pack": "Člen smečky",
+  "Rimecaster": "Mrazivý sesilatel",
+};
+
+const DEEP_MAGIC_SPELLS: Readonly<Record<string, string>> = {
+  "Abhorrent Apparition": "Odpudivý přízrak",
+  "Accelerate": "Zrychlení",
+  "Acid Gate": "Kyselinová brána",
+  "Acid Rain": "Kyselý déšť",
+  "Adjust Position": "Úprava polohy",
+  "Afflict Line": "Prokletí linie",
+  "Agonizing Mark": "Trýznivá značka",
+  "Alchemical Form": "Alchymická podoba",
+  "Ally Aegis": "Ochrana spojence",
+  "Alone": "Osamění",
+  "Alter Arrow's Fortune": "Změň osud šípu",
+  "Althea's Travel Tent": "Althein cestovní stan",
+  "Amplify Gravity": "Zesil gravitaci",
+  "Analyze Device": "Analyzuj zařízení",
+  "Ancestor's Strength": "Síla předků",
+  "Anchoring Rope": "Kotvicí lano",
+  "Ancient Shade": "Prastarý stín",
+  "Angelic Guardian": "Andělský strážce",
+  "Animate Ghoul": "Oživ ghúla",
+  "Animate Greater Undead": "Oživ mocnějšího nemrtvého",
+  "Animated Scroll": "Oživený svitek",
+  "Anticipate Arcana": "Předvídej magii",
+  "Anticipate Attack": "Předvídej útok",
+  "Anticipate Weakness": "Předvídej slabinu",
+  "Arcane Sight": "Arkánní zrak",
+  "As You Were": "Jako předtím",
+  "Ashen Memories": "Popelavé vzpomínky",
+  "Aspect of the Dragon": "Dračí aspekt",
+  "Aspect of the Serpent": "Hadí aspekt",
+  "Auspicious Warning": "Příznivé varování",
+  "Avoid Grievous Injury": "Odvrať těžké zranění",
+  "Beguiling Gift": "Okouzlující dar",
+  "Blizzard": "Sněhová bouře",
+  "Caustic Torrent": "Žíravý proud",
+  "Conjure Minor Voidborn": "Vyvolej menšího tvora prázdnoty",
+  "Conjure Voidborn": "Vyvolej tvora prázdnoty",
+  "Crushing Curse": "Drtivá kletba",
+  "Destructive Resonance": "Ničivá rezonance",
+  "Earthskimmer": "Klouzání po zemi",
+  "Entomb": "Pohřbení",
+  "Flame Wave": "Vlna plamenů",
+  "Frozen Razors": "Ledové břitvy",
+  "Glimpse of the Void": "Záblesk prázdnoty",
+  "Life Drain": "Vysátí života",
+  "Living Shadows": "Živé stíny",
+  "Maddening Whispers": "Šílenství vyvolávající šepoty",
+  "Nether Weapon": "Zbraň podsvětí",
+  "Pummelstone": "Bičující kámen",
+  "Pyroclasm": "Pyroklasma",
+  "Riptide": "Zpětný proud",
+  "Rolling Thunder": "Valící se hrom",
+  "Spire of Stone": "Kamenná věž",
+  "Tidal Barrier": "Přílivová bariéra",
+  "Void Rift": "Trhlina prázdnoty",
+  "Void Strike": "Úder prázdnoty",
+  "Wind Lash": "Větrný bič",
+  "Wind Tunnel": "Větrný tunel",
+  "Word of Misfortune": "Slovo neštěstí",
+};
+
 type ThirdPartyCsKind = "items" | "spells" | "feats";
 type Entries = Readonly<Partial<Record<ThirdPartyCsKind, Readonly<Record<string, string>>>>>;
 
 const THIRD_PARTY_CS_NAMES: Readonly<Record<string, Entries>> = {
   // Open5e v1: document__slug=toh; v2 imports preserve this key.
-  toh: { items: TOME_OF_HEROES_ITEMS, spells: TOME_OF_HEROES_SPELLS },
+  toh: { items: TOME_OF_HEROES_ITEMS, spells: TOME_OF_HEROES_SPELLS, feats: TOME_OF_HEROES_FEATS },
+  // Open5e document__slug=deepm (Kobold Press Deep Magic).
+  deepm: { spells: DEEP_MAGIC_SPELLS },
 };
 
 const INDEX: Readonly<Record<string, Partial<Record<ThirdPartyCsKind, Readonly<Record<string, string>>>>>> =
