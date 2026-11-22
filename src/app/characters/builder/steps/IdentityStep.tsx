@@ -1,7 +1,7 @@
 "use client";
 
-import { Camera, Dices, Images, UserRound } from "lucide-react";
-import { useId } from "react";
+import { Camera, Check, Copy, Dices, Images, UserRound } from "lucide-react";
+import { useId, useState } from "react";
 import { AttractionPicker, CHARACTER_ATTRACTION_HINT } from "@/components/AttractionPicker";
 import { InfoButton } from "@/components/ui/InfoDialog";
 import { LengthNote } from "@/components/ui/LengthNote";
@@ -40,6 +40,9 @@ export function IdentityStep({
   pack,
   initial,
   background,
+  raceName,
+  className,
+  backgroundName,
   paintsPortraits,
   onUploadPortrait,
   onOpenGallery,
@@ -53,6 +56,9 @@ export function IdentityStep({
   // The background chosen on the Ancestry step, whose suggested trait,
   // ideal, bond and flaw the Personality block offers.
   background?: BackgroundOption | null;
+  raceName?: string;
+  className?: string;
+  backgroundName?: string;
   // Whether this server can paint a portrait at all. Without an image
   // backend the section still offers uploads and bundled gallery art and
   // painting that would never arrive.
@@ -77,6 +83,34 @@ export function IdentityStep({
   // The same for the personality's four lines.
   const asksPersona = hostOffers(useCapabilities(), "persona");
   const keptSaved = Boolean(initial?.portrait && portrait?.url === initial.portrait.url);
+  const [copyStatus, setCopyStatus] = useState<"idle" | "copied" | "failed">("idle");
+
+  async function copyPortraitPrompt() {
+    const details = [
+      state.name.trim() && `Name: ${state.name.trim()}`,
+      raceName && `Species: ${raceName}`,
+      className && `Class: ${className}`,
+      state.subclass.trim() && `Subclass: ${state.subclass.trim()}`,
+      backgroundName && `Background: ${backgroundName}`,
+      state.gender && `Gender: ${genderLabel(state.gender, locale)}`,
+      state.appearance.trim() && `Physical appearance: ${state.appearance.trim()}`,
+    ].filter(Boolean);
+    const prompt = [
+      "Create a single fantasy tabletop RPG character avatar portrait based on the character details below.",
+      ...details,
+      "",
+      "Composition: a square 1:1 portrait, head and shoulders (bust), front-facing or slight three-quarter angle. Face centered, fully visible, with the full head, hair, neck and shoulders safely inside the frame. Leave a little breathing room around the head so the portrait can be cropped into a small square or circle without cutting off facial features.",
+      "Visuals: polished, detailed fantasy character illustration; expressive face, believable anatomy, distinctive ancestry and class-appropriate clothing or armor visible at the shoulders. Neutral or softly blurred atmospheric fantasy background, with strong contrast from the subject.",
+      "Preserve the supplied appearance details. Do not invent specific traits that contradict them. No full body, no distant figure, no multiple characters, no text, no letters, no watermark, no border, no UI elements.",
+      "Output one image suitable for a character sheet avatar.",
+    ].join("\n");
+    try {
+      await navigator.clipboard.writeText(prompt);
+      setCopyStatus("copied");
+    } catch {
+      setCopyStatus("failed");
+    }
+  }
 
   return (
     <div className="space-y-4">
@@ -180,6 +214,10 @@ export function IdentityStep({
                 <Images className="size-3.5" aria-hidden="true" />
                 {t("Choose from gallery")}
               </button>
+              <button type="button" onClick={() => void copyPortraitPrompt()} className={ui.btnSmall}>
+                {copyStatus === "copied" ? <Check className="size-3.5" aria-hidden="true" /> : <Copy className="size-3.5" aria-hidden="true" />}
+                {locale === "cs" ? "Zkopírovat prompt" : "Copy portrait prompt"}
+              </button>
               {/* Clearing the saved portrait means "paint me a new one", which
                   only makes sense where a painter exists. A freshly uploaded
                   photo can always be taken back. */}
@@ -189,6 +227,13 @@ export function IdentityStep({
                 </button>
               ) : null}
             </div>
+            {copyStatus !== "idle" ? (
+              <p role="status" className={cn("mt-1 text-xs", copyStatus === "failed" ? "text-red-300" : "text-emerald-300")}>
+                {copyStatus === "copied"
+                  ? (locale === "cs" ? "Prompt zkopírován. Vlož jej do generátoru obrázků a hotový portrét nahraj sem." : "Prompt copied. Paste it into an image generator, then upload the portrait here.")
+                  : (locale === "cs" ? "Kopírování se nezdařilo. Zkontroluj oprávnění schránky." : "Could not copy. Check clipboard permissions.")}
+              </p>
+            ) : null}
             <p className="mt-1.5 text-xs text-stone-500">
               {portrait
                 ? paintsPortraits
