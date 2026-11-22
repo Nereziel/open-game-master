@@ -2,7 +2,7 @@ import { readFileSync } from "node:fs";
 import { join } from "node:path";
 import { describe, expect, it } from "vitest";
 import catalog from "./cs.json";
-import { installCatalog, translate } from "./translate";
+import { installCatalog, translate, translatePlural } from "./translate";
 
 // Previously 217 Czech UI labels were stored separately in translate.ts.
 // 63 missing keys have been moved to cs.json; existing catalog values win.
@@ -40,6 +40,21 @@ describe("Czech UI translations have one canonical catalog", () => {
     expect(translate("cs", "Add {count}", { count: 2 })).toBe("Přidat (2)");
     expect(translate("en", "Acquired item: {name}.", { name: "Lantern" })).toBe("Acquired item: Lantern.");
     expect(translate("en", "Prepared spells")).toBe("Prepared spells");
+  });
+
+  it("covers the UI audit backlog and keeps Czech grammar for different level counts", () => {
+    installCatalog("cs", catalog);
+    expect(translate("cs", "The attack hits. Someone may still add to its damage."))
+      .toBe("Útok zasáhl. Někdo může ještě zvýšit jeho zranění.");
+    expect(translate("cs", "{name} attacks {target}.", { name: "Alya", target: "skřeta" }))
+      .toBe("Alya útočí na skřeta.");
+    expect(translate("cs", "1 still to choose. ")).toBe("Zbývá vybrat 1 možnost. ");
+    expect(translate("cs", "Hour")).toBe("Hodina");
+    expect(translatePlural("cs", "level", "levels", { count: 1 })).toBe("úroveň");
+    expect(translatePlural("cs", "level", "levels", { count: 3 })).toBe("úrovně");
+    expect(translatePlural("cs", "level", "levels", { count: 5 })).toBe("úrovní");
+    expect(translate("en", "{name} attacks {target}.", { name: "Alya", target: "an orc" }))
+      .toBe("Alya attacks an orc.");
   });
 
   it("preserves existing catalog translations rather than overwriting them with old fallback wording", () => {
