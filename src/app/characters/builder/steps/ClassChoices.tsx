@@ -4,7 +4,8 @@ import { GameTerm } from "@/components/ui/GameTerm";
 import { InfoButton } from "@/components/ui/InfoDialog";
 import { cn } from "@/lib/cn";
 import { describeSkill } from "@/lib/help";
-import { SRD_SKILLS } from "@/lib/srd";
+import { SRD_SKILLS, skillLabel } from "@/lib/srd";
+import { fightingStyleCs } from "@/lib/srd/fighting-style-cs";
 import { expertiseAllowed, expertiseSlotsFor, THIEVES_TOOLS } from "@/lib/srd/features";
 import type { ClassOption } from "../useBuilderOptions";
 import type { BuilderActions, BuilderDerived } from "../useBuilderDerived";
@@ -95,7 +96,7 @@ export function ClassChoices({
               return (
                 <PickPill
                   key={skillId}
-                  label={skill?.name ?? (skillId === THIEVES_TOOLS ? t("Thieves' tools") : skillId)}
+                  label={skill ? skillLabel(skillId, locale) : (skillId === THIEVES_TOOLS ? t("Thieves' tools") : skillId)}
                   selected={selected}
                   info={{ text: skill ? describeSkill(t, skillId, locale) : t("Your proficiency bonus is doubled for ability checks you make with thieves' tools.") }}
                   onClick={() =>
@@ -150,8 +151,8 @@ export function ClassChoices({
                   }
                   className={optionCard(selected)}
                 >
-                  <span className="block text-xs">{style.name}</span>
-                  <span className="block text-sm text-stone-500">{style.description}</span>
+                  <span className="block text-xs">{locale === "cs" ? fightingStyleCs(style.id)?.name ?? style.name : style.name}</span>
+                  <span className="block text-sm text-stone-500">{locale === "cs" ? fightingStyleCs(style.id)?.description ?? style.description : style.description}</span>
                 </button>
               );
             })}
@@ -185,7 +186,7 @@ export function ClassChoices({
               ) : null}
               {rule ? `${rule} ` : null}
               {spells
-                ? "Tap the info button on any one to read the spell."
+                ? t("Tap the info button on any one to read the spell.")
                 : t(" These are real abilities your character gets. Tap the info button on any one to read what it does.")}
             </>
           }
