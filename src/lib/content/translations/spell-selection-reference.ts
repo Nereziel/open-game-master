@@ -29,13 +29,13 @@ export function updateChosenSpellReference(
   reference: StoredContentReference | null,
 ): Record<string, StoredContentReference> {
   const next = { ...current };
-  // English names are the legacy spell list's persisted keys. A missing
-  // or ambiguous reference must never silently retain an unrelated source.
-  if (reference && (!next[name] || sameStoredContentReference(next[name], reference))) {
-    next[name] = reference;
-  } else {
-    delete next[name];
-  }
+  // Treat case/whitespace variants of the same English engine name as one
+  // spell. Clear all prior spell aliases before writing a new reference.
+  const aliases = Object.entries(next).filter(([key]) => textKey(key) === textKey(name));
+  const conflict = reference && aliases.some(([, existing]) => !sameStoredContentReference(existing, reference));
+  for (const [key] of aliases) delete next[key];
+  // Never leave a reference from another book or guess on an ambiguous pick.
+  if (reference && !conflict) next[name] = reference;
   return next;
 }
 
