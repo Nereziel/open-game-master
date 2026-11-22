@@ -13,6 +13,17 @@ type Catalog = {
 // Small patches for missing Czech UI keys while the large generated catalog
 // remains unchanged. Only apply when the catalog would display English.
 const CZECH_LABEL_FALLBACKS: Record<string, string> = {
+  "Melee weapon": "Zbraň na blízko",
+  "Ranged weapon": "Zbraň na dálku",
+  "Armor or shield": "Zbroj nebo štít",
+  "Used up when used": "Spotřební předmět",
+  "Magic item": "Magický předmět",
+  "Gear": "Vybavení",
+  "Select the mark beside it for the full entry.": "Úplný popis otevřeš kliknutím na značku vedle předmětu.",
+  "partly by hand": "část vyhodnocuje PJ",
+  "narrated": "vyhodnocuje PJ",
+  "Partly by hand": "Část vyhodnocuje PJ",
+  "Narrated": "Vyhodnocuje PJ",
   "The Saltmarch": "Solné močály",
   "Click the map to set each corner.": "Kliknutím na mapu umísti jednotlivé rohy.",
   "Close the shape ({count} corners)": "Uzavřít tvar ({count} rohů)",
