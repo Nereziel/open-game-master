@@ -93,6 +93,242 @@ export const CZECH_WORKSHOP_GUIDE_SUMMARIES: Record<string, { title: string; pur
   },
 };
 
+export type CzechWorkshopGuideDetails = { steps: string[]; atTable: string; tips: string[] };
+
+// Complete Czech instructions for every workshop tool. English source and
+// French translations remain in WORKSHOP_GUIDES, unchanged.
+export const CZECH_WORKSHOP_GUIDE_DETAILS: Record<string, CzechWorkshopGuideDetails> = {
+  "world": {
+    "steps": [
+      "Začni tlačítkem Vytvořit: přidej osobu, místo, nestvůru, předmět nebo celý svět. Funkce Navrhnout svět podle nápadu připraví osnovu, z níž vybereš požadované položky. Ruční vytvoření prvního záznamu ani otevření souboru WorldForge model AI nevyžaduje.",
+      "Otevři záznam, napiš jeho článek, vyplň pole odpovídající jeho typu a přidej skrytou pravdu, kterou hráči nesmějí číst.",
+      "Propoj záznam s dalšími: vyber cílový záznam, popiš vztah a určete, zda jde o veřejnou znalost, skrytou pravdu nebo mylnou domněnku.",
+      "Propoj záznam s herním obsahem: se statistikami nestvůry nebo předmětem, u místa také s bojovými mapami a střetnutími. Příkaz Přidat do boje vloží právě tuto nestvůru do střetnutí.",
+      "Pokud je nastaven generátor obrázků, můžeš záznam ilustrovat. Nový obrázek nejprve schválíš nebo odmítneš; při neúspěchu se zobrazí důvod a lze to zkusit znovu.",
+      "Přidej kalendáře, historii světa, mapy v atlasu a tajemství včetně jejich strážců.",
+      "Polož světu otázku a přečti si pasáže, z nichž odpověď vychází.",
+      "Ulož svět zpět do souboru WorldForge nebo vyexportuj celou Dílnu jako balíček v části Sdílení."
+    ],
+    "atTable": "Kampaň, do které svět naimportuješ, dostane vlastní kopii na záložce Svět; tu vidí jen ten, kdo vede příběh. Volbou Odhalit družině zveřejníš tajemství jako znalost dostupnou hráčům. Mapu z atlasu hráči uvidí na záložce Mapa až poté, co ji družině ukážeš.",
+    "tips": [
+      "Záznamy jsou společné nástrojům Postavy světa, Oblast, Frakce a Historie a znalosti světa. Změny provedené v kterémkoli z nich se projeví i v ostatních.",
+      "Kánon určuje, co ve světě platí. AI Pán jeskyně považuje koncepty a alternativní verze za nepotvrzené a vyřazené záznamy nepoužívá. Nekanonické znalosti světa zůstávají hráčům skryté, dokud je nepotvrdíš.",
+      "Hráči skryté pravdy nečtou. AI Pán jeskyně zná tajemství osob, míst, frakcí a jejich vazeb i dosud neodhalené informace, ale nesmí je přímo prozradit.",
+      "Kalendáře určují datování událostí v historii světa. Kampaň má vlastní čas a přidání události do kalendáře samo o sobě nic nenaplánuje při hraní.",
+      "V zobrazení vztahů přepni na Co si lidé myslí, pokud chceš vidět svět z pohledu znalostí hráčů.",
+      "Bez textového modelu nejsou dostupné funkce Osnova, Tvořit, Zeptat se a Návrh. Bez generátoru obrázků není dostupné Malování. Vše ostatní funguje i bez AI; modely se nastavují v administraci serveru."
+    ]
+  },
+  "storyboard": {
+    "steps": [
+      "Vyber typ karty, zadej její název a klikni na Přidat.",
+      "Otevři kartu, napiš její obsah a z nabídek ji propoj s NPC, mapou, připraveným soubojem nebo místem.",
+      "Pomocí pole Vede k propoj kartu s těmi, které následují.",
+      "Prohlédni si přehled chybějících částí osnovy a přidej navrhované karty.",
+      "Zkontroluj náhled Co z toho vznikne: ukazuje výsledek importu osnovy do kampaně."
+    ],
+    "atTable": "Kampaň, do které osnovu přeneseš, získá znalosti světa, úkoly, připravené souboje, poznámky PJ a příběhový oblouk. Karta načtená ze souboru WorldForge má označený původ; opětovný import původní kartu aktualizuje, místo aby vznikla duplicita.",
+    "tips": [
+      "Propojovací nabídky používají ostatní nástroje. Nejprve vytvoř NPC nebo mapu a potom na ně může karta odkazovat.",
+      "Seznam chybějících částí se počítá podle dat, nikoli odhadu AI."
+    ]
+  },
+  "party": {
+    "steps": [
+      "V horní liště Dílny nastav velikost a úroveň družiny a změny ulož.",
+      "Vyber postavu ze své knihovny a přidej ji, nebo vytvoř novou.",
+      "Funkce Navrhnout předpřipravené postavy nechá AI Pána jeskyně navrhnout hrdinu pro každé místo ve vzorové družině. Deníky sestaví pravidla na zadané úrovni. Hráčům se návrhy nezobrazí, dokud je neschválíš.",
+      "Postavu odstraníš z družiny křížkem; v knihovně ti zůstane."
+    ],
+    "atTable": "Předpřipravené postavy jsou hotové deníky pro hráče, kteří ke stolu přijdou bez vlastní postavy.",
+    "tips": [
+      "Pokud má předpřipravená postava jinou úroveň než vzorová družina, její karta na to upozorní.",
+      "Při sdílení Dílny se předpřipravené postavy přenesou spolu s balíčkem.",
+      "Postava navržená AI je označena jako návrh od AI Pána jeskyně, dokud ji neupravíš. Bez textového modelu je generování návrhů vypnuté a aplikace vysvětlí proč."
+    ]
+  },
+  "maps": {
+    "steps": [
+      "Otevři Nová mapa, pojmenuj ji a vyber náhodné vytvoření, prázdnou skálu, prázdnou zem nebo import souboru .dd2vtt.",
+      "Kliknutím na mapu v seznamu otevři její editor.",
+      "Kresli štětcem, čárou, obrysem, obdélníkem nebo výplní. Chybný tah můžeš vrátit.",
+      "Pomocí nástrojů rozmísti světla, dveře, popisky a objekty. U objektu představujícího kolemjdoucího lze vybrat postavu z připravených NPC.",
+      "Nastav téma, okolní osvětlení, štítky, poznámky a zvukový doprovod mapy.",
+      "Během kampaně vlož mapu na herní stůl nebo ji otevři jako scénu."
+    ],
+    "atTable": "Střetnutí nebo místo propojené s mapou se otevře s jejími stěnami, dveřmi a osvětlením. Během hry můžeš mapu na stůl vložit i ručně.",
+    "tips": [
+      "Nic z této sekce neovlivní probíhající hru, dokud obsah nepřidáš na stůl.",
+      "Obrázek na pozadí je pod herní mřížkou, takže i ručně kreslená mapa využívá systémové osvětlení a dveře.",
+      "Již použité štítky dalších map se nabízejí u pole pro štítky."
+    ]
+  },
+  "region": {
+    "steps": [
+      "Zvol režim Přidat bod, Malovat terén, Nakreslit čáru nebo Napsat popisek a klikni na mapu.",
+      "V části Upravit tvar oblasti popiš krajinu jednou větou, čímž nastavíš ovládací hodnoty, nebo nech vygenerovat náhodný svět.",
+      "Pojmenuj a přidej místa, na která se pak mohou odkazovat NPC, karty a střetnutí.",
+      "Místo dlaždic můžeš použít obrázek, importovat mapu z Azgaaru nebo oblast exportovat jako PNG.",
+      "Jako pozadí může sloužit i mapa z atlasu WorldForge. Přidej její označená místa; jejich polohy se pak mění spolu s body na mapě."
+    ],
+    "atTable": "Jde o mapu krajiny, po které družina cestuje. Hráči uvidí jednotlivá místa až poté, co je družina objeví.",
+    "tips": [
+      "Hráči vidí jen místa, která už družina objevila.",
+      "Regenerování vytvoří nový terén. Místa si ponechají své pozice tam, kde to nová krajina dovolí."
+    ]
+  },
+  "encounters": {
+    "steps": [
+      "Otevři Jak obtížné to je?, vyber nestvůry a nech spočítat náročnost sestavy ještě před uložením.",
+      "Klikni na Nové střetnutí, pojmenuj je a přidej nestvůry do sestavy. Počty upravíš v poli níže.",
+      "Vyber bojovou mapu a rozmísti na ni protivníky i výchozí pozici družiny.",
+      "Napiš plán souboje: odměny i okamžiky, kdy se mají stát důležité události.",
+      "Připrav střetnutí. Při hraní je pak zahájíš jediným stisknutím tlačítka Nasadit.",
+      "Pomocí Vyzkoušet souboj jej spusť na soukromém testovacím stole. Vyber vzorovou nebo vlastní družinu a určete, zda nepřátele ovládá AI Pán jeskyně, nebo ty. Bez AI je ovládáš sám."
+    ],
+    "atTable": "Nasazení střetnutí umístí souboj na vybranou mapu a přidá jeho plán. Vlastní nestvůry použité ve střetnutí se při importu přenesou také do kampaně.",
+    "tips": [
+      "Ukazatel obtížnosti používá stejné výpočty jako herní systém; u každé hodnoty jsou dostupné dílčí výpočty.",
+      "Test ukončíš u testovacího stolu nebo v seznamu střetnutí. Spuštěním dalšího testu předchozí skončí. Testy neovlivní skutečné postavy.",
+      "Nestvůra, kterou svět nezná, je označena na kartě; chyba se neodkládá až do hry."
+    ]
+  },
+  "cast": {
+    "steps": [
+      "Klikni na Nová osoba, zadej jméno, roli a postoj vůči družině.",
+      "Vyber místo, kde se postava nachází, ze seznamu lokací světa nebo napiš nové.",
+      "Vyplň osobnost, cíle a vztahy k dalším postavám.",
+      "Ulož záznam a přidej portrét nahráním nebo vygenerováním."
+    ],
+    "atTable": "AI Pán jeskyně postavu hraje podle její osobnosti a cílů. Lidský PJ ji najde v seznamu postav světa.",
+    "tips": [
+      "Funkce Navrhnout používá textový model k doplnění jediného pole. Model lze nastavit v administraci serveru.",
+      "Odložit skryje postavu bez smazání. Seznam postav se navíc doplňuje, jak družina potkává nové lidi."
+    ]
+  },
+  "factions": {
+    "steps": [
+      "Klikni na Přidat frakci a zadej její název.",
+      "Napiš, co o frakci družina ví, a její skutečné cíle, které hráči nevidí.",
+      "Vyber postoj, sílu, obrázek a štítky.",
+      "Pomocí značek u frakce určete vztah družiny k ní.",
+      "Otevři záznam frakce ve WorldForge a doplň členy, sídlo a vazby."
+    ],
+    "atTable": "AI Pán jeskyně zná frakce, jejich cíle a vztahy k družině. V kampani se jejich cíle mohou posouvat na pozadí při uzavírání kapitol.",
+    "tips": [
+      "Frakce a její záznam ve WorldForge představují stejná data; můžeš je upravovat z obou míst.",
+      "Funkce převzetí obsahu Dílny do balíčku světa zahrnuje frakce, jejich sídla i členy."
+    ]
+  },
+  "bestiary": {
+    "steps": [
+      "Otevři Vytvořit nestvůru, zadej jméno a nebezpečnost nebo vyber jako základ existující nestvůru z katalogu.",
+      "V bloku statistik nastav vlastnosti, útoky a rysy. Funkce Záchrany z vlastností doplní záchranné hody.",
+      "Funkce Sestavit z katalogu převezme velikost, životy, zbroj a útoky podle původu, povolání a výbavy.",
+      "Z katalogu doplň známá kouzla, z nabídky jazyky a také prostředí výskytu.",
+      "Ulož blok statistik. Nebezpečnost se vypočte a zobrazí se její odvození.",
+      "Z deníku nestvůry vytvoř záznam ve WorldForge a propoj ji se světem. Odtud ji můžeš přidat do připraveného střetnutí."
+    ],
+    "atTable": "Vlastní nestvůra se při střetnutí vyhledává podle jména a herní systém používá právě její uložený blok statistik.",
+    "tips": [
+      "Nestvůry patří k tvému účtu, takže jsou dostupné ve všech Dílnách. Při přenosu přípravy, která je používá, získá kampaň vlastní kopie. Balíček Dílny je přenese i na jiný server.",
+      "Při výpočtu nebezpečnosti započítej do dodatečného zranění také kouzlení za jedno kolo."
+    ]
+  },
+  "homebrew": {
+    "steps": [
+      "Nahoře vyber druh vlastního obsahu a klikni na Nový.",
+      "Můžeš začít kopií existujícího záznamu z knih nebo obsahového balíčku.",
+      "Uprav pravidla podle potřeby. Dovednosti, jazyky, stavy a typy zranění se vybírají z nabídek, ale lze je také napsat.",
+      "Přečti si upozornění pod popisem. Závažná chyba zabrání uložení.",
+      "Ulož výtvor. Tvůrce postav a herní systém jej pak používají podobně jako oficiální obsah; editor ukazuje, kde bude dostupný.",
+      "Předmět můžeš propojit se záznamem WorldForge, aby patřil do konkrétního světa."
+    ],
+    "atTable": "Tvůrce postav, obchody a inventáře nabízejí vlastní obsah vedle oficiálního. Je dostupný tvým postavám a stolům, které vedeš jako vlastník, PJ nebo pomocný PJ. U cizí kampaně jej musí vlastník či PJ převzít, například z balíčku Dílny. Samotný import přípravy vlastní tvorbu nekopíruje: už je součástí tvého účtu.",
+    "tips": [
+      "Předmět propojený se záznamem WorldForge se zkopíruje do kampaně spolu s importovaným světem. Balíček Dílny může nést celou sbírku nebo pouze použitý obsah.",
+      "Vlastní povolání je plnohodnotné povolání. Tvůrce postav jej nabízí mezi vlastní tvorbou a jeho podobory se vytvářejí zde.",
+      "Podobor se zpřístupní na úrovni, kdy jej dané povolání vybírá, a také při postupu na tuto úroveň.",
+      "Obsah můžeš přejmenovat; existující postavy, záznamy a stoly se přizpůsobí novému názvu.",
+      "Zranění, záchranný hod a typ zranění kouzla se určují z jeho popisu obdobně jako u SRD.",
+      "Veškerý obsah se při psaní kontroluje proti pravidlům."
+    ]
+  },
+  "lore": {
+    "steps": [
+      "Klikni na Nový záznam a vyber kategorii i název.",
+      "Napiš text v Markdownu. Z nabídky můžeš vložit odkaz na jiný záznam přímo na pozici kurzoru.",
+      "Urči, zda záznam mohou číst hráči, nebo jej vidíš jen ty.",
+      "Přidej obrázek jako materiál pro hráče, doplň štítky a záznam ulož.",
+      "Připni záznamy, které má vypravěč vidět v každém tahu."
+    ],
+    "atTable": "Připnuté záznamy dostává vypravěč v každém tahu, ostatní se vyhledávají podle potřeby. Hráči vidí dostupné znalosti na záložce Příběh; záznamy jen pro PJ nebo dosud nepotvrzený kánon WorldForge neuvidí.",
+    "tips": [
+      "Nepřipnuté informace se načítají podle relevance, takže obsáhlá encyklopedie nezatěžuje každý tah.",
+      "U pole pro štítky se nabízejí již používané hodnoty."
+    ]
+  },
+  "tables": {
+    "steps": [
+      "Klikni na Nová tabulka a zadej její název.",
+      "Napiš jeden výsledek na řádek s rozsahem (1–3) nebo vahou (×3), případně vlož tabulku z knihy.",
+      "Pomocí výběru pod polem přidej odkaz na další tabulku, nestvůru, předmět, postavu nebo encyklopedický záznam.",
+      "Sleduj pokrytí rozsahů a případné mezery nebo překryvy.",
+      "Ulož tabulku a házej z její karty. Volba Tahat bez vracení z ní udělá balíček."
+    ],
+    "atTable": "Při hraní můžeš hodit přímo z karty tabulky. Všichni vidí hod kostkou, ale obsah vylosovaného řádku se zobrazí jen tobě.",
+    "tips": [
+      "Hod tabulkou se zaznamená jako běžný veřejný hod, ale výsledek řádku vidí jen PJ.",
+      "Vyhledávání nestvůry vedle tabulek slouží jako přehled jejích statistik z katalogu."
+    ]
+  },
+  "rules": {
+    "steps": [
+      "Zapni požadované varianty pravidel a nastav délku odpočinku.",
+      "Napiš domácí pravidla rozdělená nadpisy a ulož je.",
+      "Oddíl můžeš vypnout, aby se nepoužíval, nebo připnout, aby se přikládal ke každému tahu.",
+      "Pravidla ulož jako samostatnou sadu pro další kampaně a Dílny.",
+      "Použij již uloženou sadu pravidel; nejprve se zobrazí náhled změn."
+    ],
+    "atTable": "Kampaň, do které pravidla přeneseš, je bude používat. Herní systém vyhodnocuje varianty a vypravěč dostává odpovídající domácí pravidla.",
+    "tips": [
+      "Použitím sady se vytvoří kopie. Pozdější změna originálu ji neovlivní.",
+      "Sada obsahuje pravidla, ne vlastní tvorbu postav a předmětů; ta je dostupná u stolů, které vedeš."
+    ]
+  },
+  "plugin": {
+    "steps": [
+      "Spusť průvodce nastavením: pojmenuj svět, uveď inspiraci a vlastníka práv, vyber základní žánr a napiš pokyny pro vypravěče.",
+      "Pomocí Převzít z této Dílny doplň již vytvořené znalosti, místa, zápletky a postavy.",
+      "V částech Obyvatelé, Magie a vybavení a Bestiář vyber položky z katalogu a zadej jejich názvy ve svém světě.",
+      "V části Obrázky nahraj obálku a ilustrace ras, povolání, nestvůr, míst nebo frakcí. Obrázky se při nahrání upraví na vhodnou velikost.",
+      "Otevři Publikovat, oprav nalezené problémy a stáhni balíček nebo jej nainstaluj přímo na server, který spravuješ."
+    ],
+    "atTable": "Po instalaci na server se balíček nabídne mezi herními světy při vytváření kampaně.",
+    "tips": [
+      "Při publikování se zobrazí, co balíček světa nepřenese: tajemství, skryté pravdy, vyřazené záznamy, vlastní nestvůry, vlastní tvorbu, střetnutí, bojové mapy a další obsah. Úplný balíček Dílny je zachová.",
+      "Balíček přejmenovává obsah, ale nemění pravidla. Mechanické změny patří do vlastní tvorby.",
+      "U světů založených na cizí předloze uveď držitele práv, aby se správně sestavilo právní upozornění.",
+      "Rozpracovaný balíček se uchovává v exportu Dílny. Sdílením Dílny tedy sdílíš i jeho návrh."
+    ]
+  },
+  "share": {
+    "steps": [
+      "Pojmenuj exportní balíček a stručně popiš jeho obsah.",
+      "Doplň autora a verzi. U cizího herního světa také držitele práv.",
+      "Urči, zda export zahrne všechnu tvou vlastní tvorbu, nebo jen obsah použitý v této Dílně.",
+      "Stáhni balíček nebo z něj sestav balíček světa."
+    ],
+    "atTable": "Jiný server importuje balíček jako samostatnou Dílnu, jejíž obsah pak lze přenést do kampaní.",
+    "tips": [
+      "Obrázky se přenesou do stanovených velikostních limitů. Obsah žádné konkrétní kampaně se nepřenáší.",
+      "Vlastní nestvůry a vlastní tvorba se přenášejí v balíčku. Pokud již příjemce má stejnojmenný záznam, původní zůstane a odlišný importovaný obsah se přidá pod názvem balíčku. Odkazy z předpřipravených postav, tabulek a inventářů budou směřovat na správnou kopii.",
+      "Volba pouze použitého obsahu zahrne i jeho závislosti: tabulky, inventáře, předpřipravené postavy, kouzla podoborů a povolání či kouzla předmětů.",
+      "Sestavení balíčku světa upozorní na obsah, který by se proti úplnému balíčku Dílny ztratil."
+    ]
+  }
+};
+
 export const WORKSHOP_GUIDES: ToolGuide[] = [
   {
     id: "world",
