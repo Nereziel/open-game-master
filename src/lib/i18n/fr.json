@@ -1,5 +1,7 @@
 {
   "messages": {
+    "Remove portrait": "Retirer le portrait",
+    "Used to paint your character's portrait if you don't add a photo or choose one from the gallery.": "Sert à créer le portrait de ton personnage avec l’IA si tu n’importes pas de photo et ne choisis pas d’image dans la galerie.",
     "Choose from gallery": "Choisir dans la galerie",
     "These are built-in portraits. Choosing one is free and does not use AI. Race and class pictures show different aspects of a character.": "Ces portraits sont inclus dans l’application. Le choix est gratuit et ne fait pas appel à l’IA. Les images d’espèce et de classe montrent différentes facettes du personnage.",
     "Filter portraits by race": "Filtrer les portraits par espèce",
