@@ -222,7 +222,7 @@ function ExtraClassCard({
   const tp = useTp();
   const locale = useLocale();
   const row = entry.klass;
-  const name = row.name;
+  const name = classDisplayNameFor(row.id, locale);
   const lower = name.toLowerCase();
   // As many levels as it has plus all but one of the first class's.
   const most = entry.level + Math.max(0, derived.primaryLevel - 1);
