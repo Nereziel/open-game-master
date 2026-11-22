@@ -436,6 +436,22 @@ const VAULT_OF_MAGIC_ITEMS: Readonly<Record<string, string>> = {
   "Everflowing Bowl": "Nevyčerpatelná mísa",
   "Exsanguinating Blade": "Čepel vykrvácení",
   "Eye of Horus": "Horovo oko",
+  "Angry Hornet": "Rozzuřený sršeň",
+  "Armor of the Ngobou": "Zbroj z ngobou",
+  "Asp's Kiss": "Polibek zmije",
+  "Baba Yaga's Cinderskull": "Popelavá lebka Baby Jagy",
+  "Big Dipper": "Velká medová naběračka",
+  "Blade of the Temple Guardian": "Čepel chrámového strážce",
+  "Blood-Soaked Hide": "Krvavá kožešina",
+  "Book of Ebon Tides": "Kniha temných přílivů",
+  "Boots of the Grandmother": "Babiččiny boty",
+  "Boots of the Swift Striker": "Boty rychlého útočníka",
+  "Bracelet of the Fire Tender": "Náramek strážce ohně",
+  "Braid Whip Clasp": "Spona na copový bič",
+  "Brawn Armor": "Zbroj medvědí síly",
+  "Brazen Band": "Mosazný prsten",
+  "Broken Fang Talisman": "Talisman zlomeného tesáku",
+  "Brotherhood of Fezzes": "Bratrstvo fezů",
 };
 
 type ThirdPartyCsKind = "items" | "spells" | "feats";
