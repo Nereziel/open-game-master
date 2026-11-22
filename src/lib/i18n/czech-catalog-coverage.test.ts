@@ -30,6 +30,23 @@ describe("Czech UI catalog completeness", () => {
       .toBe("Výběr nástrojů pro povolání {class}");
   });
 
+  it("covers typed Czech multiclass refusals without altering their placeholders", () => {
+    for (const key of [
+      'Unknown class "{name}".',
+      "This character already has levels in {class}.",
+      "To take {class}, prerequisites: {prereq}.",
+      "To multiclass, the existing {class} also requires {prereq}.",
+    ] as const) {
+      const localized = czech.messages[key];
+      expect(localized).toBeTruthy();
+      for (const match of key.matchAll(/\\{[a-z]+\\}/g)) {
+        expect(localized).toContain(match[0]);
+      }
+    }
+    expect(czech.messages["A character holds at most {count} classes here."])
+      .toContain("{count}");
+  });
+
   it("covers all source messages, contexts and plural entries", () => {
     // The empty source key represents an empty UI string, not untranslated text.
     const sourceMessages = Object.keys(source.messages).filter(Boolean);
