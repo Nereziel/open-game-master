@@ -114,6 +114,10 @@ export function applyDefaults(
   if (next.aiStorySetup !== draft.aiStorySetup) {
     next.storySetupKept = false;
   }
+  // Newly created tables start with theatre inserts on, even when a saved
+  // setup predates the default change. The player can still switch this off
+  // in the campaign creator or later in Table settings.
+  next.presentation = "theatre";
   return { draft: presetTheme(next as CampaignDraft, locale), kept };
 }
 
