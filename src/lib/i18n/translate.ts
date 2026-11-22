@@ -14,6 +14,19 @@ type Catalog = {
 // Small patches for missing Czech UI keys while the large generated catalog
 // remains unchanged. Only apply when the catalog would display English.
 const CZECH_LABEL_FALLBACKS: Record<string, string> = {
+  // Shared UI messages used by the campaign hero editor and character history.
+  // Keep source keys in English; only translate at display time.
+  "Armor sets the AC: {ac}": "Zbroj určuje TZ: {ac}",
+  "Prepared spells": "Připravená kouzla",
+  "Reason for change (shown in the log)": "Důvod změny (zobrazí se v záznamu)",
+  "Pact spell slots": "Paktové pozice",
+  "Spell slots used / max": "spotřebováno / celkem",
+  "{name} slots used": "{name}: spotřebováno",
+  "{name} slots max": "{name}: celkem",
+  "Acquired item: {name}.": "Získaný předmět: {name}.",
+  "Add \"{name}\" as custom": "Přidat „{name}“ jako vlastní položku",
+  "Could not reach the server to search; type again to retry, or add entries by name.": "Nepodařilo se načíst výsledky hledání. Zkus to znovu nebo zadej vlastní název.",
+  "Add {count}": "Přidat ({count})",
   "in hand": "v ruce",
   "Looking it up...": "Načítání údajů…",
   "No details available. The content pack may not be installed, or this item was added by hand.": "Podrobnosti nejsou k dispozici. Balíček obsahu možná není nainstalovaný nebo byl předmět přidán ručně.",
