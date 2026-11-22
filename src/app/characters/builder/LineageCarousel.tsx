@@ -7,7 +7,8 @@ import { InfoButton, renderRules, type ContentRef } from "@/components/ui/InfoDi
 import { cn } from "@/lib/cn";
 import { textKey } from "@/lib/language/text-logic";
 import { useLocale, useT } from "@/lib/locale";
-import { speciesTraitName } from "@/lib/content/names";
+import { contentName, speciesTraitName } from "@/lib/content/names";
+import { languageLabel } from "@/lib/content/languages-cs";
 import { czechBundledSpeciesTrait } from "@/lib/content/species-traits-cs";
 import { ui } from "@/lib/ui";
 import { lineageFits } from "./lineageFits";
@@ -178,7 +179,7 @@ export function LineageDetails({ slide }: { slide: LineageSlide }) {
             <span className="font-display font-semibold uppercase tracking-[0.12em] text-amber-400/90">{t("Good fits ")}</span>
             {fits.kind === "any"
               ? t("Any class: its bonuses are yours to place.")
-              : `${fits.names.join(", ")}.`}
+              : `${fits.names.map((name) => contentName("classes", name, locale)).join(", ")}.`}
           </p>
         ) : null}
         {slide.packBlurb ? (
@@ -186,7 +187,7 @@ export function LineageDetails({ slide }: { slide: LineageSlide }) {
         ) : null}
         <div className="rounded-[10px] border border-stone-700/60 bg-stone-950/60 px-3 py-2.5">
           <span className={sectionLabel}>{t("Tongues")}</span>
-          <span className="font-serif text-base leading-normal text-stone-300">{slide.languages.join(", ")}</span>
+          <span className="font-serif text-base leading-normal text-stone-300">{slide.languages.map((name) => languageLabel(name, locale)).join(", ")}</span>
         </div>
         {choices.length ? (
           <div className="rounded-[10px] border border-amber-500/30 bg-amber-950/20 px-3 py-2.5">

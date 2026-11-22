@@ -4,6 +4,7 @@ import { CS_NAMES_BY_TABLE } from "./names-cs";
 import { contentName } from "./names";
 import { installCsTables } from "@/lib/i18n/cs-tables";
 import { CZECH_BUNDLED_SPECIES_TRAITS, czechBundledSpeciesTrait } from "./species-traits-cs";
+import { languageLabel } from "./languages-cs";
 
 // The builder uses the English race name, while other pickers also pass an
 // underscore/kebab-case id. Both paths must resolve to the same Czech label.
@@ -38,6 +39,33 @@ describe("Czech labels for all bundled playable races", () => {
     expect(czechBundledSpeciesTrait("Dwarven Resilience (adv. vs poison)")?.name).toBe("Trpasličí odolnost");
     expect(czechBundledSpeciesTrait("Fey Ancestry (adv. vs charm, immune to magical sleep)")?.name).toBe("Vílí původ");
     expect(czechBundledSpeciesTrait("Stone's Endurance (reduce damage by 1d12 + CON, 1/short rest)")?.name).toBe("Kamenná výdrž");
+  });
+
+  it("uses Czech class recommendations and languages for Aasimar detail", () => {
+    installCsTables({ names: CS_NAMES_BY_TABLE });
+    expect(
+      ["Bard", "Paladin", "Sorcerer", "Warlock"]
+        .map((name) => contentName("classes", name, "cs")),
+    ).toEqual(["Bard", "Paladin", "Čaroděj", "Černokněžník"]);
+    expect(["Common", "Celestial"].map((name) => languageLabel(name, "cs")))
+      .toEqual(["Obecná řeč", "Nebesština"]);
+    expect(["Common", "Celestial"].map((name) => languageLabel(name, "en")))
+      .toEqual(["Common", "Celestial"]);
+  });
+
+  it("translates every bundled background including its five 2014 variants", () => {
+    installCsTables({ names: CS_NAMES_BY_TABLE });
+    const variants = [
+      ["Knight", "Rytíř"],
+      ["Spy", "Špion"],
+      ["Pirate", "Pirát"],
+      ["Gladiator", "Gladiátor"],
+      ["Guild Merchant", "Cechovní obchodník"],
+    ] as const;
+    for (const [english, czech] of variants) {
+      expect(contentName("backgrounds", english, "cs")).toBe(czech);
+      expect(contentName("backgrounds", english, "en")).toBe(english);
+    }
   });
 
   it("distinguishes subraces and translates names in character creation", () => {
