@@ -287,7 +287,7 @@ export function TrainingLines({
     // Generic translations are ambiguous here: "light" can mean illumination,
     // but in armor proficiency it means light armor.
     if (locale === "cs" && kind) {
-      const key = value.trim().toLowerCase().replace(/[-_]/g, " ").replace(/\\s+/g, " ");
+      const key = value.trim().toLowerCase().replace(/[-_]/g, " ").replace(/\s+/g, " ");
       const armor: Record<string, string> = {
         light: "Lehká", "light armor": "Lehká zbroj",
         medium: "Střední", "medium armor": "Střední zbroj",
