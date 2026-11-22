@@ -15,6 +15,8 @@ const TYPE: Record<RulebookPage["kind"], ContentType> = {
 
 export type SrdTranslationCoverage = Readonly<{
   total: number;
+  // Fully translated rules chapters; the legal/attribution page is separate.
+  fullRulePages: number;
   translated: Readonly<Partial<Record<ContentType, number>>>;
   missingIds: readonly string[];
 }>;
@@ -38,6 +40,7 @@ export function srdTranslationPack(
   const entries: Partial<Record<ContentType, Record<string, TranslationEntry>>> = {};
   const translated: Partial<Record<ContentType, number>> = {};
   const missingIds: string[] = [];
+  let fullRulePages = 0;
 
   for (const original of originals) {
     const localized = localizedById.get(original.id);
@@ -49,6 +52,9 @@ export function srdTranslationPack(
       throw new Error(`Czech SRD page changed kind/chapter: ${original.id}`);
     }
     const kind = TYPE[original.kind];
+    if (kind === "rules" && localized.md.includes("## Úplné znění pravidel v češtině")) {
+      fullRulePages += 1;
+    }
     const name = localized.title !== original.title ? localized.title : undefined;
     const metadata = localized.meta !== original.meta && localized.meta
       ? { meta: localized.meta }
@@ -79,6 +85,6 @@ export function srdTranslationPack(
 
   return {
     pack: { sourceId: "srd-5.1", locale: "cs", entries },
-    coverage: { total: originals.length, translated, missingIds },
+    coverage: { total: originals.length, fullRulePages, translated, missingIds },
   };
 }
