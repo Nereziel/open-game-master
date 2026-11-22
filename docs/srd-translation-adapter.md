@@ -175,3 +175,24 @@ English names (not provenance). Although the picker keeps multiple book
 rows visible and pending selections are slug-aware, a complete storage
 migration must be designed before claiming that two same-name entries
 remain distinguishable after saving.
+
+### Search, source identity and legacy save compatibility
+
+A Czech SRD alias **adds** an exact canonical English SRD match to the
+results of the user's original query. It does not replace that query:
+Czech-named homebrew, unrelated books, campaign scope and user-defined
+entries remain searchable. The `appendExactSrdAlias` helper verifies
+`sourceId=srd-5.1`, exact English title and
+`source + documentSlug + slug` identity, and includes focused regressions.
+
+For standard catalog browsing, API list results now include only localized
+short labels. The full Czech prose is loaded when the user opens the item
+detail/info dialog; workshop mechanics copy requests still receive the full
+localized description because that interaction needs complete rules.
+
+Before stored characters are migrated to keep provenance, two distinct
+book entries with the same English name cannot safely be persisted as
+separate rows in some character save models. The multi-picker therefore
+permits **only one pending choice per canonical English name** and lets
+the player switch its book source. This is an explicit compatibility
+boundary, not a permanent solution for the persisted content reference.
