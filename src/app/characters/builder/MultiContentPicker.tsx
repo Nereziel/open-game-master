@@ -13,7 +13,7 @@ import { contentName } from "@/lib/content/names";
 
 // `level` rides along for spells, so a cantrip picked here lands in the
 // cantrip list rather than among the levelled spells.
-export type MultiPick = { name: string; slug?: string; level?: number; source?: PickerEntry["source"] };
+export type MultiPick = { name: string; slug?: string; level?: number; source?: PickerEntry["source"]; documentSlug?: string };
 
 // Searchable multi-select against /api/content/[kind]: result rows toggle
 // into a pending chip strip and one "Add" commits them all, so nobody has
@@ -40,7 +40,7 @@ export default function MultiContentPicker({
   const t = useT();
   const tp = useTp();
   const locale = useLocale();
-  const displayName = (name: string, source?: PickerEntry["source"], slug?: string) => contentName(kind, { name, source, slug }, locale);
+  const displayName = (name: string, source?: PickerEntry["source"], slug?: string, documentSlug?: string) => contentName(kind, { name, source, slug, documentSlug }, locale);
   const pickKey = (name: string, source?: PickerEntry["source"]) => kind === "feats" ? featPickerKey(name, source) : textKey(name);
   const { query, setQuery, results, setResults, open, setOpen, loading, unavailable, failed, unadmitted } =
     useContentSearch(kind, extraParams);
@@ -68,7 +68,7 @@ export default function MultiContentPicker({
     setPending((picks) =>
       picks.some((pick) => pickKey(pick.name, pick.source) === key)
         ? picks.filter((pick) => pickKey(pick.name, pick.source) !== key)
-        : [...picks, { name: entry.name, slug: entry.slug, level: entry.level, source: entry.source }],
+        : [...picks, { name: entry.name, slug: entry.slug, level: entry.level, source: entry.source, documentSlug: entry.documentSlug }],
     );
   }
 
@@ -135,7 +135,7 @@ export default function MultiContentPicker({
                       <Plus className="size-3.5 shrink-0 text-stone-600" />
                     )}
                     <span className={cn(entry.source === "homebrew" && "text-amber-300")}>
-                      {displayName(entry.name, entry.source, entry.slug)}
+                      {displayName(entry.name, entry.source, entry.slug, entry.documentSlug)}
                     </span>
                   </span>
                   <span className="shrink-0 text-xs text-stone-500">
@@ -147,7 +147,7 @@ export default function MultiContentPicker({
                   </span>
                 </button>
                 <InfoButton
-                  label={displayName(entry.name, entry.source, entry.slug)}
+                  label={displayName(entry.name, entry.source, entry.slug, entry.documentSlug)}
                   meta={kind === "spells" ? (locale === "cs" ? (entry.level === 0 ? t("cantrip", { context: "lead.edit.cantripMeta" }) : entry.level !== undefined ? t("Level {level}", { level: entry.level }) : "") : spellSummary(entry.data)) : undefined}
                   text={entry.source === "homebrew" ? describeContentEntry(entry.data) : undefined}
                   reference={entry.source === "homebrew" ? undefined : { kind, slug: entry.slug, name: entry.name, source: entry.source, documentSlug: entry.documentSlug, rulebook: entry.rulebook }}
@@ -158,7 +158,7 @@ export default function MultiContentPicker({
           {trimmedQuery &&
           !selectedLower.has(pickKey(trimmedQuery)) &&
           !pendingLower.has(pickKey(trimmedQuery)) &&
-          !results.some((entry) => pickKey(entry.name, entry.source) === pickKey(trimmedQuery) || textKey(displayName(entry.name, entry.source, entry.slug)) === textKey(trimmedQuery)) ? (
+          !results.some((entry) => pickKey(entry.name, entry.source) === pickKey(trimmedQuery) || textKey(displayName(entry.name, entry.source, entry.slug, entry.documentSlug)) === textKey(trimmedQuery)) ? (
             <li className="border-t border-stone-800">
               <button
                 type="button"
@@ -192,13 +192,13 @@ export default function MultiContentPicker({
               key={pick.name}
               className="flex items-center gap-1 rounded-full bg-stone-800 px-2 py-0.5 text-xs text-stone-200"
             >
-              {displayName(pick.name, pick.source, pick.slug)}
+              {displayName(pick.name, pick.source, pick.slug, pick.documentSlug)}
               <button
                 type="button"
                 onClick={() =>
                   setPending((picks) => picks.filter((entry) => entry.name !== pick.name))
                 }
-                aria-label={t("Remove {name}", { name: displayName(pick.name, pick.source, pick.slug) })}
+                aria-label={t("Remove {name}", { name: displayName(pick.name, pick.source, pick.slug, pick.documentSlug) })}
                 className="text-stone-500 hover:text-red-400"
               >
                 <X className="size-3" />
