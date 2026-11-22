@@ -43,12 +43,12 @@ export function PartyBar({ api, atlas, region }: { api: WorldApi; atlas: AtlasMa
       const done = (await api.party("POST", { mapId: atlas.id, apply: true })) as ShowPlan | null;
       if (!done?.applied) return;
       setPlan(null);
-      region.setNotice({ text: `${atlas.name} is on the party's Atlas now, in everyone's Map tab.` });
+      region.setNotice({ text: t("{name} is on the party’s Atlas now, in everyone’s Map tab.", { name: atlas.name }) });
     });
   const hide = () =>
     run(async () => {
       const done = (await api.party("DELETE", { mapId: atlas.id })) as { hidden?: boolean } | null;
-      if (done?.hidden) region.setNotice({ text: `${atlas.name} is off the party's Atlas.` });
+      if (done?.hidden) region.setNotice({ text: t("{name} is off the party’s Atlas.", { name: atlas.name }) });
     });
 
   return (
@@ -79,7 +79,7 @@ export function PartyBar({ api, atlas, region }: { api: WorldApi; atlas: AtlasMa
             </KitButton>
           </div>
           <p>
-            Players will see {plan.seen.pins.length === 1 ? "one pin" : `${plan.seen.pins.length} pins`} and {plan.seen.regions.length === 1 ? "one region" : `${plan.seen.regions.length} regions`}:
+            {t("Players will see {pins} pins and {regions} regions:", { pins: plan.seen.pins.length, regions: plan.seen.regions.length })}
           </p>
           {plan.seen.pins.length || plan.seen.regions.length ? (
             <ul className="flex flex-col gap-0.5" data-testid="atlas-party-seen">
@@ -99,7 +99,7 @@ export function PartyBar({ api, atlas, region }: { api: WorldApi; atlas: AtlasMa
           ) : null}
           {plan.hiddenPins || plan.hiddenRegions ? (
             <p>
-              Staying hidden: {[plan.hiddenPins ? `${plan.hiddenPins} ${plan.hiddenPins === 1 ? "pin" : "pins"}` : "", plan.hiddenRegions ? `${plan.hiddenRegions} ${plan.hiddenRegions === 1 ? "region" : "regions"}` : ""].filter(Boolean).join(" and ")}.
+              {t("Staying hidden: {pins} pins and {regions} regions.", { pins: plan.hiddenPins, regions: plan.hiddenRegions })}
             </p>
           ) : null}
           <p className="text-stone-400">{t("To hide one first, cancel, open the pin or region, and tick Hidden from the party.")}</p>
@@ -109,7 +109,7 @@ export function PartyBar({ api, atlas, region }: { api: WorldApi; atlas: AtlasMa
           <span className="flex justify-end gap-1.5">
             <KitButton tone="small" onClick={() => setPlan(null)}>{t("Cancel")}</KitButton>
             <KitButton tone="primary" busy={busy} disabled={busy} onClick={() => void show()} data-testid="atlas-party-apply">
-              {busy ? null : <Eye className="size-3.5" />} Show it
+              {busy ? null : <Eye className="size-3.5" />} {t("Show it")}
             </KitButton>
           </span>
         </div>
@@ -141,7 +141,7 @@ export function PartyAtlasPanel({ campaignId, refreshKey = 0 }: { campaignId: st
   const current = atlas.maps.find((entry) => entry.id === mapId) ?? atlas.maps.find((entry) => !entry.parentPinId) ?? atlas.maps[0];
   const parent = current.parentPinId ? atlas.maps.find((entry) => entry.pins.some((pin) => pin.id === current.parentPinId)) : undefined;
   return (
-    <section className="panel flex flex-col gap-2 rounded-xl p-3" aria-label="The party's Atlas" data-testid="party-atlas">
+    <section className="panel flex flex-col gap-2 rounded-xl p-3" aria-label={t("The party’s Atlas")} data-testid="party-atlas">
       <SectionHead title={t("Atlas")} />
       {atlas.maps.length > 1 ? (
         <div className="flex flex-wrap gap-1" role="tablist" aria-label={t("Maps")}>
