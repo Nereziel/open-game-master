@@ -41,14 +41,14 @@ describe("Czech SRD equipment descriptions", () => {
   it("uses the full chapter rules, not a short summary, for special equipment", () => {
     expect(canonicalGearDescriptionCs("Ball bearings (bag of 1,000)")).toMatch(/SO 10/);
     expect(canonicalGearDescriptionCs("Caltrops (bag of 20)")).toMatch(/SO 15/);
-    expect(canonicalGearDescriptionCs("Holy water (flask)")).toMatch(/2k6/);
+    expect(canonicalGearDescriptionCs("Holy water (flask)")).toMatch(/2d6/);
     expect(canonicalGearDescriptionCs("Climber's kit")).toMatch(/25 stop/);
     expect(canonicalGearDescriptionCs("Rope, silk (50 feet)")).toMatch(/SO 17/);
     expect(canonicalGearDescriptionCs("Burglar's Pack")).toBeTruthy();
   });
 
   it("shows Czech weapon and armor text without replacing English data", () => {
-    expect(canonicalGearDescriptionCs("Longsword")).toMatch(/1k8/);
+    expect(canonicalGearDescriptionCs("Longsword")).toMatch(/1d8/);
     expect(canonicalGearDescriptionCs("Plate")).toMatch(/plát/iu);
     expect(canonicalGearDescriptionCs("Shield")).toMatch(/\+2/);
     expect(canonicalGearDescriptionCs("Net")).toMatch(/SO 10/);
