@@ -41,7 +41,7 @@ export function PlaystylePicker({
   // language; the ids stay the quiz's.
   const words = (id: PlaystyleId) => ({
     label: ({ "tank": t("Hold the line, take the hits"), "dps": t("Deal the damage"), "healer": t("Keep everyone alive"), "support": t("Help the team, control the battlefield"), "utility": t("Scout, sneak, solve problems") } as Record<string, string>)[id] ?? String(id),
-    tag: ({ "tank": t("Tank"), "dps": t("DPS"), "healer": t("Healer"), "support": t("Support / Control"), "utility": t("Utility") } as Record<string, string>)[id] ?? String(id),
+    tag: ({ "tank": t("Tank"), "dps": locale === "cs" ? "Útočník" : t("DPS"), "healer": t("Healer"), "support": t("Support / Control"), "utility": t("Utility") } as Record<string, string>)[id] ?? String(id),
     blurb: ({ "tank": t("Stand in front and keep the others safe."), "dps": t("End fights fast, with a blade, a bow or a spell."), "healer": t("Heal the hurt and bring the fallen back up."), "support": t("Lift your friends, hinder your foes, bend the fight with magic."), "utility": t("Scout ahead, pick locks, talk your way through.") } as Record<string, string>)[id] ?? String(id),
   });
   const [ownStyle, setOwnStyle] = useState<PlaystyleId | null>(null);
@@ -104,7 +104,7 @@ export function PlaystylePicker({
                       <GameIcon icon={{ kind: "family", key: `class-${id}` }} size="size-8" className="shrink-0" />
                       <span className="min-w-0 flex-1">
                         <span className="block font-display text-sm tracking-wide text-amber-50">{contentName("classes", entry, locale)}</span>
-                        <span className="block text-[0.875rem] text-stone-500">{entry.roles.map((role) => ({ "tank": t("Tank"), "dps": t("DPS"), "healer": t("Healer"), "support": t("Support"), "control": t("Control"), "utility": t("Utility") } as Record<string, string>)[textKey(role)] ?? role).join(" / ")}</span>
+                        <span className="block text-[0.875rem] text-stone-500">{entry.roles.map((role) => ({ "tank": t("Tank"), "dps": locale === "cs" ? "Útočník" : t("DPS"), "healer": t("Healer"), "support": t("Support"), "control": t("Control"), "utility": t("Utility") } as Record<string, string>)[textKey(role)] ?? role).join(" / ")}</span>
                         {EASY_CLASSES.has(id) ? (
                           <span className="mt-1 inline-block max-w-full rounded-full border border-emerald-400/40 bg-emerald-400/10 px-2 py-0.5 text-[0.875rem] leading-snug text-emerald-200">
                             {t("Easy to learn")}
