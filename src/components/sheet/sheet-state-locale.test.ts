@@ -52,7 +52,7 @@ describe("localized sheet state explanations", () => {
       ac: 14,
       conditions: [],
       concentratingOn: "Cure Wounds",
-    } as CharacterSheet;
+    } as unknown as CharacterSheet;
     const cs = stateTags(reader("cs"), sheet);
     expect(cs.find((tag) => tag.id === "concentration")?.label).toContain("Léčení zranění");
     expect(cs.find((tag) => tag.id === "concentration")?.label).not.toContain("Cure Wounds");
@@ -98,7 +98,7 @@ describe("localized sheet state explanations", () => {
       class: "",
       level: 1,
       feats: [],
-    } as CharacterSheet;
+    } as unknown as CharacterSheet;
     expect(defensesView(sheet, "cs").resist).toContain("Ohnivé");
     expect(defensesView(sheet, "en").resist).toContain("fire");
     expect(sheet.race).toBe("tiefling");
