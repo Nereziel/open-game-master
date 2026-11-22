@@ -215,8 +215,8 @@ export function canonicalGearDescriptionCs(name: string): string | null {
   const armorTitle = ARMOR_NAMES[normalized];
   if (armorTitle) return ARMOR.get(armorTitle) ?? null;
   if (normalized === "shield") return "Štít se drží v jedné ruce a poskytuje bonus +2 k obrannému číslu (OČ). Současně lze využít pouze jeden štít.";
-  if (normalized === "lance") return WEAPONS.get("jezdecké kopí") ?? null;
-  if (normalized === "net") return WEAPONS.get("síť") ?? null;
+  if (normalized === "lance") return WEAPONS.get("jezdecké kopí (lance)") ?? null;
+  if (normalized === "net") return WEAPONS.get("síť (net)") ?? null;
   return PLAIN_GEAR[normalized] ?? VARIANTS[normalized] ?? WEAPON_NOTES[normalized] ?? null;
 }
 
