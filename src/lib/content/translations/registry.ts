@@ -36,7 +36,7 @@ export type TranslationResolution = Readonly<{
 export function translationSourceId(record: SourceRecord): string | null {
   if (record.source === "homebrew") return null; // User-authored content is never silently translated.
   if (record.source === "srd") return "srd-5.1";
-  // "bundled" is not necessarily SRD; keep unverified ODM rows untouched.
+  // "bundled" also covers ODM-authored material, not only its SRD reader.
   if (record.source === "bundled") return record.documentSlug === "wotc-srd" ? "srd-5.1" : null;
   if (record.source !== "open5e") return null;
   switch (record.documentSlug) {
