@@ -167,7 +167,7 @@ describe("Czech campaign content pickers", () => {
   });
 
   it("delivers complete Czech supplement rules only for the exact book, kind and language", () => {
-    expect(THIRD_PARTY_FULL_RULES_CS_COUNTS).toEqual({ tomeSpells: 14, deepSpells: 12, vaultItems: 15 });
+    expect(THIRD_PARTY_FULL_RULES_CS_COUNTS).toEqual({ tomeSpells: 14, deepSpells: 12, vaultItems: 48 });
     const tome = { kind: "spells", name: "Spite", source: "open5e", documentSlug: "toh" };
     const text = thirdPartyFullRulesCs(tome, "cs");
     expect(text).toContain("Vyvolání:");
@@ -193,6 +193,18 @@ describe("Czech campaign content pickers", () => {
     expect(thirdPartyFullRulesCs({ ...vault, documentSlug: "toh" }, "cs")).toBeNull();
     expect(thirdPartyFullRulesCs({ ...vault, name: "Nonexistent" }, "cs")).toBeNull();
     expect(thirdPartyFullRulesCs(vault, "en")).toBeNull();
+    const chargedItem = thirdPartyFullRulesCs({ ...vault, name: "Ankh of Aten" }, "cs");
+    expect(chargedItem).toContain("5k8");
+    expect(chargedItem).toContain("SO 15");
+    expect(chargedItem).toContain("1k4 + 1");
+    const poisonItem = thirdPartyFullRulesCs({ ...vault, name: "Black Phial" }, "cs");
+    expect(poisonItem).toContain("SO 12");
+    expect(poisonItem).toContain("1k3");
+    const cursedItem = thirdPartyFullRulesCs({ ...vault, name: "Alabaster Salt Shaker" }, "cs");
+    expect(cursedItem).toContain("48 hodin");
+    expect(cursedItem).toContain("vyčerpání");
+    expect(thirdPartyFullRulesCs({ ...vault, documentSlug: "toh", name: "Black Phial" }, "cs")).toBeNull();
+
 
     const completeTomeSpells = [
       "Lance", "Feint", "Sneer", "Spite", "Misdirection", "Oversized Paws",
