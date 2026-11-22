@@ -182,7 +182,7 @@ function pdfPersonality(ctx: Ctx, value: string): string {
     trait: "Personality trait", ideal: "Ideal", bond: "Bond", flaw: "Flaw",
   };
   return value.split("; ").map((part) => {
-    const match = /^(trait|ideal|bond|flaw) "([\\s\\S]*)"$/.exec(part);
+    const match = /^(trait|ideal|bond|flaw) "([\s\S]*)"$/.exec(part);
     if (!match) return translate(ctx.locale, part);
     return `${translate(ctx.locale, labels[match[1]])}: "${translate(ctx.locale, match[2])}"`;
   }).join("; ");
