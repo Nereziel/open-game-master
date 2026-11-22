@@ -17,7 +17,7 @@ Tento katalog navazuje na [společnou překladovou vrstvu](../src/lib/content/na
 - Názvy používají `contentName()` společně s katalogem SRD. Původní anglická `name`, `slug`, hodnoty mechanik, API a ukládané údaje se nemění.
 - Český dotaz se mapuje na **původní anglické jméno**; výsledný řádek se znovu ověřuje podle českého názvu. První přednost mají shody v centrálním SRD katalogu.
 - Vlastní uživatelské `homebrew` a jiné knihy se stejným názvem se nepřekládají. Neznámé řádky ponechávají anglický původní název.
-- U 15 zbraní Tome of Heroes je navíc vlastní stručný český informační přehled (`third-party-item-summary-cs.ts`), vycházející z veřejně uváděných mechanických údajů. Zobrazuje se vedle původních pravidel, nikoli místo nich.
+- U 15 zbraní Tome of Heroes a 5 magických předmětů Vault of Magic je navíc vlastní stručný český informační přehled (`third-party-item-summary-cs.ts`), vycházející z veřejně uváděných mechanických údajů. Zobrazuje se vedle původních pravidel, nikoli místo nich.
 
 ## Co ještě není přeložené
 
