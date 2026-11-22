@@ -16,6 +16,8 @@ import {
 import fontkit from "@pdf-lib/fontkit";
 import type { Locale } from "@/lib/i18n/translate";
 import { pdfLabel } from "./labels";
+import { contentName, classFeatureName } from "@/lib/content/names";
+import { translate } from "@/lib/i18n/translate";
 import type {
   AbilityScores,
   ClassEntry,
@@ -127,8 +129,18 @@ const INK = rgb(0.12, 0.11, 0.1);
 const LINE = rgb(0.55, 0.5, 0.44);
 const FILL = rgb(0.98, 0.97, 0.95);
 
-function titleCase(value: string): string {
-  return value.replace(/[-_]/g, " ").replace(/\b\w/g, (letter) => letter.toUpperCase());
+// Localize display values, not the stored canonical IDs used by the rules engine.
+function pdfContent(ctx: Ctx, table: Parameters<typeof contentName>[0], value: string): string {
+  return contentName(table, value, ctx.locale);
+}
+
+function pdfItem(ctx: Ctx, value: string): string {
+  return pdfContent(ctx, "items", value);
+}
+
+function pdfProficiency(ctx: Ctx, value: string): string {
+  const item = pdfItem(ctx, value);
+  return item !== value ? item : translate(ctx.locale, value);
 }
 
 // One drawing context bundles the page, form, fonts, and a counter that keeps
@@ -272,18 +284,18 @@ function drawHeader(ctx: Ctx, c: PdfCharacter) {
   // Class & level, background, race, alignment, XP grid.
   const classes = classListFor(c);
   const classLine = classes
-    .map((entry) => `${titleCase(findClass(entry.id)?.name ?? entry.id)} ${entry.level}`)
+    .map((entry) => `${pdfContent(ctx, "classes", findClass(entry.id)?.name ?? entry.id)} ${entry.level}`)
     .join(" / ");
   const gx = MARGIN + 262;
   const gw = PAGE_W - MARGIN - gx;
   const cellW = gw / 3;
   const cells: Array<[string, string]> = [
     ["Class & Level", classLine],
-    ["Race", titleCase(c.race)],
-    ["Background", titleCase(c.background)],
-    ["Alignment", c.alignment],
+    ["Race", pdfContent(ctx, "species", c.race)],
+    ["Background", pdfContent(ctx, "backgrounds", c.background)],
+    ["Alignment", translate(ctx.locale, c.alignment)],
     ["Experience", String(c.xp)],
-    ["Subclass", c.subclass],
+    ["Subclass", pdfContent(ctx, "subclasses", c.subclass)],
   ];
   cells.forEach(([label, value], i) => {
     const col = i % 3;
@@ -308,7 +320,7 @@ function drawAbilities(ctx: Ctx, c: PdfCharacter, derived: ReturnType<typeof com
   const h = 52;
   for (const ability of ["str", "dex", "con", "int", "wis", "cha"] as const) {
     box(ctx, x, y - h, w, h, true);
-    caption(ctx, x + w / 2 - 9, y - 10, ability, 7);
+    caption(ctx, x + w / 2 - 9, y - 10, ability.toUpperCase(), 7);
     field(ctx, x + 6, y - 34, w - 12, 16, formatModifier(derived.abilityMods[ability]), {
       size: 15,
       align: TextAlignment.Center,
@@ -389,7 +401,7 @@ function drawCombat(ctx: Ctx, c: PdfCharacter, derived: ReturnType<typeof comput
   const third = (w - 8) / 3;
   stat(ctx, x, y - 44, third, 44, "Armor Class", String(c.ac), 15);
   stat(ctx, x + third + 4, y - 44, third, 44, "Initiative", formatModifier(derived.initiative), 15);
-  stat(ctx, x + (third + 4) * 2, y - 44, third, 44, "Speed", `${c.speed} ft`, 13);
+  stat(ctx, x + (third + 4) * 2, y - 44, third, 44, "Speed", `${c.speed} ${ctx.locale === "cs" ? "stop" : "ft"}`, 13);
   y -= 54;
 
   // Hit points.
@@ -420,9 +432,9 @@ function drawCombat(ctx: Ctx, c: PdfCharacter, derived: ReturnType<typeof comput
   let ry = y - 34;
   for (let i = 0; i < 8; i += 1) {
     const a = attacks[i];
-    field(ctx, x + 4, ry, w - 84, 11, a?.name ?? "", { size: 8 });
+    field(ctx, x + 4, ry, w - 84, 11, a ? pdfItem(ctx, a.name) : "", { size: 8 });
     field(ctx, x + w - 80, ry, 20, 11, a ? formatModifier(a.toHit) : "", { size: 8, align: TextAlignment.Center });
-    field(ctx, x + w - 58, ry, 54, 11, a ? `${a.damage} ${a.type}`.trim() : "", { size: 7 });
+    field(ctx, x + w - 58, ry, 54, 11, a ? `${a.damage} ${translate(ctx.locale, a.type)}`.trim() : "", { size: 7 });
     ry -= 12;
   }
   y -= rowsH + 8;
@@ -432,7 +444,7 @@ function drawCombat(ctx: Ctx, c: PdfCharacter, derived: ReturnType<typeof comput
   box(ctx, x, MARGIN + 18, w, eqH, true);
   heading(ctx, x + 4, y - 11, "Equipment");
   const eqText = c.equipment
-    .map((item) => (item.qty > 1 ? `${item.name} x${item.qty}` : item.name))
+    .map((item) => (item.qty > 1 ? `${pdfItem(ctx, item.name)} ×${item.qty}` : pdfItem(ctx, item.name)))
     .join("\n");
   field(ctx, x + 4, MARGIN + 22, w - 8, eqH - 18, eqText, { size: 8, multiline: true });
   box(ctx, x, MARGIN, w, 16, true);
@@ -451,8 +463,8 @@ async function drawTraits(ctx: Ctx, c: PdfCharacter, portraitBytes?: Uint8Array)
 
   // Features & traits (features + feats).
   const featText = [
-    ...c.features.map((f) => f.name),
-    ...c.feats.map((name) => `${pdfLabel(ctx.locale, "Feat")}: ${name}`),
+    ...c.features.map((f) => classFeatureName(c.class, f.name, ctx.locale)),
+    ...c.feats.map((name) => `${pdfLabel(ctx.locale, "Feat")}: ${pdfContent(ctx, "feats", name)}`),
   ].join("\n");
   const featH = 176;
   box(ctx, x, y - featH, w, featH, true);
@@ -463,10 +475,10 @@ async function drawTraits(ctx: Ctx, c: PdfCharacter, portraitBytes?: Uint8Array)
   // Other proficiencies & languages.
   const p = c.proficiencies;
   const profText = [
-    p.armor.length ? `${pdfLabel(ctx.locale, "Armor")}: ${p.armor.join(", ")}` : "",
-    p.weapons.length ? `${pdfLabel(ctx.locale, "Weapons")}: ${p.weapons.join(", ")}` : "",
-    p.tools.length ? `${pdfLabel(ctx.locale, "Tools")}: ${p.tools.join(", ")}` : "",
-    p.languages.length ? `${pdfLabel(ctx.locale, "Languages")}: ${p.languages.join(", ")}` : "",
+    p.armor.length ? `${pdfLabel(ctx.locale, "Armor")}: ${p.armor.map((name) => pdfProficiency(ctx, name)).join(", ")}` : "",
+    p.weapons.length ? `${pdfLabel(ctx.locale, "Weapons")}: ${p.weapons.map((name) => pdfProficiency(ctx, name)).join(", ")}` : "",
+    p.tools.length ? `${pdfLabel(ctx.locale, "Tools")}: ${p.tools.map((name) => translate(ctx.locale, name)).join(", ")}` : "",
+    p.languages.length ? `${pdfLabel(ctx.locale, "Languages")}: ${p.languages.map((name) => translate(ctx.locale, name)).join(", ")}` : "",
   ]
     .filter(Boolean)
     .join("\n");
@@ -522,13 +534,11 @@ function drawSpellPage(ctx: Ctx, c: PdfCharacter, derived: ReturnType<typeof com
   let y = PAGE_H - MARGIN;
 
   // Header line: class, ability, save DC, attack bonus.
-  const casterName = titleCase(
-    classListFor(c).find((entry) => findClass(entry.id)?.spellAbility)?.id ?? c.class,
-  );
+  const casterName = pdfContent(ctx, "classes", classListFor(c).find((entry) => findClass(entry.id)?.spellAbility)?.id ?? c.class);
   box(ctx, MARGIN, y - 40, PAGE_W - MARGIN * 2, 40, true);
   field(ctx, MARGIN + 6, y - 28, 200, 20, `${casterName} ${pdfLabel(ctx.locale, "Spellcasting")}`, { size: 13 });
   const infoX = MARGIN + 230;
-  stat(ctx, infoX, y - 34, 90, 30, "Ability", sc.ability.toUpperCase(), 11);
+  stat(ctx, infoX, y - 34, 90, 30, "Ability", pdfLabel(ctx.locale, sc.ability.toUpperCase()), 11);
   stat(ctx, infoX + 96, y - 34, 90, 30, "Spell Save DC", String(derived.spellSaveDc ?? ""), 11);
   stat(ctx, infoX + 192, y - 34, 90, 30, "Spell Atk", formatModifier(derived.spellAttack ?? 0), 11);
   y -= 52;
@@ -564,11 +574,11 @@ function drawSpellPage(ctx: Ctx, c: PdfCharacter, derived: ReturnType<typeof com
 
   // Cantrips, then known / prepared spells.
   const spellText = [
-    sc.cantrips?.length ? `${pdfLabel(ctx.locale, "Cantrips")}:\n${sc.cantrips.join(", ")}` : "",
-    sc.prepared.length ? `${pdfLabel(ctx.locale, "Prepared")}:\n${sc.prepared.join(", ")}` : "",
-    sc.known.length ? `${pdfLabel(ctx.locale, "Known")}:\n${sc.known.join(", ")}` : "",
-    sc.pending?.length ? `${pdfLabel(ctx.locale, "Prepared after the next long rest")}:\n${sc.pending.join(", ")}` : "",
-    sc.spellbook?.length ? `${pdfLabel(ctx.locale, "Spellbook")}:\n${sc.spellbook.join(", ")}` : "",
+    sc.cantrips?.length ? `${pdfLabel(ctx.locale, "Cantrips")}:\n${sc.cantrips.map((name) => pdfContent(ctx, "spells", name)).join(", ")}` : "",
+    sc.prepared.length ? `${pdfLabel(ctx.locale, "Prepared")}:\n${sc.prepared.map((name) => pdfContent(ctx, "spells", name)).join(", ")}` : "",
+    sc.known.length ? `${pdfLabel(ctx.locale, "Known")}:\n${sc.known.map((name) => pdfContent(ctx, "spells", name)).join(", ")}` : "",
+    sc.pending?.length ? `${pdfLabel(ctx.locale, "Prepared after the next long rest")}:\n${sc.pending.map((name) => pdfContent(ctx, "spells", name)).join(", ")}` : "",
+    sc.spellbook?.length ? `${pdfLabel(ctx.locale, "Spellbook")}:\n${sc.spellbook.map((name) => pdfContent(ctx, "spells", name)).join(", ")}` : "",
   ]
     .filter(Boolean)
     .join("\n\n");
