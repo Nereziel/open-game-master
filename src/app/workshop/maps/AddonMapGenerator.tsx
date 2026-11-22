@@ -181,7 +181,7 @@ export function AddonMapGenerator({
             </div>
             <label className="block space-y-1 sm:col-span-2">
               <span className="block text-xs text-stone-300">{t("What should it be like?")}</span>
-              <textarea value={summary} onChange={(event) => setSummary(event.target.value)} maxLength={600} rows={2} placeholder="A flooded crypt with two ways in" className={cn(ui.input, "text-xs")} />
+              <textarea value={summary} onChange={(event) => setSummary(event.target.value)} maxLength={600} rows={2} placeholder={t("A flooded crypt with two ways in")} className={cn(ui.input, "text-xs")} />
             </label>
           </div>
 
