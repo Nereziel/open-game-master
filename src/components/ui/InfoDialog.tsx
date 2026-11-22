@@ -16,7 +16,7 @@ import { textKey } from "@/lib/language/text-logic";
 import { officialCzechSpellPageId } from "@/lib/help/official-cs-reference";
 import { thirdPartyItemSummaryCs } from "@/lib/help/third-party-item-summary-cs";
 import { sameContentDocument } from "@/lib/help/content-ref-match";
-import { thirdPartySpellSummaryCs } from "@/lib/help/third-party-spell-summary-cs";
+import { localizedThirdPartySpellDescription } from "@/lib/help/third-party-spell-summary-cs";
 
 // The "what does this do?" affordance, used everywhere a game term appears.
 //
@@ -198,7 +198,7 @@ function ContentBody({ reference }: { reference: ContentRef }) {
           const text = withNote(entry, describeContentEntry(entry?.data, reference.kind === "backgrounds" ? reference.name : undefined));
           if (text) {
             if (!cancelled) {
-              setState({ text, loading: false });
+              setState({ text: localizedThirdPartySpellDescription(reference, locale, text), loading: false });
             }
             return;
           }
@@ -214,7 +214,7 @@ function ContentBody({ reference }: { reference: ContentRef }) {
           (entry: { name: string; source?: string; documentSlug?: string }) => textKey(entry.name) === wanted && sameContentDocument(reference, entry),
         );
         if (!cancelled) {
-          setState({ text: withNote(hit, describeContentEntry(hit?.data)), loading: false });
+          setState({ text: localizedThirdPartySpellDescription(reference, locale, withNote(hit, describeContentEntry(hit?.data))), loading: false });
         }
       } catch {
         if (!cancelled) {
