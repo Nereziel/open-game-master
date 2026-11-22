@@ -1399,7 +1399,18 @@ export function builderActions(
           // identity rather than merging two incompatible item definitions.
           if (entry.contentRef && !sameStoredContentReference(existing.contentRef, entry.contentRef)) {
             return current.map((item) => item.name === entry.name
-              ? { ...item, slug: entry.slug, contentRef: entry.contentRef }
+              ? {
+                  name: item.name,
+                  qty: item.qty,
+                  slug: entry.slug,
+                  contentRef: entry.contentRef,
+                  // Never carry the previous book's mechanics or price into
+                  // a newly chosen source with the same English name.
+                  ...(entry.gear ? { gear: entry.gear } : {}),
+                  ...(entry.weight !== undefined ? { weight: entry.weight } : {}),
+                  ...(entry.priceCp !== undefined ? { priceCp: entry.priceCp } : {}),
+                  ...(entry.magic ? { magic: true } : {}),
+                }
               : item);
           }
           return current.map((item) =>
