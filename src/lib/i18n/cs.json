@@ -12566,6 +12566,7 @@
     }
   },
   "plurals": {
+    "level\u0000levels": ["úroveň","úrovně","úrovní"],
     "1 model the backend lists cannot play the full rules and is left off the list. To use it anyway, choose Type a model id; Open Game Master does not support or test it.\u0000{count} models the backend lists cannot play the full rules and are left off the list. To use one anyway, choose Type a model id; Open Game Master does not support or test them.": ["1 model nabízený backendem nedokáže používat úplná pravidla, proto se v seznamu nezobrazuje. Pokud ho chceš přesto použít, zvol „Zadej identifikátor modelu…“. Open Game Master ho nepodporuje ani netestuje.","{count} modely nabízené backendem nedokážou používat úplná pravidla, proto se v seznamu nezobrazují. Pokud chceš některý přesto použít, zvol „Zadej identifikátor modelu…“. Open Game Master je nepodporuje ani netestuje.","{count} modelů nabízených backendem nedokáže používat úplná pravidla, proto se v seznamu nezobrazují. Pokud chceš některý přesto použít, zvol „Zadej identifikátor modelu…“. Open Game Master je nepodporuje ani netestuje."],
     "{names} cannot play the full rules, so it is left off the list. \u0000{names} cannot play the full rules, so they are left off the list. ": [
       "{names} nemůže používat všechna pravidla, proto není v seznamu. ",
