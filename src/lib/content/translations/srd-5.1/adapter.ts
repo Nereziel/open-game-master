@@ -60,7 +60,9 @@ export function srdTranslationPack(
       if (!localized.md.endsWith(original.md)) {
         throw new Error(`Czech SRD page does not preserve original English suffix: ${original.id}`);
       }
-      description = localized.md.slice(0, -original.md.length).trim() || undefined;
+      description = localized.md.slice(0, -original.md.length)
+        .replace(/\\n*---\\n+\\*\\*Úplné původní znění SRD 5\\.1 v angličtině:\\*\\*\\s*$/, "")
+        .trim() || undefined;
     }
     if (!name && !description && !metadata) {
       missingIds.push(original.id);
