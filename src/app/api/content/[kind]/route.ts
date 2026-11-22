@@ -65,7 +65,10 @@ export async function GET(
     ? requestedLocale
     : bookLocaleOf(request);
   const originalQuery = url.searchParams.get("q") ?? "";
-  const q = canonicalSrdSearchQuery(kind, originalQuery, locale);
+  // Keep the original query for homebrew and other books. The Czech alias
+  // adds verified SRD matches instead of replacing the original search.
+  const canonicalQuery = canonicalSrdSearchQuery(kind, originalQuery, locale);
+  const q = originalQuery;
   const limitRaw = Number.parseInt(url.searchParams.get("limit") ?? "", 10);
   const offsetRaw = Number.parseInt(url.searchParams.get("offset") ?? "", 10);
   const mechanics = url.searchParams.get("mechanics") === "1";
@@ -215,6 +218,45 @@ export async function GET(
       });
     default:
       return Response.json({ error: "Unknown content kind." }, { status: 404 });
+  }
+
+  // A unique Czech title may need an English lookup in Open5e. Limit the
+  // additional results to matching SRD rows and leave other books untouched.
+  if (canonicalQuery !== originalQuery && (kind === "spells" || kind === "items")) {
+    const aliasMatches = kind === "spells"
+      ? searchSpells({
+          ...base, q: canonicalQuery,
+          classSlug: url.searchParams.get("class") ?? undefined,
+          ...(Number.isFinite(Number.parseInt(url.searchParams.get("level") ?? "", 10))
+            ? { level: Number.parseInt(url.searchParams.get("level") ?? "", 10) } : {}),
+          school: url.searchParams.get("school") ?? undefined,
+          attack: url.searchParams.get("attack") === "1",
+          exactLevel: url.searchParams.get("exact") === "1",
+        })
+      : searchItems({
+          ...base, q: canonicalQuery,
+          ...(ITEM_KINDS.has(url.searchParams.get("kind") ?? "")
+            ? { kind: url.searchParams.get("kind") as ItemEntry["kind"] } : {}),
+        });
+    const originalIds = new Set((results as Array<{ slug: string; documentSlug?: string }>).map(
+      (entry) => JSON.stringify([entry.documentSlug, entry.slug]),
+    ));
+    const aliases = aliasMatches.filter((entry) =>
+      entry.source === "open5e" && entry.documentSlug === "wotc-srd"
+      && textKey(entry.name) === textKey(canonicalQuery)
+      && !originalIds.has(JSON.stringify([entry.documentSlug, entry.slug])),
+    );
+    results = [...results, ...aliases];
+    // A server without Open5e still exposes its bundled SRD for this alias.
+    if (!packInstalled && kind === "spells") {
+      results = [...results, ...notFiled(results, bundledSpellRows(canonicalQuery).filter(
+        (entry) => textKey(entry.name) === textKey(canonicalQuery),
+      ))];
+    } else if (!packInstalled && kind === "items") {
+      results = [...results, ...notFiled(results, bundledItemRows(canonicalQuery).filter(
+        (entry) => textKey(entry.name) === textKey(canonicalQuery),
+      ))];
+    }
   }
 
   // The workshop's "start from" asks for what the engine runs, too.
