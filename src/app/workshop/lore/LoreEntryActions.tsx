@@ -3,6 +3,7 @@
 import { Copy, Pencil, Pin, Trash2 } from "lucide-react";
 import { cn } from "@/lib/cn";
 import { ui } from "@/lib/ui";
+import { useLocale } from "@/lib/locale";
 
 const action = "px-2.5 py-1.5";
 import type { LoreEntryView } from "@/app/workshop/lore/types";
@@ -28,6 +29,7 @@ export function LoreEntryActions({
   onDuplicate: () => void;
   onDelete: () => void;
 }) {
+  const locale = useLocale();
   return (
     <div className="flex flex-wrap items-center gap-1.5 text-xs">
       {onEdit ? (
@@ -36,34 +38,34 @@ export function LoreEntryActions({
           onClick={onEdit}
           className={cn(ui.btnSmall, action)}
         >
-          <Pencil className="size-3" /> Edit
+          <Pencil className="size-3" /> {locale === "cs" ? "Upravit" : "Edit"}
         </button>
       ) : null}
       <button
         type="button"
         onClick={onPin}
         title={
-          entry.pinned ? "Unpin: retrieved only when relevant" : "Pin: included in every GM turn"
+          entry.pinned ? (locale === "cs" ? "Odepnout: načítá se jen podle souvislostí" : "Unpin: retrieved only when relevant") : (locale === "cs" ? "Připnout: zahrnout do každého tahu PJ" : "Pin: included in every GM turn")
         }
         aria-pressed={entry.pinned}
         className={cn(ui.btnSmall, action, entry.pinned && "border-amber-500/60 bg-amber-400/10 text-amber-200")}
       >
-        <Pin className="size-3" /> {entry.pinned ? "Pinned" : "Pin"}
+        <Pin className="size-3" /> {entry.pinned ? (locale === "cs" ? "Připnuto" : "Pinned") : (locale === "cs" ? "Připnout" : "Pin")}
       </button>
       <button
         type="button"
         onClick={onDuplicate}
-        aria-label={`Duplicate ${entry.title}`}
+        aria-label={locale === "cs" ? `Duplikovat: ${entry.title}` : `Duplicate ${entry.title}`}
         className={cn(ui.btnSmall, action)}
       >
-        <Copy className="size-3" /> Duplicate
+        <Copy className="size-3" /> {locale === "cs" ? "Duplikovat" : "Duplicate"}
       </button>
       <button
         type="button"
         onClick={onDelete}
         className={cn(ui.btnSmall, action, "hover:border-red-500/50 hover:text-red-300")}
       >
-        <Trash2 className="size-3" /> Delete
+        <Trash2 className="size-3" /> {locale === "cs" ? "Odstranit" : "Delete"}
       </button>
     </div>
   );

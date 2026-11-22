@@ -10,7 +10,7 @@ import { startWebLayout } from "@/lib/worldforge/force-layout";
 import type { XY } from "@/lib/worldforge/model";
 import type { WorldState } from "./useWorld";
 import { EntityAvatar, TypeChip, tint, typeOf } from "./world-ui";
-import { useT } from "@/lib/locale";
+import { useLocale, useT } from "@/lib/locale";
 
 // The world's web, after WorldForge's graph tab: the web of every link (or
 // the entries within a few links of one), the family tree read off the
@@ -96,6 +96,7 @@ function rowsLayout(rows: string[][]): Map<string, XY> {
 
 export function WebView({ world, focus, onOpen }: { world: WorldState; focus: string | null; onOpen: (ref: string) => void }) {
   const t = useT();
+  const locale = useLocale();
   const { doc, entities } = world;
   const [mode, setMode] = useState<Mode>("web");
   const [view, setView] = useState<View>("all");
@@ -197,7 +198,7 @@ export function WebView({ world, focus, onOpen }: { world: WorldState; focus: st
         ) : (
           // Kept across a recentre, so the entries that stay glide to their
           // new places while the new ones pop in.
-          <svg key={`${mode}-${view}`} viewBox={`0 0 ${W} ${H}`} className="block h-auto w-full min-w-[720px]" role="img" aria-label={`${MODES.find((entry) => entry.id === mode)?.label} of the world`}>
+          <svg key={`${mode}-${view}`} viewBox={`0 0 ${W} ${H}`} className="block h-auto w-full min-w-[720px]" role="img" aria-label={locale === "cs" ? `${t(MODES.find((entry) => entry.id === mode)?.label ?? "Web")} světa` : `${MODES.find((entry) => entry.id === mode)?.label} of the world`}>
             <defs>
               <marker id="wf-arrow" viewBox="0 0 10 10" refX="22" refY="5" markerWidth="7" markerHeight="7" orient="auto-start-reverse">
                 <path d="M0,0 L10,5 L0,10 z" fill="#a8a29e" />
@@ -231,7 +232,7 @@ export function WebView({ world, focus, onOpen }: { world: WorldState; focus: st
                     className={cn(hidden || believed || edge.kind === "sibling" ? "wf-edge-dashed" : "wf-edge")}
                     markerEnd={edge.kind === "oneway" || mode === "chain" ? "url(#wf-arrow)" : undefined}
                   >
-                    <title>{`${byRef.get(edge.from)?.name} ${edge.label} ${byRef.get(edge.to)?.name}${hidden ? " (hidden truth)" : believed ? " (false belief)" : ""}`}</title>
+                    <title>{`${byRef.get(edge.from)?.name} ${edge.label} ${byRef.get(edge.to)?.name}${hidden ? (locale === "cs" ? " (skrytá pravda)" : " (hidden truth)") : believed ? (locale === "cs" ? " (mylná domněnka)" : " (false belief)") : ""}`}</title>
                   </path>
                   {labels && mode === "web" ? (
                     <text x={middle.x} y={middle.y - 4} textAnchor="middle" className="wf-edge-label fill-stone-500 text-[11px]">
@@ -275,11 +276,11 @@ export function WebView({ world, focus, onOpen }: { world: WorldState; focus: st
             <TypeChip type={typeOf(doc, chosen)} />
             {mode === "web" ? (
               <KitButton tone="small" onClick={() => setCenter(chosen.ref)}>
-                <Crosshair className="size-3.5" /> Center here
+                <Crosshair className="size-3.5" /> {locale === "cs" ? "Vycentrovat zde" : "Center here"}
               </KitButton>
             ) : null}
             <KitButton tone="small" onClick={() => onOpen(chosen.ref)}>
-              <ExternalLink className="size-3.5" /> Open in the wiki
+              <ExternalLink className="size-3.5" /> {locale === "cs" ? "Otevřít v encyklopedii" : "Open in the wiki"}
             </KitButton>
           </div>
         ) : null}

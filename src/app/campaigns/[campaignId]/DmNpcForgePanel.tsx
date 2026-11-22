@@ -35,7 +35,7 @@ import { WorldEntryLink, useOpenOnArrival } from "@/app/workshop/world/WorldEntr
 import { useUnsavedDraft } from "@/app/workshop/unsaved";
 import { NpcEditorFields } from "@/app/workshop/cast/NpcEditorFields";
 import { compareNames, textKey } from "@/lib/language/text-logic";
-import { useT } from "@/lib/locale";
+import { useLocale, useT } from "@/lib/locale";
 
 // The NPC forge.
 //
@@ -75,6 +75,7 @@ export function DmNpcForgePanel({
   onWorldEntry?: (id: string) => void;
 }) {
   const t = useT();
+  const locale = useLocale();
   const [npcs, setNpcs] = useState<Npc[]>([]);
   const [graph, setGraph] = useState<RelationGraph>({ nodes: [], edges: [] });
   const [showGraph, setShowGraph] = useState(false);
@@ -440,7 +441,7 @@ export function DmNpcForgePanel({
                 onClick={() => void patch({ draft, generatePortrait: true })}
                 className={cn(ui.btnSmall, "min-h-9 gap-1 px-2 py-1 text-xs")}
               >
-                <Sparkles className="size-3" /> Paint one
+                <Sparkles className="size-3" /> {(locale === "cs" ? "Vytvořit portrét" : "Paint one")}
               </button>
             ) : null}
             {selected.portraitUrl ? (
@@ -451,7 +452,7 @@ export function DmNpcForgePanel({
                 onClick={() => void patch({ portraitUrl: "" })}
                 className={cn(ui.btnSmall, "min-h-9 gap-1 px-2 py-1 text-xs")}
               >
-                <ImageOff className="size-3" /> Use placeholder
+                <ImageOff className="size-3" /> {(locale === "cs" ? "Použít výchozí obrázek" : "Use placeholder")}
               </button>
             ) : null}
             <button
@@ -467,22 +468,22 @@ export function DmNpcForgePanel({
             >
               {selected.archived ? (
                 <>
-                  <ArchiveRestore className="size-3" /> Bring back
+                  <ArchiveRestore className="size-3" /> {(locale === "cs" ? "Vrátit zpět" : "Bring back")}
                 </>
               ) : (
                 <>
-                  <Archive className="size-3" /> Set aside
+                  <Archive className="size-3" /> {(locale === "cs" ? "Odložit stranou" : "Set aside")}
                 </>
               )}
             </button>
             <button
               type="button"
               disabled={busy} aria-busy={busy}
-              aria-label={`Duplicate ${selected.name}`}
+              aria-label={t("Duplicate {name}", { name: selected.name })}
               onClick={() => void duplicate()}
               className={cn(ui.btnSmall, "min-h-9 gap-1 px-2 py-1 text-xs")}
             >
-              <Copy className="size-3" /> Duplicate
+              <Copy className="size-3" /> {t("Duplicate")}
             </button>
             <button
               type="button"
@@ -490,7 +491,7 @@ export function DmNpcForgePanel({
               onClick={() => void remove()}
               className={cn(ui.btnSmall, "ml-auto min-h-9 gap-1 px-2 py-1 text-xs hover:border-red-400/50 hover:text-red-300")}
             >
-              <Trash2 className="size-3" /> Forget them
+              <Trash2 className="size-3" /> {(locale === "cs" ? "Odstranit postavu" : "Forget them")}
             </button>
           </>
         ) : null}
@@ -512,7 +513,7 @@ export function DmNpcForgePanel({
         className={cn(ui.btnSmall, "min-h-9 px-2 py-1 text-xs", showGraph && "border-amber-500/70 bg-amber-400/10 text-amber-100")}
       >
         <GameIcon icon={{ kind: "glyph", key: "tab-bonds" }} size="size-5" />
-        {showGraph ? "Hide who knows whom" : "Who knows whom"}
+        {showGraph ? (locale === "cs" ? "Skrýt vztahy postav" : "Hide who knows whom") : (locale === "cs" ? "Kdo koho zná" : "Who knows whom")}
       </button>
       {showGraph ? (
         <RelationGraphView
@@ -534,7 +535,7 @@ export function DmNpcForgePanel({
     return (
       <div className="space-y-3">
         {graphView}
-        <Listed loaded={loaded} error={loadError} onRetry={() => void load()} loading="Calling the cast...">
+        <Listed loaded={loaded} error={loadError} onRetry={() => void load()} loading={(locale === "cs" ? "Načítání postav…" : "Calling the cast...")}>
           <CastRows npcs={npcs} onOpen={open} factionNames={new Map(factions.map((faction) => [faction.id, faction.name]))} />
         </Listed>
         <Sheet
@@ -553,7 +554,7 @@ export function DmNpcForgePanel({
     <div className="space-y-3">
       {graphView}
       {/* The chips and the editor fields draw their own heads and cards. */}
-      <Listed loaded={loaded} error={loadError} onRetry={() => void load()} loading="Calling the cast...">
+      <Listed loaded={loaded} error={loadError} onRetry={() => void load()} loading={(locale === "cs" ? "Načítání postav…" : "Calling the cast...")}>
         <CastChips npcs={npcs} selectedId={selectedId} onOpen={open} />
       </Listed>
       {editor}

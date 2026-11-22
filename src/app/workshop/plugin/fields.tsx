@@ -3,6 +3,7 @@
 import { rowIcon } from "@/app/workshop/kit";
 import { Plus, X } from "lucide-react";
 import { useState } from "react";
+import { useLocale } from "@/lib/locale";
 import { AddFromList, type AddOption } from "@/components/ui/AddFromList";
 import { cn } from "@/lib/cn";
 import { ui } from "@/lib/ui";
@@ -80,6 +81,7 @@ export function PairList<T extends Record<string, string>>({
   empty: string;
   max?: number;
 }) {
+  const locale = useLocale();
   return (
     <div className="space-y-1.5">
       {items.length === 0 ? <p className="reveal text-xs italic text-stone-500">{empty}</p> : null}
@@ -161,7 +163,7 @@ export function LineList({
           <button
             type="button"
             onClick={() => onChange(removeAt(items, index))}
-            aria-label="Remove this line"
+            aria-label={locale === "cs" ? "Odebrat tento řádek" : "Remove this line"}
             className={cn(ui.iconAction, rowIcon, "hover:text-red-300")}
           >
             <X className="size-3.5" />

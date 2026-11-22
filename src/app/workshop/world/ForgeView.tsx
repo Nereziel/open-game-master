@@ -130,7 +130,7 @@ export function ForgeView({ api, world, onOpen }: { api: WorldApi; world: WorldS
           ) : null}
           <label className="flex items-center gap-2 text-xs text-stone-400">
             <input type="checkbox" className="accent-amber-400" checked={stubTheRest} onChange={(event) => setStubTheRest(event.target.checked)} />
-            Keep the unticked names in To write
+            {locale === "cs" ? "Neoznačené názvy ponechat v seznamu K napsání" : "Keep the unticked names in To write"}
           </label>
           <div className="flex justify-end gap-2">
             <KitButton tone="small" onClick={() => { setRows(null); setLinks([]); }}>{t("Throw it away")}</KitButton>
