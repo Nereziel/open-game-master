@@ -1,6 +1,8 @@
 // Display-only Czech labels for the item details modal. Keep source data,
 // stored inventory names, numerical mechanics and non-Czech locales intact.
 import { translate, type Locale } from "@/lib/i18n/translate";
+import { canonicalGearDescriptionCs } from "@/lib/help/gear-description-cs";
+import { canonicalMagicItemDescriptionCs } from "@/lib/help/magic-item-description-cs";
 
 const LABELS: Readonly<Record<string, string>> = {
   "Weight": "Hmotnost", "Value": "Cena", "Damage": "Zranění",
@@ -89,6 +91,21 @@ export function itemDetailCs(value: string | null | undefined, locale: Locale): 
   const magicTag = /^\+(\d+) magic$/.exec(value);
   if (magicTag) return `Magický bonus +${magicTag[1]}`;
   return value;
+}
+
+// Prefer the full Czech rule text for canonical SRD gear. Descriptions from
+// third-party packs, homebrew, and other languages are never modified.
+export function itemDescriptionCs(name: string, description: string | null, locale: Locale, slug?: string): string | null {
+  if (locale !== "cs") return description;
+  const canonical = canonicalMagicItemDescriptionCs(name, slug) ?? canonicalGearDescriptionCs(name);
+  if (!description) return canonical;
+  // Existing Czech text (including manually authored content) takes priority.
+  // English pack descriptions can be a short fragment without verbs, so
+  // detecting just a few English keywords would leave many untranslated.
+  const czechText = /[áčďéěíňóřšťúůýž]/i.test(description)
+    || /\b(je|jsou|jako|nebo|bez|kniha|zbroj|stity|mece)\b/i.test(description);
+  if (czechText) return description;
+  return canonical ?? itemDetailCs(description, locale);
 }
 
 export function itemWeightCs(value: string | null, locale: Locale): string | null {

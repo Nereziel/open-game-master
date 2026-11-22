@@ -378,7 +378,7 @@ export function EquipmentChips({
     const idle = explicit ? wornButIdle(item, equipment) : null;
     if (idle) return t("worn, not in effect: {kind} at a time", { kind: oneOfKind(idle) ?? t("none", { context: "sheet.training.none" }) });
     if (item.equipped && item.layered) return t("worn beside another, on the GM's say");
-    return item.equipped ? (matchWeapon(item) ? "in hand" : t("worn")) : null;
+    return item.equipped ? (matchWeapon(item) ? t("in hand") : t("worn")) : null;
   };
   return (
     <InfoChipList

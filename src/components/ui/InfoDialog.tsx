@@ -8,7 +8,7 @@ import type { IconRef } from "@/lib/icons";
 import { useEffect, useState, type CSSProperties, type ReactNode } from "react";
 import { cn } from "@/lib/cn";
 import { useLocale, useT } from "@/lib/locale";
-import { itemDetailCs, itemRangeCs, itemWeightCs } from "@/lib/help/item-detail-cs";
+import { itemDescriptionCs, itemDetailCs, itemRangeCs, itemWeightCs } from "@/lib/help/item-detail-cs";
 import { Dialog } from "@/components/ui/Dialog";
 import type { ItemSheet } from "@/lib/help/item-sheet";
 import { firstSentence, parseRulesBlocks, parseRulesTable } from "@/lib/help/rules-text";
@@ -205,7 +205,7 @@ function ContentBody({ reference }: { reference: ContentRef }) {
   if (state.loading) {
     return (
       <p className="flex items-center gap-2 text-sm text-stone-500">
-        <Loader2 className="size-4 animate-spin" /> Looking it up...
+        <Loader2 className="size-4 animate-spin" /> {t("Looking it up...")}
       </p>
     );
   }
@@ -263,6 +263,7 @@ function ItemBody({ reference }: { reference: ContentRef }) {
   const campaignId = useContentCampaign();
   const locale = useLocale();
   const detail = (value: string | null | undefined) => itemDetailCs(value, locale);
+  const t = useT();
   const [state, setState] = useState<{ sheet: ItemSheet | null; loading: boolean }>({
     sheet: null,
     loading: true,
@@ -308,9 +309,11 @@ function ItemBody({ reference }: { reference: ContentRef }) {
   }
   const sheet = state.sheet;
   if (!sheet) {
+    const fallback = itemDescriptionCs(reference.name ?? reference.slug, null, locale, reference.slug);
+    if (fallback) return <div className="space-y-2 text-sm text-stone-300">{renderRules(fallback)}</div>;
     return (
       <p className="text-sm text-stone-500">
-        No details available. The content pack may not be installed, or this item was added by hand.
+        {t("No details available. The content pack may not be installed, or this item was added by hand.")}
       </p>
     );
   }
@@ -377,6 +380,7 @@ function ItemBody({ reference }: { reference: ContentRef }) {
 
   const localizedArmorRows = armorRows.map(({ label, text }) => ({ label: detail(label), text: text ? detail(text) : null }));
   const localizedWeaponRows = weaponRows.map(({ label, text }) => ({ label: detail(label), text: text ? detail(text) : null }));
+  const shownDescription = itemDescriptionCs(reference.name ?? reference.slug, sheet.description, locale, reference.slug);
 
   return (
     <div className="space-y-4">
@@ -408,9 +412,9 @@ function ItemBody({ reference }: { reference: ContentRef }) {
           <RuleList rows={localizedWeaponRows} />
         </ItemSection>
       ) : null}
-      {sheet.description ? (
+      {shownDescription ? (
         <ItemSection title={detail("Description")}>
-          <div className="space-y-2 border-t border-stone-800 pt-2">{renderRules(detail(sheet.description))}</div>
+          <div className="space-y-2 border-t border-stone-800 pt-2">{renderRules(shownDescription)}</div>
         </ItemSection>
       ) : null}
     </div>
