@@ -370,10 +370,10 @@ export function LeadEditDialog({
 
           <div className="mt-3 space-y-2 text-xs">
             <SectionHead title={t("Scores and training")} glyph="rest-level-up" level="h3" />
-            <div className="grid grid-cols-3 gap-2">
+            <div className="grid grid-cols-2 gap-3">
               {ABILITIES.map((ability) => (
-                <div key={ability} className="space-y-1">
-                  <span className="text-stone-400">{({ "str": t("Strength"), "dex": t("Dexterity"), "con": t("Constitution"), "int": t("Intelligence"), "wis": t("Wisdom"), "cha": t("Charisma") } as Record<string, string>)[ability] ?? String(ability)}</span>
+                <div key={ability} className="min-w-0 space-y-1">
+                  <span className="block truncate text-stone-400">{({ "str": t("Strength"), "dex": t("Dexterity"), "con": t("Constitution"), "int": t("Intelligence"), "wis": t("Wisdom"), "cha": t("Charisma") } as Record<string, string>)[ability] ?? String(ability)}</span>
                   <NumberStepper
                     size="sm"
                     value={abilities[ability]}
@@ -585,6 +585,7 @@ export function LeadEditDialog({
           <div className="mt-3 space-y-1 text-xs">
             <SectionHead title={t("Feats")} glyph="rest-level-up" level="h3" aside={feats.length || null} />
             <ChipList
+              kind="feats"
               values={feats}
               onRemove={(value) => setFeats((list) => list.filter((entry) => entry !== value))}
             />
