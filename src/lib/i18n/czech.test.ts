@@ -1,4 +1,5 @@
 import { describe, expect, it } from "vitest";
+import { statusLabel, type HomeCampaign } from "../../app/home/types";
 import { calculatorDisplayText } from "../reference/calculator-display";
 import { mathPartLabel, formatMathParts } from "../srd";
 import { APPEARANCE_THEMES } from "../appearance-themes";
@@ -44,6 +45,18 @@ installCatalog("cs", catalog);
 installCsTables({ names: CS_NAMES_BY_TABLE, guidance: RESOURCE_CS_GUIDANCE });
 
 describe("Czech localization", () => {
+  it("renders Czech campaign status badges instead of English Active", () => {
+    const t = (key: string) => key;
+    const campaign = (status: "active" | "lobby" | "ended") =>
+      ({ status, glance: {} }) as HomeCampaign;
+    expect(statusLabel(t, campaign("active"), "cs")).toBe("Aktivní");
+    expect(statusLabel(t, campaign("lobby"), "cs")).toBe("V přípravě");
+    expect(statusLabel(t, campaign("ended"), "cs")).toBe("Ukončená");
+    expect(statusLabel(t, campaign("active"), "en")).toBe("active");
+    expect(statusLabel(t, { ...campaign("active"), glance: { session: { between: true } } } as HomeCampaign, "cs"))
+      .toBe("between sessions");
+  });
+
   it("translates all 234 bundled and general personality suggestions without changing saved English strings", () => {
     const sets = [...Object.values(BUNDLED_PERSONA), GENERAL_PERSONA];
     const lines = sets.flatMap((set) => [...set.trait, ...set.ideal, ...set.bond, ...set.flaw]);

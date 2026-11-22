@@ -148,9 +148,15 @@ export function chapterLine(
 export function statusLabel(
   t: (key: string, vars?: Record<string, string | number>) => string,
   campaign: HomeCampaign,
+  locale?: string,
 ): string {
   if (campaign.status === "active" && campaign.glance?.session?.between) {
     return t("between sessions");
+  }
+  // The home catalog may still carry English status values (e.g. "Active").
+  // Keep the saved status identifier unchanged; translate only the badge.
+  if (locale === "cs") {
+    return { active: "Aktivní", lobby: "V přípravě", ended: "Ukončená" }[campaign.status] ?? campaign.status;
   }
   const key = `home.badge.${campaign.status}`;
   const word = t(key);
