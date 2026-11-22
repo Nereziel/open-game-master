@@ -41,3 +41,26 @@ Tests cover the actual bundled SRD corpus as well as synthetic corrupted
 pages, per-page fallback, unchanged origin, correct content kinds and
 stable source IDs. Run on a known commit; pre-existing failures on the
 `main` Linux smoke must not be attributed to this adapter.
+
+## Open5e ↔ SRD page crosswalk
+
+`srdPageIdForCatalogRecord(record, englishPages)` is a **display-only**
+bridge between the Open5e catalog and this translated rulebook pack:
+
+1. Refuse rows unless their proven source resolves to `srd-5.1`.
+2. For bundled `srd:<page-id>` rows or explicit `rulebook` links, verify
+   that the page ID, content kind and canonical English title (or an explicit
+   vetted catalog alias) agree.
+3. For Open5e slugs, match against **English SRD pages of the same kind**;
+   return null on zero or multiple matching pages. Never infer a source
+   from a title or select the first ambiguous result.
+4. Never rewrite the original row, slug, saved IDs or rulebook content.
+   Source-specific translations are looked up by the resulting page ID.
+5. Some subraces, spells with alternative printed names and nested entries
+   may need additional explicit mappings in a later integration PR. A
+   missing/unmapped entry stays English rather than borrowing from another
+   source.
+
+The legacy `rulebookPageIdFor` helper performs broader page discovery,
+including fuzzy race sections; the new translator must not use that
+fuzziness to guess a canonical translation identity.
