@@ -34,6 +34,7 @@ import { spellOnSavedList, spellShortageLines, spellSupplyOf } from "../spellSup
 import { capLines, castingNumbers, swapChoices, swapInList, swapQuestion, type PendingSwap } from "../spellDesk";
 import { StepPanel, inputClass } from "./shared";
 import { textKey } from "@/lib/language/text-logic";
+import { selectedSpellReference, updateChosenSpellReference } from "@/lib/content/translations/spell-selection-reference";
 
 const noSubscribe = () => () => {};
 
@@ -235,7 +236,7 @@ export function SpellsSection({
 }) {
   const t = useT();
   const tp = useTp();
-  const { spells, setSpells, cantrips, setCantrips, bookPrepared, setBookPrepared } = state;
+  const { spells, setSpells, cantrips, setCantrips, bookPrepared, setBookPrepared, setSpellContentRefs } = state;
   const {
     spellAdvice,
     cantripAdvice,
@@ -298,6 +299,12 @@ export function SpellsSection({
   // on top of the class's count too.
   const isFeat = (name: string) => has([...featSpells.cantrips, ...featSpells.spells], name);
   const poolByName = new Map(pool.map((row) => [textKey(row.name), row]));
+  const rememberSpell = (name: string) => {
+    const ref = selectedSpellReference(name, [...pool, ...anyPool]);
+    setSpellContentRefs((current) => updateChosenSpellReference(current, name, ref));
+  };
+  const forgetSpell = (name: string) =>
+    setSpellContentRefs((current) => updateChosenSpellReference(current, name, null));
   // The picks off the class's list are the group's, read once the class's
   // list is in (until then every pick would look off it).
   const onClassList = (name: string) => poolByName.has(textKey(name));
@@ -403,6 +410,8 @@ export function SpellsSection({
     const into = swap.name;
     if (swap.kind === "cantrip") {
       setCantrips((current) => swapInList(current, out, into));
+      forgetSpell(out);
+      rememberSpell(into);
     } else if (swap.kind === "prepared") {
       setBookPrepared((current) => swapInList(current, out, into));
     } else {
@@ -414,6 +423,8 @@ export function SpellsSection({
         return;
       }
       setSpells((current) => swapInList(current, out, into));
+      forgetSpell(out);
+      rememberSpell(into);
       // A spell that leaves the book leaves what is prepared from it.
       setBookPrepared((current) => current.filter((entry) => textKey(entry) !== textKey(out)));
     }
@@ -425,6 +436,7 @@ export function SpellsSection({
   function toggleCantrip(name: string) {
     if (has(cantrips, name)) {
       setCantrips((current) => current.filter((entry) => textKey(entry) !== textKey(name)));
+      forgetSpell(name);
       return;
     }
     if (keptForNamed(name)) {
@@ -439,10 +451,12 @@ export function SpellsSection({
       return;
     }
     setCantrips((current) => [...current, name]);
+    rememberSpell(name);
   }
   function toggleSpell(name: string) {
     if (has(spells, name)) {
       setSpells((current) => current.filter((entry) => textKey(entry) !== textKey(name)));
+      forgetSpell(name);
       setBookPrepared((current) => current.filter((entry) => textKey(entry) !== textKey(name)));
       return;
     }
@@ -454,6 +468,7 @@ export function SpellsSection({
         return;
       }
       setSpells((current) => [...current, name]);
+      rememberSpell(name);
       return;
     }
     // A full list first, as the tile says (blockedFor below), then the
@@ -482,6 +497,7 @@ export function SpellsSection({
       return;
     }
     setSpells((current) => [...current, name]);
+    rememberSpell(name);
   }
   function togglePrepared(name: string) {
     if (has(bookPrepared, name)) {
@@ -671,6 +687,7 @@ export function SpellsSection({
     const setList = tile.level === 0 ? setCantrips : setSpells;
     if (anyChosenKeys.has(key)) {
       setList((current) => current.filter((entry) => textKey(entry) !== key));
+      forgetSpell(tile.name);
       return;
     }
     const refusal = anyRefusal(tile.name, tile.level === 0);
@@ -679,6 +696,7 @@ export function SpellsSection({
       return;
     }
     setList((current) => [...current, tile.name]);
+    rememberSpell(tile.name);
   }
 
   const counters = [
