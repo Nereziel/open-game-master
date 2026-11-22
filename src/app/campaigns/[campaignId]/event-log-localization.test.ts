@@ -5,6 +5,7 @@ import { installCatalog, translate, type Locale } from "@/lib/i18n/translate";
 import { describeKnownEntry } from "./event-log-logic";
 import { installCsTables } from "@/lib/i18n/cs-tables";
 import { CS_NAMES_BY_TABLE } from "@/lib/content/names-cs";
+import { contentName } from "@/lib/content/names";
 
 installCatalog("cs", cs);
 installCatalog("fr", fr);
@@ -92,4 +93,14 @@ describe("historical event-log system phrases follow the reader's locale", () =>
     expect(say("cs", "reaction", { reaction: "My custom reaction" })).toBe("Mara: My custom reaction");
   });
 
+
+  it("uses the same creature names as the bestiary for wild-shape audit rows", () => {
+    const delta = { form: "Wolf", amount: 3, beastHp: 7 };
+    const translated = contentName("monsters", "Wolf", "cs");
+    expect(say("cs", "apply_damage", delta)).toContain(translated);
+    expect(say("cs", "heal", delta)).toContain(translated);
+    expect(say("en", "apply_damage", delta)).toContain("Wolf");
+    expect(say("cs", "apply_damage", { form: "Custom Beast", amount: 3 })).toContain("Custom Beast");
+    expect(delta).toEqual({ form: "Wolf", amount: 3, beastHp: 7 });
+  });
 });
