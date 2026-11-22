@@ -9,6 +9,7 @@ on:
       - "src/lib/srd/skill-help-cs*"
       - "src/app/characters/builder/AbilityText.tsx"
       - "src/app/campaigns/**/CharacterSheetDialog.tsx"
+      - "src/app/campaigns/**/LevelUpDialog.tsx"
       - "src/app/campaigns/**/lead-edit-cs.test.ts"
       - "src/components/sheet/sheet-state.ts"
       - "src/components/sheet/SheetState.tsx"
