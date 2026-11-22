@@ -12,7 +12,7 @@ const SKILL_IDS = new Map(SRD_SKILLS.map((skill) => [skill.name, skill.id]));
 // drawing each page. English remains the source and default for existing users.
 const LABELS: Record<string, { cs: string; fr: string }> = {
   "Character Name": { cs: "Jméno postavy", fr: "Nom du personnage" },
-  "Class & Level": { cs: "Třída a úroveň", fr: "Classe et niveau" },
+  "Class & Level": { cs: "Povolání a úroveň", fr: "Classe et niveau" },
   "Race": { cs: "Rasa", fr: "Espèce" },
   "Background": { cs: "Zázemí", fr: "Historique" },
   "Alignment": { cs: "Přesvědčení", fr: "Alignement" },
