@@ -54,7 +54,7 @@ export function IdentityStep({
   // ideal, bond and flaw the Personality block offers.
   background?: BackgroundOption | null;
   // Whether this server can paint a portrait at all. Without an image
-  // backend the section offers the upload alone and stops promising a
+  // backend the section still offers uploads and bundled gallery art and
   // painting that would never arrive.
   paintsPortraits: boolean;
   onUploadPortrait: () => void;
@@ -185,7 +185,7 @@ export function IdentityStep({
                   photo can always be taken back. */}
               {portrait && (paintsPortraits || !keptSaved) ? (
                 <button type="button" onClick={() => setPortrait(null)} className={ui.btnSmall}>
-                  {keptSaved ? t("Regenerate portrait") : t("Remove photo")}
+                  {keptSaved ? t("Regenerate portrait") : t("Remove portrait")}
                 </button>
               ) : null}
             </div>
@@ -203,7 +203,7 @@ export function IdentityStep({
         <Field label={t("Appearance")} className="mt-4" captionId={appearanceId}>
           <p id={`${appearanceId}-help`} className="mb-2 text-xs text-stone-500">
             {paintsPortraits
-              ? t("Used to paint your character's portrait if you don't upload a photo.")
+              ? t("Used to paint your character's portrait if you don't add a photo or choose one from the gallery.")
               : t("How your character looks, for the party and the GM to picture.")}
           </p>
           <textarea
