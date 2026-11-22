@@ -25,6 +25,7 @@ import { srdNameFor } from "@/lib/dm/item-logic";
 import { withoutBonus } from "@/lib/srd/item-row";
 import { bundledClassRows } from "@/lib/workshop/class-catalog";
 import { bookLocaleOf, rulebookPage } from "@/lib/rulebook/book";
+import { withCatalogDisplay } from "@/lib/content/translations/catalog-display";
 
 export const runtime = "nodejs";
 export const dynamic = "force-dynamic";
@@ -235,5 +236,15 @@ export async function GET(
   // so (issue #570).
   const classSlug = url.searchParams.get("class") ?? undefined;
   results = results.map((row) => withBestEffort(kind, row, { classSlug }));
+  // Add a separate Czech presentation layer only. The original catalog name,
+  // slug, descriptions and mechanics are still used for every game action.
+  const requestedLocale = url.searchParams.get("locale");
+  const locale = requestedLocale === "cs" || requestedLocale === "en" || requestedLocale === "fr"
+    ? requestedLocale
+    : bookLocaleOf(request);
+  if (locale === "cs") {
+    results = (results as Array<Parameters<typeof withCatalogDisplay>[1]>)
+      .map((row) => withCatalogDisplay(kind, row, locale));
+  }
   return Response.json({ results, packInstalled, unadmitted: unadmittedNames(scope, user.id, kind, q, url.searchParams.get("class") ?? "") });
 }
