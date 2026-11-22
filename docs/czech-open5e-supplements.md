@@ -10,10 +10,10 @@ Rozšíření společné překladové vrstvy pro Issue #100 a PR #106. Překlady
 | Tome of Heroes (`toh`): odbornosti | 13 | 13 | 13 úplných českých pravidlových textů |
 | Tome of Heroes (`toh`): předměty, zbraně a zbroje | 65 | 65 | 65 stručných přehledů |
 | Deep Magic (`dmag`, `deepm`): kouzla, starší v1 | 514 | 56 | 56 stručných přehledů |
-| Vault of Magic (`vom`): magické předměty | 805 | 193 | 92 stručných přehledů |
-| **Celkem** | **1 488** | **418** | **317** |
+| Vault of Magic (`vom`): magické předměty | 805 | 193 | 193 stručných přehledů |
+| **Celkem** | **1 488** | **418** | **418** |
 
-Počty se týkají konkrétních Open5e zdrojových záznamů v importovatelném katalogu 5e v1, nikoli součtu všech vydání knih nebo všech položek na uživatelském serveru. Celkových 317 českých textů zahrnuje 304 autorských stručných přehledů a 13 plných českých pravidlových textů odborností.
+Počty se týkají konkrétních Open5e zdrojových záznamů v importovatelném katalogu 5e v1, nikoli součtu všech vydání knih nebo všech položek na uživatelském serveru. Celkových 418 českých textů zahrnuje 405 autorských stručných přehledů a 13 plných českých pravidlových textů odborností.
 
 Ověřený zdroj: `open5e/open5e-api`, větev `staging`, soubory `data/v1/toh/{Spell,Feat,MagicItem,Weapon,Armor}.json`, `data/v1/dmag/Spell.json` a `data/v1/vom/MagicItem.json`. Dokumenty označují svoji licenci jako Open Gaming License a obsahují připsání Kobold Press / Open Design.
 
