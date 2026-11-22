@@ -93,3 +93,17 @@ catalog's actual category sizes.
 The source has 36 rule-kind pages including licensing information; 35 are
 expected to contain complete Czech rules text. The license is excluded from
 the `fullText` requirement and retained in the original form.
+
+## Metadata mechanical audit
+
+`auditSrdLocalizedMetadata(english, czech)` compares the multiset of
+numeric and dice tokens in localized metadata and magic-item names against
+the original SRD. It catches changed spell levels, dice, enchantment bonuses
+and fractions such as challenge rating. Tokens are compared without
+depending on Czech word order. The corresponding regression test runs on
+every bundled page, not only a few selected examples.
+
+**Scope:** This is a mechanical sanity check, not proof that all spell-school,
+creature-type, rarity, alignment, attunement or rule-prose translations are
+correct. Those terms still require glossary review against d20.cz and
+line-by-line comparison with the licensed English original.
