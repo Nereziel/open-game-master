@@ -102,7 +102,10 @@ export function fulfillMessageImage(
       recordDmTrace("image_generation_result", { campaignId, kind: "scene", messageId, success: false, reason });
       publishMediaStatus(campaignId, "image", messageId, "failed", reason);
       recordImageFailure(campaignId, messageId, reason);
-      throw error;
+      // Illustration is optional: the stored message now records the
+      // failure and clients stop showing a pending spinner after reload.
+      // A new request may retry it; the queue need not print a stack trace.
+      console.warn(`[media:gpu] image ${messageId} was not generated: ${reason}`);
     }
   }));
 }
