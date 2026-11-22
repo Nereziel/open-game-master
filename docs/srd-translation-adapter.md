@@ -131,3 +131,28 @@ continues to carry a separate `display.metadata`, not a modified
 `data_json` or rules-engine field. The downstream editor, picker,
 character sheet and PDF still need explicit consumer-side integration
 in phase 4; the new bridge by itself does not replace their labels.
+
+## Consumer integration (source-safe display layer)
+
+The catalog API and direct detail API now add an optional `display`
+object for Czech SRD entries only. `display.name`, `description`,
+`school`, `rarity`, `category` and `meta` are for presentation.
+`name`, `slug`, `source`, `documentSlug`, `data` and mechanics remain
+canonical and continue to drive selection, game rules and persistence.
+
+The character builder's single/multi pickers request the active UI locale,
+show these Czech display fields and include source-book provenance in result
+labels. The info dialog prefers the localized rule text when available.
+Picker row deduplication now uses provenance and exact slug instead of
+English name; two separate books' identically named rows are not collapsed.
+The multi-picker's pending selection also uses slug identity, while existing
+stored character names remain unchanged.
+
+The server supports **unique, exact Czech SRD titles** as catalog search
+aliases; unknown or ambiguous requests remain unchanged. This deliberately
+does not promise full substring searching or translation of other books.
+
+Remaining work: audit all consumers (campaign sheet, workshop, PDF,
+reference), migrate any name-only persistence flows carefully and add
+source-specific packs for other licensed content. The new SRD display object
+is not evidence that those other surfaces have been migrated.
