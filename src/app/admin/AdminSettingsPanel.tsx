@@ -77,7 +77,7 @@ export function AdminSettingsPanel() {
   const t = useT();
   const tp = useTp();
   const locale = useLocale();
-  const secondaryModelLabel = locale === "cs" ? "Sekundární model" : t("Utility model");
+  const utilityModelLabel = locale === "cs" ? "Pomocný model" : t("Utility model");
   const BLANK = blanks(t);
   const [config, setConfig] = useState<MaskedConfig | null>(null);
   // The config as the server last saved it, so the panel can say whether
@@ -304,7 +304,7 @@ export function AdminSettingsPanel() {
           const lamp = lampFor(stop.id);
           return (
             <button key={stop.id} type="button" onClick={() => jumpTo(stop.id)} className="motion-press">
-              <GameIcon icon={{ kind: "glyph", key: stop.glyph }} size="size-7" /> {stop.id === "admin-utility" ? secondaryModelLabel : t(stop.label)}
+              <GameIcon icon={{ kind: "glyph", key: stop.glyph }} size="size-7" /> {stop.id === "admin-utility" ? utilityModelLabel : t(stop.label)}
               {lamp ? (
                 <span title={lamp.words}>
                   <Lamp tone={lamp.tone} className="ml-0.5" />
@@ -598,7 +598,7 @@ export function AdminSettingsPanel() {
         />
       )}
 
-      <PageSection id="admin-utility" heading={locale === "cs" ? "Sekundární model (volitelný)" : t("Utility model (optional)")} glyph="ui-utility">
+      <PageSection id="admin-utility" heading={locale === "cs" ? "Pomocný model (volitelný)" : t("Utility model (optional)")} glyph="ui-utility">
         <p className="mb-3 text-xs text-stone-500">
           {t("A second, smaller model for the mechanical work: history compaction, chapter summaries and fact extraction, world-arc ticks, lore checks, and Ask answers. None of it is narration, so a small model does it well while the story model keeps its weights and prompt cache resident. Leave the model name blank to turn this off, and every one of those calls goes back to the story model. If a configured utility model is unreachable, the story model picks the job up anyway.")}
         </p>
