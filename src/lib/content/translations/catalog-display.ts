@@ -46,6 +46,7 @@ export function withCatalogDisplay<T extends CatalogRow>(
   kind: string,
   row: T,
   locale: "cs" | "en" | "fr",
+  options: { includeDescription?: boolean } = {},
 ): T & { display?: CatalogDisplay } {
   if (locale !== "cs" || !SUPPORTED.has(kind) || translationSourceId(row) !== "srd-5.1") return row;
   const sourceRow: SrdCatalogRecord = {
@@ -71,7 +72,7 @@ export function withCatalogDisplay<T extends CatalogRow>(
   const metadata = resolved.display.metadata;
   const display: CatalogDisplay = {
     name: resolved.display.name ?? row.name,
-    ...(resolved.display.description ? { description: resolved.display.description } : {}),
+    ...(options.includeDescription !== false && resolved.display.description ? { description: resolved.display.description } : {}),
     ...(metadata?.school ? { school: metadata.school } : {}),
     ...(metadata?.rarity ? { rarity: metadata.rarity } : {}),
     ...(metadata?.category ? { category: metadata.category } : {}),
