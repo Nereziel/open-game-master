@@ -57,6 +57,13 @@ describe("SRD 5.1 Czech companion adapter (#107 phase 2)", () => {
     expect(coverage.total).toBe(english.length);
     expect(coverage.translated.rules).toBe(english.filter((page) => page.kind === "rules").length);
     expect(coverage.fullRulePages).toBe(35);
+    // SRD feats are subsections of the rules page, NOT separate page-kind
+    // records. Custom "odm-expanded" feats must not be counted as SRD.
+    const englishFeatsPage = english.find((page) => page.id === "feats");
+    const czechFeatsPage = czech.find((page) => page.id === "feats");
+    expect(englishFeatsPage?.kind).toBe("rules");
+    expect(czechFeatsPage?.md).toContain("## Úplné znění pravidel v češtině");
+    expect(pack.entries.rules?.feats?.description).toContain("Úplné znění pravidel v češtině");
     // A complete translation must contain the full-text marker, not merely
     // a localized title, metadata or short Czech overview.
     for (const kind of ["classes", "monsters", "items"] as const) {
