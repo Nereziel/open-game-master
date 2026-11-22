@@ -51,9 +51,13 @@ jobs:
       - name: Verify UI audit (including Windows path behavior)
         run: npm run i18n:cs:ui-test
 
-      # Existing missing literal keys are reported but do not fail CI until
-      # the baseline is reviewed and fixed (issue #100).
-      - name: Report untranslated UI keys and JSX candidates
+      # The initial 49 missing literal keys are now covered. Unexpected
+      # untranslated UI strings and duplicate JSON keys must fail the PR.
+      # Advisory hardcoded JSX candidates remain non-blocking.
+      - name: Enforce Czech UI key coverage
+        run: npm run i18n:cs:ui-check
+
+      - name: Report possible hardcoded Czech JSX candidates
         run: npm run i18n:cs:ui-report
 
       - name: Czech localization regression tests
