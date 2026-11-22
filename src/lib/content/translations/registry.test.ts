@@ -6,6 +6,8 @@ describe("source-scoped translation registry (#107)", () => {
   it("maps actual Open5e document identifiers without changing engine IDs", () => {
     expect(translationSourceId({ source: "open5e", documentSlug: "wotc-srd" })).toBe("srd-5.1");
     expect(translationSourceId({ source: "bundled", documentSlug: "wotc-srd" })).toBe("srd-5.1");
+    expect(translationSourceId({ source: "bundled" })).toBeNull();
+    expect(translationSourceId({ source: "bundled", documentSlug: "custom-genre" })).toBeNull();
     expect(translationSourceId({ source: "open5e", documentSlug: "toh" })).toBe("tome-of-heroes");
     expect(translationSourceId({ source: "open5e", documentSlug: "deepm" })).toBe("deep-magic");
     expect(translationSourceId({ source: "open5e", documentSlug: "dmag" })).toBe("deep-magic");
