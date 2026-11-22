@@ -10,10 +10,11 @@ import { textKey } from "@/lib/language/text-logic";
 import { useLocale, useT, useTp } from "@/lib/locale";
 import { contentName } from "@/lib/content/names";
 import { sourceRowIdentity, togglePendingSourceRow } from "./pickerRows";
+import { storedReferenceForCatalogRow, type StoredContentReference } from "@/lib/content/translations/stored-reference";
 
 // `level` rides along for spells, so a cantrip picked here lands in the
 // cantrip list rather than among the levelled spells.
-export type MultiPick = { name: string; slug?: string; level?: number };
+export type MultiPick = { name: string; slug?: string; level?: number; contentRef?: StoredContentReference };
 
 // Searchable multi-select against /api/content/[kind]: result rows toggle
 // into a pending chip strip and one "Add" commits them all, so nobody has
@@ -69,6 +70,8 @@ export default function MultiContentPicker({
       name: entry.name, slug: entry.slug, level: entry.level,
       source: entry.source, documentSlug: entry.documentSlug,
       kind: entry.kind, displayLabel: rowName(entry),
+      ...(entry.slug && storedReferenceForCatalogRow(kind, entry)
+        ? { contentRef: storedReferenceForCatalogRow(kind, entry)! } : {}),
     };
     setPending((picks) => togglePendingSourceRow(picks, choice));
   }
@@ -88,8 +91,14 @@ export default function MultiContentPicker({
     if (!pending.length) {
       return;
     }
-    // Only canonical fields leave this UI; localized labels are ephemeral.
-    onAdd(pending.map((pick) => ({ name: pick.name, ...(pick.slug ? { slug: pick.slug } : {}), ...(pick.level !== undefined ? { level: pick.level } : {}) })));
+    // Pass a verified source reference but never pass translated display
+    // labels or ephemeral picker provenance to saved character fields.
+    onAdd(pending.map((pick) => ({
+      name: pick.name,
+      ...(pick.slug ? { slug: pick.slug } : {}),
+      ...(pick.level !== undefined ? { level: pick.level } : {}),
+      ...(pick.contentRef ? { contentRef: pick.contentRef } : {}),
+    })));
     setPending([]);
     setQuery("");
     setResults([]);
