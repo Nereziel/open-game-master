@@ -84,12 +84,12 @@ function TrapBlock({ block, put }: { block: Mech; put: (patch: Mech) => void }) 
       <MechGroup title={t("How it works")} summary={String(block.trigger ?? "") || t("its trigger")} open>
         <SelectField label={t("Kind")} value={String(block.kind ?? "mechanical")} options={[{ value: "mechanical", label: t("mechanical") }, { value: "magic", label: t("magic") }]} onChange={(kind) => put({ kind })} />
         <div className="col-span-2 sm:col-span-3">
-          <TextField label={t("Trigger")} value={String(block.trigger ?? "")} onChange={(trigger) => put({ trigger })} placeholder="a pressure plate under the third flagstone" maxLength={200} />
+          <TextField label={t("Trigger")} value={String(block.trigger ?? "")} onChange={(trigger) => put({ trigger })} placeholder={t("a pressure plate under the third flagstone")} maxLength={200} />
         </div>
         <NumberField label={t("Spot DC")} value={num(spot.dc, 0) || ""} min={1} max={30} onChange={(dc) => put({ spot: dc === "" ? undefined : { dc, skill: String(spot.skill ?? "perception") } })} />
         <SelectField label={t("Spotted with")} value={String(spot.skill ?? "perception")} options={["perception", "investigation", "arcana"].map((value) => ({ value, label: value }))} onChange={(skill) => put({ spot: { dc: num(spot.dc, 10), skill } })} />
         <NumberField label={t("Disarm DC")} value={num(disarm.dc, 0) || ""} min={1} max={30} onChange={(dc) => put({ disarm: dc === "" ? undefined : { dc, how: String(disarm.how ?? "thieves' tools") } })} />
-        <TextField label={t("Disarmed by")} value={String(disarm.how ?? "")} onChange={(how) => put({ disarm: { dc: num(disarm.dc, 15), how } })} placeholder="thieves' tools" maxLength={200} />
+        <TextField label={t("Disarmed by")} value={String(disarm.how ?? "")} onChange={(how) => put({ disarm: { dc: num(disarm.dc, 15), how } })} placeholder={t("thieves' tools")} maxLength={200} />
       </MechGroup>
       <MechGroup title={t("What it does")} summary={[save.dc ? `DC ${num(save.dc)} ${String(save.ability ?? "").toUpperCase()}` : "", damage.dice ? `${String(damage.dice)} ${String(damage.type ?? "")}` : "", block.condition ? String(block.condition) : ""].filter(Boolean).join(", ") || t("nothing yet")} open>
         <NumberField label={t("Attack bonus")} value={block.attackBonus === undefined ? "" : num(block.attackBonus)} min={-5} max={20} onChange={(value) => put({ attackBonus: optional(value), ...(value === "" ? { volley: undefined } : {}) })} hint={t("Empty: no attack roll.")} />
@@ -181,7 +181,7 @@ function DiseaseBlock({ block, put }: { block: Mech; put: (patch: Mech) => void 
         <SelectField label={t("Of")} value={String(onset.unit ?? "days")} options={[{ value: "hours", label: t("hours") }, { value: "days", label: t("days") }]} onChange={(unit) => put({ onset: { dice: onset.dice ?? "1d4", unit } })} />
       </MechGroup>
       <MechGroup title={t("The symptoms")} summary={[String(block.condition ?? ""), num(block.exhaustion) ? `${num(block.exhaustion)} exhaustion` : ""].filter(Boolean).join(", ") || t("none yet")} open>
-        <TextField label={t("Condition it shows as")} value={String(block.condition ?? "")} onChange={(condition) => put({ condition })} placeholder="marsh fever" maxLength={40} />
+        <TextField label={t("Condition it shows as")} value={String(block.condition ?? "")} onChange={(condition) => put({ condition })} placeholder={t("marsh fever")} maxLength={40} />
         <NumberField label={t("Levels of exhaustion")} value={num(block.exhaustion)} min={0} max={5} onChange={(exhaustion) => put({ exhaustion: exhaustion === "" ? 0 : exhaustion })} />
         <div className="col-span-2 space-y-1">
           <span className="text-[11px] text-stone-400">{t("And while sick")}</span>
