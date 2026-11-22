@@ -65,7 +65,7 @@ import { revisedSpecies } from "@/lib/srd/race-id";
 // charges its own catalog's price again when the sheet is saved. `magic`
 // marks a row the pack files as a magic item, which the purse refuses in the
 // server's words. Neither is saved (submit.ts).
-export type EquipmentItem = { name: string; qty: number; slug?: string; priceCp?: number; magic?: boolean };
+export type EquipmentItem = { name: string; qty: number; slug?: string; contentRef?: import("@/lib/content/translations/stored-reference").StoredContentReference; priceCp?: number; magic?: boolean };
 
 // What the last change set aside, for the notice the wizard shows: the
 // change that did it ("race") and the picks that no longer fit. Null once
@@ -238,6 +238,7 @@ export function useBuilderState({
       name: item.name,
       qty: item.qty,
       ...(item.slug ? { slug: item.slug } : {}),
+      ...(item.contentRef ? { contentRef: item.contentRef } : {}),
     })),
   );
   // Auto-added class weapons the user explicitly removed; reset on class change.
