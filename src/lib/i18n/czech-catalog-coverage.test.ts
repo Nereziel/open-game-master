@@ -23,6 +23,13 @@ describe("Czech UI catalog completeness", () => {
       .toContain("zadej výsledky");
   });
 
+  it("covers Czech multiclass tool selection and screen-reader labels", () => {
+    expect(czech.messages["Choose tools for {class} ({count}):"])
+      .toBe("Vyber nástroje pro povolání {class} (počet: {count}):");
+    expect(czech.messages["Tool choices for {class}"])
+      .toBe("Výběr nástrojů pro povolání {class}");
+  });
+
   it("covers all source messages, contexts and plural entries", () => {
     // The empty source key represents an empty UI string, not untranslated text.
     const sourceMessages = Object.keys(source.messages).filter(Boolean);
