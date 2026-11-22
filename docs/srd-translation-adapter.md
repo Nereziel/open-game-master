@@ -196,3 +196,27 @@ separate rows in some character save models. The multi-picker therefore
 permits **only one pending choice per canonical English name** and lets
 the player switch its book source. This is an explicit compatibility
 boundary, not a permanent solution for the persisted content reference.
+
+## Optional persisted source references (in progress)
+
+`src/lib/content/translations/stored-reference.ts` defines a compact,
+strictly validated identity for catalog selections:
+`{ sourceId, contentType, contentId, documentSlug? }`. The
+`contentId` here is the **catalog slug**, not a translated title (and not
+necessarily a rulebook Markdown page ID).
+
+`equipmentItemSchema.contentRef?` and
+`spellcastingSchema.contentRefs?` are optional so previously saved
+character sheets continue to parse unchanged. Existing English display
+and mechanic fields remain the authority in the 2014 rules engine.
+
+The new character builder forwards a source reference for a newly selected
+catalog equipment item, restores it when editing an existing item and
+retains it through the creation payload. Switching books for an already
+present English item name replaces its source reference instead of
+silently combining incompatible mechanics.
+
+**Not yet complete:** spell pickers and multiclass spell lists do not yet
+populate `spellcasting.contentRefs`; editor/campaign mutation endpoints and
+all PDF/help consumers still require a provenance audit. Do not guess the
+source for old name-only entries; preserve them as unresolved legacy rows.
