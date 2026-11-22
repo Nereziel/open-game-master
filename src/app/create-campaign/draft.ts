@@ -151,7 +151,7 @@ export const DEFAULT_DRAFT: CampaignDraft = {
   maxCompanions: 2,
   maxGuests: 2,
   voiceChat: {
-    enabled: true,
+    enabled: false,
     turnEnforcement: "soft",
     transcribe: false,
     rules: {
