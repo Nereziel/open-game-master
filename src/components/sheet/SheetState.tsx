@@ -7,7 +7,7 @@ import { cn } from "@/lib/cn";
 import { ui } from "@/lib/ui";
 import { Tooltip } from "@/components/ui/Tooltip";
 import { GameIcon } from "@/components/ui/GameIcon";
-import { useT } from "@/lib/locale";
+import { useLocale, useT } from "@/lib/locale";
 import { FaceInputs, flatTotalOf, useFaceEntry } from "@/components/dice/FaceEntry";
 import type { CharacterSheet } from "@/lib/schemas/sheet";
 import { defensesView, hitDiceRows, stateTags, type StateTag } from "@/components/sheet/sheet-state";
@@ -66,7 +66,8 @@ export function StateTags({ sheet, className }: { sheet: CharacterSheet; classNa
 // pcImmunities): race, features, rage, spells, worn magic items.
 export function DefensesLine({ sheet }: { sheet: CharacterSheet }) {
   const t = useT();
-  const { resist, immune } = defensesView(sheet);
+  const locale = useLocale();
+  const { resist, immune } = defensesView(sheet, locale);
   if (!resist && !immune) return null;
   return (
     <p className="reveal mt-2 flex flex-wrap items-center gap-x-3 gap-y-0.5 text-xs text-stone-300">
