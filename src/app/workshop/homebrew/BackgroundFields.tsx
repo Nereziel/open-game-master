@@ -139,7 +139,7 @@ export function BackgroundFields({ data, set }: Props) {
         <NumberField label={t("Coin (gp)")} value={grants.purse} min={0} max={10000} onChange={(purse) => put({ purse: purse === "" ? 0 : purse })} className="w-40" />
       </div>
       <div className="grid gap-2 sm:grid-cols-2">
-        <TextField label={t("Feature", { context: "workshop.homebrew.background.feature" })} value={String(data.feature ?? "")} onChange={(feature) => set({ feature })} placeholder="Salt Lore" maxLength={80} />
+        <TextField label={t("Feature", { context: "workshop.homebrew.background.feature" })} value={String(data.feature ?? "")} onChange={(feature) => set({ feature })} placeholder={t("Salt Lore")} maxLength={80} />
         <TextArea label={t("What the feature does")} value={String(data.feature_desc ?? "")} onChange={(feature_desc) => set({ feature_desc })} rows={3} maxLength={4000} />
       </div>
     </div>
