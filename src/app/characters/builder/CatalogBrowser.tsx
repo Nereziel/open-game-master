@@ -7,7 +7,7 @@ import { InfoButton } from "@/components/ui/InfoDialog";
 import { cn } from "@/lib/cn";
 import { contentSlug, describeContentEntry, spellSummary } from "@/lib/help";
 import { PrerequisiteLine } from "./ContentPicker";
-import { uniqueByName } from "./pickerRows";
+import { uniqueBySource } from "./pickerRows";
 import type { PickerEntry } from "./useContentSearch";
 import { textKey } from "@/lib/language/text-logic";
 import { useLocale, useT } from "@/lib/locale";
@@ -98,7 +98,7 @@ export default function CatalogBrowser({
   // A feat's row name reads in the reader's language (the official maps; a
   // homebrew row stays its author's words) while the pick itself stores the
   // row's own English name.
-  const rowName = (entry: PickerEntry) => (kind === "feats" ? contentName("feats", entry, locale) : entry.name);
+  const rowName = (entry: PickerEntry) => entry.display?.name ?? (kind === "feats" ? contentName("feats", entry, locale) : entry.name);
   const [open, setOpen] = useState(defaultOpen);
   const [expanded, setExpanded] = useState<string[]>(openSections);
   const [loaded, setLoaded] = useState<Record<string, Loaded>>({});
@@ -135,6 +135,7 @@ export default function CatalogBrowser({
           const params = new URLSearchParams(
             scopedParams({ limit: String(PAGE), offset: String(offset), ...(section.params ?? {}) }, campaignId),
           );
+          params.set("locale", locale);
           const response = await fetch(`/api/content/${kind}?${params}`);
           if (!response.ok) {
             // Refused, which is not a missing pack: said so, and asked again
@@ -161,7 +162,7 @@ export default function CatalogBrowser({
         }
         setLoaded((current) => ({
           ...current,
-          [section.key]: { rows: uniqueByName(rows), truncated },
+          [section.key]: { rows: uniqueBySource(rows), truncated },
         }));
       } catch {
         // A failed browse leaves the search box, which is the same catalog by
@@ -172,7 +173,7 @@ export default function CatalogBrowser({
         setLoading((current) => current.filter((key) => key !== section.key));
       }
     },
-    [kind, campaignId],
+    [kind, campaignId, locale],
   );
 
   // Sections open from the start fetch from the start. `load` remembers what
@@ -296,7 +297,7 @@ export default function CatalogBrowser({
             const isLoading = loading.includes(section.key);
             const rows = loaded[section.key]?.rows ?? [];
             const visible = needle
-              ? rows.filter((entry) => textKey(entry.name).includes(needle))
+              ? rows.filter((entry) => textKey(entry.name).includes(needle) || textKey(rowName(entry)).includes(needle))
               : rows;
             return (
               <div key={section.key} className="border-t border-stone-800/80 first:border-t-0">
@@ -382,15 +383,15 @@ export default function CatalogBrowser({
                                     <span className="shrink-0 text-[0.875rem] text-stone-500">
                                       {entry.source === "homebrew"
                                         ? t("homebrew")
-                                        : (metaOf?.(entry) ?? "")}
+                                        : [metaOf?.(entry), entry.display?.meta ?? (kind === "spells" ? entry.display?.school : entry.display?.rarity), entry.document].filter(Boolean).join(" · ")}
                                     </span>
                                   </button>
                                   {/* The row already carries the full entry, so
                                       reading it before adding costs nothing. */}
                                   <InfoButton
                                     label={rowName(entry)}
-                                    meta={kind === "spells" ? spellSummary(entry.data) : undefined}
-                                    text={describeContentEntry(entry.data)}
+                                    meta={entry.display?.meta ?? (kind === "spells" ? spellSummary(entry.data) : undefined)}
+                                    text={entry.display?.description ?? describeContentEntry(entry.data)}
                                     reference={
                                       entry.source === "homebrew"
                                         ? undefined
