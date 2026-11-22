@@ -74,7 +74,10 @@ export function enqueueLocationMap(campaign: Campaign, locationId: string) {
       if (setLocationMapFailed(locationId, reason)) {
         publishLocation(campaign.id, locationId);
       }
-      throw error;
+      // A failed optional map is a completed job: the location now carries
+      // mapFailed and the table can continue or request a redraw later.
+      // Do not rethrow into the media queue (which would print a full stack).
+      console.warn(`[media:gpu] map ${locationId} was not generated: ${reason}`);
     }
   }));
 }
