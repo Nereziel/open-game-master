@@ -24,4 +24,10 @@ describe("skill descriptions in Czech", () => {
     }
     expect(skillHelpText("acrobatics", "dex", "en")).toContain("Acrobatics");
   });
+
+  it("uses shared ability codes in English and French skill tooltips", () => {
+    expect(skillHelpText("acrobatics", "dex", "en")).toContain("DEX");
+    expect(skillHelpText("athletics", "str", "fr")).toContain("FOR");
+    expect(skillHelpText("perception", "wis", "fr")).toContain("SAG");
+  });
 });
