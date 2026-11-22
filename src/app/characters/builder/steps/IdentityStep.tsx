@@ -1,6 +1,6 @@
 "use client";
 
-import { Camera, Dices, UserRound } from "lucide-react";
+import { Camera, Dices, Images, UserRound } from "lucide-react";
 import { useId } from "react";
 import { AttractionPicker, CHARACTER_ATTRACTION_HINT } from "@/components/AttractionPicker";
 import { InfoButton } from "@/components/ui/InfoDialog";
@@ -42,6 +42,7 @@ export function IdentityStep({
   background,
   paintsPortraits,
   onUploadPortrait,
+  onOpenGallery,
   alignmentGroups,
   alignmentInfo,
   onEditGender,
@@ -57,6 +58,7 @@ export function IdentityStep({
   // painting that would never arrive.
   paintsPortraits: boolean;
   onUploadPortrait: () => void;
+  onOpenGallery: () => void;
   alignmentGroups: PickerGroup[];
   alignmentInfo: string;
   // To the gender on the class step, where the cards it changes are.
@@ -174,6 +176,10 @@ export function IdentityStep({
                 <Camera className="size-3.5" />
                 {portrait ? t("Replace photo") : t("Upload a photo")}
               </button>
+              <button type="button" onClick={onOpenGallery} className={ui.btnSmall}>
+                <Images className="size-3.5" aria-hidden="true" />
+                {t("Choose from gallery")}
+              </button>
               {/* Clearing the saved portrait means "paint me a new one", which
                   only makes sense where a painter exists. A freshly uploaded
                   photo can always be taken back. */}
@@ -186,11 +192,11 @@ export function IdentityStep({
             <p className="mt-1.5 text-xs text-stone-500">
               {portrait
                 ? paintsPortraits
-                  ? t("This photo is used as-is; no portrait is painted for you.")
-                  : t("This photo is used as-is.")
+                  ? t("This picture is used as-is; no portrait is painted for you.")
+                  : t("This picture is used as-is.")
                 : paintsPortraits
-                  ? t("Add art, or let the AI paint one after you save.")
-                  : t("Upload a photo to give your character a face.")}
+                  ? t("Upload a photo, choose from the gallery, or let the AI paint one after you save.")
+                  : t("Upload a photo or choose a free built-in portrait.")}
             </p>
           </div>
         </div>
