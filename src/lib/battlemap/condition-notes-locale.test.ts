@@ -1,11 +1,14 @@
 import { describe, expect, it } from "vitest";
 import { conditionNote } from "./condition-notes";
+import { installCsTables } from "@/lib/i18n/cs-tables";
+import { CS_NAMES_BY_TABLE } from "@/lib/content/names-cs";
 import cs from "@/lib/i18n/cs.json";
 import fr from "@/lib/i18n/fr.json";
 import { installCatalog, translate, type Locale } from "@/lib/i18n/translate";
 
 installCatalog("cs", cs);
 installCatalog("fr", fr);
+installCsTables({ names: CS_NAMES_BY_TABLE });
 
 const localizedT = (locale: Locale) =>
   Object.assign(
@@ -43,5 +46,23 @@ describe("condition save ends ability labels", () => {
       () => null, undefined, localizedT("cs"),
     );
     expect(note.save).toContain("LUCK");
+  });
+
+  it("uses the same known spell names as the character sheet in condition sources", () => {
+    const meta = { source: "caster", spell: "Cure Wounds" };
+    const nameOf = (id: string) => id === "caster" ? "Mara" : null;
+    const csNote = conditionNote("poisoned", meta, nameOf, undefined, localizedT("cs"));
+    expect(csNote.source).toContain("Léčení zranění");
+    expect(csNote.source).not.toContain("Cure Wounds");
+    expect(conditionNote("poisoned", meta, nameOf, undefined, localizedT("en")).source).toContain("Cure Wounds");
+    expect(meta).toEqual({ source: "caster", spell: "Cure Wounds" });
+  });
+
+  it("preserves homebrew spell names and readied triggers verbatim", () => {
+    const custom = conditionNote("poisoned", { spell: "My Homebrew Spell" }, () => null, undefined, localizedT("cs"));
+    expect(custom.source).toBe("My Homebrew Spell");
+    const trigger = "Cure Wounds when the door opens";
+    const ready = conditionNote("readied", { source: trigger }, () => null, undefined, localizedT("cs"));
+    expect(ready.source).toContain(trigger);
   });
 });
