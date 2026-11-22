@@ -8,6 +8,7 @@ Tento dokument popisuje **společné zdroje překladů**. Překlady se vytváře
 | Názvy kouzel, zbraní, zbrojí, vybavení, nestvůr, povolání atd. | `src/lib/content/names-cs.ts` | `contentName(kind, englishName, locale)` |
 | Názvy dovedností | společný `skillLabel()` v `src/lib/srd/index.ts` | `skillLabel(skillId, locale)` |
 | Zkratky vlastností | `src/lib/srd/ability-short-label.ts` | `abilityShortLabel(abilityId, locale)` |
+| Typy zranění, výrazy zranění a odolnosti | `src/lib/dm/damage-logic.ts` | `damageTypeWord(typeId, locale)` / `damageWords(expression, locale)`; stejné výrazy pro historii, deník i PDF |
 | Dlouhé herní/pravidlové popisy | vhodný existující `src/lib/help/*-cs.ts` nebo SRD obsah | obsahový renderer (ne UI katalog) |
 | Texty webu a generovaného PDF | výše uvedené společné funkce, případně `src/lib/i18n/game-text.ts` | stejné názvy v obou výstupech |
 
@@ -29,6 +30,7 @@ Události ukládej ve strojově čitelné podobě (typ + parametry), pokud to ex
 - Historie postavy: `src/lib/characters/event-summary-cs.ts` rozpoznává pouze bezpečné historické šablony (`Acquired {item}`); nesmí rozpoznávat vícerádkový příběh.
 - Nápověda stavů: `src/lib/battlemap/condition-notes.ts` používá `abilityShortLabel()` pro záchranné hody a `contentName("spells", ...)` pro známý zdrojový název kouzla; vlastní spouštěč připravené akce se nepřekládá.
 - Audit polí postavy: seznam rozpoznaných strojových klíčů je jediný ve `src/lib/sheet-audit-logic.ts` (`knownFieldWords()`). Pouze rozpoznané klíče se překládají jako popisky při zobrazení; neznámé klíče a hodnoty rozšíření se zachovávají doslova.
+- Zranění a odolnosti: 13 standardních typů mají **jediný** česko-francouzský katalog v `damage-logic.ts`; nevytvářej nový seznam ani nezkoušej překládat jednotlivé ID přes náhodné UI klíče. Překlad `damageTypeWord()` je jen zobrazovací. `damageWords()` zachovává zápis kostek `1d8`, `2d6` atd. Neznámý typ `dreamfire` a vlastní dovětky jako `nonmagical piercing` musí zůstat nedotčené.
 - Když předáváš překladač jiné pomocné funkci, zachovej `t.locale`, pokud podle něj funkce lokalizuje obsahové názvy. Samotný obyčejný callback bez informace o locale používá bezpečný anglický fallback.
 
 **Nedělej** plošný `replace()` anglických frází na celém deníku, v databázi ani v odpovědích AI; změnit lze pouze pevně vymezené systémové šablony. Při testování ověř vždy češtinu, angličtinu, francouzštinu, placeholdery, neznámý homebrew název i neměnnost uloženého vstupu.
