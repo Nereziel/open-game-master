@@ -129,7 +129,7 @@ const TOME_OF_HEROES_SPELLS: Readonly<Record<string, string>> = {
   "Inexorable Summons": "Neodvratné povolání",
   "Inspiring Speech": "Inspirující proslov",
   "Instant Armored Vehicle": "Okamžité obrněné vozidlo",
-  "Instant Snare": "Okamžitá léčka",
+  "Instant Snare": "Magická smyčka",
   "Iron Gut": "Železný žaludek",
   "Jagged Forcelance": "Zubaté silové kopí",
   "Jarring Growl": "Otřesné zavrčení",
