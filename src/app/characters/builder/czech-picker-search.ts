@@ -45,19 +45,10 @@ export function czechPickerQueries(
 ): string[] {
   const needle = searchKey(search.trim());
   if (needle.length < 2) return [];
-  const queries: string[] = [];
+  const primary: string[] = [];
   const seen = new Set<string>();
-  // Entries from additional licensed books are searched by their actual
-  // English names; API results are checked against their document-bound
-  // Czech display labels before they reach the UI.
-  for (const english of thirdPartyCzechPickerQueries(kind, search, limit)) {
-    const key = searchKey(english);
-    if (!seen.has(key)) {
-      seen.add(key);
-      queries.push(english);
-    }
-    if (queries.length >= limit) return queries;
-  }
+  // Collect canonical SRD matches first, so a broad Czech term still finds
+  // the core book instead of being crowded out by additional supplements.
   for (const table of TABLES[kind] ?? []) {
     for (const [id, translated] of Object.entries(names[table] ?? {})) {
       if (!searchKey(translated).includes(needle)) continue;
@@ -67,9 +58,15 @@ export function czechPickerQueries(
       const key = searchKey(query);
       if (!key || seen.has(key)) continue;
       seen.add(key);
-      queries.push(query);
-      if (queries.length >= limit) return queries;
+      primary.push(query);
+      if (primary.length >= limit) break;
     }
+    if (primary.length >= limit) break;
   }
-  return queries;
+  // Reserve some slots for known licensed books, while retaining SRD
+  // results. The source-document check happens again on returned rows.
+  const supplemental = thirdPartyCzechPickerQueries(kind, search, limit)
+    .filter((english) => !seen.has(searchKey(english)));
+  const coreLimit = supplemental.length ? Math.max(0, limit - Math.min(2, supplemental.length)) : limit;
+  return [...primary.slice(0, coreLimit), ...supplemental].slice(0, limit);
 }
