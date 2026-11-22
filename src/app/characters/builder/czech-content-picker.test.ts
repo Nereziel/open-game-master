@@ -42,15 +42,32 @@ describe("Czech campaign content pickers", () => {
     const tohItem = { name: "Clockwork Crossbow", slug: "clockwork-crossbow", source: "open5e", documentSlug: "toh" };
     const tohSpell = { name: "Fuse Armor", slug: "fuse-armor", source: "open5e", documentSlug: "toh" };
     expect(contentName("items", tohItem, "cs")).toBe("Mechanická kuše");
-    expect(contentName("spells", tohSpell, "cs")).toBe("Zatavení zbroje");
+    expect(contentName("spells", tohSpell, "cs")).toBe("Znehybnění kovu");
     expect(contentName("items", { ...tohItem, documentSlug: "wotc-srd" }, "cs")).toBe("Clockwork Crossbow");
     expect(contentName("items", { ...tohItem, documentSlug: "another-book" }, "cs")).toBe("Clockwork Crossbow");
     expect(contentName("items", { ...tohItem, source: "homebrew" }, "cs")).toBe("Clockwork Crossbow");
     expect(contentName("items", tohItem, "en")).toBe("Clockwork Crossbow");
     expect(contentName("items", "Clockwork Crossbow", "cs")).toBe("Clockwork Crossbow");
     expect(contentName("spells", { ...tohSpell, documentSlug: "other-book" }, "cs")).toBe("Fuse Armor");
+    const verifiedSpellNames: Array<[string, string]> = [
+      ["Secret Blind", "Skrytý úkryt"],
+      ["Pincer", "Klešťový úder"],
+      ["Lightless Torch", "Pochodeň temnovidu"],
+      ["Long Game", "Odložená odplata"],
+      ["Heart to Heart", "Propojená srdce"],
+      ["Clear The Board", "Rozdělení bojiště"],
+      ["Instant Snare", "Magická smyčka"],
+      ["Mud", "Vazké bahno"],
+    ];
+    for (const [english, translated] of verifiedSpellNames) {
+      const reference = { name: english, source: "open5e", documentSlug: "toh" };
+      expect(contentName("spells", reference, "cs")).toBe(translated);
+      expect(contentName("spells", { ...reference, source: "homebrew" }, "cs")).toBe(english);
+      expect(contentName("spells", { ...reference, documentSlug: "deepm" }, "cs")).toBe(english);
+    }
+
     expect(czechPickerQueries("items", "mechanicka kuse", CS_NAMES_BY_TABLE)).toContain("Clockwork Crossbow");
-    expect(czechPickerQueries("spells", "zataveni zbroje", CS_NAMES_BY_TABLE)).toContain("Fuse Armor");
+    expect(czechPickerQueries("spells", "znehybneni kovu", CS_NAMES_BY_TABLE)).toContain("Fuse Armor");
     expect(contentName("feats", { name: "Boundless Reserves", source: "open5e", documentSlug: "toh" }, "cs"))
       .toBe("Nevyčerpatelné zásoby");
     expect(contentName("spells", { name: "Acid Gate", source: "open5e", documentSlug: "deepm" }, "cs"))
