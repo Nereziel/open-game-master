@@ -91,14 +91,14 @@ export function ForgeView({ api, world, onOpen }: { api: WorldApi; world: WorldS
       ) : null}
 
       {rows ? (
-        <section className="flex flex-col gap-2 animate-fade-up" aria-label="What the forge found">
+        <section className="flex flex-col gap-2 animate-fade-up" aria-label={t("What the forge found")}>
           <h3 className="eyebrow text-[10px] text-amber-400/80">Found {rows.length}: tick what to keep</h3>
           <ul className="flex flex-col gap-1.5">
             {rows.map((row, index) => (
               <li key={row.key} className={cn("panel wf-rise flex flex-col gap-1.5 rounded-lg p-2.5", !row.keep && "opacity-60")} style={{ "--i": index } as React.CSSProperties}>
                 <div className="flex flex-wrap items-center gap-2">
                   <input type="checkbox" className="accent-amber-400" aria-label={`Keep ${row.name}`} checked={row.keep} disabled={Boolean(row.existing)} onChange={(event) => set(row.key, { keep: event.target.checked })} />
-                  <input className={cn(ui.input, "w-48 py-1 text-sm")} aria-label="Name" maxLength={80} value={row.name} disabled={Boolean(row.existing)} onChange={(event) => set(row.key, { name: event.target.value })} />
+                  <input className={cn(ui.input, "w-48 py-1 text-sm")} aria-label={t("Name")} maxLength={80} value={row.name} disabled={Boolean(row.existing)} onChange={(event) => set(row.key, { name: event.target.value })} />
                   {row.existing ? (
                     <button type="button" onClick={() => onOpen(row.existing)} className="pk-chip text-[11px] text-stone-400">already in the world</button>
                   ) : (
@@ -117,7 +117,7 @@ export function ForgeView({ api, world, onOpen }: { api: WorldApi; world: WorldS
           </ul>
           {links.length ? (
             <>
-              <h3 className="eyebrow mt-1 text-[10px] text-amber-400/80">Links</h3>
+              <h3 className="eyebrow mt-1 text-[10px] text-amber-400/80">{t("Links")}</h3>
               <ul className="flex flex-col gap-1">
                 {links.map((link, index) => (
                   <li key={`${link.from}-${link.to}-${link.label}`} className="wf-rise flex items-center gap-2 text-sm text-stone-300" style={{ "--i": index } as React.CSSProperties}>
@@ -133,7 +133,7 @@ export function ForgeView({ api, world, onOpen }: { api: WorldApi; world: WorldS
             Keep the unticked names in To write
           </label>
           <div className="flex justify-end gap-2">
-            <KitButton tone="small" onClick={() => { setRows(null); setLinks([]); }}>Throw it away</KitButton>
+            <KitButton tone="small" onClick={() => { setRows(null); setLinks([]); }}>{t("Throw it away")}</KitButton>
             <KitButton tone="primary" busy={busy} disabled={busy || !(rows.some((row) => row.keep && !row.existing) || links.some((link) => link.keep))} onClick={keep}>
               {busy ? null : <Check className="size-3.5" />} Add the ticked
             </KitButton>
