@@ -157,6 +157,8 @@ export const HUB_TOUR: TourStep[] = [
 const RAIL_STEP: TourStep = {
   id: "rail",
   title: "Hop between tools",
+  titleCs: "Přepínání nástrojů",
+  bodyCs: "Postranní lišta přepíná nástroje bez návratu na úvodní obrazovku. Odkaz nad ní tě vrátí k přehledu.",
   titleFr: "Passer d’un outil à l’autre",
   body: "The rail switches tools without going back to the hub. The back link above it returns to the cards.",
   bodyFr: "Le rail change d’outil sans repasser par le centre. Le lien retour au-dessus de lui ramène aux tuiles.",
@@ -166,6 +168,8 @@ const RAIL_STEP: TourStep = {
 const HELP_STEP: TourStep = {
   id: "help",
   title: "The guide",
+  titleCs: "Nápověda k nástroji",
+  bodyCs: "Nápověda otevře psaný návod k nástroji a umožní zopakovat tuto prohlídku.",
   titleFr: "Le guide",
   body: "Help opens the written guide for this tool and replays this tour.",
   bodyFr: "L’aide ouvre le guide écrit de cet outil et rejoue cette visite.",
@@ -182,6 +186,8 @@ export const SYSTEM_TOURS: Record<string, TourStep[]> = {
     {
       id: "add",
       title: "Add a card",
+      titleCs: "Přidání karty",
+      bodyCs: "Vyber typ karty (scéna, souboj, místo, postava nebo vyústění) a pojmenuj ji. Karty tvoří osnovu dobrodružství.",
       titleFr: "Ajouter une carte",
       body: "Pick what kind of thing it is (a scene, a fight, a place, a person, a payoff) and give it a title. Cards are the plan of the adventure.",
       bodyFr: "Choisis le type de chose (une scène, un combat, un lieu, une personne, un dénouement) et donne un titre. Les cartes sont le plan de l’aventure.",
@@ -190,6 +196,8 @@ export const SYSTEM_TOURS: Record<string, TourStep[]> = {
     {
       id: "board",
       title: "The board",
+      titleCs: "Osnova na kartách",
+      bodyCs: "Otevři kartu, napiš její obsah a propoj ji s připraveným NPC, mapou, soubojem nebo místem. Nabídka umožňuje vybrat jen existující záznamy.",
       titleFr: "Le tableau",
       body: "Tap a card to write it up and link it to the material in the other tools: which NPC, which map, which prepared fight, which place. Linking is by dropdown, so a card never points at something that is not there.",
       bodyFr: "Touche une carte pour la rédiger et la lier à la matière des autres outils : quel PNJ, quelle carte, quel combat préparé, quel lieu. Le lien se fait par menu déroulant, donc une carte ne pointe jamais vers quelque chose qui n’existe pas.",
@@ -198,6 +206,8 @@ export const SYSTEM_TOURS: Record<string, TourStep[]> = {
     {
       id: "missing",
       title: "What the board is missing",
+      titleCs: "Co v osnově chybí",
+      bodyCs: "Kontrola podle dat upozorní například na souboj bez mapy či vyústění bez předchozí scény. Chybějící kartu můžeš rovnou přidat.",
       titleFr: "Ce qui manque au tableau",
       body: "Counted, not guessed: a fight with no map, a payoff with no scene before it. Each line has a button that adds the card.",
       bodyFr: "Compté, pas deviné : un combat sans carte, un dénouement sans scène avant lui. Chaque ligne a un bouton qui ajoute la carte.",
@@ -206,6 +216,8 @@ export const SYSTEM_TOURS: Record<string, TourStep[]> = {
     {
       id: "compile",
       title: "What it becomes",
+      titleCs: "Co z osnovy vznikne",
+      bodyCs: "Náhled obsahu, který se při importu dostane do kampaně: znalosti světa, úkoly, souboje, poznámky PJ a příběhový oblouk.",
       titleFr: "Ce que cela devient",
       body: "The preview of what the board turns into when imported into a campaign: lore, quests, prepared fights, GM notes and the story arc.",
       bodyFr: "L’aperçu de ce en quoi le tableau se transforme une fois importé dans une campagne : lore, quêtes, combats préparés, notes de MJ et arc de l’histoire.",
@@ -216,6 +228,8 @@ export const SYSTEM_TOURS: Record<string, TourStep[]> = {
     {
       id: "roster",
       title: "The pregens",
+      titleCs: "Předpřipravené postavy",
+      bodyCs: "Hotové deníky pro hráče bez vlastní postavy. Odlišná úroveň oproti vzorové družině je označena kvůli správnému výpočtu obtížnosti.",
       titleFr: "Les pré-tirés",
       body: "Sheets ready for anyone who sits down without a character. A level that differs from the stand-in party is flagged so the budgets stay honest.",
       bodyFr: "Des fiches prêtes pour quiconque s’assoit sans personnage. Un niveau différent du groupe fictif est signalé, pour que les budgets restent honnêtes.",
@@ -224,6 +238,8 @@ export const SYSTEM_TOURS: Record<string, TourStep[]> = {
     {
       id: "draft",
       title: "Let the AI GM draft them",
+      titleCs: "Návrhy postav od AI Pána jeskyně",
+      bodyCs: "AI Pán jeskyně podle dobrodružství navrhne hrdinu pro každé místo v družině. Deníky vytvoří pravidla na zvolené úrovni. Návrhy nejprve zkontroluj a vyber, které hráčům nabídneš.",
       titleFr: "Laisser le MJ IA les ébaucher",
       body: "No time to build? The AI GM reads this adventure and proposes a hero for each seat of the party set above, and the builder's own rules make every sheet at that party's level. Drafts arrive unoffered, marked as drafted until you edit them: look them over, then tick the ones players may take.",
       bodyFr: "Pas le temps de les construire ? Le MJ IA lit cette aventure et propose un héros pour chaque siège du groupe fixé ci-dessus, et les règles du créateur de personnage font chaque fiche au niveau de ce groupe. Les ébauches arrivent sans être proposées, marquées comme ébauchées tant que tu ne les as pas éditées : relis-les, puis coche celles que les joueurs peuvent prendre.",
@@ -232,6 +248,8 @@ export const SYSTEM_TOURS: Record<string, TourStep[]> = {
     {
       id: "add",
       title: "Add to the roster",
+      titleCs: "Přidat do družiny",
+      bodyCs: "Vyber postavu z knihovny nebo vytvoř novou. Předpřipravené postavy se přenesou při sdílení dílny.",
       titleFr: "Ajouter à la liste",
       body: "Pick a character from your library, or build a new one and come back. Pregens travel inside the bundle when you share the workshop.",
       bodyFr: "Choisis un personnage de ta bibliothèque, ou construis-en un nouveau et reviens. Les pré-tirés voyagent dans le paquet quand tu partages l’atelier.",
@@ -242,6 +260,8 @@ export const SYSTEM_TOURS: Record<string, TourStep[]> = {
     {
       id: "new",
       title: "A new map",
+      titleCs: "Nová mapa",
+      bodyCs: "Otevři tvorbu mapy a pojmenuj ji. Do hry se dostane až po jejím přenesení do kampaně.",
       titleFr: "Une nouvelle carte",
       body: "Open this to make one. Name it first; nothing here reaches a table until you put it there.",
       bodyFr: "Ouvre ceci pour en faire une. Nomme-la d’abord ; rien ici n’atteint une table tant que tu ne l’y as pas mise.",
@@ -250,6 +270,8 @@ export const SYSTEM_TOURS: Record<string, TourStep[]> = {
     {
       id: "create",
       title: "Roll, draw or import",
+      titleCs: "Generovat, kreslit nebo importovat",
+      bodyCs: "Vygeneruj mapu podle rozměrů a zadání, začni s prázdnou skálou či zemí, nebo načti soubor Universal VTT například z Dungeondraftu.",
       titleFr: "Tirer, dessiner ou importer",
       body: "Roll one generates a layout from the size and a hint. Blank rock and Blank ground start empty for painting. Import reads a Universal VTT file from Dungeondraft and its neighbours.",
       bodyFr: "« En tirer une » génère un plan à partir de la taille et d’un indice. « Rocher vierge » et « Terrain vierge » partent vides, prêts à peindre. « Importer .dd2vtt » lit un fichier Universal VTT venu de Dungeondraft et ses voisins.",
@@ -260,6 +282,8 @@ export const SYSTEM_TOURS: Record<string, TourStep[]> = {
     {
       id: "gallery",
       title: "The drawer",
+      titleCs: "Seznam map",
+      bodyCs: "Otevři připravenou mapu a uprav terén, objekty, světla, dveře, popisky, kolemjdoucí, pozadí i zvukový doprovod.",
       titleFr: "Le tiroir",
       body: "Every prepared map. Tap one to open the editor: paint terrain, stamp props, place lights, doors, labels and bystanders, hang a backdrop picture, and set the sound the map makes.",
       bodyFr: "Chaque carte préparée. Touche l’une pour ouvrir l’éditeur : peins le terrain, tamponne des éléments, place des lumières, des portes, des étiquettes et des passants, accroche une image de fond, et règle le son de la carte.",
@@ -270,6 +294,8 @@ export const SYSTEM_TOURS: Record<string, TourStep[]> = {
     {
       id: "canvas",
       title: "The overworld",
+      titleCs: "Mapa oblasti",
+      bodyCs: "Tažením mapu posuneš, kolečkem či gestem ji přiblížíš. Hráči postupně objevují místa; ty vidíš všechna.",
       titleFr: "La carte du monde",
       body: "Drag to pan, scroll or pinch to zoom. Places appear to the party as they discover them; you see all of them.",
       bodyFr: "Glisse pour déplacer, molette ou pincement pour zoomer. Les lieux apparaissent au groupe au fil de leurs découvertes ; toi, tu les vois tous.",
@@ -278,6 +304,8 @@ export const SYSTEM_TOURS: Record<string, TourStep[]> = {
     {
       id: "modes",
       title: "The modes",
+      titleCs: "Režimy úprav",
+      bodyCs: "Přidej značku, umísti družinu, přesouvej místa, kresli terén, cesty, řeky a hranice, piš popisky nebo maž. Zvol režim a klikni do mapy.",
       titleFr: "Les modes",
       body: "Add a pin, place the party, move a place, paint terrain, draw a road, river or border, write a label, or erase. Pick a mode, then tap the map.",
       bodyFr: "Ajouter un point, placer le groupe, déplacer un lieu, peindre le terrain, tracer une route, une rivière ou une frontière, écrire une étiquette, ou effacer. Choisis un mode, puis touche la carte.",
@@ -286,6 +314,8 @@ export const SYSTEM_TOURS: Record<string, TourStep[]> = {
     {
       id: "files",
       title: "Pictures and files",
+      titleCs: "Obrázky a soubory",
+      bodyCs: "Můžeš použít vlastní obrázek místo dlaždic, importovat mapu z Azgaarova generátoru nebo oblast uložit jako PNG. Pozadím může být mapa z atlasu WorldForge se značkami míst.",
       titleFr: "Images et fichiers",
       body: "Hang a picture in place of the tiles, read in a map from Azgaar's Fantasy Map Generator, or save the region as a PNG. A WorldForge Atlas map can be the backdrop too: use it from the Atlas, then place the places pinned on it here; each then moves with its pin.",
       bodyFr: "Accroche une image à la place des tuiles, lis une carte venue d’Azgaar’s Fantasy Map Generator, ou enregistre la région en PNG. Une carte de l’Atlas WorldForge peut servir de fond aussi : sers-t’en depuis l’Atlas, puis place ici les lieux épinglés dessus ; chacun bouge alors avec son épingle.",
@@ -294,6 +324,8 @@ export const SYSTEM_TOURS: Record<string, TourStep[]> = {
     {
       id: "shape",
       title: "Shape the region",
+      titleCs: "Upravit podobu oblasti",
+      bodyCs: "Popiš krajinu větou a nech nastavit parametry, vygeneruj nový svět nebo přidej místa ručně.",
       titleFr: "Façonner la région",
       body: "Describe the land in a sentence and let it set the dials, roll a fresh world, or add named places by hand.",
       bodyFr: "Décris le terrain en une phrase et laisse ça régler les curseurs, tire un monde tout neuf, ou ajoute des lieux nommés à la main.",
@@ -304,6 +336,8 @@ export const SYSTEM_TOURS: Record<string, TourStep[]> = {
     {
       id: "workbench",
       title: "How hard is this?",
+      titleCs: "Obtížnost střetnutí",
+      bodyCs: "Před uložením vyhodnoť sestavu nestvůr. Výpočet odpovídá pravidlům při hraní a ukazuje dílčí hodnoty.",
       titleFr: "Quelle difficulté ?",
       body: "Weigh a roster before saving it. The readout is the same maths the engine enforces at the table, and every number shows its parts.",
       bodyFr: "Pèse une liste avant de l’enregistrer. La lecture est le même calcul que celui que le moteur fait respecter à la table, et chaque nombre montre ses composantes.",
@@ -312,6 +346,8 @@ export const SYSTEM_TOURS: Record<string, TourStep[]> = {
     {
       id: "workbench-roster",
       title: "Pick the monsters",
+      titleCs: "Vybrat nestvůry",
+      bodyCs: "Hledej v katalogu, vlastním bestiáři nebo obsahu světa. Můžeš je také napsat po řádcích s počtem, například x4.",
       titleFr: "Choisir les monstres",
       body: "Search what this world holds, the catalogue and your own bestiary, and the pick lands in the roster. Typing works too: one per line, optional x4.",
       bodyFr: "Cherche dans ce que ce monde contient, dans le catalogue et dans ton propre bestiaire, et le choix atterrit dans la liste. La saisie marche aussi : un par ligne, x4 en option.",
@@ -322,6 +358,8 @@ export const SYSTEM_TOURS: Record<string, TourStep[]> = {
     {
       id: "list",
       title: "Prepared fights",
+      titleCs: "Připravené souboje",
+      bodyCs: "Každý souboj ukazuje obtížnost pro vzorovou družinu a zvolenou mapu. Vyzkoušet souboj spustí soukromý herní stůl s vybranými postavami.",
       titleFr: "Les combats préparés",
       body: "Each card carries its difficulty against the stand-in party and the map it opens on. Test fight plays it on a table only you can see, with the stand-ins or characters you pick.",
       bodyFr: "Chaque carte porte sa difficulté face au groupe fictif et la carte sur laquelle elle s’ouvre. « Combat d’essai » la joue sur une table que toi seul vois, avec les personnages fictifs ou les personnages que tu choisis.",
@@ -330,6 +368,8 @@ export const SYSTEM_TOURS: Record<string, TourStep[]> = {
     {
       id: "new",
       title: "A new encounter",
+      titleCs: "Nové střetnutí",
+      bodyCs: "Otevře editor připravovaného souboje.",
       titleFr: "Une nouvelle rencontre",
       body: "Opens the editor for a fight.",
       bodyFr: "Ouvre l’éditeur d’un combat.",
@@ -338,6 +378,8 @@ export const SYSTEM_TOURS: Record<string, TourStep[]> = {
     {
       id: "picker",
       title: "The roster",
+      titleCs: "Seznam účastníků",
+      bodyCs: "Vyhledej a přidej nestvůry. V seznamu níže pak uprav jejich počty.",
       titleFr: "La liste",
       body: "Search and pick monsters here; each pick is appended below, where you can still change the counts by hand.",
       bodyFr: "Cherche et choisis les monstres ici ; chaque choix s’ajoute en dessous, où tu peux encore changer les nombres à la main.",
@@ -348,6 +390,8 @@ export const SYSTEM_TOURS: Record<string, TourStep[]> = {
     {
       id: "map",
       title: "On which map",
+      titleCs: "Výběr mapy",
+      bodyCs: "Vyber připravenou mapu nebo nech rozhodnout generátor. Pak rozmísti tvory a vstupní místo družiny.",
       titleFr: "Sur quelle carte",
       body: "A prepared map from the drawer, or the generator's choice. With a map chosen you can place each creature and the party's entrance on it below.",
       bodyFr: "Une carte préparée du tiroir, ou le choix du générateur. Avec une carte choisie, tu peux y placer chaque créature et l’entrée du groupe en dessous.",
@@ -358,6 +402,8 @@ export const SYSTEM_TOURS: Record<string, TourStep[]> = {
     {
       id: "save",
       title: "Prepare it",
+      titleCs: "Uložit střetnutí",
+      bodyCs: "Uloží souboj, který pak během hry spustíš jedním tlačítkem.",
       titleFr: "Le préparer",
       body: "Saves the fight. It is one button at the table from then on.",
       bodyFr: "Enregistre le combat. C’est ensuite un seul bouton à la table.",
@@ -370,6 +416,8 @@ export const SYSTEM_TOURS: Record<string, TourStep[]> = {
     {
       id: "search",
       title: "Find a person",
+      titleCs: "Najít postavu světa",
+      bodyCs: "Hledej podle jména nebo přezdívky. Seznam se doplňuje také o postavy potkané při hraní.",
       titleFr: "Trouver une personne",
       body: "By name or alias. The list also fills itself in as the party meets people at the table.",
       bodyFr: "Par nom ou par alias. La liste se remplit aussi toute seule au fil des rencontres du groupe à la table.",
@@ -378,6 +426,8 @@ export const SYSTEM_TOURS: Record<string, TourStep[]> = {
     {
       id: "new",
       title: "Someone new",
+      titleCs: "Nová postava světa",
+      bodyCs: "Otevře editor nové postavy světa.",
       titleFr: "Quelqu’un de nouveau",
       body: "Opens the editor for a person.",
       bodyFr: "Ouvre l’éditeur d’une personne.",
@@ -386,6 +436,8 @@ export const SYSTEM_TOURS: Record<string, TourStep[]> = {
     {
       id: "fields",
       title: "Who they are",
+      titleCs: "Kdo postava je",
+      bodyCs: "Vyplň jméno, roli, postoj k družině a místo výskytu. Roli a místo vyber nebo napiš. Doplň osobnost, cíle a vztahy.",
       titleFr: "Qui c’est",
       body: "Name, role, attitude to the party and where they are found; the role and the place are dropdowns you can also type into. Below that, their personality, what they want, and how they feel about everyone else.",
       bodyFr: "Nom, rôle, attitude envers le groupe et où on le trouve ; le rôle et le lieu sont des menus déroulants dans lesquels tu peux aussi écrire. En dessous, sa personnalité, ce qu’il veut, et ce qu’il pense de chacun des autres.",
@@ -396,6 +448,8 @@ export const SYSTEM_TOURS: Record<string, TourStep[]> = {
     {
       id: "save",
       title: "Save them",
+      titleCs: "Uložit postavu",
+      bodyCs: "Uložené postavě můžeš přidat portrét, odložit ji nebo vytvořit kopii.",
       titleFr: "L’enregistrer",
       body: "Keeps the person. Once saved you can add a face, set them aside, or duplicate them.",
       bodyFr: "Garde la personne. Une fois enregistrée, tu peux lui ajouter un visage, la mettre de côté, ou la dupliquer.",
@@ -408,6 +462,8 @@ export const SYSTEM_TOURS: Record<string, TourStep[]> = {
     {
       id: "add",
       title: "Name a power",
+      titleCs: "Vytvořit frakci",
+      bodyCs: "U frakce zadej, jak ji vidí hráči a co skutečně chce. Tajné cíle zná AI Pán jeskyně, ale hráčům zůstávají skryté. V kampani se její plány mohou vyvíjet mezi kapitolami.",
       titleFr: "Nommer une puissance",
       body: "A faction is who it is to the table and what it wants. What the table knows of them is for everyone; what they want is kept from players, though the AI GM is told it, and in a campaign it moves on in the background as chapters close.",
       bodyFr: "Une faction, c’est ce qu’elle est pour la table et ce qu’elle veut. Ce que la table sait d’elle est pour tout le monde ; ce qu’elle veut est caché aux joueurs, mais le MJ IA le sait, et dans une campagne ça avance en arrière-plan à chaque chapitre clos.",
@@ -416,6 +472,8 @@ export const SYSTEM_TOURS: Record<string, TourStep[]> = {
     {
       id: "list",
       title: "Where the party stands",
+      titleCs: "Vztahy k frakcím",
+      bodyCs: "Ukazatele nastavují vztah družiny k frakcím. Každá frakce má ve WorldForge záznam se členy, sídlem a vazbami, který můžeš otevřít k úpravě.",
       titleFr: "Où en est le groupe",
       body: "The pips set how the party stands with each faction. Each one is also an entry in WorldForge, where its members, seat and ties are written: edit a faction and World entry opens it.",
       bodyFr: "Les pastilles règlent où le groupe en est avec chaque faction. Chacune est aussi une entrée dans WorldForge, où ses membres, son siège et ses liens sont écrits : édite une faction et la « Fiche de Monde » s’ouvre.",
@@ -426,6 +484,8 @@ export const SYSTEM_TOURS: Record<string, TourStep[]> = {
     {
       id: "build",
       title: "Build a monster",
+      titleCs: "Vytvořit nestvůru",
+      bodyCs: "Otevře tvorbu nové nestvůry.",
       titleFr: "Bâtir un monstre",
       body: "Open this to start one.",
       bodyFr: "Ouvre ceci pour en commencer un.",
@@ -434,6 +494,8 @@ export const SYSTEM_TOURS: Record<string, TourStep[]> = {
     {
       id: "controls",
       title: "From a baseline or from the books",
+      titleCs: "Od základu nebo z katalogu",
+      bodyCs: "Zadej název a nebezpečnost pro výchozí blok statistik, nebo vyber nestvůru z katalogu a uprav ji.",
       titleFr: "D’une base ou des livres",
       body: "Name it and pick a challenge rating for a baseline block, or search for a catalogue monster to start from and change what you like.",
       bodyFr: "Nomme-le et choisis un degré de défi pour un bloc de base, ou cherche un monstre du catalogue comme point de départ et change ce que tu veux.",
@@ -444,6 +506,8 @@ export const SYSTEM_TOURS: Record<string, TourStep[]> = {
     {
       id: "list",
       title: "Your monsters",
+      titleCs: "Tvoje nestvůry",
+      bodyCs: "Uprav úplný blok statistik: vlastnosti, útoky, schopnosti, smysly a kouzla. Lze použít také sestavení z původu, povolání a výbavy. Systém vypočte nebezpečnost. Nestvůru propoj s WorldForge nebo přidej do střetnutí. Vlastní nestvůry sdílejí tvoje dílny; kampaně získávají vlastní kopie a balíček je může přenést na jiný server.",
       titleFr: "Tes monstres",
       body: "Tap one to open the full stat block: abilities, attacks, traits, senses, spells, and a kit that assembles it from ancestry, class and gear. The rating is derived for you and shows its working. Give it a World entry to tie it to your setting, and add it to a fight in Encounters. Monsters belong to your account and follow you into every workshop; a campaign that brings in prep using one gets its own copy, and the workshop's bundle carries it to other servers.",
       bodyFr: "Touche l’un pour ouvrir le statblock complet : caractéristiques, attaques, traits, sens, sorts, et un kit qui l’assemble à partir d’une lignée, d’une classe et d’un équipement. Le degré est calculé pour toi et montre son raisonnement. Donne-lui une fiche de Monde pour le lier à ton univers, et ajoute-le à un combat dans Rencontres. Les monstres appartiennent à ton compte et te suivent dans chaque atelier ; une campagne qui importe une préparation qui en utilise un en reçoit sa propre copie, et le paquet de l’atelier l’emporte vers d’autres serveurs.",
@@ -454,6 +518,8 @@ export const SYSTEM_TOURS: Record<string, TourStep[]> = {
     {
       id: "kinds",
       title: "What kind",
+      titleCs: "Druh vlastního obsahu",
+      bodyCs: "Vytvářej předměty, kouzla, odbornosti, minulosti, druhy, povolání, podobory a nebezpečí. Každý typ používá pole herního systému.",
       titleFr: "Quel genre",
       body: "Items, spells, feats, backgrounds, species, classes, subclasses and hazards. Each kind writes the fields the character builder and the engine already read.",
       bodyFr: "Objets, sorts, dons, historiques, espèces, classes, sous-classes et dangers. Chaque genre remplit les champs que le créateur de personnage et le moteur lisent déjà.",
@@ -462,6 +528,8 @@ export const SYSTEM_TOURS: Record<string, TourStep[]> = {
     {
       id: "search",
       title: "Find one of yours",
+      titleCs: "Vyhledat vlastní obsah",
+      bodyCs: "Hledej podle názvu v otevřeném druhu obsahu.",
       titleFr: "Retrouver l’un des tiens",
       body: "By name, within the kind you have open.",
       bodyFr: "Par nom, dans le genre que tu as ouvert.",
@@ -470,6 +538,8 @@ export const SYSTEM_TOURS: Record<string, TourStep[]> = {
     {
       id: "new",
       title: "Make one",
+      titleCs: "Vytvořit nový obsah",
+      bodyCs: "Otevře editor vybraného typu obsahu.",
       titleFr: "En fabriquer un",
       body: "Opens the editor for that kind.",
       bodyFr: "Ouvre l’éditeur de ce genre.",
@@ -478,6 +548,8 @@ export const SYSTEM_TOURS: Record<string, TourStep[]> = {
     {
       id: "start",
       title: "Start from the books",
+      titleCs: "Začít podle pravidel",
+      bodyCs: "Vyhledej položku v katalogu, zkopíruj ji a uprav potřebné hodnoty. Systém průběžně kontroluje pravidla.",
       titleFr: "Partir des livres",
       body: "Search the content pack and copy a row in, then change one number instead of retyping nine fields. Everything is checked against the ruleset as you type.",
       bodyFr: "Cherche dans le pack de contenu et copie une ligne dedans, puis change un chiffre au lieu de retaper neuf champs. Tout est vérifié contre le jeu de règles pendant que tu écris.",
@@ -488,6 +560,8 @@ export const SYSTEM_TOURS: Record<string, TourStep[]> = {
     {
       id: "save",
       title: "Keep it",
+      titleCs: "Uložit vlastní obsah",
+      bodyCs: "Položku lze uložit po opravě všech chyb. Předměty můžeš propojit s WorldForge, odkud se přenesou do kampaně. Export dílny může obsahovat celou sbírku.",
       titleFr: "Le garder",
       body: "Saves the piece. A finding marked as an error blocks saving until it is fixed. An item can then be given a World entry; one a World entry links to is copied into a campaign that brings that world in, and the workshop's bundle can carry your whole shelf.",
       bodyFr: "Enregistre la pièce. Un constat marqué comme erreur bloque l’enregistrement tant qu’il n’est pas corrigé. Un objet peut ensuite recevoir une fiche de Monde ; un objet vers lequel une fiche de Monde pointe est copié dans une campagne qui importe ce monde, et le paquet de l’atelier peut emporter toute ton étagère.",
@@ -500,6 +574,8 @@ export const SYSTEM_TOURS: Record<string, TourStep[]> = {
     {
       id: "search",
       title: "Search the lore",
+      titleCs: "Prohledat znalosti světa",
+      bodyCs: "Hledej podle názvu, textu nebo štítku.",
       titleFr: "Chercher dans le lore",
       body: "By title, body or tag.",
       bodyFr: "Par titre, par corps ou par étiquette.",
@@ -508,6 +584,8 @@ export const SYSTEM_TOURS: Record<string, TourStep[]> = {
     {
       id: "new",
       title: "A new entry",
+      titleCs: "Nový záznam",
+      bodyCs: "Otevře editor nového záznamu.",
       titleFr: "Une nouvelle fiche",
       body: "Opens the editor.",
       bodyFr: "Ouvre l’éditeur.",
@@ -516,6 +594,8 @@ export const SYSTEM_TOURS: Record<string, TourStep[]> = {
     {
       id: "title",
       title: "Category and title",
+      titleCs: "Kategorie a název",
+      bodyCs: "Vyber kategorii, například zeměpis, frakce či historii, a zadej název. Podle kategorie lze při hraní filtrovat.",
       titleFr: "Catégorie et titre",
       body: "Geography, factions, history and the rest. The category is what the search tool at the table filters by.",
       bodyFr: "Géographie, factions, histoire et le reste. La catégorie est ce que l’outil de recherche à la table filtre.",
@@ -526,6 +606,8 @@ export const SYSTEM_TOURS: Record<string, TourStep[]> = {
     {
       id: "body",
       title: "The entry",
+      titleCs: "Obsah záznamu",
+      bodyCs: "Můžeš psát v Markdownu. Připnuté záznamy dostává vypravěč při každém tahu, ostatní načítá podle potřeby.",
       titleFr: "L’entrée",
       body: "Markdown is fine. Pinned entries reach the narrator every turn; the rest are retrieved when relevant.",
       bodyFr: "Le Markdown passe très bien. Les entrées épinglées atteignent le narrateur à chaque tour ; les autres sont retrouvées quand c’est pertinent.",
@@ -536,6 +618,8 @@ export const SYSTEM_TOURS: Record<string, TourStep[]> = {
     {
       id: "link",
       title: "Link another entry",
+      titleCs: "Propojit záznam",
+      bodyCs: "Vyber jiný záznam a na místo kurzoru vlož odkaz ve tvaru [[odkaz]]. Kliknutí otevře cílový záznam.",
       titleFr: "Lier une autre entrée",
       body: "Pick an entry and a [[link]] to it lands where the cursor is. Links open the other entry when read.",
       bodyFr: "Choisis une entrée et un [[lien]] vers elle atterrit là où se trouve le curseur. Les liens ouvrent l’autre entrée quand on les lit.",
@@ -546,6 +630,8 @@ export const SYSTEM_TOURS: Record<string, TourStep[]> = {
     {
       id: "save",
       title: "Add it",
+      titleCs: "Uložit záznam",
+      bodyCs: "Urči, zda záznam smí číst hráči, nebo pouze PJ, a případně přidej obrázek jako herní pomůcku.",
       titleFr: "L’ajouter",
       body: "Saves the entry. Choose whether the table reads it or only you do, and attach a picture to make it a handout.",
       bodyFr: "Enregistre l’entrée. Choisis si la table la lit ou si c’est toi seul, et joins une image pour en faire un document à montrer.",
@@ -556,6 +642,8 @@ export const SYSTEM_TOURS: Record<string, TourStep[]> = {
     {
       id: "market",
       title: "Shops",
+      titleCs: "Obchody",
+      bodyCs: "V Tržišti založ obchod, vyber místo a obchodníka a přidej zboží z katalogu nebo ručně. Obchody i nabídky se importují do kampaně.",
       titleFr: "Les boutiques",
       body: "Below the entries is the Market. Open a shop, say where it stands and who keeps it, and stock its shelf from the content pack or line by line. A campaign that brings this workshop in gets the shops with their shelves.",
       bodyFr: "Sous les entrées se trouve le Marché. Ouvre une boutique, dis où elle se trouve et qui la tient, et remplis son étagère depuis le pack de contenu ou ligne par ligne. Une campagne qui importe cet atelier reçoit les boutiques avec leurs étagères.",
@@ -566,6 +654,8 @@ export const SYSTEM_TOURS: Record<string, TourStep[]> = {
     {
       id: "search",
       title: "Your tables",
+      titleCs: "Tvoje náhodné tabulky",
+      bodyCs: "Karty ukazují kostku a pokrytí výsledků. Hod uvidí všichni, ale vylosovaný text pouze ty.",
       titleFr: "Tes tables",
       body: "Each card shows what die it rolls on and whether every number is covered. Roll writes an ordinary roll everyone sees; what the row says comes back to you alone.",
       bodyFr: "Chaque carte montre quel dé elle lance et si chaque nombre est couvert. « Tirer » écrit un lancer ordinaire que tout le monde voit ; ce que dit la rangée ne revient qu’à toi.",
@@ -574,6 +664,8 @@ export const SYSTEM_TOURS: Record<string, TourStep[]> = {
     {
       id: "new",
       title: "A new table",
+      titleCs: "Nová tabulka",
+      bodyCs: "Otevře editor nové náhodné tabulky.",
       titleFr: "Une nouvelle table",
       body: "Opens the editor.",
       bodyFr: "Ouvre l’éditeur.",
@@ -582,6 +674,8 @@ export const SYSTEM_TOURS: Record<string, TourStep[]> = {
     {
       id: "lookup",
       title: "Look up a monster",
+      titleCs: "Vyhledat nestvůru",
+      bodyCs: "Zobrazí blok statistik nestvůry z katalogu jako pomůcku při tvorbě tabulky.",
       titleFr: "Chercher un monstre",
       body: "A stat block from the catalogue, for reference while you write.",
       bodyFr: "Un statblock du catalogue, pour référence pendant que tu écris.",
@@ -590,6 +684,8 @@ export const SYSTEM_TOURS: Record<string, TourStep[]> = {
     {
       id: "body",
       title: "The rows",
+      titleCs: "Řádky tabulky",
+      bodyCs: "Jeden výsledek na řádek, s rozsahem hodů nebo váhou. Tabulku můžeš vložit i z knihy. Průběžná kontrola upozorní na mezery a překryvy.",
       titleFr: "Les rangées",
       body: "One row per line, with a range or a weight. Paste a table straight out of a book. The line under the box reports gaps and overlaps as you type.",
       bodyFr: "Une rangée par ligne, avec une plage ou un poids. Colle une table directement sortie d’un livre. La ligne sous la zone signale trous et chevauchements pendant que tu écris.",
@@ -600,6 +696,8 @@ export const SYSTEM_TOURS: Record<string, TourStep[]> = {
     {
       id: "ref",
       title: "A row that is a thing",
+      titleCs: "Výsledek odkazující na obsah",
+      bodyCs: "Vyber druh obsahu: tabulku, nestvůru, předmět, postavu nebo záznam světa, a pak konkrétní položku. Řádek se doplní automaticky.",
       titleFr: "Une rangée qui est une chose",
       body: "Pick what kind of thing (another table, a monster, an item, a person, a lore entry) and then the thing itself from what this workshop holds. The row is written for you.",
       bodyFr: "Choisis le type de chose (une autre table, un monstre, un objet, une personne, une entrée de lore) puis la chose elle-même dans ce que cet atelier contient. La rangée s’écrit pour toi.",
@@ -610,6 +708,8 @@ export const SYSTEM_TOURS: Record<string, TourStep[]> = {
     {
       id: "save",
       title: "Save table",
+      titleCs: "Uložit tabulku",
+      bodyCs: "Losování bez vracení funguje jako balíček karet: jednou vylosovaná pověst se neopakuje.",
       titleFr: "Sauvegarder la table",
       body: "Draw without replacement turns it into a deck: a rumour heard once is not heard again.",
       bodyFr: "« Tirer sans remise » en fait un jeu de cartes : une rumeur entendue une fois n’est pas entendue une deuxième fois.",
@@ -622,6 +722,8 @@ export const SYSTEM_TOURS: Record<string, TourStep[]> = {
     {
       id: "library",
       title: "Saved rulesets",
+      titleCs: "Uložené sady pravidel",
+      bodyCs: "Sady sdružují volitelná a domácí pravidla pro opakované použití v kampaních. Otevřením uvidíš, co by se změnilo.",
       titleFr: "Les jeux de règles enregistrés",
       body: "A ruleset is variant rules and house rulings kept as one thing, reusable across campaigns. Open one to see what applying it here would change.",
       bodyFr: "Un jeu de règles est un ensemble de règles variantes et de décisions de maison gardé d’un bloc, réutilisable d’une campagne à l’autre. Ouvre l’un pour voir ce que l’appliquer ici changerait.",
@@ -630,6 +732,8 @@ export const SYSTEM_TOURS: Record<string, TourStep[]> = {
     {
       id: "save-as",
       title: "Save these rules",
+      titleCs: "Uložit tato pravidla",
+      bodyCs: "Uloží aktuální nastavení jako sadu použitelnou v dalších kampaních.",
       titleFr: "Enregistrer ces règles",
       body: "Keeps the rules below as a ruleset you can apply anywhere.",
       bodyFr: "Garde les règles en dessous comme un jeu de règles applicable où tu veux.",
@@ -638,6 +742,8 @@ export const SYSTEM_TOURS: Record<string, TourStep[]> = {
     {
       id: "variants",
       title: "Variant rules",
+      titleCs: "Volitelná pravidla",
+      bodyCs: "Přepínače pravidel vyhodnocovaných herním systémem, například obchvat nebo délka odpočinku.",
       titleFr: "Règles variantes",
       body: "Switches the engine honours: flanking, rest lengths and the rest.",
       bodyFr: "Des interrupteurs que le moteur respecte : les attaques de flanc, la longueur des repos et le reste.",
@@ -646,6 +752,8 @@ export const SYSTEM_TOURS: Record<string, TourStep[]> = {
     {
       id: "house",
       title: "House rules",
+      titleCs: "Domácí pravidla",
+      bodyCs: "Psaná pravidla podle oddílů. Vypravěč načítá související oddíly při každém tahu; připnutý oddíl dostává vždy.",
       titleFr: "Règles de maison",
       body: "Written rules, grouped by heading. The narrator retrieves only the relevant sections each turn; pin one to include it always.",
       bodyFr: "Des règles écrites, regroupées par titre. Le narrateur ne retrouve que les sections pertinentes à chaque tour ; épingle-en une pour qu’elle soit toujours incluse.",
@@ -656,6 +764,8 @@ export const SYSTEM_TOURS: Record<string, TourStep[]> = {
     {
       id: "sections",
       title: "The parts of a world pack",
+      titleCs: "Části balíčku světa",
+      bodyCs: "Balíček mapuje názvy světa na druhy, povolání, kouzla, výbavu a nestvůry v pravidlech. Obsahuje také frakce, místa, zápletky a obrázky. Každá část má záložku.",
       titleFr: "Les parties d’un pack de monde",
       body: "A pack is a name mapping over the rules: the world's own races, classes, spells, gear and monsters, plus its factions, places, hooks and pictures. Each part is a tab here.",
       bodyFr: "Un pack est un nom posé sur les règles : les races, classes, sorts, équipements et monstres propres au monde, plus ses factions, lieux, accroches et images. Chaque partie est un onglet ici.",
@@ -664,6 +774,8 @@ export const SYSTEM_TOURS: Record<string, TourStep[]> = {
     {
       id: "guided",
       title: "Guided setup",
+      titleCs: "Průvodce nastavením",
+      bodyCs: "Postupně nastavíš název světa, předlohu, žánr a styl vypravěče. K průvodci se můžeš vracet.",
       titleFr: "Réglage guidé",
       body: "Walks through the identity of the world one question at a time: what it is called, whose setting it stands on, its genre and how the narrator should sound. Come back to it any time.",
       bodyFr: "Parcourt l’identité du monde une question à la fois : comment il s’appelle, sur l’univers de qui il se tient, son genre et comment le narrateur doit sonner. Reviens-y quand tu veux.",
@@ -672,6 +784,8 @@ export const SYSTEM_TOURS: Record<string, TourStep[]> = {
     {
       id: "pull",
       title: "Pull from this workshop",
+      titleCs: "Převzít obsah dílny",
+      bodyCs: "Načte existující znalosti, místa, karty zápletek a postavy do balíčku světa. Přidává položky, ale nepřepisuje ruční změny.",
       titleFr: "Tirer de cet atelier",
       body: "Reads the lore, places, hook cards and cast you already built here into the pack's setting lists. It adds; it never overwrites what you wrote by hand.",
       bodyFr: "Lit le lore, les lieux, les cartes d’accroche et le cast déjà bâtis ici dans les listes de réglage du pack. Ça ajoute ; ça n’écrase jamais ce que tu as écrit à la main.",
@@ -680,6 +794,8 @@ export const SYSTEM_TOURS: Record<string, TourStep[]> = {
     {
       id: "publish",
       title: "Check, download, install",
+      titleCs: "Zkontrolovat, stáhnout a nainstalovat",
+      bodyCs: "Na záložce Publikovat uvidíš chybějící údaje a stáhneš celý balíček. Správce ho může rovnou nainstalovat na server.",
       titleFr: "Vérifier, télécharger, installer",
       body: "The Publish tab lists what is missing, then hands you the pack as one file. An admin can install it straight onto this server.",
       bodyFr: "L’onglet « Publish » liste ce qui manque, puis te remet le pack en un fichier. Un admin peut l’installer directement sur ce serveur.",
@@ -690,6 +806,8 @@ export const SYSTEM_TOURS: Record<string, TourStep[]> = {
     {
       id: "manifest",
       title: "Name the bundle",
+      titleCs: "Údaje o balíčku",
+      bodyCs: "Vyplň název, krátký popis, autora a verzi. U cizí předlohy uveď držitele práv, aby oznámení jasně uvedlo, že s ním projekt není spojen.",
       titleFr: "Nommer le paquet",
       body: "Name, a line about it, author and version. The rights holder line turns the notice into a proper non-affiliation disclaimer when the world is built on somebody else's setting.",
       bodyFr: "Nom, une ligne à son sujet, auteur et version. La ligne du détenteur des droits transforme la mention en vraie clause de non-affiliation quand le monde est bâti sur l’univers de quelqu’un d’autre.",
@@ -698,6 +816,8 @@ export const SYSTEM_TOURS: Record<string, TourStep[]> = {
     {
       id: "export",
       title: "Download or compile",
+      titleCs: "Stáhnout nebo sestavit balíček",
+      bodyCs: "Stažený balíček obsahuje záznamy dílny, WorldForge, obrázky v povolených limitech i vlastní nestvůry a další tvorbu – celou sbírku nebo jen použité položky. Sestavení balíčku světa vytvoří návrh a ukáže, co se do něj na rozdíl od úplného exportu nepřenese.",
       titleFr: "Télécharger ou compiler",
       body: "Download bundle writes everything here as one file another server can import: every tool's records, the WorldForge world, pictures within the size caps, and your hand-built monsters and homebrew (all of your shelf, or only what this workshop uses). Compile a world pack builds a draft pack and lists what a pack leaves out that the bundle carries.",
       bodyFr: "« Télécharger le paquet » écrit tout ce qui est ici en un fichier qu’un autre serveur peut importer : les fiches de chaque outil, le monde WorldForge, les images sous les limites de taille, et tes monstres et homebrew façonnés à la main (toute ton étagère, ou seulement ce que cet atelier utilise). « Compiler un pack de monde » bâtit un brouillon de pack et liste ce qu’un pack laisse de côté alors que le paquet l’emporte.",
