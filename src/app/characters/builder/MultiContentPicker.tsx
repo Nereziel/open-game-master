@@ -7,12 +7,13 @@ import { InfoButton } from "@/components/ui/InfoDialog";
 import { describeContentEntry, spellSummary } from "@/lib/help";
 import { useContentSearch, type PickerEntry } from "./useContentSearch";
 import { textKey } from "@/lib/language/text-logic";
+import { featPickerKey } from "./feat-picker-logic";
 import { useLocale, useT, useTp } from "@/lib/locale";
 import { contentName } from "@/lib/content/names";
 
 // `level` rides along for spells, so a cantrip picked here lands in the
 // cantrip list rather than among the levelled spells.
-export type MultiPick = { name: string; slug?: string; level?: number };
+export type MultiPick = { name: string; slug?: string; level?: number; source?: PickerEntry["source"] };
 
 // Searchable multi-select against /api/content/[kind]: result rows toggle
 // into a pending chip strip and one "Add" commits them all, so nobody has
@@ -39,7 +40,8 @@ export default function MultiContentPicker({
   const t = useT();
   const tp = useTp();
   const locale = useLocale();
-  const displayName = (name: string, source?: string) => source === "homebrew" ? name : contentName(kind, name, locale);
+  const displayName = (name: string, source?: PickerEntry["source"]) => contentName(kind, { name, source }, locale);
+  const pickKey = (name: string, source?: PickerEntry["source"]) => kind === "feats" ? featPickerKey(name, source) : textKey(name);
   const { query, setQuery, results, setResults, open, setOpen, loading, unavailable, failed, unadmitted } =
     useContentSearch(kind, extraParams);
   const [pending, setPending] = useState<MultiPick[]>([]);
@@ -57,22 +59,22 @@ export default function MultiContentPicker({
     return () => document.removeEventListener("mousedown", onClickOutside);
   }, [setOpen]);
 
-  const selectedLower = new Set(selectedNames.map((name) => textKey(name)));
-  const pendingLower = new Set(pending.map((pick) => textKey(pick.name)));
+  const selectedLower = new Set(selectedNames.map((name) => pickKey(name)));
+  const pendingLower = new Set(pending.map((pick) => pickKey(pick.name, pick.source)));
   const trimmedQuery = query.trim();
 
   function togglePending(entry: PickerEntry) {
-    const key = textKey(entry.name);
+    const key = pickKey(entry.name, entry.source);
     setPending((picks) =>
-      picks.some((pick) => textKey(pick.name) === key)
-        ? picks.filter((pick) => textKey(pick.name) !== key)
-        : [...picks, { name: entry.name, slug: entry.slug, level: entry.level }],
+      picks.some((pick) => pickKey(pick.name, pick.source) === key)
+        ? picks.filter((pick) => pickKey(pick.name, pick.source) !== key)
+        : [...picks, { name: entry.name, slug: entry.slug, level: entry.level, source: entry.source }],
     );
   }
 
   function addCustom() {
     const key = textKey(trimmedQuery);
-    if (!key || selectedLower.has(key) || pendingLower.has(key)) {
+    if (!key || selectedLower.has(pickKey(trimmedQuery)) || pendingLower.has(pickKey(trimmedQuery))) {
       return;
     }
     setPending((picks) => [...picks, { name: trimmedQuery }]);
@@ -109,7 +111,7 @@ export default function MultiContentPicker({
       {open && (results.length || trimmedQuery || unavailable) ? (
         <ul className="mt-1 max-h-48 overflow-y-auto rounded-lg panel panel-smoke">
           {results.map((entry) => {
-            const key = textKey(entry.name);
+            const key = pickKey(entry.name, entry.source);
             const alreadyOn = selectedLower.has(key);
             const picked = pendingLower.has(key);
             return (
@@ -146,16 +148,17 @@ export default function MultiContentPicker({
                 </button>
                 <InfoButton
                   label={displayName(entry.name, entry.source)}
-                  meta={kind === "spells" ? spellSummary(entry.data) : undefined}
-                  text={describeContentEntry(entry.data)}
-                  reference={entry.source === "homebrew" ? undefined : { kind, slug: entry.slug }}
+                  meta={kind === "spells" ? (locale === "cs" ? (entry.level === 0 ? t("cantrip", { context: "lead.edit.cantripMeta" }) : entry.level !== undefined ? t("Level {level}", { level: entry.level }) : "") : spellSummary(entry.data)) : undefined}
+                  text={entry.source === "homebrew" ? describeContentEntry(entry.data) : undefined}
+                  reference={entry.source === "homebrew" ? undefined : { kind, slug: entry.slug, name: entry.name, source: entry.source, documentSlug: entry.documentSlug, rulebook: entry.rulebook }}
                 />
               </li>
             );
           })}
           {trimmedQuery &&
-          !selectedLower.has(textKey(trimmedQuery)) &&
-          !results.some((entry) => textKey(entry.name) === textKey(trimmedQuery)) ? (
+          !selectedLower.has(pickKey(trimmedQuery)) &&
+          !pendingLower.has(pickKey(trimmedQuery)) &&
+          !results.some((entry) => pickKey(entry.name, entry.source) === pickKey(trimmedQuery) || textKey(displayName(entry.name, entry.source)) === textKey(trimmedQuery)) ? (
             <li className="border-t border-stone-800">
               <button
                 type="button"
@@ -189,13 +192,13 @@ export default function MultiContentPicker({
               key={pick.name}
               className="flex items-center gap-1 rounded-full bg-stone-800 px-2 py-0.5 text-xs text-stone-200"
             >
-              {displayName(pick.name)}
+              {displayName(pick.name, pick.source)}
               <button
                 type="button"
                 onClick={() =>
                   setPending((picks) => picks.filter((entry) => entry.name !== pick.name))
                 }
-                aria-label={t("Remove {name}", { name: displayName(pick.name) })}
+                aria-label={t("Remove {name}", { name: displayName(pick.name, pick.source) })}
                 className="text-stone-500 hover:text-red-400"
               >
                 <X className="size-3" />
