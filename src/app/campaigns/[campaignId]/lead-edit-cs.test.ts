@@ -53,8 +53,11 @@ describe("Campaign character adjustments in Czech", () => {
   it("keeps the campaign editor wired to the shared translations and help", () => {
     const editor = readFileSync(path.join(process.cwd(), "src/app/campaigns/[campaignId]/LeadEditDialog.tsx"), "utf8");
     const parts = readFileSync(path.join(process.cwd(), "src/app/campaigns/[campaignId]/LeadEditParts.tsx"), "utf8");
+    const sheetDialog = readFileSync(path.join(process.cwd(), "src/app/campaigns/[campaignId]/CharacterSheetDialog.tsx"), "utf8");
     expect(editor).toContain('<GameTerm id="armor_class">');
     expect(editor).toContain("localizeAcParts(derived.parts, t, locale)");
+    expect(sheetDialog).toContain('localizeAcParts(armor.parts, t, locale).join(" + ")');
+    expect(sheetDialog).not.toContain('armor.parts.join(" + ")');
     expect(editor).toContain("skillLabel(skill.id, locale)");
     expect(editor).toContain("LocalizedItemNameInput");
     expect(editor).toContain('t("Prepared spells")');
