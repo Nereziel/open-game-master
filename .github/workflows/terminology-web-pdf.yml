@@ -7,6 +7,7 @@ on:
       - "src/lib/battlemap/condition-notes*"
       - "src/lib/srd/ability-short-label*"
       - "src/lib/srd/multiclass.ts"
+      - "src/lib/srd/multiclass-labels.ts"
       - "src/lib/srd/multiclass-locale.test.ts"
       - "src/lib/srd/skill-help-cs*"
       - "src/app/characters/builder/AbilityText.tsx"
