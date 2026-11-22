@@ -55,8 +55,14 @@ const FIELD_WORDS: Record<string, string> = {
   wildShape: "Wild Shape",
 };
 
+// Only a field with a defined system meaning may be translated. Unknown
+// keys can come from extensions or custom sheets and must stay literal.
+export function knownFieldWords(key: string): string | null {
+  return FIELD_WORDS[key] ?? null;
+}
+
 export function fieldWords(key: string): string {
-  return FIELD_WORDS[key] ?? key.replace(/([a-z0-9])([A-Z])/g, "$1 $2").toLowerCase();
+  return knownFieldWords(key) ?? key.replace(/([a-z0-9])([A-Z])/g, "$1 $2").toLowerCase();
 }
 
 // Why an undo would overwrite a later change: who it was to, the later
