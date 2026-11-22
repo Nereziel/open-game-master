@@ -30,7 +30,7 @@ import { Select } from "@/components/ui/Select";
 import { Field, FieldLabel, OptionalStepper, addChip, chip, chipOn, chipRow, rowIcon } from "@/app/workshop/kit";
 import { textKey } from "@/lib/language/text-logic";
 import { translate } from "@/lib/messages-logic";
-import { useT } from "@/lib/locale";
+import { useLocale, useT } from "@/lib/locale";
 
 // The printed half of a stat block (docs/workshop-parity-audit.md phase
 // 12): ability scores, skills, senses, languages and alignment, the spells
@@ -261,6 +261,7 @@ export function SkillsAndSenses({ draft, onChange }: { draft: MonsterDraft; onCh
 
 export function LanguagesAndHabitat({ draft, onChange }: { draft: MonsterDraft; onChange: (draft: MonsterDraft) => void }) {
   const t = useT();
+  const locale = useLocale();
   const stats = draft.stats;
   const set: Setter = (patch) => onChange({ ...draft, stats: { ...stats, ...patch } });
   const environment = stats.environment ?? [];
@@ -274,7 +275,7 @@ export function LanguagesAndHabitat({ draft, onChange }: { draft: MonsterDraft; 
             <input
               value={stats.languages ?? ""}
               maxLength={200}
-              placeholder="Common, Goblin"
+              placeholder={locale === "cs" ? "Obecná řeč, goblinština" : "Common, Goblin"}
               onChange={(event) => set({ languages: event.target.value || undefined })}
               className={cn(ui.input, "min-w-32 flex-1")}
             />
@@ -357,6 +358,7 @@ export function LanguagesAndHabitat({ draft, onChange }: { draft: MonsterDraft; 
 // the DM prompt prints, prefix and all (src/lib/bestiary/block-sections.ts).
 export function SectionedTraitEditor({ draft, onChange }: { draft: MonsterDraft; onChange: (draft: MonsterDraft) => void }) {
   const t = useT();
+  const locale = useLocale();
   const traits = draft.stats.traits;
   const setTraits = (next: string[]) => onChange({ ...draft, stats: { ...draft.stats, traits: next } });
   return (
@@ -380,7 +382,7 @@ export function SectionedTraitEditor({ draft, onChange }: { draft: MonsterDraft;
               onChange={(event) =>
                 setTraits(traits.map((row, at) => (at === index ? withSection(event.target.value, section) : row)))
               }
-              placeholder="Fire Breath (Recharge 5-6): DC 15 Dex save, 6d6 fire, half on a success"
+              placeholder={locale === "cs" ? "Ohnivý dech (obnovení 5–6): záchrana na Obratnost SO 15, ohnivé zranění 6k6, při úspěchu poloviční" : "Fire Breath (Recharge 5-6): DC 15 Dex save, 6d6 fire, half on a success"}
               className={cn(ui.input, "min-w-40 flex-1")}
             />
             <button
