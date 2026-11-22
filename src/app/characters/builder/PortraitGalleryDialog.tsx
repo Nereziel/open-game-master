@@ -62,7 +62,7 @@ export function PortraitGalleryDialog({
       // and character export. The image backend is never contacted.
       const image = await fetch(portrait.src);
       if (!image.ok) throw new Error("gallery image unavailable");
-      const dataUrl = await blobToDataUrl(await image.blob());
+      const dataUrl = await blobToDataUrl(new Blob([await image.blob()], { type: "image/webp" }));
       const response = await fetch("/api/upload", {
         method: "POST",
         headers: { "Content-Type": "application/json" },
