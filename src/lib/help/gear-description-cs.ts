@@ -80,7 +80,7 @@ const ARMOR_NAMES: Readonly<Record<string, string>> = {
   "padded": "vycpávaná zbroj", "padded armor": "vycpávaná zbroj",
   "leather": "kožená zbroj", "leather armor": "kožená zbroj",
   "studded leather": "pobíjená kožená zbroj", "studded leather armor": "pobíjená kožená zbroj",
-  "hide": "kožešinová", "hide armor": "kožešinová",
+  "hide": "kožešinová zbroj", "hide armor": "kožešinová zbroj",
   "chain shirt": "kroužková košile",
   "scale mail": "šupinová zbroj",
   "breastplate": "kyrys",
