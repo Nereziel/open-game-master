@@ -206,16 +206,16 @@ function knownEntryText(t: Say, entry: { kind: string; delta: Delta }, name: str
     case "apply_damage": {
       // Wild Shape: the blow landed on the beast form, not the druid.
       const form = word(delta.form);
-      const formName = form ? displayName(t, "monsters", form) : null;
       if (form) {
+        const formName = displayName(t, "monsters", form);
         const carryover = amount(delta.carryover) ?? 0;
         if (delta.reverted) {
-          return carryover > 0 ? t("{name}'s {form} form breaks, {carryover} damage carrying through", { name, form: formName!, carryover }) : t("{name}'s {form} form breaks", { name, form: formName! });
+          return carryover > 0 ? t("{name}'s {form} form breaks, {carryover} damage carrying through", { name, form: formName, carryover }) : t("{name}'s {form} form breaks", { name, form: formName });
         }
         const beastHp = amount(delta.beastHp);
         return beastHp !== null
-          ? t("{name}'s {form} form takes {amount} damage ({hp} beast HP)", { name, form: formName!, amount: amount(delta.amount) ?? t("some"), hp: beastHp })
-          : t("{name}'s {form} form takes {amount} damage", { name, form: formName!, amount: amount(delta.amount) ?? t("some") });
+          ? t("{name}'s {form} form takes {amount} damage ({hp} beast HP)", { name, form: formName, amount: amount(delta.amount) ?? t("some"), hp: beastHp })
+          : t("{name}'s {form} form takes {amount} damage", { name, form: formName, amount: amount(delta.amount) ?? t("some") });
       }
       if (delta.relentlessEndurance) return t("{name} holds on at 1 HP (Relentless Endurance)", { name });
       if (delta.undyingSentinel) return t("{name} holds on at 1 HP (Undying Sentinel)", { name });
@@ -231,12 +231,12 @@ function knownEntryText(t: Say, entry: { kind: string; delta: Delta }, name: str
     }
     case "heal": {
       const form = word(delta.form);
-      const formName = form ? displayName(t, "monsters", form) : null;
       const healed = amount(delta.amount);
       if (form) {
+        const formName = displayName(t, "monsters", form);
         const beastHp = amount(delta.beastHp);
         const taken = healed ?? t("some");
-        return beastHp !== null ? t("{name}'s {form} form heals {amount} ({hp} beast HP)", { name, form: formName!, amount: taken, hp: beastHp }) : t("{name}'s {form} form heals {amount}", { name, form: formName!, amount: taken });
+        return beastHp !== null ? t("{name}'s {form} form heals {amount} ({hp} beast HP)", { name, form: formName, amount: taken, hp: beastHp }) : t("{name}'s {form} form heals {amount}", { name, form: formName, amount: taken });
       }
       const hp = amount(delta.newHp);
       return healed !== null ? `${t("{name} heals {amount}", { name, amount: healed })}${hp !== null ? t(" ({hp} HP)", { hp }) : ""}` : t("{name} is healed", { name });
