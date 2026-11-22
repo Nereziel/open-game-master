@@ -396,7 +396,7 @@ export function CharacterSheetDialog({
               <span className="font-mono text-xs">
                 {t("{hp}/{max} beast HP", { hp: sheet.wildShape.beastHp, max: sheet.wildShape.beastMaxHp })}
               </span>
-              <span className="font-mono text-xs">AC {sheet.wildShape.beastAc}</span>
+              <span className="font-mono text-xs">{t("AC")} {sheet.wildShape.beastAc}</span>
               <span className="w-full text-xs text-lime-400/80">
                 {t("Damage hits the beast's hit points first. The {current}/{max} HP above is what {name} returns to when the form breaks.", { current: sheet.currentHp, max: hp.max, name: sheet.name })}
               </span>
