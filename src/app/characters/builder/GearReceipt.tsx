@@ -4,6 +4,7 @@ import { Minus, Plus, X } from "lucide-react";
 import { useState } from "react";
 import { InfoButton } from "@/components/ui/InfoDialog";
 import { contentSlug } from "@/lib/help";
+import { contentName } from "@/lib/content/names";
 import { formatPrice } from "@/lib/srd/currency";
 import { damageWords } from "@/lib/dm/damage-logic";
 import { useLocale, useT } from "@/lib/locale";
@@ -101,18 +102,18 @@ export default function GearReceipt({ receipt, itemLabel }: { receipt: ReceiptVi
         <tbody>
           {receipt.rows.map((row) => {
             const homebrew = row.slug?.startsWith("homebrew:") ?? false;
-            const shown = itemLabel ? itemLabel(row.name) : row.name;
+            const shown = itemLabel ? itemLabel(row.name) : contentName("items", row.name, locale);
             return (
               <tr key={row.name} className="border-b border-stone-900 align-top last:border-0">
                 <td className="px-2 py-1.5">
                   <div className="flex items-start gap-1">
                     <span className="min-w-0 break-words text-stone-200">
                       {shown}
-                      {shown !== row.name ? <span className="ml-1 text-stone-500">({row.name})</span> : null}
+                      {locale !== "cs" && shown !== row.name ? <span className="ml-1 text-stone-500">({row.name})</span> : null}
                     </span>
                     {homebrew ? null : (
                       <InfoButton
-                        label={row.name}
+                        label={shown}
                         reference={{ kind: "items", slug: row.slug ?? contentSlug(row.name), name: row.name }}
                       />
                     )}
