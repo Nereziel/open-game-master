@@ -1,0 +1,40 @@
+name: Czech picker and CI integration
+
+on:
+  pull_request:
+    paths:
+      - "src/app/characters/builder/**"
+      - "src/app/campaigns/**/LeadEditDialog.tsx"
+      - "src/components/ui/InfoDialog.tsx"
+      - "src/components/sheet/**"
+      - "src/app/workshop/plugin/fields.tsx"
+      - "src/lib/content/names*"
+      - "src/lib/help/**"
+      - "src/lib/i18n/translate.ts"
+      - "src/lib/rulebook/**"
+      - ".github/workflows/czech-picker-integration.yml"
+  workflow_dispatch:
+
+permissions:
+  contents: read
+
+jobs:
+  verify:
+    runs-on: ubuntu-latest
+    timeout-minutes: 25
+    env:
+      ONNXRUNTIME_NODE_INSTALL: skip
+    steps:
+      - uses: actions/checkout@v6
+      - uses: actions/setup-node@v6
+        with:
+          node-version: "24"
+          cache: npm
+      - name: Install dependencies
+        run: npm ci
+      - name: Dead code and strict TypeScript
+        run: npm run dead-code
+      - name: Czech content picker regression tests
+        run: npm test -- src/app/characters/builder/czech-content-picker.test.ts src/lib/help/item-detail-cs.test.ts src/lib/content/species-names-cs.test.ts src/app/campaigns/[campaignId]/lead-edit-cs.test.ts
+      - name: Production build
+        run: npm run build
