@@ -10,7 +10,7 @@ import { cn } from "@/lib/cn";
 import { useT } from "@/lib/locale";
 import { Dialog } from "@/components/ui/Dialog";
 import type { ItemSheet } from "@/lib/help/item-sheet";
-import { firstSentence, parseRulesBlocks } from "@/lib/help/rules-text";
+import { firstSentence, parseRulesBlocks, parseRulesTable } from "@/lib/help/rules-text";
 import { textKey } from "@/lib/language/text-logic";
 
 // The "what does this do?" affordance, used everywhere a game term appears.
@@ -30,8 +30,8 @@ export type ContentRef = { kind: string; slug: string; name?: string };
 
 // Content-pack descriptions are markdown-ish: headings, bold, italics, tables.
 // The block structure comes from src/lib/help/rules-text.ts, which knows the
-// pack's quirks; this only turns each block into elements. Table rows keep
-// their pipes inside a monospace block.
+// pack's quirks; this only turns each block into elements. Valid Markdown
+// tables render as horizontally scrollable, accessible HTML tables.
 function renderInline(text: string, keyPrefix: string): ReactNode[] {
   const out: ReactNode[] = [];
   const pattern = /(\*\*[^*]+\*\*|\*[^*\s][^*]*\*|(?<![\w])_[^_\n]+_(?![\w]))/g;
@@ -69,15 +69,53 @@ function renderInline(text: string, keyPrefix: string): ReactNode[] {
 export function renderRules(text: string): ReactNode {
   return parseRulesBlocks(text).map((block, blockIndex) => {
     switch (block.kind) {
-      case "table":
+      case "table": {
+        const table = parseRulesTable(block.rows);
+        if (!table) {
+          // A nonstandard rules entry must remain readable without dropping
+          // columns or silently interpreting arbitrary pipe-delimited text.
+          return (
+            <pre key={blockIndex} className="overflow-x-auto rounded-md bg-stone-900/60 p-2 text-[11px] leading-relaxed text-stone-400">
+              {block.rows.join("\n")}
+            </pre>
+          );
+        }
         return (
-          <pre
-            key={blockIndex}
-            className="overflow-x-auto rounded-md bg-stone-900/60 p-2 text-[11px] leading-relaxed text-stone-400"
-          >
-            {block.rows.join("\n")}
-          </pre>
+          <div key={blockIndex} className="max-w-full overflow-x-auto rounded-md border border-stone-700/70">
+            <table className="w-full min-w-max border-collapse text-left text-xs leading-relaxed">
+              <thead className="bg-stone-900/70 text-amber-100">
+                <tr>
+                  {table.head.map((cell, cellIndex) => (
+                    <th
+                      key={cellIndex}
+                      scope="col"
+                      className="whitespace-nowrap border-b border-stone-700 px-3 py-2 font-semibold"
+                      style={{ textAlign: table.align[cellIndex] ?? undefined }}
+                    >
+                      {renderInline(cell, `${blockIndex}-head-${cellIndex}`)}
+                    </th>
+                  ))}
+                </tr>
+              </thead>
+              <tbody>
+                {table.rows.map((row, rowIndex) => (
+                  <tr key={rowIndex} className="border-b border-stone-800/70 last:border-0 odd:bg-stone-900/20">
+                    {row.map((cell, cellIndex) => (
+                      <td
+                        key={cellIndex}
+                        className="px-3 py-2 align-top text-stone-300"
+                        style={{ textAlign: table.align[cellIndex] ?? undefined }}
+                      >
+                        {renderInline(cell, `${blockIndex}-${rowIndex}-${cellIndex}`)}
+                      </td>
+                    ))}
+                  </tr>
+                ))}
+              </tbody>
+            </table>
+          </div>
         );
+      }
       case "list":
         return (
           <ul key={blockIndex} className="list-disc space-y-1 pl-4">
