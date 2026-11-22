@@ -165,7 +165,7 @@ export function EntryList({
                 {excerpt ? <span className="text-stone-400"> · {excerpt}</span> : null}
               </span>
             </span>
-            {entity.entry.hiddenTruth ? <Lock className="size-3 shrink-0 text-red-400/80" aria-label="Has a hidden truth" /> : null}
+            {entity.entry.hiddenTruth ? <Lock className="size-3 shrink-0 text-red-400/80" aria-label={locale === "cs" ? "Obsahuje skrytou pravdu" : "Has a hidden truth"} /> : null}
           </button>
         );
       })}
