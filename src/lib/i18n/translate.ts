@@ -1,3 +1,4 @@
+import { displayDiceNotation } from "@/lib/language/dice-notation";
 export type Locale = "en" | "fr" | "cs";
 
 export type TranslateVars = Record<string, string | number> & {
@@ -269,7 +270,7 @@ export function translate(locale: Locale, english: string, vars?: TranslateVars)
   if (locale === "cs" && text === english) {
     text = CZECH_LABEL_FALLBACKS[english] ?? text;
   }
-  return interpolate(text, vars);
+  return displayDiceNotation(interpolate(text, vars));
 }
 
 export function translatePlural(
