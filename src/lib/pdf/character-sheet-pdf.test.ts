@@ -95,7 +95,7 @@ describe("fillable character-sheet PDF localization", () => {
       name: sheet.name, race: sheet.race, class: sheet.class,
       subclass: "", background: "soldier", level: 1, sheet,
     });
-    async function values(locale: "cs" | "en") {
+    async function values(locale: "cs" | "en" | "fr") {
       const bytes = await buildCharacterSheetPdf(character, {
         fontBytes: new Uint8Array(regular),
         boldFontBytes: new Uint8Array(bold),
@@ -112,10 +112,14 @@ describe("fillable character-sheet PDF localization", () => {
     expect(cs).toContain("Voják");
     expect(cs.some((value) => value?.includes("Dlouhý meč") && value.includes("Batoh ×2"))).toBe(true);
     expect(cs.some((value) => value?.includes("Druhý dech"))).toBe(true);
+    expect(cs.some((value) => value?.includes("Sečné"))).toBe(true);
     const en = await values("en");
     expect(en).toContain("Fighter 1");
     expect(en).toContain("human");
     expect(en.some((value) => value?.includes("Longsword") && value.includes("Backpack"))).toBe(true);
+    expect(en.some((value) => value?.includes("slashing"))).toBe(true);
+    const fr = await values("fr");
+    expect(fr.some((value) => value?.includes("Tranchants"))).toBe(true);
   });
 
   it("translates race-feature explanations, armor/weapon groups and personality in Czech", async () => {
