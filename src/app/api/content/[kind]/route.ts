@@ -262,6 +262,22 @@ export async function GET(
     }
   }
 
+  // The remaining SRD catalogs use the same exact, source-scoped alias
+  // policy. Other-book and player-owned matches still come from q unchanged.
+  if (canonicalQuery !== originalQuery && (kind === "monsters" || kind === "races" || kind === "classes")) {
+    const aliasMatches = kind === "monsters"
+      ? searchMonsters({
+          ...base, q: canonicalQuery,
+          ...(Number.isFinite(Number.parseFloat(url.searchParams.get("maxCr") ?? ""))
+            ? { maxCr: Number.parseFloat(url.searchParams.get("maxCr") ?? "") } : {}),
+        })
+      : kind === "races"
+        ? listRaces({ ...base, q: canonicalQuery, includeSubraces: url.searchParams.get("subraces") !== "0" })
+        : listClasses({ ...base, q: canonicalQuery });
+    type AliasRow = { source: "open5e" | "homebrew" | "srd" | "bundled"; documentSlug?: string; name: string; slug: string };
+    results = appendExactSrdAlias(results as AliasRow[], aliasMatches, canonicalQuery);
+  }
+
   // The workshop's "start from" asks for what the engine runs, too.
   if (mechanics) {
     results = withMechanics(kind, results, { classSlug: url.searchParams.get("class") ?? undefined });
