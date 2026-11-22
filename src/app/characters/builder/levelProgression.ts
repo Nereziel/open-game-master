@@ -22,7 +22,8 @@ import type { ThirdCasterSetting } from "@/lib/srd/third-caster";
 import { translate } from "@/lib/messages-logic";
 import type { Locale } from "@/lib/messages-logic";
 import { ordinalOf } from "@/lib/characters/join-changes";
-import { contentName } from "@/lib/content/names";
+import { classFeatureName, contentName, subclassName } from "@/lib/content/names";
+import { fightingStyleNameCs } from "@/lib/srd/fighting-style-cs";
 
 // The shape of a translator, as the pure sentence builders take it.
 type T = (key: string, vars?: Record<string, string | number>) => string;
@@ -158,11 +159,12 @@ export function levelProgressionRows(input: ProgressionInput, t: T = enT, locale
     const features = classFeaturesFor(input.classId, input.subclass, level)
       .filter((feature) => feature.level === level)
       .map((feature) => {
+        const name = classFeatureName(input.classId, feature.name, locale);
         if (fightingStyleSlots([feature]) === 0) {
-          return feature.name;
+          return name;
         }
         const style = styles.shift();
-        return style ? `${feature.name} (${style})` : feature.name;
+        return style ? `${name} (${locale === "cs" ? fightingStyleNameCs(style) : style})` : name;
       });
     const slotIndex = input.asiSlotLevels.indexOf(level);
     const choice = slotIndex >= 0 ? (input.asiChoices[slotIndex] ?? null) : null;
@@ -195,7 +197,7 @@ export function levelProgressionRows(input: ProgressionInput, t: T = enT, locale
       // The class table's row: the level's bonus, before any item.
       proficiency: proficiencyBonus(level),
       features,
-      subclass: pickLevel === level ? { pick: input.subclass.trim() || null } : null,
+      subclass: pickLevel === level ? { pick: input.subclass.trim() ? subclassName(input.classId, input.subclass, locale) : null } : null,
       improvement:
         slotIndex >= 0 ? { pick: choice ? improvementWordsT(t, choice, locale) : null, takenInPlay: takenInPlay && !choice } : null,
       slots,
@@ -227,11 +229,12 @@ function classListRows(input: ProgressionInput, classes: ReadonlyArray<Progressi
     const features = classFeaturesFor(entry.classId, entry.subclass, classLevel)
       .filter((feature) => feature.level === classLevel)
       .map((feature) => {
+        const name = classFeatureName(entry.classId, feature.name, locale);
         if (fightingStyleSlots([feature]) === 0) {
-          return feature.name;
+          return name;
         }
         const style = styles.shift();
-        return style ? `${feature.name} (${style})` : feature.name;
+        return style ? `${name} (${locale === "cs" ? fightingStyleNameCs(style) : style})` : name;
       });
     const slotIndex = input.asiSlotLevels.indexOf(level);
     const choice = slotIndex >= 0 ? (input.asiChoices[slotIndex] ?? null) : null;
@@ -280,16 +283,16 @@ function classListRows(input: ProgressionInput, classes: ReadonlyArray<Progressi
       // The class table's row: the level's bonus, before any item.
       proficiency: proficiencyBonus(level),
       features,
-      subclass: subclassLevelFor(entry.classId) === classLevel ? { pick: entry.subclass.trim() || null } : null,
+      subclass: subclassLevelFor(entry.classId) === classLevel ? { pick: entry.subclass.trim() ? subclassName(entry.classId, entry.subclass, locale) : null } : null,
       improvement:
         slotIndex >= 0 ? { pick: choice ? improvementWordsT(t, choice, locale) : null, takenInPlay: takenInPlay && !choice } : null,
       slots,
       pact: pactRow ? { level: pactRow.level, count: pactRow.max } : null,
-      classLabel: `${entry.name} ${classLevel}`,
+      classLabel: `${contentName("classes", entry.name, locale)} ${classLevel}`,
       cantrips: casting ? casting.preview.cantripCap : null,
       spells,
       ...(castingAll.length > 1
-        ? { casters: castingAll.map((pair) => ({ name: pair.held.name, cantrips: pair.preview.cantripCap, spells: spellsOf(pair) })) }
+        ? { casters: castingAll.map((pair) => ({ name: contentName("classes", pair.held.name, locale), cantrips: pair.preview.cantripCap, spells: spellsOf(pair) })) }
         : {}),
       mark: level === input.next ? "next" : level === input.current ? "current" : null,
     });

@@ -16,6 +16,7 @@ import { csTables } from "@/lib/i18n/cs-tables";
 import { srdRaceId } from "@/lib/srd/race-id";
 import { frTables } from "@/lib/i18n/fr-tables";
 import { genreClassCs } from "@/lib/classes/genre-class-cs";
+import { genreFeatureNameCs, genreSubclassNameCs } from "@/lib/classes/feature-help-cs";
 
 // The tables the maps carry, as the helper's callers name them.
 export type FrNamesTable =
@@ -241,6 +242,8 @@ export function classFeatureName(classId: string, featureName: string, locale: L
   }
   const key = `${classId.trim().toLowerCase()}:${canonicalKey(featureName)}`;
   if (locale === "cs") {
+    const genre = genreFeatureNameCs(classId, featureName);
+    if (genre) return genre;
     const names = csNames();
     return names.classFeatures?.[key]
       ?? (CS_FEATURE_CLASS_IDS.has(classId.trim().toLowerCase().replace(/-/g, "_"))
@@ -423,5 +426,5 @@ export function subclassName(classId: string, subclass: string, locale: Locale):
     return subclass;
   }
   const key = `${classId.trim().toLowerCase()}:${canonicalKey(subclass)}`;
-  return (locale === "cs" ? csNames() : frNames()).subclasses?.[key] ?? subclass;
+  return (locale === "cs" ? genreSubclassNameCs(classId, subclass) ?? csNames().subclasses?.[key] : frNames().subclasses?.[key]) ?? subclass;
 }

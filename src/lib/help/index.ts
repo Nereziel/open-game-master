@@ -16,6 +16,7 @@ import starterSpellsJson from "@/lib/help/starter-spells.json";
 import skillsJson from "@/lib/srd/skills.json";
 import { describeBackgroundFeature } from "@/lib/backgrounds";
 import { classFeatureDescription, spellClassFor } from "@/lib/classes";
+import { genreFeatureDescriptionCs } from "@/lib/classes/feature-help-cs";
 import { srdRaceFor } from "@/lib/content/race-options";
 import { normalizeRulesText } from "@/lib/help/rules-text";
 import { textKey } from "@/lib/language/text-logic";
@@ -104,6 +105,12 @@ function stripLeadingLabel(text: string | null, name: string): string | null {
 // resource's line in the reader's words (class-resources-fr.ts); the stored
 // English def stays what the engine and the DM's tools read.
 export function describeFeature(classId: string, subclass: string, name: string, locale: Locale = "en"): string | null {
+  // Genre-specific translations are keyed by class and original feature name,
+  // so identically named features in different classes retain their own rules.
+  if (locale === "cs") {
+    const genreText = genreFeatureDescriptionCs(classId, name);
+    if (genreText) return genreText;
+  }
   // An option pick ("Invocation: Agonizing Blast") explains itself from the
   // option list, before any of the feature tables are consulted.
   const option = findOptionByFeatureName(name);

@@ -21,6 +21,11 @@ import { languageLabel } from "../content/languages-cs";
 import { backgroundInfoText, classInfoText } from "../../app/characters/builder/usePickerGroups";
 import { CZECH_BUILDER_CLASS_RULES } from "../../app/characters/builder/classRulesCs";
 import { GENRE_CLASS_CS } from "../classes/genre-class-cs";
+import { GENRE_CLASS_FEATURES_CS, genreClassRulesCs, genreFeatureCs, genreSubclassNameCs, genreSubclassDescriptionCs } from "../classes/feature-help-cs";
+import genreFeatureNames from "../classes/feature-names.json";
+import { FIGHTING_STYLES_CS } from "../srd/fighting-style-cs";
+import { FIGHTING_STYLES } from "../srd/feature-effects";
+import { SRD_SKILLS } from "../srd";
 import { knownSoFarRows } from "../../app/characters/builder/buildMath";
 import { CUSTOM_BACKGROUNDS, describeBackgroundFeature } from "../backgrounds";
 import { resourceDisplayName, resourceGuidance } from "../srd/class-resources-fr";
@@ -80,6 +85,67 @@ describe("Czech localization", () => {
   });
 
 
+  it("localizes all 18 skills and all six fighting styles without changing their stored IDs", () => {
+    expect(SRD_SKILLS).toHaveLength(18);
+    for (const skill of SRD_SKILLS) {
+      expect(skillLabel(skill.id, "cs"), skill.id).not.toBe(skill.name);
+      expect(skillLabel(skill.id, "en")).toBe(skill.name);
+    }
+    expect(FIGHTING_STYLES).toHaveLength(6);
+    expect(Object.keys(FIGHTING_STYLES_CS)).toHaveLength(6);
+    for (const style of FIGHTING_STYLES) {
+      const czech = FIGHTING_STYLES_CS[style.id];
+      expect(czech?.name, style.id).toBeTruthy();
+      expect(czech?.name).not.toBe(style.name);
+      expect(czech?.description).not.toBe(style.description);
+    }
+  });
+
+  it("translates all 733 authored genre-class features and all 36 subclasses without changing English keys", () => {
+    const catalog = genreFeatureNames as { classes: Record<string, {
+      levels: Record<string, string[]>;
+      subclass: { name: string; levels: Record<string, string[]> };
+    }> };
+    expect(Object.keys(catalog.classes)).toHaveLength(36);
+    expect(Object.keys(GENRE_CLASS_FEATURES_CS)).toHaveLength(36);
+    let count = 0;
+    for (const [classId, entry] of Object.entries(catalog.classes)) {
+      const sourceNames = [
+        ...Object.values(entry.levels).flat(),
+        ...Object.values(entry.subclass.levels).flat(),
+      ];
+      const rules = genreClassRulesCs(classId);
+      expect(rules, classId).toContain("### Schopnosti povolání");
+      expect(rules, classId).toContain("### Podpovolání:");
+      const translated = GENRE_CLASS_FEATURES_CS[classId];
+      expect(translated, classId).toBeTruthy();
+      expect(Object.keys(translated), classId).toHaveLength(sourceNames.length);
+      const subclassNameCs = genreSubclassNameCs(classId, entry.subclass.name);
+      expect(subclassNameCs, classId).toBeTruthy();
+      expect(subclassName(classId, entry.subclass.name, "cs")).toBe(subclassNameCs);
+      expect(subclassName(classId, entry.subclass.name, "en")).toBe(entry.subclass.name);
+      const subclassRules = genreSubclassDescriptionCs(classId, entry.subclass.name);
+      expect(subclassRules, classId).toContain("Úroveň");
+      for (const english of sourceNames) {
+        count++;
+        const cs = genreFeatureCs(classId, english);
+        expect(cs?.name, `${classId} / ${english}`).toBeTruthy();
+        expect(rules, `${classId} / ${english}`).toContain(cs?.description);
+        expect(cs?.description, `${classId} / ${english}`).toBeTruthy();
+        expect(cs?.name, `${classId} / ${english}`).not.toBe(english);
+        expect(classFeatureName(classId, english, "cs")).toBe(cs?.name);
+        expect(classFeatureName(classId, english, "en")).toBe(english);
+        expect(describeFeature(classId, entry.subclass.name, english, "cs")).toBe(cs?.description);
+        expect(genreFeatureCs(classId, english)?.description).not.toMatch(/^(?:Bonus action|Reaction|When you|You can|Casts |1\/long rest)/);
+      }
+    }
+    expect(count).toBe(733);
+    expect(genreFeatureCs("grave_knight", "Deathly Pact Blade")?.name).toBe("Čepel smrtelné úmluvy");
+    expect(genreFeatureCs("grave_knight", "Grave Grip")?.description).toContain("15 stop");
+    expect(genreSubclassNameCs("grave_knight", "Court of the Wilted Rose")).toBe("Dvůr zvadlé růže");
+    expect(genreFeatureCs("unknown_homebrew", "Rage")).toBeNull();
+  });
+
   it("translates names and descriptions for all 36 original genre classes", () => {
     expect(Object.keys(GENRE_CLASS_CS)).toHaveLength(36);
     const grave = {
@@ -90,6 +156,8 @@ describe("Czech localization", () => {
     expect(contentName("classes", grave.name, "cs")).toBe("Hrobový rytíř");
     const czech = classInfoText(grave, (key) => translate("cs", key), "cs");
     expect(czech).toContain("Rytíř přísahající moci");
+    expect(czech).toContain("Čepel smrtelné úmluvy");
+    expect(czech).toContain("Dvůr zvadlé růže");
     expect(czech).not.toContain(grave.blurb);
     expect(classInfoText(grave, (key) => translate("en", key), "en")).toBe(grave.blurb);
     for (const [id, item] of Object.entries(GENRE_CLASS_CS)) {
