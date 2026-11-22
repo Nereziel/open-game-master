@@ -436,7 +436,7 @@ export function FeatureChips({
         icon: { kind: "feature" as const, key: feature.name, family: `class-${classId.toLowerCase()}` },
         note: feature.source === "story" ? t("(story)") : undefined,
         meta: feature.level ? t("Level {level}", { level: feature.level }) : undefined,
-        text: describeFeature(classId, subclass ?? "", feature.name, locale) ?? undefined,
+        text: describeFeature(feature.classId ?? classId, subclass ?? "", feature.name, locale) ?? undefined,
         reference: backgroundFeatureReference(feature, background, classId, subclass ?? "") ?? undefined,
       }))}
     />
