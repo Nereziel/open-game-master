@@ -22,7 +22,7 @@ import type {
 import { textKey } from "@/lib/language/text-logic";
 import { CZECH_BUILDER_CLASS_RULES } from "./classRulesCs";
 import { genreClassCs } from "@/lib/classes/genre-class-cs";
-import { genreSubclassDescriptionCs } from "@/lib/classes/feature-help-cs";
+import { genreClassRulesCs, genreSubclassDescriptionCs } from "@/lib/classes/feature-help-cs";
 
 export const ALIGNMENTS = ["LG", "NG", "CG", "LN", "N", "CN", "LE", "NE", "CE"];
 
@@ -184,7 +184,8 @@ export function classInfoText(entry: { id?: string; packBlurb?: string; blurb?: 
   const czechRules = locale === "cs" && entry.id && !entry.packBlurb
     ? CZECH_BUILDER_CLASS_RULES[entry.id]
     : undefined;
-  const parts = [blurb, czechRules ?? entry.desc].filter(Boolean);
+  const genreRules = genre && entry.id ? genreClassRulesCs(entry.id) : null;
+  const parts = [blurb, czechRules ?? genreRules ?? entry.desc].filter(Boolean);
   return parts.length ? parts.join("\n\n") : undefined;
 }
 
