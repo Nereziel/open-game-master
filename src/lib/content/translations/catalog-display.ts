@@ -1,7 +1,7 @@
 // Server-side, display-only bridge for the catalog API.
 // The content row remains canonical English and keeps its own source/slug.
 import { rulebookPages } from "@/lib/rulebook/book";
-import { TranslationRegistry } from "./registry";
+import { TranslationRegistry, translationSourceId } from "./registry";
 import { srdTranslationPack } from "./srd-5.1/adapter";
 import { resolveSrdCatalogTranslation } from "./srd-5.1/resolve";
 import type { SrdCatalogRecord } from "./srd-5.1/crosswalk";
@@ -47,7 +47,7 @@ export function withCatalogDisplay<T extends CatalogRow>(
   row: T,
   locale: "cs" | "en" | "fr",
 ): T & { display?: CatalogDisplay } {
-  if (locale !== "cs" || !SUPPORTED.has(kind)) return row;
+  if (locale !== "cs" || !SUPPORTED.has(kind) || translationSourceId(row) !== "srd-5.1") return row;
   const sourceRow: SrdCatalogRecord = {
     kind: kind as SrdCatalogRecord["kind"],
     source: row.source,
