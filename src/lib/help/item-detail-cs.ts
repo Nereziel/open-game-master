@@ -1,3 +1,4 @@
+import { displayDiceNotation } from "@/lib/language/dice-notation";
 // Display-only Czech labels for the item details modal. Keep source data,
 // stored inventory names, numerical mechanics and non-Czech locales intact.
 import { translate, type Locale } from "@/lib/i18n/translate";
@@ -98,14 +99,14 @@ export function itemDetailCs(value: string | null | undefined, locale: Locale): 
 export function itemDescriptionCs(name: string, description: string | null, locale: Locale, slug?: string): string | null {
   if (locale !== "cs") return description;
   const canonical = canonicalMagicItemDescriptionCs(name, slug) ?? canonicalGearDescriptionCs(name);
-  if (!description) return canonical;
+  if (!description) return canonical ? displayDiceNotation(canonical) : null;
   // Existing Czech text (including manually authored content) takes priority.
   // English pack descriptions can be a short fragment without verbs, so
   // detecting just a few English keywords would leave many untranslated.
   const czechText = /[áčďéěíňóřšťúůýž]/i.test(description)
     || /\b(je|jsou|jako|nebo|bez|kniha|zbroj|stity|mece)\b/i.test(description);
-  if (czechText) return description;
-  return canonical ?? itemDetailCs(description, locale);
+  if (czechText) return displayDiceNotation(description);
+  return displayDiceNotation(canonical ?? itemDetailCs(description, locale));
 }
 
 export function itemWeightCs(value: string | null, locale: Locale): string | null {

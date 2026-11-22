@@ -31,7 +31,7 @@ describe("Czech item details", () => {
     expect(itemDescriptionCs("Book", "A book can contain poems or histories.", "cs"))
       .toContain("Kniha může obsahovat");
     expect(itemDescriptionCs("Longsword", "This melee weapon is versatile.", "cs"))
-      .toContain("1k8");
+      .toContain("1d8");
     expect(itemDescriptionCs("Shield", "A shield is carried in one hand.", "cs"))
       .toContain("OČ");
     expect(itemDescriptionCs("Book", "A book can contain poems or histories.", "en"))

@@ -1,3 +1,5 @@
+import { displayDiceNotation } from "@/lib/language/dice-notation";
+
 // The content pack's descriptions are markdown-ish and come from five
 // sources that each write it a little differently: "***Trait.***" and
 // "**_Trait._**" for a bold lead-in, headings that start a block with no
@@ -14,7 +16,7 @@ export type RulesBlock =
   | { kind: "table"; rows: string[] };
 
 export function normalizeRulesText(text: string): string {
-  return text
+  return displayDiceNotation(text)
     .replace(/\r\n?/g, "\n")
     .replace(/\\n/g, "\n")
     .replace(/\[No description provided\]\.?/gi, "")
