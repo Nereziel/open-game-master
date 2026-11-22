@@ -143,7 +143,7 @@ export default function MultiContentPicker({
                       ? t("already added")
                       : entry.source === "homebrew"
                         ? t("homebrew")
-                        : [entry.display?.meta ?? (kind === "spells" ? entry.display?.school : entry.display?.rarity) ?? renderMeta?.(entry), entry.document].filter(Boolean).join(" · ")}
+                        : [renderMeta?.(entry), entry.display?.meta ?? (kind === "spells" ? entry.display?.school : entry.display?.rarity), entry.document].filter(Boolean).join(" · ")}
                   </span>
                 </button>
                 <InfoButton
