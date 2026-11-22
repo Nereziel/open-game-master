@@ -5,7 +5,7 @@ import { mathPartLabel, formatMathParts } from "../srd";
 import { APPEARANCE_THEMES } from "../appearance-themes";
 import { SHELF_TOUR, HUB_TOUR, SYSTEM_TOURS } from "../tours/workshop";
 import { PLAYER_TOUR, FIRST_TURN_TOUR, DM_TOUR } from "../tours/table";
-import { CZECH_WORKSHOP_GUIDE_SUMMARIES, WORKSHOP_GUIDES } from "../tours/workshop-guide";
+import { CZECH_WORKSHOP_GUIDE_DETAILS, CZECH_WORKSHOP_GUIDE_SUMMARIES, WORKSHOP_GUIDES } from "../tours/workshop-guide";
 import catalog from "./cs.json";
 import { installCatalog, translate, translatePlural } from "./translate";
 import { localeFromAcceptLanguage, localeOfServerLanguage, parseLocale, resolveLocale } from "./locale";
@@ -420,7 +420,7 @@ describe("Czech localization", () => {
     expect(translate("cs", "The workshop shelf")).toBe("Polička dílny");
   });
 
-  it("provides Czech titles and summaries for every workshop help tool", () => {
+  it("provides complete Czech help for all workshop tools", () => {
     expect(WORKSHOP_GUIDES).toHaveLength(15);
     expect(Object.keys(CZECH_WORKSHOP_GUIDE_SUMMARIES)).toHaveLength(WORKSHOP_GUIDES.length);
     for (const guide of WORKSHOP_GUIDES) {
@@ -429,6 +429,20 @@ describe("Czech localization", () => {
       expect(localized.title.trim().length).toBeGreaterThan(2);
       expect(localized.purpose.trim().length).toBeGreaterThan(20);
       expect(localized.purpose, `Untranslated workshop purpose: ${guide.id}`).not.toBe(guide.purpose);
+      const details = CZECH_WORKSHOP_GUIDE_DETAILS[guide.id];
+      expect(details, `Missing Czech workshop steps: ${guide.id}`).toBeDefined();
+      expect(details.steps).toHaveLength(guide.steps.length);
+      expect(details.tips).toHaveLength(guide.tips.length);
+      expect(details.atTable.trim().length).toBeGreaterThan(30);
+      expect(details.atTable, `Untranslated workshop table usage: ${guide.id}`).not.toBe(guide.atTable);
+      for (const [index, step] of details.steps.entries()) {
+        expect(step.trim().length, `${guide.id} step ${index}`).toBeGreaterThan(15);
+        expect(step, `Untranslated workshop step: ${guide.id} ${index}`).not.toBe(guide.steps[index]);
+      }
+      for (const [index, tip] of details.tips.entries()) {
+        expect(tip.trim().length, `${guide.id} tip ${index}`).toBeGreaterThan(15);
+        expect(tip, `Untranslated workshop tip: ${guide.id} ${index}`).not.toBe(guide.tips[index]);
+      }
     }
     expect(CZECH_WORKSHOP_GUIDE_SUMMARIES.storyboard.purpose).toContain("Plán dobrodružství");
   });

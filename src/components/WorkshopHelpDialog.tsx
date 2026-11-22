@@ -13,7 +13,7 @@ import {
 import { cn } from "@/lib/cn";
 import { ui } from "@/lib/ui";
 import { useLocale, useT } from "@/lib/locale";
-import { CZECH_WORKSHOP_GUIDE_SUMMARIES, WORKSHOP_GUIDES } from "@/lib/tours/workshop-guide";
+import { CZECH_WORKSHOP_GUIDE_DETAILS, CZECH_WORKSHOP_GUIDE_SUMMARIES, WORKSHOP_GUIDES } from "@/lib/tours/workshop-guide";
 import { Dialog } from "@/components/ui/Dialog";
 import { Section } from "@/components/HelpDialog";
 
@@ -88,11 +88,12 @@ export function WorkshopHelpDialog({
         <div className="space-y-1.5">
           {guides.map((guide) => {
             const cs = czech ? CZECH_WORKSHOP_GUIDE_SUMMARIES[guide.id] : undefined;
+            const csDetails = czech ? CZECH_WORKSHOP_GUIDE_DETAILS[guide.id] : undefined;
             const title = cs?.title ?? (french && guide.titleFr ? guide.titleFr : guide.title);
             const purpose = cs?.purpose ?? (french && guide.purposeFr ? guide.purposeFr : guide.purpose);
-            const steps = french && guide.stepsFr ? guide.stepsFr : guide.steps;
-            const atTable = french && guide.atTableFr ? guide.atTableFr : guide.atTable;
-            const tips = french && guide.tipsFr ? guide.tipsFr : guide.tips;
+            const steps = csDetails?.steps ?? (french && guide.stepsFr ? guide.stepsFr : guide.steps);
+            const atTable = csDetails?.atTable ?? (french && guide.atTableFr ? guide.atTableFr : guide.atTable);
+            const tips = csDetails?.tips ?? (french && guide.tipsFr ? guide.tipsFr : guide.tips);
             return (
             <details
               key={guide.id}
