@@ -23,6 +23,21 @@ const TOME_SPELLS: Readonly<Record<string, string>> = {
   "Convey Inner Peace": "**Kouzlo 5. úrovně, proměny**\n**Vyvolání:** 1 akce\n**Dosah:** 30 stop\n**Složky:** V, P, S\n**Trvání:** 24 hodin\n\nSobě a až pěti ochotným tvorům v dosahu propůjčíš schopnost vstoupit do meditačního transu podobného elfímu. Každý ovlivněný tvor může jednou před skončením kouzla dokončit dlouhý odpočinek během 4 hodin meditace, stejně jako elf v transu. Po takovém odpočinku získá stejné výhody, jaké by běžně získal po 8 hodinách odpočinku."
 };
 
+const DEEP_SPELLS: Readonly<Record<string, string>> = {
+  "Analyze Device": "**Kouzlo 1. úrovně, věštění**\n**Vyvolání:** 1 hodina\n**Dosah:** Dotyk\n**Složky:** V, P, S (sada hodinářských nástrojů)\n**Trvání:** Ihned\n\nOdhalíš veškeré mechanické vlastnosti, součásti a funkce jednoho konstruktu nebo hodinového zařízení, včetně vhodných způsobů jejich zapnutí a vypnutí, pokud takové způsoby existují.",
+  "Auspicious Warning": "**Kouzlo 1. úrovně, očarování**\n**Vyvolání:** 1 reakce, kterou provedeš, když spojenec hodí na útok, ověření vlastnosti nebo záchranný hod\n**Dosah:** 30 stop\n**Složky:** V\n**Trvání:** Ihned\n\nV pravý okamžik varuješ tvora v dosahu. Cíl hodí k4 a výsledek přičte k hodu na útok, ověření vlastnosti nebo záchrannému hodu, který právě provedl. Úspěch či neúspěch se určí podle nového součtu.",
+  "Avoid Grievous Injury": "**Kouzlo 1. úrovně, věštění**\n**Vyvolání:** 1 reakce, kterou provedeš, když tě zasáhne kritický zásah\n**Dosah:** Sesilatel\n**Složky:** V, P\n**Trvání:** Ihned\n\nSešleš toto kouzlo, když tě protivník kriticky zasáhne, ale ještě před hodem kostkami zranění. Kritický zásah proti tobě se změní v běžný zásah.",
+  "Anticipate Arcana": "**Kouzlo 3. úrovně, věštění**\n**Vyvolání:** 1 reakce, kterou provedeš, když nepřítel, kterého vidíš, sesílá kouzlo\n**Dosah:** Sesilatel\n**Složky:** V, P\n**Trvání:** Ihned\n\nDíky krátkému záblesku předvídavosti se dokážeš připravit na magický útok. Od okamžiku seslání do začátku svého příštího tahu máš výhodu k záchranným hodům proti kouzlům a jiným magickým účinkům.",
+  "Anticipate Weakness": "**Kouzlo 1. úrovně, věštění**\n**Vyvolání:** 1 bonusová akce\n**Dosah:** Sesilatel\n**Složky:** V, P\n**Trvání:** Ihned\n\nKrátce nahlédneš do budoucnosti a poznáš, kde se v obraně protivníka otevře slabina. Po seslání tohoto kouzla máš výhodu ke všem hodům na útok až do konce svého tahu.",
+  "Wind Lash": "**Trik, zaklínání**\n**Vyvolání:** 1 akce\n**Dosah:** 20 stop\n**Složky:** V, P\n**Trvání:** Ihned\n\nRychlým gestem vytvoříš pevný bič z kvílejícího větru. Proveď kouzelný útok na blízko proti cíli. Při zásahu cíl utrpí 1k8 sečného zranění a je odstrčen o 5 stop od tebe.\n\n**Na vyšších úrovních.** Zranění kouzla se zvýší o 1k8 na 5. úrovni (2k8), 11. úrovni (3k8) a 17. úrovni (4k8).",
+  "Word of Misfortune": "**Trik, očarování**\n**Vyvolání:** 1 akce\n**Dosah:** 60 stop\n**Složky:** V, P\n**Trvání:** Soustředění, až 1 minuta\n\nZasyčíš slovo Řeči prázdnoty. Vyber tvora, kterého vidíš v dosahu. Až tento tvor během trvání kouzla příště provede záchranný hod, musí hodit k4 a výsledek odečíst od celkového výsledku záchranného hodu. Potom kouzlo skončí.",
+  "Crushing Curse": "**Trik, očarování**\n**Vyvolání:** 1 akce\n**Dosah:** 60 stop\n**Složky:** V, P\n**Trvání:** Ihned\n\nProneseš slovo Řeči prázdnoty. Vyber tvora, kterého vidíš v dosahu. Pokud tě cíl slyší, musí uspět v záchranném hodu na Moudrost, jinak utrpí 1k6 psychického zranění a na jednu minutu ohluchne. I během tohoto ohluchnutí však stále slyší Řeč prázdnoty. Takto ohluchlý tvor může na konci každého svého tahu záchranný hod opakovat; při úspěchu účinek skončí.\n\n**Na vyšších úrovních.** Zranění se zvýší o 1k6 na 5. úrovni (2k6), 11. úrovni (3k6) a 17. úrovni (4k6).",
+  "Pummelstone": "**Trik, vyvolávání**\n**Vyvolání:** 1 akce\n**Dosah:** 60 stop\n**Složky:** V, P, S (kamínek)\n**Trvání:** Ihned\n\nVytvoříš kámen o velikosti pěsti a vrhneš jej na cíl. Proveď kouzelný útok na dálku. Při zásahu cíl utrpí 1k6 drtivého zranění. Až během svého příštího tahu provede hod na útok nebo ověření vlastnosti, musí hodit k4 a jeho výsledek odečíst od daného hodu.\n\n**Na vyšších úrovních.** Zranění se zvýší o 1k6 na 5. úrovni (2k6), 11. úrovni (3k6) a 17. úrovni (4k6).",
+  "Destructive Resonance": "**Kouzlo 2. úrovně, očarování**\n**Vyvolání:** 1 akce\n**Dosah:** Sesilatel (kužel 15 stop)\n**Složky:** V, P\n**Trvání:** Ihned\n\nVykřikneš ničivou posloupnost slov Řeči prázdnoty, která zasáhne mysl tvorů před tebou. Každý tvor v kuželu o délce 15 stop, který tě slyší, utrpí 4k6 psychického zranění; při úspěšném záchranném hodu na Moudrost utrpí polovinu. Tvor zraněný tímto kouzlem nemůže do začátku svého příštího tahu provádět reakce.\n\n**Na vyšších úrovních.** Pokud použiješ pozici kouzla 3. nebo vyšší úrovně, zranění se zvýší o 1k6 za každou úroveň pozice nad druhou.",
+  "Ally Aegis": "**Kouzlo 6. úrovně, ochrana**\n**Vyvolání:** 1 reakce, kterou provedeš, když je spojenec zasažen útokem nebo se stane cílem kouzla způsobujícího jiné než psychické zranění\n**Dosah:** 60 stop\n**Složky:** V, P\n**Trvání:** 1 kolo\n\nKdyž vidíš spojence v dosahu v bezprostředním nebezpečí, ochráníš ho štítem magické síly. Do začátku svého příštího tahu má spojenec bonus +5 ke třídě zbroje a imunitu proti silovému zranění. Pokud musí provést záchranný hod proti nepřátelskému kouzlu způsobujícímu zranění, utrpí při neúspěchu pouze polovinu zranění a při úspěchu žádné. Proti psychickému zranění však toto kouzlo neposkytuje žádnou ochranu.\n\n**Na vyšších úrovních.** Při seslání s použitím pozice 7. nebo vyšší úrovně můžeš ovlivnit jednoho dalšího spojence za každou úroveň pozice nad šestou.",
+  "Accelerate": "**Kouzlo 3. úrovně, proměny**\n**Vyvolání:** 1 akce\n**Dosah:** Dotyk\n**Složky:** V, P, S (dětská káča)\n**Trvání:** Soustředění, až 1 minuta\n\nVyber až tři ochotné tvory v dosahu; můžeš mezi ně zahrnout sebe. Po dobu trvání kouzla se rychlost chůze každého cíle zdvojnásobí. Každý z nich může také v každém svém tahu provést bonusovou akcí Běh a má výhodu k záchranným hodům na Obratnost.\n\n**Na vyšších úrovních.** Pokud použiješ pozici kouzla 4. nebo vyšší úrovně, můžeš ovlivnit jednoho dalšího tvora za každou úroveň pozice nad třetí."
+};
+
 const VAULT_ITEMS: Readonly<Record<string, string>> = {
   "Candied Axe": "Tato válečná sekera má zlatavou hlavici z krystalizovaného medu a dřevěnou násadu zdobenou řezbami včel. Při útocích a hodech na zranění touto magickou zbraní získáváš bonus +2.",
   "Corpsehunter's Medallion": "Tento amulet je vyroben z lebek hřbitovních krys nebo z vyřezávaných kostí mrtvých. Dokud ho nosíš, máš odolnost proti nekrotickému zranění.",
@@ -44,6 +59,9 @@ const VAULT_ITEMS: Readonly<Record<string, string>> = {
 const TOME_SPELL_INDEX = Object.fromEntries(
   Object.entries(TOME_SPELLS).map(([name, text]) => [textKey(name), text]),
 );
+const DEEP_SPELL_INDEX = Object.fromEntries(
+  Object.entries(DEEP_SPELLS).map(([name, text]) => [textKey(name), text]),
+);
 const VAULT_ITEM_INDEX = Object.fromEntries(
   Object.entries(VAULT_ITEMS).map(([name, text]) => [textKey(name), text]),
 );
@@ -56,6 +74,8 @@ export function thirdPartyFullRulesCs(
   const key = textKey(reference.name ?? "");
   if (reference.kind === "spells" && reference.documentSlug === "toh")
     return TOME_SPELL_INDEX[key] ?? null;
+  if (reference.kind === "spells" && (reference.documentSlug === "dmag" || reference.documentSlug === "deepm"))
+    return DEEP_SPELL_INDEX[key] ?? null;
   if (reference.kind === "items" && reference.documentSlug === "vom")
     return VAULT_ITEM_INDEX[key] ?? null;
   return null;
@@ -63,5 +83,6 @@ export function thirdPartyFullRulesCs(
 
 export const THIRD_PARTY_FULL_RULES_CS_COUNTS = {
   tomeSpells: Object.keys(TOME_SPELLS).length,
+  deepSpells: Object.keys(DEEP_SPELLS).length,
   vaultItems: Object.keys(VAULT_ITEMS).length,
 } as const;
