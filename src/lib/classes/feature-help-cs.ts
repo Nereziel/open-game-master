@@ -1,6 +1,7 @@
 // Complete display-only Czech text for all 733 features of the 36 original
 // genre classes. Source descriptions/IDs are English for game logic and the DM.
 import { FEATURES_CS_CYBERPUNK } from "./feature-help-cs-cyberpunk";
+import genreFeatureNames from "./feature-names.json";
 import { FEATURES_CS_DARK_FANTASY } from "./feature-help-cs-dark-fantasy";
 import { FEATURES_CS_HORROR } from "./feature-help-cs-horror";
 import { FEATURES_CS_MYSTERY } from "./feature-help-cs-mystery";
@@ -69,3 +70,27 @@ export const GENRE_SUBCLASS_NAMES_CS: Readonly<Record<string, string>> = {
   aether_channeler: "Bouřné dynamo",
   steam_knight: "Paroplátový předvoj",
 };
+
+const GENRE_SOURCE_SUBCLASSES = (
+  genreFeatureNames as { classes: Record<string, { subclass: { name: string; levels: Record<string, string[]> } }> }
+).classes;
+
+export function genreSubclassNameCs(classId: string, englishName: string): string | null {
+  const id = classId.trim().toLowerCase().replace(/-/g, "_");
+  const source = GENRE_SOURCE_SUBCLASSES[id]?.subclass;
+  return source?.name === englishName ? GENRE_SUBCLASS_NAMES_CS[id] ?? null : null;
+}
+
+export function genreSubclassDescriptionCs(classId: string, englishName: string): string | null {
+  const id = classId.trim().toLowerCase().replace(/-/g, "_");
+  const source = GENRE_SOURCE_SUBCLASSES[id]?.subclass;
+  if (!source || source.name !== englishName) return null;
+  const sections = Object.entries(source.levels).map(([level, names]) => {
+    const lines = names.map((name) => {
+      const feature = genreFeatureCs(id, name);
+      return feature ? `- **${feature.name}:** ${feature.description}` : null;
+    }).filter(Boolean);
+    return lines.length ? `**Úroveň ${level}**\n\n${lines.join("\n")}` : null;
+  }).filter(Boolean);
+  return sections.join("\n\n") || null;
+}
