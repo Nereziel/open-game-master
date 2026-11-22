@@ -1,4 +1,6 @@
 import type { Locale } from "@/lib/i18n/translate";
+import { abilityShortLabel } from "@/lib/srd/ability-short-label";
+import { SRD_SKILLS, skillLabel } from "@/lib/srd";
 
 // PDF field captions are not part of the DOM, so they must be localized when
 // drawing each page. English remains the source and default for existing users.
@@ -54,32 +56,20 @@ const LABELS: Record<string, { cs: string; fr: string }> = {
   "Prepared after the next long rest": { cs: "Připraví se po dalším dlouhém odpočinku", fr: "Préparés après le prochain repos long" },
   "Spellbook": { cs: "Kniha kouzel", fr: "Grimoire" },
   "Spells": { cs: "Kouzla", fr: "Sorts" },
-  "STR": { cs: "SÍL", fr: "FOR" },
-  "DEX": { cs: "OBR", fr: "DEX" },
-  "CON": { cs: "ODL", fr: "CON" },
-  "INT": { cs: "INT", fr: "INT" },
-  "WIS": { cs: "MOU", fr: "SAG" },
-  "CHA": { cs: "CHA", fr: "CHA" },
-  "Acrobatics": { cs: "Akrobacie", fr: "Acrobaties" },
-  "Animal Handling": { cs: "Zacházení se zvířaty", fr: "Dressage" },
-  "Arcana": { cs: "Arkána", fr: "Arcanes" },
-  "Athletics": { cs: "Atletika", fr: "Athlétisme" },
-  "Deception": { cs: "Klamání", fr: "Tromperie" },
-  "History": { cs: "Historie", fr: "Histoire" },
-  "Insight": { cs: "Vhled", fr: "Intuition" },
-  "Intimidation": { cs: "Zastrašování", fr: "Intimidation" },
-  "Investigation": { cs: "Pátrání", fr: "Investigation" },
-  "Medicine": { cs: "Lékařství", fr: "Médecine" },
-  "Nature": { cs: "Příroda", fr: "Nature" },
-  "Perception": { cs: "Vnímání", fr: "Perception" },
-  "Performance": { cs: "Vystupování", fr: "Représentation" },
-  "Persuasion": { cs: "Přesvědčování", fr: "Persuasion" },
-  "Religion": { cs: "Náboženství", fr: "Religion" },
-  "Sleight of Hand": { cs: "Obratnost rukou", fr: "Escamotage" },
-  "Stealth": { cs: "Nenápadnost", fr: "Discrétion" },
-  "Survival": { cs: "Přežití", fr: "Survie" },
+
 };
 
+// All ability and skill labels are shared with the character builder and
+// campaign sheet. Keep the PDF-only captions in LABELS above; a second skill
+// glossary would otherwise drift (e.g. Magie/Arkána or MDR/MOU).
+const SKILL_IDS_BY_ENGLISH = new Map(SRD_SKILLS.map((skill) => [skill.name, skill.id]));
+
 export function pdfLabel(locale: Locale, english: string): string {
-  return locale === "en" ? english : LABELS[english]?.[locale] ?? english;
+  if (locale === "en") return english;
+  if (/^(STR|DEX|CON|INT|WIS|CHA)$/.test(english)) {
+    return abilityShortLabel(english, locale);
+  }
+  const skillId = SKILL_IDS_BY_ENGLISH.get(english);
+  if (skillId) return skillLabel(skillId, locale);
+  return LABELS[english]?.[locale] ?? english;
 }
