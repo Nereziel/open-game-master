@@ -14,6 +14,7 @@ import { backgroundFeatureReference, contentSlug, describeFeature } from "@/lib/
 import { useClassFeatureText } from "@/lib/classes/use-feature-text";
 import { ABILITIES } from "@/lib/schemas/sheet";
 import { formatModifier, skillLabel, SRD_SKILLS } from "@/lib/srd";
+import { abilityShortLabel } from "@/lib/srd/ability-short-label";
 import { useLocale, useT } from "@/lib/locale";
 import { wearingIsExplicit } from "@/lib/srd/armor";
 import { isTack, onMount } from "@/lib/srd/tack";
@@ -39,9 +40,11 @@ type Ability = (typeof ABILITIES)[number];
 
 // The abilities' names as message keys (sheet.ability.*), read with the
 // component's own translator; the tile's eyebrow keeps the short code.
-export const CS_ABILITY_ABBR: Record<Ability, string> = {
-  str: "SÍL", dex: "OBR", con: "ODL", int: "INT", wis: "MDR", cha: "CHA",
-};
+// Kept as a public alias for existing sheet consumers; the labels themselves
+// come only from the shared rules helper (used by editor, sheet and PDF).
+export const CS_ABILITY_ABBR: Record<Ability, string> = Object.fromEntries(
+  ABILITIES.map((ability) => [ability, abilityShortLabel(ability, "cs")]),
+) as Record<Ability, string>;
 
 const ABILITY_KEYS: Record<Ability, string> = {
   str: "Strength",
@@ -142,7 +145,7 @@ export function AbilityTiles({
             title={t(ABILITY_KEYS[ability])}
           >
             <GameIcon icon={{ kind: "glyph", key: `ability-${ability}` }} size="size-9" className="mx-auto" />
-            <p className="eyebrow mt-1 text-[10px] text-stone-400">{locale === "cs" ? CS_ABILITY_ABBR[ability] : ability.toUpperCase()}</p>
+            <p className="eyebrow mt-1 text-[10px] text-stone-400">{abilityShortLabel(ability, locale)}</p>
             <p className="sheet-ability-mod" title={locale === "cs" ? `Bonus z ${({ str: "Síly", dex: "Obratnosti", con: "Odolnosti", int: "Inteligence", wis: "Moudrosti", cha: "Charismatu" } as Record<Ability, string>)[ability]}` : t("Ability modifier")}>{formatModifier(mods[ability])}</p>
             <p className="sheet-ability-score">{abilities[ability]}</p>
             {saves ? (
