@@ -231,7 +231,7 @@ export const FEATURES_CS_STEAMPUNK: Readonly<Record<string,Record<string,{name:s
       "description": "Jednou za dlouhý odpočinek uvaříš vyšší elixír, jehož vypití dá na 1 minutu výhodu ke všemu."
     },
     "Alkahest": {
-      "name": "Alkahest",
+      "name": "Univerzální rozpouštědlo",
       "description": "Tvé kyselinové receptury ignorují odolnost a rozpouštějí nemagické překážky do tloušťky jedné stopy."
     },
     "The Great Work": {
