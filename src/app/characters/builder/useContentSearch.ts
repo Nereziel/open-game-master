@@ -4,6 +4,10 @@ import { useEffect, useRef, useState } from "react";
 import { scopedParams, useContentCampaign } from "@/lib/content-scope";
 import { uniqueByName } from "./pickerRows";
 import { uniquePlayableFeatRows } from "./feat-picker-logic";
+import { czechPickerQueries } from "./czech-picker-search";
+import { csTables } from "@/lib/i18n/cs-tables";
+import { useLocale } from "@/lib/locale";
+import { searchKey } from "@/lib/language/text-logic";
 
 export type PickerEntry = {
   slug: string;
@@ -60,6 +64,7 @@ export type PickerEntry = {
 // says so instead of "nothing matched".
 export function useContentSearch(kind: string, extraParams: Record<string, string> = {}) {
   const campaignId = useContentCampaign();
+  const locale = useLocale();
   const [query, setQuery] = useState("");
   const [results, setResults] = useState<PickerEntry[]>([]);
   const [open, setOpen] = useState(false);
@@ -97,7 +102,29 @@ export function useContentSearch(kind: string, extraParams: Record<string, strin
             setFailed(false);
             setPackMissing(data.packInstalled === false);
             setUnadmitted(Array.isArray(data.unadmitted) ? data.unadmitted : []);
-            const byName = uniqueByName(data.results ?? []);
+            let rows = data.results ?? [];
+            // API searches canonical English names. Only if that search
+            // returns no rows, ask for the known official English IDs whose
+            // Czech labels match the typed text (diacritics optional).
+            if (!rows.length && trimmed && locale === "cs") {
+              const lookup = czechPickerQueries(kind, trimmed, csTables()?.names ?? {})
+                .filter((english) => searchKey(english) !== searchKey(trimmed));
+              const localized = await Promise.all(lookup.map(async (english) => {
+                const translatedParams = new URLSearchParams(params);
+                translatedParams.set("q", english);
+                try {
+                  const response = await fetch(`/api/content/${kind}?${translatedParams}`, { signal: controller.signal });
+                  return response.ok
+                    ? ((await response.json()) as { results?: PickerEntry[] }).results ?? []
+                    : [];
+                } catch {
+                  return [];
+                }
+              }));
+              rows = [...rows, ...localized.flat()];
+            }
+            if (controller.signal.aborted) return;
+            const byName = uniqueByName(rows);
             setResults(kind === "feats" ? uniquePlayableFeatRows(byName) : byName);
             if (trimmed) {
               setOpen(true);
@@ -130,7 +157,7 @@ export function useContentSearch(kind: string, extraParams: Record<string, strin
       }
     };
     // eslint-disable-next-line react-hooks/exhaustive-deps
-  }, [query, kind, campaignId, JSON.stringify(extraParams)]);
+  }, [query, kind, campaignId, locale, JSON.stringify(extraParams)]);
 
   const unavailable = failed || (packMissing && !results.length && !query.trim());
   return { query, setQuery, results, setResults, open, setOpen, loading, unavailable, packMissing, failed, unadmitted };
