@@ -26,8 +26,10 @@ Tento dokument popisuje **společné zdroje překladů**. Překlady se vytváře
 - `npm run i18n:cs:check` — validace překladů a placeholderů.
 - `npm run i18n:cs:ui-report` — audit **literal** volání `t("...")` a `tp("...", "...")` v `.ts` i `.tsx` souborech kampaní, postav a sdílených komponent (nikoli v `*.test.ts`, `*.spec.ts`, stories a složkách s fixtures); vypíše chybějící klíče s cestou a číslem řádku. Funguje na Windows i Unixu.
 - `node scripts/audit-cs-ui-keys.mjs --json` — strojově čitelný úplný report: chybějící klíče, duplicitní JSON klíče a **podezřelé české literály v JSX** (`title`, `placeholder`, `aria-label`, krátké texty apod.). Podezřelé JSX literály jsou **pouze kandidáti k ručnímu posouzení**: mohou zahrnovat záměrnou prózu a pravidlový obsah, nenahrazovat je automaticky.
-- `npm run i18n:cs:ui-check` — stejný audit v přísném režimu s nenulovým návratovým kódem při chybějících překladech nebo duplicitních katalogových klíčích. **Nezapínat plošně do CI bez vyřešení počátečního nálezu**; kontrola zatím nepostihuje dynamické klíče a kandidáti z JSX neovlivňují návratový kód.
+- `npm run i18n:cs:ui-check` — přísná kontrola chybějících literal UI překladů a duplicitních katalogových klíčů, zapnutá v lokalizačním PR CI po doplnění počátečních 49 unikátních klíčů. Kandidáti na české JSX literály jsou stále informativní a dynamické klíče musí projít ručním auditem.
 - `npm run i18n:cs:ui-test` — samostatný test analyzátoru volání pomocí TypeScript AST.
 - `npm test -- src/lib/i18n/czech-catalog-coverage.test.ts` — regresní kontrola úplnosti katalogu.
+
+Po doplnění chybějících UI klíčů se při auditu očekává **0 chybějících překladů a 0 duplicitních klíčů**. Oprávněný český nápis „Komunitní český překlad na d20.cz“ v JSX je pouze informativní nález. U překladů počtů se vždy používá český plurál (1, 2–4, 5+), například „úroveň / úrovně / úrovní“.
 
 Po změně katalogu doporučujeme zkontrolovat editor hrdiny, deník postavy, dílnu a PDF. Další etapy: [issue #100](https://github.com/Nereziel/open-game-master/issues/100).
