@@ -13,6 +13,15 @@ type Catalog = {
 // Small patches for missing Czech UI keys while the large generated catalog
 // remains unchanged. Only apply when the catalog would display English.
 const CZECH_LABEL_FALLBACKS: Record<string, string> = {
+  "Has a hidden truth": "Obsahuje skrytou pravdu",
+  "Slay every dragon it meets": "Zabít každého draka, kterého potká",
+  "Arcane Strike": "Magický úder",
+  "Once a turn, a weapon hit deals an extra 1d8 force damage.": "Jednou za tah způsobí zásah zbraní navíc 1k8 silového zranění.",
+  "diamonds worth 300 gp, which the spell consumes": "diamanty v hodnotě 300 zl, které kouzlo spotřebuje",
+  "The damage increases by 1d6 for each slot level above 1st.": "Za každou úroveň pozice nad 1. se zranění zvýší o 1k6.",
+  "Darkvision 60 ft": "Vidění ve tmě na 60 stop",
+  "A flooded crypt with two ways in": "Zatopená krypta se dvěma vstupy",
+  "The rolled map": "Náhodně vytvořená mapa",
   "A region": "Oblast",
   "Inside {name}": "Uvnitř: {name}",
   "this pin": "tohoto bodu",
