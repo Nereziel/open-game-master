@@ -1,6 +1,7 @@
 // Display-only Czech labels for the item details modal. Keep source data,
 // stored inventory names, numerical mechanics and non-Czech locales intact.
 import { translate, type Locale } from "@/lib/i18n/translate";
+import { canonicalGearDescriptionCs } from "@/lib/help/gear-description-cs";
 
 const LABELS: Readonly<Record<string, string>> = {
   "Weight": "Hmotnost", "Value": "Cena", "Damage": "Zranění",
@@ -91,26 +92,17 @@ export function itemDetailCs(value: string | null | undefined, locale: Locale): 
   return value;
 }
 
-// The bundled content pack can still supply English prose for ordinary SRD
-// equipment. Use original Czech descriptions of these canonical entries in
-// Czech UI only; do not change stored data or other locales. These are not
-// translations of homebrew item descriptions.
-const COMMON_SRD_DESCRIPTIONS_CS: Readonly<Record<string, string>> = {
-  "book": "Kniha může obsahovat básně, dějiny, náboženské texty, poznámky o určitém oboru nebo jiný psaný obsah. Její skutečné informace určuje Pán jeskyně.",
-  "longsword": "Dlouhý meč je vojenská zbraň na blízko. Způsobuje 1k8 sečného zranění, při držení oběma rukama 1k10. Má vlastnost jeden a půlruční.",
-  "shield": "Štít se drží v jedné ruce a při používání poskytuje bonus +2 k obrannému číslu (OČ). Současně lze využít bonus pouze jednoho štítu.",
-};
-
+// Prefer the full Czech rule text for canonical SRD gear. Descriptions from
+// third-party packs, homebrew, and other languages are never modified.
 export function itemDescriptionCs(name: string, description: string | null, locale: Locale): string | null {
   if (locale !== "cs") return description;
-  const canonical = name.toLowerCase().trim().replace(/\s*\+\d+$/, "");
-  if (!description) return COMMON_SRD_DESCRIPTIONS_CS[canonical] ?? null;
-  // Only replace text evidently supplied in English, not an existing Czech
-  // translation or a custom Czech description using the same item name.
-  if (!/\b(the|with|contains|can|weapon|shield|book|this|you|your)\b/i.test(description)) {
+  const canonical = canonicalGearDescriptionCs(name);
+  if (!description) return canonical;
+  // Existing Czech text (including manually authored content) takes priority.
+  if (!/\b(the|with|contains|can|weapon|shield|book|this|you|your|takes|requires|damage)\b/i.test(description)) {
     return description;
   }
-  return COMMON_SRD_DESCRIPTIONS_CS[canonical] ?? itemDetailCs(description, locale);
+  return canonical ?? itemDetailCs(description, locale);
 }
 
 export function itemWeightCs(value: string | null, locale: Locale): string | null {
