@@ -33,7 +33,7 @@ function FeatFields({ data, set }: { data: Data; set: (patch: Data) => void }) {
         label={t("prerequisite")}
         value={String(data.prerequisite ?? "")}
         onChange={(prerequisite) => set({ prerequisite })}
-        placeholder="Strength 13 or higher"
+        placeholder={t("Strength 13 or higher")}
         maxLength={200}
         hint={t("Leave empty for none. The builder shows it beside the feat.")}
         suggestions={PREREQUISITE_SUGGESTIONS}
