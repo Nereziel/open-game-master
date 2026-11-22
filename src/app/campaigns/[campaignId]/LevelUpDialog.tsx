@@ -34,7 +34,7 @@ import {
   XP_THRESHOLDS,
   abilityMod,
   findClass,
-  findSkill,
+  skillLabel,
   levelForXp,
 } from "@/lib/srd";
 import { asiLevelsFor } from "@/lib/srd/asi";
@@ -94,7 +94,8 @@ import FeatChoicesFields from "@/app/characters/builder/FeatChoicesFields";
 import { useArchetypeOptions, useWorldPack } from "@/app/characters/builder/useBuilderOptions";
 import { TableScopeNote } from "@/app/characters/builder/TableScopeNote";
 import type { AsiChoice, CharacterSheet } from "@/lib/schemas/sheet";
-import { textKey } from "@/lib/language/text-logic";
+import { searchKey, textKey } from "@/lib/language/text-logic";
+import { contentName, subclassName } from "@/lib/content/names";
 import { levelUpChangeOffers, type LevelUpChange } from "@/lib/srd/level-up-changes";
 import { sheetCantrips } from "@/lib/srd/owed-picks-logic";
 import { LevelUpChangePick } from "./LevelUpChangePick";
@@ -273,16 +274,16 @@ export function LevelUpDialog({
   const [otherOpen, setOtherOpen] = useState(false);
   const classGroups = useMemo(() => {
     const ids = genre ? settingClassIds(genre, (pack?.classes ?? []).map((entry) => entry.id)) : [];
-    const query = textKey(classQuery.trim());
+    const query = searchKey(classQuery.trim());
     const matching = query
-      ? newClassOptions.filter(({ option }) => textKey(option.name).includes(query))
+      ? newClassOptions.filter(({ option }) => searchKey(option.name).includes(query) || searchKey(contentName("classes", option.name, locale)).includes(query))
       : newClassOptions;
     const split = splitBySetting(
       matching.map((entry) => ({ ...entry, id: entry.option.id })),
       ids,
     );
     return { ...split, label: pack?.classes.length ? t("Callings of {pack}", { pack: pack.name, context: "table.levelup.packClasses" }) : t("Recommended for this setting"), query };
-  }, [genre, pack, classQuery, newClassOptions]);
+  }, [genre, pack, classQuery, newClassOptions, locale]);
   const classListId = useId();
 
   // What this host's code has (src/lib/capabilities.ts SERVER_FEATURES).
@@ -1001,7 +1002,7 @@ export function LevelUpDialog({
         hpGained: typeof data?.hpGained === "number" ? data.hpGained : 0,
         rolled: typeof data?.rolled?.hp === "number" ? data.rolled.hp : null,
         die: hitDie,
-        classLine: isMulticlassPath ? ` (${chosenKlass?.name ?? classChoice} ${classLevelAfter})` : "",
+        classLine: isMulticlassPath ? ` (${contentName("classes", chosenKlass?.name ?? classChoice, locale)} ${classLevelAfter})` : "",
       });
     } catch {
       setError(t("Could not reach the server.", { context: "table.unreachable" }));
@@ -1237,9 +1238,9 @@ export function LevelUpDialog({
                           )}
                         >
                           <span>
-                            {held?.name ?? entry.id}
+                            {contentName("classes", held?.name ?? entry.id, locale)}
                             {entry.subclass ? (
-                              <span className="text-xs text-stone-500"> · {entry.subclass}</span>
+                              <span className="text-xs text-stone-500"> · {subclassName(entry.id, entry.subclass, locale)}</span>
                             ) : null}
                           </span>
                           <span className="font-mono text-xs text-amber-400">
@@ -1349,12 +1350,12 @@ export function LevelUpDialog({
                   {needsSkillPick ? (
                     <>
                       <p className="text-stone-300">
-                        {t("{class} grants one new skill. Pick it:", { class: chosenKlass?.name ?? classChoice })}
+                        {t("{class} grants one new skill. Pick it:", { class: contentName("classes", chosenKlass?.name ?? classChoice, locale) })}
                       </p>
                       <div className="stagger-pop flex flex-wrap gap-1.5">
                         {skillOptions.map((skillId) => {
                           const picked = skillPick === skillId;
-                          const name = findSkill(skillId)?.name ?? skillId;
+                          const name = skillLabel(skillId, locale);
                           return (
                             <span
                               key={skillId}
@@ -1430,8 +1431,8 @@ export function LevelUpDialog({
                 <>
                   <p className="text-stone-300">
                     {asiLevels.length === 1
-                      ? t("{name} is owed an ability score improvement by {class} level {level}: two points, or a feat, each.", { name: sheet.name, class: klass?.name ?? classChoice, level: classLevelAfter })
-                      : t("{name} is owed {count} ability score improvements by {class} level {level}: two points, or a feat, each.", { name: sheet.name, count: asiLevels.length, class: klass?.name ?? classChoice, level: classLevelAfter })}
+                      ? t("{name} is owed an ability score improvement by {class} level {level}: two points, or a feat, each.", { name: sheet.name, class: contentName("classes", klass?.name ?? classChoice, locale), level: classLevelAfter })
+                      : t("{name} is owed {count} ability score improvements by {class} level {level}: two points, or a feat, each.", { name: sheet.name, count: asiLevels.length, class: contentName("classes", klass?.name ?? classChoice, locale), level: classLevelAfter })}
                   </p>
                   <AsiFeatEditor
                     slotLevels={asiLevels}
@@ -1465,7 +1466,7 @@ export function LevelUpDialog({
                   <div className="stagger-pop flex flex-wrap gap-1.5">
                     {expertiseOptions.map((skillId) => {
                       const picked = expertisePicks.includes(skillId);
-                      const name = findSkill(skillId)?.name ?? skillId;
+                      const name = skillLabel(skillId, locale);
                       return (
                         <span
                           key={skillId}
@@ -1625,7 +1626,7 @@ export function LevelUpDialog({
                   <p className="text-stone-300">
                     {t("At level {level}, every {class} chooses a specialization. Pick one for {name}:", {
                       level: subclassLevel ?? 0,
-                      class: klass?.name ?? sheet.class,
+                      class: contentName("classes", klass?.name ?? sheet.class, locale),
                       name: sheet.name,
                     })}
                   </p>
@@ -1650,7 +1651,7 @@ export function LevelUpDialog({
                             onClick={() => chooseSubclass(name)}
                             className="flex grow items-center justify-between gap-2 py-2 text-left"
                           >
-                            <span>{name}</span>
+                            <span>{subclassName(classChoice, name, locale)}</span>
                             {builtInSubclasses.some(
                               (entry) => textKey(entry) === textKey(name),
                             ) ? (
@@ -1664,7 +1665,7 @@ export function LevelUpDialog({
                             )}
                           </button>
                           <InfoButton
-                            label={name}
+                            label={subclassName(classChoice, name, locale)}
                             text={archetype?.desc || subclassBlurb(classChoice, name) || undefined}
                             reference={
                               archetype ? { kind: "archetypes", slug: archetype.id, name } : undefined
@@ -1926,6 +1927,7 @@ function NewClassButton({
   onPick: () => void;
 }) {
   const t = useT();
+  const locale = useLocale();
   const picked = chosen.toLowerCase() === option.id.toLowerCase();
   return (
     <button
@@ -1946,7 +1948,7 @@ function NewClassButton({
       )}
     >
       <span className="flex items-center justify-between text-sm">
-        <span>{option.name}</span>
+        <span>{contentName("classes", option.name, locale)}</span>
         <span className="text-xs text-stone-500">d{option.hitDie}</span>
       </span>
       <span className="block text-xs text-stone-400">
