@@ -31,6 +31,9 @@
     "generate-ambience": "node scripts/generate-ambience.mjs",
     "pack-ambience": "node scripts/pack-ambience.mjs",
     "i18n:cs:report": "node scripts/generate-cs-localization.mjs --report",
+    "i18n:cs:ui-report": "node scripts/audit-cs-ui-keys.mjs",
+    "i18n:cs:ui-check": "node scripts/audit-cs-ui-keys.mjs --check",
+    "i18n:cs:ui-test": "node scripts/audit-cs-ui-keys.mjs --self-test",
     "i18n:cs:check": "node scripts/generate-cs-localization.mjs --check",
     "i18n:cs:generate": "node scripts/generate-cs-localization.mjs",
     "i18n:cs:deepl": "node scripts/deepl-cs-localization.mjs"
