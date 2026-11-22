@@ -69,7 +69,13 @@ export default function MultiContentPicker({
     setPending((picks) =>
       picks.some((pick) => sourceRowIdentity(pick) === identity)
         ? picks.filter((pick) => sourceRowIdentity(pick) !== identity)
-        : [...picks, { name: entry.name, slug: entry.slug, level: entry.level, source: entry.source, documentSlug: entry.documentSlug, kind: entry.kind, displayLabel: rowName(entry) }],
+        : [
+            // Until a save format stores provenance, a single character
+            // cannot keep two independent entries with the same name.
+            // Choosing another book version replaces the pending one.
+            ...picks.filter((pick) => textKey(pick.name) !== textKey(entry.name)),
+            { name: entry.name, slug: entry.slug, level: entry.level, source: entry.source, documentSlug: entry.documentSlug, kind: entry.kind, displayLabel: rowName(entry) },
+          ],
     );
   }
 
