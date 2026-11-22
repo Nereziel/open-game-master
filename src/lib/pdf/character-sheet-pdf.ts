@@ -16,7 +16,8 @@ import {
 import fontkit from "@pdf-lib/fontkit";
 import type { Locale } from "@/lib/i18n/translate";
 import { pdfLabel } from "./labels";
-import { contentName, classFeatureName } from "@/lib/content/names";
+import { contentName, classFeatureName, backgroundFeatureLabel } from "@/lib/content/names";
+import { czechBundledSpeciesTrait } from "@/lib/content/species-traits-cs";
 import { translate } from "@/lib/i18n/translate";
 import type {
   AbilityScores,
@@ -138,9 +139,53 @@ function pdfItem(ctx: Ctx, value: string): string {
   return pdfContent(ctx, "items", value);
 }
 
+// Canonical SRD proficiency categories are stored as English values, not content names.
+const CS_PROFICIENCIES: Record<string, string> = {
+  light: "lehká zbroj", "light armor": "lehká zbroj",
+  medium: "střední zbroj", "medium armor": "střední zbroj",
+  heavy: "těžká zbroj", "heavy armor": "těžká zbroj",
+  shield: "štíty", shields: "štíty",
+  "all armor": "veškerá zbroj",
+  simple: "jednoduché zbraně", "simple weapons": "jednoduché zbraně",
+  martial: "válečné zbraně", "martial weapons": "válečné zbraně",
+};
 function pdfProficiency(ctx: Ctx, value: string): string {
+  if (ctx.locale === "cs") {
+    const known = CS_PROFICIENCIES[value.trim().toLowerCase()];
+    if (known) return known;
+  }
   const item = pdfItem(ctx, value);
   return item !== value ? item : translate(ctx.locale, value);
+}
+
+// Species shorthand contains explanatory English in brackets; prefer the
+// full, reviewed Czech description rather than translating just its title.
+function pdfFeature(ctx: Ctx, feature: SheetFeature, character: PdfCharacter): string {
+  if (ctx.locale === "cs" && feature.source === "race") {
+    const known = czechBundledSpeciesTrait(feature.name);
+    if (known) return `${known.name} — ${known.description}`;
+  }
+  if (feature.source === "background") {
+    return backgroundFeatureLabel(character.background, feature.name, ctx.locale);
+  }
+  if (feature.source === "class") {
+    return classFeatureName(feature.classId ?? character.class, feature.name, ctx.locale);
+  }
+  return translate(ctx.locale, feature.name);
+}
+
+// personaLine stores stable English source values for gameplay. Localize only
+// their display here, including legacy selections, without rewriting notes.
+function pdfPersonality(ctx: Ctx, value: string): string {
+  if (ctx.locale === "en" || !value) return value;
+  const labels: Record<string, string> = {
+    trait: "Personality trait", ideal: "Ideal", bond: "Bond", flaw: "Flaw",
+  };
+  return value.split("; ").map((part) => {
+    const match = /^(trait|ideal|bond|flaw) "([\\s\\S]*)"$/.exec(part);
+    if (!match) return translate(ctx.locale, part);
+    return `${translate(ctx.locale, labels[match[1]])}: "${translate(ctx.locale, match[2])}"`;
+  }).join("; ");
 }
 
 // One drawing context bundles the page, form, fonts, and a counter that keeps
@@ -463,7 +508,7 @@ async function drawTraits(ctx: Ctx, c: PdfCharacter, portraitBytes?: Uint8Array)
 
   // Features & traits (features + feats).
   const featText = [
-    ...c.features.map((f) => classFeatureName(c.class, f.name, ctx.locale)),
+    ...c.features.map((f) => pdfFeature(ctx, f, c)),
     ...c.feats.map((name) => `${pdfLabel(ctx.locale, "Feat")}: ${pdfContent(ctx, "feats", name)}`),
   ].join("\n");
   const featH = 176;
@@ -492,7 +537,7 @@ async function drawTraits(ctx: Ctx, c: PdfCharacter, portraitBytes?: Uint8Array)
   const bioH = y - MARGIN;
   box(ctx, x, MARGIN, w, bioH, true);
   heading(ctx, x + 4, y - 11, "Backstory & Notes");
-  const bioText = [c.personality ? `${pdfLabel(ctx.locale, "Personality")}: ${c.personality}` : "", c.backstory, c.notes].filter(Boolean).join("\n\n");
+  const bioText = [c.personality ? `${pdfLabel(ctx.locale, "Personality")}: ${pdfPersonality(ctx, c.personality)}` : "", c.backstory, c.notes].filter(Boolean).join("\n\n");
   field(ctx, x + 4, MARGIN + 3, w - 8, bioH - 16, bioText, { size: 8, multiline: true });
 }
 
