@@ -2549,6 +2549,26 @@ function ensureSchema(db: SqliteDatabase) {
     `);
   }
 
+  // Enable theatre inserts once for ALL saved campaigns, including imported
+  // and prebuilt campaigns. This is a one-time change: future edits to the
+  // Faces toggle must survive restarts.
+  const theatreMarker = db.prepare(`SELECT key FROM app_settings WHERE key = 'theatre_inserts_default_20261122'`).get();
+  if (!theatreMarker) {
+    db.transaction(() => {
+      const rows = db.prepare(`SELECT id, game_settings_json FROM campaigns`).all() as Array<{ id: string; game_settings_json: string }>;
+      const update = db.prepare(`UPDATE campaigns SET game_settings_json = ? WHERE id = ?`);
+      for (const row of rows) {
+        const settings = parseJson<Record<string, unknown>>(row.game_settings_json, {});
+        if (settings.presentation !== "theatre") {
+          update.run(JSON.stringify({ ...settings, presentation: "theatre" }), row.id);
+        }
+      }
+      db.prepare(`INSERT INTO app_settings (key, value_json, updated_at) VALUES (?, ?, ?)`).run(
+        "theatre_inserts_default_20261122", "true", new Date().toISOString(),
+      );
+    })();
+  }
+
   // Folds the old npcs.bonds_json meters into the relationships table so a
   // grudge or a friendship earned before the meter existed arrives at the
   // tier it always meant. One-time, guarded by an app_settings marker.
