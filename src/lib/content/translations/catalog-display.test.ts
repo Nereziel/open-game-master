@@ -14,6 +14,9 @@ describe("SRD catalog API presentation boundary (#107)", () => {
     expect(result.level).toBe(row!.level);
     expect(result.display?.name).toBe("Světlo");
     expect(result.display?.description).toContain("Úplné znění pravidel v češtině");
+    const lite = withCatalogDisplay("spells", row!, "cs", { includeDescription: false });
+    expect(lite.display?.name).toBe("Světlo");
+    expect(lite.display?.description).toBeUndefined();
     expect(withCatalogDisplay("spells", row!, "en")).toBe(row);
   });
 
