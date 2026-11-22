@@ -7,6 +7,7 @@ import { GameIcon } from "@/components/ui/GameIcon";
 import type { AuditEntry, CampaignLocation } from "@/app/campaigns/[campaignId]/useCampaignStream";
 import { effectiveMaxHp } from "@/lib/dm/condition-logic";
 import { prefersReducedMotion, useLowEffects } from "@/lib/effects-mode";
+import { useLocale } from "@/lib/locale";
 import type { CharacterSheet, EquipmentItem } from "@/lib/schemas/sheet";
 import { magicItemBonus } from "@/lib/srd/item-row";
 import { matchMagicItem } from "@/lib/srd/magic-items";
@@ -225,6 +226,7 @@ const TRAVEL_MS = 3400;
 // is open, its name rides in under a compass rose. A place already current
 // when the table opened is not announced.
 export function TravelBanner({ locations }: { locations: CampaignLocation[] }) {
+  const locale = useLocale();
   const place = locations.find((location) => location.isCurrent) ?? null;
   const visited = locations.filter((location) => location.visited).map((location) => location.id).join(",");
   const [known, setKnown] = useState({ id: place?.id ?? "", visited });
@@ -253,7 +255,9 @@ export function TravelBanner({ locations }: { locations: CampaignLocation[] }) {
       {/* eslint-disable-next-line @next/next/no-img-element */}
       <img src="/assets/ui/compass-rose.webp" alt="" className="moment-travel-rose" />
       <span className="min-w-0">
-        <span className="moment-travel-kicker">{shown.firstVisit ? "New place discovered" : "The party arrives"}</span>
+        <span className="moment-travel-kicker">{shown.firstVisit
+          ? (locale === "cs" ? "Objeveno nové místo" : "New place discovered")
+          : (locale === "cs" ? "Družina dorazila" : "The party arrives")}</span>
         <span className="gold-title moment-travel-name">{shown.name}</span>
       </span>
     </div>
