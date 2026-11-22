@@ -1,5 +1,17 @@
 {
   "messages": {
+    "{name}'s hit point maximum is now {max}": "Maximální počet životů postavy {name} je nyní {max}",
+    "{name}'s hit point maximum changes": "Maximální počet životů postavy {name} se mění",
+    "{name} creates a pact weapon: {item}": "{name} vytváří paktovou zbraň: {item}",
+    "{name} bonds with {item} as a pact weapon": "{name} poutá {item} jako svou paktovou zbraň",
+    "{name} breaks the pact bond with {item}": "{name} ruší paktové pouto s předmětem {item}",
+    "{name} dismisses {item}": "{name} odvolává {item}",
+    "the pact weapon": "paktovou zbraň",
+    "{name} makes a new Book of Shadows, and the old one is gone": "{name} vytváří novou Knihu stínů a původní mizí",
+    "{name} makes a Book of Shadows": "{name} vytváří Knihu stínů",
+    "{name} draws on Form of Dread for this turn": "{name} v tomto tahu využívá Podobu hrůzy",
+    "{name} takes a reaction": "{name} používá reakci",
+    "{name}'s spirit is held by Anchor of the Living": "Ducha postavy {name} poutá Kotva živých",
     "Arcane Strike": "Arkánní úder",
     "Once a turn, a weapon hit deals an extra 1d8 force damage.": "Jednou za tah způsobí zásah zbraní navíc silové zranění 1k8.",
     "Slay every dragon it meets": "Zabít každého draka, kterého potká",
