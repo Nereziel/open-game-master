@@ -13,6 +13,7 @@ import { Dialog } from "@/components/ui/Dialog";
 import type { ItemSheet } from "@/lib/help/item-sheet";
 import { firstSentence, parseRulesBlocks, parseRulesTable } from "@/lib/help/rules-text";
 import { textKey } from "@/lib/language/text-logic";
+import { officialCzechSpellPageId } from "@/lib/help/official-cs-reference";
 
 // The "what does this do?" affordance, used everywhere a game term appears.
 //
@@ -27,7 +28,7 @@ import { textKey } from "@/lib/language/text-logic";
 // `name` lets the lookup recover when a row's slug is not the plain
 // slugified name (third-party documents pick their own), by falling back to
 // a search.
-export type ContentRef = { kind: string; slug: string; name?: string };
+export type ContentRef = { kind: string; slug: string; name?: string; source?: string; documentSlug?: string; rulebook?: string };
 
 // Content-pack descriptions are markdown-ish: headings, bold, italics, tables.
 // The block structure comes from src/lib/help/rules-text.ts, which knows the
@@ -144,6 +145,7 @@ function ContentBody({ reference }: { reference: ContentRef }) {
   // The table the dialog opened at reads its DMs' homebrew.
   const campaignId = useContentCampaign();
   const t = useT();
+  const locale = useLocale();
   const [state, setState] = useState<{ text: string | null; loading: boolean }>({
     text: null,
     loading: true,
@@ -155,6 +157,15 @@ function ContentBody({ reference }: { reference: ContentRef }) {
       try {
         const { describeContentEntry } = await import("@/lib/help");
         const { needsNote } = await import("@/lib/content/levelup-logic");
+        const srdSpellPage = locale === "cs" ? officialCzechSpellPageId(reference) : null;
+        if (srdSpellPage) {
+          const pageResponse = await fetch(`/api/rulebook/pages/${encodeURIComponent(srdSpellPage)}`, { headers: { "X-Odm-Locale": "cs" } });
+          const page = pageResponse.ok ? (await pageResponse.json())?.page : null;
+          if (page?.kind === "spell" && typeof page.md === "string" && page.md.trim()) {
+            if (!cancelled) setState({ text: page.md, loading: false });
+            return;
+          }
+        }
         // An entry built on rules this game does not play, or played from
         // mechanics the app read and nobody checked, says so first (issue
         // #570). The note is the reader's words — the keyed "best effort"
@@ -200,7 +211,7 @@ function ContentBody({ reference }: { reference: ContentRef }) {
     return () => {
       cancelled = true;
     };
-  }, [reference.kind, reference.slug, reference.name, campaignId, t]);
+  }, [reference.kind, reference.slug, reference.name, reference.source, reference.documentSlug, reference.rulebook, campaignId, t, locale]);
 
   if (state.loading) {
     return (
@@ -212,8 +223,7 @@ function ContentBody({ reference }: { reference: ContentRef }) {
   if (!state.text) {
     return (
       <p className="text-sm text-stone-500">
-        No description available. The content pack may not be installed, or this entry was added by
-        hand.
+        {t("No details available. The content pack may not be installed, or this item was added by hand.")}
       </p>
     );
   }
@@ -303,7 +313,7 @@ function ItemBody({ reference }: { reference: ContentRef }) {
   if (state.loading) {
     return (
       <p className="flex items-center gap-2 text-sm text-stone-500">
-        <Loader2 className="size-4 animate-spin" /> Looking it up...
+        <Loader2 className="size-4 animate-spin" /> {t("Looking it up...")}
       </p>
     );
   }
