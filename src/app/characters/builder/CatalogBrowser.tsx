@@ -115,6 +115,12 @@ export default function CatalogBrowser({
   const fetched = useRef(new Set<string>());
   const noteId = useId();
 
+  // A locale switch must not reuse rows cached under the previous language.
+  useEffect(() => {
+    fetched.current.clear();
+    setLoaded({});
+  }, [locale]);
+
   const selected = useMemo(
     () => new Set(selectedNames.map((name) => textKey(name))),
     [selectedNames],
