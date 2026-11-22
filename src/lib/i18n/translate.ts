@@ -13,6 +13,7 @@ type Catalog = {
 // Small patches for missing Czech UI keys while the large generated catalog
 // remains unchanged. Only apply when the catalog would display English.
 const CZECH_LABEL_FALLBACKS: Record<string, string> = {
+  "The Saltmarch": "Solné močály",
   "Click the map to set each corner.": "Kliknutím na mapu umísti jednotlivé rohy.",
   "Close the shape ({count} corners)": "Uzavřít tvar ({count} rohů)",
   "{count} more corners needed.": "Ještě je třeba přidat {count} rohů.",
