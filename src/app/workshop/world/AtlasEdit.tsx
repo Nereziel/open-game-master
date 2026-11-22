@@ -28,6 +28,7 @@ const percent = (value: number) => Math.round(value * 1000) / 10;
 // A point on the map as two numbers: how far across and how far down, in
 // percent of the box. Saved when a field is left or Enter is pressed.
 export function PointFields({ at, label, onCommit }: { at: XY; label: string; onCommit: (to: XY) => void }) {
+  const t = useT();
   const [draft, setDraft] = useState({ x: String(percent(at.x)), y: String(percent(at.y)) });
   const [shown, setShown] = useState(at);
   if (shown.x !== at.x || shown.y !== at.y) {
@@ -52,7 +53,7 @@ export function PointFields({ at, label, onCommit }: { at: XY; label: string; on
         max={100}
         step={0.1}
         inputMode="decimal"
-        aria-label={`${label}: ${axis === "x" ? "across" : "down"} (percent)`}
+        aria-label={t("{label}: {direction} (percent)", { label, direction: axis === "x" ? t("across") : t("down") })}
         value={draft[axis]}
         onChange={(event) => setDraft({ ...draft, [axis]: event.target.value })}
         onBlur={commit}
@@ -65,14 +66,15 @@ export function PointFields({ at, label, onCommit }: { at: XY; label: string; on
   );
   return (
     <span className="flex flex-wrap items-center gap-2" data-testid="atlas-point">
-      {field("x", "Across")}
-      {field("y", "Down")}
+      {field("x", t("Across"))}
+      {field("y", t("Down"))}
     </span>
   );
 }
 
 // A region's corners, each as numbers, with corners to add and take away.
 export function CornerEditor({ points, onSave }: { points: XY[]; onSave: (points: XY[]) => void }) {
+  const t = useT();
   const add = () => {
     const last = points[points.length - 1];
     const first = points[0];
@@ -80,14 +82,14 @@ export function CornerEditor({ points, onSave }: { points: XY[]; onSave: (points
   };
   return (
     <details className="text-xs text-stone-300" data-testid="region-corners">
-      <summary className="cursor-pointer text-[11px] text-stone-500">Corners ({points.length}), as numbers</summary>
+      <summary className="cursor-pointer text-[11px] text-stone-500">{t("Corners ({count}), as numbers", { count: points.length })}</summary>
       <ol className="mt-1 flex flex-col gap-1">
         {points.map((point, index) => (
           <li key={index} className="flex flex-wrap items-center gap-1.5">
-            <span className="w-14 text-[11px] text-stone-500">Corner {index + 1}</span>
-            <PointFields at={point} label={`Corner ${index + 1}`} onCommit={(to) => onSave(points.map((entry, at) => (at === index ? to : entry)))} />
+            <span className="w-14 text-[11px] text-stone-500">{t("Corner {number}", { number: index + 1 })}</span>
+            <PointFields at={point} label={t("Corner {number}", { number: index + 1 })} onCommit={(to) => onSave(points.map((entry, at) => (at === index ? to : entry)))} />
             {points.length > 3 ? (
-              <KitButton tone="icon" always aria-label={`Take away corner ${index + 1}`} onClick={() => onSave(points.filter((_, at) => at !== index))}>
+              <KitButton tone="icon" always aria-label={t("Take away corner {number}", { number: index + 1 })} onClick={() => onSave(points.filter((_, at) => at !== index))}>
                 <Minus className="size-3.5" />
               </KitButton>
             ) : null}
@@ -95,7 +97,7 @@ export function CornerEditor({ points, onSave }: { points: XY[]; onSave: (points
         ))}
       </ol>
       <KitButton tone="link" onClick={add}>
-        <Plus className="size-3.5" /> Add a corner
+        <Plus className="size-3.5" /> {t("Add a corner")}
       </KitButton>
     </details>
   );
