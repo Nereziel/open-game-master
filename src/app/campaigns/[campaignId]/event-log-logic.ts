@@ -6,7 +6,7 @@ import { skillLabel } from "@/lib/srd";
 import type { Locale } from "@/lib/i18n/translate";
 import type { ClockTurn } from "@/lib/db/clock-moves";
 import type { TurnChangeView } from "@/lib/db/turn-changes";
-import { quietTick } from "@/lib/sheet-audit-logic";
+import { quietTick, knownFieldWords } from "@/lib/sheet-audit-logic";
 import { translate } from "@/lib/messages-logic";
 import { COPPER_PER_GOLD, formatPrice } from "@/lib/srd/currency";
 import { pluralOf } from "@/lib/messages-logic";
@@ -168,6 +168,13 @@ const displayDamageType = (t: Say, type: string) =>
 // character-sheet catalog. A free-form resource name never gets rewritten.
 const displayResource = (t: Say, raw: string) =>
   resourceDisplayName(raw, t.locale ?? "en") ?? raw;
+
+// Translate only recognized internal sheet field identifiers. A custom sheet
+// key must not be silently rewritten as if it were a system-owned field.
+const displaySheetField = (t: Say, key: string) => {
+  const label = knownFieldWords(key);
+  return label ? t(label) : key;
+};
 
 // Training subjects can be an SRD skill ID or its canonical English name.
 // Other subjects are free text entered by the GM and stay exactly as written.
@@ -463,17 +470,17 @@ function knownEntryText(t: Say, entry: { kind: string; delta: Delta }, name: str
       return t("{name} attunes to an item over a rest", { name });
     case "update_sheet": {
       const changed = Object.keys(delta);
-      return t("The GM rewrites {name}'s sheet{fields}", { name, fields: changed.length ? t(" ({fields})", { fields: changed.join(", ") }) : "" });
+      return t("The GM rewrites {name}'s sheet{fields}", { name, fields: changed.length ? t(" ({fields})", { fields: changed.map((key) => displaySheetField(t, key)).join(", ") }) : "" });
     }
     case "undo":
       return t("Party lead undid a change to {name}", { name });
     case "lead_edit": {
       const changed = Object.keys(delta).filter((key) => key !== "reason");
-      return t("Party lead corrected {name}{fields}", { name, fields: changed.length ? t(" ({fields})", { fields: changed.join(", ") }) : "" });
+      return t("Party lead corrected {name}{fields}", { name, fields: changed.length ? t(" ({fields})", { fields: changed.map((key) => displaySheetField(t, key)).join(", ") }) : "" });
     }
     case "player_adjust": {
       const changed = Object.keys(delta);
-      return t("{name}'s player adjusted their counters{fields}", { name, fields: changed.length ? t(" ({fields})", { fields: changed.join(", ") }) : "" });
+      return t("{name}'s player adjusted their counters{fields}", { name, fields: changed.length ? t(" ({fields})", { fields: changed.map((key) => displaySheetField(t, key)).join(", ") }) : "" });
     }
     default:
       return null;
