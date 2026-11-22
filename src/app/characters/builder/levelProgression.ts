@@ -23,6 +23,7 @@ import { translate } from "@/lib/messages-logic";
 import type { Locale } from "@/lib/messages-logic";
 import { ordinalOf } from "@/lib/characters/join-changes";
 import { classFeatureName, contentName, subclassName } from "@/lib/content/names";
+import { fightingStyleNameCs } from "@/lib/srd/fighting-style-cs";
 
 // The shape of a translator, as the pure sentence builders take it.
 type T = (key: string, vars?: Record<string, string | number>) => string;
@@ -163,7 +164,7 @@ export function levelProgressionRows(input: ProgressionInput, t: T = enT, locale
           return name;
         }
         const style = styles.shift();
-        return style ? `${name} (${style})` : name;
+        return style ? `${name} (${locale === "cs" ? fightingStyleNameCs(style) : style})` : name;
       });
     const slotIndex = input.asiSlotLevels.indexOf(level);
     const choice = slotIndex >= 0 ? (input.asiChoices[slotIndex] ?? null) : null;
@@ -233,7 +234,7 @@ function classListRows(input: ProgressionInput, classes: ReadonlyArray<Progressi
           return name;
         }
         const style = styles.shift();
-        return style ? `${name} (${style})` : name;
+        return style ? `${name} (${locale === "cs" ? fightingStyleNameCs(style) : style})` : name;
       });
     const slotIndex = input.asiSlotLevels.indexOf(level);
     const choice = slotIndex >= 0 ? (input.asiChoices[slotIndex] ?? null) : null;
