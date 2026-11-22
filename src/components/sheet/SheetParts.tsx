@@ -79,10 +79,11 @@ export function PortraitMedallion({
   className?: string;
   style?: CSSProperties;
 }) {
+  const locale = useLocale();
   return (
     <div className={cn("sheet-medallion", className)} style={style}>
       <div className="sheet-medallion-face">{children}</div>
-      <span className="sheet-medallion-emblem" title={classId}>
+      <span className="sheet-medallion-emblem" title={contentName("classes", classId, locale)}>
         <GameIcon icon={{ kind: "family", key: `class-${classId.toLowerCase()}` }} size="size-7" />
       </span>
       {level ? <span className="sheet-medallion-level">{level}</span> : null}
