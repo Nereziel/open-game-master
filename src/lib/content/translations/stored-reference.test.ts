@@ -1,9 +1,9 @@
 import { describe, expect, it } from "vitest";
 import { equipmentItemSchema, spellcastingSchema } from "@/lib/schemas/sheet";
 import {
-  sameStoredContentReference, storedContentReferenceSchema,
-  storedReferenceForCatalogRow,
+  sameStoredContentReference, storedReferenceForCatalogRow,
 } from "./stored-reference";
+import { storedContentReferenceSchema } from "./stored-reference-schema";
 
 describe("backwards-compatible saved content references (#107)", () => {
   it("keeps legacy equipment and spell lists valid without any new metadata", () => {
