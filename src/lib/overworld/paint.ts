@@ -41,10 +41,20 @@ export const OVERWORLD_BRUSHES = [
 ] as const;
 export type OverworldBrush = (typeof OVERWORLD_BRUSHES)[number];
 
-// Written for a person looking at a map, not for the tile alphabet: the
-// message key per brush, read in the interface's language at render.
+// Use the same user-facing translation keys as the terrain legend. The
+// internal overworld.brush.* IDs are not catalog entries and must not appear
+// as button captions.
+const BRUSH_LABEL_KEYS: Record<OverworldBrush, string> = {
+  water: "Water",
+  plains: "Plains",
+  forest: "Forest",
+  hills: "Hills",
+  mountains: "Mountains",
+  swamp: "Swamp",
+};
+
 export function brushLabelKey(brush: OverworldBrush): string {
-  return `overworld.brush.${brush}`;
+  return BRUSH_LABEL_KEYS[brush];
 }
 
 // Exported so a palette can colour each brush with the same swatch the map
