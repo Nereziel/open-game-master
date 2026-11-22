@@ -20,6 +20,8 @@ describe("Czech item details", () => {
   it("localizes common-clothes metadata and description", () => {
     expect(itemDetailCs("Adventuring gear", "cs")).toBe("Dobrodružná výbava");
     expect(itemDetailCs("Weight", "cs")).toBe("Hmotnost");
+    expect(itemDetailCs("Armor class", "cs")).toBe("Třída zbroje");
+    expect(itemDetailCs("AC bonus", "cs")).toBe("Bonus k TZ");
     expect(itemDetailCs("Value", "cs")).toBe("Cena");
     expect(itemDetailCs("Description", "cs")).toBe("Popis");
     expect(itemDetailCs("Common clothes.", "cs")).toBe("Obyčejné oblečení.");
