@@ -13,6 +13,15 @@ type Catalog = {
 // Small patches for missing Czech UI keys while the large generated catalog
 // remains unchanged. Only apply when the catalog would display English.
 const CZECH_LABEL_FALLBACKS: Record<string, string> = {
+  "Across": "Vodorovně",
+  "Down": "Svisle",
+  "across": "vodorovně",
+  "down": "svisle",
+  "{label}: {direction} (percent)": "{label}: {direction} (v procentech)",
+  "Corners ({count}), as numbers": "Rohy ({count}), číselně",
+  "Corner {number}": "Roh {number}",
+  "Take away corner {number}": "Odebrat roh {number}",
+  "Add a corner": "Přidat roh",
   "The Sunken Coast": "Potopené pobřeží",
   "A drowned dwarven kingdom and the tide-cults that kept living in it.": "Zatopené trpasličí království a přílivové kulty, které v něm přežily.",
   "An original world, or the setting this is a homage to": "Vlastní svět nebo předloha, kterou tento svět připomíná",
