@@ -4,6 +4,8 @@ import { PDFDocument } from "pdf-lib";
 import { createSheetSchema } from "@/lib/schemas/sheet";
 import { buildCharacterSheetPdf, libraryToPdfCharacter } from "./character-sheet-pdf";
 import { pdfLabel } from "./labels";
+import { abilityShortLabel } from "@/lib/srd/ability-short-label";
+import { SRD_SKILLS, skillLabel } from "@/lib/srd";
 import { installCsTables } from "@/lib/i18n/cs-tables";
 import { installCatalog } from "@/lib/i18n/translate";
 
@@ -163,6 +165,27 @@ describe("fillable character-sheet PDF localization", () => {
     expect(en).toContain("Light Bearer (the light cantrip)");
     expect(en).toContain("light, medium, heavy, shields");
     expect(en).toContain('trait "I offer a blessing to strangers whether they want one or not."');
+  });
+
+  it("uses the same six ability abbreviations as the character sheet in every locale", () => {
+    for (const locale of ["cs", "fr", "en"] as const) {
+      for (const ability of ["str", "dex", "con", "int", "wis", "cha"]) {
+        expect(pdfLabel(locale, ability.toUpperCase())).toBe(abilityShortLabel(ability, locale));
+      }
+    }
+    expect(pdfLabel("cs", "WIS")).toBe("MDR");
+    expect(pdfLabel("cs", "DEX")).toBe("OBR");
+  });
+
+  it("uses the shared names of all 18 skills rather than a duplicate PDF dictionary", () => {
+    for (const locale of ["cs", "fr", "en"] as const) {
+      for (const skill of SRD_SKILLS) {
+        expect(pdfLabel(locale, skill.name), skill.id).toBe(skillLabel(skill.id, locale));
+      }
+    }
+    expect(pdfLabel("cs", "Arcana")).toBe("Magie");
+    expect(pdfLabel("cs", "Stealth")).toBe("Plížení");
+    expect(pdfLabel("cs", "Acrobatics")).toBe("Akrobacie");
   });
 
   it("translates all key PDF captions and keeps English as the default", () => {
