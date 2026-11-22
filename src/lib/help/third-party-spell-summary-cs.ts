@@ -99,8 +99,71 @@ const TOME_OF_HEROES_SPELL_NOTES: Readonly<Record<string, string>> = {
   "Sightburst": "Zvuková vlna ti do začátku příštího tahu poskytne slepozrak do vzdálenosti 100 stop a umožní odhalovat přírodní nebezpečí. K záchranám proti takto zjištěným hrozbám máš výhodu.",
 };
 
+const DEEP_MAGIC_SPELL_NOTES: Readonly<Record<string, string>> = {
+  "Abhorrent Apparition": "Děsivé zjevení vyvolané na dýni zasáhne tvory do 15 stop za 6k8 psychického zranění a může je na minutu vystrašit. Úspěšná záchrana na Moudrost zranění půlí a strachu zabrání.",
+  "Accelerate": "Až třem ochotným tvorům se zdvojnásobí rychlost chůze. Mohou bonusovou akcí Běžet a mají výhodu k záchranám na Obratnost.",
+  "Acid Gate": "Vytvoříš portál do známého místa vzdáleného nejvýše 100 mil pro sebe a tři určené tvory. Každý jiný, kdo se jím pokusí projít, utrpí 10k6 kyselinového zranění a je náhodně teleportován.",
+  "Acid Rain": "Válcovou oblast širokou 20 stop a vysokou 30 stop zahalí kyselý déšť. Při vstupu nebo začátku tahu v oblasti způsobí 6k6 kyselinového zranění; úspěšná záchrana na Obratnost jej půlí.",
+  "Adjust Position": "Přemístíš ochotného spojence o pět stop skutečným pohybem bez vyvolání příležitostných útoků. V cestě nesmí být překážka; nejde o teleportaci.",
+  "Afflict Line": "Prokleješ cíl i jeho potomky. Po neúspěšné záchraně na Moudrost má nevýhodu k ověřením a záchranám na tvou sesílací vlastnost; kletba se může přenést na prvorozeného potomka a při rituálním posílení pokračovat v rodové linii.",
+  "Agonizing Mark": "Černým paprskem označíš cíl za kořist. Kdykoli mu způsobíš zranění, musí uspět v záchraně na Charisma, jinak bolestí spadne k zemi.",
+  "Alchemical Form": "Změníš se v kyselou, jedovatou rosolovitou bytost. Získáš imunity proti kyselině a jedu, odolnosti proti vybraným nemagickým útokům a možnost protlačit se úzkými otvory; nemůžeš mluvit ani sesílat kouzla, ale můžeš útočit kyselinou či jedem.",
+  "Ally Aegis": "Reakcí ochráníš spojence magickým štítem: do začátku dalšího tahu má +5 k TZ, imunitu proti silovému zranění a lepší ochranu při záchranách proti zraňujícím kouzlům. Proti psychickému zranění nechrání.",
+  "Alone": "Cíl po neúspěšné záchraně na Moudrost věří, že jeho spojenci zmizeli do jiné sféry. Nedokáže je vnímat ani na ně cílit, dokud účinek neskončí nebo se nevymaní.",
+  "Alter Arrow’s Fortune": "Reakcí narušíš nepřítelův úspěšný útok na dálku proti spojenci. Pokud útočník neuspěje v záchraně na Charisma, přehodí útok a použije nižší výsledek.",
+  "Althea’s Travel Tent": "Očaruješ správně postavený obyčejný stan. Uvnitř vznikne pohodlné ubytování pro dva s předsíní, stolem a ložnicí; po skončení kouzla se prostor vrátí do původního stavu.",
+  "Amplify Gravity": "V oblasti o poloměru 50 stop zesílí gravitace. Zranění pádem se násobí čtyřmi, tvorové mohou padat k zemi a jejich pohyb i obratnostní akce jsou omezené.",
+  "Analyze Device": "Zjistíš všechny mechanické vlastnosti, mechanismy a funkce jednoho konstruktu nebo hodinového stroje, včetně případných způsobů spuštění či vypnutí.",
+  "Ancestor’s Strength": "Dotykem posílíš ochotného tvora. Pro nosnost, zvedání, tlačení, tažení a rozbíjení předmětů se považuje za o jednu kategorii velikosti větší a má výhodu k ověřením Síly.",
+  "Anchoring Rope": "Vytvoříš přízračné lano dlouhé 5–30 stop, které unese až 800 liber a má konec upevněný ve vzduchu. Při seslání během pádu dokáže zastavit pád bez zranění.",
+  "Ancient Shade": "Oživíš vzpomínky ducha ze starých kostí či prachu. Duch odpovídá na omezený počet otázek podle toho, jak dávno zemřel; zná jen to, co věděl za života, a odpovědi mohou být útržkovité.",
+  "Angelic Guardian": "Přivoláš drobnou nebeskou podobu, která chrání cíl. Dává +2 k TZ a při prvním neúspěchu v záchraně na Obratnost umožní reakcí hod přehodit; potom kouzlo skončí.",
+  "Animate Ghoul": "Z mrtvoly Malého nebo Středního humanoida vytvoříš ghúla pod svou kontrolou. Původní povolání a schopnosti těla jsou nahrazeny běžným statblokem ghúla.",
+  "Animate Greater Undead": "Z pozůstatků Velkého či Obrovského humanoida vytvoříš mocnějšího kostlivce nebo zombie pod kontrolou na 24 hodin. Dalším sesláním lze kontrolu obnovit i pro více již vytvořených nemrtvých.",
+  "Animated Scroll": "Složený list papíru oživíš do podoby zvířete s nebezpečností 0. Papírový tvor dokáže vykonávat přirozené činnosti svého předobrazu a plní příkazy, například doručit zprávu.",
+  "Anticipate Arcana": "Předvídáš přicházející magický účinek a získáš výhodu k záchranám proti kouzlům a jiné magii do začátku svého příštího tahu.",
+  "Anticipate Attack": "Reakcí na hrozící útok se přesuneš až o polovinu rychlosti bez příležitostných útoků. Pokud se tak z útoku zcela dostaneš, automaticky mine; jinak se vyhodnotí z nové pozice.",
+  "Anticipate Weakness": "Nahlédneš do nejbližší budoucnosti a získáš výhodu ke všem útokům do konce svého tahu.",
+  "Arcane Sight": "Po dobu trvání má cíl účinky Pravdivého vidění a Odhalení magie a navíc rozpozná název a účinek každého kouzla, jehož seslání pozoruje.",
+  "As You Were": "Mrtvole nebo tělesnému nemrtvému vrátíš zdravý vzhled, jaký měl za života. U mrtvoly se účinek podobá Pokojnému spočinutí; nemrtvý také vypadá, zní a působí jako dříve.",
+  "Ashen Memories": "Dotykem popela, sazí nebo žhavých uhlíků získáš vidinu významné události spojené s ohněm, například útržek rozhovoru či obraz spáleného dopisu. Obsah vidiny určuje PJ.",
+  "Aspect of the Dragon": "Proměníš se v draka s nebezpečností nejvýše 10. Přijmeš jeho životy a kostky životů, ale zachováš použitelné schopnosti své původní postavy; při návratu do vlastní podoby se obnoví její dřívější životy.",
+  "Aspect of the Serpent": "Cíl získá hadí rysy, temnovid do 60 stop a slepozrak do 30 stop. Může plivat jed (2k6 jedového zranění) a kousnout za 2k6 bodného zranění s možností ochromení po neúspěšné záchraně na Odolnost SO 14.",
+  "Auspicious Warning": "Včasným varováním pomůžeš cíli: k právě provedenému hodu na útok, ověření vlastnosti či záchraně přidá 1k4 a vyhodnotí nový součet.",
+  "Avoid Grievous Injury": "Pokud tě protivník kriticky zasáhne, ale zranění ještě nebylo hozeno, změníš tento kritický zásah na běžný.",
+  "Blizzard": "Vyvoláš hustou vánici v oblasti válce vysokého i širokého 40 stop. Tvorové při vzniku či vstupu utrpí 8k8 chladného zranění, záchrana na Odolnost půlí; chlad zhoršuje udržování soustředění.",
+  "Caustic Torrent": "Vyšlehneš 60 stop dlouhý a 5 stop široký proud žíraviny, který způsobuje 14k6 kyselinového zranění, při úspěšné záchraně na Obratnost polovinu. Jedovaté výpary mohou otrávit okolní tvory.",
+  "Conjure Minor Voidborn": "Přivoláš skupinu ďáblů či aberací v počtu podle jejich nebezpečnosti. Bojují proti tvým nepřátelům, ale mají vlastní vůli a mohou škodit i tvé družině.",
+  "Conjure Voidborn": "Přivoláš jednoho běsa či aberaci s nebezpečností nejvýše 6. Přikazovat mu můžeš za cenu 2k6 psychického zranění; při ztrátě soustředění se může obrátit proti družině.",
+  "Crushing Curse": "Slovo Prázdnoty zasáhne mysl viditelného cíle za 1k6 psychického zranění a na minutu jej ohluší po neúspěšné záchraně na Moudrost. Tvor však stále slyší Řeč prázdnoty.",
+  "Destructive Resonance": "Výkřik Řečí prázdnoty zasáhne tvory v kuželu o délce 15 stop za 4k6 psychického zranění, záchrana na Moudrost půlí. Zasažení nemohou do dalšího tahu reagovat.",
+  "Earthskimmer": "Vyvýšená deska země a kamene tě nese až 5 stop nad terénem rychlostí 60 stop a ignoruje obtížný terén. Při Běhu můžeš protivníka přejet za 4k6 drtivého zranění.",
+  "Entomb": "Kamenné desky uzavřou tvora do vzduchotěsné krychle o hraně 10 stop. Hrob má TZ 18, 50 životů a jen omezený přísun vzduchu; může se mu vyhnout úspěšnou záchranou na Obratnost.",
+  "Flame Wave": "Ohnivá vlna zaplní kužel o délce 40 stop. Po neúspěšné záchraně na Obratnost způsobí 6k8 ohnivého zranění a odstrčí cíl o 20 stop; při úspěchu půlí zranění bez odhození.",
+  "Frozen Razors": "Ostré ledové čepele pokryjí krychli o hraně 20 stop, vytvářejí obtížný terén a slabé zastření. Pohybující se tvor utrpí 2k6 sečného a 3k6 chladného zranění, při úspěšné záchraně na Obratnost polovinu.",
+  "Glimpse of the Void": "Mrazivou vizí nicoty zasáhneš tvory v krychli o hraně 30 stop. Neúspěšná záchrana na Inteligenci způsobí dočasné šílenství: postižený jen křičí a blábolí, jeho pohyb řídí PJ.",
+  "Life Drain": "Vírem nekrotické energie zasáhneš tvory do 15 stop od bodu za 10k6 nekrotického zranění, záchrana na Odolnost půlí. Za každého zasaženého můžeš vybranému živému tvorovi obnovit životy rovné polovině způsobeného zranění.",
+  "Living Shadows": "Živé stíny v kouli o poloměru 15 stop mohou tvora po neúspěšné záchraně na Sílu znehybnit. Zadržovaný tvor může v dalších tazích utrpět vyčerpání a akcí se pokusit uniknout.",
+  "Maddening Whispers": "Šepot Řeči prázdnoty může cíl po neúspěšné záchraně na Charisma zneschopnit a zastavit. Sesilatel musí účinek dalšími akcemi udržovat a zranění cíle kouzlo ukončí.",
+  "Nether Weapon": "Dotykem očaruješ zbraň temnou silou. Stává se magickou a při zásahu přidává 2k6 nekrotického zranění; zasažený tvor se do začátku tvého dalšího tahu nemůže léčit.",
+  "Pummelstone": "Na cíl vyletí kámen. Po úspěšném kouzelném útoku na dálku způsobí 1k6 drtivého zranění; v příštím tahu si cíl od útoku či ověření vlastnosti odečítá 1k4.",
+  "Pyroclasm": "Ze země vyšlehne čtyřicet stop vysoký gejzír lávy za 10k8 ohnivého zranění, záchrana na Obratnost půlí. Kolem něj se šíří lávové jezero, které dále pálí a zpomaluje tvory.",
+  "Riptide": "Vyvoláš válec vířící vody, který může tvory po neúspěšné záchraně na Sílu znehybnit. V dalším tahu vodu vypustíš jako proud, který zraňuje a odhazuje, nebo jako spodní vír stahující tvory k sobě.",
+  "Rolling Thunder": "Hromový tón postupuje v pásu 30 × 5 stop. Neúspěšná záchrana na Odolnost ohluší cíl, půlí mu rychlost a každé kolo způsobuje 2k8 hromového zranění, dokud neuspěje v opakované záchraně.",
+  "Tidal Barrier": "Obklopíš se vířící mořskou vodou do 10 stop. V oblasti je obtížný terén; tvor po neúspěšné záchraně na Sílu odletí o 10 stop a do začátku dalšího tahu se nemůže pohybovat.",
+  "Void Rift": "Vytvoříš kouli nicoty o poloměru 10 stop, která vtahuje okolní tvory a předměty ze vzdálenosti až 40 stop. Dotyk trhliny způsobuje 8k10 nekrotického zranění a uvnitř ztrácejí tvorové zrak i sluch.",
+  "Void Strike": "Z ruky vystřelíš temný paprsek, který při zásahu způsobí 5k8 nekrotického zranění a na chvíli cíl vystraší. Při útoku na tvora v šeru či tmě máš výhodu; výstřel lze opakovat dalšími akcemi při soustředění.",
+  "Wind Lash": "Bič prudkého větru zasáhne cíl na blízko za 1k8 sečného zranění a odstrčí ho o 5 stop.",
+  "Wind Tunnel": "Vytvoříš větrný tunel dlouhý 60 a široký 10 stop. Pohyb po větru je rychlejší o 10 stop a usnadňuje střelbu na dálku; pohyb proti větru stojí dvojnásobnou rychlost a střelba má nevýhodu.",
+  "Word of Misfortune": "Slovem Prázdnoty postihneš cíl smůlou. Při jeho příští záchraně si musí odečíst hod 1k4; potom kouzlo skončí.",
+};
+
 const INDEX = Object.fromEntries(
   Object.entries(TOME_OF_HEROES_SPELL_NOTES)
+    .map(([name, description]) => [textKey(name), description]),
+);
+const DEEP_MAGIC_INDEX = Object.fromEntries(
+  Object.entries(DEEP_MAGIC_SPELL_NOTES)
     .map(([name, description]) => [textKey(name), description]),
 );
 
@@ -108,9 +171,12 @@ export function thirdPartySpellSummaryCs(
   reference: { name?: string; source?: string; documentSlug?: string; kind: string },
   locale: Locale,
 ): string | null {
-  if (locale !== "cs" || reference.kind !== "spells"
-    || reference.source !== "open5e" || reference.documentSlug !== "toh") return null;
-  return INDEX[textKey(reference.name ?? "")] ?? null;
+  if (locale !== "cs" || reference.kind !== "spells" || reference.source !== "open5e") return null;
+  const key = textKey(reference.name ?? "");
+  if (reference.documentSlug === "toh") return INDEX[key] ?? null;
+  if (reference.documentSlug === "dmag" || reference.documentSlug === "deepm")
+    return DEEP_MAGIC_INDEX[key] ?? null;
+  return null;
 }
 
 export function localizedThirdPartySpellDescription(
