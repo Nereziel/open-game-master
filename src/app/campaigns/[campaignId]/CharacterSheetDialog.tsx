@@ -46,7 +46,7 @@ import { speciesSpellsShown } from "@/lib/srd/species-spell-view";
 import { SummonDoor } from "@/app/campaigns/[campaignId]/SummonDoor";
 import { DefensesLine, HitDiceSpend, StateTags } from "@/components/sheet/SheetState";
 import { SheetBetween } from "@/components/sheet/SheetBetween";
-import { acView, conditionDetail, hitDiceLine, itemStatus, maxHpView, otherSpeedsLine, speedView, wearableGear } from "@/components/sheet/sheet-state";
+import { acView, conditionDetail, hitDiceLine, itemStatus, localizeDefenseTypes, maxHpView, otherSpeedsLine, speedView, wearableGear } from "@/components/sheet/sheet-state";
 import { FeatureChoicePicker, OtherSpeeds } from "@/components/sheet/SheetChoices";
 import { OwedPicks } from "@/components/sheet/OwedPicks";
 import { wearQuestion, type PendingWear } from "@/components/sheet/SheetGearRow";
@@ -66,6 +66,7 @@ import { SheetPersonality } from "@/app/campaigns/[campaignId]/SheetPersonality"
 import { classWordsAfterLevel, isSplit } from "@/lib/characters/class-words";
 import { contentName, subclassName } from "@/lib/content/names";
 import { resourceDisplayName, resourceGuidance } from "@/lib/srd/class-resources-fr";
+import { abilityShortLabel } from "@/lib/srd/ability-short-label";
 import { useLocale } from "@/lib/locale";
 
 function titleCase(value: string) {
@@ -634,12 +635,12 @@ export function CharacterSheetDialog({
                     <p className="reveal text-[11px] text-sky-400/80">
                       {t("Active magic:")}{" "}
                       {[
-                        magic.acBonus ? `+${magic.acBonus} AC` : null,
-                        magic.saveBonus ? `+${magic.saveBonus} saves` : null,
+                        magic.acBonus ? `+${magic.acBonus} ${t("AC")}` : null,
+                        magic.saveBonus ? `+${magic.saveBonus} ${t("Saving throws")}` : null,
                         ...Object.entries(magic.abilitySet).map(
-                          ([ability, score]) => `${ability.toUpperCase()} ${score}`,
+                          ([ability, score]) => `${abilityShortLabel(ability, locale)} ${score}`,
                         ),
-                        magic.resistances.length ? `resist ${magic.resistances.join(", ")}` : null,
+                        magic.resistances.length ? `${t("Resists")} ${localizeDefenseTypes(magic.resistances.join(", "), locale)}` : null,
                       ]
                         .filter(Boolean)
                         .join(" \u00b7 ") || "worn"}
