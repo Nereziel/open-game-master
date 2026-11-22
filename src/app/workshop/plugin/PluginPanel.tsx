@@ -19,7 +19,7 @@ import { PublishSection } from "@/app/workshop/plugin/PublishSection";
 import { MagicSection, PeopleSection } from "@/app/workshop/plugin/ReskinSection";
 import { SettingSection } from "@/app/workshop/plugin/SettingSection";
 import { PLUGIN_SECTIONS, type Flushed, type SectionId } from "@/app/workshop/plugin/types";
-import { useT, useTp } from "@/lib/locale";
+import { useLocale, useT, useTp } from "@/lib/locale";
 
 // The Plugin system: a world pack written in the workshop.
 //
@@ -79,6 +79,7 @@ export function PluginPanel({
   onChanged?: (count: number) => void;
 }) {
   const t = useT();
+  const locale = useLocale();
   const tp = useTp();
   const [draft, setDraft] = useState<WorldPackDraft | null>(null);
   const [section, setSection] = useState<SectionId>("identity");
@@ -382,7 +383,7 @@ export function PluginPanel({
 
       <div data-tour="plugin-sections" className="w-fit max-w-full">
         <SegmentedControl
-          options={PLUGIN_SECTIONS.map((entry) => ({ value: entry.id, label: entry.label }))}
+          options={PLUGIN_SECTIONS.map((entry) => ({ value: entry.id, label: locale === "cs" ? ({ identity: "Základní údaje", people: "Obyvatelé", magic: "Magie a výbava", bestiary: "Bestiář", setting: "Herní svět", art: "Obrázky", publish: "Publikování" } as Record<SectionId, string>)[entry.id] : t(entry.label) }))}
           value={section}
           onChange={setSection}
           size="sm"
