@@ -58,6 +58,8 @@ describe("Campaign character adjustments in Czech", () => {
     expect(editor).toContain("localizeAcParts(derived.parts, t, locale)");
     expect(sheetDialog).toContain('localizeAcParts(armor.parts, t, locale).join(" + ")');
     expect(sheetDialog).not.toContain('armor.parts.join(" + ")');
+    expect(sheetDialog).toContain("abilityShortLabel(ability, locale)");
+    expect(sheetDialog).toContain('localizeDefenseTypes(magic.resistances.join(", "), locale)');
     expect(editor).toContain("skillLabel(skill.id, locale)");
     expect(editor).toContain("LocalizedItemNameInput");
     expect(editor).toContain('t("Prepared spells")');
