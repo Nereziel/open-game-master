@@ -24,7 +24,7 @@ Tento dokument popisuje **společné zdroje překladů**. Překlady se vytváře
 
 - `npm run i18n:cs:report` — existující přehled pokrytí katalogu.
 - `npm run i18n:cs:check` — validace překladů a placeholderů.
-- `npm run i18n:cs:ui-report` — audit **literal** volání `t("...")` a `tp("...", "...")` v `.ts` i `.tsx` souborech kampaní, postav a sdílených komponent; vypíše chybějící klíče s cestou a číslem řádku. Funguje na Windows i Unixu.
+- `npm run i18n:cs:ui-report` — audit **literal** volání `t("...")` a `tp("...", "...")` v `.ts` i `.tsx` souborech kampaní, postav a sdílených komponent (nikoli v `*.test.ts`, `*.spec.ts`, stories a složkách s fixtures); vypíše chybějící klíče s cestou a číslem řádku. Funguje na Windows i Unixu.
 - `node scripts/audit-cs-ui-keys.mjs --json` — strojově čitelný úplný report: chybějící klíče, duplicitní JSON klíče a **podezřelé české literály v JSX** (`title`, `placeholder`, `aria-label`, krátké texty apod.). Podezřelé JSX literály jsou **pouze kandidáti k ručnímu posouzení**: mohou zahrnovat záměrnou prózu a pravidlový obsah, nenahrazovat je automaticky.
 - `npm run i18n:cs:ui-check` — stejný audit v přísném režimu s nenulovým návratovým kódem při chybějících překladech nebo duplicitních katalogových klíčích. **Nezapínat plošně do CI bez vyřešení počátečního nálezu**; kontrola zatím nepostihuje dynamické klíče a kandidáti z JSX neovlivňují návratový kód.
 - `npm run i18n:cs:ui-test` — samostatný test analyzátoru volání pomocí TypeScript AST.
