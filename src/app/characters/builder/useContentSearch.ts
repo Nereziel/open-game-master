@@ -4,7 +4,7 @@ import { useEffect, useRef, useState } from "react";
 import { scopedParams, useContentCampaign } from "@/lib/content-scope";
 import { uniqueByName } from "./pickerRows";
 import { uniquePlayableFeatRows } from "./feat-picker-logic";
-import { czechPickerQueries } from "./czech-picker-search";
+import { appendCzechPickerMatches, czechPickerQueries } from "./czech-picker-search";
 import { csTables } from "@/lib/i18n/cs-tables";
 import { useLocale } from "@/lib/locale";
 import { searchKey } from "@/lib/language/text-logic";
@@ -103,10 +103,11 @@ export function useContentSearch(kind: string, extraParams: Record<string, strin
             setPackMissing(data.packInstalled === false);
             setUnadmitted(Array.isArray(data.unadmitted) ? data.unadmitted : []);
             let rows = data.results ?? [];
-            // API searches canonical English names. Only if that search
-            // returns no rows, ask for the known official English IDs whose
-            // Czech labels match the typed text (diacritics optional).
-            if (!rows.length && trimmed && locale === "cs") {
+            // Search by official Czech labels even if the initial English
+            // query returned an unrelated/partial match. Keep its results
+            // too, without changing the stored names or including unrelated
+            // rows from the additional requests.
+            if (trimmed && locale === "cs") {
               const lookup = czechPickerQueries(kind, trimmed, csTables()?.names ?? {})
                 .filter((english) => searchKey(english) !== searchKey(trimmed));
               const localized = await Promise.all(lookup.map(async (english) => {
@@ -121,7 +122,7 @@ export function useContentSearch(kind: string, extraParams: Record<string, strin
                   return [];
                 }
               }));
-              rows = [...rows, ...localized.flat()];
+              rows = appendCzechPickerMatches(kind, trimmed, rows, localized.flat());
             }
             if (controller.signal.aborted) return;
             const byName = uniqueByName(rows);
