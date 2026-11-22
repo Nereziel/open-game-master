@@ -309,6 +309,8 @@ function ItemBody({ reference }: { reference: ContentRef }) {
   }
   const sheet = state.sheet;
   if (!sheet) {
+    const fallback = itemDescriptionCs(reference.name ?? reference.slug, null, locale);
+    if (fallback) return <div className="space-y-2 text-sm text-stone-300">{renderRules(fallback)}</div>;
     return (
       <p className="text-sm text-stone-500">
         {t("No details available. The content pack may not be installed, or this item was added by hand.")}
