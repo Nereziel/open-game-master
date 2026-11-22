@@ -42,7 +42,7 @@ describe("Czech campaign content pickers", () => {
     const tohItem = { name: "Clockwork Crossbow", slug: "clockwork-crossbow", source: "open5e", documentSlug: "toh" };
     const tohSpell = { name: "Fuse Armor", slug: "fuse-armor", source: "open5e", documentSlug: "toh" };
     expect(contentName("items", tohItem, "cs")).toBe("Mechanická kuše");
-    expect(contentName("spells", tohSpell, "cs")).toBe("Spojení zbroje");
+    expect(contentName("spells", tohSpell, "cs")).toBe("Zatavení zbroje");
     expect(contentName("items", { ...tohItem, documentSlug: "wotc-srd" }, "cs")).toBe("Clockwork Crossbow");
     expect(contentName("items", { ...tohItem, documentSlug: "another-book" }, "cs")).toBe("Clockwork Crossbow");
     expect(contentName("items", { ...tohItem, source: "homebrew" }, "cs")).toBe("Clockwork Crossbow");
@@ -50,7 +50,7 @@ describe("Czech campaign content pickers", () => {
     expect(contentName("items", "Clockwork Crossbow", "cs")).toBe("Clockwork Crossbow");
     expect(contentName("spells", { ...tohSpell, documentSlug: "other-book" }, "cs")).toBe("Fuse Armor");
     expect(czechPickerQueries("items", "mechanicka kuse", CS_NAMES_BY_TABLE)).toContain("Clockwork Crossbow");
-    expect(czechPickerQueries("spells", "spojeni zbroje", CS_NAMES_BY_TABLE)).toContain("Fuse Armor");
+    expect(czechPickerQueries("spells", "zataveni zbroje", CS_NAMES_BY_TABLE)).toContain("Fuse Armor");
     expect(contentName("feats", { name: "Boundless Reserves", source: "open5e", documentSlug: "toh" }, "cs"))
       .toBe("Nevyčerpatelné zásoby");
     expect(contentName("spells", { name: "Acid Gate", source: "open5e", documentSlug: "deepm" }, "cs"))
