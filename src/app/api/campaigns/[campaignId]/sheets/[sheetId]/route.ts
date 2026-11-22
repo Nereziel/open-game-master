@@ -38,7 +38,15 @@ export async function PATCH(
   // built before the cantrip, pending and spellbook lists (or the per-class
   // casters) sends only prepared and known, and must not wipe the rest.
   if (raw && typeof raw === "object" && raw.spellcasting && typeof raw.spellcasting === "object") {
-    raw.spellcasting = layOver(sheet.spellcasting ?? {}, raw.spellcasting);
+    // An explicitly sent contentRefs map is a *replacement*, not a
+    // recursive patch: an empty map means the last referenced spell was
+    // removed. Older clients omitting contentRefs still retain the stored map.
+    const castingEdit = raw.spellcasting as Record<string, unknown>;
+    const baseCasting = { ...(sheet.spellcasting ?? {}) };
+    if (Object.prototype.hasOwnProperty.call(castingEdit, "contentRefs")) {
+      delete baseCasting.contentRefs;
+    }
+    raw.spellcasting = layOver(baseCasting, castingEdit);
   }
   const parsed = fullPatchSheetSchema.safeParse(raw);
   if (!parsed.success) {
