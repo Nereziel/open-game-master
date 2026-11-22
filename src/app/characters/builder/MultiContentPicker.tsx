@@ -66,12 +66,12 @@ export default function MultiContentPicker({
   const trimmedQuery = query.trim();
 
   function togglePending(entry: PickerEntry) {
+    const contentRef = storedReferenceForCatalogRow(kind, entry);
     const choice = {
       name: entry.name, slug: entry.slug, level: entry.level,
       source: entry.source, documentSlug: entry.documentSlug,
       kind: entry.kind, displayLabel: rowName(entry),
-      ...(entry.slug && storedReferenceForCatalogRow(kind, entry)
-        ? { contentRef: storedReferenceForCatalogRow(kind, entry)! } : {}),
+      ...(contentRef ? { contentRef } : {}),
     };
     setPending((picks) => togglePendingSourceRow(picks, choice));
   }
