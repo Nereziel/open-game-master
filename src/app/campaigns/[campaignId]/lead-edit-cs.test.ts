@@ -23,6 +23,17 @@ describe("Campaign character adjustments in Czech", () => {
     expect(spells).not.toContain('>{contentName("classes", titleCase(view.classId), locale)}</p>');
   });
 
+  it("uses the locale catalog for hit-die roll instructions and actions", () => {
+    const state = readFileSync(path.join(process.cwd(), "src/components/sheet/SheetState.tsx"), "utf8");
+    expect(state).toContain('aria-label={t("Your hit die roll")}');
+    expect(state).toContain('t("Heal with this roll")');
+    expect(state).toContain('t("Roll digitally instead")');
+    expect(state).toContain('t("Roll {summary}. Your assigned dice fill in on their own."');
+    expect(state).toContain('t("Enter the bare die numbers; the {mod} is added for you."');
+    expect(state).not.toContain('aria-label="Your hit die roll"');
+    expect(state).not.toContain('>Heal with this roll<');
+  });
+
   it("keeps the shared ability labels in character tiles and the PDF", () => {
     for (const ability of ABILITIES) {
       expect(CS_ABILITY_ABBR[ability]).toBe(abilityShortLabel(ability, "cs"));
