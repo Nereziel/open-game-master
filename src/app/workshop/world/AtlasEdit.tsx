@@ -2,6 +2,7 @@
 
 import { Check, Minus, Plus, Settings2, Trash2, X } from "lucide-react";
 import { useState } from "react";
+import { useT } from "@/lib/locale";
 import { cn } from "@/lib/cn";
 import { ui } from "@/lib/ui";
 import { KitButton } from "@/app/campaigns/[campaignId]/PanelKit";
@@ -103,11 +104,12 @@ export function CornerEditor({ points, onSave }: { points: XY[]; onSave: (points
 // ---- a failed save ----
 
 export function NotSaved({ onRetry, what = "Your changes" }: { onRetry: () => void; what?: string }) {
+  const t = useT();
   return (
     <p className="flex flex-wrap items-center gap-2 text-[11px] text-ember-300" role="alert" data-testid="atlas-not-saved">
-      Not saved. {what} are still here.
+      {t("Not saved. {what} are still here.", { what: t(what) })}
       <KitButton tone="small" onClick={onRetry}>
-        Try again
+        {t("Try again")}
       </KitButton>
     </p>
   );
@@ -118,6 +120,7 @@ export function NotSaved({ onRetry, what = "Your changes" }: { onRetry: () => vo
 type Shape = "wide" | "picture" | "custom";
 
 export function MapSettings({ api, atlas, region, onClose }: { api: WorldApi; atlas: AtlasMap; region: AtlasRegion; onClose: () => void }) {
+  const t = useT();
   const frame = frameOf(atlas);
   const [draft, setDraft] = useState({ name: atlas.name, image: atlas.image });
   const [failed, setFailed] = useState(false);
@@ -142,7 +145,7 @@ export function MapSettings({ api, atlas, region, onClose }: { api: WorldApi; at
     const ok = await api.patch({ maps: latest.map((entry) => (entry.id === atlas.id ? { ...entry, name: draft.name.trim(), image: draft.image } : entry)) });
     setSaving(false);
     setFailed(!ok);
-    if (ok) region.setNotice({ text: `Saved ${draft.name.trim()}.` });
+    if (ok) region.setNotice({ text: t("Saved {name}.", { name: draft.name.trim() }) });
   }
 
   async function review(apply: boolean) {
@@ -162,11 +165,11 @@ export function MapSettings({ api, atlas, region, onClose }: { api: WorldApi; at
   }
 
   return (
-    <div className="panel motion-pop flex flex-col gap-3 rounded-lg p-3 text-xs text-stone-300" role="region" aria-label={`Settings for ${atlas.name}`} data-testid="atlas-settings">
+    <div className="panel motion-pop flex flex-col gap-3 rounded-lg p-3 text-xs text-stone-300" role="region" aria-label={t("Settings for {name}", { name: atlas.name })} data-testid="atlas-settings">
       <div className="flex items-center gap-2">
         <Settings2 className="size-4 text-amber-400/80" />
-        <span className="text-sm text-amber-100">Map settings</span>
-        <KitButton tone="icon" always className="ml-auto" aria-label="Close the settings" onClick={onClose}>
+        <span className="text-sm text-amber-100">{t("Map settings")}</span>
+        <KitButton tone="icon" always className="ml-auto" aria-label={t("Close the settings")} onClick={onClose}>
           <X className="size-4" />
         </KitButton>
       </div>
@@ -178,26 +181,26 @@ export function MapSettings({ api, atlas, region, onClose }: { api: WorldApi; at
           void saveText();
         }}
       >
-        <input className={ui.input} aria-label="Map name" maxLength={80} value={draft.name} onChange={(event) => setDraft({ ...draft, name: event.target.value })} />
+        <input className={ui.input} aria-label={t("Map name")} maxLength={80} value={draft.name} onChange={(event) => setDraft({ ...draft, name: event.target.value })} />
         <LoreImageField imagePath={draft.image} onChange={(image) => setDraft({ ...draft, image })} />
         {draft.image !== atlas.image && atlas.role === "region" ? (
-          <p className="text-[11px] text-stone-400">The Region keeps showing the old picture until you use this map as the Region backdrop again.</p>
+          <p className="text-[11px] text-stone-400">{t("The Region keeps showing the old picture until you use this map as the Region backdrop again.")}</p>
         ) : null}
         {failed ? <NotSaved onRetry={() => void saveText()} /> : null}
         <span className="flex justify-end">
           <KitButton tone="primary" type="submit" busy={saving} disabled={saving || !changedText || !draft.name.trim()} data-testid="atlas-settings-save">
-            {saving ? null : <Check className="size-3.5" />} Save name and picture
+            {saving ? null : <Check className="size-3.5" />} {t("Save name and picture")}
           </KitButton>
         </span>
       </form>
 
       <fieldset className="flex flex-col gap-1.5 border-t border-stone-800 pt-2">
-        <legend className="eyebrow text-[10px] text-stone-500">How the picture sits</legend>
-        <div className="flex flex-wrap gap-3" role="radiogroup" aria-label="How the picture fills the box">
+        <legend className="eyebrow text-[10px] text-stone-500">{t("How the picture sits")}</legend>
+        <div className="flex flex-wrap gap-3" role="radiogroup" aria-label={t("How the picture fills the box")}>
           {(
             [
-              ["cover", "Fill the box (crops the picture)"],
-              ["contain", "Show the whole picture"],
+              ["cover", t("Fill the box (crops the picture)")],
+              ["contain", t("Show the whole picture")],
             ] as const
           ).map(([value, label]) => (
             <label key={value} className="flex items-center gap-1.5">
@@ -205,32 +208,32 @@ export function MapSettings({ api, atlas, region, onClose }: { api: WorldApi; at
             </label>
           ))}
         </div>
-        <div className="flex flex-wrap items-center gap-3" role="radiogroup" aria-label="The box's shape">
+        <div className="flex flex-wrap items-center gap-3" role="radiogroup" aria-label={t("The box’s shape")}>
           <label className="flex items-center gap-1.5">
-            <input type="radio" name={`shape-${atlas.id}`} checked={shape === "wide"} onChange={() => { setShape("wide"); setPlan(null); }} /> Wide, 16:10
+            <input type="radio" name={`shape-${atlas.id}`} checked={shape === "wide"} onChange={() => { setShape("wide"); setPlan(null); }} /> {t("Wide, 16:10")}
           </label>
           {uploaded ? (
             <label className="flex items-center gap-1.5">
-              <input type="radio" name={`shape-${atlas.id}`} checked={shape === "picture"} onChange={() => { setShape("picture"); setPlan(null); }} data-testid="atlas-shape-picture" /> The picture&apos;s own shape
+              <input type="radio" name={`shape-${atlas.id}`} checked={shape === "picture"} onChange={() => { setShape("picture"); setPlan(null); }} data-testid="atlas-shape-picture" /> {t("The picture’s own shape")}
             </label>
           ) : null}
           <label className="flex items-center gap-1.5">
-            <input type="radio" name={`shape-${atlas.id}`} checked={shape === "custom"} onChange={() => { setShape("custom"); setPlan(null); }} /> Width to height
+            <input type="radio" name={`shape-${atlas.id}`} checked={shape === "custom"} onChange={() => { setShape("custom"); setPlan(null); }} /> {t("Width to height")}
           </label>
           {shape === "custom" ? (
             <span className="flex items-center gap-1">
-              <input className={cn(ui.input, "w-16 py-0.5 text-xs")} type="number" min={0.1} step={0.1} aria-label="Box width" value={ratio.w} onChange={(event) => { setRatio({ ...ratio, w: event.target.value }); setPlan(null); }} />
+              <input className={cn(ui.input, "w-16 py-0.5 text-xs")} type="number" min={0.1} step={0.1} aria-label={t("Box width")} value={ratio.w} onChange={(event) => { setRatio({ ...ratio, w: event.target.value }); setPlan(null); }} />
               :
-              <input className={cn(ui.input, "w-16 py-0.5 text-xs")} type="number" min={0.1} step={0.1} aria-label="Box height" value={ratio.h} onChange={(event) => { setRatio({ ...ratio, h: event.target.value }); setPlan(null); }} />
+              <input className={cn(ui.input, "w-16 py-0.5 text-xs")} type="number" min={0.1} step={0.1} aria-label={t("Box height")} value={ratio.h} onChange={(event) => { setRatio({ ...ratio, h: event.target.value }); setPlan(null); }} />
             </span>
           ) : null}
         </div>
-        <div className="flex flex-col gap-1" role="radiogroup" aria-label="What the pins do">
+        <div className="flex flex-col gap-1" role="radiogroup" aria-label={t("What the pins do")}>
           <label className="flex items-center gap-1.5">
-            <input type="radio" name={`carry-${atlas.id}`} checked={carry} onChange={() => { setCarry(true); setPlan(null); }} /> Pins and regions stay on the same spots of the picture
+            <input type="radio" name={`carry-${atlas.id}`} checked={carry} onChange={() => { setCarry(true); setPlan(null); }} /> {t("Pins and regions stay on the same spots of the picture")}
           </label>
           <label className="flex items-center gap-1.5">
-            <input type="radio" name={`carry-${atlas.id}`} checked={!carry} onChange={() => { setCarry(false); setPlan(null); }} /> They stay where they are in the box
+            <input type="radio" name={`carry-${atlas.id}`} checked={!carry} onChange={() => { setCarry(false); setPlan(null); }} /> {t("They stay where they are in the box")}
           </label>
         </div>
         {plan ? (
@@ -248,14 +251,14 @@ export function MapSettings({ api, atlas, region, onClose }: { api: WorldApi; at
         <span className="flex justify-end gap-1.5">
           {plan ? (
             <>
-              <KitButton tone="small" onClick={() => setPlan(null)}>Cancel</KitButton>
+              <KitButton tone="small" onClick={() => setPlan(null)}>{t("Cancel")}</KitButton>
               <KitButton tone="primary" busy={busy} disabled={busy} onClick={() => void review(true)} data-testid="atlas-frame-apply">
-                {busy ? null : <Check className="size-3.5" />} Change it
+                {busy ? null : <Check className="size-3.5" />} {t("Change it")}
               </KitButton>
             </>
           ) : (
             <KitButton tone="small" busy={busy} disabled={busy || !surfaceOk} onClick={() => void review(false)} data-testid="atlas-frame-review-button">
-              Review the change
+              {t("Review the change")}
             </KitButton>
           )}
         </span>
@@ -269,6 +272,7 @@ export function MapSettings({ api, atlas, region, onClose }: { api: WorldApi; at
 export type DeleteAsk = { target: AtlasTarget; plan: DeletePlan };
 
 export function useAtlasDelete(api: WorldApi, region: AtlasRegion) {
+  const t = useT();
   const [ask, setAsk] = useState<DeleteAsk | null>(null);
   const [busy, setBusy] = useState(false);
 
@@ -291,7 +295,7 @@ export function useAtlasDelete(api: WorldApi, region: AtlasRegion) {
       if (!done?.applied) return false;
       const token = done.undo;
       region.setNotice({
-        text: `Deleted ${done.impact.name}.`,
+        text: t("Deleted {name}.", { name: done.impact.name }),
         undo: token
           ? async () => {
               const back = (await api.atlasStep("restore", { undo: token })) as { skipped?: string[] } | null;
@@ -310,6 +314,7 @@ export function useAtlasDelete(api: WorldApi, region: AtlasRegion) {
 }
 
 export function DeleteReview({ remover, onDeleted }: { remover: ReturnType<typeof useAtlasDelete>; onDeleted: (target: AtlasTarget) => void }) {
+  const t = useT();
   const { ask } = remover;
   if (!ask) return null;
   const { impact, notes } = ask.plan;
@@ -331,9 +336,9 @@ export function DeleteReview({ remover, onDeleted }: { remover: ReturnType<typeo
       {notes.map((note) => (
         <p key={note} className="text-stone-400">{note}</p>
       ))}
-      <p className="text-stone-500">You can undo it straight after.</p>
+      <p className="text-stone-500">{t("You can undo it straight after.")}</p>
       <span className="flex justify-end gap-1.5">
-        <KitButton tone="small" onClick={remover.cancel}>Cancel</KitButton>
+        <KitButton tone="small" onClick={remover.cancel}>{t("Cancel")}</KitButton>
         <KitButton
           tone="danger"
           busy={remover.busy}
@@ -344,7 +349,7 @@ export function DeleteReview({ remover, onDeleted }: { remover: ReturnType<typeo
             if (await remover.confirm()) onDeleted(target);
           }}
         >
-          {remover.busy ? null : <Trash2 className="size-3.5" />} Delete
+          {remover.busy ? null : <Trash2 className="size-3.5" />} {t("Delete")}
         </KitButton>
       </span>
     </div>
