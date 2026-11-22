@@ -209,7 +209,7 @@ export const gameSettingsSchema = z.object({
   // should write (issue #383): the model-agnostic way to fit a table's prose
   // to its model and its taste, where a per-model prompt would go stale.
   // Standard and blank change nothing in the prompt.
-  narrationLength: z.enum(["short", "standard", "rich"]).default("standard"),
+  narrationLength: z.enum(["short", "standard", "rich"]).default("short"),
   styleNotes: z.string().trim().max(500).default(""),
   // How often the AI DM's world brings a fight (issue #432): the encounter
   // dice of the world tick (src/lib/dm/world-tick-logic.ts pacedTickConfig),
