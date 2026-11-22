@@ -115,6 +115,15 @@ describe("historical event-log system phrases follow the reader's locale", () =>
     expect(say("cs", "set_condition", { condition: "My Homebrew Curse" })).toContain("My Homebrew Curse");
   });
 
+  it("uses canonical spell names for successful revivals without touching the death record", () => {
+    const delta = { revived: "Revivify", currentHp: 1 };
+    expect(say("cs", "death_state", delta)).toContain("Oživení");
+    expect(say("en", "death_state", delta)).toContain("Revivify");
+    expect(say("cs", "death_state", { revived: "Ancient Pact Ritual", currentHp: 1 }))
+      .toContain("Ancient Pact Ritual");
+    expect(delta).toEqual({ revived: "Revivify", currentHp: 1 });
+  });
+
   it("translates standard damage types through the shared UI catalog, not custom ones", () => {
     const withFire = { kind: "apply_damage", delta: { amount: 3, type: "fire" } };
     const withCustom = { kind: "apply_damage", delta: { amount: 3, type: "dreamfire" } };
