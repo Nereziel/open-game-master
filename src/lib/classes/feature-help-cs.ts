@@ -72,7 +72,7 @@ export const GENRE_SUBCLASS_NAMES_CS: Readonly<Record<string, string>> = {
 };
 
 const GENRE_SOURCE_SUBCLASSES = (
-  genreFeatureNames as { classes: Record<string, { subclass: { name: string; levels: Record<string, string[]> } }> }
+  genreFeatureNames as { classes: Record<string, { levels: Record<string, string[]>; subclass: { name: string; levels: Record<string, string[]> } }> }
 ).classes;
 
 export function genreSubclassNameCs(classId: string, englishName: string): string | null {
@@ -102,7 +102,7 @@ export function genreClassRulesCs(classId: string): string | null {
   if (!table || !GENRE_CLASS_FEATURES_CS[id]) return null;
   // The class feature catalog holds the original level progression as well
   // as the subclass's features. Never infer levels from translated strings.
-  const source = table as typeof table & { levels: Record<string, string[]> };
+  const source = table;
   const classSections = Object.entries(source.levels).map(([level, featureNames]) => {
     const rules = featureNames.map((name) => {
       const feature = genreFeatureCs(id, name);
