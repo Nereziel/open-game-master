@@ -12,6 +12,9 @@ import { MULTICLASS_CAP, describeGrant, multiclassGrantsFor } from "@/lib/srd/mu
 import { textKey } from "@/lib/language/text-logic";
 import { useLocale, useT, useTp } from "@/lib/locale";
 import { skillLabel } from "@/lib/srd";
+import { classFeatureName, subclassName as subclassNameLabel } from "@/lib/content/names";
+import { genreSubclassDescriptionCs } from "@/lib/classes/feature-help-cs";
+import { classDisplayNameFor } from "@/lib/characters/class-words";
 import { hitDieChip } from "../lineage";
 import { CardText } from "../CardText";
 import { classSplitWords, multiclassChoices } from "../multiclassBuild";
@@ -314,7 +317,7 @@ function ExtraClassCard({
       ) : null}
       {features.length ? (
         <p className="mt-3 text-xs text-stone-400">
-          {t("At {class} level {level}: {list}.", { class: lower, level: entry.level, list: features.map((feature) => feature.name).join(", ") })}
+          {t("At {class} level {level}: {list}.", { class: lower, level: entry.level, list: features.map((feature) => classFeatureName(entry.klass.id, feature.name, locale)).join(", ") })}
         </p>
       ) : null}
     </section>
@@ -326,6 +329,7 @@ function ExtraClassCard({
 // offers them (usePickerGroups.ts).
 function ExtraSubclassField({ state, entry, index }: { state: BuilderState; entry: ExtraClassRow; index: number }) {
   const t = useT();
+  const locale = useLocale();
   const { archetypes } = useArchetypeOptions(entry.klass.id);
   const groups = useMemo<PickerGroup[]>(() => {
     const builtIn = subclassNamesFor(entry.klass.id);
@@ -339,8 +343,8 @@ function ExtraSubclassField({ state, entry, index }: { state: BuilderState; entr
               label: t("Full features"),
               options: builtIn.map((subclassName) => ({
                 id: subclassName,
-                name: subclassName,
-                infoText: subclassBlurb(entry.klass.id, subclassName) || undefined,
+                name: subclassNameLabel(entry.klass.id, subclassName, locale),
+                infoText: (locale === "cs" ? genreSubclassDescriptionCs(entry.klass.id, subclassName) : null) ?? subclassBlurb(entry.klass.id, subclassName) ?? undefined,
               })),
             },
           ]
@@ -349,10 +353,12 @@ function ExtraSubclassField({ state, entry, index }: { state: BuilderState; entr
         ? [{ label: t("More subclasses"), options: others.map((archetype) => ({ id: archetype.name, name: archetype.name, infoText: archetype.desc })) }]
         : []),
     ];
-  }, [entry.klass.id, archetypes, t]);
-  const blurb = entry.subclass ? subclassBlurb(entry.klass.id, entry.subclass) : "";
+  }, [entry.klass.id, archetypes, t, locale]);
+  const blurb = entry.subclass
+    ? (locale === "cs" ? genreSubclassDescriptionCs(entry.klass.id, entry.subclass) : null) ?? subclassBlurb(entry.klass.id, entry.subclass)
+    : null;
   return (
-    <Field label={t("{class} subclass", { class: entry.klass.name })} className="mt-3">
+    <Field label={t("{class} subclass", { class: classDisplayNameFor(entry.klass.id, locale) })} className="mt-3">
       <OptionPicker
         value={entry.subclass}
         groups={groups}
@@ -363,7 +369,7 @@ function ExtraSubclassField({ state, entry, index }: { state: BuilderState; entr
       {entry.subclass ? (
         <span className="mt-1 flex items-start gap-1 text-xs text-stone-500">
           <span className="grow">{blurb || t("A specialization within the class.")}</span>
-          {blurb ? <InfoButton label={entry.subclass} text={blurb} /> : null}
+          {blurb ? <InfoButton label={subclassNameLabel(entry.klass.id, entry.subclass, locale)} text={blurb} /> : null}
         </span>
       ) : (
         <span className="mt-1 block text-xs text-amber-300">{t("Still to choose.")}</span>
