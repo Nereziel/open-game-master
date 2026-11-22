@@ -88,7 +88,7 @@ export default function MultiContentPicker({
       return;
     }
     // Only canonical fields leave this UI; localized labels are ephemeral.
-    onAdd(pending.map(({ displayLabel: _label, ...canonical }) => canonical));
+    onAdd(pending.map((pick) => ({ name: pick.name, ...(pick.slug ? { slug: pick.slug } : {}), ...(pick.level !== undefined ? { level: pick.level } : {}) })));
     setPending([]);
     setQuery("");
     setResults([]);
