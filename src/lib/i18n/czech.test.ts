@@ -290,7 +290,7 @@ describe("Czech localization", () => {
     expect(resourceGuidance("sub_psionic_energy", "en")).toBeNull();
     expect(resourceGuidance("unknown_resource", "cs")).toBeNull();
     expect(describeFeature("street_samurai", "", "Bullet Time", "cs"))
-      .toBe(resourceGuidance("cyberpunk_bullet_time", "cs"));
+      .toBe(genreFeatureCs("street_samurai", "Bullet Time")?.description);
     expect(describeFeature("street_samurai", "", "Bullet Time", "en"))
       .not.toBe(resourceGuidance("cyberpunk_bullet_time", "cs"));
     expect(describeFeature("homebrew:unknown", "", "Bullet Time", "cs"))
