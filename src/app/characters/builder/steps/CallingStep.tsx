@@ -5,7 +5,8 @@ import { GameTerm } from "@/components/ui/GameTerm";
 import { textKey } from "@/lib/language/text-logic";
 import { InfoButton, InfoDialog } from "@/components/ui/InfoDialog";
 import { describeFeature, describeSkill } from "@/lib/help";
-import { classFeatureName, contentName } from "@/lib/content/names";
+import { classFeatureName, contentName, subclassName } from "@/lib/content/names";
+import { genreSubclassDescriptionCs } from "@/lib/classes/feature-help-cs";
 import { useClassFeatureText } from "@/lib/classes/use-feature-text";
 import { firstSentence } from "@/lib/help/rules-text";
 import { CLASS_ROLES, classRoles, type ClassRole } from "@/lib/srd/class-roles";
@@ -225,6 +226,9 @@ export function CallingStep({
   const details = detailsFor
     ? classGroups.flatMap((group) => group.options).find((option) => option.id === detailsFor)
     : undefined;
+  const chosenSubclassDescription = (locale === "cs" ? genreSubclassDescriptionCs(klass?.id ?? "", subclass) : null)
+    ?? chosenArchetype?.desc
+    ?? subclassBlurb(klass?.id ?? "", subclass);
 
   return (
     <div className="space-y-4">
@@ -320,12 +324,12 @@ export function CallingStep({
               {subclass ? (
                 <>
                   <span className="grow">
-                    {firstSentence(t(chosenArchetype?.desc || subclassBlurb(klass?.id ?? "", subclass) || "")) ??
+                    {firstSentence(t(chosenSubclassDescription || "")) ??
                       t("A specialization within your class.")}
                   </span>
                   <InfoButton
-                    label={contentName("subclasses", subclass, locale)}
-                    text={chosenArchetype?.desc || subclassBlurb(klass?.id ?? "", subclass) ? t(chosenArchetype?.desc || subclassBlurb(klass?.id ?? "", subclass) || "") : undefined}
+                    label={subclassName(klass?.id ?? "", subclass, locale)}
+                    text={chosenSubclassDescription ? t(chosenSubclassDescription) : undefined}
                     reference={
                       chosenArchetype ? { kind: "archetypes", slug: chosenArchetype.id } : undefined
                     }
