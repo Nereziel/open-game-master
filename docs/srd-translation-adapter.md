@@ -77,3 +77,19 @@ calling `contentName` without provenance.
 
 Integration tests cover real bundled SRD spell/item rows, cross-book name
 collisions, ambiguous IDs, translated fields and unchanged English mechanics.
+
+## Completeness accounting
+
+`coverage.translated` counts entries with any Czech field; it is **not**
+proof of full prose translation. `coverage.fullText` counts pages whose
+companion Markdown includes the SRD full-text section heading;
+`coverage.incompleteIds` lists pages without that heading (except the
+required unmodified legal page). `coverage.missingIds` lists pages without
+any translation. These are structural signals, not semantic accuracy
+validation. Full text coverage is tested independently for rule chapters,
+classes, monsters, magic items, spells and race pages, using the source
+catalog's actual category sizes.
+
+The source has 36 rule-kind pages including licensing information; 35 are
+expected to contain complete Czech rules text. The license is excluded from
+the `fullText` requirement and retained in the original form.
