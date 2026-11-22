@@ -18,6 +18,8 @@ Tento katalog navazuje na [společnou překladovou vrstvu](../src/lib/content/na
 - Český dotaz se mapuje na **původní anglické jméno**; výsledný řádek se znovu ověřuje podle českého názvu. První přednost mají shody v centrálním SRD katalogu.
 - Vlastní uživatelské `homebrew` a jiné knihy se stejným názvem se nepřekládají. Neznámé řádky ponechávají anglický původní název.
 - U 15 zbraní Tome of Heroes a 5 magických předmětů Vault of Magic je navíc vlastní stručný český informační přehled (`third-party-item-summary-cs.ts`), vycházející z veřejně uváděných mechanických údajů. Zobrazuje se vedle původních pravidel, nikoli místo nich.
+- U devíti účinkově prověřených kouzel z Tome of Heroes přibyl nezávisle napsaný český přehled (`third-party-spell-summary-cs.ts`). Výslovně se odlišuje od plného anglického pravidlového popisu.
+- Informační dialog ověřuje `documentSlug` a `source` i při náhradním vyhledávání (`content-ref-match.ts`); pravidla jiné knihy nebo homebrew se již nesmějí vybrat jen na základě shody názvu.
 
 
 ## Audit významu názvů Tome of Heroes (22. 11. 2026)
@@ -40,7 +42,7 @@ Prameny k mechanikám (ne k českému názvosloví): veřejné herní popisy na 
 
 ## Co ještě není přeložené
 
-Úplné popisy kouzel, magických předmětů a pravidlové vlastnosti obsažené ve třetích knihách jsou prozatím v původním znění. Český název **není** tvrzením, že je k dispozici úplný český překlad pravidel. Pro další překlady je třeba samostatně připravit ověřené české texty, zachovat veškerou herní mechaniku a respektovat licenční podmínky příslušné knihy.
+Úplné popisy kouzel, magických předmětů a pravidlové vlastnosti obsažené ve třetích knihách jsou zatím v původním znění; u devíti kouzel a dvaceti předmětů je navíc krátký český přehled. Český název **není** tvrzením, že je k dispozici úplný český překlad pravidel. Pro další překlady je třeba samostatně připravit ověřené české texty, zachovat veškerou herní mechaniku a respektovat licenční podmínky příslušné knihy.
 
 Při rozšiřování:
 1. Ověřit přesnou anglickou položku a Open5e `documentSlug`, nikoli jen podobný název.
