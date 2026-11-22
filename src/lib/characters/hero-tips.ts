@@ -296,7 +296,7 @@ function featureTip(found: { card: HandCard; uses: number; recharge: "short" | "
   const namedFeature = locale === "cs" && textKey(card.name).startsWith("lay on hands")
     ? "Vkládání rukou (zásoba životů)"
     : t(card.name);
-  const use = `${t("Use {name}", { name: namedFeature, context: "tips.feature.use" })}${how}`;
+  const use = `${locale === "cs" ? `Použij ${namedFeature}` : t("Use {name}", { name: namedFeature, context: "tips.feature.use" })}${how}`;
   return {
     kind: "feature",
     text: card.dice ? t("{use}: {detail}", { use, detail: locale === "cs" ? card.dice.replace(/^heals up to (\d+)$/i, "obnoví až $1 životů") : card.dice }) : use,
