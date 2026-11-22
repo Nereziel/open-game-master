@@ -1,5 +1,5 @@
 import { describe, expect, it } from "vitest";
-import { acView } from "./sheet-state";
+import { acView, speedView } from "./sheet-state";
 import { installCsTables } from "@/lib/i18n/cs-tables";
 import { CS_NAMES_BY_TABLE } from "@/lib/content/names-cs";
 import { translate, type Locale } from "@/lib/i18n/translate";
@@ -27,6 +27,22 @@ describe("localized sheet state explanations", () => {
     expect(cs.note).not.toContain("Wolf");
     expect(acView(sheet, reader("en")).note).toContain("Wolf");
     expect(sheet.wildShape?.form).toBe("Wolf");
+  });
+
+  it("uses the condition catalog in movement warnings without modifying combat state", () => {
+    const sheet = {
+      name: "Mara",
+      speed: 30,
+      wildShape: { form: "Wolf", beastAc: 13, speed: 30 },
+      conditions: ["grappled"],
+      exhaustion: 0,
+    } as CharacterSheet;
+    const cs = speedView(reader("cs"), sheet);
+    expect(cs.speed).toBe(0);
+    expect(cs.notes.join(" ")).toContain("Uchvácený");
+    expect(cs.notes.join(" ")).not.toContain("grappled");
+    expect(speedView(reader("en"), sheet).notes.join(" ")).toContain("grappled");
+    expect(sheet.conditions).toEqual(["grappled"]);
   });
 
   it("does not rewrite a custom wild-shape name", () => {
