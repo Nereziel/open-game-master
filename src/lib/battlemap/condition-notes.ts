@@ -116,10 +116,11 @@ export function conditionNote(
   }
   // The spell identifier is stored in English, just like the sheet. Translate
   // only its known display name; never rewrite an unknown or authored spell.
-  const displayedSpell = meta.spell ? contentName("spells", meta.spell, t.locale ?? "en") : null;
+  const rawSpell = meta.spell?.trim() || null;
+  const displayedSpell = rawSpell ? contentName("spells", rawSpell, t.locale ?? "en") : null;
   if (displayedSpell && !source) {
     source = displayedSpell;
-  } else if (displayedSpell && source && !source.includes(meta.spell!) && !source.includes(displayedSpell)) {
+  } else if (rawSpell && displayedSpell && source && !source.includes(rawSpell) && !source.includes(displayedSpell)) {
     source = `${source} (${displayedSpell})`;
   }
   return { duration, counted, save, source, meaning };
