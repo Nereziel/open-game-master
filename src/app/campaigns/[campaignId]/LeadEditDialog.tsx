@@ -335,7 +335,7 @@ export function LeadEditDialog({
           <div className="mt-2 space-y-1.5 rounded-lg border border-stone-700/50 bg-stone-950/40 p-2 text-xs">
             <div className="flex flex-wrap items-center justify-between gap-2">
               <span className="flex items-center gap-1 text-stone-400">
-                <GameIcon icon={{ kind: "glyph", key: "rest-ac" }} size="size-4" /> {t("AC")}
+                <GameIcon icon={{ kind: "glyph", key: "rest-ac" }} size="size-4" /> <GameTerm id="armor_class">{t("AC")}</GameTerm>
               </span>
               <Switch on={pinned} onChange={setPinned} label={t("Pin the armor class by hand")} />
             </div>
