@@ -8,6 +8,9 @@ import spellSlotsJson from "@/lib/srd/spell-slots.json";
 import { findClass, spellSlotsFor } from "@/lib/srd";
 import { isThirdCaster, type ThirdCasterSetting } from "@/lib/srd/third-caster";
 import type { Ability, AbilityScores, ClassEntry } from "@/lib/schemas/sheet";
+import type { Locale } from "@/lib/i18n/translate";
+import { trainingProficiencyLabel } from "@/lib/content/proficiency-labels";
+import { toolLabel } from "@/lib/srd/tool-choices";
 
 // UI sanity cap: RAW is unbounded, but nobody at this table needs four.
 export const MULTICLASS_CAP = 3;
@@ -230,8 +233,14 @@ export function describePrereqT(t: T, classId: string): string {
 }
 
 // The proficiencies a second class grants, in the reader's words.
-export function describeGrantT(t: T, grant: MulticlassGrant): string {
-  const parts = [...grant.armor, ...grant.weapons, ...grant.tools];
+export function describeGrantT(t: T, grant: MulticlassGrant, locale: Locale = "en"): string {
+  // Read from the same category catalog as the sheet and its PDF. The
+  // underlying grant remains in English for the multiclass rule engine.
+  const parts = [
+    ...grant.armor.map((entry) => trainingProficiencyLabel(entry, "armor", locale, true) ?? t(entry)),
+    ...grant.weapons.map((entry) => trainingProficiencyLabel(entry, "weapons", locale, true) ?? t(entry)),
+    ...grant.tools.map((entry) => toolLabel(entry, t)),
+  ];
   if (grant.skillChoice) {
     parts.push(t(grant.skillChoice.from.length ? "one skill from its class list" : "one skill of your choice"));
   }
