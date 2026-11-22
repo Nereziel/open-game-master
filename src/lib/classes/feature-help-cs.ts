@@ -94,3 +94,34 @@ export function genreSubclassDescriptionCs(classId: string, englishName: string)
   }).filter(Boolean);
   return sections.join("\n\n") || null;
 }
+
+/** Complete Czech class-by-class rule description for the character detail view. */
+export function genreClassRulesCs(classId: string): string | null {
+  const id = classId.trim().toLowerCase().replace(/-/g, "_");
+  const table = GENRE_SOURCE_SUBCLASSES[id];
+  if (!table || !GENRE_CLASS_FEATURES_CS[id]) return null;
+  // The class feature catalog holds the original level progression as well
+  // as the subclass's features. Never infer levels from translated strings.
+  const source = table as typeof table & { levels: Record<string, string[]> };
+  const classSections = Object.entries(source.levels).map(([level, featureNames]) => {
+    const rules = featureNames.map((name) => {
+      const feature = genreFeatureCs(id, name);
+      return feature ? `**${feature.name}.** ${feature.description}` : null;
+    }).filter(Boolean);
+    return rules.length ? `#### Úroveň ${level}\n\n${rules.join("\n\n")}` : null;
+  }).filter(Boolean);
+  const subclass = source.subclass;
+  const subclassSections = Object.entries(subclass.levels).map(([level, featureNames]) => {
+    const rules = featureNames.map((name) => {
+      const feature = genreFeatureCs(id, name);
+      return feature ? `**${feature.name}.** ${feature.description}` : null;
+    }).filter(Boolean);
+    return rules.length ? `#### Úroveň ${level}\n\n${rules.join("\n\n")}` : null;
+  }).filter(Boolean);
+  return [
+    "### Schopnosti povolání",
+    ...classSections,
+    `### Podpovolání: ${GENRE_SUBCLASS_NAMES_CS[id]}`,
+    ...subclassSections,
+  ].join("\n\n");
+}
