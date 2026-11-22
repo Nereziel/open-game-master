@@ -1,5 +1,7 @@
 {
   "messages": {
+    "Remove portrait": "Odebrat portrét",
+    "Used to paint your character's portrait if you don't add a photo or choose one from the gallery.": "Slouží jako podklad pro vytvoření portrétu AI, pokud nenahraješ obrázek ani nevybereš portrét z galerie.",
     "Choose from gallery": "Vybrat z galerie",
     "These are built-in portraits. Choosing one is free and does not use AI. Race and class pictures show different aspects of a character.": "Jde o předpřipravené portréty. Výběr je zdarma a nepoužívá AI. Obrázky ras a povolání zachycují různé stránky postavy.",
     "Filter portraits by race": "Filtrovat portréty podle rasy",
