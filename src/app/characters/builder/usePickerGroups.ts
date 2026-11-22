@@ -22,6 +22,7 @@ import type {
 import { textKey } from "@/lib/language/text-logic";
 import { CZECH_BUILDER_CLASS_RULES } from "./classRulesCs";
 import { genreClassCs } from "@/lib/classes/genre-class-cs";
+import { genreSubclassDescriptionCs } from "@/lib/classes/feature-help-cs";
 
 export const ALIGNMENTS = ["LG", "NG", "CG", "LN", "N", "CN", "LE", "NE", "CE"];
 
@@ -444,7 +445,7 @@ export function usePickerGroups({
             name: subclassName(klass?.id ?? "", name, locale),
             // The pack's full write-up when it has the row, else the
             // bundled line, so no subclass is a bare name.
-            infoText: match?.desc || subclassBlurb(klass?.id ?? "", name) || undefined,
+            infoText: (locale === "cs" ? genreSubclassDescriptionCs(klass?.id ?? "", name) : null) ?? match?.desc ?? subclassBlurb(klass?.id ?? "", name) ?? undefined,
             reference: match
               ? { kind: "archetypes", slug: match.id, name }
               : undefined,
