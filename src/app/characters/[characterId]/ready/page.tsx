@@ -128,7 +128,7 @@ export default function HeroReadyPage({ params }: { params: Promise<{ characterI
       if (!response.ok) throw new Error("refused");
     } catch {
       setSkip(!next);
-      setSkipError("Could not save that. Try again.");
+      setSkipError(t("Could not save that. Try again."));
     }
   }
 
@@ -184,13 +184,13 @@ export default function HeroReadyPage({ params }: { params: Promise<{ characterI
               // eslint-disable-next-line @next/next/no-img-element
               <img
                 src={portraitUrl}
-                alt={`Portrait of ${character.name}`}
+                alt={t("Portrait of {name}", { name: character.name })}
                 className="size-28 rounded-xl border border-amber-500/30 object-cover shadow-glow-gold sm:size-32"
               />
             ) : (
               <CharacterPortrait
                 look={{ race: character.race, class: character.class, gender: character.sheet.gender }}
-                alt={`${character.name}, placeholder portrait`}
+                alt={t("{name}, placeholder portrait", { name: character.name })}
                 size="size-28 sm:size-32"
                 rounded="rounded-xl"
                 className="border-amber-500/30 shadow-glow-gold"
@@ -209,16 +209,16 @@ export default function HeroReadyPage({ params }: { params: Promise<{ characterI
               tabIndex={-1}
               className="gold-title font-display text-3xl tracking-wide outline-none focus-visible:ring-2 focus-visible:ring-amber-300/60 sm:text-4xl"
             >
-              {character.name} is ready
+              {t("{name} is ready", { name: character.name })}
             </h1>
             <p className="mt-1 text-sm capitalize text-stone-300">
-              Level {character.level} {ancestry} {calling}
+              {t("Level {level}", { level: character.level })} {ancestry} {calling}
             </p>
             {reveal ? <p className="mt-2 font-serif text-base italic text-amber-200">{reveal}</p> : null}
             {portraitPending ? (
-              <p className="mt-2 text-xs text-stone-400">The portrait is still painting. It will appear here when it is done.</p>
+              <p className="mt-2 text-xs text-stone-400">{t("The portrait is still painting. It will appear here when it is done.")}</p>
             ) : !portraitUrl && character.portraitStatus === "failed" ? (
-              <p className="mt-2 text-xs text-stone-500">The portrait couldn&apos;t be painted. You can paint or upload one from the sheet.</p>
+              <p className="mt-2 text-xs text-stone-500">{t("The portrait could not be painted. You can paint or upload one from the sheet.")}</p>
             ) : null}
           </div>
         </div>
@@ -226,7 +226,7 @@ export default function HeroReadyPage({ params }: { params: Promise<{ characterI
 
       <section aria-labelledby="hero-tips-heading" className={cn(ui.card, "mb-4 p-4 sm:p-5", motion)}>
         <h2 id="hero-tips-heading" className="font-display text-lg tracking-wide text-amber-100">
-          Three things to try on your turn
+          {t("Three things to try on your turn")}
         </h2>
         {tips.length ? (
           <ol className="mt-3 space-y-3">
@@ -241,7 +241,7 @@ export default function HeroReadyPage({ params }: { params: Promise<{ characterI
             ))}
           </ol>
         ) : (
-          <p className="mt-3 text-sm text-stone-400">Your sheet lists everything you can do once you sit down at a table.</p>
+          <p className="mt-3 text-sm text-stone-400">{t("Your sheet lists everything you can do once you sit down at a table.")}</p>
         )}
       </section>
 
@@ -253,14 +253,14 @@ export default function HeroReadyPage({ params }: { params: Promise<{ characterI
             onChange={(event) => void changeSkip(event.target.checked)}
             className="size-5 accent-amber-400 focus-visible:outline-2 focus-visible:outline-amber-300"
           />
-          Don&apos;t show this again
+          {t("Don\u0027t show this again")}
         </label>
         <div className="flex flex-wrap gap-2">
           <button type="button" onClick={() => setSeating(true)} className={cn(ui.btnPrimary, "min-w-0 flex-1 sm:flex-none")}>
-            <GameIcon icon={{ kind: "glyph", key: "tab-campaigns" }} size="size-6" /> Bring to a table
+            <GameIcon icon={{ kind: "glyph", key: "tab-campaigns" }} size="size-6" /> {t("Bring to a table")}
           </button>
           <Link href="/characters" className={cn(ui.btnSecondary, "min-w-0 flex-1 sm:flex-none")}>
-            Done
+            {t("Done")}
           </Link>
         </div>
       </div>

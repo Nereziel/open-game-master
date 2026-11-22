@@ -14,7 +14,7 @@ import { CardText } from "./CardText";
 import { prefersStillMotion, useEffectsRoot } from "@/lib/effects-mode";
 import type { Genre } from "@/lib/schemas/game-settings";
 import type { Ability, CreateSheetInput } from "@/lib/schemas/sheet";
-import { SRD_SKILLS } from "@/lib/srd";
+import { SRD_SKILLS, skillLabel } from "@/lib/srd";
 import { FIGHTING_STYLES } from "@/lib/srd/feature-effects";
 import { hostOffers, offersImages, useCapabilities } from "@/lib/use-capabilities";
 import { applyClassReskins, applyIdReskins } from "@/lib/worlds/reskin-logic";
@@ -128,14 +128,14 @@ function offeredRows<T extends { id: string }>(rows: T[], groups: PickerGroup[])
 
 // A dropped pick as the player knows it: skill and style ids by name, an
 // ability by its word, everything else as it was picked.
-function droppedName(drop: DroppedPick): string {
+function droppedName(drop: DroppedPick, locale: "en" | "fr" | "cs"): string {
   switch (drop.target) {
     case "classSkills":
     case "racialSkills":
     case "backgroundSkills":
     case "repeatSkills":
     case "expertise":
-      return SRD_SKILLS.find((skill) => skill.id === drop.value)?.name ?? drop.value;
+      return skillLabel(SRD_SKILLS.find((skill) => skill.id === drop.value)?.id ?? drop.value, locale);
     case "styles":
       return FIGHTING_STYLES.find((style) => style.id === drop.value)?.name ?? drop.value;
     case "racialAsi":
@@ -172,13 +172,14 @@ const DROP_LABELS: Record<string, string> = {
 // Ancestry step." The notice says what went, never that it must be picked
 // again: a language dropped because the new race has fewer slots is not
 // owed, and the step's own gate knows which picks are.
-function droppedMessage(t: (key: string, vars?: Record<string, string | number>) => string, { because, drops }: DroppedNotice, stepLabel: string | undefined): string {
+function droppedMessage(t: (key: string, vars?: Record<string, string | number>) => string, locale: "en" | "fr" | "cs", { because, drops }: DroppedNotice, stepLabel: string | undefined): string {
   const tp = pluralOf(t);
   const list = drops.map((drop) => {
     const dropKey = textKey(drop.label);
     const label = DROP_LABELS[dropKey] ? t(DROP_LABELS[dropKey]) : drop.label;
-    return `${label} ${droppedName(drop)}`;
+    return `${label} ${droppedName(drop, locale)}`;
   });
+  const translatedBecause = locale === "cs" ? ({ background: "minulosti", race: "rasy", class: "povolání", subclass: "podpovolání" } as Record<string, string>)[because] ?? t(because) : t(because);
   const joiner = t("and");
   const named =
     list.length <= 2 ? list.join(` ${joiner} `) : `${list.slice(0, -1).join(", ")} ${joiner} ${list[list.length - 1]}`;
@@ -189,7 +190,7 @@ function droppedMessage(t: (key: string, vars?: Record<string, string | number>)
   if (because === "content pack") {
     return t("The content pack's rows set aside {named}.", { named }) + where;
   }
-  return tp("Changing the {because} set aside {named}: it no longer fits.", "Changing the {because} set aside {named}: they no longer fit.", { count: list.length, because, named }) + where;
+  return tp("Changing the {because} set aside {named}: it no longer fits.", "Changing the {because} set aside {named}: they no longer fit.", { count: list.length, because: translatedBecause, named }) + where;
 }
 
 // Full character creation flow as a six-step wizard: class, ancestry and
@@ -905,7 +906,7 @@ function CharacterBuilderForm({
       }
     : dropped
     ? {
-        message: droppedMessage(t, dropped, droppedStep >= 0 ? steps[droppedStep].label : undefined),
+        message: droppedMessage(t, locale, dropped, droppedStep >= 0 ? steps[droppedStep].label : undefined),
         step: droppedStep >= 0 ? droppedStep : undefined,
         onShow: () => locate(dropped.drops[0].target),
         onDismiss: state.dismissDropped,
