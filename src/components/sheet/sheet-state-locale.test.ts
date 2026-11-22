@@ -1,5 +1,5 @@
 import { describe, expect, it } from "vitest";
-import { acView, speedView, stateTags } from "./sheet-state";
+import { acView, speedView, stateTags, localizeDefenseTypes, defensesView } from "./sheet-state";
 import { installCsTables } from "@/lib/i18n/cs-tables";
 import { CS_NAMES_BY_TABLE } from "@/lib/content/names-cs";
 import { translate, type Locale } from "@/lib/i18n/translate";
@@ -75,6 +75,33 @@ describe("localized sheet state explanations", () => {
     expect(condition?.label).not.toContain("stunned");
     expect(stateTags(reader("en"), sheet).find((tag) => tag.id === "incapacitated")?.label).toContain("stunned");
     expect(sheet.conditions).toEqual(["stunned"]);
+  });
+
+  it("uses the canonical damage vocabulary for visible defenses only", () => {
+    const source = "fire, cold, slashing, dreamfire, nonmagical piercing";
+    expect(localizeDefenseTypes(source, "cs")).toBe(
+      "Ohnivé, Chladné, Sečné, dreamfire, nonmagical piercing",
+    );
+    expect(localizeDefenseTypes(source, "fr")).toBe(
+      "Feu, Froid, Tranchants, dreamfire, nonmagical piercing",
+    );
+    expect(localizeDefenseTypes(source, "en")).toBe(source);
+    expect(localizeDefenseTypes("  fire,  custom flavor ", "cs")).toBe("  Ohnivé,  custom flavor ");
+  });
+
+  it("reads racial resistance in Czech without changing stored engine values", () => {
+    const sheet = {
+      race: "tiefling",
+      features: [],
+      conditions: [],
+      equipment: [],
+      class: "",
+      level: 1,
+      feats: [],
+    } as CharacterSheet;
+    expect(defensesView(sheet, "cs").resist).toContain("Ohnivé");
+    expect(defensesView(sheet, "en").resist).toContain("fire");
+    expect(sheet.race).toBe("tiefling");
   });
 
   it("does not rewrite a custom wild-shape name", () => {
