@@ -156,3 +156,22 @@ Remaining work: audit all consumers (campaign sheet, workshop, PDF,
 reference), migrate any name-only persistence flows carefully and add
 source-specific packs for other licensed content. The new SRD display object
 is not evidence that those other surfaces have been migrated.
+
+### Additional consumer coverage and performance
+
+The builder's browse-all `CatalogBrowser`, workshop `CatalogStart` and
+direct detail endpoint also read the same optional display layer. The
+browsable list refetches when the user's language changes, and every
+source-distinct row carries its book label. This does not modify draft or
+character engine data.
+
+For `lite=1` queries only the translated display name/metadata are
+returned; the server omits lengthy Czech descriptions, so phone pickers
+do not download a whole book to display short lists. The full detail
+endpoint still provides the appropriate Czech rules on demand.
+
+Known integration limit: some saved character selections still store only
+English names (not provenance). Although the picker keeps multiple book
+rows visible and pending selections are slug-aware, a complete storage
+migration must be designed before claiming that two same-name entries
+remain distinguishable after saving.
