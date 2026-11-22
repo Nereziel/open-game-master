@@ -15,7 +15,7 @@ import { RESOURCE_CS_EXTRA_GUIDANCE } from "../srd/resource-guidance-cs-extra";
 import { RESOURCE_CS_AUTHORED_GUIDANCE } from "../srd/resource-guidance-cs-authored";
 import { describeFeature } from "../help";
 import { BUNDLED_PERSONA, GENERAL_PERSONA } from "../backgrounds/persona-data";
-import { SRD_BACKGROUNDS, skillLabel } from "../srd";
+import { SRD_BACKGROUNDS, SRD_SKILLS, skillLabel } from "../srd";
 import { STANDARD_LANGUAGES } from "../content/mechanics";
 import { languageLabel } from "../content/languages-cs";
 import { backgroundInfoText, classInfoText } from "../../app/characters/builder/usePickerGroups";
@@ -25,7 +25,6 @@ import { GENRE_CLASS_FEATURES_CS, genreClassRulesCs, genreFeatureCs, genreSubcla
 import genreFeatureNames from "../classes/feature-names.json";
 import { FIGHTING_STYLES_CS } from "../srd/fighting-style-cs";
 import { FIGHTING_STYLES } from "../srd/feature-effects";
-import { SRD_SKILLS } from "../srd";
 import { knownSoFarRows } from "../../app/characters/builder/buildMath";
 import { CUSTOM_BACKGROUNDS, describeBackgroundFeature } from "../backgrounds";
 import { resourceDisplayName, resourceGuidance } from "../srd/class-resources-fr";
@@ -102,41 +101,57 @@ describe("Czech localization", () => {
   });
 
   it("translates all 733 authored genre-class features and all 36 subclasses without changing English keys", () => {
-    const catalog = genreFeatureNames as { classes: Record<string, {
+    const classes: Record<string, {
       levels: Record<string, string[]>;
       subclass: { name: string; levels: Record<string, string[]> };
-    }> };
-    expect(Object.keys(catalog.classes)).toHaveLength(36);
+    }> = genreFeatureNames.classes;
+    expect(Object.keys(classes)).toHaveLength(36);
     expect(Object.keys(GENRE_CLASS_FEATURES_CS)).toHaveLength(36);
     let count = 0;
-    for (const [classId, entry] of Object.entries(catalog.classes)) {
+    for (const [classId, entry] of Object.entries(classes)) {
       const sourceNames = [
         ...Object.values(entry.levels).flat(),
         ...Object.values(entry.subclass.levels).flat(),
       ];
       const rules = genreClassRulesCs(classId);
-      expect(rules, classId).toContain("### Schopnosti povolání");
-      expect(rules, classId).toContain("### Podpovolání:");
+      if (rules === null) {
+        throw new Error(`Missing Czech class rules: ${classId}`);
+      }
+      expect(rules).toContain("### Schopnosti povolání");
+      expect(rules).toContain("### Podpovolání:");
+
       const translated = GENRE_CLASS_FEATURES_CS[classId];
-      expect(translated, classId).toBeTruthy();
-      expect(Object.keys(translated), classId).toHaveLength(sourceNames.length);
-      const subclassNameCs = genreSubclassNameCs(classId, entry.subclass.name);
-      expect(subclassNameCs, classId).toBeTruthy();
-      expect(subclassName(classId, entry.subclass.name, "cs")).toBe(subclassNameCs);
+      if (translated === undefined) {
+        throw new Error(`Missing Czech class feature table: ${classId}`);
+      }
+      expect(Object.keys(translated)).toHaveLength(sourceNames.length);
+
+      const translatedSubclassName = genreSubclassNameCs(classId, entry.subclass.name);
+      if (translatedSubclassName === null) {
+        throw new Error(`Missing Czech subclass name: ${classId} / ${entry.subclass.name}`);
+      }
+      expect(subclassName(classId, entry.subclass.name, "cs")).toBe(translatedSubclassName);
       expect(subclassName(classId, entry.subclass.name, "en")).toBe(entry.subclass.name);
       const subclassRules = genreSubclassDescriptionCs(classId, entry.subclass.name);
-      expect(subclassRules, classId).toContain("Úroveň");
+      if (subclassRules === null) {
+        throw new Error(`Missing Czech subclass rules: ${classId} / ${entry.subclass.name}`);
+      }
+      expect(subclassRules).toContain("Úroveň");
+
       for (const english of sourceNames) {
         count++;
-        const cs = genreFeatureCs(classId, english);
-        expect(cs?.name, `${classId} / ${english}`).toBeTruthy();
-        expect(rules, `${classId} / ${english}`).toContain(cs?.description);
-        expect(cs?.description, `${classId} / ${english}`).toBeTruthy();
-        expect(cs?.name, `${classId} / ${english}`).not.toBe(english);
-        expect(classFeatureName(classId, english, "cs")).toBe(cs?.name);
+        const feature = genreFeatureCs(classId, english);
+        if (feature === null) {
+          throw new Error(`Missing Czech feature: ${classId} / ${english}`);
+        }
+        expect(feature.name).toBeTruthy();
+        expect(rules).toContain(feature.description);
+        expect(feature.description).toBeTruthy();
+        expect(feature.name).not.toBe(english);
+        expect(classFeatureName(classId, english, "cs")).toBe(feature.name);
         expect(classFeatureName(classId, english, "en")).toBe(english);
-        expect(describeFeature(classId, entry.subclass.name, english, "cs")).toBe(cs?.description);
-        expect(genreFeatureCs(classId, english)?.description).not.toMatch(/^(?:Bonus action|Reaction|When you|You can|Casts |1\/long rest)/);
+        expect(describeFeature(classId, entry.subclass.name, english, "cs")).toBe(feature.description);
+        expect(feature.description).not.toMatch(/^(?:Bonus action|Reaction|When you|You can|Casts |1\/long rest)/);
       }
     }
     expect(count).toBe(733);
