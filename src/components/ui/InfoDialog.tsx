@@ -14,6 +14,7 @@ import type { ItemSheet } from "@/lib/help/item-sheet";
 import { firstSentence, parseRulesBlocks, parseRulesTable } from "@/lib/help/rules-text";
 import { textKey } from "@/lib/language/text-logic";
 import { officialCzechSpellPageId } from "@/lib/help/official-cs-reference";
+import { thirdPartyItemSummaryCs } from "@/lib/help/third-party-item-summary-cs";
 
 // The "what does this do?" affordance, used everywhere a game term appears.
 //
@@ -408,6 +409,11 @@ function ItemBody({ reference }: { reference: ContentRef }) {
     ? sheet.description
     : itemDescriptionCs(reference.name ?? reference.slug, sheet.description, locale, reference.slug);
 
+  const supplementSummary = thirdPartyItemSummaryCs(reference, locale);
+  const displayedDescription = supplementSummary
+    ? `**Stručný český přehled:** ${supplementSummary}${shownDescription ? `\n\n**Úplný pravidlový popis (anglicky):**\n\n${shownDescription}` : ""}`
+    : shownDescription;
+
   return (
     <div className="space-y-4">
       {sheet.type || tags.length ? (
@@ -438,9 +444,9 @@ function ItemBody({ reference }: { reference: ContentRef }) {
           <RuleList rows={localizedWeaponRows} />
         </ItemSection>
       ) : null}
-      {shownDescription ? (
+      {displayedDescription ? (
         <ItemSection title={detail("Description")}>
-          <div className="space-y-2 border-t border-stone-800 pt-2">{renderRules(shownDescription)}</div>
+          <div className="space-y-2 border-t border-stone-800 pt-2">{renderRules(displayedDescription)}</div>
         </ItemSection>
       ) : null}
     </div>
