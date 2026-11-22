@@ -190,6 +190,7 @@ describe("fillable character-sheet PDF localization", () => {
 
   it("translates all key PDF captions and keeps English as the default", () => {
     expect(pdfLabel("cs", "Character Name")).toBe("Jméno postavy");
+    expect(pdfLabel("cs", "Class & Level")).toBe("Povolání a úroveň");
     expect(pdfLabel("cs", "Successes")).toBe("Úspěchy");
     expect(pdfLabel("cs", "Failures")).toBe("Neúspěchy");
     expect(pdfLabel("cs", "Damage / Type")).toBe("Zran. / typ");
