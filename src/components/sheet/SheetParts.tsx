@@ -4,8 +4,7 @@ import type { CSSProperties, ReactNode } from "react";
 import { ChevronRight } from "lucide-react";
 import { GameIcon } from "@/components/ui/GameIcon";
 import { GameTerm } from "@/components/ui/GameTerm";
-import { InfoButton } from "@/components/ui/InfoDialog";
-import { skillHelpText } from "@/lib/srd/skill-help-cs";
+import { SkillHelpTerm } from "@/components/sheet/SkillHelpTerm";
 import { InfoChipList } from "@/components/ui/InfoDialog";
 import { CountPop } from "@/components/ui/Reveal";
 import { cn } from "@/lib/cn";
@@ -342,8 +341,7 @@ export function SkillRows({
         return (
           <span key={skill.id} className={cn("sheet-skill", on && "sheet-skill-on")} title={explain?.(skill.id)}>
             <GameIcon icon={{ kind: "glyph", key: `skill-${skill.name}` }} size="size-5" />
-            <span className="grow truncate">{skillLabel(skill.id, locale)}</span>
-            <InfoButton label={skillLabel(skill.id, locale)} text={skillHelpText(skill.id, skill.ability, locale)} size="sm" />
+            <span className="min-w-0 grow truncate"><SkillHelpTerm id={skill.id} ability={skill.ability} /></span>
             <span className={cn("sheet-pip", on && "sheet-pip-on")} aria-hidden="true" />
             <span className="w-7 text-right font-mono">{formatModifier(skills[skill.id] ?? 0)}</span>
           </span>
