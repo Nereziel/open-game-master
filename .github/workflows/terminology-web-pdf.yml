@@ -14,6 +14,8 @@ on:
       - "src/components/sheet/SheetState.tsx"
       - "src/components/sheet/SheetParts.tsx"
       - "src/components/sheet/SheetSpells.tsx"
+      - "src/components/sheet/SpellBook.tsx"
+      - "src/components/sheet/spell-name-search*"
       - "src/components/sheet/sheet-state-locale.test.ts"
       - ".github/workflows/terminology-web-pdf.yml"
   workflow_dispatch:
@@ -40,7 +42,7 @@ jobs:
           cache: npm
       - run: npm ci
       - name: Czech/English/French terminology and character PDF regressions
-        run: npm test -- src/lib/srd/ability-short-label.test.ts src/lib/srd/skill-help-cs.test.ts src/lib/pdf/character-sheet-pdf.test.ts src/lib/i18n/game-text.test.ts src/lib/battlemap/condition-notes-locale.test.ts src/components/sheet/sheet-state-locale.test.ts src/app/campaigns/[campaignId]/lead-edit-cs.test.ts
+        run: npm test -- src/lib/srd/ability-short-label.test.ts src/lib/srd/skill-help-cs.test.ts src/lib/pdf/character-sheet-pdf.test.ts src/lib/i18n/game-text.test.ts src/lib/battlemap/condition-notes-locale.test.ts src/components/sheet/sheet-state-locale.test.ts src/app/campaigns/[campaignId]/lead-edit-cs.test.ts src/components/sheet/spell-name-search.test.ts
       - name: TypeScript
         run: npx tsc --noEmit --incremental false
       - name: Build
