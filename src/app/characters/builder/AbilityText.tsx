@@ -1,6 +1,7 @@
 "use client";
 
-import { useT } from "@/lib/locale";
+import { useLocale, useT } from "@/lib/locale";
+import { abilityShortLabel } from "@/lib/srd/ability-short-label";
 import { abilityName } from "./lineage";
 
 // A card's words with each ability code ("CON +2", "INT caster") printed as
@@ -21,6 +22,7 @@ const ABILITY_KEYS: Record<string, string> = {
 
 export function AbilityText({ text }: { text: string }) {
   const t = useT();
+  const locale = useLocale();
   const parts = text.split(CODE);
   if (parts.length === 1) {
     return text;
@@ -30,9 +32,10 @@ export function AbilityText({ text }: { text: string }) {
       return part;
     }
     const name = ABILITY_KEYS[part] ? t(ABILITY_KEYS[part]) : abilityName(part.toLowerCase());
+    const code = abilityShortLabel(part.toLowerCase(), locale);
     return (
       <abbr key={index} title={name} className="no-underline">
-        <span aria-hidden="true">{part}</span>
+        <span aria-hidden="true">{code}</span>
         <span className="sr-only">{name}</span>
       </abbr>
     );
