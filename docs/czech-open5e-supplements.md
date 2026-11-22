@@ -19,6 +19,25 @@ Tento katalog navazuje na [společnou překladovou vrstvu](../src/lib/content/na
 - Vlastní uživatelské `homebrew` a jiné knihy se stejným názvem se nepřekládají. Neznámé řádky ponechávají anglický původní název.
 - U 15 zbraní Tome of Heroes a 5 magických předmětů Vault of Magic je navíc vlastní stručný český informační přehled (`third-party-item-summary-cs.ts`), vycházející z veřejně uváděných mechanických údajů. Zobrazuje se vedle původních pravidel, nikoli místo nich.
 
+
+## Audit významu názvů Tome of Heroes (22. 11. 2026)
+
+U překladů se rozlišuje doslovný význam jména a popis skutečného herního účinku. U následujících devíti kouzel byla provedena cílená kontrola veřejně dostupných pravidlových popisů:
+
+| Anglický název | Výsledný český název | Důvod |
+| --- | --- | --- |
+| Fuse Armor | Znehybnění kovu | Slepuje pohyblivé části kovového mechanismu nebo zbroje; neomezuje se jen na zbroj |
+| Secret Blind | Skrytý úkryt | Neprůhledná a iluzí maskovaná ochranná sféra, která blokuje vstup |
+| Pincer | Klešťový úder | Dvě protilehlé hromové výseče vytvářejí útok ze dvou stran |
+| Lightless Torch | Pochodeň temnovidu | Nedává světlo; vytváří oblast, v níž funguje temnovid jako v jasném světle |
+| Long Game | Odložená odplata | Skrytý psychický účinek lze po seslání spustit s časovým odstupem |
+| Heart to Heart | Propojená srdce | Dvě postavy si mohou sdílet obnovené životy a navzájem se stabilizují |
+| Clear The Board | Rozdělení bojiště | Přesunuje spojence a nepřátele teleportací na opačné strany bojiště |
+| Instant Snare | Magická smyčka | Magická smyčka vynese a znehybní cíl, nikoli obecná „okamžitá past“ |
+| Mud | Vazké bahno | Vytváří lepkavé bahno, obtížný terén a může zastavit pohyb |
+
+Prameny k mechanikám (ne k českému názvosloví): veřejné herní popisy na [Open Gaming Network / 5E SRD](https://5esrd.old.opengamingnetwork.com/database/spell/) (zejména jednotlivé stránky výše uvedených kouzel). Pro specifické názvy z těchto doplňků nebylo při cíleném hledání na českých D&D stránkách doloženo existující autorizované české názvosloví. Výsledné názvy jsou **samostatné překladatelské návrhy**. U dalších položek ještě musí proběhnout stejně důkladná kontrola popisů; samotné zařazení do katalogu 430 názvů neznamená, že každý název prošel tímto obsahovým auditem.
+
 ## Co ještě není přeložené
 
 Úplné popisy kouzel, magických předmětů a pravidlové vlastnosti obsažené ve třetích knihách jsou prozatím v původním znění. Český název **není** tvrzením, že je k dispozici úplný český překlad pravidel. Pro další překlady je třeba samostatně připravit ověřené české texty, zachovat veškerou herní mechaniku a respektovat licenční podmínky příslušné knihy.
