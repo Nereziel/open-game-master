@@ -7,6 +7,8 @@ import { builtinFeatSummaryCs } from "@/lib/help/feat-summary-cs";
 import { thirdPartyItemSummaryCs } from "@/lib/help/third-party-item-summary-cs";
 import { contentRefMatches, sameContentDocument } from "@/lib/help/content-ref-match";
 import { thirdPartySpellSummaryCs, localizedThirdPartySpellDescription } from "@/lib/help/third-party-spell-summary-cs";
+import { thirdPartyFeatDescriptionCs } from "@/lib/help/third-party-feat-description-cs";
+import { thirdPartyCzechPickerQueries } from "@/lib/content/third-party-names-cs";
 import { officialCzechSpellPageId } from "@/lib/help/official-cs-reference";
 import { itemPickerKindLabel, itemPickerMeta, itemPickerRarityLabel } from "@/lib/help/item-picker-labels";
 import { featPickerKey, uniquePlayableFeatRows } from "./feat-picker-logic";
@@ -51,14 +53,16 @@ describe("Czech campaign content pickers", () => {
     expect(contentName("items", tohItem, "en")).toBe("Clockwork Crossbow");
     expect(contentName("items", "Clockwork Crossbow", "cs")).toBe("Clockwork Crossbow");
     expect(contentName("spells", { ...tohSpell, documentSlug: "other-book" }, "cs")).toBe("Fuse Armor");
+    expect(contentName("spells", { name: "Heart to Heart", source: "open5e", documentSlug: "toh" }, "cs")).toBe("Heart to Heart");
+    expect(contentName("spells", { name: "Instant Snare", source: "open5e", documentSlug: "toh" }, "cs")).toBe("Instant Snare");
     const verifiedSpellNames: Array<[string, string]> = [
       ["Secret Blind", "Skrytý úkryt"],
       ["Pincer", "Klešťový úder"],
       ["Lightless Torch", "Pochodeň temnovidu"],
       ["Long Game", "Odložená odplata"],
-      ["Heart to Heart", "Propojená srdce"],
+      ["Stone Fetch", "Kamenný dvojník"],
       ["Clear The Board", "Rozdělení bojiště"],
-      ["Instant Snare", "Magická smyčka"],
+      ["Wild Hunt", "Divoký hon"],
       ["Mud", "Vazké bahno"],
     ];
     for (const [english, translated] of verifiedSpellNames) {
@@ -116,6 +120,25 @@ describe("Czech campaign content pickers", () => {
     expect(contentRefMatches(reference, { name: "Fuse Armor", source: "open5e", documentSlug: "toh" })).toBe(true);
     expect(contentRefMatches(reference, { name: "Other Spell", source: "open5e", documentSlug: "toh" })).toBe(false);
     expect(contentRefMatches({ slug: "custom-id", source: "homebrew" }, { name: "Custom", slug: "custom-id", source: "homebrew" })).toBe(true);
+  });
+
+  it("provides full source-scoped Czech mechanics for all thirteen Tome of Heroes feats", () => {
+    const names = [
+      "Boundless Reserves", "Diehard", "Floriographer", "Forest Denizen",
+      "Friend of the Forest", "Giant Foe", "Harrier", "Inner Resilience",
+      "Part of the Pack", "Rimecaster", "Sorcerous Vigor", "Stalker", "Stunning Sniper",
+    ];
+    for (const name of names) {
+      const ref = { kind: "feats", name, source: "open5e", documentSlug: "toh" };
+      const full = thirdPartyFeatDescriptionCs(ref, "cs");
+      expect(full?.length, name).toBeGreaterThan(85);
+      expect(thirdPartyFeatDescriptionCs(ref, "en")).toBeNull();
+      expect(thirdPartyFeatDescriptionCs({ ...ref, source: "homebrew" }, "cs")).toBeNull();
+      expect(thirdPartyFeatDescriptionCs({ ...ref, documentSlug: "deepm" }, "cs")).toBeNull();
+      expect(thirdPartyCzechPickerQueries("feats", contentName("feats", ref, "cs"), 6)).toContain(name);
+    }
+    expect(thirdPartyFeatDescriptionCs({ kind: "feats", name: "Unknown", source: "open5e", documentSlug: "toh" }, "cs")).toBeNull();
+    expect(thirdPartyFeatDescriptionCs({ kind: "spells", name: "Diehard", source: "open5e", documentSlug: "toh" }, "cs")).toBeNull();
   });
 
   it("reads the official Czech spell book only for official spell refs", () => {
