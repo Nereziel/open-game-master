@@ -5,6 +5,8 @@ import { installCsTables } from "@/lib/i18n/cs-tables";
 import { contentName } from "@/lib/content/names";
 import { builtinFeatSummaryCs } from "@/lib/help/feat-summary-cs";
 import { thirdPartyItemSummaryCs } from "@/lib/help/third-party-item-summary-cs";
+import { contentRefMatches, sameContentDocument } from "@/lib/help/content-ref-match";
+import { thirdPartySpellSummaryCs, localizedThirdPartySpellDescription } from "@/lib/help/third-party-spell-summary-cs";
 import { officialCzechSpellPageId } from "@/lib/help/official-cs-reference";
 import { itemPickerKindLabel, itemPickerMeta, itemPickerRarityLabel } from "@/lib/help/item-picker-labels";
 import { featPickerKey, uniquePlayableFeatRows } from "./feat-picker-logic";
@@ -89,6 +91,31 @@ describe("Czech campaign content pickers", () => {
     expect(thirdPartyItemSummaryCs(tohItem, "cs")).toContain("šest střel");
     expect(thirdPartyItemSummaryCs({ ...tohItem, documentSlug: "other-book" }, "cs")).toBeNull();
     expect(thirdPartyItemSummaryCs(tohItem, "en")).toBeNull();
+  });
+
+  it("shows Czech supplement spell explanations only for matching books", () => {
+    const ref = { kind: "spells", name: "Fuse Armor", source: "open5e", documentSlug: "toh" };
+    expect(thirdPartySpellSummaryCs(ref, "cs")).toContain("kovové části");
+    const rendered = localizedThirdPartySpellDescription(ref, "cs", "Original complete rule mechanics.");
+    expect(rendered).toContain("Stručný český přehled");
+    expect(rendered).toContain("Original complete rule mechanics.");
+    expect(localizedThirdPartySpellDescription(ref, "en", "Original rules.")).toBe("Original rules.");
+    expect(thirdPartySpellSummaryCs({ ...ref, source: "homebrew" }, "cs")).toBeNull();
+    expect(thirdPartySpellSummaryCs({ ...ref, documentSlug: "deepm" }, "cs")).toBeNull();
+    expect(localizedThirdPartySpellDescription({ ...ref, documentSlug: "deepm" }, "cs", "Different rules."))
+      .toBe("Different rules.");
+    expect(thirdPartySpellSummaryCs({ kind: "feats", name: "Fuse Armor", source: "open5e", documentSlug: "toh" }, "cs")).toBeNull();
+    expect(thirdPartySpellSummaryCs({ kind: "spells", name: "Unknown Spell", source: "open5e", documentSlug: "toh" }, "cs")).toBeNull();
+  });
+
+  it("does not mix content with the same title from different publishers", () => {
+    const reference = { kind: "spells", slug: "fuse-armor", name: "Fuse Armor", source: "open5e", documentSlug: "toh" };
+    expect(sameContentDocument(reference, { name: "Fuse Armor", source: "open5e", documentSlug: "toh" })).toBe(true);
+    expect(sameContentDocument(reference, { name: "Fuse Armor", source: "open5e", documentSlug: "deepm" })).toBe(false);
+    expect(sameContentDocument(reference, { name: "Fuse Armor", source: "homebrew", documentSlug: "toh" })).toBe(false);
+    expect(contentRefMatches(reference, { name: "Fuse Armor", source: "open5e", documentSlug: "toh" })).toBe(true);
+    expect(contentRefMatches(reference, { name: "Other Spell", source: "open5e", documentSlug: "toh" })).toBe(false);
+    expect(contentRefMatches({ slug: "custom-id", source: "homebrew" }, { name: "Custom", slug: "custom-id", source: "homebrew" })).toBe(true);
   });
 
   it("reads the official Czech spell book only for official spell refs", () => {
