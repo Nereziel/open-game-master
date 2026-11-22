@@ -24,6 +24,20 @@ describe("SRD catalog display-only bridge (#107)", () => {
     expect(original).toEqual({ name: "Light", description: "English light", metadata: { level: "0", damage: "0" } });
   });
 
+  it("translates structured school labels only for the matched canonical SRD spell", () => {
+    const registry = new TranslationRegistry();
+    registry.register({ sourceId: "srd-5.1", locale: "cs", entries: {
+      spells: { light: { name: "Světlo" } },
+    } });
+    const row = { kind: "spells" as const, source: "open5e" as const, documentSlug: "wotc-srd", slug: "light", name: "Light" };
+    const english = { name: "Light", metadata: { school: "evocation", level: "0" } };
+    expect(resolveSrdCatalogTranslation(registry, row, pages, english, "cs").display.metadata)
+      .toEqual({ school: "Zaklínání", level: "0" });
+    expect(english.metadata.school).toBe("evocation");
+    expect(resolveSrdCatalogTranslation(registry, { ...row, documentSlug: "toh" }, pages, english, "cs").display)
+      .toBe(english);
+  });
+
   it("never borrows SRD translations for Tome of Heroes, homebrew or English mode", () => {
     const registry = new TranslationRegistry();
     registry.register({ sourceId: "srd-5.1", locale: "cs", entries: { spells: { light: { name: "Světlo" } } } });
