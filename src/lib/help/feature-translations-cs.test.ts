@@ -2,6 +2,7 @@ import { describe, expect, it } from "vitest";
 import srdFeatures from "./srd-features.json";
 import { SRD_FEATURE_DESCRIPTIONS_CS } from "./srd-feature-descriptions-cs";
 import { describeFeature } from "./index";
+import { firstSentence } from "./rules-text";
 import { czechBundledSpeciesTrait } from "@/lib/content/species-traits-cs";
 import races from "@/lib/srd/races.json";
 
@@ -32,6 +33,8 @@ describe("Czech feature and trait descriptions", () => {
     expect(revelation?.name).toBe("Nebeské zjevení");
     expect(revelation?.description).toMatch(/^Od 3\. úrovně/);
     expect(revelation?.description).toContain("Nebeská křídla");
+    expect(firstSentence(revelation?.description)).toMatch(/^Od 3\. úrovně můžeš/);
+    expect(firstSentence(revelation?.description)).not.toBe("Od 3.");
   });
 
   it("shows translated SRD feature help while preserving English mode", () => {
