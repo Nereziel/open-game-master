@@ -77,17 +77,17 @@ const GEAR_NAMES: Readonly<Record<string, string>> = {
 };
 
 const ARMOR_NAMES: Readonly<Record<string, string>> = {
-  "padded": "vycpávaná", "padded armor": "vycpávaná",
-  "leather": "kožená", "leather armor": "kožená",
-  "studded leather": "vyztužená kožená", "studded leather armor": "vyztužená kožená",
+  "padded": "vycpávaná zbroj", "padded armor": "vycpávaná zbroj",
+  "leather": "kožená zbroj", "leather armor": "kožená zbroj",
+  "studded leather": "pobíjená kožená zbroj", "studded leather armor": "pobíjená kožená zbroj",
   "hide": "kožešinová", "hide armor": "kožešinová",
   "chain shirt": "kroužková košile",
   "scale mail": "šupinová zbroj",
   "breastplate": "kyrys",
   "half plate": "poloviční plátová zbroj",
   "ring mail": "kroužková zbroj",
-  "chain mail": "drátěná zbroj",
-  "splint": "lamelová zbroj",
+  "chain mail": "kroužková brň",
+  "splint": "pásová zbroj",
   "plate": "plátová zbroj", "plate armor": "plátová zbroj",
 };
 
@@ -151,7 +151,7 @@ export function canonicalGearDescriptionCs(name: string): string | null {
   const armorTitle = ARMOR_NAMES[normalized];
   if (armorTitle) return ARMOR.get(armorTitle) ?? null;
   if (normalized === "shield") return "Štít se drží v jedné ruce a poskytuje bonus +2 k obrannému číslu (OČ). Současně lze využít pouze jeden štít.";
-  if (normalized === "lance") return WEAPONS.get("dřevec") ?? null;
+  if (normalized === "lance") return WEAPONS.get("jezdecké kopí") ?? null;
   if (normalized === "net") return WEAPONS.get("síť") ?? null;
   return PLAIN_GEAR[normalized] ?? null;
 }
