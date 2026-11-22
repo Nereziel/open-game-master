@@ -1,5 +1,5 @@
 import { describe, expect, it } from "vitest";
-import { itemDetailCs, itemRangeCs, itemWeightCs } from "./item-detail-cs";
+import { itemDescriptionCs, itemDetailCs, itemRangeCs, itemWeightCs } from "./item-detail-cs";
 
 describe("Czech item details", () => {
   it("fully localizes the longbow's category, properties and damage text", () => {
@@ -25,6 +25,19 @@ describe("Czech item details", () => {
     expect(itemDetailCs("Common clothes.", "cs")).toBe("Obyčejné oblečení.");
     expect(itemDetailCs("Slashing", "cs")).toBe("Sečné");
     expect(itemDetailCs("Bludgeoning", "cs")).toBe("Drtivé");
+  });
+
+  it("gives common SRD items Czech descriptions without altering English or custom Czech text", () => {
+    expect(itemDescriptionCs("Book", "A book can contain poems or histories.", "cs"))
+      .toContain("Kniha může obsahovat");
+    expect(itemDescriptionCs("Longsword", "This melee weapon is versatile.", "cs"))
+      .toContain("1k8");
+    expect(itemDescriptionCs("Shield", "A shield is carried in one hand.", "cs"))
+      .toContain("OČ");
+    expect(itemDescriptionCs("Book", "A book can contain poems or histories.", "en"))
+      .toBe("A book can contain poems or histories.");
+    expect(itemDescriptionCs("Book", "Vlastní tajemný rukopis.", "cs"))
+      .toBe("Vlastní tajemný rukopis.");
   });
 
   it("retains all English display strings and does not change numeric rules", () => {
