@@ -25,7 +25,7 @@ describe("SRD 5.1 Czech companion adapter (#107 phase 2)", () => {
       name: "Světlo", description: "Český kompletní text",
       metadata: { meta: "Evokační trik" },
     });
-    expect(coverage).toEqual({ total: 1, translated: { spells: 1 }, missingIds: [] });
+    expect(coverage).toEqual({ total: 1, fullRulePages: 0, translated: { spells: 1 }, missingIds: [] });
     expect(source.md).toBe("Original English rules");
   });
 
@@ -55,7 +55,8 @@ describe("SRD 5.1 Czech companion adapter (#107 phase 2)", () => {
     const registry = new TranslationRegistry();
     registry.register(pack);
     expect(coverage.total).toBe(english.length);
-    expect(coverage.translated.rules).toBe(35);
+    expect(coverage.translated.rules).toBe(english.filter((page) => page.kind === "rules").length);
+    expect(coverage.fullRulePages).toBe(35);
     expect(coverage.translated.classes).toBe(12);
     expect(coverage.translated.monsters).toBe(318);
     expect(coverage.translated.items).toBe(239);
