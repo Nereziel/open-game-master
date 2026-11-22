@@ -37,6 +37,18 @@ describe("explicit spell provenance selection (#107)", () => {
     });
   });
 
+  it("normalizes duplicate saved spell names before replacing their source", () => {
+    const srd = selectedSpellReference("Light", [
+      { name: "Light", level: 0, source: "open5e", documentSlug: "wotc-srd", slug: "light" },
+    ])!;
+    const other = selectedSpellReference("Light", [
+      { name: "Light", level: 0, source: "open5e", documentSlug: "toh", slug: "light" },
+    ])!;
+    expect(updateChosenSpellReference({ Light: srd }, "light", other)).toEqual({});
+    expect(updateChosenSpellReference({ Light: srd }, "LIGHT", srd)).toEqual({ LIGHT: srd });
+    expect(updateChosenSpellReference({ Light: srd }, "light", null)).toEqual({});
+  });
+
   it("preserves old name-only lists and drops provenance for removed spells", () => {
     const ref = selectedSpellReference("Light", [light])!;
     expect(keepChosenSpellReferences({ Light: ref }, ["Shield"])).toEqual({});
