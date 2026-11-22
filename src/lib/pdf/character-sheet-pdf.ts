@@ -18,6 +18,7 @@ import type { Locale } from "@/lib/i18n/translate";
 import { pdfLabel } from "./labels";
 import { contentName, classFeatureName, backgroundFeatureLabel } from "@/lib/content/names";
 import { czechBundledSpeciesTrait } from "@/lib/content/species-traits-cs";
+import { trainingProficiencyLabel, type TrainingKind } from "@/lib/content/proficiency-labels";
 import { translate } from "@/lib/i18n/translate";
 import type {
   AbilityScores,
@@ -139,21 +140,10 @@ function pdfItem(ctx: Ctx, value: string): string {
   return pdfContent(ctx, "items", value);
 }
 
-// Canonical SRD proficiency categories are stored as English values, not content names.
-const CS_PROFICIENCIES: Record<string, string> = {
-  light: "lehká zbroj", "light armor": "lehká zbroj",
-  medium: "střední zbroj", "medium armor": "střední zbroj",
-  heavy: "těžká zbroj", "heavy armor": "těžká zbroj",
-  shield: "štíty", shields: "štíty",
-  "all armor": "veškerá zbroj",
-  simple: "jednoduché zbraně", "simple weapons": "jednoduché zbraně",
-  martial: "vojenské zbraně", "martial weapons": "vojenské zbraně",
-};
-function pdfProficiency(ctx: Ctx, value: string): string {
-  if (ctx.locale === "cs") {
-    const known = CS_PROFICIENCIES[value.trim().toLowerCase()];
-    if (known) return known;
-  }
+// Match the character UI: both exports use the same shared proficiency dictionary.
+function pdfProficiency(ctx: Ctx, value: string, kind: TrainingKind): string {
+  const known = trainingProficiencyLabel(value, kind, ctx.locale, true);
+  if (known) return known.charAt(0).toLowerCase() + known.slice(1);
   const item = pdfItem(ctx, value);
   return item !== value ? item : translate(ctx.locale, value);
 }
@@ -520,8 +510,8 @@ async function drawTraits(ctx: Ctx, c: PdfCharacter, portraitBytes?: Uint8Array)
   // Other proficiencies & languages.
   const p = c.proficiencies;
   const profText = [
-    p.armor.length ? `${pdfLabel(ctx.locale, "Armor")}: ${p.armor.map((name) => pdfProficiency(ctx, name)).join(", ")}` : "",
-    p.weapons.length ? `${pdfLabel(ctx.locale, "Weapons")}: ${p.weapons.map((name) => pdfProficiency(ctx, name)).join(", ")}` : "",
+    p.armor.length ? `${pdfLabel(ctx.locale, "Armor")}: ${p.armor.map((name) => pdfProficiency(ctx, name, "armor")).join(", ")}` : "",
+    p.weapons.length ? `${pdfLabel(ctx.locale, "Weapons")}: ${p.weapons.map((name) => pdfProficiency(ctx, name, "weapons")).join(", ")}` : "",
     p.tools.length ? `${pdfLabel(ctx.locale, "Tools")}: ${p.tools.map((name) => translate(ctx.locale, name)).join(", ")}` : "",
     p.languages.length ? `${pdfLabel(ctx.locale, "Languages")}: ${p.languages.map((name) => translate(ctx.locale, name)).join(", ")}` : "",
   ]
