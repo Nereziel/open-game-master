@@ -164,7 +164,7 @@ for (const { label, fields, weapon } of CASES) {
 test("the working names its parts: a rogue's Dexterity save and an expert's Stealth", () => {
   const built = builder.build(CASES[2].fields);
   const rows = rowsOf(tableOf({ ...built, klass: builder.classes.find((entry) => entry.id === "rogue") }));
-  assert.equal(rows.get("save-dex").working, "DEX modifier +3, proficiency +2");
+  assert.equal(rows.get("save-dex").working, "DEX modifier +3, proficiency bonus +2");
   assert.equal(rows.get("skill-stealth").working, "DEX modifier +3, expertise +4");
   assert.equal(rows.get("skill-athletics").working, "STR modifier -1");
   assert.match(rows.get("weapon-Rapier").working, /^to hit: DEX modifier \+3, proficiency \+2; damage adds DEX modifier/);
