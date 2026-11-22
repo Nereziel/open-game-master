@@ -103,10 +103,10 @@ const COMMON_SRD_DESCRIPTIONS_CS: Readonly<Record<string, string>> = {
 
 export function itemDescriptionCs(name: string, description: string | null, locale: Locale): string | null {
   if (!description || locale !== "cs") return description;
-  const canonical = name.toLowerCase().trim().replace(/\\s*\\+\\d+$/, "");
+  const canonical = name.toLowerCase().trim().replace(/\s*\+\d+$/, "");
   // Only replace text evidently supplied in English, not an existing Czech
   // translation or a custom Czech description using the same item name.
-  if (!/\\b(the|with|contains|can|weapon|shield|book|this|you|your)\\b/i.test(description)) {
+  if (!/\b(the|with|contains|can|weapon|shield|book|this|you|your)\b/i.test(description)) {
     return description;
   }
   return COMMON_SRD_DESCRIPTIONS_CS[canonical] ?? itemDetailCs(description, locale);
