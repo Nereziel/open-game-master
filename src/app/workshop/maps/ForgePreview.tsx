@@ -61,6 +61,7 @@ export function ForgePreview({
   // Above 1 slows the flood: a roll brought back from the history takes its time.
   stretch?: number;
 }) {
+  const t = useT();
   const canvasRef = useRef<HTMLCanvasElement>(null);
   const startRef = useRef<{ rollId: number; at: number } | null>(null);
   const ground = usePaintedGround({
