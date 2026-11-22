@@ -7,7 +7,7 @@ import { GENDERS, storedGender, type Gender } from "@/lib/gender";
 import { ATTRACTION_NOTE_MAX, normalizeAttraction, type Attraction } from "@/lib/attraction";
 import { conditionMetaSchema, ROUND_CEILING, type ConditionMetaMap } from "@/lib/schemas/condition-meta";
 import { textKey } from "@/lib/language/text-logic";
-import { storedContentReferenceSchema } from "@/lib/content/translations/stored-reference";
+import { storedContentReferenceSchema } from "@/lib/content/translations/stored-reference-schema";
 
 export { ABILITIES, type Ability } from "@/lib/schemas/abilities";
 export type { ConditionMetaMap } from "@/lib/schemas/condition-meta";
