@@ -226,10 +226,10 @@ export function GuidedTour({
           </button>
         </div>
         <h3 className="mt-1.5 font-display text-base tracking-wide text-amber-50">
-          {locale === "fr" && current.step.titleFr ? current.step.titleFr : t(current.step.title)}
+          {locale === "cs" && current.step.titleCs ? current.step.titleCs : locale === "fr" && current.step.titleFr ? current.step.titleFr : t(current.step.title)}
         </h3>
         <p className="mt-1.5 text-sm leading-relaxed text-stone-300">
-          {locale === "fr" && current.step.bodyFr ? current.step.bodyFr : t(current.step.body)}
+          {locale === "cs" && current.step.bodyCs ? current.step.bodyCs : locale === "fr" && current.step.bodyFr ? current.step.bodyFr : t(current.step.body)}
         </p>
         <div className="mt-3 flex justify-end gap-2">
           {index > 0 ? (
