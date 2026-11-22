@@ -92,7 +92,7 @@ export function ForgeView({ api, world, onOpen }: { api: WorldApi; world: WorldS
 
       {rows ? (
         <section className="flex flex-col gap-2 animate-fade-up" aria-label={t("What the forge found")}>
-          <h3 className="eyebrow text-[10px] text-amber-400/80">Found {rows.length}: tick what to keep</h3>
+          <h3 className="eyebrow text-[10px] text-amber-400/80">{t("Found {count}: tick what to keep", { count: rows.length })}</h3>
           <ul className="flex flex-col gap-1.5">
             {rows.map((row, index) => (
               <li key={row.key} className={cn("panel wf-rise flex flex-col gap-1.5 rounded-lg p-2.5", !row.keep && "opacity-60")} style={{ "--i": index } as React.CSSProperties}>
@@ -111,7 +111,7 @@ export function ForgeView({ api, world, onOpen }: { api: WorldApi; world: WorldS
                 {!row.existing ? (
                   <textarea className={cn(ui.input, "min-h-12 text-xs")} aria-label={`${row.name}, summary`} maxLength={2_000} value={row.summary} onChange={(event) => set(row.key, { summary: event.target.value })} />
                 ) : null}
-                {row.hiddenTruth && !row.existing ? <p className="text-xs text-red-300">Hidden truth: {row.hiddenTruth}</p> : null}
+                {row.hiddenTruth && !row.existing ? <p className="text-xs text-red-300">{t("Hidden truth: {truth}", { truth: row.hiddenTruth })}</p> : null}
               </li>
             ))}
           </ul>
