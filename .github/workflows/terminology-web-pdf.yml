@@ -12,6 +12,8 @@ on:
       - "src/app/campaigns/**/lead-edit-cs.test.ts"
       - "src/components/sheet/sheet-state.ts"
       - "src/components/sheet/SheetState.tsx"
+      - "src/components/sheet/SheetParts.tsx"
+      - "src/components/sheet/SheetSpells.tsx"
       - "src/components/sheet/sheet-state-locale.test.ts"
       - ".github/workflows/terminology-web-pdf.yml"
   workflow_dispatch:
