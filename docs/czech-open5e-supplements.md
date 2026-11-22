@@ -35,7 +35,7 @@ U názvů rozhoduje pravidlový účinek, ne jen doslovná podobnost: napříkla
 
 *Stručný český přehled* není úplný překlad původního pravidlového popisu. Originální anglický text se ponechává přístupný, zvláště pokud obsahuje výjimky, tabulky či varianty, které se do přehledu nevejdou. Nesmí se vydávat za ověřený úplný překlad. Úplné české pravidlové texty mají nyní jen 13 odborností Tome of Heroes.
 
-Zbývá dokončit názvy a popisy ostatních 458 kouzel Deep Magic, dalších 576 předmětů Vault of Magic a plné české přepisy pravidel u položek, které mají zatím jen přehled. Zdrojové knihy jsou volitelnou součástí serveru; tento PR je do serveru nevkládá.
+Zbývá dokončit názvy a popisy ostatních 458 kouzel Deep Magic, dalších 556 předmětů Vault of Magic a plné české přepisy pravidel u položek, které mají zatím jen přehled. Zdrojové knihy jsou volitelnou součástí serveru; tento PR je do serveru nevkládá.
 
 Při každém dalším doplnění:
 1. Nejdřív ověřit anglické jméno, pravidlový popis, `documentSlug` a licenční informace ze zdrojového záznamu.
