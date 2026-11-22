@@ -10,13 +10,13 @@ const LABELS: Readonly<Record<string, string>> = {
   "Strength": "Síla", "Dexterity": "Obratnost", "Stealth": "Nenápadnost",
   "Shield": "Štít", "Requires attunement": "Vyžaduje sladění",
   "Adventuring gear": "Dobrodružná výbava", "Adventuring Gear": "Dobrodružná výbava",
-  "Martial ranged weapon": "Válečná střelná zbraň",
-  "Martial melee weapon": "Válečná zbraň na blízko",
-  "Simple ranged weapon": "Jednoduchá střelná zbraň",
+  "Martial ranged weapon": "Vojenská zbraň na dálku",
+  "Martial melee weapon": "Vojenská zbraň na blízko",
+  "Simple ranged weapon": "Jednoduchá zbraň na dálku",
   "Simple melee weapon": "Jednoduchá zbraň na blízko",
-  "Martial ranged": "Válečná střelná zbraň",
-  "Martial melee": "Válečná zbraň na blízko",
-  "Simple ranged": "Jednoduchá střelná zbraň",
+  "Martial ranged": "Vojenská zbraň na dálku",
+  "Martial melee": "Vojenská zbraň na blízko",
+  "Simple ranged": "Jednoduchá zbraň na dálku",
   "Simple melee": "Jednoduchá zbraň na blízko",
   "Light armor": "Lehká zbroj", "Medium armor": "Střední zbroj",
   "Heavy armor": "Těžká zbroj", "Wondrous item": "Podivuhodný předmět",
@@ -24,17 +24,17 @@ const LABELS: Readonly<Record<string, string>> = {
   "Common": "Běžný", "Uncommon": "Neobvyklý", "Rare": "Vzácný",
   "Very rare": "Velmi vzácný", "Legendary": "Legendární",
   "Artifact": "Artefakt",
-  "Ammunition": "Munice", "Double-headed": "Oboustranná",
+  "Ammunition": "Střelná", "Double-headed": "Oboustranná",
   "Finesse": "Vytříbená", "Gunpowder": "Střelný prach",
-  "Heavy": "Těžká", "Light": "Lehká", "Loading": "Nabíjení",
-  "Magazine": "Zásobník", "Reach": "Dosah", "Special": "Zvláštní",
-  "Thrown": "Vrhací", "Two-handed": "Obouruční", "Versatile": "Univerzální",
+  "Heavy": "Těžká", "Light": "Lehká", "Loading": "Nabíjecí",
+  "Magazine": "Zásobník", "Reach": "Dlouhá", "Special": "Zvláštní",
+  "Thrown": "Vrhací", "Two-handed": "Obouruční", "Versatile": "Jeden a půlruční",
   "Acid": "Kyselinové", "Bludgeoning": "Drtivé", "Cold": "Chladné",
   "Fire": "Ohnivé", "Force": "Silové", "Lightning": "Bleskové",
   "Necrotic": "Nekrotické", "Piercing": "Bodné", "Poison": "Jedové",
   "Psychic": "Psychické", "Radiant": "Zářivé",
   "Slashing": "Sečné", "Thunder": "Hromové",
-  "Common clothes.": "Běžné oblečení.",
+  "Common clothes.": "Obyčejné oblečení.",
   "Add your full Dexterity modifier.": "Přičti celou svou opravu Obratnosti.",
   "Dexterity does not add to it.": "Oprava Obratnosti se nepřičítá.",
   "Carried in one hand; only one shield counts at a time.": "Štít se drží v jedné ruce. Započítává se vždy jen jeden.",
@@ -77,7 +77,7 @@ export function itemDetailCs(value: string | null | undefined, locale: Locale): 
   const translated = translate(locale, value);
   if (translated !== value) return translated;
   const rangedAmmo = /^Ammunition \((range )?(\d+\/\d+)\)$/i.exec(value);
-  if (rangedAmmo) return `Munice (dostřel ${rangedAmmo[2]})`;
+  if (rangedAmmo) return `Střelná (dostřel ${rangedAmmo[2]})`;
   const dexCap = /^Add your Dexterity modifier, up to \+(\d+)\.$/.exec(value);
   if (dexCap) return `Přičti opravu Obratnosti, nejvýše +${dexCap[1]}.`;
   const minStr = /^Needs (\d+); below that, your speed drops by 10 feet while wearing it\.$/.exec(value);
