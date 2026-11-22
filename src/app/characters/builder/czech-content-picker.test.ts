@@ -167,7 +167,7 @@ describe("Czech campaign content pickers", () => {
   });
 
   it("delivers complete Czech supplement rules only for the exact book, kind and language", () => {
-    expect(THIRD_PARTY_FULL_RULES_CS_COUNTS).toEqual({ tomeSpells: 14, vaultItems: 15 });
+    expect(THIRD_PARTY_FULL_RULES_CS_COUNTS).toEqual({ tomeSpells: 14, deepSpells: 12, vaultItems: 15 });
     const tome = { kind: "spells", name: "Spite", source: "open5e", documentSlug: "toh" };
     const text = thirdPartyFullRulesCs(tome, "cs");
     expect(text).toContain("Vyvolání:");
@@ -179,6 +179,14 @@ describe("Czech campaign content pickers", () => {
     expect(thirdPartyFullRulesCs({ ...tome, source: "homebrew" }, "cs")).toBeNull();
     expect(thirdPartyFullRulesCs({ ...tome, kind: "items" }, "cs")).toBeNull();
     expect(thirdPartyFullRulesCs(tome, "en")).toBeNull();
+
+    const deep = { kind: "spells", name: "Wind Lash", source: "open5e", documentSlug: "dmag" };
+    const deepText = thirdPartyFullRulesCs(deep, "cs");
+    expect(deepText).toContain("Na vyšších úrovních.");
+    expect(deepText).toContain("17. úrovni");
+    expect(thirdPartyFullRulesCs({ ...deep, documentSlug: "deepm" }, "cs")).toBe(deepText);
+    expect(thirdPartyFullRulesCs({ ...deep, documentSlug: "vom" }, "cs")).toBeNull();
+    expect(thirdPartyFullRulesCs({ ...deep, source: "homebrew" }, "cs")).toBeNull();
 
     const vault = { kind: "items", name: "Broom of Sweeping", source: "open5e", documentSlug: "vom" };
     expect(thirdPartyFullRulesCs(vault, "cs")).toContain("5 krychlových stop");
