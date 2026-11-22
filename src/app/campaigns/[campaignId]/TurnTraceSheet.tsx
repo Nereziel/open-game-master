@@ -11,6 +11,7 @@ import type { TraceCall, TraceOutcome, TraceRow, TraceSource, TurnTrace } from "
 import { ui } from "@/lib/ui";
 import { hostOffers, useCapabilities } from "@/lib/use-capabilities";
 import { useT } from "@/lib/locale";
+import { pluralOf } from "@/lib/messages-logic";
 
 // The test fight's turn trace (issue 685): every call the GM made at this
 // table and what the engine answered, so its author can read why a swing
@@ -79,8 +80,10 @@ function outcomeLabel(t: TraceT, call: TraceCall): string {
   return t(OUTCOME_KEYS[call.outcome]);
 }
 
-function plural(count: number, one: string, many: string): string {
-  return `${count} ${count === 1 ? one : many}`;
+function plural(count: number, t: TraceT, one: string, many: string): string {
+  // The translator carries its locale in useT(), so Czech 2–4 and 5+
+  // use different endings rather than inheriting English's two forms.
+  return `${count} ${pluralOf(t)(one, many, { count })}`;
 }
 
 function clock(iso: string): string {
@@ -92,8 +95,8 @@ function factsOf(t: TraceT, turn: TurnTrace): string {
   return [
     t(STATUS_KEYS[turn.status]),
     turn.durationMs !== null ? `${(turn.durationMs / 1000).toFixed(1)} s` : "",
-    turn.modelCalls ? plural(turn.modelCalls, t("model call"), t("model calls")) : "",
-    turn.rolls ? plural(turn.rolls, t("roll"), t("rolls")) : "",
+    turn.modelCalls ? plural(turn.modelCalls, t, "model call", "model calls") : "",
+    turn.rolls ? plural(turn.rolls, t, "roll", "rolls") : "",
   ]
     .filter(Boolean)
     .join(" · ");
