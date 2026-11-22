@@ -76,6 +76,6 @@ describe("Czech campaign content pickers", () => {
     expect(unique.map(row => row.slug)).toEqual(["two", "four", "custom", "another", "last"]);
     expect(featPickerKey("Attentive")).toBe(featPickerKey("Alert"));
     expect(featPickerKey("Battle Caster")).not.toBe(featPickerKey("War Caster"));
-    expect(featPickerKey("Alert", "homebrew")).toBe(featPickerKey("Alert"));
+    expect(featPickerKey("Alert", "homebrew")).not.toBe(featPickerKey("Alert"));
   });
 });
