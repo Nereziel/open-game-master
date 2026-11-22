@@ -135,7 +135,7 @@ function SaveSlot({
                 ended && "ts-slot-badge-ended",
               )}
             >
-              {statusLabel(t, campaign)}
+              {statusLabel(t, campaign, locale)}
             </span>
           </span>
           <span className="ts-slot-title">{campaign.title}</span>
