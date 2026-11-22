@@ -8,10 +8,21 @@ import { installCsTables } from "@/lib/i18n/cs-tables";
 import { translate } from "@/lib/i18n/translate";
 import { skillLabel } from "@/lib/srd";
 import { abilityShortLabel } from "@/lib/srd/ability-short-label";
+import { CS_ABILITY_ABBR } from "@/components/sheet/SheetParts";
+import { ABILITIES } from "@/lib/schemas/sheet";
 
 installCsTables({ names: CS_NAMES_BY_TABLE });
 
 describe("Campaign character adjustments in Czech", () => {
+  it("keeps the shared ability labels in character tiles and the PDF", () => {
+    for (const ability of ABILITIES) {
+      expect(CS_ABILITY_ABBR[ability]).toBe(abilityShortLabel(ability, "cs"));
+    }
+    const parts = readFileSync(path.join(process.cwd(), "src/components/sheet/SheetParts.tsx"), "utf8");
+    expect(parts).toContain("{abilityShortLabel(ability, locale)}");
+    expect(parts).not.toContain('locale === "cs" ? CS_ABILITY_ABBR[ability]');
+  });
+
   it("translates every displayed source in a scale-mail armor calculation", () => {
     const parts = ["Scale Mail 14", "DEX -1", "Shield +2"];
     const t = (key: string) => translate("cs", key);
