@@ -12,8 +12,10 @@ import { describeConditionDuration } from "@/lib/dm/condition-logic";
 import { conditionEffectsFor } from "@/lib/srd/condition-effects";
 import { forPlayers } from "@/lib/language/player-text";
 import { translate } from "@/lib/messages-logic";
+import { abilityShortLabel } from "@/lib/srd/ability-short-label";
+import type { Locale } from "@/lib/i18n/translate";
 
-type T = (key: string, vars?: Record<string, string | number>) => string;
+type T = ((key: string, vars?: Record<string, string | number>) => string) & { locale?: Locale };
 const enT: T = (key, vars) => translate("en", key, vars);
 
 export type ConditionMetaLike = {
@@ -97,7 +99,7 @@ export function conditionNote(
   // A hold whose save the creature picks (Nature's Wrath) names both.
   const save = meta.saveEnds
     ? t("save ends ({spec})", {
-        spec: `${meta.saveEnds.ability.toUpperCase()}${meta.saveEnds.or ? ` ${t("or")} ${meta.saveEnds.or.toUpperCase()}` : ""} ${meta.saveEnds.dc}${meta.saveEnds.beyondFeet ? `, ${t("beyond {feet} ft", { feet: meta.saveEnds.beyondFeet })}` : ""}${meta.saveEnds.unseen ? `, ${t("only out of the caster's sight; off the board, after its first turn")}` : ""}`,
+        spec: `${abilityShortLabel(meta.saveEnds.ability, t.locale ?? "en")}${meta.saveEnds.or ? ` ${t("or")} ${abilityShortLabel(meta.saveEnds.or, t.locale ?? "en")}` : ""} ${meta.saveEnds.dc}${meta.saveEnds.beyondFeet ? `, ${t("beyond {feet} ft", { feet: meta.saveEnds.beyondFeet })}` : ""}${meta.saveEnds.unseen ? `, ${t("only out of the caster's sight; off the board, after its first turn")}` : ""}`,
       })
     : null;
   let source: string | null = null;
