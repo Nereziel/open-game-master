@@ -70,7 +70,7 @@ fuzziness to guess a canonical translation identity.
 `resolveSrdCatalogTranslation(registry, row, englishPages, original, locale)`
 combines the strict crosswalk with the source pack. It returns `pageId`,
 a `translated` flag, and localized `display` fields; it never modifies the
-original row or game mechanics. It is **not yet wired into the application**.
+original row or game mechanics. It is now wired into catalog results, direct detail, builder pickers and the workshop as an **optional display-only layer**.
 Unmapped, non-SRD, user-authored and English-language entries retain their
 original display fields. The UI migration should use this bridge instead of
 calling `contentName` without provenance.
@@ -128,9 +128,9 @@ translation; the original model/data row and mechanics remain untouched.
 `resolveSrdCatalogTranslation` calls it only **after** successfully
 mapping an actual catalog row to a canonical SRD page ID. The result
 continues to carry a separate `display.metadata`, not a modified
-`data_json` or rules-engine field. The downstream editor, picker,
-character sheet and PDF still need explicit consumer-side integration
-in phase 4; the new bridge by itself does not replace their labels.
+`data_json` or rules-engine field. The builder pickers and workshop catalog now consume this display layer.
+Campaign character sheets and PDF still need explicit consumer-side coverage
+and the new bridge does not automatically replace those other labels.
 
 ## Consumer integration (source-safe display layer)
 
