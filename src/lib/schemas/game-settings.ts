@@ -286,7 +286,7 @@ export const gameSettingsSchema = z.object({
   // (src/lib/voice/audibility.ts) rather than separate features.
   voice: z
     .object({
-      enabled: z.boolean().default(true),
+      enabled: z.boolean().default(false),
       // How hard the floor (open / hold / spotlight / initiative) is enforced
       // on microphones. "soft" shows whose turn it is without muting anyone,
       // and is the default because hard-muting a friend mid-sentence is an
@@ -324,7 +324,7 @@ export const gameSettingsSchema = z.object({
         }),
     })
     .default({
-      enabled: true,
+      enabled: false,
       turnEnforcement: "soft",
       transcribe: false,
       rules: {
