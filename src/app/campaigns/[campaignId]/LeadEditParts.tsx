@@ -1,6 +1,7 @@
 "use client";
 
 import { X } from "lucide-react";
+import { useState } from "react";
 import { cn } from "@/lib/cn";
 import { useLocale, useT } from "@/lib/locale";
 import { contentName } from "@/lib/content/names";
@@ -43,6 +44,37 @@ export function ItemFlags({ item }: { item: EquipmentItem }) {
         </span>
       ))}
     </span>
+  );
+}
+
+// Existing inventory names are canonical English IDs. Show their translated
+// display names until a user edits the field, then expose the original value
+// so editing never accidentally saves a translated ID.
+export function LocalizedItemNameInput({
+  name,
+  onChange,
+  className,
+  placeholder,
+}: {
+  name: string;
+  onChange: (name: string) => void;
+  className?: string;
+  placeholder?: string;
+}) {
+  const [focused, setFocused] = useState(false);
+  const locale = useLocale();
+  const displayed = focused ? name : contentName("items", name, locale);
+  return (
+    <input
+      value={displayed}
+      onFocus={() => setFocused(true)}
+      onBlur={() => setFocused(false)}
+      onChange={(event) => onChange(event.target.value)}
+      aria-label={placeholder}
+      title={focused ? name : displayed}
+      placeholder={placeholder}
+      className={className}
+    />
   );
 }
 
