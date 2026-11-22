@@ -18,6 +18,7 @@ import { speciesSpellsShown } from "@/lib/srd/species-spell-view";
 import { Ribbon } from "@/components/ui/Ribbon";
 import { cn } from "@/lib/cn";
 import { useT, useLocale } from "@/lib/locale";
+import { characterEventSummary } from "@/lib/characters/event-summary-cs";
 import type { CreateSheetInput } from "@/lib/schemas/sheet";
 import { computeSheetDerived, formatModifier, speedFor, type DerivedPart,
   formatMathParts,
@@ -199,6 +200,7 @@ export function SheetSections({ sheet, level = 1 }: { sheet: CreateSheetInput; l
 // API returns them, drawn as a timeline down a gold hairline.
 export function StorySoFar({ events }: { events: CharacterEvent[] }) {
   const t = useT();
+  const locale = useLocale();
   return (
     <SheetPanel
       title={
@@ -225,7 +227,7 @@ export function StorySoFar({ events }: { events: CharacterEvent[] }) {
                   {new Date(event.createdAt).toLocaleDateString()}
                 </span>
               </div>
-              <p className="mt-1 text-stone-200">{event.summary}</p>
+              <p className="mt-1 text-stone-200">{characterEventSummary(event.summary, event.kind, locale)}</p>
             </li>
           ))}
         </ol>
