@@ -397,6 +397,7 @@ export function AtlasView({
 // Over a map drawn inside a place's pin: that place's battle maps and
 // encounters, one press away, and a plain word that this picture is not one.
 function InsidePlace({ place, onOpen, onOpenPrep }: { place: WorldEntity; onOpen: (ref: string) => void; onOpenPrep: OpenPrep }) {
+  const t = useT();
   const records = place.bound.filter((record) => (record.kind === "map" || record.kind === "encounter") && record.found);
   return (
     <div className="flex flex-wrap items-center gap-1.5 rounded-lg border border-stone-700/60 px-2 py-1.5 text-xs text-stone-300" data-testid="atlas-inside-place">
