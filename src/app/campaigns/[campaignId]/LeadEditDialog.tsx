@@ -258,7 +258,9 @@ export function LeadEditDialog({
         ]),
       ];
       const refs = keepChosenSpellReferences(spellContentRefs, activeSpellNames);
-      if (Object.keys(refs).length) nextSpellcasting.contentRefs = refs;
+      // Send an empty map explicitly to delete previously saved links;
+      // the campaign API merges other spellcasting fields for old clients.
+      if (Object.keys(refs).length || sheet.spellcasting.contentRefs) nextSpellcasting.contentRefs = refs;
       else delete nextSpellcasting.contentRefs;
       if (JSON.stringify(nextSpellcasting) !== JSON.stringify(sheet.spellcasting)) {
         patch.spellcasting = nextSpellcasting;
