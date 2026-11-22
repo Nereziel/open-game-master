@@ -13,7 +13,7 @@ import { BLOCK_LIMITS, SAVE_ABILITY_IDS } from "@/lib/bestiary/block-check";
 import type { MonsterDraft } from "@/lib/bestiary/monster-draft";
 import type { MonsterAbility } from "@/lib/dm/monster-abilities";
 import type { RoutineStep } from "@/lib/bestiary/multiattack-text";
-import { useT } from "@/lib/locale";
+import { useLocale, useT } from "@/lib/locale";
 import { Field, FieldLabel, OptionalStepper, addChip, chip, chipOn, chipRow, rowIcon } from "@/app/workshop/kit";
 
 // The actions with numbers the engine runs (src/lib/dm/enemy-casting.ts,
@@ -37,6 +37,7 @@ function AbilityRow({ ability, onChange, onRemove, conditionList, typeList }: {
   typeList: string;
 }) {
   const t = useT();
+  const locale = useLocale();
   const set = (patch: Partial<MonsterAbility>) => onChange(clean({ ...ability, ...patch }));
   const rechargeOptions = [
     { value: "", label: t("No recharge") },
@@ -58,7 +59,7 @@ function AbilityRow({ ability, onChange, onRemove, conditionList, typeList }: {
     <div className="live-in grid gap-2 rounded-lg border border-stone-800 bg-stone-950/50 p-2.5">
       <div className="flex flex-wrap items-end gap-2">
         <Field as="label" label={t("Name")} className="min-w-40 flex-1">
-          <input value={ability.name} maxLength={BLOCK_LIMITS.specialName} placeholder="Fire Breath" onChange={(event) => set({ name: event.target.value })} className={ui.input} />
+          <input value={ability.name} maxLength={BLOCK_LIMITS.specialName} placeholder={locale === "cs" ? "Ohnivý dech" : "Fire Breath"} onChange={(event) => set({ name: event.target.value })} className={ui.input} />
         </Field>
         <Field label={t("Recharge")}>
           <span className="block w-36">
