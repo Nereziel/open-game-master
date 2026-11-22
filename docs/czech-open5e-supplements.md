@@ -1,54 +1,44 @@
-# České názvy obsahu mimo SRD
+# Česká lokalizace doplňků Open5e mimo SRD
 
-Tento katalog navazuje na [společnou překladovou vrstvu](../src/lib/content/names.ts) a problém #100. Nejde o kopii překladů pravidlových knih.
+Rozšíření společné překladové vrstvy pro Issue #100 a PR #106. Překlady jsou vlastní autorské české texty na základě pravidlových dat, ne oficiální české edice knih. Zdrojová herní data zůstávají nezměněná a autorské/licenční informace Open Gaming License (OGL) se dále vedou u jednotlivých knih a jejich řádků.
 
-## Aktuální rozsah (PR #106)
+## Ověřený stav proti originálním datům Open5e
 
-| Open5e `documentSlug` | Kniha | Předměty | Kouzla | Odbornosti |
-| --- | --- | ---: | ---: | ---: |
-| `toh` | Tome of Heroes | 62 | 106 | 10 |
-| `deepm` | Deep Magic | 0 | 58 | 0 |
-| `vom` | Vault of Magic | 194 | 0 | 0 |
-| **Celkem** | | **256** | **164** | **10** |
+| Kniha (identifikátor) | Záznamů v Open5e | České názvy | České popisy |
+| --- | ---: | ---: | ---: |
+| Tome of Heroes (`toh`): kouzla | 91 | 91 | 91 stručných věcných přehledů |
+| Tome of Heroes (`toh`): odbornosti | 13 | 13 | 13 úplných českých pravidlových textů |
+| Tome of Heroes (`toh`): předměty, zbraně a zbroje | 65 | 65 | 65 stručných přehledů |
+| Deep Magic (`dmag`, `deepm`): kouzla, starší v1 | 514 | 56 | 56 stručných přehledů |
+| Vault of Magic (`vom`): magické předměty | 805 | 193 | 92 stručných přehledů |
+| **Celkem** | **1 488** | **418** | **317** |
 
-**Celkem 430 vlastních českých názvů.** Jsou to původní návrhy českého názvosloví, nikoli licencované/autor­izované překlady vydavatelů. Výběrové dialogy a české hledání je používají jen u řádků `source: "open5e"` s odpovídajícím `documentSlug`.
+Počty se týkají konkrétních Open5e zdrojových záznamů v importovatelném katalogu 5e v1, nikoli součtu všech vydání knih nebo všech položek na uživatelském serveru. Celkových 317 českých textů zahrnuje 304 autorských stručných přehledů a 13 plných českých pravidlových textů odborností.
 
-- Slovník: `src/lib/content/third-party-names-cs.ts`; říká pouze, jak se zobrazí identifikovaný název.
-- Názvy používají `contentName()` společně s katalogem SRD. Původní anglická `name`, `slug`, hodnoty mechanik, API a ukládané údaje se nemění.
-- Český dotaz se mapuje na **původní anglické jméno**; výsledný řádek se znovu ověřuje podle českého názvu. První přednost mají shody v centrálním SRD katalogu.
-- Vlastní uživatelské `homebrew` a jiné knihy se stejným názvem se nepřekládají. Neznámé řádky ponechávají anglický původní název.
-- U 15 zbraní Tome of Heroes a 5 magických předmětů Vault of Magic je navíc vlastní stručný český informační přehled (`third-party-item-summary-cs.ts`), vycházející z veřejně uváděných mechanických údajů. Zobrazuje se vedle původních pravidel, nikoli místo nich.
-- U devíti účinkově prověřených kouzel z Tome of Heroes přibyl nezávisle napsaný český přehled (`third-party-spell-summary-cs.ts`). Výslovně se odlišuje od plného anglického pravidlového popisu.
-- Informační dialog ověřuje `documentSlug` a `source` i při náhradním vyhledávání (`content-ref-match.ts`); pravidla jiné knihy nebo homebrew se již nesmějí vybrat jen na základě shody názvu.
+Ověřený zdroj: `open5e/open5e-api`, větev `staging`, soubory `data/v1/toh/{Spell,Feat,MagicItem,Weapon,Armor}.json`, `data/v1/dmag/Spell.json` a `data/v1/vom/MagicItem.json`. Dokumenty označují svoji licenci jako Open Gaming License a obsahují připsání Kobold Press / Open Design.
 
+**Důležitá oprava proti první verzi PR:** dosavadních 430 názvů zahrnovalo nesprávné položky a rozdílný zápis. Slovník byl srovnán se zdrojovými ID: Tome of Heroes nyní odpovídá všem skutečným záznamům 65/65, 91/91 a 13/13. Zároveň se odstranily chybné vazby jako `Heart to Heart` a `Instant Snare` z knihy `toh` (ve zdrojovém záznamu této knihy nejsou) a opravila se interpunkce, velikost písmen a apostrofy.
 
-## Audit významu názvů Tome of Heroes (22. 11. 2026)
+## Kde se používají
 
-U překladů se rozlišuje doslovný význam jména a popis skutečného herního účinku. U následujících devíti kouzel byla provedena cílená kontrola veřejně dostupných pravidlových popisů:
+- `src/lib/content/third-party-names-cs.ts`: české názvy přes přesnou kombinaci knihy (`documentSlug`), druhu a anglického jména. `deepm` a `dmag` ukazují na stejný ověřený překladový katalog; obě podoby existují v Open5e.
+- `src/lib/help/third-party-spell-summary-cs.ts`: české stručné přehledy ověřených kouzel, před původním plným pravidlovým textem.
+- `src/lib/help/third-party-feat-description-cs.ts`: úplné české pravidlové mechaniky všech 13 odborností Tome of Heroes včetně požadavků, hodů, obnovování a omezení.
+- `src/lib/help/third-party-item-summary-cs.ts`: české přehledy konkrétních magických předmětů, zbraní a zbrojí, za nimiž lze zobrazit původní anglická pravidla.
+- `src/lib/help/content-ref-match.ts`: ochrana proti načtení textu shodného jména z jiné knihy. Detaily z API se ověřují podle `source` a `documentSlug`.
 
-| Anglický název | Výsledný český název | Důvod |
-| --- | --- | --- |
-| Fuse Armor | Znehybnění kovu | Slepuje pohyblivé části kovového mechanismu nebo zbroje; neomezuje se jen na zbroj |
-| Secret Blind | Skrytý úkryt | Neprůhledná a iluzí maskovaná ochranná sféra, která blokuje vstup |
-| Pincer | Klešťový úder | Dvě protilehlé hromové výseče vytvářejí útok ze dvou stran |
-| Lightless Torch | Pochodeň temnovidu | Nedává světlo; vytváří oblast, v níž funguje temnovid jako v jasném světle |
-| Long Game | Odložená odplata | Skrytý psychický účinek lze po seslání spustit s časovým odstupem |
-| Heart to Heart | Propojená srdce | Dvě postavy si mohou sdílet obnovené životy a navzájem se stabilizují |
-| Clear The Board | Rozdělení bojiště | Přesunuje spojence a nepřátele teleportací na opačné strany bojiště |
-| Instant Snare | Magická smyčka | Magická smyčka vynese a znehybní cíl, nikoli obecná „okamžitá past“ |
-| Mud | Vazké bahno | Vytváří lepkavé bahno, obtížný terén a může zastavit pohyb |
+Vlastní uživatelské homebrew se nikdy nepřekládá ani nepřepisuje. Originální anglické `name`, `slug` a údaje mechanik zůstávají zdrojem pro herní engine a ukládání; překlady slouží pouze k zobrazení a vyhledávání (včetně hledání bez diakritiky).
 
-Prameny k mechanikám (ne k českému názvosloví): veřejné herní popisy na [Open Gaming Network / 5E SRD](https://5esrd.old.opengamingnetwork.com/database/spell/) (zejména jednotlivé stránky výše uvedených kouzel). Pro specifické názvy z těchto doplňků nebylo při cíleném hledání na českých D&D stránkách doloženo existující autorizované české názvosloví. Výsledné názvy jsou **samostatné překladatelské návrhy**. U dalších položek ještě musí proběhnout stejně důkladná kontrola popisů; samotné zařazení do katalogu 430 názvů neznamená, že každý název prošel tímto obsahovým auditem.
+## Pravidla kvality a další práce
 
-## Co ještě není přeložené
+U názvů rozhoduje pravidlový účinek, ne jen doslovná podobnost: například `Fuse Armor` je **Znehybnění kovu**, protože působí i na jiné kovové mechanismy. `Secret Blind` je **Skrytý úkryt**. Názvy nejsou vydavatelsky potvrzené oficiální české názvy.
 
-Úplné popisy kouzel, magických předmětů a pravidlové vlastnosti obsažené ve třetích knihách jsou zatím v původním znění; u devíti kouzel a dvaceti předmětů je navíc krátký český přehled. Český název **není** tvrzením, že je k dispozici úplný český překlad pravidel. Pro další překlady je třeba samostatně připravit ověřené české texty, zachovat veškerou herní mechaniku a respektovat licenční podmínky příslušné knihy.
+*Stručný český přehled* není úplný překlad původního pravidlového popisu. Originální anglický text se ponechává přístupný, zvláště pokud obsahuje výjimky, tabulky či varianty, které se do přehledu nevejdou. Nesmí se vydávat za ověřený úplný překlad. Úplné české pravidlové texty mají nyní jen 13 odborností Tome of Heroes.
 
-Při rozšiřování:
-1. Ověřit přesnou anglickou položku a Open5e `documentSlug`, nikoli jen podobný název.
-2. Doplnit vlastní český název do správné knihy a tabulky, zachovat jiná vydání a homebrew.
-3. U herních účinků doplnit kontrolované krátké autorské shrnutí nebo samostatně oprávněný překlad; nepřepisovat anglický text při importu.
-4. Rozšířit `czech-content-picker.test.ts` o název, české hledání, cizí dokument, homebrew a EN fallback.
-5. Ověřit `npm run dead-code`, cílené testy a produkční build. Prohlížečový Linux smoke ověřit po integraci do `main`.
+Zbývá dokončit názvy a popisy ostatních 458 kouzel Deep Magic, dalších 612 předmětů Vault of Magic a plné české přepisy pravidel u položek, které mají zatím jen přehled. Zdrojové knihy jsou volitelnou součástí serveru; tento PR je do serveru nevkládá.
 
-Datové katalogy Open5e jsou volitelné a závisí na instalaci obsahu na serveru. PR nevkládá nové knihy do databáze; překládá názvy těch položek, které Open5e skutečně vrátí.
+Při každém dalším doplnění:
+1. Nejdřív ověřit anglické jméno, pravidlový popis, `documentSlug` a licenční informace ze zdrojového záznamu.
+2. Přidat vlastní český název pouze do tabulky odpovídající knize; nesměšovat různé knihy a homebrew.
+3. V českém textu ověřit veškeré číselné hodnoty a herní mechaniku. Nevyplňovat pravidlové údaje odhadem.
+4. Přidat test konkrétního překladu, rozsahu a oddělení zdrojů; spustit `npm run dead-code`, testy a produkční build.
