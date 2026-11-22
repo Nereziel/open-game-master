@@ -16,12 +16,12 @@ describe("Character history milestones in Czech", () => {
   });
 
   it("never interprets multiline player prose as a legacy item event", () => {
-    const note = "Acquired\\nScale Mail.";
+    const note = "Acquired\nScale Mail.";
     expect(characterEventSummary(note, "item", "cs")).toBe(note);
-    const story = "Acquired Scale Mail.\\nThe hero celebrated.";
+    const story = "Acquired Scale Mail.\nThe hero celebrated.";
     expect(characterEventSummary(story, "item", "cs")).toBe(story);
-    expect(characterEventSummary("Acquired\\r\\nScale Mail.", "item", "cs"))
-      .toBe("Acquired\\r\\nScale Mail.");
+    expect(characterEventSummary("Acquired\r\nScale Mail.", "item", "cs"))
+      .toBe("Acquired\r\nScale Mail.");
   });
 
   it("does not rewrite other languages, unrelated stories, or user-authored prose", () => {
