@@ -13,7 +13,7 @@ describe("SRD 5.1 Czech companion adapter (#107 phase 2)", () => {
   it("keeps the canonical page ID and strips the duplicated English footer", () => {
     const localized: RulebookPage = {
       ...source, title: "Světlo", meta: "Evokační trik",
-      md: "Český kompletní text\n\n---\n\nOriginal English rules",
+      md: "Český kompletní text\n\n---\n\n**Úplné původní znění SRD 5.1 v angličtině:**\n\nOriginal English rules",
     };
     const { pack, coverage } = srdTranslationPack([source], [localized]);
     const registry = new TranslationRegistry();
@@ -22,7 +22,7 @@ describe("SRD 5.1 Czech companion adapter (#107 phase 2)", () => {
       { sourceId: "srd-5.1", contentType: "spells", contentId: "light", locale: "cs" },
       { name: source.title, description: source.md, metadata: { meta: source.meta! } },
     ).entry).toEqual({
-      name: "Světlo", description: "Český kompletní text\n\n---",
+      name: "Světlo", description: "Český kompletní text",
       metadata: { meta: "Evokační trik" },
     });
     expect(coverage).toEqual({ total: 1, translated: { spells: 1 }, missingIds: [] });
