@@ -114,4 +114,18 @@ describe("historical event-log system phrases follow the reader's locale", () =>
     expect(say("en", "set_condition", { condition: "blinded" })).toContain("blinded");
     expect(say("cs", "set_condition", { condition: "My Homebrew Curse" })).toContain("My Homebrew Curse");
   });
+
+  it("translates standard damage types through the shared UI catalog, not custom ones", () => {
+    const withFire = { kind: "apply_damage", delta: { amount: 3, type: "fire" } };
+    const withCustom = { kind: "apply_damage", delta: { amount: 3, type: "dreamfire" } };
+    const customT = Object.assign(
+      (key: string, vars?: Record<string, string | number>) =>
+        key === "fire" ? "ohněm" : translate("en", key, vars),
+      { locale: "cs" as const },
+    );
+    expect(describeKnownEntry(customT, withFire, "Mara")).toContain("(ohněm)");
+    expect(describeKnownEntry(customT, withCustom, "Mara")).toContain("(dreamfire)");
+    expect(say("en", "apply_damage", withFire.delta)).toContain("(fire)");
+    expect(withFire.delta).toEqual({ amount: 3, type: "fire" });
+  });
 });
