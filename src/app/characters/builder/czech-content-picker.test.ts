@@ -7,7 +7,7 @@ import { builtinFeatSummaryCs } from "@/lib/help/feat-summary-cs";
 import { officialCzechSpellPageId } from "@/lib/help/official-cs-reference";
 import { itemPickerKindLabel, itemPickerMeta, itemPickerRarityLabel } from "@/lib/help/item-picker-labels";
 import { featPickerKey, uniquePlayableFeatRows } from "./feat-picker-logic";
-import { czechPickerQueries } from "./czech-picker-search";
+import { appendCzechPickerMatches, czechPickerQueries } from "./czech-picker-search";
 
 installCsTables({ names: CS_NAMES_BY_TABLE });
 
@@ -70,9 +70,27 @@ describe("Czech campaign content pickers", () => {
       .toContain("longsword");
     expect(czechPickerQueries("feats", "ostrostrelec", CS_NAMES_BY_TABLE))
       .toContain("sharpshooter");
+    // The Open5e weapon slug is reversed; the API expects "Light Crossbow".
+    expect(czechPickerQueries("items", "lehka kuse", CS_NAMES_BY_TABLE))
+      .toContain("light crossbow");
     expect(czechPickerQueries("feats", "a", CS_NAMES_BY_TABLE)).toEqual([]);
     expect(czechPickerQueries("unrecognized", "leceni", CS_NAMES_BY_TABLE)).toEqual([]);
     expect(czechPickerQueries("spells", "nejaka-vlastni-homebrew", CS_NAMES_BY_TABLE)).toEqual([]);
+  });
+
+  it("keeps Czech matches when an English query returned other rows", () => {
+    const EnglishMatches = [{ name: "Leceni's Tonic", source: "homebrew", slug: "own" }];
+    const localized = [
+      { name: "Cure Wounds", source: "srd", slug: "srd:cure-wounds" },
+      { name: "Magic Missile", source: "srd", slug: "srd:magic-missile" },
+      { name: "Cure Wounds", source: "homebrew", slug: "custom" },
+    ];
+    const combined = appendCzechPickerMatches("spells", "leceni", EnglishMatches, localized);
+    expect(combined.map((row) => row.slug)).toEqual(["own", "srd:cure-wounds"]);
+    expect(appendCzechPickerMatches("items", "lehka kuse", [], [
+      { name: "Light Crossbow", source: "open5e", slug: "crossbow-light" },
+    ])).toHaveLength(1);
+    expect(appendCzechPickerMatches("classes", "leceni", EnglishMatches, localized)).toEqual(EnglishMatches);
   });
 
   it("collapses only explicitly equivalent feats and retains distinct homebrew feats", () => {
