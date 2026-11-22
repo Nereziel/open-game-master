@@ -168,6 +168,7 @@ export function LeadEditDialog({
         const base = { ...row.base };
         delete base.slug;
         delete base.contentRef;
+        delete base.gear; // Old homebrew mechanics do not belong to a renamed item.
         return { ...row, ...patch, base };
       }
       return { ...row, ...patch };
