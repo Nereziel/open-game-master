@@ -14,6 +14,8 @@ import type { TourStep } from "./logic.ts";
 export const WORLD_TOUR_STEPS: TourStep[] = [
   {
     id: "create",
+    titleCs: "Začni tím, co chceš vytvořit",
+    bodyCs: "V nabídce Vytvořit vyber postavu, místo, nestvůru, předmět, střetnutí, mapu nebo celý svět. Otevře se odpovídající nástroj, který vytvoří použitelné herní údaje. Vše lze zapsat ručně nebo zkopírovat z existujícího záznamu. Pokud má server nastavený textový model, nabídne také návrh pomocí AI.",
     title: "Start from what you want",
     titleFr: "Partir de ce que tu veux obtenir",
     body: "Create asks what you want to end up with (a person, a place, a monster, an item, a fight, a map or a whole world) and opens the tool that makes it, so a monster gets a stat block the table can fight and an item rules the sheet can use. Each can be made by hand or copied from one that exists; Draft with AI is offered where the server has a text model.",
@@ -22,6 +24,8 @@ export const WORLD_TOUR_STEPS: TourStep[] = [
   },
   {
     id: "import",
+    titleCs: "Načíst svět z WorldForge",
+    bodyCs: "Otevři exportovaný soubor WorldForge a přidej do světa postavy, místa, frakce, další záznamy, vazby, kalendáře, události, tajemství a mapy. Opětovné načtení stejného souboru aktualizuje existující obsah místo vytváření duplicit. Pokud nelze vše převést, před uložením uvidíš, co by se ztratilo.",
     title: "A world from WorldForge",
     titleFr: "Un monde venu de WorldForge",
     body: "Open a WorldForge export and it joins this world: characters, places, factions, every other entry, their links, calendars, events, secrets and maps. Opening the same file again updates what is here rather than doubling it. A file that would not come in whole says what each scene would lose before anything is written.",
@@ -30,6 +34,8 @@ export const WORLD_TOUR_STEPS: TourStep[] = [
   },
   {
     id: "wiki",
+    titleCs: "Každý záznam lze využít při hře",
+    bodyCs: "Postavy najdeš také v obsazení, místa v oblasti a frakce v přehledu frakcí. Ostatní záznamy jsou součástí znalostí světa. Změny se projeví ve všech propojených nástrojích. Záznam můžeš propojit s jinými záznamy, statistikami nestvůr, předměty, bojovými mapami a střetnutími. Přidání nestvůry do boje použije právě její statistiky.",
     title: "Every entry is a record the table uses",
     titleFr: "Chaque entrée est une fiche que la table utilise",
     body: "A person here is in the Cast, a place in the Region's places, a faction in Factions and the rest in Lore, so a change in either tool shows in both. Open an entry to write it and link it to others, and to what the table plays with: a stat block or an item it is about, and for a place its battle maps and encounters. Add to a fight puts that exact monster into an encounter.",
@@ -40,6 +46,8 @@ export const WORLD_TOUR_STEPS: TourStep[] = [
   },
   {
     id: "outline",
+    titleCs: "Navrhnout svět podle nápadu",
+    bodyCs: "Napiš krátký námět a AI navrhne osnovu postav, míst, frakcí, znalostí, nestvůr a předmětů. Dokud neoznačíš vybrané řádky, nic se nevytvoří. Nestvůry se ověřují v bestiáři a předměty v nástroji pro vlastní obsah; obojí se propojí se záznamy světa. Neúspěšný řádek lze opravit a zkusit znovu. Funkce vyžaduje textový model nastavený správcem serveru.",
     title: "Draft a world from an idea",
     titleFr: "Bâtir un monde depuis une idée",
     body: "Write a line or two and a model drafts an outline: people, places, factions and lore, and a few creatures and items, each counted. Nothing is made until you tick rows. Creatures are built and checked in the Bestiary and items in Homebrew, each with a World entry linked to it, and a row that fails says why and can be retried on its own. Needs a text model, which an admin adds under Admin > Text model defaults.",
@@ -50,6 +58,8 @@ export const WORLD_TOUR_STEPS: TourStep[] = [
   },
   {
     id: "forge",
+    titleCs: "Vytěžit záznamy z poznámek",
+    bodyCs: "Vlož své poznámky. AI z nich vyhledá zmíněné osoby, místa a další prvky i jejich vztahy, aniž by domýšlela chybějící informace. Do světa se zapíší pouze označené položky. Existující záznamy se nepřepisují; případné vynechané položky a důvody se zobrazí ve výsledku. Je potřeba textový model.",
     title: "Extract from your notes",
     titleFr: "Extraire de tes notes",
     body: "Paste notes you already have and the model lists what they name and how those things stand with each other; it never invents what the notes leave out. Nothing is written until you tick what to keep, a name the world already has is never rewritten, and the report after names anything not added, and why. Needs a text model, as Outline does.",
@@ -60,6 +70,8 @@ export const WORLD_TOUR_STEPS: TourStep[] = [
   },
   {
     id: "ask",
+    titleCs: "Zeptat se světa",
+    bodyCs: "Polož otázku o svém světě, včetně skrytých skutečností. Odpověď uvádí podklady a jejich umístění i to, zda jde o potvrzený kánon. Odpovědi bez podkladů je nutné ověřit. Funkce vyžaduje textový model.",
     title: "Ask the world",
     titleFr: "Demander au monde",
     body: "A question answered from this world only, hidden truths included. Each answer lists the passages it rests on, with where each one is and whether it is settled canon; an answer that cites nothing says to check it first. Needs a text model, as Outline does.",
@@ -70,6 +82,8 @@ export const WORLD_TOUR_STEPS: TourStep[] = [
   },
   {
     id: "web",
+    titleCs: "Síť vztahů",
+    bodyCs: "Zobraz všechny vazby jako síť, příbuzenské vztahy jako rodokmen a vztahy nadřízenosti jako hierarchii. Přepnutím na pohled podle veřejně známých informací zjistíš, jak svět vnímají hráči.",
     title: "The web",
     titleFr: "La toile",
     body: "Every link drawn as a web, a family tree read off the family words, and a chain of command read off the chain words. Switch to what people believe to see the world as the players will hear it.",
@@ -80,6 +94,8 @@ export const WORLD_TOUR_STEPS: TourStep[] = [
   },
   {
     id: "timeline",
+    titleCs: "Dějiny světa",
+    bodyCs: "Kalendáře používají převod mezi letopočty, takže stejný rok lze zobrazit v různých kalendářích. Události jsou řazené podle období a upozornění označí osoby uvedené mimo dobu jejich života. Časová osa popisuje historii světa; herní kampaň má vlastní čas a událost zde nic automaticky neplánuje.",
     title: "The world's history",
     titleFr: "L’histoire du monde",
     body: "Calendars are reckonings with an offset, so a year in one reads in all of them. Events run in order, grouped by era, and anyone named outside their own lifetime is flagged. This dates the world's past: a campaign keeps its own clock, and an event here schedules nothing at the table.",
@@ -90,6 +106,8 @@ export const WORLD_TOUR_STEPS: TourStep[] = [
   },
   {
     id: "atlas",
+    titleCs: "Atlas",
+    bodyCs: "Vytvářej mapy s označenými místy, vnořenými mapami a zakreslenými oblastmi. Mapu můžeš použít jako podklad herní oblasti a propojit místa s jejími značkami. Změny se před použitím kontrolují a smazanou mapu lze bezprostředně obnovit. Hráči uvidí jen zveřejněné mapy, značky a oblasti.",
     title: "The atlas",
     titleFr: "L’atlas",
     body: "Maps with a pin on each place that matters, maps inside maps, and regions drawn as shapes. Use a map as the Region backdrop, then place its pinned places on the playable Region; each then moves with its pin. Every change is reviewed before it is made, and a deleted map can be undone straight after. Players see a map only once you show it to the party, and then only its shown pins and regions.",
@@ -100,6 +118,8 @@ export const WORLD_TOUR_STEPS: TourStep[] = [
   },
   {
     id: "secrets",
+    titleCs: "Tajemství",
+    bodyCs: "U každého tajemství určuj jeho obsah, koho se týká a kdo ho zná. AI Pán jeskyně zná i tajemství, která družina dosud neodhalila. V záložce Svět během kampaně můžeš tajemství odhalit družině; tím se přidá do znalostí hráčů a označí jako objevené.",
     title: "Secrets",
     titleFr: "Les secrets",
     body: "What the secret is, whom it is about and who keeps it. The AI GM is told the ones the party has not learned, so a keeper can let one slip. In a campaign's World tab, Reveal to the party writes it into the players' lore as they learn it and marks it learned.",
@@ -110,6 +130,8 @@ export const WORLD_TOUR_STEPS: TourStep[] = [
   },
   {
     id: "stubs",
+    titleCs: "Dosud nerozpracované záznamy",
+    bodyCs: "Prohledej celý svět a najdi jména, k nimž zatím neexistuje záznam. Můžeš je ponechat jako námět, vytvořit z nich úplný záznam nebo je trvale ignorovat.",
     title: "Still to write",
     titleFr: "Reste à écrire",
     body: "Reads the whole world for names nothing answers to yet. Keep one as a stub, write it as an entry, or dismiss it for good.",
@@ -120,6 +142,8 @@ export const WORLD_TOUR_STEPS: TourStep[] = [
   },
   {
     id: "types",
+    titleCs: "Typy a pole",
+    bodyCs: "Vytvářej vlastní typy záznamů a jejich pole: text, číslo, výběr ze seznamu nebo rok. Rok může označovat narození či úmrtí. Každé pole může být také soukromé.",
     title: "Types and fields",
     titleFr: "Types et champs",
     body: "Make the types your world needs and the fields each keeps: text, a number, a pick from a list, or a year. A year can mark a birth or a death; any field can be yours alone.",
@@ -130,6 +154,8 @@ export const WORLD_TOUR_STEPS: TourStep[] = [
   },
   {
     id: "export",
+    titleCs: "Exportovat do WorldForge",
+    bodyCs: "Ulož svět do souboru WorldForge včetně obrázků. Pokud některé údaje dílny nelze do tohoto formátu převést, zobrazí se předem přehled možných ztrát. Místo toho můžeš použít balíček dílny, který zachová veškerý obsah.",
     title: "Back to WorldForge",
     titleFr: "Retour vers WorldForge",
     body: "Saves this world as a WorldForge file, pictures and all. When the storyboard holds more than a file can carry (a card's kind, its routes, its fight), it first lists what each card would lose and offers a workshop bundle, which carries all of it.",
