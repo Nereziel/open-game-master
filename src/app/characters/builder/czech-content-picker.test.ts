@@ -4,6 +4,7 @@ import { CS_NAMES_BY_TABLE } from "@/lib/content/names-cs";
 import { installCsTables } from "@/lib/i18n/cs-tables";
 import { contentName } from "@/lib/content/names";
 import { builtinFeatSummaryCs } from "@/lib/help/feat-summary-cs";
+import { thirdPartyItemSummaryCs } from "@/lib/help/third-party-item-summary-cs";
 import { officialCzechSpellPageId } from "@/lib/help/official-cs-reference";
 import { itemPickerKindLabel, itemPickerMeta, itemPickerRarityLabel } from "@/lib/help/item-picker-labels";
 import { featPickerKey, uniquePlayableFeatRows } from "./feat-picker-logic";
@@ -50,6 +51,16 @@ describe("Czech campaign content pickers", () => {
     expect(contentName("spells", { ...tohSpell, documentSlug: "other-book" }, "cs")).toBe("Fuse Armor");
     expect(czechPickerQueries("items", "mechanicka kuse", CS_NAMES_BY_TABLE)).toContain("Clockwork Crossbow");
     expect(czechPickerQueries("spells", "spojeni zbroje", CS_NAMES_BY_TABLE)).toContain("Fuse Armor");
+    expect(contentName("feats", { name: "Boundless Reserves", source: "open5e", documentSlug: "toh" }, "cs"))
+      .toBe("Nevyčerpatelné zásoby");
+    expect(contentName("spells", { name: "Acid Gate", source: "open5e", documentSlug: "deepm" }, "cs"))
+      .toBe("Kyselinová brána");
+    expect(contentName("spells", { name: "Acid Gate", source: "homebrew", documentSlug: "deepm" }, "cs"))
+      .toBe("Acid Gate");
+    expect(czechPickerQueries("spells", "kyselinova brana", CS_NAMES_BY_TABLE)).toContain("Acid Gate");
+    expect(thirdPartyItemSummaryCs(tohItem, "cs")).toContain("šest střel");
+    expect(thirdPartyItemSummaryCs({ ...tohItem, documentSlug: "other-book" }, "cs")).toBeNull();
+    expect(thirdPartyItemSummaryCs(tohItem, "en")).toBeNull();
   });
 
   it("reads the official Czech spell book only for official spell refs", () => {
