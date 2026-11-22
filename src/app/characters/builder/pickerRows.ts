@@ -49,3 +49,17 @@ export function sourceRowIdentity(entry: { name: string; slug?: string; source?:
     entry.slug || textKey(entry.name),
   ]);
 }
+
+/** A name-only save cannot represent two different books' same-name entries.
+ * Preserve source choice in pending UI, but keep at most one pending row per
+ * canonical English name until the saved character schema can store a ref. */
+export function togglePendingSourceRow<T extends { name: string; slug?: string; source?: string; documentSlug?: string; kind?: string }>(
+  pending: readonly T[],
+  entry: T,
+): T[] {
+  const identity = sourceRowIdentity(entry);
+  if (pending.some((row) => sourceRowIdentity(row) === identity)) {
+    return pending.filter((row) => sourceRowIdentity(row) !== identity);
+  }
+  return [...pending.filter((row) => textKey(row.name) !== textKey(entry.name)), entry];
+}
