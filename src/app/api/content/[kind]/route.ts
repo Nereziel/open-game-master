@@ -246,7 +246,17 @@ export async function GET(
       && textKey(entry.name) === textKey(canonicalQuery)
       && !originalIds.has(JSON.stringify([entry.documentSlug, entry.slug])),
     );
-    results = [...results, ...aliases];
+    const canonicalAliases = kind === "items"
+      ? (aliases as ItemEntry[]).map((entry) => {
+          const listed = srdNameFor(withoutBonus(entry.name), "items");
+          return {
+            ...entry,
+            price: catalogPrices(entry.name),
+            ...("srdName" in listed && listed.srdName ? { srdName: listed.srdName } : {}),
+          };
+        })
+      : aliases;
+    results = [...results, ...canonicalAliases];
     // A server without Open5e still exposes its bundled SRD for this alias.
     if (!packInstalled && kind === "spells") {
       results = [...results, ...notFiled(results, bundledSpellRows(canonicalQuery).filter(
