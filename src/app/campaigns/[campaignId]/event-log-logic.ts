@@ -241,7 +241,9 @@ function knownEntryText(t: Say, entry: { kind: string; delta: Delta }, name: str
     case "set_effect": {
       const max = amount(delta.maxHp);
       const hp = amount(delta.currentHp);
-      return max !== null ? `${name}'s hit point maximum is now ${max}${hp !== null ? ` (${hp} HP)` : ""}` : `${name}'s hit point maximum changes`;
+      return max !== null
+        ? `${t("{name}'s hit point maximum is now {max}", { name, max })}${hp !== null ? t(" ({hp} HP)", { hp }) : ""}`
+        : t("{name}'s hit point maximum changes", { name });
     }
     case "award_xp": {
       const xp = amount(delta.amount);
@@ -301,14 +303,16 @@ function knownEntryText(t: Say, entry: { kind: string; delta: Delta }, name: str
       const created = word(delta.created);
       const bonded = word(delta.bonded);
       const unbonded = word(delta.unbonded);
-      if (created) return `${name} creates a pact weapon: ${created}`;
-      if (bonded) return `${name} bonds with ${bonded} as a pact weapon`;
-      if (unbonded) return `${name} breaks the pact bond with ${unbonded}`;
-      return `${name} dismisses ${word(delta.dismissed) ?? "the pact weapon"}`;
+      if (created) return t("{name} creates a pact weapon: {item}", { name, item: created });
+      if (bonded) return t("{name} bonds with {item} as a pact weapon", { name, item: bonded });
+      if (unbonded) return t("{name} breaks the pact bond with {item}", { name, item: unbonded });
+      return t("{name} dismisses {item}", { name, item: word(delta.dismissed) ?? t("the pact weapon") });
     }
     // Pact of the Tome: a new book, the old one gone with it.
     case "book_of_shadows":
-      return delta.replaced === true ? `${name} makes a new Book of Shadows, and the old one is gone` : `${name} makes a Book of Shadows`;
+      return delta.replaced === true
+        ? t("{name} makes a new Book of Shadows, and the old one is gone", { name })
+        : t("{name} makes a Book of Shadows", { name });
     case "hand_item": {
       const to = word(delta.to);
       const from = word(delta.from);
@@ -360,7 +364,7 @@ function knownEntryText(t: Say, entry: { kind: string; delta: Delta }, name: str
     // The once-a-turn mark of Spirit Projection's Form of Dread heal
     // (spirit-projection.ts), written apart from the heal itself.
     case "spirit_projection":
-      return `${name} draws on Form of Dread for this turn`;
+      return t("{name} draws on Form of Dread for this turn", { name });
     case "condition_clock": {
       const ended = words(delta.ended);
       return ended.length ? t("{name} is no longer {ended}", { name, ended: ended.join(" or ") }) : t("Time runs on {name}'s conditions", { name });
@@ -386,7 +390,8 @@ function knownEntryText(t: Say, entry: { kind: string; delta: Delta }, name: str
     // What a reaction itself did to the sheet (reaction-refund.ts reactionPatch).
     case "reaction": {
       const what = word(delta.reaction);
-      return what ? `${name}: ${what}` : `${name} takes a reaction`;
+      // A named reaction is author- or feature-provided: preserve it verbatim.
+      return what ? `${name}: ${what}` : t("{name} takes a reaction", { name });
     }
     case "use_resource": {
       const resource = word(delta.resource) ?? t("a feature");
@@ -407,7 +412,7 @@ function knownEntryText(t: Say, entry: { kind: string; delta: Delta }, name: str
     case "death_moment":
       return t("The moment {name} died is written down", { name });
     case "spirit_anchor":
-      return `${name}'s spirit is held by Anchor of the Living`;
+      return t("{name}'s spirit is held by Anchor of the Living", { name });
     case "stabilize": {
       const healer = word(delta.healer);
       const woke = amount(delta.currentHp) === 1;
