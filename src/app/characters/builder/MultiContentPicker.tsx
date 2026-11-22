@@ -40,7 +40,7 @@ export default function MultiContentPicker({
   const t = useT();
   const tp = useTp();
   const locale = useLocale();
-  const displayName = (name: string, source?: PickerEntry["source"]) => contentName(kind, { name, source }, locale);
+  const displayName = (name: string, source?: PickerEntry["source"], slug?: string) => contentName(kind, { name, source, slug }, locale);
   const pickKey = (name: string, source?: PickerEntry["source"]) => kind === "feats" ? featPickerKey(name, source) : textKey(name);
   const { query, setQuery, results, setResults, open, setOpen, loading, unavailable, failed, unadmitted } =
     useContentSearch(kind, extraParams);
@@ -135,7 +135,7 @@ export default function MultiContentPicker({
                       <Plus className="size-3.5 shrink-0 text-stone-600" />
                     )}
                     <span className={cn(entry.source === "homebrew" && "text-amber-300")}>
-                      {displayName(entry.name, entry.source)}
+                      {displayName(entry.name, entry.source, entry.slug)}
                     </span>
                   </span>
                   <span className="shrink-0 text-xs text-stone-500">
@@ -147,7 +147,7 @@ export default function MultiContentPicker({
                   </span>
                 </button>
                 <InfoButton
-                  label={displayName(entry.name, entry.source)}
+                  label={displayName(entry.name, entry.source, entry.slug)}
                   meta={kind === "spells" ? (locale === "cs" ? (entry.level === 0 ? t("cantrip", { context: "lead.edit.cantripMeta" }) : entry.level !== undefined ? t("Level {level}", { level: entry.level }) : "") : spellSummary(entry.data)) : undefined}
                   text={entry.source === "homebrew" ? describeContentEntry(entry.data) : undefined}
                   reference={entry.source === "homebrew" ? undefined : { kind, slug: entry.slug, name: entry.name, source: entry.source, documentSlug: entry.documentSlug, rulebook: entry.rulebook }}
@@ -158,7 +158,7 @@ export default function MultiContentPicker({
           {trimmedQuery &&
           !selectedLower.has(pickKey(trimmedQuery)) &&
           !pendingLower.has(pickKey(trimmedQuery)) &&
-          !results.some((entry) => pickKey(entry.name, entry.source) === pickKey(trimmedQuery) || textKey(displayName(entry.name, entry.source)) === textKey(trimmedQuery)) ? (
+          !results.some((entry) => pickKey(entry.name, entry.source) === pickKey(trimmedQuery) || textKey(displayName(entry.name, entry.source, entry.slug)) === textKey(trimmedQuery)) ? (
             <li className="border-t border-stone-800">
               <button
                 type="button"
@@ -192,13 +192,13 @@ export default function MultiContentPicker({
               key={pick.name}
               className="flex items-center gap-1 rounded-full bg-stone-800 px-2 py-0.5 text-xs text-stone-200"
             >
-              {displayName(pick.name, pick.source)}
+              {displayName(pick.name, pick.source, pick.slug)}
               <button
                 type="button"
                 onClick={() =>
                   setPending((picks) => picks.filter((entry) => entry.name !== pick.name))
                 }
-                aria-label={t("Remove {name}", { name: displayName(pick.name, pick.source) })}
+                aria-label={t("Remove {name}", { name: displayName(pick.name, pick.source, pick.slug) })}
                 className="text-stone-500 hover:text-red-400"
               >
                 <X className="size-3" />
