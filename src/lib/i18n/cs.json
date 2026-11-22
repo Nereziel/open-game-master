@@ -1,5 +1,7 @@
 {
   "messages": {
+    "Choose tools for {class} ({count}):": "Vyber nástroje pro povolání {class} (počet: {count}):",
+    "Tool choices for {class}": "Výběr nástrojů pro povolání {class}",
     "Your hit die roll": "Hod kostkou životů",
     "Heal with this roll": "Vyléčit podle hodu",
     "The {die} is from {from}.": "Kostka {die} pochází z {from}.",
