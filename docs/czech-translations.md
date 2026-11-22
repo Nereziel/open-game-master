@@ -25,9 +25,10 @@ Tento dokument popisuje **společné zdroje překladů**. Překlady se vytváře
 
 Události ukládej ve strojově čitelné podobě (typ + parametry), pokud to existující schéma umožňuje. Čtenářská část sestaví lokalizovanou větu až podle aktuálního jazyka; **neukládej českou větu místo původního `delta`**.
 
-- Historie kampaně: `src/app/campaigns/[campaignId]/event-log-logic.ts` přijímá lokalizovaný `t` z `useT()`. Zároveň překládá známé názvy z `delta` přes `contentName("items" | "spells" | "conditions" | "monsters", name, locale)`. Název neznámého domácího předmětu, kouzla nebo nestvůry zachovej beze změny.
+- Historie kampaně: `src/app/campaigns/[campaignId]/event-log-logic.ts` přijímá lokalizovaný `t` z `useT()`. Zároveň překládá známé názvy z `delta` přes `contentName("items" | "spells" | "conditions" | "monsters", name, locale)`. Pro ID spotřebovaných třídních zdrojů používá `resourceDisplayName()` a pro předměty výcviku `skillLabel()`; neznámé názvy a předměty výcviku z hráčské prózy nechává beze změny.
 - Historie postavy: `src/lib/characters/event-summary-cs.ts` rozpoznává pouze bezpečné historické šablony (`Acquired {item}`); nesmí rozpoznávat vícerádkový příběh.
 - Nápověda stavů: `src/lib/battlemap/condition-notes.ts` používá `abilityShortLabel()` pro záchranné hody a `contentName("spells", ...)` pro známý zdrojový název kouzla; vlastní spouštěč připravené akce se nepřekládá.
+- Audit polí postavy: seznam rozpoznaných strojových klíčů je jediný ve `src/lib/sheet-audit-logic.ts` (`knownFieldWords()`). Pouze rozpoznané klíče se překládají jako popisky při zobrazení; neznámé klíče a hodnoty rozšíření se zachovávají doslova.
 - Když předáváš překladač jiné pomocné funkci, zachovej `t.locale`, pokud podle něj funkce lokalizuje obsahové názvy. Samotný obyčejný callback bez informace o locale používá bezpečný anglický fallback.
 
 **Nedělej** plošný `replace()` anglických frází na celém deníku, v databázi ani v odpovědích AI; změnit lze pouze pevně vymezené systémové šablony. Při testování ověř vždy češtinu, angličtinu, francouzštinu, placeholdery, neznámý homebrew název i neměnnost uloženého vstupu.
