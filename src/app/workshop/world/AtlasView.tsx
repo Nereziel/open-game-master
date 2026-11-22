@@ -245,7 +245,7 @@ export function AtlasView({
         </div>
         {mode === "region" ? (
           <p className="motion-pop text-xs text-stone-400">
-            Click the map to set each corner. {drawing.length >= 3 ? <button type="button" onClick={() => void finishRegion()} className="text-amber-200 underline underline-offset-2">Close the shape ({drawing.length} corners)</button> : `${3 - drawing.length} more to make a shape.`}{" "}
+            {t("Click the map to set each corner.")} {drawing.length >= 3 ? <button type="button" onClick={() => void finishRegion()} className="text-amber-200 underline underline-offset-2">{t("Close the shape ({count} corners)", { count: drawing.length })}</button> : t("{count} more corners needed.", { count: 3 - drawing.length })}{" "}
             Or{" "}
             <button type="button" onClick={() => void finishRegion([{ x: 0.4, y: 0.4 }, { x: 0.6, y: 0.4 }, { x: 0.5, y: 0.6 }])} className="text-amber-200 underline underline-offset-2" data-testid="atlas-region-by-numbers">
               start with three corners in the middle
