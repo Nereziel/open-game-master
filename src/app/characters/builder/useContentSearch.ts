@@ -3,6 +3,7 @@
 import { useEffect, useRef, useState } from "react";
 import { scopedParams, useContentCampaign } from "@/lib/content-scope";
 import { uniqueByName } from "./pickerRows";
+import { uniquePlayableFeatRows } from "./feat-picker-logic";
 
 export type PickerEntry = {
   slug: string;
@@ -96,7 +97,8 @@ export function useContentSearch(kind: string, extraParams: Record<string, strin
             setFailed(false);
             setPackMissing(data.packInstalled === false);
             setUnadmitted(Array.isArray(data.unadmitted) ? data.unadmitted : []);
-            setResults(uniqueByName(data.results ?? []));
+            const byName = uniqueByName(data.results ?? []);
+            setResults(kind === "feats" ? uniquePlayableFeatRows(byName) : byName);
             if (trimmed) {
               setOpen(true);
             }
