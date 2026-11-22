@@ -26,6 +26,7 @@ import { withoutBonus } from "@/lib/srd/item-row";
 import { bundledClassRows } from "@/lib/workshop/class-catalog";
 import { bookLocaleOf, rulebookPage } from "@/lib/rulebook/book";
 import { withCatalogDisplay } from "@/lib/content/translations/catalog-display";
+import { canonicalSrdSearchQuery } from "@/lib/content/translations/srd-5.1/catalog-query";
 
 export const runtime = "nodejs";
 export const dynamic = "force-dynamic";
@@ -59,7 +60,12 @@ export async function GET(
   if ("error" in scope) {
     return Response.json({ error: scope.error }, { status: scope.status });
   }
-  const q = url.searchParams.get("q") ?? "";
+  const requestedLocale = url.searchParams.get("locale");
+  const locale = requestedLocale === "cs" || requestedLocale === "en" || requestedLocale === "fr"
+    ? requestedLocale
+    : bookLocaleOf(request);
+  const originalQuery = url.searchParams.get("q") ?? "";
+  const q = canonicalSrdSearchQuery(kind, originalQuery, locale);
   const limitRaw = Number.parseInt(url.searchParams.get("limit") ?? "", 10);
   const offsetRaw = Number.parseInt(url.searchParams.get("offset") ?? "", 10);
   const mechanics = url.searchParams.get("mechanics") === "1";
@@ -238,10 +244,6 @@ export async function GET(
   results = results.map((row) => withBestEffort(kind, row, { classSlug }));
   // Add a separate Czech presentation layer only. The original catalog name,
   // slug, descriptions and mechanics are still used for every game action.
-  const requestedLocale = url.searchParams.get("locale");
-  const locale = requestedLocale === "cs" || requestedLocale === "en" || requestedLocale === "fr"
-    ? requestedLocale
-    : bookLocaleOf(request);
   if (locale === "cs") {
     results = (results as Array<Parameters<typeof withCatalogDisplay>[1]>)
       .map((row) => withCatalogDisplay(kind, row, locale));
