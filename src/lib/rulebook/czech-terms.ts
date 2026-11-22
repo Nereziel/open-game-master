@@ -649,25 +649,6 @@ export const CZECH_ITEMS: Readonly<Record<string, string>> = {
   ...CZECH_ITEM_TITLES_6,
 };
 
-export const CZECH_RULE_TERMS: Readonly<Record<string, string>> = {
-  "Armor Class": "Obranné číslo",
-  "Ability Check": "Ověření vlastnosti",
-  "Saving Throw": "Záchranný hod",
-  "Proficiency Bonus": "Zdatnostní bonus",
-  "Passive Perception": "Pasivní Vnímání",
-  "Spell Save DC": "SO záchrany kouzla",
-  "Difficulty Class": "Stupeň obtížnosti",
-  "Hit Points": "Životy",
-  "Hit Dice": "Kostky životů",
-  "Short Rest": "Krátký odpočinek",
-  "Long Rest": "Dlouhý odpočinek",
-  Advantage: "Výhoda",
-  Disadvantage: "Nevýhoda",
-  Concentration: "Soustředění",
-  Initiative: "Iniciativa",
-  "Death Saving Throw": "Záchranný hod proti smrti",
-};
-
 // Magic schools follow the terminology of the Czech 5e SRD. We translate
 // only recognized SRD spell metadata; unknown text is left unchanged.
 export const CZECH_SCHOOLS: Readonly<Record<string, string>> = {
