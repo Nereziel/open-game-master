@@ -13,7 +13,8 @@ import { contentSlug, describeContentEntry, spellRowConcentrates, spellSummary }
 import { bundledSpellFacts } from "@/lib/srd/spell-facts";
 import { replayAnimation } from "@/lib/motion/replay";
 import { spellSupportFor, spellSupportWord } from "@/lib/srd/spell-support";
-import { compareNames, textKey } from "@/lib/language/text-logic";
+import { compareNames, searchKey, textKey } from "@/lib/language/text-logic";
+import { spellNameMatchesSearch } from "./spell-name-search";
 import { contentName } from "@/lib/content/names";
 import {
   ANY_SPELL_FILTER,
@@ -180,7 +181,7 @@ export function SpellBook({
   if (typeof notice === "string" && notice && notice !== heldNotice) {
     setHeldNotice(notice);
   }
-  const needle = textKey(filter);
+  const needle = searchKey(filter);
   const [desk, setDesk] = useState<SpellFilter>(NO_SPELL_FILTER);
   const factsByName = useMemo(
     () => (filters ? new Map(tiles.map((tile) => [tile.name, spellDeskFacts(tile)])) : null),
@@ -198,7 +199,7 @@ export function SpellBook({
   // A search or a filter shows every level at once.
   const narrowed = Boolean(needle) || filtering;
   const passes = (tile: SpellTile) =>
-    (!needle || textKey(tile.label ?? tile.name).includes(needle)) &&
+    spellNameMatchesSearch(tile.name, shownName(tile), needle) &&
     (!filtering || matchesSpellFilter(factsByName?.get(tile.name) ?? spellDeskFacts(tile), live));
   // The level row says which level is chosen only once mounted. The travelling
   // pill (src/lib/motion/pill.ts) decorates every pill group that has a chosen
@@ -241,8 +242,8 @@ export function SpellBook({
   // that chose it. Re-sorting on every tap sent a chosen spell leaping to
   // the front and the list jumping, and the tap looked lost (issue 66).
   const byRank = (a: SpellTile, b: SpellTile) =>
-    RANK[a.state] - RANK[b.state] || compareNames(a.label ?? a.name, b.label ?? b.name);
-  const pageKey = `${narrowed ? `?${needle}|${JSON.stringify(live)}` : active}|${shown
+    RANK[a.state] - RANK[b.state] || compareNames(shownName(a), shownName(b));
+  const pageKey = `${locale}|${narrowed ? `?${needle}|${JSON.stringify(live)}` : active}|${shown
     .map((tile) => tile.name)
     .sort()
     .join("|")}`;
