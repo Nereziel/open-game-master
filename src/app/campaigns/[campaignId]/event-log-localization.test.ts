@@ -3,13 +3,16 @@ import cs from "@/lib/i18n/cs.json";
 import fr from "@/lib/i18n/fr.json";
 import { installCatalog, translate, type Locale } from "@/lib/i18n/translate";
 import { describeKnownEntry } from "./event-log-logic";
+import { installCsTables } from "@/lib/i18n/cs-tables";
+import { CS_NAMES_BY_TABLE } from "@/lib/content/names-cs";
 
 installCatalog("cs", cs);
 installCatalog("fr", fr);
+installCsTables({ names: CS_NAMES_BY_TABLE });
 
 function say(locale: Locale, kind: string, delta: Record<string, unknown> = {}, name = "Mara") {
   return describeKnownEntry(
-    (key, vars) => translate(locale, key, vars),
+    Object.assign((key: string, vars?: Record<string, string | number>) => translate(locale, key, vars), { locale }),
     { kind, delta },
     name,
   );
@@ -65,4 +68,28 @@ describe("historical event-log system phrases follow the reader's locale", () =>
     expect(say("cs", "reaction", delta)).toBe("Mara: My custom reaction");
     expect(delta).toEqual({ reaction: "My custom reaction" });
   });
+  it("uses canonical Czech item and spell names without rewriting stored events", () => {
+    const item = { name: "Scale Mail", qty: 2 };
+    const spell = { spell: "Cure Wounds" };
+    expect(say("cs", "grant_item", item)).toContain("Šupinová zbroj");
+    expect(say("cs", "remove_item", { name: "Scale Mail", removed: 1 })).toContain("Šupinová zbroj");
+    expect(say("cs", "purchase", { name: "Scale Mail", price: 5 })).toContain("Šupinová zbroj");
+    expect(say("cs", "gear", { name: "Scale Mail", equipped: true })).toContain("Šupinová zbroj");
+    expect(say("cs", "reveal_item", { from: "Scale Mail", to: "Longsword" })).toContain("Dlouhý meč");
+    expect(say("cs", "learn_spell", spell)).toContain("Léčení zranění");
+    expect(say("cs", "concentration_clock", spell)).toContain("Léčení zranění");
+    expect(say("cs", "pact_weapon", { created: "Longsword" })).toContain("Dlouhý meč");
+    expect(say("en", "grant_item", item)).toContain("Scale Mail");
+    expect(say("en", "learn_spell", spell)).toContain("Cure Wounds");
+    expect(item).toEqual({ name: "Scale Mail", qty: 2 });
+    expect(spell).toEqual({ spell: "Cure Wounds" });
+  });
+
+  it("leaves unknown custom names and reactions intact in every language", () => {
+    expect(say("cs", "grant_item", { name: "My Dragon Lantern" })).toContain("My Dragon Lantern");
+    expect(say("cs", "learn_spell", { spell: "Homebrew Storm" })).toContain("Homebrew Storm");
+    expect(say("fr", "pact_weapon", { bonded: "Custom Blade" })).toContain("Custom Blade");
+    expect(say("cs", "reaction", { reaction: "My custom reaction" })).toBe("Mara: My custom reaction");
+  });
+
 });
