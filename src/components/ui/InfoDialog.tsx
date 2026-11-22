@@ -514,6 +514,7 @@ export function InfoChipList({
   }>;
   emptyText?: string;
 }) {
+  const t = useT();
   if (!items.length) {
     return emptyText ? <p className="text-xs text-stone-500">{emptyText}</p> : null;
   }
@@ -537,8 +538,8 @@ export function InfoChipList({
                   {item.icon ? <GameIcon icon={item.icon} size={item.icon.kind === "action" ? "h-12 w-24" : "size-12"} className="shrink-0" /> : null}
                   <span className="min-w-0">
                     <span className="block font-display text-[13px] tracking-wide text-amber-100">{item.name}</span>
-                    {(item.meta ?? item.lead?.label) ? <span className="block text-[10px] uppercase tracking-wider text-stone-500">{item.meta ?? item.lead?.label}</span> : null}
-                    <span className="mt-0.5 block text-stone-300">{line ?? "Select the mark beside it for the full entry."}</span>
+                    {(item.meta ?? item.lead?.label) ? <span className="block text-[10px] uppercase tracking-wider text-stone-500">{item.meta ?? (item.lead?.label ? t(item.lead.label) : null)}</span> : null}
+                    <span className="mt-0.5 block text-stone-300">{line ?? t("Select the mark beside it for the full entry.")}</span>
                   </span>
                 </span>
               }
@@ -547,7 +548,7 @@ export function InfoChipList({
                 {item.lead ? (
                   <>
                     <GameIcon icon={item.lead.icon} size="size-8" className="tone-rim" />
-                    <span className="sr-only">{item.lead.label}:</span>
+                    <span className="sr-only">{t(item.lead.label)}:</span>
                   </>
                 ) : item.icon ? (
                   <GameIcon icon={item.icon} size="size-8" />
