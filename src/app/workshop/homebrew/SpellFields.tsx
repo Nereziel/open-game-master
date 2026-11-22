@@ -126,7 +126,7 @@ export function SpellFields({
               });
             }}
             maxLength={300}
-            placeholder="diamonds worth 300 gp, which the spell consumes"
+            placeholder={t("diamonds worth 300 gp, which the spell consumes")}
             hint={t("What the caster must hold. A component pouch or a focus stands in for one with no price.")}
           />
           <NumberField
@@ -176,7 +176,7 @@ export function SpellFields({
         label={t("At higher levels")}
         value={String(data.higher_level ?? "")}
         onChange={(higher_level) => set({ higher_level })}
-        placeholder="The damage increases by 1d6 for each slot level above 1st."
+        placeholder={t("The damage increases by 1d6 for each slot level above 1st.")}
         maxLength={2000}
         hint={t("The engine scales the dice from this sentence when a spell is upcast.")}
       />
