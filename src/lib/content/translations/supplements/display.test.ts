@@ -67,6 +67,13 @@ describe("source-scoped Czech catalog display (#107 phase 4)", () => {
     expect(supplementCzechDisplay(registry, "items", source[5], true)?.fullRules).toBeUndefined();
   });
 
+  it("refuses the same document and slug when the original English title changed", () => {
+    expect(supplementCzechDisplay(registry, "spells", source[0])?.name).toBe("Znehybnění kovu");
+    expect(supplementCzechDisplay(registry, "spells", {
+      ...source[0], name: "Different English Spell",
+    })).toBeNull();
+  });
+
   it("refuses a same-slug entry from another source document", () => {
     expect(matchesRequestedCatalogDocument(source[0], "toh")).toBe(true);
     expect(matchesRequestedCatalogDocument(source[0], "dmag")).toBe(false);
