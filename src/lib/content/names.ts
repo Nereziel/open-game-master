@@ -156,9 +156,14 @@ export function contentName(
   locale: Locale,
 ): string {
   const row: NamedRow = typeof ref === "string" ? { name: ref } : ref;
-  if (locale === "en" || !row.name || (row.source && row.source !== "open5e")) {
-    return row.name;
+  if (locale === "en" || !row.name) return row.name;
+  // The bundled SRD catalog also has source:"srd" rather than "open5e".
+  // Only use an explicitly resolved, display-only value for those records:
+  // never translate homebrew or arbitrary bundled works by matching a title.
+  if (row.source === "srd" || (row.source === "bundled" && row.documentSlug === "wotc-srd")) {
+    return locale === "cs" ? row.display?.name ?? row.name : row.name;
   }
+  if (row.source && row.source !== "open5e") return row.name;
   // A content row is not identified by its English title alone. In
   // particular, a Tome of Heroes "Shield" must never inherit the SRD Shield
   // translation simply because both appear in an old name table.
