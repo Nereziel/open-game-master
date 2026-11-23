@@ -188,7 +188,7 @@ describe("fillable character-sheet PDF localization", () => {
       }
     }
     expect(pdfLabel("cs", "Arcana")).toBe("Mystika");
-    expect(pdfLabel("cs", "Stealth")).toBe("Plížení");
+    expect(pdfLabel("cs", "Stealth")).toBe("Nenápadnost");
     expect(pdfLabel("cs", "Acrobatics")).toBe("Akrobacie");
   });
 
