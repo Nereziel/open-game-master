@@ -5,7 +5,7 @@ import { fullCzechRulesOnly } from "./phase2-audit";
 
 export type MonsterStatIssue = Readonly<{
   id: string;
-  field: "armorClass" | "hitPoints" | "challengeRating" | "abilityScores" | "missingHeader";
+  field: "armorClass" | "hitPoints" | "challengeRating" | "abilityScores" | "speed" | "missingHeader";
   original: string;
   localized: string;
 }>;
@@ -30,10 +30,24 @@ function abilities(markdown: string): string | null {
     if (!row.trim().startsWith("|")) continue;
     const cells = row.split("|").slice(1, -1).map(cell => cell.trim());
     if (cells.length !== 6) continue;
-    const scores = cells.map(cell => /^(\d{1,2})\s*\(\s*[+-]?\d+\s*\)$/.exec(cell)?.[1]);
+    const scores = cells.map(cell => {
+      const match = /^(\d{1,2})\s*\(\s*([+-]?\d+)\s*\)$/.exec(cell);
+      return match ? `${Number(match[1])}(${Number(match[2]) >= 0 ? "+" : ""}${Number(match[2])})` : null;
+    });
     if (scores.every(Boolean)) return scores.join(",");
   }
   return null;
+}
+
+function speedFeet(text: string, localized: boolean): string {
+  const regex = localized ? /(\d+)\s*(?:stop|stopy|stopa)\b/gi
+    : /(\d+)\s*(?:ft\.?|feet|foot)\b/gi;
+  return [...text.matchAll(regex)].map(match => String(Number(match[1]))).join(",");
+}
+
+function hitPointDice(text: string): string {
+  const match = /\(\s*(\d+)\s*[dk](\d+)\s*([+-]\s*\d+)?\s*\)/i.exec(text);
+  return match ? `${Number(match[1])}d${Number(match[2])}${(match[3] ?? "").replace(/\s/g, "")}` : "";
 }
 
 const FIELDS = [
@@ -71,6 +85,18 @@ export function auditMonsterStats(
       } else if (leadingStat(en) !== leadingStat(cs)) {
         issues.push({ id: page.id, field, original: en, localized: cs });
       }
+    }
+    const englishSpeed = statLine(page.md, ["Speed"]);
+    const czechSpeed = statLine(czech, ["Rychlost"]);
+    if (englishSpeed || czechSpeed) {
+      if (!englishSpeed || !czechSpeed || speedFeet(englishSpeed, false) !== speedFeet(czechSpeed, true)) {
+        issues.push({ id: page.id, field: "speed", original: englishSpeed ?? "", localized: czechSpeed ?? "" });
+      }
+    }
+    const sourceHp = statLine(page.md, ["Hit Points"]);
+    const localHp = statLine(czech, ["Životy"]);
+    if (sourceHp && localHp && hitPointDice(sourceHp) !== hitPointDice(localHp)) {
+      issues.push({ id: page.id, field: "hitPoints", original: sourceHp, localized: localHp });
     }
     const en = abilities(page.md);
     const cs = abilities(czech);
