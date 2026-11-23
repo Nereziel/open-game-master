@@ -57,3 +57,9 @@ export function matchesRequestedCatalogDocument(
 ): boolean {
   return !documentSlug || Boolean(row?.source === "open5e" && row.documentSlug === documentSlug);
 }
+
+// Only supplementary books use the separate draft-description boundary.
+// SRD 5.1 and bundled gear keep their existing Czech description resolver.
+export function isSupplementDocumentSlug(documentSlug?: string | null): boolean {
+  return documentSlug === "toh" || documentSlug === "dmag" || documentSlug === "deepm" || documentSlug === "vom";
+}
