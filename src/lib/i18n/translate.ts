@@ -7,7 +7,7 @@ export type TranslateVars = Record<string, string | number> & {
 type Catalog = {
   messages: Record<string, string>;
   contexts: Record<string, Record<string, string>>;
-  plurals: Record<string, [string, string]>;
+  plurals: Record<string, [string, string] | [string, string, string]>;
 };
 
 // The French catalog is about 1 MB of JSON (340 KiB gzip). Imported here it
@@ -70,6 +70,11 @@ export function translatePlural(
   if (catalog) {
     const pair = catalog.plurals[`${englishOne}\0${englishOther}`];
     if (pair) {
+      if (locale === "cs" && pair.length === 3) {
+        const count = vars.count;
+        const form = count === 1 ? 0 : Number.isInteger(count) && count >= 2 && count <= 4 ? 1 : 2;
+        return interpolate(pair[form], vars);
+      }
       return interpolate(isOne ? pair[0] : pair[1], vars);
     }
   }
