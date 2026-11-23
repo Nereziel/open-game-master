@@ -3,7 +3,7 @@ import { CS_NAMES_BY_TABLE } from "./names-cs";
 import { contentName, classFeatureName, subclassName } from "./names";
 import { installCsTables } from "../i18n/cs-tables";
 
-installCsTables({ names: CS_NAMES_BY_TABLE });
+installCsTables({ names: CS_NAMES_BY_TABLE, guidance: {} });
 
 describe("Czech content names through upstream helpers", () => {
   it("translates canonical rulebook names without changing the original data", () => {
