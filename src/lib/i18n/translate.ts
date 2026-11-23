@@ -1,4 +1,4 @@
-export type Locale = "en" | "fr";
+export type Locale = "en" | "fr" | "cs";
 
 export type TranslateVars = Record<string, string | number> & {
   context?: string;
@@ -50,11 +50,11 @@ function interpolate(template: string, vars?: TranslateVars): string {
 // that disambiguated French string wins over the default entry.
 export function translate(locale: Locale, english: string, vars?: TranslateVars): string {
   let text = english;
-  const FR = locale === "fr" ? catalogs().fr : undefined;
-  if (FR) {
+  const catalog = locale === "en" ? undefined : catalogs()[locale];
+  if (catalog) {
     const ctx = vars?.context;
-    const ctxMatch = ctx ? FR.contexts[english]?.[ctx] : undefined;
-    text = ctxMatch ?? FR.messages[english] ?? english;
+    const ctxMatch = ctx ? catalog.contexts[english]?.[ctx] : undefined;
+    text = ctxMatch ?? catalog.messages[english] ?? english;
   }
   return interpolate(text, vars);
 }
@@ -68,7 +68,7 @@ export function translatePlural(
   const isOne = locale === "fr" ? vars.count <= 1 : vars.count === 1;
   const FR = locale === "fr" ? catalogs().fr : undefined;
   if (FR) {
-    const pair = FR.plurals[`${englishOne}\0${englishOther}`];
+    const pair = catalog.plurals[`${englishOne}\0${englishOther}`];
     if (pair) {
       return interpolate(isOne ? pair[0] : pair[1], vars);
     }
