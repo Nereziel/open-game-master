@@ -380,3 +380,15 @@ without `itemRef` keep their legacy behavior and do not manufacture one.
 Book-specific acquisitions need a separate trusted catalog lookup before
 persisting provenance; accepting model-supplied IDs alone would be unsafe.
 `purchase-source.test.ts` covers this contract.
+
+### Shop-stock provenance boundary
+
+Unlike a source-scoped content catalog, the current shop stock persists
+`itemName`, quantity, price and optional `srdName`, but no verified
+book-specific `contentRef`. Therefore the `purchase action=buy`
+router now forwards any explicit `itemRef` to `buy_item` instead of
+dropping it. `buy_item` rejects such a request **before** purse, stock
+or equipment mutations, since the shop cannot attest to the requested
+source. The legacy stock-only purchase without `itemRef` remains
+unchanged. A future source-aware shop stock schema and validation against
+actual catalog rows is needed before honoring source-specific purchases.
