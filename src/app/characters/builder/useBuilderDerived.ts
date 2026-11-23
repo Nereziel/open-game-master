@@ -57,6 +57,7 @@ import { combatRiders, fightingStyleFeatureName } from "@/lib/srd/feature-effect
 import type { BackgroundOption, ClassOption, RaceOption } from "./useBuilderOptions";
 import type { BuilderState, EquipmentItem as BuilderItem } from "./useBuilderState";
 import { textKey } from "@/lib/language/text-logic";
+import { sameStoredContentReference } from "@/lib/content/translations/stored-reference";
 import { ALL_SKILLS } from "@/lib/content/mechanics";
 
 // The derivation memoises each value with React's useMemo while the wizard
@@ -1384,6 +1385,7 @@ export function builderActions(
       name: string;
       qty?: number;
       slug?: string;
+      contentRef?: EquipmentItem["contentRef"];
       gear?: EquipmentItem["gear"];
       weight?: number;
       priceCp?: number;
@@ -1392,6 +1394,25 @@ export function builderActions(
       state.setEquipment((current) => {
         const existing = current.find((item) => item.name === entry.name);
         if (existing) {
+          // Existing sheets aggregate equipment by English name. When the
+          // player chooses that name from another book, switch the source
+          // identity rather than merging two incompatible item definitions.
+          if (entry.contentRef && !sameStoredContentReference(existing.contentRef, entry.contentRef)) {
+            return current.map((item) => item.name === entry.name
+              ? {
+                  name: item.name,
+                  qty: item.qty,
+                  slug: entry.slug,
+                  contentRef: entry.contentRef,
+                  // Never carry the previous book's mechanics or price into
+                  // a newly chosen source with the same English name.
+                  ...(entry.gear ? { gear: entry.gear } : {}),
+                  ...(entry.weight !== undefined ? { weight: entry.weight } : {}),
+                  ...(entry.priceCp !== undefined ? { priceCp: entry.priceCp } : {}),
+                  ...(entry.magic ? { magic: true } : {}),
+                }
+              : item);
+          }
           return current.map((item) =>
             item.name === entry.name ? { ...item, qty: item.qty + 1 } : item,
           );
@@ -1404,6 +1425,7 @@ export function builderActions(
             name: entry.name,
             qty: entry.qty ?? 1,
             slug: entry.slug,
+            ...(entry.contentRef ? { contentRef: entry.contentRef } : {}),
             ...(entry.gear ? { gear: entry.gear } : {}),
             ...(entry.weight !== undefined ? { weight: entry.weight } : {}),
             ...(entry.priceCp !== undefined ? { priceCp: entry.priceCp } : {}),

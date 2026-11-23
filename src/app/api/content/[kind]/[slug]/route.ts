@@ -6,6 +6,8 @@ import { bundledGearRow } from "@/lib/workshop/bundled-gear-rows";
 import { contentScopeFor } from "@/lib/content/scope";
 import { findHomebrewBySlug, getAuthorsHomebrew } from "@/lib/db/homebrew";
 import type { HomebrewKind } from "@/lib/schemas/homebrew";
+import { bookLocaleOf } from "@/lib/rulebook/book";
+import { withCatalogDisplay } from "@/lib/content/translations/catalog-display";
 
 export const runtime = "nodejs";
 export const dynamic = "force-dynamic";
@@ -44,6 +46,12 @@ export async function GET(
   if ("error" in scope) {
     return Response.json({ error: scope.error }, { status: scope.status });
   }
+  const requestedLocale = new URL(request.url).searchParams.get("locale");
+  const locale = requestedLocale === "cs" || requestedLocale === "en" || requestedLocale === "fr"
+    ? requestedLocale
+    : bookLocaleOf(request);
+  const localizedEntry = (row: Parameters<typeof withCatalogDisplay>[1]) =>
+    withCatalogDisplay(kind, row, locale);
   const homebrewKind = KINDS[kind];
   const asEntry = (entry: { id: string; name: string; data: Record<string, unknown> }) =>
     Response.json({
@@ -61,7 +69,7 @@ export async function GET(
 
   const entry = getEntryDetail(kind as Parameters<typeof getEntryDetail>[0], decoded);
   if (entry) {
-    return Response.json({ entry: withBestEffort(kind, entry, { classSlug: String(entry.data.class_slug ?? "") || undefined }) });
+    return Response.json({ entry: localizedEntry(withBestEffort(kind, entry, { classSlug: String(entry.data.class_slug ?? "") || undefined })) });
   }
   // The bundled book's rows the search serves with no pack ("srd:web",
   // "srd-gear:longsword"), so their info reads with no pack too.
@@ -74,7 +82,7 @@ export async function GET(
           ? bundledGearRow(decoded)
           : null;
   if (bundled) {
-    return Response.json({ entry: bundled });
+    return Response.json({ entry: localizedEntry(bundled) });
   }
   const brewed = homebrewKind ? findHomebrewBySlug(scope.userIds, homebrewKind, decoded) : null;
   return brewed ? asEntry(brewed) : Response.json({ error: "Not found." }, { status: 404 });

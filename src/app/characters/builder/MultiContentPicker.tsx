@@ -9,10 +9,12 @@ import { useContentSearch, type PickerEntry } from "./useContentSearch";
 import { textKey } from "@/lib/language/text-logic";
 import { useLocale, useT, useTp } from "@/lib/locale";
 import { contentName } from "@/lib/content/names";
+import { sourceRowIdentity, togglePendingSourceRow } from "./pickerRows";
+import { storedReferenceForCatalogRow, type StoredContentReference } from "@/lib/content/translations/stored-reference";
 
 // `level` rides along for spells, so a cantrip picked here lands in the
 // cantrip list rather than among the levelled spells.
-export type MultiPick = { name: string; slug?: string; level?: number };
+export type MultiPick = { name: string; slug?: string; level?: number; contentRef?: StoredContentReference };
 
 // Searchable multi-select against /api/content/[kind]: result rows toggle
 // into a pending chip strip and one "Add" commits them all, so nobody has
@@ -40,9 +42,10 @@ export default function MultiContentPicker({
   const tp = useTp();
   const locale = useLocale();
   const displayName = (name: string, source?: string) => source === "homebrew" ? name : contentName(kind, name, locale);
+  const rowName = (entry: PickerEntry) => entry.display?.name ?? displayName(entry.name, entry.source);
   const { query, setQuery, results, setResults, open, setOpen, loading, unavailable, failed, unadmitted } =
     useContentSearch(kind, extraParams);
-  const [pending, setPending] = useState<MultiPick[]>([]);
+  const [pending, setPending] = useState<Array<MultiPick & { source?: string; documentSlug?: string; kind?: string; displayLabel?: string }>>([]);
   const container = useRef<HTMLDivElement>(null);
 
   // The browse list opens on focus, so clicking elsewhere must collapse it
@@ -59,15 +62,18 @@ export default function MultiContentPicker({
 
   const selectedLower = new Set(selectedNames.map((name) => textKey(name)));
   const pendingLower = new Set(pending.map((pick) => textKey(pick.name)));
+  const pendingIds = new Set(pending.map((pick) => sourceRowIdentity(pick)));
   const trimmedQuery = query.trim();
 
   function togglePending(entry: PickerEntry) {
-    const key = textKey(entry.name);
-    setPending((picks) =>
-      picks.some((pick) => textKey(pick.name) === key)
-        ? picks.filter((pick) => textKey(pick.name) !== key)
-        : [...picks, { name: entry.name, slug: entry.slug, level: entry.level }],
-    );
+    const contentRef = storedReferenceForCatalogRow(kind, entry);
+    const choice = {
+      name: entry.name, slug: entry.slug, level: entry.level,
+      source: entry.source, documentSlug: entry.documentSlug,
+      kind: entry.kind, displayLabel: rowName(entry),
+      ...(contentRef ? { contentRef } : {}),
+    };
+    setPending((picks) => togglePendingSourceRow(picks, choice));
   }
 
   function addCustom() {
@@ -85,7 +91,14 @@ export default function MultiContentPicker({
     if (!pending.length) {
       return;
     }
-    onAdd(pending);
+    // Pass a verified source reference but never pass translated display
+    // labels or ephemeral picker provenance to saved character fields.
+    onAdd(pending.map((pick) => ({
+      name: pick.name,
+      ...(pick.slug ? { slug: pick.slug } : {}),
+      ...(pick.level !== undefined ? { level: pick.level } : {}),
+      ...(pick.contentRef ? { contentRef: pick.contentRef } : {}),
+    })));
     setPending([]);
     setQuery("");
     setResults([]);
@@ -111,7 +124,7 @@ export default function MultiContentPicker({
           {results.map((entry) => {
             const key = textKey(entry.name);
             const alreadyOn = selectedLower.has(key);
-            const picked = pendingLower.has(key);
+            const picked = pendingIds.has(sourceRowIdentity(entry));
             return (
               <li
                 key={entry.slug}
@@ -133,7 +146,7 @@ export default function MultiContentPicker({
                       <Plus className="size-3.5 shrink-0 text-stone-600" />
                     )}
                     <span className={cn(entry.source === "homebrew" && "text-amber-300")}>
-                      {displayName(entry.name, entry.source)}
+                      {rowName(entry)}
                     </span>
                   </span>
                   <span className="shrink-0 text-xs text-stone-500">
@@ -141,13 +154,13 @@ export default function MultiContentPicker({
                       ? t("already added")
                       : entry.source === "homebrew"
                         ? t("homebrew")
-                        : (renderMeta?.(entry) ?? "")}
+                        : [renderMeta?.(entry), entry.display?.meta ?? (kind === "spells" ? entry.display?.school : entry.display?.rarity), entry.document].filter(Boolean).join(" · ")}
                   </span>
                 </button>
                 <InfoButton
-                  label={displayName(entry.name, entry.source)}
-                  meta={kind === "spells" ? spellSummary(entry.data) : undefined}
-                  text={describeContentEntry(entry.data)}
+                  label={rowName(entry)}
+                  meta={entry.display?.meta ?? (kind === "spells" ? spellSummary(entry.data) : undefined)}
+                  text={entry.display ? (entry.display.description ?? null) : describeContentEntry(entry.data)}
                   reference={entry.source === "homebrew" ? undefined : { kind, slug: entry.slug }}
                 />
               </li>
@@ -186,16 +199,16 @@ export default function MultiContentPicker({
         <div className="mt-1.5 flex flex-wrap items-center gap-1.5">
           {pending.map((pick) => (
             <span
-              key={pick.name}
+              key={sourceRowIdentity(pick)}
               className="flex items-center gap-1 rounded-full bg-stone-800 px-2 py-0.5 text-xs text-stone-200"
             >
-              {displayName(pick.name)}
+              {pick.displayLabel ?? displayName(pick.name)}
               <button
                 type="button"
                 onClick={() =>
-                  setPending((picks) => picks.filter((entry) => entry.name !== pick.name))
+                  setPending((picks) => picks.filter((entry) => sourceRowIdentity(entry) !== sourceRowIdentity(pick)))
                 }
-                aria-label={t("Remove {name}", { name: displayName(pick.name) })}
+                aria-label={t("Remove {name}", { name: pick.displayLabel ?? displayName(pick.name) })}
                 className="text-stone-500 hover:text-red-400"
               >
                 <X className="size-3" />

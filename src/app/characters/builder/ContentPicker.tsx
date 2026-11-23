@@ -46,7 +46,7 @@ export default function ContentPicker({
   // A feat's row name reads in the reader's language (the official maps; a
   // homebrew row stays its author's words) while the pick itself stores the
   // row's own English name.
-  const rowName = (entry: PickerEntry) => (kind === "feats" ? contentName("feats", entry, locale) : entry.name);
+  const rowName = (entry: PickerEntry) => entry.display?.name ?? (kind === "feats" ? contentName("feats", entry, locale) : entry.name);
   const { query, setQuery, results: found, setResults, open, setOpen, loading, unavailable, failed, unadmitted } =
     useContentSearch(kind, extraParams);
   const results = hide ? found.filter((entry) => !hide(entry)) : found;
@@ -141,15 +141,15 @@ export default function ContentPicker({
                 <span className="shrink-0 text-xs text-stone-500">
                   {entry.source === "homebrew"
                     ? t("homebrew")
-                    : (renderMeta?.(entry) ?? "")}
+                    : [renderMeta?.(entry), entry.display?.meta ?? (kind === "spells" ? entry.display?.school : entry.display?.rarity), entry.document].filter(Boolean).join(" · ")}
                 </span>
               </button>
               {/* The row already carries the full entry, so reading a spell
                   before adding it costs no extra request. */}
               <InfoButton
                 label={rowName(entry)}
-                meta={kind === "spells" ? spellSummary(entry.data) : undefined}
-                text={describeContentEntry(entry.data)}
+                meta={entry.display?.meta ?? (kind === "spells" ? spellSummary(entry.data) : undefined)}
+                text={entry.display ? (entry.display.description ?? null) : describeContentEntry(entry.data)}
                 reference={
                   entry.source === "homebrew" ? undefined : { kind, slug: entry.slug }
                 }

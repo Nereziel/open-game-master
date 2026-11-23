@@ -2,7 +2,8 @@
 
 import { useEffect, useRef, useState } from "react";
 import { scopedParams, useContentCampaign } from "@/lib/content-scope";
-import { uniqueByName } from "./pickerRows";
+import { uniqueBySource } from "./pickerRows";
+import { useLocale } from "@/lib/locale";
 
 export type PickerEntry = {
   slug: string;
@@ -18,6 +19,15 @@ export type PickerEntry = {
   // Pounds, where the catalog knows (an item).
   weight?: number;
   data: Record<string, unknown>;
+  // Optional localized display-only fields. Never use to store picked data.
+  display?: {
+    name: string;
+    description?: string;
+    school?: string;
+    rarity?: string;
+    category?: string;
+    meta?: string;
+  };
   level?: number;
   school?: string;
   kind?: string;
@@ -59,6 +69,7 @@ export type PickerEntry = {
 // says so instead of "nothing matched".
 export function useContentSearch(kind: string, extraParams: Record<string, string> = {}) {
   const campaignId = useContentCampaign();
+  const locale = useLocale();
   const [query, setQuery] = useState("");
   const [results, setResults] = useState<PickerEntry[]>([]);
   const [open, setOpen] = useState(false);
@@ -84,6 +95,7 @@ export function useContentSearch(kind: string, extraParams: Record<string, strin
           if (trimmed) {
             params.set("q", trimmed);
           }
+          params.set("locale", locale);
           const response = await fetch(`/api/content/${kind}?${params}`, {
             signal: controller.signal,
           });
@@ -96,7 +108,7 @@ export function useContentSearch(kind: string, extraParams: Record<string, strin
             setFailed(false);
             setPackMissing(data.packInstalled === false);
             setUnadmitted(Array.isArray(data.unadmitted) ? data.unadmitted : []);
-            setResults(uniqueByName(data.results ?? []));
+            setResults(uniqueBySource(data.results ?? []));
             if (trimmed) {
               setOpen(true);
             }
@@ -128,7 +140,7 @@ export function useContentSearch(kind: string, extraParams: Record<string, strin
       }
     };
     // eslint-disable-next-line react-hooks/exhaustive-deps
-  }, [query, kind, campaignId, JSON.stringify(extraParams)]);
+  }, [query, kind, campaignId, locale, JSON.stringify(extraParams)]);
 
   const unavailable = failed || (packMissing && !results.length && !query.trim());
   return { query, setQuery, results, setResults, open, setOpen, loading, unavailable, packMissing, failed, unadmitted };

@@ -27,6 +27,7 @@ import { isCantripName, spellLevelOf } from "@/lib/srd/spell-lists";
 import { arcanumName } from "@/lib/srd/mystic-arcanum";
 import type { BuilderState, EquipmentItem } from "./useBuilderState";
 import { textKey } from "@/lib/language/text-logic";
+import { keepChosenSpellReferences } from "@/lib/content/translations/spell-selection-reference";
 import { ALL_SKILLS } from "@/lib/content/mechanics";
 import { subclassPickFeatures } from "@/lib/srd/subclass-choice-picks";
 import { featChoice } from "@/lib/schemas/sheet";
@@ -820,6 +821,16 @@ export function buildBuilderResult(input: SubmitInput): BuilderResult {
     }
   }
   const finalSpells = casting.ability ? [...spells, ...grantedLevelled] : spells;
+  // Preserve only explicit references for spells still present in the final
+  // list. Multiclass additions are included, but never infer origins for
+  // legacy or automatically granted name-only spells.
+  const savedCasterEntries = multiclass ? otherCasterEntries(derived, classes) : [];
+  const activeSpellRefs = keepChosenSpellReferences(
+    state.spellContentRefs,
+    [...finalSpells, ...finalCantrips, ...savedCasterEntries.flatMap((entry) => [
+      ...entry.known, ...entry.prepared, ...entry.cantrips, ...(entry.spellbook ?? []),
+    ])],
+  );
   const racialFeatures = casting.ability
     ? []
     : racialCantrips.map((name) => ({ name: `Racial cantrip: ${name}`, source: "story" as const }));
@@ -946,6 +957,7 @@ export function buildBuilderResult(input: SubmitInput): BuilderResult {
               prepared: isKnownCaster ? [] : isWizard ? picks.bookPrepared : finalSpells,
               known: isKnownCaster ? finalSpells : [],
               cantrips: finalCantrips,
+              ...(Object.keys(activeSpellRefs).length ? { contentRefs: activeSpellRefs } : {}),
               ...(isWizard ? { spellbook: finalSpells } : {}),
             },
             multiclass && casterKlass ? casterKlass.id : null,

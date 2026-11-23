@@ -25,6 +25,9 @@ import { srdNameFor } from "@/lib/dm/item-logic";
 import { withoutBonus } from "@/lib/srd/item-row";
 import { bundledClassRows } from "@/lib/workshop/class-catalog";
 import { bookLocaleOf, rulebookPage } from "@/lib/rulebook/book";
+import { withCatalogDisplay } from "@/lib/content/translations/catalog-display";
+import { canonicalSrdSearchQuery } from "@/lib/content/translations/srd-5.1/catalog-query";
+import { appendExactSrdAlias } from "@/lib/content/translations/srd-5.1/search-alias";
 
 export const runtime = "nodejs";
 export const dynamic = "force-dynamic";
@@ -58,7 +61,15 @@ export async function GET(
   if ("error" in scope) {
     return Response.json({ error: scope.error }, { status: scope.status });
   }
-  const q = url.searchParams.get("q") ?? "";
+  const requestedLocale = url.searchParams.get("locale");
+  const locale = requestedLocale === "cs" || requestedLocale === "en" || requestedLocale === "fr"
+    ? requestedLocale
+    : bookLocaleOf(request);
+  const originalQuery = url.searchParams.get("q") ?? "";
+  // Keep the original query for homebrew and other books. The Czech alias
+  // adds verified SRD matches instead of replacing the original search.
+  const canonicalQuery = canonicalSrdSearchQuery(kind, originalQuery, locale);
+  const q = originalQuery;
   const limitRaw = Number.parseInt(url.searchParams.get("limit") ?? "", 10);
   const offsetRaw = Number.parseInt(url.searchParams.get("offset") ?? "", 10);
   const mechanics = url.searchParams.get("mechanics") === "1";
@@ -204,10 +215,67 @@ export async function GET(
       return Response.json({
         results: [...searchHomebrewHazards(base), ...hazardCatalog(q)],
         packInstalled,
-        unadmitted: unadmittedNames(scope, user.id, kind, q, url.searchParams.get("class") ?? ""),
+        unadmitted: unadmittedNames(scope, user.id, kind, originalQuery, url.searchParams.get("class") ?? ""),
       });
     default:
       return Response.json({ error: "Unknown content kind." }, { status: 404 });
+  }
+
+  // A unique Czech title may need an English lookup in Open5e. Limit the
+  // additional results to matching SRD rows and leave other books untouched.
+  if (canonicalQuery !== originalQuery && (kind === "spells" || kind === "items")) {
+    const aliasMatches = kind === "spells"
+      ? searchSpells({
+          ...base, q: canonicalQuery,
+          classSlug: url.searchParams.get("class") ?? undefined,
+          ...(Number.isFinite(Number.parseInt(url.searchParams.get("level") ?? "", 10))
+            ? { level: Number.parseInt(url.searchParams.get("level") ?? "", 10) } : {}),
+          school: url.searchParams.get("school") ?? undefined,
+          attack: url.searchParams.get("attack") === "1",
+          exactLevel: url.searchParams.get("exact") === "1",
+        })
+      : searchItems({
+          ...base, q: canonicalQuery,
+          ...(ITEM_KINDS.has(url.searchParams.get("kind") ?? "")
+            ? { kind: url.searchParams.get("kind") as ItemEntry["kind"] } : {}),
+        });
+    const aliases = kind === "items"
+      ? (aliasMatches as ItemEntry[]).map((entry) => {
+          const listed = srdNameFor(withoutBonus(entry.name), "items");
+          return {
+            ...entry,
+            price: catalogPrices(entry.name),
+            ...("srdName" in listed && listed.srdName ? { srdName: listed.srdName } : {}),
+          };
+        })
+      : aliasMatches;
+    type SearchAliasRow = { source: "open5e" | "homebrew" | "srd" | "bundled"; documentSlug?: string; name: string; slug: string };
+    results = appendExactSrdAlias(results as SearchAliasRow[], aliases, canonicalQuery);
+    if (!packInstalled && kind === "spells") {
+      results = appendExactSrdAlias(
+        results as SearchAliasRow[], bundledSpellRows(canonicalQuery), canonicalQuery,
+      );
+    } else if (!packInstalled && kind === "items") {
+      results = appendExactSrdAlias(
+        results as SearchAliasRow[], bundledItemRows(canonicalQuery), canonicalQuery,
+      );
+    }
+  }
+
+  // The remaining SRD catalogs use the same exact, source-scoped alias
+  // policy. Other-book and player-owned matches still come from q unchanged.
+  if (canonicalQuery !== originalQuery && (kind === "monsters" || kind === "races" || kind === "classes")) {
+    const aliasMatches = kind === "monsters"
+      ? searchMonsters({
+          ...base, q: canonicalQuery,
+          ...(Number.isFinite(Number.parseFloat(url.searchParams.get("maxCr") ?? ""))
+            ? { maxCr: Number.parseFloat(url.searchParams.get("maxCr") ?? "") } : {}),
+        })
+      : kind === "races"
+        ? listRaces({ ...base, q: canonicalQuery, includeSubraces: url.searchParams.get("subraces") !== "0" })
+        : listClasses({ ...base, q: canonicalQuery });
+    type AliasRow = { source: "open5e" | "homebrew" | "srd" | "bundled"; documentSlug?: string; name: string; slug: string };
+    results = appendExactSrdAlias(results as AliasRow[], aliasMatches, canonicalQuery);
   }
 
   // The workshop's "start from" asks for what the engine runs, too.
@@ -235,5 +303,11 @@ export async function GET(
   // so (issue #570).
   const classSlug = url.searchParams.get("class") ?? undefined;
   results = results.map((row) => withBestEffort(kind, row, { classSlug }));
-  return Response.json({ results, packInstalled, unadmitted: unadmittedNames(scope, user.id, kind, q, url.searchParams.get("class") ?? "") });
+  // Add a separate Czech presentation layer only. The original catalog name,
+  // slug, descriptions and mechanics are still used for every game action.
+  if (locale === "cs") {
+    results = (results as Array<Parameters<typeof withCatalogDisplay>[1]>)
+      .map((row) => withCatalogDisplay(kind, row, locale, { includeDescription: mechanics && url.searchParams.get("lite") !== "1" }));
+  }
+  return Response.json({ results, packInstalled, unadmitted: unadmittedNames(scope, user.id, kind, originalQuery, url.searchParams.get("class") ?? "") });
 }

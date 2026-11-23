@@ -13,6 +13,9 @@ import { insertSheetAudit } from "@/lib/db/sheet-audit";
 import { getSheetById, listSheets, patchSheet } from "@/lib/db/sheets";
 import { findShopNear, getShop, insertShop, listShops, listShopsAt, shopStandsAt, updateShop } from "@/lib/db/shops";
 import { searchItems } from "@/lib/content";
+import { getContentDb } from "@/lib/content/db";
+import { PLAYED_DOCUMENTS_SQL } from "@/lib/content/edition";
+import { storedReferenceForCatalogRow, type StoredContentReference } from "@/lib/content/translations/stored-reference";
 import { SRD_GEAR, SRD_GOODS } from "@/lib/srd/adventuring-gear";
 import { SRD_ARMOR } from "@/lib/srd/armor";
 import { bundledPriceCopper } from "@/lib/srd/starting-wealth";
@@ -50,6 +53,8 @@ import {
   SIZE_MARKUP,
   stepMoves,
   stockFromPool,
+  stockItemPromptName,
+  stockReferenceMatchesCatalog,
   takeStock,
   type Shop,
 } from "@/lib/dm/shop-logic";
@@ -59,10 +64,9 @@ import { publishEphemeral, publishPersisted, publishWithSeq } from "@/lib/events
 import type { CharacterSheet } from "@/lib/schemas/sheet";
 import { addCopper, formatCopper, formatPrice } from "@/lib/srd/currency";
 import { argumentsRefusal, noneNamed, type ToolError, type ToolResult } from "@/lib/dm/tool-errors";
-import { alreadyInPack, notCarried } from "@/lib/dm/item-logic";
+import { alreadyInPack, ambiguousCarriedItem, findCarriedItem, notCarried } from "@/lib/dm/item-logic";
 import { isTableGearName } from "@/lib/db/homebrew";
 import { containsPhrase, textKey } from "@/lib/language/text-logic";
-import { lineNamed } from "@/lib/srd/item-row";
 import type { EngineCall, ToolArgs } from "@/lib/dm/tool-merge-logic";
 
 // The shop tools (docs/vtt-parity-implementation-plan.md 11.1). The server
@@ -185,9 +189,9 @@ function publishSheet(campaign: Campaign, sheetId: string) {
 // prices no magic item, so each is priced by its rarity under the 2014 rules
 // (src/lib/srd/magic-item-value.ts) and carries that rarity for the shelf to
 // choose by: commons only (SHELF_RARITIES).
-export function stockPool(kind: string): Array<{ name: string; cost: string; staple?: boolean; rarity?: string }> {
+export function stockPool(kind: string): Array<{ name: string; cost: string; staple?: boolean; rarity?: string; contentRef?: StoredContentReference }> {
   const spec = KIND_POOL[normalizeShopKind(kind)];
-  const pool: Array<{ name: string; cost: string; staple?: boolean; rarity?: string }> = [];
+  const pool: Array<{ name: string; cost: string; staple?: boolean; rarity?: string; contentRef?: StoredContentReference }> = [];
   const seen = new Set<string>();
   const stapled = new Set<string>();
   for (const itemKind of spec.kinds) {
@@ -204,7 +208,13 @@ export function stockPool(kind: string): Array<{ name: string; cost: string; sta
         stapled.add(textKey(staple));
       }
       const rarity = magic ? magic.rarity : null;
-      pool.push({ name: item.name, cost, ...(first ? { staple: true } : {}), ...(rarity ? { rarity } : {}) });
+      // This is the actual catalog row selected for the shelf, not a
+      // guess made later from its English name. Homebrew and bundled
+      // fallback items must not claim Open5e book provenance.
+      const contentRef = item.source === "open5e"
+        ? storedReferenceForCatalogRow("items", item)
+        : null;
+      pool.push({ name: item.name, cost, ...(first ? { staple: true } : {}), ...(rarity ? { rarity } : {}), ...(contentRef ? { contentRef } : {}) });
     }
   }
   return pool.length ? pool : bundledPool(spec);
@@ -334,7 +344,7 @@ export function handleOpenShop(campaign: Campaign, rawArguments: string, random:
 }
 
 function shelfLines(shop: Shop): string[] {
-  return shop.stock.slice(0, 12).map((line) => `${line.itemName} x${line.qty} at ${formatPrice(askingPriceCp(line.priceCp, shop.markup))}`);
+  return shop.stock.slice(0, 12).map((line) => `${stockItemPromptName(shop.stock, line)} x${line.qty} at ${formatPrice(askingPriceCp(line.priceCp, shop.markup))}`);
 }
 
 const buySchema = z.object({
@@ -342,6 +352,13 @@ const buySchema = z.object({
   shop: z.string().trim().min(1),
   item: z.string().trim().min(1).max(80),
   qty: z.coerce.number().int().min(1).max(99).default(1),
+  // The client may select a specific catalog-backed stock line. Its ID is
+  // verified against the actual catalog before any purchase is committed.
+  itemRef: z.object({
+    sourceId: z.string().trim().min(1).max(100),
+    contentId: z.string().trim().min(1).max(200),
+    documentSlug: z.string().trim().max(100).optional(),
+  }).optional(),
 });
 
 function ledger(campaign: Campaign, sheet: CharacterSheet, kind: string, delta: Record<string, unknown>, reason: string, patch: Record<string, unknown>, summary: string) {
@@ -442,9 +459,35 @@ export function handleBuyItem(campaign: Campaign, rawArguments: string, at: Trad
   if (refused) {
     return refused;
   }
-  const line = findStockLine(shop.stock, args.item);
+  const requestedRef = args.itemRef
+    ? { ...args.itemRef, contentType: "items" as const }
+    : undefined;
+  const line = findStockLine(shop.stock, args.item, requestedRef);
   if (!line) {
-    return { error: `${shop.name} does not stock "${args.item}". On the shelf: ${shop.stock.map((entry) => entry.itemName).join(", ") || "nothing"}.`, refused: "rules" };
+    if (requestedRef) return {
+      error: `No unique shop stock item "${args.item}" matches itemRef; nothing was bought.`,
+      retry: true,
+    };
+    return { error: `${shop.name} does not stock a unique "${args.item}". On the shelf: ${shop.stock.map((entry) => entry.itemName).join(", ") || "nothing"}. Use itemRef to select a book if sources collide.`, retry: true };
+  }
+  // Validate the shelf's source against the actual read-only Open5e pack,
+  // not merely against an ID provided by the DM or a saved stock JSON.
+  // Without the source pack, a sourced purchase fails closed.
+  const savedRef = line.contentRef;
+  if (savedRef) {
+    const db = getContentDb();
+    const record = savedRef.documentSlug && db
+      ? db.prepare(`SELECT slug, name, document_slug AS documentSlug FROM items WHERE slug = ? AND document_slug = ? AND ${PLAYED_DOCUMENTS_SQL} LIMIT 1`)
+        .get(savedRef.contentId, savedRef.documentSlug) as { slug: string; name: string; documentSlug: string } | undefined
+      : undefined;
+    if (!record || !stockReferenceMatchesCatalog(line, { ...record, source: "open5e" })) {
+      return {
+        error: `Shop stock "${line.itemName}" has an unverified catalog reference; repair the shelf or catalog before buying. Nothing was bought.`,
+        retry: true,
+      };
+    }
+  } else if (requestedRef) {
+    return { error: `Shop stock "${line.itemName}" has no catalog reference; nothing was bought.`, retry: true };
   }
   if (line.qty < args.qty) {
     return { error: `${shop.name} has only ${line.qty} of ${line.itemName}.`, retry: true };
@@ -458,7 +501,10 @@ export function handleBuyItem(campaign: Campaign, rawArguments: string, at: Trad
     return { error: `${line.itemName} x${args.qty} costs ${formatPrice(total)}; ${sheet.name} carries ${formatCopper(purse.gold * 100 + purse.copper)}. They cannot afford it.`, refused: "rules" };
   }
   const paid = addCopper(purse, -total);
-  const items = grantItemMath(sheet.equipment, line.itemName, args.qty, line.srdName ? { srdName: line.srdName } : {});
+  const items = grantItemMath(sheet.equipment, line.itemName, args.qty, {
+    ...(line.srdName ? { srdName: line.srdName } : {}),
+    ...(savedRef ? { contentRef: savedRef } : {}),
+  });
   // Strength x 15 pounds is all a character can carry (src/lib/dm/load-rules.ts).
   const tooHeavy = capacityProblem(sheet, items.equipment, line.itemName, paid.purse);
   if (tooHeavy) {
@@ -466,7 +512,7 @@ export function handleBuyItem(campaign: Campaign, rawArguments: string, at: Trad
   }
   const patch = { gold: paid.purse.gold, copper: paid.purse.copper, equipment: items.equipment };
   patchSheet(sheet.id, patch);
-  updateShop(shop.id, { stock: takeStock(shop.stock, line.itemName, args.qty) ?? shop.stock });
+  updateShop(shop.id, { stock: takeStock(shop.stock, line.itemName, args.qty, savedRef) ?? shop.stock });
   ledger(campaign, sheet, "purchase", { item: line.itemName, qty: args.qty, action: "buy", priceCp: each, shop: shop.name }, `Bought at ${shop.name}`, patch, `Bought ${line.itemName}${args.qty > 1 ? ` x${args.qty}` : ""} for ${formatPrice(total)} at ${shop.name}.`);
   publishSheet(campaign, sheet.id);
   publishShops(campaign.id);
@@ -477,7 +523,16 @@ export function handleBuyItem(campaign: Campaign, rawArguments: string, at: Trad
 // A price the table cannot check is still held to the ceiling purchase keeps
 // (100,000 gp a unit), so a model's number cannot mint a fortune.
 const MAX_UNPRICED_CP = 10_000_000;
-const sellSchema = buySchema.extend({ priceCp: z.coerce.number().int().min(1).max(MAX_UNPRICED_CP).optional() });
+const sellSchema = buySchema.extend({
+  priceCp: z.coerce.number().int().min(1).max(MAX_UNPRICED_CP).optional(),
+  // The shop sells one actual book-specific inventory entry, not whichever
+  // same-name row happened to appear first. Legacy calls may omit this.
+  itemRef: z.object({
+    sourceId: z.string().trim().min(1).max(100),
+    contentId: z.string().trim().min(1).max(200),
+    documentSlug: z.string().trim().max(100).optional(),
+  }).optional(),
+});
 
 export function handleSellItem(campaign: Campaign, rawArguments: string, at: TradeAt = {}): ToolResult {
   const args = parse(sellSchema, rawArguments);
@@ -500,9 +555,17 @@ export function handleSellItem(campaign: Campaign, rawArguments: string, at: Tra
   if (!shop.buys) {
     return { error: `${shop.name} does not buy.`, refused: "rules" };
   }
-  const removal = removeItemMath(sheet.equipment, args.item, args.qty);
+  const selectedSource = args.itemRef
+    ? { ...args.itemRef, contentType: "items" as const }
+    : undefined;
+  const removal = removeItemMath(sheet.equipment, args.item, args.qty, selectedSource);
   if (!removal) {
-    return notCarried(sheet.name, sheet.equipment.map((item) => item.name), args.item, isTableGearName(campaign.id, args.item));
+    if (selectedSource) return {
+      error: `No unique "${args.item}" matches itemRef (sourceId, contentId, documentSlug). Nothing was sold.`,
+      retry: true,
+    };
+    return ambiguousCarriedItem(sheet.equipment, args.item)
+      ?? notCarried(sheet.name, sheet.equipment.map((item) => item.name), args.item, isTableGearName(campaign.id, args.item));
   }
   const line = removal.item;
   const carried = line.name;
@@ -535,7 +598,7 @@ export function handleSellItem(campaign: Campaign, rawArguments: string, at: Tra
   const paid = addCopper({ gold: sheet.gold, copper: sheet.copper }, total);
   const patch = { gold: paid.purse.gold, copper: paid.purse.copper, equipment: removal.equipment };
   patchSheet(sheet.id, patch);
-  updateShop(shop.id, { stock: addStock(shop.stock, carried, removal.removed, listCp ?? each * 2, line.srdName) });
+  updateShop(shop.id, { stock: addStock(shop.stock, carried, removal.removed, listCp ?? each * 2, line.srdName, line.contentRef) });
   ledger(campaign, sheet, "purchase", { item: carried, qty: removal.removed, action: "sell", priceCp: each, shop: shop.name }, `Sold at ${shop.name}`, patch, `Sold ${carried}${removal.removed > 1 ? ` x${removal.removed}` : ""} for ${formatPrice(total)} at ${shop.name}.`);
   publishSheet(campaign, sheet.id);
   publishShops(campaign.id);
@@ -703,14 +766,22 @@ export function tradeCall(campaign: Campaign, args: ToolArgs): EngineCall {
   }
   const atShop = (shop: string, shelfName: string = item): EngineCall => {
     const common = { characterId: args.characterId, shop, item: shelfName, ...(args.qty !== undefined ? { qty: args.qty } : {}) };
+    const selectedRef = args.itemRef && typeof args.itemRef === "object" && !Array.isArray(args.itemRef)
+      ? { itemRef: args.itemRef }
+      : {};
     if (action === "buy") {
-      return { name: "buy_item", args: { ...common, ...(args.waypoint !== undefined ? { waypoint: args.waypoint } : {}) } };
+      return { name: "buy_item", args: { ...common, ...selectedRef, ...(args.waypoint !== undefined ? { waypoint: args.waypoint } : {}) } };
     }
     const priceCp = args.priceCp ?? (Number.isFinite(Number(args.price)) && Number(args.price) > 0 ? Math.round(Number(args.price) * 100) : undefined);
-    return { name: "sell_item", args: { ...common, ...(priceCp !== undefined ? { priceCp } : {}) } };
+    return { name: "sell_item", args: { ...common, ...selectedRef, ...(priceCp !== undefined ? { priceCp } : {}) } };
   };
   const srdName = typeof args.srdName === "string" ? args.srdName.trim() : "";
-  const shelved = (shop: Shop) => findStockLine(shop.stock, item) ?? (srdName ? findStockLine(shop.stock, srdName) : null);
+  const requested = action === "buy" ? buySchema.shape.itemRef.safeParse(args.itemRef) : null;
+  const bookRef = requested?.success && requested.data
+    ? { ...requested.data, contentType: "items" as const }
+    : undefined;
+  const shelved = (shop: Shop) => findStockLine(shop.stock, item, bookRef)
+    ?? (srdName ? findStockLine(shop.stock, srdName, bookRef) : null);
   if (named) {
     // The shelf's own name, by the item or its English name, as below: an
     // item in the table's language was refused at a shop the call named.
@@ -733,9 +804,21 @@ export function tradeCall(campaign: Campaign, args: ToolArgs): EngineCall {
   }
   // A shop buys a potion or a scroll and no other magic item (handleSellItem).
   const sheet = typeof args.characterId === "string" ? resolveSheet(campaign, args.characterId) : null;
-  const carried = sheet ? sheet.equipment[lineNamed(sheet.equipment, item)] : undefined;
+  // The sale-price quote must not inspect the first of two same-name items
+  // from different books as though its magic properties were unambiguous.
+  // A source-aware sale must evaluate the same item that the handler
+  // will remove, including its magic restrictions and price.
+  const parsedRef = sellSchema.shape.itemRef.safeParse(args.itemRef);
+  const exactRef = parsedRef.success && parsedRef.data
+    ? { ...parsedRef.data, contentType: "items" as const }
+    : undefined;
+  const carried = sheet
+    ? exactRef
+      ? removeItemMath(sheet.equipment, item, 1, exactRef)?.item ?? null
+      : findCarriedItem(sheet.equipment, item)
+    : null;
   const magic = carried ? magicValueOf(carried) : null;
-  const buyers = here.filter((shop) => shop.buys && (!magic || (carried !== undefined && soldToShops(carried))));
+  const buyers = here.filter((shop) => shop.buys && (!magic || (carried != null && soldToShops(carried))));
   const buyer = buyers.find((shop) => shelved(shop)) ?? buyers.find((shop) => shop.kind === "general") ?? buyers[0];
   return buyer ? atShop(buyer.name) : listPrice;
 }

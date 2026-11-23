@@ -33,7 +33,9 @@ import { acBreakdownFor, effectiveAcFor, SRD_SKILLS, skillLabel } from "@/lib/sr
 import { isCantripName } from "@/lib/srd/spell-lists";
 import { spellStyleFor } from "@/lib/srd/spell-prep";
 import { priceText } from "@/lib/srd/currency";
-import MultiContentPicker from "@/app/characters/builder/MultiContentPicker";
+import MultiContentPicker, { type MultiPick } from "@/app/characters/builder/MultiContentPicker";
+import { keepChosenSpellReferences, updateChosenSpellReference } from "@/lib/content/translations/spell-selection-reference";
+import type { StoredContentReference } from "@/lib/content/translations/stored-reference";
 import { ABILITIES, type Ability, type CharacterSheet, type Proficiencies } from "@/lib/schemas/sheet";
 import { hostOffers, useCapabilities } from "@/lib/use-capabilities";
 import { useLocale, useT } from "@/lib/locale";
@@ -92,6 +94,9 @@ export function LeadEditDialog({
   const [prepared, setPrepared] = useState<string[]>(sheet.spellcasting?.prepared ?? []);
   const [known, setKnown] = useState<string[]>(sheet.spellcasting?.known ?? []);
   const [cantrips, setCantrips] = useState<string[]>(sheet.spellcasting?.cantrips ?? []);
+  const [spellContentRefs, setSpellContentRefs] = useState<Record<string, StoredContentReference>>(
+    () => sheet.spellcasting?.contentRefs ?? {},
+  );
   const [pending, setPending] = useState<string[]>(sheet.spellcasting?.pending ?? []);
   // Which lists this class actually uses (src/lib/srd/spell-prep.ts), so the
   // dialog never offers a cleric a "known" list or a bard a "prepared" one.
@@ -114,7 +119,12 @@ export function LeadEditDialog({
     entry.level === 0 || (entry.level === undefined && isCantripName(entry.name));
   // A cantrip picked from any levelled search still lands in the cantrip
   // list; the other lists hold levelled spells only.
-  const addCantrips = (entries: Array<{ name: string; level?: number }>) => {
+  const addCantrips = (entries: MultiPick[]) => {
+    // Every spell picker passes through here, including levelled spells.
+    // Unverified free text remains name-only; never infer a book from text.
+    setSpellContentRefs((current) => entries.reduce(
+      (refs, entry) => updateChosenSpellReference(refs, entry.name, entry.contentRef ?? null), current,
+    ));
     const picked = entries.filter(isCantrip).map((entry) => entry.name);
     if (picked.length) {
       setCantrips((list) => [...list, ...picked.filter((name) => !list.includes(name))]);
@@ -150,7 +160,19 @@ export function LeadEditDialog({
   const [error, setError] = useState("");
 
   function setItem(index: number, patch: Partial<ItemRow>) {
-    setItems((rows) => rows.map((row, i) => (i === index ? { ...row, ...patch } : row)));
+    setItems((rows) => rows.map((row, i) => {
+      if (i !== index) return row;
+      if (patch.name !== undefined && patch.name !== row.name) {
+        // Renaming a catalog item makes it free text. Do not retain its
+        // former book identity while keeping wear/attunement flags intact.
+        const base = { ...row.base };
+        delete base.slug;
+        delete base.contentRef;
+        delete base.gear; // Old homebrew mechanics do not belong to a renamed item.
+        return { ...row, ...patch, base };
+      }
+      return { ...row, ...patch };
+    }));
   }
 
   function splitList(raw: string): string[] {
@@ -226,6 +248,20 @@ export function LeadEditDialog({
           syncCasterLists(sheet.spellcasting, nextSpellcasting, sheet),
         );
       }
+      const activeSpellNames = [
+        ...nextSpellcasting.known, ...nextSpellcasting.prepared,
+        ...nextSpellcasting.cantrips, ...(nextSpellcasting.pending ?? []),
+        ...(nextSpellcasting.spellbook ?? []),
+        ...(nextSpellcasting.casters ?? []).flatMap((caster) => [
+          ...caster.known, ...caster.prepared, ...caster.cantrips,
+          ...(caster.pending ?? []), ...(caster.spellbook ?? []),
+        ]),
+      ];
+      const refs = keepChosenSpellReferences(spellContentRefs, activeSpellNames);
+      // Send an empty map explicitly to delete previously saved links;
+      // the campaign API merges other spellcasting fields for old clients.
+      if (Object.keys(refs).length || sheet.spellcasting.contentRefs) nextSpellcasting.contentRefs = refs;
+      else delete nextSpellcasting.contentRefs;
       if (JSON.stringify(nextSpellcasting) !== JSON.stringify(sheet.spellcasting)) {
         patch.spellcasting = nextSpellcasting;
       }
@@ -468,7 +504,7 @@ export function LeadEditDialog({
                     ...entries.map((entry) => ({
                       name: entry.name,
                       qty: "1",
-                      base: { name: entry.name, qty: 1, ...(entry.slug ? { slug: entry.slug } : {}) },
+                      base: { name: entry.name, qty: 1, ...(entry.slug ? { slug: entry.slug } : {}), ...(entry.contentRef ? { contentRef: entry.contentRef } : {}) },
                     })),
                   ])
                 }

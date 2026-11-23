@@ -80,6 +80,17 @@ export const resourceTools: ToolDef[] = [
                     "The SRD or pack item's English name ('Longsword') when item is in other words. Sent with the first call: the server prices an item only by that name. Omit it when item already is that English name.",
                 },
                 price: { type: "number", description: "Gold each, for a thing no shelf or list prices." },
+                itemRef: {
+                  type: "object",
+                  additionalProperties: false,
+                  description: "For a book-specific purchase or sale, copy sourceId, contentId (catalog slug) and documentSlug from the actual selected catalog or GAME STATE item. A shop verifies its stock against that catalog entry; outside a shop a sourced buy is refused. Never guess.",
+                  properties: {
+                    sourceId: { type: "string" },
+                    contentId: { type: "string" },
+                    documentSlug: { type: "string" },
+                  },
+                  required: ["sourceId", "contentId"],
+                },
               },
               required: ["item"],
             },

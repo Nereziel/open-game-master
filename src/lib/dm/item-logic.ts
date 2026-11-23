@@ -33,7 +33,38 @@ export function consumableEffect(item: TaggedItem): ConsumableEffect {
 // The carried item a tool's name picks out (src/lib/srd/item-row.ts
 // lineNamed): "Potion of Healing" finds the "Pozione di guarigione" the DM
 // named by it, and "healing potion" finds neither.
+// A text-only DM action cannot distinguish identical names from different
+// books. Return a specific retry hint instead of incorrectly saying the
+// character has no such item.
+export function ambiguousCarriedItem(
+  equipment: EquipmentItem[],
+  term: string,
+): ToolError | null {
+  const candidates = linesNamed(equipment, term);
+  if (candidates.length < 2) return null;
+  const first = candidates[0].contentRef;
+  const differs = candidates.some((candidate) => {
+    const ref = candidate.contentRef;
+    if (!first || !ref) return first !== ref;
+    return first.sourceId !== ref.sourceId
+      || first.contentType !== ref.contentType
+      || first.contentId !== ref.contentId
+      || (first.documentSlug ?? "") !== (ref.documentSlug ?? "");
+  });
+  if (!differs) return null;
+  const sources = candidates.map((item) =>
+    item.contentRef
+      ? item.contentRef.documentSlug ?? item.contentRef.sourceId
+      : "unidentified source",
+  );
+  return {
+    error: `More than one carried item matches "${term}", from different sources (${[...new Set(sources)].join(", ")}). Choose the exact book-specific item; nothing was removed.`,
+    retry: true,
+  };
+}
+
 export function findCarriedItem(equipment: EquipmentItem[], term: string): EquipmentItem | null {
+  if (ambiguousCarriedItem(equipment, term)) return null;
   return equipment[lineNamed(equipment, term)] ?? null;
 }
 

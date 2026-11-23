@@ -144,6 +144,7 @@ function ContentBody({ reference }: { reference: ContentRef }) {
   // The table the dialog opened at reads its DMs' homebrew.
   const campaignId = useContentCampaign();
   const t = useT();
+  const locale = useLocale();
   const [state, setState] = useState<{ text: string | null; loading: boolean }>({
     text: null,
     loading: true,
@@ -164,12 +165,12 @@ function ContentBody({ reference }: { reference: ContentRef }) {
           return text && notes.length ? `${notes.join("\n\n")}\n\n${text}` : text;
         };
         const response = await fetch(
-          `/api/content/${reference.kind}/${encodeURIComponent(reference.slug)}${scopeQuery(campaignId)}`,
+          `/api/content/${reference.kind}/${encodeURIComponent(reference.slug)}${scopeQuery(campaignId) || "?"}${campaignId ? "&" : ""}locale=${locale}`,
         );
         if (response.ok) {
           const data = await response.json();
           // A background's feature asked by name opens that feature.
-          const text = withNote(data?.entry, describeContentEntry(data?.entry?.data, reference.kind === "backgrounds" ? reference.name : undefined));
+          const text = withNote(data?.entry, data?.entry?.display?.description ?? describeContentEntry(data?.entry?.data, reference.kind === "backgrounds" ? reference.name : undefined));
           if (text) {
             if (!cancelled) {
               setState({ text, loading: false });
@@ -181,14 +182,14 @@ function ContentBody({ reference }: { reference: ContentRef }) {
         // no text. Search by name and take an exact match.
         const wanted = textKey(reference.name ?? reference.slug);
         const search = await fetch(
-          `/api/content/${reference.kind}?q=${encodeURIComponent(wanted)}&limit=20&mechanics=1${scopeQuery(campaignId, "&")}`,
+          `/api/content/${reference.kind}?q=${encodeURIComponent(wanted)}&limit=20&mechanics=1&locale=${locale}${scopeQuery(campaignId, "&")}`,
         );
         const results = search.ok ? ((await search.json()).results ?? []) : [];
         const hit = results.find(
           (entry: { name: string }) => textKey(entry.name) === wanted,
         );
         if (!cancelled) {
-          setState({ text: withNote(hit, describeContentEntry(hit?.data)), loading: false });
+          setState({ text: withNote(hit, hit?.display?.description ?? describeContentEntry(hit?.data)), loading: false });
         }
       } catch {
         if (!cancelled) {
@@ -200,7 +201,7 @@ function ContentBody({ reference }: { reference: ContentRef }) {
     return () => {
       cancelled = true;
     };
-  }, [reference.kind, reference.slug, reference.name, campaignId, t]);
+  }, [reference.kind, reference.slug, reference.name, campaignId, locale, t]);
 
   if (state.loading) {
     return (

@@ -3,15 +3,18 @@
 
 import type { ToolError } from "@/lib/dm/tool-errors";
 import { textKey } from "../language/text-logic.ts";
-import { lineNamed } from "../srd/item-row.ts";
+import { lineNamed, linesNamed } from "../srd/item-row.ts";
 import { bundlesAsRounds, carriedAsRounds } from "../srd/ammo-bundles.ts";
 import type { ItemTag } from "@/lib/schemas/item-tags";
+import type { StoredContentReference } from "@/lib/content/translations/stored-reference";
 
 export type SlotState = { max: number; used: number };
 export type EquipmentRow = {
   name: string;
   qty: number;
   slug?: string;
+  // Optional stable catalog reference; legacy rows intentionally omit it.
+  contentRef?: StoredContentReference;
   // False while the party does not know what this is. Absent reads as true,
   // so every row written before the flag existed stays identified.
   identified?: boolean;
@@ -168,6 +171,18 @@ export function handedOverRow<Row extends EquipmentRow>(row: Row, qty: number, m
   return carriedAsRounds({ ...(rest as Row), ...whole, ...bond }, qty);
 }
 
+// When two rows explicitly point to different source books, never combine
+// their quantities. An unidentified legacy row must not silently acquire a
+// verified book's identity merely because its English name matches.
+function sameItemSource(a: EquipmentRow, b: EquipmentRow): boolean {
+  if (!a.contentRef && !b.contentRef) return true;
+  if (!a.contentRef || !b.contentRef) return false;
+  return a.contentRef.sourceId === b.contentRef.sourceId
+    && a.contentRef.contentType === b.contentRef.contentType
+    && a.contentRef.contentId === b.contentRef.contentId
+    && (a.contentRef.documentSlug ?? "") === (b.contentRef.documentSlug ?? "");
+}
+
 // Whether two rows are the same thing, the rule grantItemMath merges by:
 // one name, known or unknown alike, one spell and one entry.
 export function sameItemRow(a: EquipmentRow, b: EquipmentRow): boolean {
@@ -175,6 +190,7 @@ export function sameItemRow(a: EquipmentRow, b: EquipmentRow): boolean {
     textKey(a.name) === textKey(b.name) &&
     isIdentified(a) === isIdentified(b) &&
     (a.slug ?? "") === (b.slug ?? "") &&
+    sameItemSource(a, b) &&
     a.spell === b.spell &&
     a.srdName === b.srdName
   );
@@ -200,8 +216,20 @@ export function addRowMath<Row extends EquipmentRow>(equipment: Row[], row: Row)
 // Returns null when the item is absent. The row is the one the name picks
 // out (src/lib/srd/item-row.ts lineNamed): its own name, else its
 // srdNameWithBonus.
-export function removeItemMath<Row extends EquipmentRow>(equipment: Row[], name: string, qty: number) {
-  const index = lineNamed(equipment, name);
+export function removeItemMath<Row extends EquipmentRow>(
+  equipment: Row[], name: string, qty: number, reference?: StoredContentReference,
+) {
+  const candidates = linesNamed(equipment, name);
+  // An explicit catalog reference selects exactly one source, never a
+  // different book with the same English name.
+  const matching = reference
+    ? candidates.filter((item) => sameItemSource(item, { name, qty, contentRef: reference }))
+    : candidates;
+  if (reference && matching.length !== 1) return null;
+  // Legacy name-only DM calls cannot choose between different books.
+  if (!reference && candidates.length > 1 && candidates.some((candidate) =>
+    !sameItemSource(candidate, candidates[0]))) return null;
+  const index = reference ? equipment.indexOf(matching[0]) : lineNamed(equipment, name);
   if (index < 0) {
     return null;
   }
@@ -219,7 +247,7 @@ export function removeItemMath<Row extends EquipmentRow>(equipment: Row[], name:
 // What a tool says an item is, beyond its name: its tags, its worth, a
 // scroll's spell, and its own weight (a row the party's pack kept: taken
 // out without it, an item no table weighs weighed nothing).
-export type ItemFacts = { srdName?: string; tags?: ItemTag[]; worth?: number; spell?: string; weight?: number };
+export type ItemFacts = { srdName?: string; tags?: ItemTag[]; worth?: number; spell?: string; weight?: number; contentRef?: StoredContentReference };
 
 function itemFacts(facts: ItemFacts): ItemFacts {
   return {
@@ -228,6 +256,7 @@ function itemFacts(facts: ItemFacts): ItemFacts {
     ...(facts.worth ? { worth: facts.worth } : {}),
     ...(facts.spell ? { spell: facts.spell } : {}),
     ...(facts.weight ? { weight: facts.weight } : {}),
+    ...(facts.contentRef ? { contentRef: facts.contentRef } : {}),
   };
 }
 
@@ -258,7 +287,7 @@ export function grantItemMath(
   // Two scrolls of different spells, or two potions of different rows, are
   // two things, whatever they are called.
   const index = equipment.findIndex(
-    (item) => textKey(item.name) === textKey(named) && isIdentified(item) === known && item.spell === facts.spell && item.srdName === facts.srdName,
+    (item) => textKey(item.name) === textKey(named) && isIdentified(item) === known && sameItemSource(item, { name: named, qty: amount, contentRef: facts.contentRef }) && item.spell === facts.spell && item.srdName === facts.srdName,
   );
   if (index < 0) {
     return {

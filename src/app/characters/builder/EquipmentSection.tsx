@@ -15,6 +15,7 @@ import ContentPicker, { type PickerEntry } from "./ContentPicker";
 import GearReceipt, { type ReceiptView } from "./GearReceipt";
 import { Chip } from "./steps/shared";
 import { textKey } from "@/lib/language/text-logic";
+import { storedReferenceForCatalogRow, type StoredContentReference } from "@/lib/content/translations/stored-reference";
 
 // What a catalog row brings into the pack beside its name: a homebrew row
 // its mechanics (so the live AC and attack lines read it before it is
@@ -24,8 +25,9 @@ import { textKey } from "@/lib/language/text-logic";
 // from the same pack, would have sold it (issue #136). A magic row carries
 // no price: those are found in play.
 function pickedGear(entry: PickerEntry) {
+  const contentRef = storedReferenceForCatalogRow("items", entry);
   if (entry.source === "homebrew") {
-    return { name: entry.name, slug: entry.slug, gear: gearFromHomebrewData(entry.name, entry.data) ?? undefined };
+    return { name: entry.name, slug: entry.slug, gear: gearFromHomebrewData(entry.name, entry.data) ?? undefined, ...(contentRef ? { contentRef } : {}) };
   }
   // The server's own answer rides with the row (the items API); the row's
   // kind and cost stand in for a client built before it did.
@@ -33,6 +35,7 @@ function pickedGear(entry: PickerEntry) {
   return {
     name: entry.name,
     slug: entry.slug,
+    ...(contentRef ? { contentRef } : {}),
     ...(price.copper !== null ? { priceCp: price.copper } : {}),
     ...(price.magic ? { magic: true } : {}),
   };
@@ -107,7 +110,7 @@ export default function EquipmentSection({
   equipment: Array<{ name: string; qty: number; slug?: string }>;
   // Name plus a one-word stat to show beside it ("1d8 slashing", "AC 14").
   suggestions: Array<{ name: string; note: string }>;
-  onAdd: (entry: { name: string; qty?: number; slug?: string; gear?: HomebrewGear }) => void;
+  onAdd: (entry: { name: string; qty?: number; slug?: string; gear?: HomebrewGear; contentRef?: StoredContentReference }) => void;
   onAddMany: (entries: Array<{ name: string; qty: number }>) => void;
   onRemove: (name: string) => void;
   purse: PurseView;

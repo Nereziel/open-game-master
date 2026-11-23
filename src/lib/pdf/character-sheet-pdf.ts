@@ -16,6 +16,7 @@ import {
 import fontkit from "@pdf-lib/fontkit";
 import type { Locale } from "@/lib/i18n/translate";
 import { pdfLabel } from "./labels";
+import { pdfReferencedName } from "./source-name";
 import { gameName, gameProficiency, gameFeature, gamePersonalityLine, type GameTextKind } from "@/lib/i18n/game-text";
 import type { TrainingKind } from "@/lib/content/proficiency-labels";
 import { translate } from "@/lib/i18n/translate";
@@ -451,7 +452,10 @@ function drawCombat(ctx: Ctx, c: PdfCharacter, derived: ReturnType<typeof comput
   box(ctx, x, MARGIN + 18, w, eqH, true);
   heading(ctx, x + 4, y - 11, "Equipment");
   const eqText = c.equipment
-    .map((item) => (item.qty > 1 ? `${pdfItem(ctx, item.name)} ×${item.qty}` : pdfItem(ctx, item.name)))
+    .map((item) => {
+      const name = pdfReferencedName("items", item.name, ctx.locale, item.contentRef);
+      return item.qty > 1 ? `${name} ×${item.qty}` : name;
+    })
     .join("\n");
   field(ctx, x + 4, MARGIN + 22, w - 8, eqH - 18, eqText, { size: 8, multiline: true });
   box(ctx, x, MARGIN, w, 16, true);
@@ -579,13 +583,15 @@ function drawSpellPage(ctx: Ctx, c: PdfCharacter, derived: ReturnType<typeof com
   }
   y -= 54;
 
-  // Cantrips, then known / prepared spells.
+  // Cantrips, then known / prepared spells. A source reference must win
+  // over a same-name SRD alias belonging to another book.
+  const pdfSpell = (name: string) => pdfReferencedName("spells", name, ctx.locale, sc.contentRefs?.[name]);
   const spellText = [
-    sc.cantrips?.length ? `${pdfLabel(ctx.locale, "Cantrips")}:\n${sc.cantrips.map((name) => pdfContent(ctx, "spells", name)).join(", ")}` : "",
-    sc.prepared.length ? `${pdfLabel(ctx.locale, "Prepared")}:\n${sc.prepared.map((name) => pdfContent(ctx, "spells", name)).join(", ")}` : "",
-    sc.known.length ? `${pdfLabel(ctx.locale, "Known")}:\n${sc.known.map((name) => pdfContent(ctx, "spells", name)).join(", ")}` : "",
-    sc.pending?.length ? `${pdfLabel(ctx.locale, "Prepared after the next long rest")}:\n${sc.pending.map((name) => pdfContent(ctx, "spells", name)).join(", ")}` : "",
-    sc.spellbook?.length ? `${pdfLabel(ctx.locale, "Spellbook")}:\n${sc.spellbook.map((name) => pdfContent(ctx, "spells", name)).join(", ")}` : "",
+    sc.cantrips?.length ? `${pdfLabel(ctx.locale, "Cantrips")}:\n${sc.cantrips.map(pdfSpell).join(", ")}` : "",
+    sc.prepared.length ? `${pdfLabel(ctx.locale, "Prepared")}:\n${sc.prepared.map(pdfSpell).join(", ")}` : "",
+    sc.known.length ? `${pdfLabel(ctx.locale, "Known")}:\n${sc.known.map(pdfSpell).join(", ")}` : "",
+    sc.pending?.length ? `${pdfLabel(ctx.locale, "Prepared after the next long rest")}:\n${sc.pending.map(pdfSpell).join(", ")}` : "",
+    sc.spellbook?.length ? `${pdfLabel(ctx.locale, "Spellbook")}:\n${sc.spellbook.map(pdfSpell).join(", ")}` : "",
   ]
     .filter(Boolean)
     .join("\n\n");

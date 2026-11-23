@@ -25,3 +25,41 @@ export function uniqueByName<T extends { name: string; kind?: string }>(rows: T[
   }
   return order.map((key) => kept.get(key)!);
 }
+
+
+// Source-specific identity for catalogs: "Shield" from two distinct books
+// must remain two selectable entries. Keep legacy uniqueByName for places
+// whose saved game mechanic still explicitly expects one name.
+export function uniqueBySource<T extends { name: string; slug?: string; source?: string; documentSlug?: string; kind?: string }>(rows: T[]): T[] {
+  const seen = new Set<string>();
+  return rows.filter((entry) => {
+    const key = sourceRowIdentity(entry);
+    if (seen.has(key)) return false;
+    seen.add(key);
+    return true;
+  });
+}
+
+/** An entry's identity is scoped to its content pack, not its printed title. */
+export function sourceRowIdentity(entry: { name: string; slug?: string; source?: string; documentSlug?: string; kind?: string }): string {
+  return JSON.stringify([
+    entry.source ?? "",
+    entry.documentSlug ?? "",
+    entry.kind ?? "",
+    entry.slug || textKey(entry.name),
+  ]);
+}
+
+/** A name-only save cannot represent two different books' same-name entries.
+ * Preserve source choice in pending UI, but keep at most one pending row per
+ * canonical English name until the saved character schema can store a ref. */
+export function togglePendingSourceRow<T extends { name: string; slug?: string; source?: string; documentSlug?: string; kind?: string }>(
+  pending: readonly T[],
+  entry: T,
+): T[] {
+  const identity = sourceRowIdentity(entry);
+  if (pending.some((row) => sourceRowIdentity(row) === identity)) {
+    return pending.filter((row) => sourceRowIdentity(row) !== identity);
+  }
+  return [...pending.filter((row) => textKey(row.name) !== textKey(entry.name)), entry];
+}
