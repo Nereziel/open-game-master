@@ -57,7 +57,10 @@ export function auditSrdClassProgressions(
       }
       for(let j=0;j<english.length;j++){
         const before=mechanicalCell(english[j]),after=mechanicalCell(translated[j]);
-        if(before!==null&&(after===null||before!==after)){
+        // A printed dash in a restriction column may mean "no restrictions"
+        // (druid Wild Shape level 8 => "Bez omezení"), not numeric zero.
+        // Audit actual numeric values; textual restrictions require editorial reading.
+        if(before!==null&&before!=="-"&&(after===null||before!==after)){
           findings.push({id:source.id,level:i+1,column:j,english:english[j],czech:translated[j]});
         }
       }
