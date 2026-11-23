@@ -307,7 +307,7 @@ function ItemBody({ reference }: { reference: ContentRef }) {
           setState({
             sheet,
             localizedCs: selected?.localizedCs,
-            original: describeContentEntry(selected?.data) ?? sheet.description,
+            original: describeContentEntry(selected?.data) ?? sheet?.description ?? null,
             loading: false,
           });
         }
