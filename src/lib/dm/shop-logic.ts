@@ -1,7 +1,7 @@
 import { COPPER_PER_GOLD, formatPrice, packCostCopper } from "@/lib/srd/currency";
 import { compareNames, textKey } from "@/lib/language/text-logic";
 import { lineNamed, linesNamed } from "@/lib/srd/item-row";
-import type { StoredContentReference } from "@/lib/content/translations/stored-reference";
+import { sameStoredContentReference, type StoredContentReference } from "@/lib/content/translations/stored-reference";
 
 // Shops (docs/vtt-parity-implementation-plan.md 11.1): pure pricing and
 // stocking. Prices come from the content pack's cost strings, marked up by
@@ -242,12 +242,13 @@ export function takeStock(stock: StockLine[], itemName: string, qty: number): St
 
 // Put qty of an item into stock at the keeper's list price, merging by name,
 // with the row it is.
-export function addStock(stock: StockLine[], itemName: string, qty: number, priceCp: number, srdName?: string): StockLine[] {
-  const existing = stock.find((line) => textKey(line.itemName) === textKey(itemName));
+export function addStock(stock: StockLine[], itemName: string, qty: number, priceCp: number, srdName?: string, contentRef?: StoredContentReference): StockLine[] {
+  const existing = stock.find((line) => textKey(line.itemName) === textKey(itemName)
+    && (!line.contentRef && !contentRef || sameStoredContentReference(line.contentRef, contentRef)));
   if (existing) {
     return stock.map((line) => (line === existing ? { ...line, qty: line.qty + qty } : line));
   }
-  return [...stock, { itemName: itemName.slice(0, 80), qty, priceCp: Math.max(1, Math.round(priceCp)), note: "", ...(srdName ? { srdName } : {}) }];
+  return [...stock, { itemName: itemName.slice(0, 80), qty, priceCp: Math.max(1, Math.round(priceCp)), note: "", ...(srdName ? { srdName } : {}), ...(contentRef ? { contentRef } : {}) }];
 }
 
 // The magic a shelf stocks by chance, whatever the settlement's size (SRD
