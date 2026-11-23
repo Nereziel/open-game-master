@@ -3,6 +3,7 @@
 // The source SRD 5.1 is CC BY 4.0; untranslated original passages stay in English.
 // All page ids and original English headings stay intact for deep links.
 import type { RulebookData } from "./types";
+import { textKey } from "../language/text-logic";
 import { CZECH_RULE_NOTES } from "./czech-rule-extensions";
 import { CZECH_FULL_RULES_1 } from "./czech-full-rules-1";
 import { CZECH_FULL_RULES_2 } from "./czech-full-rules-2";
@@ -107,7 +108,7 @@ const CZECH_SPELL_NOTE_MAP: ReadonlyMap<string, string> = (() => {
     CZECH_SPELL_NOTES_7C, CZECH_SPELL_NOTES_7D,
   ]) {
     for (const [name, note] of Object.entries(batch)) {
-      const key = name.toLowerCase();
+      const key = textKey(name);
       if (!notes.has(key)) notes.set(key, note);
     }
   }
@@ -290,7 +291,7 @@ export function czechCompanionBook(english: RulebookData): RulebookData {
     })),
     pages: english.pages.map((page) => {
       const kindNote = page.kind === "spell"
-        ? CZECH_SPELL_NOTE_MAP.get(page.title.toLowerCase())
+        ? CZECH_SPELL_NOTE_MAP.get(textKey(page.title))
         : page.kind === "monster"
           ? CZECH_MONSTER_NOTES[page.title] ?? CZECH_MONSTER_NOTES_2[page.title] ?? CZECH_MONSTER_NOTES_3[page.title] ?? CZECH_MONSTER_NOTES_4[page.title] ?? CZECH_MONSTER_NOTES_5[page.title] ?? CZECH_MONSTER_NOTES_6[page.title] ?? CZECH_MONSTER_NOTES_7[page.title] ?? CZECH_MONSTER_NOTES_8[page.title] ?? (page.title === "Animated Armor (Animated Object)" ? CZECH_MONSTER_NOTES["Animated Armor"] : undefined)
           : page.kind === "item"
