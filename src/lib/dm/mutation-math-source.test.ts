@@ -47,6 +47,15 @@ describe("DM inventory source identity (#107)", () => {
     expect(removeItemMath([srd], "Shield", 1)?.equipment).toEqual([]);
   });
 
+  it("removes only the requested source when identical names span books", () => {
+    const selected = removeItemMath([srd, tome], "Shield", 1, tome.contentRef);
+    expect(selected?.item.contentRef).toEqual(tome.contentRef);
+    expect(selected?.equipment).toEqual([srd]);
+    expect(removeItemMath([srd, tome], "Shield", 1, {
+      ...srd.contentRef, contentId: "wrong",
+    })).toBeNull();
+  });
+
   it("preserves the historical name-only stacking behavior", () => {
     const legacy = { name: "Shield", qty: 1 };
     expect(addRowMath([legacy], legacy)).toEqual([{ name: "Shield", qty: 2 }]);
