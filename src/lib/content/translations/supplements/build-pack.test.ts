@@ -75,6 +75,21 @@ describe("book-specific Czech translation packs (#107, phase 3)", () => {
     expect(report.translated).toBe(1);
   });
 
+  it("quarantines only the conflicting Deep Magic slug while keeping unrelated translations", () => {
+    const rows = [
+      row("spells", "Abhorrent Apparition", "shared-slug", "dmag"),
+      row("spells", "Other English Title", "shared-slug", "deepm"),
+      row("spells", "Fuse Armor", "fuse-armor", "toh"),
+      row("spells", "Abhorrent Apparition", "valid-slug", "deepm"),
+    ];
+    const { pack, report } = deepMagicCsPack(rows);
+    expect(pack.entries.spells?.["shared-slug"]).toBeUndefined();
+    expect(pack.entries.spells?.["valid-slug"]?.name).toBe("Odpudivý přízrak");
+    expect(report.ambiguous).toContain("spells:conflicting catalog slug (shared-slug)");
+    const tome = tomeOfHeroesCsPack(rows);
+    expect(tome.pack.entries.spells?.["fuse-armor"]?.name).toBe("Znehybnění kovu");
+  });
+
   it("registers separate books and refuses cross-source fallback on identical titles", () => {
     const entries = [
       row("spells", "Shield", "shield", "toh"),
