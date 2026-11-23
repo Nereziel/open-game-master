@@ -422,5 +422,10 @@ inferred references. `shop-source.test.ts` checks this round-trip.
 Known limits: stock generation still chooses a single source when
 multiple catalog books publish the same English item name; it does
 not expose every edition as a separate automatically stocked option.
+When hand-authored stock or stock acquired from the party includes
+multiple books with an identical visible item name, the DM's prompt and
+the shop-opening shelf summary include an `itemRef` source/content/document
+hint only for those ambiguous rows. Single-name rows remain compact.
+The exact source ID, not a translated title, identifies what to buy.
 A legacy name-only row cannot be selected unambiguously when an
 otherwise identical book-specific row is present.
