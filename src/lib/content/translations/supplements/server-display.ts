@@ -6,8 +6,10 @@ import { TranslationRegistry } from "@/lib/content/translations/registry";
 import { supplementCzechRegistry } from "./index";
 import { supplementCzechDisplay } from "./display";
 import type { SupplementCatalogRow } from "./build-pack";
+import { czechSupplementCandidates, type SupplementSearchCandidate } from "./search";
 
 const cache = new WeakMap<object, TranslationRegistry | null>();
+const catalogRows = new WeakMap<object, readonly SupplementCatalogRow[]>();
 const DOCUMENTS = ["toh", "dmag", "deepm", "vom"] as const;
 const DOCUMENT_SQL = DOCUMENTS.map(() => "?").join(", ");
 
@@ -26,6 +28,7 @@ function registryFromCatalog(): TranslationRegistry | null {
     }
     const { registry } = supplementCzechRegistry(rows);
     cache.set(db, registry);
+    catalogRows.set(db, rows);
     return registry;
   } catch (error) {
     // An outdated or malformed pack must not break catalog routes, and
@@ -55,4 +58,21 @@ export function withSupplementCzechDisplay<T>(kind: string, value: T, includeFul
     name: row.name,
   }, includeFullRules);
   return localizedCs ? { ...row, localizedCs } : value;
+}
+
+// The complete read-only catalog, not the current search page, is the
+// authority for Czech aliases. No row is offered to the player here;
+// callers must run regular source-aware game searches with their filters.
+export function supplementCzechSearchCandidates(
+  kind: string,
+  query: string,
+  limit = 12,
+): readonly SupplementSearchCandidate[] {
+  const db = getContentDb();
+  if (!db) return [];
+  const registry = registryFromCatalog();
+  const rows = catalogRows.get(db);
+  return registry && rows
+    ? czechSupplementCandidates(registry, rows, kind, query, limit)
+    : [];
 }
