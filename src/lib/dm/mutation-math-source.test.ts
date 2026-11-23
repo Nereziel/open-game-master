@@ -1,5 +1,5 @@
 import { describe, expect, it } from "vitest";
-import { addRowMath, grantItemMath, sameItemRow } from "./mutation-math";
+import { addRowMath, grantItemMath, handedOverRow, removeItemMath, sameItemRow } from "./mutation-math";
 
 describe("DM inventory source identity (#107)", () => {
   const srd = {
@@ -29,6 +29,16 @@ describe("DM inventory source identity (#107)", () => {
     expect(result.equipment[0]).toEqual(srd);
     expect(result.equipment[1]).toMatchObject({ name: "Shield", qty: 1 });
     expect(result.equipment[1].contentRef).toBeUndefined();
+  });
+
+  it("preserves provenance across a partial transfer and never combines it into another book", () => {
+    const transferred = handedOverRow({ ...srd, qty: 3 }, 1, { from: "hero-a", to: "hero-b" });
+    expect(transferred.contentRef).toEqual(srd.contentRef);
+    const receiver = addRowMath([tome], transferred);
+    expect(receiver).toHaveLength(2);
+    expect(receiver[1].contentRef).toEqual(srd.contentRef);
+    const removed = removeItemMath([srd], "Shield", 1);
+    expect(removed?.item.contentRef).toEqual(srd.contentRef);
   });
 
   it("preserves the historical name-only stacking behavior", () => {
