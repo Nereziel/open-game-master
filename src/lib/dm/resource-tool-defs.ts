@@ -83,7 +83,7 @@ export const resourceTools: ToolDef[] = [
                 itemRef: {
                   type: "object",
                   additionalProperties: false,
-                  description: "For selling same-name items from different books, copy the source ID, content ID and document slug from GAME STATE. Never guess.",
+                  description: "For a book-specific purchase or sale, copy sourceId, contentId (catalog slug) and documentSlug from the actual selected catalog or GAME STATE item. A shop verifies its stock against that catalog entry; outside a shop a sourced buy is refused. Never guess.",
                   properties: {
                     sourceId: { type: "string" },
                     contentId: { type: "string" },
