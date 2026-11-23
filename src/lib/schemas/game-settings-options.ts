@@ -90,6 +90,7 @@ export const STARTING_WEALTH_LABELS: Record<StartingWealthSetting, string> = {
 // every one is read the same way; the ids are Snowball's own names.
 export const TABLE_LANGUAGES = [
   "english",
+  "czech",
   "danish",
   "dutch",
   "finnish",
@@ -111,6 +112,7 @@ export type TableLanguage = (typeof TABLE_LANGUAGES)[number];
 // who choose it.
 export const TABLE_LANGUAGE_NAMES: Record<TableLanguage, { english: string; native: string }> = {
   english: { english: "English", native: "English" },
+  czech: { english: "Czech", native: "Čeština" },
   danish: { english: "Danish", native: "Dansk" },
   dutch: { english: "Dutch", native: "Nederlands" },
   finnish: { english: "Finnish", native: "Suomi" },
