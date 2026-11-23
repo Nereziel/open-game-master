@@ -1,6 +1,8 @@
 import { currentUser, unauthorized } from "@/lib/auth";
 import { getEntryDetail } from "@/lib/content";
 import { withBestEffort } from "@/lib/content/entry-labels";
+import { withSupplementCzechDisplay } from "@/lib/content/translations/supplements/server-display";
+import { matchesRequestedCatalogDocument } from "@/lib/content/translations/supplements/display";
 import { bundledItemRows, bundledSpellRows } from "@/lib/rulebook/catalog-rows";
 import { bundledGearRow } from "@/lib/workshop/bundled-gear-rows";
 import { contentScopeFor } from "@/lib/content/scope";
@@ -50,9 +52,12 @@ export async function GET(
   const locale = requestedLocale === "cs" || requestedLocale === "en" || requestedLocale === "fr"
     ? requestedLocale
     : bookLocaleOf(request);
-  const localizedEntry = (row: Parameters<typeof withCatalogDisplay>[1]) =>
-    withCatalogDisplay(kind, row, locale);
+  const localizedEntry = (row: Parameters<typeof withCatalogDisplay>[1]) => {
+    const original = withCatalogDisplay(kind, row, locale);
+    return locale === "cs" ? withSupplementCzechDisplay(kind, original, true) : original;
+  };
   const homebrewKind = KINDS[kind];
+  const requestedDocument = new URL(request.url).searchParams.get("documentSlug");
   const asEntry = (entry: { id: string; name: string; data: Record<string, unknown> }) =>
     Response.json({
       entry: { slug: `homebrew:${entry.id}`, name: entry.name, source: "homebrew", documentSlug: "homebrew", data: entry.data },
@@ -60,6 +65,7 @@ export async function GET(
 
   const decoded = decodeURIComponent(slug);
   if (decoded.startsWith("homebrew:")) {
+    if (requestedDocument) return Response.json({ error: "Not found in this source document." }, { status: 404 });
     const entry = getAuthorsHomebrew(scope.userIds, decoded.slice("homebrew:".length));
     if (!entry || (homebrewKind && entry.kind !== homebrewKind)) {
       return Response.json({ error: "Not found." }, { status: 404 });
@@ -67,9 +73,15 @@ export async function GET(
     return asEntry(entry);
   }
 
-  const entry = getEntryDetail(kind as Parameters<typeof getEntryDetail>[0], decoded);
+  const entry = getEntryDetail(kind as Parameters<typeof getEntryDetail>[0], decoded, requestedDocument ?? undefined);
+  if (entry && !matchesRequestedCatalogDocument(entry, requestedDocument)) {
+    return Response.json({ error: "The selected entry is not from this source document." }, { status: 404 });
+  }
   if (entry) {
     return Response.json({ entry: localizedEntry(withBestEffort(kind, entry, { classSlug: String(entry.data.class_slug ?? "") || undefined })) });
+  }
+  if (requestedDocument) {
+    return Response.json({ error: "Not found in this source document." }, { status: 404 });
   }
   // The bundled book's rows the search serves with no pack ("srd:web",
   // "srd-gear:longsword"), so their info reads with no pack too.

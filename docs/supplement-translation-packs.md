@@ -28,3 +28,75 @@ Každý z údajů byl převeden **beze změny obsahu** z konkrétního souboru v
 Balíčky zatím nejsou napojené na všechny UI konzumenty (čtečka, picker, detail, workshop, export do PDF); to patří do fáze 4. Přesun návrhů také **nedoplňuje** chybějící překlady dalších 458 kouzel Deep Magic a 556 předmětů Vault of Magic. Každé skutečné pokrytí závisí na katalogových řádcích dostupných v instalaci serveru.
 
 Regresní testy v `src/lib/content/translations/supplements/build-pack.test.ts` ověřují counts původních map, kolize knih, fallback, skutečné `slug`, bezpečnost homebrew a označení přehledů.
+
+## První integrace čtečky/detailů a výběrů – navazující PR #111
+
+Zobrazení čte české balíčky **pouze podle celého katalogu**. Serverové
+`supplements/server-display.ts` načte skutečné kombinace
+`document_slug + slug + name` ze všech tří tabulek Open5e
+(`items`, `spells`, `feats`) a sestaví registr jednou pro danou
+read-only databázi. Nelze sestavit správný jednoznačný překlad pouze
+ze dvanácti výsledků aktuálního vyhledávání: jiný záznam stejného
+názvu může být až na další stránce.
+
+API `/api/content/{kind}` a detail `/api/content/{kind}/{slug}`
+vracejí volitelný objekt `localizedCs`:
+
+- `name` – český zobrazovací název, zvolený podle skutečného zdroje;
+- `summary` – pouze krátký přehled, nikdy úplná pravidla;
+- `hasFullRules` – údaj, že redakčně schválený úplný český pravidlový text existuje;
+- `fullRules` – pouze v detailové odpovědi, ne v lehkém seznamu.
+
+Kanoničtí `name`, `slug`, `data` a mechaniky v odpovědi zůstávají
+anglické a nedotčené. UI `ContentPicker`, `MultiContentPicker` a
+`InfoDialog` při české lokalizaci používají `localizedCs` a jinak
+vlastní dosavadní výstup. U neauditovaného návrhu úplných pravidel detail používá anglické znění; u pouhého českého přehledu detail zároveň zobrazí
+**úplný anglický popis stejného katalogového záznamu** s
+explicitním označením. Neexistující či chybně přiřazené překlady
+nepřepisují jinou knihu. U katalogu, který není nainstalován
+nebo je nečitelný, zůstává angličtina.
+
+UI výběry zachovávají oddělené řádky z různých knih a označují zdroj.
+Části výběru, které dosud ukládají jen anglický název (zejména
+`MultiContentPicker`), jsou závislé na dokončení a spojení
+zdrojových referencí z PR #109; české názvy se neukládají jako engine
+ID. Zatím **nejsou** přepojené všechny obrazovky a české dotazy na
+rozšíření je ještě nutné propojit s vyhledáváním. Tento PR je
+dílčí krok fáze 4, nikoli dokončení celého issue.
+
+### Přesná identita při otevření detailu
+
+Picker předává ke `slug` také `documentSlug` **jen u řádků
+Open5e**. Detailové API čte katalog přímo podle dvojice
+`(slug, document_slug)` a odmítá cizí zdroj; se stejným názvem
+se nevrací jiná kniha. Při nenalezení nelze přejít na homebrew,
+zabudované SRD ani anglický záznam jiného dokumentu.
+Staré odkazy bez `documentSlug` a záložní SRD řádky nadále
+používají původní chování. Totéž platí pro existující české
+popisy SRD vybavení: speciální fallback rozšíření je nemění.
+
+### Hledání podle českého názvu (PR #111)
+
+Builder posílá do katalogového API `locale=cs` podle aktuálního
+rozhraní. Pouze při českém dotazu pro `items`, `spells` a `feats`
+vybere `supplementCzechSearchCandidates` nejvýše 12 odpovídajících
+českých názvů z úplného katalogu Open5e. `searchKey` dovoluje
+psaní bez diakritiky. Kandidát vždy obsahuje **původní anglický
+název, typ, `documentSlug` a kanonický `slug`**. Následný
+anglický dotaz prochází standardními filtrovacími cestami:
+omezením povolání, úrovně, školy a druhu předmětu, dostupností
+pravidel pro danou hru a scope kampaně. Výsledek se připojí
+jen při přesné shodě původu i ID. Homebrew a SRD záznamy
+nezdědí překlad rozšíření.
+
+Další větev katalogových požadavků a stránkování zůstává beze
+změny; české aliasy se přidávají pouze při prvním offsetu
+(`offset=0`) a pouze v nainstalovaném katalogu, s omezením
+počtu kandidátů a výsledků. Pro více kandidátů používá UI
+stále stejné anglické uložené názvy a ID, české jsou jen
+zobrazovací.
+
+Omezení: není dosud sjednoceno stránkování kombinovaných
+českých/anglických výsledků v pokročilých velkých katalozích.
+Zbývá také integrovat lokalizaci do dalšího workshopu,
+reference/čtečky a exportu do PDF.

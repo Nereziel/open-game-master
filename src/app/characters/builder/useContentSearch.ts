@@ -19,6 +19,9 @@ export type PickerEntry = {
   // Pounds, where the catalog knows (an item).
   weight?: number;
   data: Record<string, unknown>;
+  // Source-scoped Czech presentation is independent of the official SRD display.
+  // Never write these labels back to the engine's English saved names.
+  localizedCs?: { name: string; summary?: string; fullRules?: string; hasFullRules: boolean };
   // Optional localized display-only fields. Never use to store picked data.
   display?: {
     name: string;

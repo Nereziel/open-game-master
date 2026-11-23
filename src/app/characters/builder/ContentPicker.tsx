@@ -8,6 +8,7 @@ import { describeContentEntry, spellSummary } from "@/lib/help";
 import { useContentSearch, type PickerEntry } from "./useContentSearch";
 import { useLocale, useT, useTp } from "@/lib/locale";
 import { contentName } from "@/lib/content/names";
+import { sourceRowIdentity } from "./pickerRows";
 
 export type { PickerEntry } from "./useContentSearch";
 
@@ -46,7 +47,9 @@ export default function ContentPicker({
   // A feat's row name reads in the reader's language (the official maps; a
   // homebrew row stays its author's words) while the pick itself stores the
   // row's own English name.
-  const rowName = (entry: PickerEntry) => entry.display?.name ?? (kind === "feats" ? contentName("feats", entry, locale) : entry.name);
+  const rowName = (entry: PickerEntry) =>
+    locale === "cs" && entry.localizedCs?.name ? entry.localizedCs.name
+      : entry.display?.name ?? (kind === "feats" ? contentName("feats", entry, locale) : entry.name);
   const { query, setQuery, results: found, setResults, open, setOpen, loading, unavailable, failed, unadmitted } =
     useContentSearch(kind, extraParams);
   const results = hide ? found.filter((entry) => !hide(entry)) : found;
@@ -109,7 +112,7 @@ export default function ContentPicker({
           {results.map((entry, index) => {
             const verdict = judge?.(entry) ?? null;
             return (
-            <li key={entry.slug} className="flex items-center gap-1 pr-2 hover:bg-stone-800">
+            <li key={sourceRowIdentity(entry)} className="flex items-center gap-1 pr-2 hover:bg-stone-800">
               <button
                 type="button"
                 aria-disabled={verdict?.blocked || undefined}
@@ -149,9 +152,13 @@ export default function ContentPicker({
               <InfoButton
                 label={rowName(entry)}
                 meta={entry.display?.meta ?? (kind === "spells" ? spellSummary(entry.data) : undefined)}
-                text={entry.display ? (entry.display.description ?? null) : describeContentEntry(entry.data)}
+                text={locale === "cs" && entry.localizedCs ? undefined
+                  : entry.display ? (entry.display.description ?? null) : describeContentEntry(entry.data)}
                 reference={
-                  entry.source === "homebrew" ? undefined : { kind, slug: entry.slug }
+                  entry.source === "homebrew" ? undefined : {
+                    kind, slug: entry.slug, name: entry.name,
+                    ...(entry.source === "open5e" && entry.documentSlug ? { documentSlug: entry.documentSlug } : {}),
+                  }
                 }
               />
             </li>

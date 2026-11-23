@@ -42,7 +42,8 @@ export default function MultiContentPicker({
   const tp = useTp();
   const locale = useLocale();
   const displayName = (name: string, source?: string) => source === "homebrew" ? name : contentName(kind, name, locale);
-  const rowName = (entry: PickerEntry) => entry.display?.name ?? displayName(entry.name, entry.source);
+  const rowName = (entry: PickerEntry) => locale === "cs" && entry.localizedCs?.name
+    ? entry.localizedCs.name : entry.display?.name ?? displayName(entry.name, entry.source);
   const { query, setQuery, results, setResults, open, setOpen, loading, unavailable, failed, unadmitted } =
     useContentSearch(kind, extraParams);
   const [pending, setPending] = useState<Array<MultiPick & { source?: string; documentSlug?: string; kind?: string; displayLabel?: string }>>([]);
@@ -127,7 +128,7 @@ export default function MultiContentPicker({
             const picked = pendingIds.has(sourceRowIdentity(entry));
             return (
               <li
-                key={entry.slug}
+                key={sourceRowIdentity(entry)}
                 className={cn(
                   "flex items-center gap-1 pr-2 hover:bg-stone-800",
                   alreadyOn && "opacity-50",
@@ -160,8 +161,12 @@ export default function MultiContentPicker({
                 <InfoButton
                   label={rowName(entry)}
                   meta={entry.display?.meta ?? (kind === "spells" ? spellSummary(entry.data) : undefined)}
-                  text={entry.display ? (entry.display.description ?? null) : describeContentEntry(entry.data)}
-                  reference={entry.source === "homebrew" ? undefined : { kind, slug: entry.slug }}
+                  text={locale === "cs" && entry.localizedCs ? undefined
+                    : entry.display ? (entry.display.description ?? null) : describeContentEntry(entry.data)}
+                  reference={entry.source === "homebrew" ? undefined : {
+                    kind, slug: entry.slug, name: entry.name,
+                    ...(entry.source === "open5e" && entry.documentSlug ? { documentSlug: entry.documentSlug } : {}),
+                  }}
                 />
               </li>
             );

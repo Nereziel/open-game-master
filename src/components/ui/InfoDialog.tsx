@@ -13,6 +13,7 @@ import { Dialog } from "@/components/ui/Dialog";
 import type { ItemSheet } from "@/lib/help/item-sheet";
 import { firstSentence, parseRulesBlocks, parseRulesTable } from "@/lib/help/rules-text";
 import { textKey } from "@/lib/language/text-logic";
+import { isSupplementDocumentSlug, supplementRulesForDisplay, type SupplementCzechDisplay } from "@/lib/content/translations/supplements/display";
 
 // The "what does this do?" affordance, used everywhere a game term appears.
 //
@@ -27,7 +28,14 @@ import { textKey } from "@/lib/language/text-logic";
 // `name` lets the lookup recover when a row's slug is not the plain
 // slugified name (third-party documents pick their own), by falling back to
 // a search.
-export type ContentRef = { kind: string; slug: string; name?: string };
+export type ContentRef = { kind: string; slug: string; name?: string; documentSlug?: string };
+
+// Keep the existing locale-aware SRD detail resolver while constraining
+// specifically selected Open5e books to an exact source document.
+function scopedDetailQuery(campaignId: string | null | undefined, documentSlug: string | undefined, locale: string): string {
+  const scope = scopeQuery(campaignId);
+  return `${scope}${scope ? "&" : "?"}locale=${encodeURIComponent(locale)}${documentSlug ? `&documentSlug=${encodeURIComponent(documentSlug)}` : ""}`;
+}
 
 // Content-pack descriptions are markdown-ish: headings, bold, italics, tables.
 // The block structure comes from src/lib/help/rules-text.ts, which knows the
@@ -165,12 +173,16 @@ function ContentBody({ reference }: { reference: ContentRef }) {
           return text && notes.length ? `${notes.join("\n\n")}\n\n${text}` : text;
         };
         const response = await fetch(
-          `/api/content/${reference.kind}/${encodeURIComponent(reference.slug)}${scopeQuery(campaignId) || "?"}${campaignId ? "&" : ""}locale=${locale}`,
+          `/api/content/${reference.kind}/${encodeURIComponent(reference.slug)}${scopedDetailQuery(campaignId, reference.documentSlug, locale)}`,
         );
         if (response.ok) {
           const data = await response.json();
           // A background's feature asked by name opens that feature.
-          const text = withNote(data?.entry, data?.entry?.display?.description ?? describeContentEntry(data?.entry?.data, reference.kind === "backgrounds" ? reference.name : undefined));
+          const english = describeContentEntry(data?.entry?.data, reference.kind === "backgrounds" ? reference.name : undefined);
+          const description = locale === "cs" && data?.entry?.localizedCs
+            ? supplementRulesForDisplay(data.entry.localizedCs, english, locale)
+            : data?.entry?.display?.description ?? english;
+          const text = withNote(data?.entry, description);
           if (text) {
             if (!cancelled) {
               setState({ text, loading: false });
@@ -178,8 +190,13 @@ function ContentBody({ reference }: { reference: ContentRef }) {
             return;
           }
         }
-        // The slug guessed from the name missed, or the row it found carries
-        // no text. Search by name and take an exact match.
+        // A scoped source ID must never fall back to a similarly named row.
+        if (reference.documentSlug) {
+          if (!cancelled) setState({ text: null, loading: false });
+          return;
+        }
+        // Legacy unspecific links may still recover by name. Supported
+        // supplements and SRD retain their separate display semantics.
         const wanted = textKey(reference.name ?? reference.slug);
         const search = await fetch(
           `/api/content/${reference.kind}?q=${encodeURIComponent(wanted)}&limit=20&mechanics=1&locale=${locale}${scopeQuery(campaignId, "&")}`,
@@ -189,7 +206,11 @@ function ContentBody({ reference }: { reference: ContentRef }) {
           (entry: { name: string }) => textKey(entry.name) === wanted,
         );
         if (!cancelled) {
-          setState({ text: withNote(hit, hit?.display?.description ?? describeContentEntry(hit?.data)), loading: false });
+          const english = describeContentEntry(hit?.data);
+          const description = locale === "cs" && hit?.localizedCs
+            ? supplementRulesForDisplay(hit.localizedCs, english, locale)
+            : hit?.display?.description ?? english;
+          setState({ text: withNote(hit, description), loading: false });
         }
       } catch {
         if (!cancelled) {
@@ -201,7 +222,7 @@ function ContentBody({ reference }: { reference: ContentRef }) {
     return () => {
       cancelled = true;
     };
-  }, [reference.kind, reference.slug, reference.name, campaignId, locale, t]);
+  }, [reference.kind, reference.slug, reference.name, reference.documentSlug, campaignId, locale, t]);
 
   if (state.loading) {
     return (
@@ -265,10 +286,12 @@ function ItemBody({ reference }: { reference: ContentRef }) {
   const locale = useLocale();
   const detail = (value: string | null | undefined) => itemDetailCs(value, locale);
   const t = useT();
-  const [state, setState] = useState<{ sheet: ItemSheet | null; loading: boolean }>({
-    sheet: null,
-    loading: true,
-  });
+  const [state, setState] = useState<{
+    sheet: ItemSheet | null;
+    localizedCs?: SupplementCzechDisplay;
+    original?: string | null;
+    loading: boolean;
+  }>({ sheet: null, loading: true });
 
   useEffect(() => {
     let cancelled = false;
@@ -277,17 +300,28 @@ function ItemBody({ reference }: { reference: ContentRef }) {
       const wanted = textKey(name);
       const readJson = async (response: Response) => (response.ok ? response.json() : null);
       try {
-        const [{ buildItemSheet }, direct, search] = await Promise.all([
+        const [{ buildItemSheet }, { describeContentEntry }, direct, search] = await Promise.all([
           import("@/lib/help/item-sheet"),
-          fetch(`/api/content/items/${encodeURIComponent(reference.slug)}${scopeQuery(campaignId)}`).then(readJson).catch(() => null),
-          fetch(`/api/content/items?q=${encodeURIComponent(wanted)}&limit=20${scopeQuery(campaignId, "&")}`).then(readJson).catch(() => null),
+          import("@/lib/help"),
+          fetch(`/api/content/items/${encodeURIComponent(reference.slug)}${scopedDetailQuery(campaignId, reference.documentSlug, locale)}`).then(readJson).catch(() => null),
+          // Additional rows only contribute to legacy name-only item cards.
+          reference.documentSlug
+            ? Promise.resolve(null)
+            : fetch(`/api/content/items?q=${encodeURIComponent(wanted)}&limit=20${scopeQuery(campaignId, "&")}`).then(readJson).catch(() => null),
         ]);
+        const selected = direct?.entry;
         const hits = ((search?.results ?? []) as Array<{ name: string; data?: Record<string, unknown> }>)
           .filter((entry) => textKey(entry.name) === wanted)
           .map((entry) => entry.data);
-        const sheet = buildItemSheet(name, [direct?.entry?.data, ...hits]);
+        const sheet = reference.documentSlug && !selected
+          ? null : buildItemSheet(name, [selected?.data, ...hits]);
         if (!cancelled) {
-          setState({ sheet, loading: false });
+          setState({
+            sheet,
+            localizedCs: selected?.localizedCs,
+            original: describeContentEntry(selected?.data) ?? sheet?.description ?? null,
+            loading: false,
+          });
         }
       } catch {
         if (!cancelled) {
@@ -299,7 +333,7 @@ function ItemBody({ reference }: { reference: ContentRef }) {
     return () => {
       cancelled = true;
     };
-  }, [reference.slug, reference.name, campaignId]);
+  }, [reference.slug, reference.name, reference.documentSlug, campaignId, locale]);
 
   if (state.loading) {
     return (
@@ -310,7 +344,7 @@ function ItemBody({ reference }: { reference: ContentRef }) {
   }
   const sheet = state.sheet;
   if (!sheet) {
-    const fallback = itemDescriptionCs(reference.name ?? reference.slug, null, locale, reference.slug);
+    const fallback = isSupplementDocumentSlug(reference.documentSlug) ? null : itemDescriptionCs(reference.name ?? reference.slug, null, locale, reference.slug);
     if (fallback) return <div className="space-y-2 text-sm text-stone-300">{renderRules(fallback)}</div>;
     return (
       <p className="text-sm text-stone-500">
@@ -381,7 +415,11 @@ function ItemBody({ reference }: { reference: ContentRef }) {
 
   const localizedArmorRows = armorRows.map(({ label, text }) => ({ label: detail(label), text: text ? detail(text) : null }));
   const localizedWeaponRows = weaponRows.map(({ label, text }) => ({ label: detail(label), text: text ? detail(text) : null }));
-  const shownDescription = itemDescriptionCs(reference.name ?? reference.slug, sheet.description, locale, reference.slug);
+  const shownDescription = locale === "cs" && state.localizedCs
+    ? supplementRulesForDisplay(state.localizedCs, state.original ?? sheet.description, locale)
+    : isSupplementDocumentSlug(reference.documentSlug)
+      ? state.original ?? sheet.description
+      : itemDescriptionCs(reference.name ?? reference.slug, sheet.description, locale, reference.slug);
 
   return (
     <div className="space-y-4">
