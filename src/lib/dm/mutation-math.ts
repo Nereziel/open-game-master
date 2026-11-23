@@ -216,13 +216,20 @@ export function addRowMath<Row extends EquipmentRow>(equipment: Row[], row: Row)
 // Returns null when the item is absent. The row is the one the name picks
 // out (src/lib/srd/item-row.ts lineNamed): its own name, else its
 // srdNameWithBonus.
-export function removeItemMath<Row extends EquipmentRow>(equipment: Row[], name: string, qty: number) {
-  // A name-only DM action cannot identify which book a same-name row came
-  // from. Refuse instead of taking the first distinct catalog entry.
+export function removeItemMath<Row extends EquipmentRow>(
+  equipment: Row[], name: string, qty: number, reference?: StoredContentReference,
+) {
   const candidates = linesNamed(equipment, name);
-  if (candidates.length > 1 && candidates.some((candidate) =>
+  // An explicit catalog reference selects exactly one source, never a
+  // different book with the same English name.
+  const matching = reference
+    ? candidates.filter((item) => sameItemSource(item, { name, qty, contentRef: reference }))
+    : candidates;
+  if (reference && matching.length !== 1) return null;
+  // Legacy name-only DM calls cannot choose between different books.
+  if (!reference && candidates.length > 1 && candidates.some((candidate) =>
     !sameItemSource(candidate, candidates[0]))) return null;
-  const index = lineNamed(equipment, name);
+  const index = reference ? equipment.indexOf(matching[0]) : lineNamed(equipment, name);
   if (index < 0) {
     return null;
   }
