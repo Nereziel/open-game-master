@@ -63,7 +63,7 @@ export async function GET(
     return asEntry(entry);
   }
 
-  const entry = getEntryDetail(kind as Parameters<typeof getEntryDetail>[0], decoded);
+  const entry = getEntryDetail(kind as Parameters<typeof getEntryDetail>[0], decoded, requestedDocument ?? undefined);
   if (entry && !matchesRequestedCatalogDocument(entry, requestedDocument)) {
     // A legacy slug-only lookup may resolve a different book. Never return
     // that book when the picker explicitly selected another document.
