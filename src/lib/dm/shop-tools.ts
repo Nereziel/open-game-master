@@ -754,7 +754,17 @@ export function tradeCall(campaign: Campaign, args: ToolArgs): EngineCall {
   const sheet = typeof args.characterId === "string" ? resolveSheet(campaign, args.characterId) : null;
   // The sale-price quote must not inspect the first of two same-name items
   // from different books as though its magic properties were unambiguous.
-  const carried = sheet ? findCarriedItem(sheet.equipment, item) : null;
+  // A source-aware sale must evaluate the same item that the handler
+  // will remove, including its magic restrictions and price.
+  const parsedRef = sellSchema.shape.itemRef.safeParse(args.itemRef);
+  const exactRef = parsedRef.success && parsedRef.data
+    ? { ...parsedRef.data, contentType: "items" as const }
+    : undefined;
+  const carried = sheet
+    ? exactRef
+      ? removeItemMath(sheet.equipment, item, 1, exactRef)?.item ?? null
+      : findCarriedItem(sheet.equipment, item)
+    : null;
   const magic = carried ? magicValueOf(carried) : null;
   const buyers = here.filter((shop) => shop.buys && (!magic || (carried != null && soldToShops(carried))));
   const buyer = buyers.find((shop) => shelved(shop)) ?? buyers.find((shop) => shop.kind === "general") ?? buyers[0];
