@@ -31,6 +31,7 @@ describe("SRD 5.1 structured Czech/English audit (#107 phase 2)", () => {
     };
     expect(fullCzechRulesOnly(original, localized)).toContain("2k6");
     expect(diceSignatures(original.md)).toEqual(["2d6"]);
+    expect(diceSignatures("a d4 and one k4; plus 3d6")).toEqual(["1d4", "3d6"]);
     expect(diceSignatures(fullCzechRulesOnly(original, localized)!)).toEqual(["2d6"]);
     expect(auditSrdPhase2([original], [localized]).metadataIssues).toEqual([]);
     expect(auditSrdPhase2([original], [localized]).diceReview).toEqual([]);
