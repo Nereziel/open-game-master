@@ -18,9 +18,9 @@ import { textKey } from "@/lib/language/text-logic";
 type Worded = Pick<StoredRoll, "kind" | "detail" | "attacker">;
 
 // The shape of a translator, as the pure sentence builders take it.
-type T = ((key: string, vars?: Record<string, string | number>) => string) & { locale?: "en" | "fr" };
+type T = ((key: string, vars?: Record<string, string | number>) => string) & { locale?: "en" | "fr" | "cs" };
 
-function localizeRollWhat(what: string, locale: "en" | "fr"): string {
+function localizeRollWhat(what: string, locale: "en" | "fr" | "cs"): string {
   if (locale !== "fr" || !what) return what;
   const key = textKey(what);
   const w = contentName("weapons", key, "fr");
@@ -30,7 +30,7 @@ function localizeRollWhat(what: string, locale: "en" | "fr"): string {
   return what;
 }
 
-function localizeDetail(detail: string, locale: "en" | "fr"): string {
+function localizeDetail(detail: string, locale: "en" | "fr" | "cs"): string {
   if (locale !== "fr" || !detail) return detail;
   const vsAt = detail.indexOf(" vs ");
   if (vsAt > 0) {
