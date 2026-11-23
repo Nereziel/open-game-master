@@ -28,6 +28,12 @@ describe("SRD translated spell headers and mechanics (#107 phase 2)", () => {
       .toEqual(["castingTime", "range", "components", "duration"]);
   });
 
+  it("accepts equivalent duration one minute written out in English", () => {
+    const source = { ...english, md: english.md.replace("up to 1 minute", "up to one minute") };
+    const companion = { ...czech, md: czech.md.replace(english.md, source.md) };
+    expect(auditSrdSpellHeaders([source], [companion])).toEqual([]);
+  });
+
   it("provides a bounded human-review report over actual bundled SRD spells", () => {
     const findings = auditSrdSpellHeaders(rulebookPages("en"), rulebookPages("cs"));
     console.info("[SRD #107 spell header review]", JSON.stringify({
