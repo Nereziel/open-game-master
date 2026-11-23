@@ -55,6 +55,15 @@ proto splněná v rozsahu překladu identit, měřitelných pravidlových hodnot
 automatických regresí. Samotná přesnost významu všech vět se ověřuje
 odděleně redakční revizí v otevřené fázi 5.
 
+## Dodatečně ověřené akce nestvůr a sladění předmětů
+
+- `monster-action-audit.ts` porovnává mezi stejnými kanonickými ID všech 318 nestvůřích stránek **SO záchranných hodů (včetně „DC of 5“ a „SO úniku 17“), bonusy k zásahu a mezní hodnoty obnovení 5–6**. Rozdíly v slovosledu češtiny či dodatečná předložka „při“ nesmějí být chybou parseru. **0 odlišných hodnot** (CI [#45181954404](https://github.com/Nereziel/open-game-master/actions/runs/45181954404)).
+- `item-attunement-audit.ts` porovnává povinnost **sladění přímo v plném českém pravidlovém znění** všech 239 magických předmětů, nezávisle na již zkontrolovaném `page.meta`. **0 chybějících či přidaných požadavků** (stejné CI).
+- Regresní testy těchto dvou auditů mají **povinný nulový výsledek**: další změna SO, bonusu, obnovování nebo sladění způsobí neúspěšný test místo pouhého informačního výpisu.
+- Číselná statbloková kontrola a tabulky postupu povolání dále vyžadují shodu; půldračí šablona obsahuje samostatný příkladový statblok a `customizing-npcs` je naopak čistě prozaický popis bez statbloku. Ani jedno nesmí způsobit falešné zjištění.
+
+Tím je splněn **měřitelný mechanický rozsah fáze 2 issue #107**. Význam ostatních formulací, například přítomnost negací a pravidlových výjimek, zůstává výslovně v redakční kontrole fáze 5.
+
 ## Pravidlová kontrola a její omezení
 
 Hodnoty v českém překladu se **nedají bezpečně považovat za správné jen proto, že sedí ID, metadata a kostky**. Automatický parser nepostihne například negaci, změnu cíle, neexistující výjimku, prahy úspěchu, všechny přepočty stop/sáhů nebo délku popisu. Proto **obsahový redakční audit úplných odstavců není označený jako dokončený**.
