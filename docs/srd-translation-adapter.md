@@ -293,3 +293,20 @@ the ambiguous choice rather than silently removing the first row.
 Single-source removals and historical name-only inventory continue to
 work. A future structured DM tool may explicitly supply a source
 reference to choose among books; this change does not guess that choice.
+
+### Shared party stash provenance
+
+The shared party inventory previously dropped `contentRef` when loading
+its JSON state or stowing an item from an individual character. A book-
+scoped item could therefore silently become a name-only row, then later
+be merged with a different book's item when withdrawn.
+
+The party's `PartyItem` now keeps an optional validated `contentRef`.
+`normalizeParty` accepts only item-kind source references and leaves old
+records without references valid. `addPartyItem` stacks only identical
+references (or two legacy unreferenced entries); `removePartyItem`
+declines same-name selection across different sources. The
+`party_stash` tool passes references into and back out of the stash,
+and `grantItemMath` restores them to a hero's equipment without
+combining known-source and unverified items. A party round-trip
+regression suite covers persistence, ambiguous names, and legacy data.
