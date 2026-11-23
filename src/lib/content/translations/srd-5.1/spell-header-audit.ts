@@ -23,8 +23,15 @@ function readHeader(markdown: string, title: string): string {
     .exec(markdown)?.[1]?.trim() ?? "";
 }
 function firstNumber(text: string): number | null {
-  const m = /\d+/.exec(text);
-  return m ? Number(m[0]) : null;
+  const digit = /\d+/.exec(text);
+  if (digit) return Number(digit[0]);
+  const words: Readonly<Record<string, number>> = {
+    one: 1, two: 2, three: 3, four: 4, five: 5,
+    six: 6, seven: 7, eight: 8, nine: 9, ten: 10,
+    twenty: 20, thirty: 30, sixty: 60,
+  };
+  const word = /\b(one|two|three|four|five|six|seven|eight|nine|ten|twenty|thirty|sixty)\b/i.exec(text);
+  return word ? words[word[1].toLowerCase()] : null;
 }
 function feet(text: string, czech: boolean): number | null {
   const pattern = czech
