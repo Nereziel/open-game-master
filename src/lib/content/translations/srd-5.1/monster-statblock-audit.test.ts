@@ -33,6 +33,6 @@ describe("Czech SRD monster statblock mechanical fidelity (#107 phase 2)", () =>
         field,result.filter(item=>item.field===field).length,
       ])),sample:result.slice(0,35),
     }));
-    expect(result.every(item=>Boolean(item.id&&item.field))).toBe(true);
+    expect(result).toEqual([]);
   });
 });
