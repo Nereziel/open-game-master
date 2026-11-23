@@ -1,6 +1,6 @@
 import { describe, expect, it } from "vitest";
 import { supplementCzechRegistry } from "./index";
-import { matchesRequestedCatalogDocument, supplementCzechDisplay, supplementRulesForDisplay } from "./display";
+import { isSupplementDocumentSlug, matchesRequestedCatalogDocument, supplementCzechDisplay, supplementRulesForDisplay } from "./display";
 import type { SupplementCatalogRow } from "./build-pack";
 
 const row = (documentSlug: string, kind: SupplementCatalogRow["kind"], slug: string, name: string): SupplementCatalogRow => ({
@@ -72,6 +72,16 @@ describe("source-scoped Czech catalog display (#107 phase 4)", () => {
     expect(matchesRequestedCatalogDocument({ source: "homebrew", documentSlug: "toh" }, "toh")).toBe(false);
     expect(matchesRequestedCatalogDocument(undefined, "toh")).toBe(false);
     expect(matchesRequestedCatalogDocument(source[0], null)).toBe(true);
+  });
+
+  it("does not redirect SRD or bundled item descriptions into supplement fallback", () => {
+    expect(isSupplementDocumentSlug("wotc-srd")).toBe(false);
+    expect(isSupplementDocumentSlug("odm-expanded")).toBe(false);
+    expect(isSupplementDocumentSlug(undefined)).toBe(false);
+    expect(isSupplementDocumentSlug("toh")).toBe(true);
+    expect(isSupplementDocumentSlug("deepm")).toBe(true);
+    expect(isSupplementDocumentSlug("dmag")).toBe(true);
+    expect(isSupplementDocumentSlug("vom")).toBe(true);
   });
 
   it("preserves English fallback if a catalog row is genuinely untranslated", () => {
