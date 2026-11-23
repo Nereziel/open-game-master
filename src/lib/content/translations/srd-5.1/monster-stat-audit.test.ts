@@ -36,5 +36,6 @@ describe("SRD monster stat-block source audit (#107)", () => {
       ), examples: issues.slice(0, 30),
     }));
     expect(issues.every(issue => Boolean(issue.id))).toBe(true);
+    expect(issues, "SRD 5.1 monster numeric stat fields must agree").toEqual([]);
   });
 });
