@@ -56,6 +56,13 @@ export function auditMonsterStats(
       issues.push({ id: page.id, field: "missingHeader", original: "monster", localized: "missing full Czech text" });
       continue;
     }
+    // "Customizing NPCs" is classified as a monster-section page in the
+    // imported SRD, but is prose guidance without a creature stat block.
+    // Treat other similarly structured pages the same way, based strictly
+    // on their English fields rather than a brittle hard-coded ID list.
+    const hasOriginalStats = FIELDS.some(([, englishLabels]) => statLine(page.md, englishLabels) !== null)
+      || abilities(page.md) !== null;
+    if (!hasOriginalStats) continue;
     for (const [field, englishLabels, czechLabels] of FIELDS) {
       const en = statLine(page.md, englishLabels);
       const cs = statLine(czech, czechLabels);
