@@ -40,15 +40,16 @@ describe("source-scoped Czech catalog display (#107 phase 4)", () => {
     expect(supplementRulesForDisplay(localized ?? undefined, english, "en")).toBe(english);
   });
 
-  it("offers full Czech rules only in a requested detail, not a compact list", () => {
+  it("keeps unaudited full-rule drafts out of both lists and details", () => {
     const entry = source[1];
     const list = supplementCzechDisplay(registry, "spells", entry);
     const detail = supplementCzechDisplay(registry, "spells", entry, true);
     expect(list?.name).toBe("Silové kopí");
-    expect(list?.hasFullRules).toBe(true);
+    expect(list?.hasFullRules).toBe(false);
     expect(list?.fullRules).toBeUndefined();
-    expect(detail?.fullRules).toContain("5k6");
-    expect(supplementRulesForDisplay(detail ?? undefined, "English rules", "cs")).toBe(detail?.fullRules);
+    expect(detail?.fullRules).toBeUndefined();
+    expect(detail?.summary).toBeTruthy();
+    expect(supplementRulesForDisplay(detail ?? undefined, "English rules", "cs")).toContain("English rules");
   });
 
   it("isolates source, slug, homebrew, and unknown content types", () => {
@@ -61,9 +62,9 @@ describe("source-scoped Czech catalog display (#107 phase 4)", () => {
 
   it("uses the corresponding book for feats, weapons and Deep Magic spells", () => {
     expect(supplementCzechDisplay(registry, "items", source[2])?.name).toBe("Sekerokopí");
-    expect(supplementCzechDisplay(registry, "feats", source[3], true)?.fullRules).toContain("Moudrost");
+    expect(supplementCzechDisplay(registry, "feats", source[3], true)?.fullRules).toBeUndefined();
     expect(supplementCzechDisplay(registry, "spells", source[4])?.name).toBe("Odpudivý přízrak");
-    expect(supplementCzechDisplay(registry, "items", source[5], true)?.fullRules).toContain("3 náboje");
+    expect(supplementCzechDisplay(registry, "items", source[5], true)?.fullRules).toBeUndefined();
   });
 
   it("refuses a same-slug entry from another source document", () => {
