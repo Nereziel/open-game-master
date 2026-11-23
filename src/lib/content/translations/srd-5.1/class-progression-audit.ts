@@ -42,11 +42,14 @@ export function auditSrdClassProgressions(
     const czech=byId.get(source.id);
     const full=czech&&fullCzechRulesOnly(source,czech);
     const englishRows=progressionRows(source.md),czechRows=full?progressionRows(full):[];
-    if(englishRows.length!==20||czechRows.length!==20){
+    // Some classes contain extra numeric advancement tables (e.g. druid).
+    // Require at least twenty rows and compare *all* mirrored rows rather
+    // than assuming each source document has exactly one level table.
+    if(englishRows.length<20||czechRows.length!==englishRows.length){
       findings.push({id:source.id,level:0,column:-1,english:String(englishRows.length),czech:String(czechRows.length)});
       continue;
     }
-    for(let i=0;i<20;i++){
+    for(let i=0;i<englishRows.length;i++){
       const english=englishRows[i],translated=czechRows[i];
       if(english.length!==translated.length){
         findings.push({id:source.id,level:i+1,column:-1,english:String(english.length),czech:String(translated.length)});
