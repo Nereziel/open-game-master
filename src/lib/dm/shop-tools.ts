@@ -13,6 +13,8 @@ import { insertSheetAudit } from "@/lib/db/sheet-audit";
 import { getSheetById, listSheets, patchSheet } from "@/lib/db/sheets";
 import { findShopNear, getShop, insertShop, listShops, listShopsAt, shopStandsAt, updateShop } from "@/lib/db/shops";
 import { searchItems } from "@/lib/content";
+import { getContentDb } from "@/lib/content/db";
+import { PLAYED_DOCUMENTS_SQL } from "@/lib/content/edition";
 import { SRD_GEAR, SRD_GOODS } from "@/lib/srd/adventuring-gear";
 import { SRD_ARMOR } from "@/lib/srd/armor";
 import { bundledPriceCopper } from "@/lib/srd/starting-wealth";
@@ -50,6 +52,7 @@ import {
   SIZE_MARKUP,
   stepMoves,
   stockFromPool,
+  stockReferenceMatchesCatalog,
   takeStock,
   type Shop,
 } from "@/lib/dm/shop-logic";
@@ -435,12 +438,6 @@ export function handleBuyItem(campaign: Campaign, rawArguments: string, at: Trad
   if (!args) {
     return argumentsRefusal("Invalid arguments: a purchase at a shop needs characterId, shop and item.", buySchema, rawArguments);
   }
-  if (args.itemRef) {
-    return {
-      error: `Cannot verify itemRef for a shop purchase of "${args.item}": this shop stock has no catalog provenance. Retry without itemRef; nothing was bought.`,
-      retry: true,
-    };
-  }
   const sheet = resolveSheet(campaign, args.characterId);
   if (!sheet) {
     return unknownSheetRef("characterId", args.characterId, listSheets(campaign.id));
@@ -454,9 +451,35 @@ export function handleBuyItem(campaign: Campaign, rawArguments: string, at: Trad
   if (refused) {
     return refused;
   }
-  const line = findStockLine(shop.stock, args.item);
+  const requestedRef = args.itemRef
+    ? { ...args.itemRef, contentType: "items" as const }
+    : undefined;
+  const line = findStockLine(shop.stock, args.item, requestedRef);
   if (!line) {
-    return { error: `${shop.name} does not stock "${args.item}". On the shelf: ${shop.stock.map((entry) => entry.itemName).join(", ") || "nothing"}.`, refused: "rules" };
+    if (requestedRef) return {
+      error: `No unique shop stock item "${args.item}" matches itemRef; nothing was bought.`,
+      retry: true,
+    };
+    return { error: `${shop.name} does not stock a unique "${args.item}". On the shelf: ${shop.stock.map((entry) => entry.itemName).join(", ") || "nothing"}. Use itemRef to select a book if sources collide.`, retry: true };
+  }
+  // Validate the shelf's source against the actual read-only Open5e pack,
+  // not merely against an ID provided by the DM or a saved stock JSON.
+  // Without the source pack, a sourced purchase fails closed.
+  const savedRef = line.contentRef;
+  if (savedRef) {
+    const db = getContentDb();
+    const record = savedRef.documentSlug && db
+      ? db.prepare(`SELECT slug, name, document_slug AS documentSlug FROM items WHERE slug = ? AND document_slug = ? AND ${PLAYED_DOCUMENTS_SQL} LIMIT 1`)
+        .get(savedRef.contentId, savedRef.documentSlug) as { slug: string; name: string; documentSlug: string } | undefined
+      : undefined;
+    if (!record || !stockReferenceMatchesCatalog(line, { ...record, source: "open5e" })) {
+      return {
+        error: `Shop stock "${line.itemName}" has an unverified catalog reference; repair the shelf or catalog before buying. Nothing was bought.`,
+        retry: true,
+      };
+    }
+  } else if (requestedRef) {
+    return { error: `Shop stock "${line.itemName}" has no catalog reference; nothing was bought.`, retry: true };
   }
   if (line.qty < args.qty) {
     return { error: `${shop.name} has only ${line.qty} of ${line.itemName}.`, retry: true };
@@ -470,7 +493,10 @@ export function handleBuyItem(campaign: Campaign, rawArguments: string, at: Trad
     return { error: `${line.itemName} x${args.qty} costs ${formatPrice(total)}; ${sheet.name} carries ${formatCopper(purse.gold * 100 + purse.copper)}. They cannot afford it.`, refused: "rules" };
   }
   const paid = addCopper(purse, -total);
-  const items = grantItemMath(sheet.equipment, line.itemName, args.qty, line.srdName ? { srdName: line.srdName } : {});
+  const items = grantItemMath(sheet.equipment, line.itemName, args.qty, {
+    ...(line.srdName ? { srdName: line.srdName } : {}),
+    ...(savedRef ? { contentRef: savedRef } : {}),
+  });
   // Strength x 15 pounds is all a character can carry (src/lib/dm/load-rules.ts).
   const tooHeavy = capacityProblem(sheet, items.equipment, line.itemName, paid.purse);
   if (tooHeavy) {
@@ -478,7 +504,7 @@ export function handleBuyItem(campaign: Campaign, rawArguments: string, at: Trad
   }
   const patch = { gold: paid.purse.gold, copper: paid.purse.copper, equipment: items.equipment };
   patchSheet(sheet.id, patch);
-  updateShop(shop.id, { stock: takeStock(shop.stock, line.itemName, args.qty) ?? shop.stock });
+  updateShop(shop.id, { stock: takeStock(shop.stock, line.itemName, args.qty, savedRef) ?? shop.stock });
   ledger(campaign, sheet, "purchase", { item: line.itemName, qty: args.qty, action: "buy", priceCp: each, shop: shop.name }, `Bought at ${shop.name}`, patch, `Bought ${line.itemName}${args.qty > 1 ? ` x${args.qty}` : ""} for ${formatPrice(total)} at ${shop.name}.`);
   publishSheet(campaign, sheet.id);
   publishShops(campaign.id);
@@ -742,7 +768,12 @@ export function tradeCall(campaign: Campaign, args: ToolArgs): EngineCall {
     return { name: "sell_item", args: { ...common, ...selectedRef, ...(priceCp !== undefined ? { priceCp } : {}) } };
   };
   const srdName = typeof args.srdName === "string" ? args.srdName.trim() : "";
-  const shelved = (shop: Shop) => findStockLine(shop.stock, item) ?? (srdName ? findStockLine(shop.stock, srdName) : null);
+  const requested = action === "buy" ? buySchema.shape.itemRef.safeParse(args.itemRef) : null;
+  const bookRef = requested?.success && requested.data
+    ? { ...requested.data, contentType: "items" as const }
+    : undefined;
+  const shelved = (shop: Shop) => findStockLine(shop.stock, item, bookRef)
+    ?? (srdName ? findStockLine(shop.stock, srdName, bookRef) : null);
   if (named) {
     // The shelf's own name, by the item or its English name, as below: an
     // item in the table's language was refused at a shop the call named.
