@@ -53,6 +53,7 @@ import {
   SIZE_MARKUP,
   stepMoves,
   stockFromPool,
+  stockItemPromptName,
   stockReferenceMatchesCatalog,
   takeStock,
   type Shop,
@@ -343,7 +344,7 @@ export function handleOpenShop(campaign: Campaign, rawArguments: string, random:
 }
 
 function shelfLines(shop: Shop): string[] {
-  return shop.stock.slice(0, 12).map((line) => `${line.itemName} x${line.qty} at ${formatPrice(askingPriceCp(line.priceCp, shop.markup))}`);
+  return shop.stock.slice(0, 12).map((line) => `${stockItemPromptName(shop.stock, line)} x${line.qty} at ${formatPrice(askingPriceCp(line.priceCp, shop.markup))}`);
 }
 
 const buySchema = z.object({
