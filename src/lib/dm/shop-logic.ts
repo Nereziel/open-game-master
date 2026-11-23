@@ -2,6 +2,7 @@ import { COPPER_PER_GOLD, formatPrice, packCostCopper } from "@/lib/srd/currency
 import { compareNames, textKey } from "@/lib/language/text-logic";
 import { lineNamed, linesNamed } from "@/lib/srd/item-row";
 import { sameStoredContentReference, type StoredContentReference } from "@/lib/content/translations/stored-reference";
+import { translationSourceId } from "@/lib/content/translations/registry";
 
 // Shops (docs/vtt-parity-implementation-plan.md 11.1): pure pricing and
 // stocking. Prices come from the content pack's cost strings, marked up by
@@ -232,6 +233,22 @@ export function findStockLine(
       : !first && !entry.contentRef))) return null;
   }
   return stock[lineNamed(rows, name)] ?? null;
+}
+
+// An ID copied onto a shelf is not a certificate of provenance. Only an
+// actual catalog row with the same canonical slug, document and English name
+// can attest the item. Hand-authored/legacy shelves retain name-only trading.
+export function stockReferenceMatchesCatalog(
+  line: StockLine,
+  catalog: { source: "open5e"; slug: string; name: string; documentSlug: string },
+): boolean {
+  const ref = line.contentRef;
+  if (!ref || ref.contentType !== "items" || !ref.documentSlug) return false;
+  return ref.documentSlug === catalog.documentSlug
+    && ref.contentId === catalog.slug
+    && ref.sourceId === translationSourceId(catalog)
+    && (textKey(line.itemName) === textKey(catalog.name)
+      || Boolean(line.srdName && textKey(line.srdName) === textKey(catalog.name)));
 }
 
 // Take qty of a line out of the stock, dropping it at zero; null when the
