@@ -58,7 +58,20 @@ describe("SRD 5.1 structured Czech/English audit (#107 phase 2)", () => {
   });
 
   it("reports possible dice discrepancies for editorial review without claiming automatic proof of prose correctness", () => {
-    const review = auditSrdPhase2(rulebookPages("en"), rulebookPages("cs")).diceReview;
+    const audit = auditSrdPhase2(rulebookPages("en"), rulebookPages("cs"));
+    const review = audit.diceReview;
+    const byKind = Object.fromEntries([...new Set(review.map((item) => item.kind))]
+      .map((kind) => [kind, review.filter((item) => item.kind === kind).length]));
+    // CI retains a bounded review queue with stable page IDs; a dice-regex
+    // finding is NOT an assertion of an incorrect translation.
+    console.info("[SRD #107 phase2 review]", JSON.stringify({
+      checked: audit.checkedPages,
+      fullTextPages: audit.fullTextPages,
+      metadataMismatches: audit.metadataIssues.length,
+      possibleDiceMismatches: review.length,
+      byKind,
+      firstIds: review.slice(0, 40).map((item) => item.id),
+    }));
     expect(Array.isArray(review)).toBe(true);
     expect(review.every((entry) => entry.missingFromCzech.length > 0 || entry.unexpectedInCzech.length > 0)).toBe(true);
     // These are review findings, not hard failures: unit conversions and
