@@ -34,6 +34,20 @@ export function consumableEffect(item: TaggedItem): ConsumableEffect {
 // lineNamed): "Potion of Healing" finds the "Pozione di guarigione" the DM
 // named by it, and "healing potion" finds neither.
 export function findCarriedItem(equipment: EquipmentItem[], term: string): EquipmentItem | null {
+  const candidates = linesNamed(equipment, term);
+  // The model names an item, not its canonical book ID. If that name
+  // identifies distinct catalog sources, picking the first row is unsafe.
+  if (candidates.length > 1) {
+    const first = candidates[0].contentRef;
+    if (candidates.some((candidate) => {
+      const ref = candidate.contentRef;
+      if (!first || !ref) return first !== ref;
+      return first.sourceId !== ref.sourceId
+        || first.contentType !== ref.contentType
+        || first.contentId !== ref.contentId
+        || (first.documentSlug ?? "") !== (ref.documentSlug ?? "");
+    })) return null;
+  }
   return equipment[lineNamed(equipment, term)] ?? null;
 }
 
