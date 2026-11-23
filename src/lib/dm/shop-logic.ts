@@ -1,6 +1,7 @@
 import { COPPER_PER_GOLD, formatPrice, packCostCopper } from "@/lib/srd/currency";
 import { compareNames, textKey } from "@/lib/language/text-logic";
 import { lineNamed } from "@/lib/srd/item-row";
+import type { StoredContentReference } from "@/lib/content/translations/stored-reference";
 
 // Shops (docs/vtt-parity-implementation-plan.md 11.1): pure pricing and
 // stocking. Prices come from the content pack's cost strings, marked up by
@@ -20,7 +21,7 @@ export type ShopKind = (typeof SHOP_KINDS)[number];
 
 // srdName: the SRD or pack row a line named in the table's language is,
 // picked from the catalog, so what is bought is that row.
-export type StockLine = { itemName: string; qty: number; priceCp: number; note: string; srdName?: string };
+export type StockLine = { itemName: string; qty: number; priceCp: number; note: string; srdName?: string; contentRef?: StoredContentReference };
 
 // The dearest a shelf line may be priced, in copper (a million gold): high
 // enough for any legendary item, low enough that a typed slip cannot put a
