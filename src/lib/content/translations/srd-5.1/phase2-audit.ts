@@ -50,8 +50,9 @@ export function fullCzechRulesOnly(source: RulebookPage, localized: RulebookPage
 // versus 9 metres or number words as discrepancies: those are conversions.
 export function diceSignatures(text: string): readonly string[] {
   const found = new Set<string>();
-  for (const match of text.matchAll(/\b(\d+)\s*[dk]\s*(4|6|8|10|12|20|100)\b/gi)) {
-    found.add(`${Number(match[1])}d${Number(match[2])}`);
+  // "d4" / "k4" is an implicit 1d4, common in SRD bonuses.
+  for (const match of text.matchAll(/\b(?:(\d+)\s*)?[dk]\s*(4|6|8|10|12|20|100)\b/gi)) {
+    found.add(`${Number(match[1] ?? "1")}d${Number(match[2])}`);
   }
   return [...found].sort();
 }
