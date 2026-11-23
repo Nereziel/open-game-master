@@ -28,6 +28,6 @@ describe("SRD magic-item attunement requirements (#107 phase 2)",()=>{
     const review=auditSrdItemAttunement(pages,rulebookPages("cs"));
     expect(pages.filter(p=>p.kind==="item")).toHaveLength(239);
     console.info("[SRD #107 item attunement audit]",JSON.stringify({count:review.length,findings:review.slice(0,35)}));
-    expect(review.every(item=>Boolean(item.id))).toBe(true);
+    expect(review).toEqual([]);
   });
 });
