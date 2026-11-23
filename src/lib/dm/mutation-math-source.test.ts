@@ -4,7 +4,7 @@ import { addRowMath, grantItemMath, handedOverRow, removeItemMath, sameItemRow }
 describe("DM inventory source identity (#107)", () => {
   const srd = {
     name: "Shield", qty: 1, slug: "shield",
-    contentRef: { sourceId: "srd-5.1", contentType: "items", contentId: "shield", documentSlug: "wotc-srd" },
+    contentRef: { sourceId: "srd-5.1", contentType: "items" as const, contentId: "shield", documentSlug: "wotc-srd" },
   };
   const tome = {
     ...srd,
