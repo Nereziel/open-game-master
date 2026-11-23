@@ -72,6 +72,18 @@ describe("source-scoped selling outside shops (#107)", () => {
     expect(legacySheet.equipment).toHaveLength(2);
   });
 
+  it("refuses unverifiable book references on name-only purchases without changing coin", () => {
+    const buyer = { ...sheet, equipment: [], gold: 50 } as unknown as CharacterSheet;
+    const result = computePurchase(buyer, {
+      item: "Shield", qty: 1, action: "buy", price: 10,
+      itemRef: other.contentRef,
+    });
+    expect("error" in result).toBe(true);
+    if ("error" in result) expect(result.error).toContain("itemRef");
+    expect(buyer.equipment).toEqual([]);
+    expect(buyer.gold).toBe(50);
+  });
+
   it("does not invent a source reference for a name-only purchase", () => {
     const buyer = { ...sheet, equipment: [], gold: 50 } as unknown as CharacterSheet;
     const result = computePurchase(buyer, {
