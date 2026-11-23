@@ -28,7 +28,14 @@ import { supplementRulesForDisplay, type SupplementCzechDisplay } from "@/lib/co
 // `name` lets the lookup recover when a row's slug is not the plain
 // slugified name (third-party documents pick their own), by falling back to
 // a search.
-export type ContentRef = { kind: string; slug: string; name?: string };
+export type ContentRef = { kind: string; slug: string; name?: string; documentSlug?: string };
+
+// Preserve a selected catalog book all the way from a picker to its detail.
+// Existing slug-only links remain compatible.
+function scopedDetailQuery(campaignId: string | null | undefined, documentSlug?: string): string {
+  const scope = scopeQuery(campaignId);
+  return documentSlug ? `${scope}${scope ? "&" : "?"}documentSlug=${encodeURIComponent(documentSlug)}` : scope;
+}
 
 // Content-pack descriptions are markdown-ish: headings, bold, italics, tables.
 // The block structure comes from src/lib/help/rules-text.ts, which knows the
@@ -166,7 +173,7 @@ function ContentBody({ reference }: { reference: ContentRef }) {
           return text && notes.length ? `${notes.join("\n\n")}\n\n${text}` : text;
         };
         const response = await fetch(
-          `/api/content/${reference.kind}/${encodeURIComponent(reference.slug)}${scopeQuery(campaignId)}`,
+          `/api/content/${reference.kind}/${encodeURIComponent(reference.slug)}${scopedDetailQuery(campaignId, reference.documentSlug)}`,
         );
         if (response.ok) {
           const data = await response.json();
@@ -188,7 +195,9 @@ function ContentBody({ reference }: { reference: ContentRef }) {
         );
         const results = search.ok ? ((await search.json()).results ?? []) : [];
         const hit = results.find(
-          (entry: { name: string }) => textKey(entry.name) === wanted,
+          (entry: { name: string; documentSlug?: string; source?: string }) =>
+            textKey(entry.name) === wanted
+            && (!reference.documentSlug || (entry.source === "open5e" && entry.documentSlug === reference.documentSlug)),
         );
         if (!cancelled) {
           setState({ text: withNote(hit, supplementRulesForDisplay(hit?.localizedCs, describeContentEntry(hit?.data), locale)), loading: false });
@@ -203,7 +212,7 @@ function ContentBody({ reference }: { reference: ContentRef }) {
     return () => {
       cancelled = true;
     };
-  }, [reference.kind, reference.slug, reference.name, campaignId, locale, t]);
+  }, [reference.kind, reference.slug, reference.name, reference.documentSlug, campaignId, locale, t]);
 
   if (state.loading) {
     return (
@@ -284,12 +293,13 @@ function ItemBody({ reference }: { reference: ContentRef }) {
         const [{ buildItemSheet }, { describeContentEntry }, direct, search] = await Promise.all([
           import("@/lib/help/item-sheet"),
           import("@/lib/help"),
-          fetch(`/api/content/items/${encodeURIComponent(reference.slug)}${scopeQuery(campaignId)}`).then(readJson).catch(() => null),
+          fetch(`/api/content/items/${encodeURIComponent(reference.slug)}${scopedDetailQuery(campaignId, reference.documentSlug)}`).then(readJson).catch(() => null),
           fetch(`/api/content/items?q=${encodeURIComponent(wanted)}&limit=20${scopeQuery(campaignId, "&")}`).then(readJson).catch(() => null),
         ]);
         const selected = direct?.entry;
         const hits = ((search?.results ?? []) as Array<{ name: string; source?: string; documentSlug?: string; data?: Record<string, unknown> }>)
           .filter((entry) => textKey(entry.name) === wanted
+            && (!reference.documentSlug || (entry.source === "open5e" && entry.documentSlug === reference.documentSlug))
             && (!selected?.localizedCs || (entry.source === selected.source && entry.documentSlug === selected.documentSlug)))
           .map((entry) => entry.data);
         const sheet = buildItemSheet(name, [selected?.data, ...hits]);
@@ -311,7 +321,7 @@ function ItemBody({ reference }: { reference: ContentRef }) {
     return () => {
       cancelled = true;
     };
-  }, [reference.slug, reference.name, campaignId]);
+  }, [reference.slug, reference.name, reference.documentSlug, campaignId]);
 
   if (state.loading) {
     return (
