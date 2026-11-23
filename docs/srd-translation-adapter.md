@@ -369,3 +369,14 @@ The visible `purchase` tool's per-item schema exposes optional
 All older name-only calls remain accepted and refuse conflicting
 book identities without making changes. `purchase-source.test.ts`
 exercises a source-specific sale and rejection of an invalid ref.
+
+### Unverified references on name-only purchases
+
+The ordinary `purchase action=buy` path outside a catalog shop has no
+trusted selected catalog row against which to validate a supplied `itemRef`.
+It now **rejects** such a purchase with a retry error before changing coin or
+equipment, instead of silently discarding the submitted reference. Purchases
+without `itemRef` keep their legacy behavior and do not manufacture one.
+Book-specific acquisitions need a separate trusted catalog lookup before
+persisting provenance; accepting model-supplied IDs alone would be unsafe.
+`purchase-source.test.ts` covers this contract.
