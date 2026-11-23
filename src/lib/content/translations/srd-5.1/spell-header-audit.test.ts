@@ -41,5 +41,6 @@ describe("SRD translated spell headers and mechanics (#107 phase 2)", () => {
       samples: findings.slice(0, 25),
     }));
     expect(findings.every(f => Boolean(f.id && f.reason))).toBe(true);
+    expect(findings, "Spell rule headers must match the canonical SRD").toEqual([]);
   });
 });
