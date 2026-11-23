@@ -44,7 +44,7 @@ describe("source-scoped Czech catalog display (#107 phase 4)", () => {
     const entry = source[1];
     const list = supplementCzechDisplay(registry, "spells", entry);
     const detail = supplementCzechDisplay(registry, "spells", entry, true);
-    expect(list?.name).toBe("Kopí");
+    expect(list?.name).toBe("Silové kopí");
     expect(list?.hasFullRules).toBe(true);
     expect(list?.fullRules).toBeUndefined();
     expect(detail?.fullRules).toContain("5k6");
