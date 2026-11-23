@@ -35,6 +35,18 @@ describe("party stash provenance round-trip (#107)", () => {
     expect("item" in exact && exact.item.contentRef).toEqual(srd.contentRef);
   });
 
+  it("takes exactly the requested book when provided an explicit itemRef", () => {
+    const selected = removePartyItem([srd, other], "Shield", true, 1, srd.contentRef);
+    expect("item" in selected).toBe(true);
+    if (!("item" in selected)) return;
+    expect(selected.item.contentRef).toEqual(srd.contentRef);
+    expect(selected.inventory).toEqual([{ ...srd, qty: 1 }, other]);
+    const unknown = removePartyItem([srd, other], "Shield", true, 1, {
+      ...srd.contentRef, contentId: "not-this-shield",
+    });
+    expect("error" in unknown).toBe(true);
+  });
+
   it("preserves source identity when an item leaves the shared pack", () => {
     const taken = removePartyItem([srd], "Shield", true, 1);
     expect("item" in taken).toBe(true);
