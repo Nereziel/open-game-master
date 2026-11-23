@@ -154,7 +154,7 @@ export default function ContentPicker({
                 meta={kind === "spells" ? spellSummary(entry.data) : undefined}
                 text={locale === "cs" && entry.localizedCs ? undefined : describeContentEntry(entry.data)}
                 reference={
-                  entry.source === "homebrew" ? undefined : { kind, slug: entry.slug }
+                  entry.source === "homebrew" ? undefined : { kind, slug: entry.slug, name: entry.name, documentSlug: entry.documentSlug }
                 }
               />
             </li>
