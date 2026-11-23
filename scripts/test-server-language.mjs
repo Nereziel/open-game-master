@@ -49,6 +49,7 @@ test("every table language has a flag", () => {
 });
 
 test("a browser language becomes the wizard's first guess, or nothing", () => {
+  assert.equal(languageFromLocale("cs-CZ"), "czech");
   assert.equal(languageFromLocale("fr-FR"), "french");
   assert.equal(languageFromLocale("nb"), "norwegian");
   assert.equal(languageFromLocale("pt_BR"), "portuguese");
