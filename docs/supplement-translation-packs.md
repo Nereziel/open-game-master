@@ -74,3 +74,29 @@ zabudované SRD ani anglický záznam jiného dokumentu.
 Staré odkazy bez `documentSlug` a záložní SRD řádky nadále
 používají původní chování. Totéž platí pro existující české
 popisy SRD vybavení: speciální fallback rozšíření je nemění.
+
+### Hledání podle českého názvu (PR #111)
+
+Builder posílá do katalogového API `locale=cs` podle aktuálního
+rozhraní. Pouze při českém dotazu pro `items`, `spells` a `feats`
+vybere `supplementCzechSearchCandidates` nejvýše 12 odpovídajících
+českých názvů z úplného katalogu Open5e. `searchKey` dovoluje
+psaní bez diakritiky. Kandidát vždy obsahuje **původní anglický
+název, typ, `documentSlug` a kanonický `slug`**. Následný
+anglický dotaz prochází standardními filtrovacími cestami:
+omezením povolání, úrovně, školy a druhu předmětu, dostupností
+pravidel pro danou hru a scope kampaně. Výsledek se připojí
+jen při přesné shodě původu i ID. Homebrew a SRD záznamy
+nezdědí překlad rozšíření.
+
+Další větev katalogových požadavků a stránkování zůstává beze
+změny; české aliasy se přidávají pouze při prvním offsetu
+(`offset=0`) a pouze v nainstalovaném katalogu, s omezením
+počtu kandidátů a výsledků. Pro více kandidátů používá UI
+stále stejné anglické uložené názvy a ID, české jsou jen
+zobrazovací.
+
+Omezení: není dosud sjednoceno stránkování kombinovaných
+českých/anglických výsledků v pokročilých velkých katalozích.
+Zbývá také integrovat lokalizaci do dalšího workshopu,
+reference/čtečky a exportu do PDF.
