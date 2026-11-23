@@ -39,7 +39,9 @@ export default function MultiContentPicker({
   const t = useT();
   const tp = useTp();
   const locale = useLocale();
-  const displayName = (name: string, source?: string) => source === "homebrew" ? name : contentName(kind, name, locale);
+  const displayName = (name: string, source?: string, row?: PickerEntry) =>
+    locale === "cs" && row?.localizedCs?.name ? row.localizedCs.name
+    : source === "homebrew" ? name : contentName(kind, name, locale);
   const { query, setQuery, results, setResults, open, setOpen, loading, unavailable, failed, unadmitted } =
     useContentSearch(kind, extraParams);
   const [pending, setPending] = useState<MultiPick[]>([]);
@@ -133,7 +135,7 @@ export default function MultiContentPicker({
                       <Plus className="size-3.5 shrink-0 text-stone-600" />
                     )}
                     <span className={cn(entry.source === "homebrew" && "text-amber-300")}>
-                      {displayName(entry.name, entry.source)}
+                      {displayName(entry.name, entry.source, entry)}
                     </span>
                   </span>
                   <span className="shrink-0 text-xs text-stone-500">
@@ -145,9 +147,9 @@ export default function MultiContentPicker({
                   </span>
                 </button>
                 <InfoButton
-                  label={displayName(entry.name, entry.source)}
+                  label={displayName(entry.name, entry.source, entry)}
                   meta={kind === "spells" ? spellSummary(entry.data) : undefined}
-                  text={describeContentEntry(entry.data)}
+                  text={locale === "cs" && entry.localizedCs ? undefined : describeContentEntry(entry.data)}
                   reference={entry.source === "homebrew" ? undefined : { kind, slug: entry.slug }}
                 />
               </li>
