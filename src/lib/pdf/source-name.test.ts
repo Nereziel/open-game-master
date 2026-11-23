@@ -1,7 +1,11 @@
 import { describe, expect, it } from "vitest";
 import { pdfReferencedName } from "./source-name";
+import { installCsTables } from "@/lib/i18n/cs-tables";
+import { CS_NAMES_BY_TABLE } from "@/lib/content/names-cs";
 
 describe("PDF source-scoped Czech labels (#107)", () => {
+  // The game installs these tables at startup; isolated Vitest must do so too.
+  installCsTables({ names: CS_NAMES_BY_TABLE });
   it("uses the verified SRD term when provenance explicitly matches", () => {
     expect(pdfReferencedName("spells", "Light", "cs", {
       sourceId: "srd-5.1", contentType: "spells", contentId: "light", documentSlug: "wotc-srd",
