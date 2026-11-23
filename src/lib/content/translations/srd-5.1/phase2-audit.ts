@@ -69,7 +69,8 @@ function expectedMetadata(source: RulebookPage): string | undefined {
 
 function numericSpellLevel(meta: string): number | null {
   const english = /\b(\d+)(?:st|nd|rd|th)-level\b/i.exec(meta);
-  const czech = /\b(\d+)\.\s*úrovně\b/i.exec(meta);
+  // JavaScript word boundaries are ASCII-based; the final Czech "ě" is not a word character.
+  const czech = /\b(\d+)\.\s*úrovně(?=\s|$|[.,;)])/i.exec(meta);
   if (english || czech) return Number((english ?? czech)![1]);
   return /\b(?:cantrip|trik)\b/i.test(meta) ? 0 : null;
 }
