@@ -27,6 +27,11 @@ describe("SRD Czech monster action values (#107 phase 2)",()=>{
     expect(auditSrdMonsterActions([english],[modified]).map(x=>x.field))
       .toEqual(["saveDC","attackBonus","recharge"]);
   });
+  it("recognizes the English zombie's 'DC of 5' saving throw",()=>{
+    const en={...english,md:english.md.replace("DC 14","DC of 14")};
+    const cs={...czech,md:czech.md.replace(english.md,en.md)};
+    expect(auditSrdMonsterActions([en],[cs])).toEqual([]);
+  });
   it("checks all bundled monsters with their full Czech rules",()=>{
     const findings=auditSrdMonsterActions(rulebookPages("en"),rulebookPages("cs"));
     console.info("[SRD #107 monster action audit]",JSON.stringify({
