@@ -24,8 +24,9 @@ function hitDice(text: string): string {
   return match ? [match[1], match[2], match[3] ?? "", match[4] ?? ""].join(":") : "";
 }
 function scores(text: string): string {
-  const before = text.split(/\*\*(?:Challenge|Nebezpečnost)\*\*/)[0];
-  for (const line of before.split("\n")) {
+  // Templates may describe "Challenge" before the actual example statblock.
+  // Scan the entire canonical page and select the first six ability cells.
+  for (const line of text.split("\n")) {
     if (!line.startsWith("|")) continue;
     const cells = line.split("|").slice(1, -1).map(cell => cell.trim());
     if (cells.length !== 6) continue;
@@ -55,6 +56,9 @@ export function auditSrdMonsterStats(
   const findings: SrdMonsterStatFinding[] = [];
   for (const source of englishPages) {
     if (source.kind !== "monster") continue;
+    // The SRD catalog also tags prose guidance (e.g. Customizing NPCs)
+    // as monster pages. Guidance has no numerical statblock to compare.
+    if (!statLine(source.md, "Armor Class") && !statLine(source.md, "Hit Points")) continue;
     const page = localized.get(source.id);
     const full = page && fullCzechRulesOnly(source, page);
     if (!full) {
