@@ -1,6 +1,6 @@
 import { describe, expect, it } from "vitest";
 import { normalizeStock } from "@/lib/db/shops";
-import { addStock, findStockLine, refillStock, stockFromPool, stockReferenceMatchesCatalog, takeStock } from "./shop-logic";
+import { addStock, findStockLine, refillStock, stockFromPool, stockItemPromptName, stockReferenceMatchesCatalog, takeStock } from "./shop-logic";
 
 describe("shop stock source identity (#107)", () => {
   const srd = {
@@ -76,6 +76,15 @@ describe("shop stock source identity (#107)", () => {
     expect(generated.find((line) => line.itemName === "Shield")?.contentRef).toEqual(srd.contentRef);
     expect(generated.find((line) => line.itemName === "Rope")?.contentRef).toBeUndefined();
     expect(normalizeStock(JSON.parse(JSON.stringify(generated)))).toEqual(generated);
+  });
+
+  it("exposes exact book identifiers only when a shelf has same-name variants", () => {
+    expect(stockItemPromptName([srd], srd)).toBe("Shield");
+    const collision = stockItemPromptName([srd, other], other);
+    expect(collision).toContain("itemRef sourceId=tome-of-heroes contentId=shield documentSlug=toh");
+    expect(stockItemPromptName([srd, { itemName: "Shield", qty: 1, priceCp: 100, note: "" }], srd)).toContain("sourceId=srd-5.1");
+    const legacy = { itemName: "Shield", qty: 1, priceCp: 100, note: "" };
+    expect(stockItemPromptName([legacy, srd], legacy)).toContain("legacy stock without source ID");
   });
 
   it("preserves historical single-name stock behavior", () => {
