@@ -15,7 +15,7 @@ import { translate } from "@/lib/messages-logic";
 const enT = (key: string, vars?: Record<string, string | number>) => translate("en", key, vars);
 import type { CharacterSheet } from "@/lib/schemas/sheet";
 import { badArguments, type ToolResult } from "@/lib/dm/tool-errors";
-import { notCarried } from "@/lib/dm/item-logic";
+import { ambiguousCarriedItem, notCarried } from "@/lib/dm/item-logic";
 import { isTableGearName } from "@/lib/db/homebrew";
 import { textKey } from "@/lib/language/text-logic";
 import { tableNoteSeq } from "@/lib/dm/narration-slot";
@@ -136,7 +136,8 @@ export function handlePartyStash(
     if (args.do === "stow") {
       const taken = removeItemMath(fresh.equipment, name, qty);
       if (!taken) {
-        return notCarried(fresh.name, fresh.equipment.map((item) => item.name), name, isTableGearName(campaign.id, name));
+        return ambiguousCarriedItem(fresh.equipment, name)
+          ?? notCarried(fresh.name, fresh.equipment.map((item) => item.name), name, isTableGearName(campaign.id, name));
       }
       const { srdName, tags, worth, spell, contentRef } = taken.item;
       const added = addPartyItem(getParty(campaign.id).inventory, {
