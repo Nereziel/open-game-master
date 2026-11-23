@@ -38,7 +38,7 @@ export default defineConfig({
     ],
   },
   test: {
-    include: ["scripts/test-*.mjs"],
+    include: ["scripts/test-*.mjs", "src/lib/{content/czech-names,i18n/czech-locale,rulebook/czech-book,srd/class-resources-cs}.test.ts"],
     globalSetup: ["scripts/lib/vitest-global-setup.mjs"],
     setupFiles: ["scripts/lib/vitest-file-setup.mjs"],
     passWithNoTests: true,
