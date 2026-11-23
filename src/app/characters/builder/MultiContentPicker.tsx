@@ -9,6 +9,7 @@ import { useContentSearch, type PickerEntry } from "./useContentSearch";
 import { textKey } from "@/lib/language/text-logic";
 import { useLocale, useT, useTp } from "@/lib/locale";
 import { contentName } from "@/lib/content/names";
+import { sourceRowIdentity } from "./pickerRows";
 
 // `level` rides along for spells, so a cantrip picked here lands in the
 // cantrip list rather than among the levelled spells.
@@ -116,7 +117,7 @@ export default function MultiContentPicker({
             const picked = pendingLower.has(key);
             return (
               <li
-                key={entry.slug}
+                key={sourceRowIdentity(entry)}
                 className={cn(
                   "flex items-center gap-1 pr-2 hover:bg-stone-800",
                   alreadyOn && "opacity-50",
@@ -143,7 +144,7 @@ export default function MultiContentPicker({
                       ? t("already added")
                       : entry.source === "homebrew"
                         ? t("homebrew")
-                        : (renderMeta?.(entry) ?? "")}
+                        : (renderMeta?.(entry) ?? (entry.source === "open5e" ? entry.document ?? entry.documentSlug ?? "" : ""))}
                   </span>
                 </button>
                 <InfoButton
