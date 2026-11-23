@@ -1,5 +1,14 @@
 name: Source-scoped translation registry
 on:
+  push:
+    branches: [main]
+    paths:
+      - "src/lib/content/translations/**"
+      - "src/lib/rulebook/czech-terms.ts"
+      - "src/lib/rulebook/czech-companion.ts"
+      - "src/lib/content/names-cs.ts"
+      - "docs/srd-translation-adapter.md"
+      - ".github/workflows/translation-pack-registry.yml"
   pull_request:
     paths:
       - "src/lib/content/translations/**"
