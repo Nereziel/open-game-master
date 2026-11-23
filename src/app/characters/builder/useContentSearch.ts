@@ -19,9 +19,18 @@ export type PickerEntry = {
   // Pounds, where the catalog knows (an item).
   weight?: number;
   data: Record<string, unknown>;
-  // Source-scoped, display-only Czech translation returned by the catalog.
-  // Canonical English name/slug/data remain unchanged for the game engine.
+  // Source-scoped Czech presentation is independent of the official SRD display.
+  // Never write these labels back to the engine's English saved names.
   localizedCs?: { name: string; summary?: string; fullRules?: string; hasFullRules: boolean };
+  // Optional localized display-only fields. Never use to store picked data.
+  display?: {
+    name: string;
+    description?: string;
+    school?: string;
+    rarity?: string;
+    category?: string;
+    meta?: string;
+  };
   level?: number;
   school?: string;
   kind?: string;
@@ -85,10 +94,11 @@ export function useContentSearch(kind: string, extraParams: Record<string, strin
       async () => {
         setLoading(true);
         try {
-          const params = new URLSearchParams(scopedParams({ limit: trimmed ? "12" : "30", ...extraParams, locale }, campaignId));
+          const params = new URLSearchParams(scopedParams({ limit: trimmed ? "12" : "30", ...extraParams }, campaignId));
           if (trimmed) {
             params.set("q", trimmed);
           }
+          params.set("locale", locale);
           const response = await fetch(`/api/content/${kind}?${params}`, {
             signal: controller.signal,
           });
