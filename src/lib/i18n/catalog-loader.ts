@@ -17,6 +17,16 @@ export function loadCatalog(locale: Locale): Promise<void> {
     loading.set(locale, pending);
     return pending;
   }
+  if (locale === "cs") {
+    pending = import("./cs.json")
+      .then((catalog) => installCatalog("cs", catalog.default ?? catalog))
+      .catch((error) => {
+        loading.delete(locale);
+        console.error("[i18n] the Czech catalog did not load", error);
+      });
+    loading.set(locale, pending);
+    return pending;
+  }
   pending = Promise.all([
     import("./fr.json"),
     import("../content/names-fr.ts"),
