@@ -34,6 +34,12 @@ const stashSchema = z.object({
   do: z.enum(["stow", "take", "deposit", "withdraw"]),
   characterId: z.string().optional(),
   item: z.string().max(80).optional(),
+  // Optional book-specific selector for same-name catalog items.
+  itemRef: z.object({
+    sourceId: z.string().trim().min(1).max(100),
+    contentId: z.string().trim().min(1).max(200),
+    documentSlug: z.string().trim().max(100).optional(),
+  }).optional(),
   qty: z.coerce.number().int().min(1).max(999).optional(),
   coins: z.string().max(60).optional(),
   gold: z.coerce.number().int().min(0).max(1000000).optional(),
@@ -63,6 +69,17 @@ export const partyTools: ToolDef[] = [
           },
           characterId: { type: "string", description: "Whose hands it comes from or goes to: exact characterId from GAME STATE." },
           item: { type: "string", description: "By name, for stow and take." },
+          itemRef: {
+            type: "object",
+            additionalProperties: false,
+            description: "Optional exact catalog identity when two items have the same name; copy sourceId, contentId and documentSlug from the item record. Do not guess.",
+            properties: {
+              sourceId: { type: "string" },
+              contentId: { type: "string" },
+              documentSlug: { type: "string" },
+            },
+            required: ["sourceId", "contentId"],
+          },
           qty: { type: "integer", minimum: 1, maximum: 999 },
           coins: { type: "string", description: "Money in the coins' codes pp, gp, ep, sp and cp ('3 gp 4 sp'), whatever the table's language. It wins over gold when both are sent." },
           gold: { type: "integer", minimum: 0, description: "Whole gold pieces, if coins is not used." },
@@ -132,10 +149,17 @@ export function handlePartyStash(
       return { error: "Name the item in item.", retry: true };
     }
     const qty = args.qty ?? 1;
+    const itemRef = args.itemRef
+      ? { contentType: "items" as const, ...args.itemRef }
+      : undefined;
 
     if (args.do === "stow") {
-      const taken = removeItemMath(fresh.equipment, name, qty);
+      const taken = removeItemMath(fresh.equipment, name, qty, itemRef);
       if (!taken) {
+        if (itemRef) return {
+          error: `No unique "${name}" matches the supplied itemRef. Check its sourceId, contentId and documentSlug; nothing moved.`,
+          retry: true,
+        };
         return ambiguousCarriedItem(fresh.equipment, name)
           ?? notCarried(fresh.name, fresh.equipment.map((item) => item.name), name, isTableGearName(campaign.id, name));
       }
@@ -162,7 +186,7 @@ export function handlePartyStash(
     }
 
     const party = getParty(campaign.id);
-    const taken = removePartyItem(party.inventory, name, isTableGearName(campaign.id, name), qty);
+    const taken = removePartyItem(party.inventory, name, isTableGearName(campaign.id, name), qty, itemRef);
     if ("error" in taken) {
       return taken;
     }
