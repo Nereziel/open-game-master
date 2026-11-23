@@ -7,13 +7,15 @@ import { sourceRowIdentity, togglePendingSourceRow, uniqueBySource } from "@/app
 import { storedReferenceForCatalogRow, sameStoredContentReference } from "../stored-reference";
 import { TOME_OF_HEROES_CS } from "../tome-of-heroes/cs-data";
 
-const row = (
-  source: CollidableCatalogRow["source"],
+const row = <S extends CollidableCatalogRow["source"]>(
+  source: S,
   documentSlug: string,
   kind: CollidableCatalogRow["kind"],
   slug: string,
   name: string,
-): CollidableCatalogRow => ({ source, documentSlug, kind, slug, name });
+): CollidableCatalogRow & { source: S; documentSlug: string } => ({
+  source, documentSlug, kind, slug, name,
+});
 
 describe("phase 3: source identity and duplicate feats across books (#107)", () => {
   const rows = [
@@ -34,7 +36,7 @@ describe("phase 3: source identity and duplicate feats across books (#107)", () 
     })]);
     expect(report.duplicateFeatsInBook[0].identities).toHaveLength(2);
     expect(report.conflictingIds).toEqual([]);
-    expect(uniqueBySource(rows)).toHaveLength(rows.length);
+    expect(uniqueBySource([...rows])).toHaveLength(rows.length);
     expect(new Set(rows.slice(0, 4).map(sourceRowIdentity)).size).toBe(4);
   });
 
