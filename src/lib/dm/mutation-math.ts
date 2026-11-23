@@ -12,6 +12,8 @@ export type EquipmentRow = {
   name: string;
   qty: number;
   slug?: string;
+  // Optional stable catalog reference; legacy rows intentionally omit it.
+  contentRef?: { sourceId: string; contentType: string; contentId: string; documentSlug?: string };
   // False while the party does not know what this is. Absent reads as true,
   // so every row written before the flag existed stays identified.
   identified?: boolean;
@@ -168,6 +170,18 @@ export function handedOverRow<Row extends EquipmentRow>(row: Row, qty: number, m
   return carriedAsRounds({ ...(rest as Row), ...whole, ...bond }, qty);
 }
 
+// When two rows explicitly point to different source books, never combine
+// their quantities. An unidentified legacy row must not silently acquire a
+// verified book's identity merely because its English name matches.
+function sameItemSource(a: EquipmentRow, b: EquipmentRow): boolean {
+  if (!a.contentRef && !b.contentRef) return true;
+  if (!a.contentRef || !b.contentRef) return false;
+  return a.contentRef.sourceId === b.contentRef.sourceId
+    && a.contentRef.contentType === b.contentRef.contentType
+    && a.contentRef.contentId === b.contentRef.contentId
+    && (a.contentRef.documentSlug ?? "") === (b.contentRef.documentSlug ?? "");
+}
+
 // Whether two rows are the same thing, the rule grantItemMath merges by:
 // one name, known or unknown alike, one spell and one entry.
 export function sameItemRow(a: EquipmentRow, b: EquipmentRow): boolean {
@@ -175,6 +189,7 @@ export function sameItemRow(a: EquipmentRow, b: EquipmentRow): boolean {
     textKey(a.name) === textKey(b.name) &&
     isIdentified(a) === isIdentified(b) &&
     (a.slug ?? "") === (b.slug ?? "") &&
+    sameItemSource(a, b) &&
     a.spell === b.spell &&
     a.srdName === b.srdName
   );
@@ -258,7 +273,7 @@ export function grantItemMath(
   // Two scrolls of different spells, or two potions of different rows, are
   // two things, whatever they are called.
   const index = equipment.findIndex(
-    (item) => textKey(item.name) === textKey(named) && isIdentified(item) === known && item.spell === facts.spell && item.srdName === facts.srdName,
+    (item) => textKey(item.name) === textKey(named) && isIdentified(item) === known && !item.contentRef && item.spell === facts.spell && item.srdName === facts.srdName,
   );
   if (index < 0) {
     return {
