@@ -1,6 +1,7 @@
 import { currentUser, unauthorized } from "@/lib/auth";
 import { withBestEffort } from "@/lib/content/entry-labels";
-import { withSupplementCzechDisplay } from "@/lib/content/translations/supplements/server-display";
+import { supplementCzechSearchCandidates, withSupplementCzechDisplay } from "@/lib/content/translations/supplements/server-display";
+import { combineSupplementSearchResults, matchesSupplementCandidate, type IdentifiedContentRow } from "@/lib/content/translations/supplements/search";
 import { catalogPrices } from "@/lib/characters/catalog";
 import { contentPackInstalled } from "@/lib/content/db";
 import { contentScopeFor, unadmittedNames } from "@/lib/content/scope";
@@ -209,6 +210,60 @@ export async function GET(
       });
     default:
       return Response.json({ error: "Unknown content kind." }, { status: 404 });
+  }
+
+  // Czech picker queries should find translated supplemental titles, but
+  // must not bypass the usual class/level/kind/playability/campaign filters.
+  // Each candidate is looked up again by its canonical English title through
+  // the same normal search and admitted only if book + slug also match.
+  // Limit the work; name-only/offset pagination keeps its existing behavior.
+  if (packInstalled && url.searchParams.get("locale") === "cs" && q.trim()
+    && (!Number.isFinite(offsetRaw) || offsetRaw === 0)
+    && (kind === "items" || kind === "spells" || kind === "feats")) {
+    const suggestions = supplementCzechSearchCandidates(kind, q, 12);
+    const localizedResults: IdentifiedContentRow[] = [];
+    for (const candidate of suggestions) {
+      const requested = { ...base, q: candidate.name, offset: 0, limit: 200 };
+      if (kind === "items") {
+        const itemKind = url.searchParams.get("kind") ?? undefined;
+        const row = searchItems({
+          ...requested,
+          ...(itemKind && ITEM_KINDS.has(itemKind) ? { kind: itemKind as ItemEntry["kind"] } : {}),
+        }).find((entry) => matchesSupplementCandidate(entry, candidate));
+        if (row) {
+          const listed = srdNameFor(withoutBonus(row.name), "items");
+          localizedResults.push({
+            ...row, price: catalogPrices(row.name),
+            ...("srdName" in listed && listed.srdName ? { srdName: listed.srdName } : {}),
+          });
+        }
+      } else if (kind === "spells") {
+        const levelRaw = Number.parseInt(url.searchParams.get("level") ?? "", 10);
+        const row = searchSpells({
+          ...requested,
+          classSlug: url.searchParams.get("class") ?? undefined,
+          ...(Number.isFinite(levelRaw) ? { level: levelRaw } : {}),
+          school: url.searchParams.get("school") ?? undefined,
+          attack: url.searchParams.get("attack") === "1",
+          exactLevel: url.searchParams.get("exact") === "1",
+        }).find((entry) => matchesSupplementCandidate(entry, candidate));
+        if (row) localizedResults.push(url.searchParams.get("lite") === "1" ? {
+          slug: row.slug, name: row.name, level: row.level, school: row.school,
+          source: row.source, documentSlug: row.documentSlug, document: row.document, data: {},
+        } : row);
+      } else {
+        const row = searchFeats(requested).find((entry) => matchesSupplementCandidate(entry, candidate));
+        if (row) localizedResults.push(row);
+      }
+    }
+    if (localizedResults.length) {
+      // Prefer the actual Czech-title matches; then retain the normal
+      // English/homebrew search rows without replacing their source IDs.
+      results = combineSupplementSearchResults(
+        localizedResults, results as IdentifiedContentRow[],
+        Number.isFinite(limitRaw) ? limitRaw : 50,
+      );
+    }
   }
 
   // The workshop's "start from" asks for what the engine runs, too.
