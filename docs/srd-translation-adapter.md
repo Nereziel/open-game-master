@@ -310,3 +310,12 @@ declines same-name selection across different sources. The
 and `grantItemMath` restores them to a hero's equipment without
 combining known-source and unverified items. A party round-trip
 regression suite covers persistence, ambiguous names, and legacy data.
+
+### Name-only carried-item lookup
+
+The legacy `findCarriedItem` lookup must not choose the first record when
+an English name matches different source-book identities (or an identified
+row and an unreferenced legacy row). It now returns no match in that case,
+rather than supplying the wrong book's item to a use or lookup operation.
+The unambiguous path and legacy single-item lookup are unchanged.
+`item-logic-source.test.ts` covers those distinctions.
