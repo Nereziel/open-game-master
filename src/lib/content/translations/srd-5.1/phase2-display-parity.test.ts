@@ -1,6 +1,9 @@
 import { describe, expect, it } from "vitest";
 import { rulebookPages } from "@/lib/rulebook/book";
 import { PAGE_CATALOG_NAMES, bundledItemRows, bundledSpellRows } from "@/lib/rulebook/catalog-rows";
+import { CZECH_ABILITIES, CZECH_SKILLS } from "@/lib/rulebook/czech-terms";
+import { CS_ABILITIES, CS_SKILLS } from "@/lib/content/translations/common/cs";
+import { skillLabel, SRD_SKILLS } from "@/lib/srd";
 import { withCatalogDisplay } from "../catalog-display";
 import { srdPageIdForCatalogRecord } from "./crosswalk";
 import { srdStructuredMetadataCs } from "./structured-metadata";
@@ -67,6 +70,18 @@ describe("one SRD identity and Czech metadata between rulebook and game catalog 
       expect(localized.category).toBe("Divotvorný předmět");
       expect(localized.costCp).toBe("500");
       expect(data.rarity).toBe(rarity);
+    }
+  });
+
+  it("reuses identical Czech ability and skill terminology in reader, common registry and character sheet", () => {
+    expect(CS_ABILITIES).toEqual(CZECH_ABILITIES);
+    expect(CS_SKILLS).toEqual(CZECH_SKILLS);
+    expect(SRD_SKILLS).toHaveLength(18);
+    for (const skill of SRD_SKILLS) {
+      expect(skillLabel(skill.id, "cs"), skill.id).toBe(
+        CZECH_SKILLS[skill.name as keyof typeof CZECH_SKILLS],
+      );
+      expect(skillLabel(skill.id, "en")).toBe(skill.name);
     }
   });
 
