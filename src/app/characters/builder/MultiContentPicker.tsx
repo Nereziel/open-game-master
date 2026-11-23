@@ -151,7 +151,7 @@ export default function MultiContentPicker({
                   label={displayName(entry.name, entry.source, entry)}
                   meta={kind === "spells" ? spellSummary(entry.data) : undefined}
                   text={locale === "cs" && entry.localizedCs ? undefined : describeContentEntry(entry.data)}
-                  reference={entry.source === "homebrew" ? undefined : { kind, slug: entry.slug, name: entry.name, documentSlug: entry.documentSlug }}
+                  reference={entry.source === "homebrew" ? undefined : { kind, slug: entry.slug, name: entry.name, ...(entry.source === "open5e" && entry.documentSlug ? { documentSlug: entry.documentSlug } : {}) }}
                 />
               </li>
             );
