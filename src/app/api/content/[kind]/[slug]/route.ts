@@ -8,6 +8,8 @@ import { bundledGearRow } from "@/lib/workshop/bundled-gear-rows";
 import { contentScopeFor } from "@/lib/content/scope";
 import { findHomebrewBySlug, getAuthorsHomebrew } from "@/lib/db/homebrew";
 import type { HomebrewKind } from "@/lib/schemas/homebrew";
+import { bookLocaleOf } from "@/lib/rulebook/book";
+import { withCatalogDisplay } from "@/lib/content/translations/catalog-display";
 
 export const runtime = "nodejs";
 export const dynamic = "force-dynamic";
@@ -46,6 +48,14 @@ export async function GET(
   if ("error" in scope) {
     return Response.json({ error: scope.error }, { status: scope.status });
   }
+  const requestedLocale = new URL(request.url).searchParams.get("locale");
+  const locale = requestedLocale === "cs" || requestedLocale === "en" || requestedLocale === "fr"
+    ? requestedLocale
+    : bookLocaleOf(request);
+  const localizedEntry = (row: Parameters<typeof withCatalogDisplay>[1]) => {
+    const original = withCatalogDisplay(kind, row, locale);
+    return locale === "cs" ? withSupplementCzechDisplay(kind, original, true) : original;
+  };
   const homebrewKind = KINDS[kind];
   const requestedDocument = new URL(request.url).searchParams.get("documentSlug");
   const asEntry = (entry: { id: string; name: string; data: Record<string, unknown> }) =>
@@ -65,12 +75,10 @@ export async function GET(
 
   const entry = getEntryDetail(kind as Parameters<typeof getEntryDetail>[0], decoded, requestedDocument ?? undefined);
   if (entry && !matchesRequestedCatalogDocument(entry, requestedDocument)) {
-    // A legacy slug-only lookup may resolve a different book. Never return
-    // that book when the picker explicitly selected another document.
     return Response.json({ error: "The selected entry is not from this source document." }, { status: 404 });
   }
   if (entry) {
-    return Response.json({ entry: withSupplementCzechDisplay(kind, withBestEffort(kind, entry, { classSlug: String(entry.data.class_slug ?? "") || undefined }), true) });
+    return Response.json({ entry: localizedEntry(withBestEffort(kind, entry, { classSlug: String(entry.data.class_slug ?? "") || undefined })) });
   }
   if (requestedDocument) {
     return Response.json({ error: "Not found in this source document." }, { status: 404 });
@@ -86,7 +94,7 @@ export async function GET(
           ? bundledGearRow(decoded)
           : null;
   if (bundled) {
-    return Response.json({ entry: bundled });
+    return Response.json({ entry: localizedEntry(bundled) });
   }
   const brewed = homebrewKind ? findHomebrewBySlug(scope.userIds, homebrewKind, decoded) : null;
   return brewed ? asEntry(brewed) : Response.json({ error: "Not found." }, { status: 404 });
