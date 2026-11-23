@@ -1,10 +1,12 @@
 import { describe, expect, it } from "vitest";
 import csCatalog from "./cs.json";
+import frCatalog from "./fr.json";
 import { catalogInstalled, installCatalog, translate, translatePlural } from "./translate";
 import { localeFromAcceptLanguage, parseLocale, resolveLocale } from "./locale";
 import { localeTag } from "../messages-logic";
 
 installCatalog("cs", csCatalog);
+installCatalog("fr", frCatalog);
 
 describe("Czech locale following the upstream French catalog", () => {
   it("recognizes Czech in explicit settings, browser headers and cookies", () => {
@@ -19,6 +21,12 @@ describe("Czech locale following the upstream French catalog", () => {
     expect(translate("cs", "Language")).toBe("Jazyk");
     expect(translate("cs", "Cancel")).toBe("Zrušit");
     expect(translate("cs", "A missing translation")).toBe("A missing translation");
+  });
+
+  it("preserves the upstream French translation catalog", () => {
+    expect(translate("fr", "Language")).toBe("Langue");
+    expect(translate("fr", "Cancel")).toBe("Annuler");
+    expect(translate("en", "Language")).toBe("Language");
   });
 
   it("uses all three Czech plural forms without changing English", () => {
