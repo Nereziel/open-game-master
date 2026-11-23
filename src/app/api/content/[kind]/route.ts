@@ -232,10 +232,11 @@ export async function GET(
         }).find((entry) => matchesSupplementCandidate(entry, candidate));
         if (row) {
           const listed = srdNameFor(withoutBonus(row.name), "items");
-          localizedResults.push({
+          const pricedRow = {
             ...row, price: catalogPrices(row.name),
             ...("srdName" in listed && listed.srdName ? { srdName: listed.srdName } : {}),
-          });
+          };
+          localizedResults.push(pricedRow);
         }
       } else if (kind === "spells") {
         const levelRaw = Number.parseInt(url.searchParams.get("level") ?? "", 10);
@@ -247,10 +248,13 @@ export async function GET(
           attack: url.searchParams.get("attack") === "1",
           exactLevel: url.searchParams.get("exact") === "1",
         }).find((entry) => matchesSupplementCandidate(entry, candidate));
-        if (row) localizedResults.push(url.searchParams.get("lite") === "1" ? {
-          slug: row.slug, name: row.name, level: row.level, school: row.school,
-          source: row.source, documentSlug: row.documentSlug, document: row.document, data: {},
-        } : row);
+        if (row) {
+          const liteRow = {
+            slug: row.slug, name: row.name, level: row.level, school: row.school,
+            source: row.source, documentSlug: row.documentSlug, document: row.document, data: {},
+          };
+          localizedResults.push(url.searchParams.get("lite") === "1" ? liteRow : row);
+        }
       } else {
         const row = searchFeats(requested).find((entry) => matchesSupplementCandidate(entry, candidate));
         if (row) localizedResults.push(row);
