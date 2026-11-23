@@ -341,6 +341,13 @@ const buySchema = z.object({
   shop: z.string().trim().min(1),
   item: z.string().trim().min(1).max(80),
   qty: z.coerce.number().int().min(1).max(99).default(1),
+  // Shop stock currently has no verified source ID. Never drop a supplied
+  // reference and then silently hand out a name-only item.
+  itemRef: z.object({
+    sourceId: z.string().trim().min(1).max(100),
+    contentId: z.string().trim().min(1).max(200),
+    documentSlug: z.string().trim().max(100).optional(),
+  }).optional(),
 });
 
 function ledger(campaign: Campaign, sheet: CharacterSheet, kind: string, delta: Record<string, unknown>, reason: string, patch: Record<string, unknown>, summary: string) {
@@ -427,6 +434,12 @@ export function handleBuyItem(campaign: Campaign, rawArguments: string, at: Trad
   const args = parse(buySchema, rawArguments);
   if (!args) {
     return argumentsRefusal("Invalid arguments: a purchase at a shop needs characterId, shop and item.", buySchema, rawArguments);
+  }
+  if (args.itemRef) {
+    return {
+      error: `Cannot verify itemRef for a shop purchase of "${args.item}": this shop stock has no catalog provenance. Retry without itemRef; nothing was bought.`,
+      retry: true,
+    };
   }
   const sheet = resolveSheet(campaign, args.characterId);
   if (!sheet) {
@@ -723,7 +736,7 @@ export function tradeCall(campaign: Campaign, args: ToolArgs): EngineCall {
       ? { itemRef: args.itemRef }
       : {};
     if (action === "buy") {
-      return { name: "buy_item", args: { ...common, ...(args.waypoint !== undefined ? { waypoint: args.waypoint } : {}) } };
+      return { name: "buy_item", args: { ...common, ...selectedRef, ...(args.waypoint !== undefined ? { waypoint: args.waypoint } : {}) } };
     }
     const priceCp = args.priceCp ?? (Number.isFinite(Number(args.price)) && Number(args.price) > 0 ? Math.round(Number(args.price) * 100) : undefined);
     return { name: "sell_item", args: { ...common, ...selectedRef, ...(priceCp !== undefined ? { priceCp } : {}) } };
