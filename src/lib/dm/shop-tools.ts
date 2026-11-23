@@ -59,7 +59,7 @@ import { publishEphemeral, publishPersisted, publishWithSeq } from "@/lib/events
 import type { CharacterSheet } from "@/lib/schemas/sheet";
 import { addCopper, formatCopper, formatPrice } from "@/lib/srd/currency";
 import { argumentsRefusal, noneNamed, type ToolError, type ToolResult } from "@/lib/dm/tool-errors";
-import { alreadyInPack, findCarriedItem, notCarried } from "@/lib/dm/item-logic";
+import { alreadyInPack, ambiguousCarriedItem, findCarriedItem, notCarried } from "@/lib/dm/item-logic";
 import { isTableGearName } from "@/lib/db/homebrew";
 import { containsPhrase, textKey } from "@/lib/language/text-logic";
 import type { EngineCall, ToolArgs } from "@/lib/dm/tool-merge-logic";
@@ -501,7 +501,8 @@ export function handleSellItem(campaign: Campaign, rawArguments: string, at: Tra
   }
   const removal = removeItemMath(sheet.equipment, args.item, args.qty);
   if (!removal) {
-    return notCarried(sheet.name, sheet.equipment.map((item) => item.name), args.item, isTableGearName(campaign.id, args.item));
+    return ambiguousCarriedItem(sheet.equipment, args.item)
+      ?? notCarried(sheet.name, sheet.equipment.map((item) => item.name), args.item, isTableGearName(campaign.id, args.item));
   }
   const line = removal.item;
   const carried = line.name;
