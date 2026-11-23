@@ -30,11 +30,11 @@ import { isSupplementDocumentSlug, supplementRulesForDisplay, type SupplementCze
 // a search.
 export type ContentRef = { kind: string; slug: string; name?: string; documentSlug?: string };
 
-// Preserve a selected catalog book all the way from a picker to its detail.
-// Existing slug-only links remain compatible.
-function scopedDetailQuery(campaignId: string | null | undefined, documentSlug?: string): string {
+// Keep the existing locale-aware SRD detail resolver while constraining
+// specifically selected Open5e books to an exact source document.
+function scopedDetailQuery(campaignId: string | null | undefined, documentSlug: string | undefined, locale: string): string {
   const scope = scopeQuery(campaignId);
-  return documentSlug ? `${scope}${scope ? "&" : "?"}documentSlug=${encodeURIComponent(documentSlug)}` : scope;
+  return `${scope}${scope ? "&" : "?"}locale=${encodeURIComponent(locale)}${documentSlug ? `&documentSlug=${encodeURIComponent(documentSlug)}` : ""}`;
 }
 
 // Content-pack descriptions are markdown-ish: headings, bold, italics, tables.
@@ -151,8 +151,8 @@ export function renderRules(text: string): ReactNode {
 function ContentBody({ reference }: { reference: ContentRef }) {
   // The table the dialog opened at reads its DMs' homebrew.
   const campaignId = useContentCampaign();
-  const locale = useLocale();
   const t = useT();
+  const locale = useLocale();
   const [state, setState] = useState<{ text: string | null; loading: boolean }>({
     text: null,
     loading: true,
@@ -173,13 +173,16 @@ function ContentBody({ reference }: { reference: ContentRef }) {
           return text && notes.length ? `${notes.join("\n\n")}\n\n${text}` : text;
         };
         const response = await fetch(
-          `/api/content/${reference.kind}/${encodeURIComponent(reference.slug)}${scopedDetailQuery(campaignId, reference.documentSlug)}`,
+          `/api/content/${reference.kind}/${encodeURIComponent(reference.slug)}${scopedDetailQuery(campaignId, reference.documentSlug, locale)}`,
         );
         if (response.ok) {
           const data = await response.json();
           // A background's feature asked by name opens that feature.
           const english = describeContentEntry(data?.entry?.data, reference.kind === "backgrounds" ? reference.name : undefined);
-          const text = withNote(data?.entry, supplementRulesForDisplay(data?.entry?.localizedCs, english, locale));
+          const description = locale === "cs" && data?.entry?.localizedCs
+            ? supplementRulesForDisplay(data.entry.localizedCs, english, locale)
+            : data?.entry?.display?.description ?? english;
+          const text = withNote(data?.entry, description);
           if (text) {
             if (!cancelled) {
               setState({ text, loading: false });
@@ -187,20 +190,27 @@ function ContentBody({ reference }: { reference: ContentRef }) {
             return;
           }
         }
-        // The slug guessed from the name missed, or the row it found carries
-        // no text. Search by name and take an exact match.
+        // A scoped source ID must never fall back to a similarly named row.
+        if (reference.documentSlug) {
+          if (!cancelled) setState({ text: null, loading: false });
+          return;
+        }
+        // Legacy unspecific links may still recover by name. Supported
+        // supplements and SRD retain their separate display semantics.
         const wanted = textKey(reference.name ?? reference.slug);
         const search = await fetch(
-          `/api/content/${reference.kind}?q=${encodeURIComponent(wanted)}&limit=20&mechanics=1${scopeQuery(campaignId, "&")}`,
+          `/api/content/${reference.kind}?q=${encodeURIComponent(wanted)}&limit=20&mechanics=1&locale=${locale}${scopeQuery(campaignId, "&")}`,
         );
         const results = search.ok ? ((await search.json()).results ?? []) : [];
         const hit = results.find(
-          (entry: { name: string; documentSlug?: string; source?: string }) =>
-            textKey(entry.name) === wanted
-            && (!reference.documentSlug || (entry.source === "open5e" && entry.documentSlug === reference.documentSlug)),
+          (entry: { name: string }) => textKey(entry.name) === wanted,
         );
         if (!cancelled) {
-          setState({ text: withNote(hit, supplementRulesForDisplay(hit?.localizedCs, describeContentEntry(hit?.data), locale)), loading: false });
+          const english = describeContentEntry(hit?.data);
+          const description = locale === "cs" && hit?.localizedCs
+            ? supplementRulesForDisplay(hit.localizedCs, english, locale)
+            : hit?.display?.description ?? english;
+          setState({ text: withNote(hit, description), loading: false });
         }
       } catch {
         if (!cancelled) {
@@ -293,16 +303,18 @@ function ItemBody({ reference }: { reference: ContentRef }) {
         const [{ buildItemSheet }, { describeContentEntry }, direct, search] = await Promise.all([
           import("@/lib/help/item-sheet"),
           import("@/lib/help"),
-          fetch(`/api/content/items/${encodeURIComponent(reference.slug)}${scopedDetailQuery(campaignId, reference.documentSlug)}`).then(readJson).catch(() => null),
-          fetch(`/api/content/items?q=${encodeURIComponent(wanted)}&limit=20${scopeQuery(campaignId, "&")}`).then(readJson).catch(() => null),
+          fetch(`/api/content/items/${encodeURIComponent(reference.slug)}${scopedDetailQuery(campaignId, reference.documentSlug, locale)}`).then(readJson).catch(() => null),
+          // Additional rows only contribute to legacy name-only item cards.
+          reference.documentSlug
+            ? Promise.resolve(null)
+            : fetch(`/api/content/items?q=${encodeURIComponent(wanted)}&limit=20${scopeQuery(campaignId, "&")}`).then(readJson).catch(() => null),
         ]);
         const selected = direct?.entry;
-        const hits = ((search?.results ?? []) as Array<{ name: string; source?: string; documentSlug?: string; data?: Record<string, unknown> }>)
-          .filter((entry) => textKey(entry.name) === wanted
-            && (!reference.documentSlug || (entry.source === "open5e" && entry.documentSlug === reference.documentSlug))
-            && (!selected?.localizedCs || (entry.source === selected.source && entry.documentSlug === selected.documentSlug)))
+        const hits = ((search?.results ?? []) as Array<{ name: string; data?: Record<string, unknown> }>)
+          .filter((entry) => textKey(entry.name) === wanted)
           .map((entry) => entry.data);
-        const sheet = buildItemSheet(name, [selected?.data, ...hits]);
+        const sheet = reference.documentSlug && !selected
+          ? null : buildItemSheet(name, [selected?.data, ...hits]);
         if (!cancelled) {
           setState({
             sheet,
@@ -321,7 +333,7 @@ function ItemBody({ reference }: { reference: ContentRef }) {
     return () => {
       cancelled = true;
     };
-  }, [reference.slug, reference.name, reference.documentSlug, campaignId]);
+  }, [reference.slug, reference.name, reference.documentSlug, campaignId, locale]);
 
   if (state.loading) {
     return (
