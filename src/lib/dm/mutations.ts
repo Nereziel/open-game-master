@@ -527,6 +527,13 @@ const argsSchema = z.object({
   qty: z.coerce.number().int().optional(),
   // use_item / purchase / use_resource.
   item: z.string().optional(),
+  // When selling two same-name items from different books, require a
+  // sourced catalog ref rather than selecting the first name match.
+  itemRef: z.object({
+    sourceId: z.string().trim().min(1).max(100),
+    contentId: z.string().trim().min(1).max(200),
+    documentSlug: z.string().trim().max(100).optional(),
+  }).optional(),
   // use_item: charges a charged item spends (src/lib/dm/item-use.ts).
   charges: z.coerce.number().int().min(1).max(50).optional(),
   targetCharacterId: z.string().optional(),
@@ -1421,6 +1428,7 @@ function dmMutation(
         qty: args.qty ?? 1,
         action,
         srdName: listed.srdName,
+        ...(action === "sell" && args.itemRef ? { itemRef: { ...args.itemRef, contentType: "items" as const } } : {}),
       });
       if ("error" in outcome) {
         return { result: outcome };
