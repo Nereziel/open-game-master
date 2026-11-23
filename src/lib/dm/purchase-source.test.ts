@@ -26,6 +26,8 @@ describe("source-scoped selling outside shops (#107)", () => {
   it("sells only the exact book-specific row and prices that same row", () => {
     const result = computePurchase(sheet, {
       item: "Shield", qty: 1, action: "sell", itemRef: other.contentRef,
+      // The isolated fixture does not install the optional pack price list.
+      price: 10,
     });
     expect("patch" in result).toBe(true);
     if (!("patch" in result)) return;
