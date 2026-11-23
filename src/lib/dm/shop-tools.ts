@@ -476,7 +476,16 @@ export function handleBuyItem(campaign: Campaign, rawArguments: string, at: Trad
 // A price the table cannot check is still held to the ceiling purchase keeps
 // (100,000 gp a unit), so a model's number cannot mint a fortune.
 const MAX_UNPRICED_CP = 10_000_000;
-const sellSchema = buySchema.extend({ priceCp: z.coerce.number().int().min(1).max(MAX_UNPRICED_CP).optional() });
+const sellSchema = buySchema.extend({
+  priceCp: z.coerce.number().int().min(1).max(MAX_UNPRICED_CP).optional(),
+  // The shop sells one actual book-specific inventory entry, not whichever
+  // same-name row happened to appear first. Legacy calls may omit this.
+  itemRef: z.object({
+    sourceId: z.string().trim().min(1).max(100),
+    contentId: z.string().trim().min(1).max(200),
+    documentSlug: z.string().trim().max(100).optional(),
+  }).optional(),
+});
 
 export function handleSellItem(campaign: Campaign, rawArguments: string, at: TradeAt = {}): ToolResult {
   const args = parse(sellSchema, rawArguments);
@@ -499,8 +508,15 @@ export function handleSellItem(campaign: Campaign, rawArguments: string, at: Tra
   if (!shop.buys) {
     return { error: `${shop.name} does not buy.`, refused: "rules" };
   }
-  const removal = removeItemMath(sheet.equipment, args.item, args.qty);
+  const selectedSource = args.itemRef
+    ? { ...args.itemRef, contentType: "items" as const }
+    : undefined;
+  const removal = removeItemMath(sheet.equipment, args.item, args.qty, selectedSource);
   if (!removal) {
+    if (selectedSource) return {
+      error: `No unique "${args.item}" matches itemRef (sourceId, contentId, documentSlug). Nothing was sold.`,
+      retry: true,
+    };
     return ambiguousCarriedItem(sheet.equipment, args.item)
       ?? notCarried(sheet.name, sheet.equipment.map((item) => item.name), args.item, isTableGearName(campaign.id, args.item));
   }
@@ -703,11 +719,14 @@ export function tradeCall(campaign: Campaign, args: ToolArgs): EngineCall {
   }
   const atShop = (shop: string, shelfName: string = item): EngineCall => {
     const common = { characterId: args.characterId, shop, item: shelfName, ...(args.qty !== undefined ? { qty: args.qty } : {}) };
+    const selectedRef = args.itemRef && typeof args.itemRef === "object" && !Array.isArray(args.itemRef)
+      ? { itemRef: args.itemRef }
+      : {};
     if (action === "buy") {
       return { name: "buy_item", args: { ...common, ...(args.waypoint !== undefined ? { waypoint: args.waypoint } : {}) } };
     }
     const priceCp = args.priceCp ?? (Number.isFinite(Number(args.price)) && Number(args.price) > 0 ? Math.round(Number(args.price) * 100) : undefined);
-    return { name: "sell_item", args: { ...common, ...(priceCp !== undefined ? { priceCp } : {}) } };
+    return { name: "sell_item", args: { ...common, ...selectedRef, ...(priceCp !== undefined ? { priceCp } : {}) } };
   };
   const srdName = typeof args.srdName === "string" ? args.srdName.trim() : "";
   const shelved = (shop: Shop) => findStockLine(shop.stock, item) ?? (srdName ? findStockLine(shop.stock, srdName) : null);
