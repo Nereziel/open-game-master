@@ -13,6 +13,7 @@ const CHOICES: Array<{ id: LocaleChoice; label: string; glyph: string }> = [
   { id: "auto", label: "auto", glyph: "sense-darkvision" },
   { id: "en", label: "English", glyph: "daypart-dusk" },
   { id: "fr", label: "Français", glyph: "daypart-night" },
+  { id: "cs", label: "Čeština", glyph: "daypart-dusk" },
 ];
 
 export function LanguageSection() {
