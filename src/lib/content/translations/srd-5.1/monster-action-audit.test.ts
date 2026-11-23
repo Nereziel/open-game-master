@@ -39,6 +39,6 @@ describe("SRD Czech monster action values (#107 phase 2)",()=>{
         field,findings.filter(x=>x.field===field).length,
       ])),samples:findings.slice(0,45),
     }));
-    expect(findings.every(f=>Boolean(f.id&&f.field))).toBe(true);
+    expect(findings).toEqual([]);
   });
 });
