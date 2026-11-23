@@ -42,6 +42,10 @@ export type NamedRow = {
   slug?: string;
   name: string;
   source?: string;
+  documentSlug?: string;
+  // Verified, display-only fields from the source-scoped catalog API.
+  display?: { name?: string };
+  localizedCs?: { name?: string };
 };
 
 // The gear table is keyed by the SRD gear's gearKey (adventuring-gear.ts):
@@ -154,6 +158,17 @@ export function contentName(
   const row: NamedRow = typeof ref === "string" ? { name: ref } : ref;
   if (locale === "en" || !row.name || (row.source && row.source !== "open5e")) {
     return row.name;
+  }
+  // A content row is not identified by its English title alone. In
+  // particular, a Tome of Heroes "Shield" must never inherit the SRD Shield
+  // translation simply because both appear in an old name table.
+  // The catalog adapter has already validated these presentation fields
+  // against the exact source book and canonical ID.
+  if (row.source === "open5e" && row.documentSlug) {
+    if (row.documentSlug !== "wotc-srd") {
+      return locale === "cs" ? row.localizedCs?.name ?? row.name : row.name;
+    }
+    if (row.display?.name) return row.display.name;
   }
   // Acolyte's kit contains incense sticks, not the SRD's incense blocks.
   // The full phrase is a stored inventory name, not a quantity parsed here.
