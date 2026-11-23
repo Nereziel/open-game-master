@@ -41,6 +41,12 @@ describe("DM inventory source identity (#107)", () => {
     expect(removed?.item.contentRef).toEqual(srd.contentRef);
   });
 
+  it("refuses a name-only removal when two distinct source books carry the same item", () => {
+    expect(removeItemMath([srd, tome], "Shield", 1)).toBeNull();
+    expect(removeItemMath([{ name: "Shield", qty: 2 }, srd], "Shield", 1)).toBeNull();
+    expect(removeItemMath([srd], "Shield", 1)?.equipment).toEqual([]);
+  });
+
   it("preserves the historical name-only stacking behavior", () => {
     const legacy = { name: "Shield", qty: 1 };
     expect(addRowMath([legacy], legacy)).toEqual([{ name: "Shield", qty: 2 }]);
