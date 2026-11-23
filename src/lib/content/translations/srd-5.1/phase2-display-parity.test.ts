@@ -1,10 +1,9 @@
 import { describe, expect, it } from "vitest";
 import { rulebookPages } from "@/lib/rulebook/book";
-import { bundledItemRows, bundledSpellRows } from "@/lib/rulebook/catalog-rows";
+import { PAGE_CATALOG_NAMES, bundledItemRows, bundledSpellRows } from "@/lib/rulebook/catalog-rows";
 import { withCatalogDisplay } from "../catalog-display";
 import { srdPageIdForCatalogRecord } from "./crosswalk";
 import { srdStructuredMetadataCs } from "./structured-metadata";
-import { czechSrdEnglishAliases } from "@/lib/rulebook/czech-terms";
 
 const KIND = {
   spell: "spells", item: "items", monster: "monsters", class: "classes", race: "races",
@@ -34,8 +33,8 @@ describe("one SRD identity and Czech metadata between rulebook and game catalog 
     const english = rulebookPages("en");
     const czech = new Map(rulebookPages("cs").map((page) => [page.id, page]));
     const rows = [
-      ...bundledSpellRows().map((row) => ({ kind: "spells" as const, ...row })),
-      ...bundledItemRows().map((row) => ({ kind: "items" as const, ...row })),
+      ...bundledSpellRows().map((row) => ({ ...row, kind: "spells" as const })),
+      ...bundledItemRows().map((row) => ({ ...row, kind: "items" as const })),
     ];
     expect(rows.length).toBeGreaterThan(500);
     for (const row of rows) {
@@ -75,7 +74,7 @@ describe("one SRD identity and Czech metadata between rulebook and game catalog 
     const pages = rulebookPages("en");
     const drow = pages.find((page) => page.id === "elf-drow");
     expect(drow?.kind).toBe("race");
-    expect(czechSrdEnglishAliases("race")[drow!.title]).toBeDefined();
+    expect(PAGE_CATALOG_NAMES["elf-drow"]).toBe("Drow");
     expect(srdPageIdForCatalogRecord({
       kind: "races", source: "open5e", slug: "drow", name: "Drow", documentSlug: "wotc-srd",
     }, pages)).toBe("elf-drow");
