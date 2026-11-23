@@ -649,7 +649,7 @@ export const CZECH_ITEMS: Readonly<Record<string, string>> = {
   ...CZECH_ITEM_TITLES_6,
 };
 
-export const CZECH_RULE_TERMS: Readonly<Record<string, string>> = {
+const CZECH_RULE_TERMS: Readonly<Record<string, string>> = {
   "Armor Class": "Obranné číslo",
   "Ability Check": "Ověření vlastnosti",
   "Saving Throw": "Záchranný hod",
@@ -801,6 +801,6 @@ export function czechSrdTitle(title: string, kind: string): string {
 }
 
 // Keep English search / italics references pointing at the same canonical ID.
-export function czechSrdEnglishAliases(kind: string): Readonly<Record<string, string>> {
+function czechSrdEnglishAliases(kind: string): Readonly<Record<string, string>> {
   return TITLES[kind] ?? {};
 }
