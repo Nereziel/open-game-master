@@ -3,7 +3,7 @@
 
 import type { ToolError } from "@/lib/dm/tool-errors";
 import { textKey } from "../language/text-logic.ts";
-import { lineNamed } from "../srd/item-row.ts";
+import { lineNamed, linesNamed } from "../srd/item-row.ts";
 import { bundlesAsRounds, carriedAsRounds } from "../srd/ammo-bundles.ts";
 import type { ItemTag } from "@/lib/schemas/item-tags";
 import type { StoredContentReference } from "@/lib/content/translations/stored-reference";
@@ -217,6 +217,11 @@ export function addRowMath<Row extends EquipmentRow>(equipment: Row[], row: Row)
 // out (src/lib/srd/item-row.ts lineNamed): its own name, else its
 // srdNameWithBonus.
 export function removeItemMath<Row extends EquipmentRow>(equipment: Row[], name: string, qty: number) {
+  // A name-only DM action cannot identify which book a same-name row came
+  // from. Refuse instead of taking the first distinct catalog entry.
+  const candidates = linesNamed(equipment, name);
+  if (candidates.length > 1 && candidates.some((candidate) =>
+    !sameItemSource(candidate, candidates[0]))) return null;
   const index = lineNamed(equipment, name);
   if (index < 0) {
     return null;
