@@ -381,30 +381,37 @@ Book-specific acquisitions need a separate trusted catalog lookup before
 persisting provenance; accepting model-supplied IDs alone would be unsafe.
 `purchase-source.test.ts` covers this contract.
 
-### Shop-stock provenance boundary
+### Catalog-verified shop acquisition
 
-Unlike a source-scoped content catalog, the current shop stock persists
-`itemName`, quantity, price and optional `srdName`, but no verified
-book-specific `contentRef`. Therefore the `purchase action=buy`
-router now forwards any explicit `itemRef` to `buy_item` instead of
-dropping it. `buy_item` rejects such a request **before** purse, stock
-or equipment mutations, since the shop cannot attest to the requested
-source. The legacy stock-only purchase without `itemRef` remains
-unchanged. A future source-aware shop stock schema and validation against
-actual catalog rows is needed before honoring source-specific purchases.
+Shop stock and prepared stock can now persist an optional validated
+item-kind `contentRef`. The stock normalizer preserves source identity on
+JSON reload, does not merge same-name items from different books (or
+legacy unreferenced lines), and drops malformed refs. Selling a character
+item into a shop keeps its reference; refilling prepared stock also
+matches by book identity rather than title alone.
 
-### Provenance-ready shop stock (not yet catalog-verified)
+For `purchase action=buy`, `tradeCall` forwards optional `itemRef`
+into `buy_item`. A named source must select exactly one matching shelf
+line by English item name *and* stored source ID, catalog slug and
+document slug. Even when the shelf supplies the reference, `buy_item`
+verifies the catalog record in the server's read-only Open5e database
+against all of these, including canonical English title (or a vetted
+`srdName`), **before** changing equipment, money or stock. If the
+catalog is absent or the match is invalid, the transaction is refused
+rather than guessing a source. When verified, the source reference
+travels to the acquired equipment and only the selected book's stock
+quantity is reduced.
 
-Shop stock and prepared stock now accept an **optional** item-kind
-`contentRef`. Storage normalization validates the reference, discards
-malformed values, retains legacy lines without one, and does not combine
-equal English names from distinct sources. Shop sale-to-stock carries the
-sold item's reference; restocking compares book identity as well as name.
-Name-only stock lookup refuses ambiguous same-name rows rather than selling
-the first book's item.
+Legacy stock without `contentRef` still supports name-only buying,
+without inventing an identity. Name-only purchases from a shelf with
+two same-name books are rejected until a source is selected. The
+ordinary `purchase action=buy` outside a shop still refuses a supplied
+`itemRef`: it has no trusted catalog-backed stock row to verify.
+`shop-source.test.ts` exercises exact selection, catalog matching,
+persistence, collisions, restocking and legacy behavior.
 
-This is a **persistence prerequisite**, not proof that a catalog source was
-validated. `buy_item` still rejects a user/model-supplied `itemRef` until
-the shelf can attest its catalog identity. The dedicated
-`shop-source.test.ts` checks normalization, JSON round-tripping, source
-collisions, stock addition, restocking and legacy behavior.
+Known limits: a shop owner or another authoring path must supply a
+source-backed stock row first; automatically generated shelves remain
+name-only. Homebrew and catalog-less items are not falsely classified
+as a book's entry, and an old name-only stock row cannot be selected
+unambiguously when an otherwise identical book-specific line is present.
