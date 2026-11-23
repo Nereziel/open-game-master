@@ -212,19 +212,23 @@ export function offerPriceCp(listCp: number): number {
 // A stock line by the names a carried line answers to (lineNamed): its
 // whole name, else the row it is listed as, so "Longsword" buys the "Spada
 // lunga" picked from the catalog. A miss is refused with the shelf listed.
-export function findStockLine(stock: StockLine[], name: string): StockLine | null {
+export function findStockLine(
+  stock: StockLine[],
+  name: string,
+  contentRef?: StoredContentReference,
+): StockLine | null {
   const rows = stock.map((line) => ({ name: line.itemName, srdName: line.srdName }));
-  // A name-only lookup must not pick the first shelf entry when multiple
-  // source books or an unreferenced legacy line use that same name.
-  const candidates = linesNamed(rows, name);
+  // Match the name before checking a source, so a supplied ID cannot select
+  // unrelated merchandise. Never guess among distinct books.
+  const candidates = linesNamed(rows, name).map((row) => stock[rows.indexOf(row)]);
+  if (contentRef) {
+    const matching = candidates.filter((line) => sameStoredContentReference(line.contentRef, contentRef));
+    return matching.length === 1 ? matching[0] : null;
+  }
   if (candidates.length > 1) {
-    const matching = candidates.map((candidate) => stock[rows.indexOf(candidate)]);
-    const first = matching[0].contentRef;
-    if (matching.some((entry) => !(first && entry.contentRef
-      ? first.sourceId === entry.contentRef.sourceId
-        && first.contentType === entry.contentRef.contentType
-        && first.contentId === entry.contentRef.contentId
-        && (first.documentSlug ?? "") === (entry.contentRef.documentSlug ?? "")
+    const first = candidates[0].contentRef;
+    if (candidates.some((entry) => !(first && entry.contentRef
+      ? sameStoredContentReference(first, entry.contentRef)
       : !first && !entry.contentRef))) return null;
   }
   return stock[lineNamed(rows, name)] ?? null;
@@ -232,8 +236,8 @@ export function findStockLine(stock: StockLine[], name: string): StockLine | nul
 
 // Take qty of a line out of the stock, dropping it at zero; null when the
 // shop has fewer than asked.
-export function takeStock(stock: StockLine[], itemName: string, qty: number): StockLine[] | null {
-  const line = findStockLine(stock, itemName);
+export function takeStock(stock: StockLine[], itemName: string, qty: number, contentRef?: StoredContentReference): StockLine[] | null {
+  const line = findStockLine(stock, itemName, contentRef);
   if (!line || line.qty < qty) {
     return null;
   }
