@@ -410,8 +410,17 @@ ordinary `purchase action=buy` outside a shop still refuses a supplied
 `shop-source.test.ts` exercises exact selection, catalog matching,
 persistence, collisions, restocking and legacy behavior.
 
-Known limits: a shop owner or another authoring path must supply a
-source-backed stock row first; automatically generated shelves remain
-name-only. Homebrew and catalog-less items are not falsely classified
-as a book's entry, and an old name-only stock row cannot be selected
-unambiguously when an otherwise identical book-specific line is present.
+Automatically generated shelves now inherit `contentRef` from the
+**actual Open5e catalog rows** selected by `stockPool`; the source,
+document and canonical slug are carried through `stockFromPool`,
+persistence and restocking. A book-backed generated item can therefore
+be purchased using its source identity, subject to the catalog check.
+The no-content-pack fallback (bundled SRD equipment tables), homebrew
+and manually created name-only shelves are deliberately left without
+inferred references. `shop-source.test.ts` checks this round-trip.
+
+Known limits: stock generation still chooses a single source when
+multiple catalog books publish the same English item name; it does
+not expose every edition as a separate automatically stocked option.
+A legacy name-only row cannot be selected unambiguously when an
+otherwise identical book-specific row is present.
