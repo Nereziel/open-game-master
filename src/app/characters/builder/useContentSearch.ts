@@ -3,6 +3,7 @@
 import { useEffect, useRef, useState } from "react";
 import { scopedParams, useContentCampaign } from "@/lib/content-scope";
 import { uniqueBySource } from "./pickerRows";
+import { useLocale } from "@/lib/locale";
 
 export type PickerEntry = {
   slug: string;
@@ -62,6 +63,7 @@ export type PickerEntry = {
 // says so instead of "nothing matched".
 export function useContentSearch(kind: string, extraParams: Record<string, string> = {}) {
   const campaignId = useContentCampaign();
+  const locale = useLocale();
   const [query, setQuery] = useState("");
   const [results, setResults] = useState<PickerEntry[]>([]);
   const [open, setOpen] = useState(false);
@@ -83,7 +85,7 @@ export function useContentSearch(kind: string, extraParams: Record<string, strin
       async () => {
         setLoading(true);
         try {
-          const params = new URLSearchParams(scopedParams({ limit: trimmed ? "12" : "30", ...extraParams }, campaignId));
+          const params = new URLSearchParams(scopedParams({ limit: trimmed ? "12" : "30", ...extraParams, locale }, campaignId));
           if (trimmed) {
             params.set("q", trimmed);
           }
@@ -131,7 +133,7 @@ export function useContentSearch(kind: string, extraParams: Record<string, strin
       }
     };
     // eslint-disable-next-line react-hooks/exhaustive-deps
-  }, [query, kind, campaignId, JSON.stringify(extraParams)]);
+  }, [query, kind, campaignId, locale, JSON.stringify(extraParams)]);
 
   const unavailable = failed || (packMissing && !results.length && !query.trim());
   return { query, setQuery, results, setResults, open, setOpen, loading, unavailable, packMissing, failed, unadmitted };
