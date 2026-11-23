@@ -2,7 +2,7 @@
 
 import { useEffect, useRef, useState } from "react";
 import { scopedParams, useContentCampaign } from "@/lib/content-scope";
-import { uniqueByName } from "./pickerRows";
+import { uniqueBySource } from "./pickerRows";
 
 export type PickerEntry = {
   slug: string;
@@ -18,6 +18,9 @@ export type PickerEntry = {
   // Pounds, where the catalog knows (an item).
   weight?: number;
   data: Record<string, unknown>;
+  // Source-scoped, display-only Czech translation returned by the catalog.
+  // Canonical English name/slug/data remain unchanged for the game engine.
+  localizedCs?: { name: string; summary?: string; fullRules?: string; hasFullRules: boolean };
   level?: number;
   school?: string;
   kind?: string;
@@ -96,7 +99,7 @@ export function useContentSearch(kind: string, extraParams: Record<string, strin
             setFailed(false);
             setPackMissing(data.packInstalled === false);
             setUnadmitted(Array.isArray(data.unadmitted) ? data.unadmitted : []);
-            setResults(uniqueByName(data.results ?? []));
+            setResults(uniqueBySource(data.results ?? []));
             if (trimmed) {
               setOpen(true);
             }
