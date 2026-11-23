@@ -44,10 +44,16 @@ statbloku a nemá žádné údaje OČ/HP/CR k porovnání.
 
 Tyto testy jsou nezávislé na samotném štítku „úplný překlad“; opravují
 především pravidlové číselné hodnoty, aniž by upravovaly anglická data.
-Dosavadní výsledky vykazují nulové neshody u strukturálních metadat,
-písemných záhlaví kouzel a číselných statbloků. Finální potvrzení CI
-se odvíjí od posledního commitu — před odškrtnutím fáze se kontrolují
-všechny relevantní testy i TypeScript.
+**Výsledek ověřeného běhu:** 933 stránek / 932 úplných českých textů, 0
+neshod strukturovaných metadat, 0 neshod záhlaví kouzel, 0 neshod číselných
+statbloků nestvůr a 0 neshod číselných hodnot v postupových tabulkách dvanácti
+povolání. Kontrola kostkových zápisů vypsala jen dva vysvětlující příklady
+navíc (klerikovo k100 a bojovníkovo k20), nikoli chybějící kostky v překladu.
+[CI #45180571807](https://github.com/Nereziel/open-game-master/actions/runs/45180571807):
+**31 souborů testů, 141 testů a TypeScript úspěšně**. Fáze 2 issue #107 je
+proto splněná v rozsahu překladu identit, měřitelných pravidlových hodnot a
+automatických regresí. Samotná přesnost významu všech vět se ověřuje
+odděleně redakční revizí v otevřené fázi 5.
 
 ## Pravidlová kontrola a její omezení
 
