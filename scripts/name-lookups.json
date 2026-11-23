@@ -2843,6 +2843,11 @@
         "identity",
         4,
         "SRD, spell, feature, subclass, hazard and magic rows by textKey (or armorKey/gearKey/rowKey/featureKey/priceKey, textKey-based); row tables keyed by the row's own name; the workshop's tables"
+      ],
+      [
+        "key",
+        1,
+        "a canonical SRD skill name read from a fixed display-only Czech labels map; no rule or game record selected"
       ]
     ],
     "lib/srd/index.ts#normalizer": [
