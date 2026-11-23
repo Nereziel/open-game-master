@@ -1,6 +1,7 @@
 // Presentation contract for source-scoped supplemental Open5e translations.
 // Do not rewrite row.name, slug, data, mechanics, or stored character entries.
 import { translationSourceId, type TranslationRegistry } from "../registry";
+import { textKey } from "@/lib/language/text-logic";
 import type { SupplementCatalogRow, SupplementKind } from "./build-pack";
 
 export type SupplementCzechDisplay = Readonly<{
@@ -26,6 +27,10 @@ export function supplementCzechDisplay(
     sourceId, contentType: kind as SupplementKind, contentId: row.slug, locale: "cs",
   }, { name: row.name });
   if (resolved.status !== "translated") return null;
+  // Exact document and slug are necessary but not sufficient: the original
+  // name is also verified against the pack's source provenance.
+  const originalName = resolved.entry.metadata?.sourceNameEnglish;
+  if (typeof originalName !== "string" || textKey(originalName) !== textKey(row.name)) return null;
   const summary = resolved.entry.metadata?.summaryCs;
   const fullRules = resolved.entry.description;
   return {
