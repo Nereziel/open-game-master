@@ -15,6 +15,7 @@ import { findShopNear, getShop, insertShop, listShops, listShopsAt, shopStandsAt
 import { searchItems } from "@/lib/content";
 import { getContentDb } from "@/lib/content/db";
 import { PLAYED_DOCUMENTS_SQL } from "@/lib/content/edition";
+import { storedReferenceForCatalogRow, type StoredContentReference } from "@/lib/content/translations/stored-reference";
 import { SRD_GEAR, SRD_GOODS } from "@/lib/srd/adventuring-gear";
 import { SRD_ARMOR } from "@/lib/srd/armor";
 import { bundledPriceCopper } from "@/lib/srd/starting-wealth";
@@ -187,9 +188,9 @@ function publishSheet(campaign: Campaign, sheetId: string) {
 // prices no magic item, so each is priced by its rarity under the 2014 rules
 // (src/lib/srd/magic-item-value.ts) and carries that rarity for the shelf to
 // choose by: commons only (SHELF_RARITIES).
-export function stockPool(kind: string): Array<{ name: string; cost: string; staple?: boolean; rarity?: string }> {
+export function stockPool(kind: string): Array<{ name: string; cost: string; staple?: boolean; rarity?: string; contentRef?: StoredContentReference }> {
   const spec = KIND_POOL[normalizeShopKind(kind)];
-  const pool: Array<{ name: string; cost: string; staple?: boolean; rarity?: string }> = [];
+  const pool: Array<{ name: string; cost: string; staple?: boolean; rarity?: string; contentRef?: StoredContentReference }> = [];
   const seen = new Set<string>();
   const stapled = new Set<string>();
   for (const itemKind of spec.kinds) {
@@ -206,7 +207,13 @@ export function stockPool(kind: string): Array<{ name: string; cost: string; sta
         stapled.add(textKey(staple));
       }
       const rarity = magic ? magic.rarity : null;
-      pool.push({ name: item.name, cost, ...(first ? { staple: true } : {}), ...(rarity ? { rarity } : {}) });
+      // This is the actual catalog row selected for the shelf, not a
+      // guess made later from its English name. Homebrew and bundled
+      // fallback items must not claim Open5e book provenance.
+      const contentRef = item.source === "open5e"
+        ? storedReferenceForCatalogRow("items", item)
+        : null;
+      pool.push({ name: item.name, cost, ...(first ? { staple: true } : {}), ...(rarity ? { rarity } : {}), ...(contentRef ? { contentRef } : {}) });
     }
   }
   return pool.length ? pool : bundledPool(spec);
