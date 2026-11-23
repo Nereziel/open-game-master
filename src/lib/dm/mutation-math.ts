@@ -6,6 +6,7 @@ import { textKey } from "../language/text-logic.ts";
 import { lineNamed } from "../srd/item-row.ts";
 import { bundlesAsRounds, carriedAsRounds } from "../srd/ammo-bundles.ts";
 import type { ItemTag } from "@/lib/schemas/item-tags";
+import type { StoredContentReference } from "@/lib/content/translations/stored-reference";
 
 export type SlotState = { max: number; used: number };
 export type EquipmentRow = {
@@ -13,7 +14,7 @@ export type EquipmentRow = {
   qty: number;
   slug?: string;
   // Optional stable catalog reference; legacy rows intentionally omit it.
-  contentRef?: { sourceId: string; contentType: string; contentId: string; documentSlug?: string };
+  contentRef?: StoredContentReference;
   // False while the party does not know what this is. Absent reads as true,
   // so every row written before the flag existed stays identified.
   identified?: boolean;
