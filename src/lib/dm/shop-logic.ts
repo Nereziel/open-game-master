@@ -376,6 +376,18 @@ export function restockDue(shop: Pick<Shop, "restockDays" | "restockedAt">, inst
   return shop.restockDays > 0 && instant - shop.restockedAt >= shop.restockDays * minutesPerDay;
 }
 
+// Avoid verbose IDs on every auto-stocked item. Show exact source IDs only
+// when the same shelf name refers to multiple entries, so the DM can select
+// the intended book for purchase instead of being forced to guess.
+export function stockItemPromptName(stock: readonly StockLine[], line: StockLine): string {
+  const duplicates = stock.filter((other) => textKey(other.itemName) === textKey(line.itemName));
+  if (duplicates.length <= 1) return line.itemName;
+  const ref = line.contentRef;
+  return ref
+    ? `${line.itemName} [itemRef sourceId=${ref.sourceId} contentId=${ref.contentId}${ref.documentSlug ? ` documentSlug=${ref.documentSlug}` : ""}]`
+    : `${line.itemName} [legacy stock without source ID]`;
+}
+
 // The prompt's line per shop at the party's place: name, keeper, and what
 // is on the shelves with the asking price in coin, then who has haggled
 // there and what it came to, so the DM narrates each buyer's own price.
@@ -386,7 +398,7 @@ export function renderShopsForPrompt(shops: Array<Shop & { keeperName: string }>
   const lines = shops.slice(0, 4).map((shop) => {
     const shelf = shop.stock
       .slice(0, 12)
-      .map((line) => `${line.itemName} x${line.qty} at ${formatPrice(askingPriceCp(line.priceCp, shop.markup))}`)
+      .map((line) => `${stockItemPromptName(shop.stock, line)} x${line.qty} at ${formatPrice(askingPriceCp(line.priceCp, shop.markup))}`)
       .join("; ");
     const haggled = shop.haggles.map((deal) => {
       const paid = !deal.steps
