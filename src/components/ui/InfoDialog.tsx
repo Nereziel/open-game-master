@@ -267,10 +267,12 @@ function ItemBody({ reference }: { reference: ContentRef }) {
   const locale = useLocale();
   const detail = (value: string | null | undefined) => itemDetailCs(value, locale);
   const t = useT();
-  const [state, setState] = useState<{ sheet: ItemSheet | null; loading: boolean }>({
-    sheet: null,
-    loading: true,
-  });
+  const [state, setState] = useState<{
+    sheet: ItemSheet | null;
+    localizedCs?: SupplementCzechDisplay;
+    original?: string | null;
+    loading: boolean;
+  }>({ sheet: null, loading: true });
 
   useEffect(() => {
     let cancelled = false;
@@ -279,17 +281,25 @@ function ItemBody({ reference }: { reference: ContentRef }) {
       const wanted = textKey(name);
       const readJson = async (response: Response) => (response.ok ? response.json() : null);
       try {
-        const [{ buildItemSheet }, direct, search] = await Promise.all([
+        const [{ buildItemSheet }, { describeContentEntry }, direct, search] = await Promise.all([
           import("@/lib/help/item-sheet"),
+          import("@/lib/help"),
           fetch(`/api/content/items/${encodeURIComponent(reference.slug)}${scopeQuery(campaignId)}`).then(readJson).catch(() => null),
           fetch(`/api/content/items?q=${encodeURIComponent(wanted)}&limit=20${scopeQuery(campaignId, "&")}`).then(readJson).catch(() => null),
         ]);
-        const hits = ((search?.results ?? []) as Array<{ name: string; data?: Record<string, unknown> }>)
-          .filter((entry) => textKey(entry.name) === wanted)
+        const selected = direct?.entry;
+        const hits = ((search?.results ?? []) as Array<{ name: string; source?: string; documentSlug?: string; data?: Record<string, unknown> }>)
+          .filter((entry) => textKey(entry.name) === wanted
+            && (!selected?.localizedCs || (entry.source === selected.source && entry.documentSlug === selected.documentSlug)))
           .map((entry) => entry.data);
-        const sheet = buildItemSheet(name, [direct?.entry?.data, ...hits]);
+        const sheet = buildItemSheet(name, [selected?.data, ...hits]);
         if (!cancelled) {
-          setState({ sheet, loading: false });
+          setState({
+            sheet,
+            localizedCs: selected?.localizedCs,
+            original: describeContentEntry(selected?.data) ?? sheet.description,
+            loading: false,
+          });
         }
       } catch {
         if (!cancelled) {
@@ -383,7 +393,9 @@ function ItemBody({ reference }: { reference: ContentRef }) {
 
   const localizedArmorRows = armorRows.map(({ label, text }) => ({ label: detail(label), text: text ? detail(text) : null }));
   const localizedWeaponRows = weaponRows.map(({ label, text }) => ({ label: detail(label), text: text ? detail(text) : null }));
-  const shownDescription = itemDescriptionCs(reference.name ?? reference.slug, sheet.description, locale, reference.slug);
+  const shownDescription = locale === "cs" && state.localizedCs
+    ? supplementRulesForDisplay(state.localizedCs, state.original ?? sheet.description, locale)
+    : itemDescriptionCs(reference.name ?? reference.slug, sheet.description, locale, reference.slug);
 
   return (
     <div className="space-y-4">
