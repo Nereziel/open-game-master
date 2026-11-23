@@ -315,7 +315,7 @@ export function stockFromPool(
   const priced = pool
     .filter((item) => !item.rarity || SHELF_RARITIES[size].includes(item.rarity))
     .map((item) => ({ name: item.name, cp: costToCopper(item.cost), staple: Boolean(item.staple), rarity: item.rarity ?? "", contentRef: item.contentRef }))
-    .filter((item): item is { name: string; cp: number; staple: boolean; rarity: string; contentRef?: StoredContentReference } => item.cp !== null);
+    .filter((item): item is { name: string; cp: number; staple: boolean; rarity: string; contentRef: StoredContentReference | undefined } => item.cp !== null);
   const line = (item: { name: string; cp: number; contentRef?: StoredContentReference }): StockLine => {
     const qty = item.cp >= 50 * COPPER_PER_GOLD ? 1 : item.cp >= 5 * COPPER_PER_GOLD ? 1 + Math.floor(random() * 3) : 2 + Math.floor(random() * 6);
     return { itemName: item.name, qty, priceCp: item.cp, note: "", ...(item.contentRef ? { contentRef: item.contentRef } : {}) };
