@@ -19,6 +19,8 @@
 | Škola magie, vzácnost, kategorie, zdatnosti/dovednosti | regresní testy | Změna je pouze zobrazovací, mechanické hodnoty v originálu jsou neměnné |
 | Kostky v úplných českých a anglických pravidlech | kontrola `d/k` + počet a počet stěn | Zaznamenává podezřelé rozdíly, nikoli soulad celé pravidlové věty |
 | Záhlaví kouzel | casting time, range, components, duration/concentration | Porovnává vybraná mechanicky významná pole z úplných pravidel, nikoli jen metadata |
+| Statbloky nestvůr | OČ, životy, kostky životů, rychlost, nebezpečnost, šest vlastností včetně oprav | Porovnání původních čísel proti českým statblokům; prozaická stránka `customizing-npcs` se nestaví na roveň statbloku |
+| Tabulky postupu povolání | všech 12 povolání, minimálně 20 úrovňových řádků a všechny jejich číselné sloupce | Porovnává zachování hodnot a bonusů, nikoli význam názvů schopností |
 
 Výstup při běhu: `src/lib/content/translations/srd-5.1/phase2-audit.test.ts` a `spell-header-audit.test.ts`. CI je spouští na změnách SRD v `main` přes `.github/workflows/translation-pack-registry.yml`.
 
@@ -28,6 +30,24 @@ Výstup při běhu: `src/lib/content/translations/srd-5.1/phase2-audit.test.ts` 
 - **Drow**: `elf-drow` je v seznamu stránek **nestvůra**, nikoli hratelná rasa. Alias `Drow` se použije jen pro správný druh obsahu; nesmí směrovat rasu na statblok nestvůry.
 - Starší `contentName` má jmenné mapy pro SRD. U záznamů Open5e z *jiné knihy* už nepoužije shodný název SRD; upřednostní ověřený `localizedCs.name`, jinak původní angličtinu. SRD upřednostní samostatný `display.name` z překladového adaptéru.
 - Dovednosti a vlastnosti v čtečce SRD, `common/cs` a `skillLabel()` jsou navzájem porovnávány regresním testem.
+
+## Dodatečná kontrola pravidlových hodnot
+
+Mechanická kontrola obsahu byla rozšířena o samostatné regresní moduly:
+`monster-stat-audit.ts` pro OČ, HP, kostky životů, rychlost,
+nebezpečnost a šest atributů (včetně jejich oprav) a
+`class-progression-audit.ts` pro úrovňové tabulky všech dvanácti povolání.
+Pro případné chyby jsou vypisována přesná kanonická ID a původní i české
+hodnoty. Kontroly jsou součástí `src/lib/content/translations/srd-5.1/`
+a CI na `main`. Záznam `customizing-npcs` je stránka s radami bez
+statbloku a nemá žádné údaje OČ/HP/CR k porovnání.
+
+Tyto testy jsou nezávislé na samotném štítku „úplný překlad“; opravují
+především pravidlové číselné hodnoty, aniž by upravovaly anglická data.
+Dosavadní výsledky vykazují nulové neshody u strukturálních metadat,
+písemných záhlaví kouzel a číselných statbloků. Finální potvrzení CI
+se odvíjí od posledního commitu — před odškrtnutím fáze se kontrolují
+všechny relevantní testy i TypeScript.
 
 ## Pravidlová kontrola a její omezení
 
