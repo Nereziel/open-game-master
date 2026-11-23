@@ -317,13 +317,15 @@ export function stockFromPool(
 // prepared count at its prepared price, in the author's order, and anything
 // the keeper bought from the party since still on the shelf after them.
 export function refillStock(stock: StockLine[], prepared: StockLine[]): StockLine[] {
-  const now = new Map(stock.map((line) => [textKey(line.itemName), line]));
+  const same = (a: StockLine, b: StockLine) =>
+    textKey(a.itemName) === textKey(b.itemName)
+    && (!a.contentRef && !b.contentRef
+      || sameStoredContentReference(a.contentRef, b.contentRef));
   const refilled = prepared.map((line) => {
-    const current = now.get(textKey(line.itemName));
+    const current = stock.find((entry) => same(entry, line));
     return { ...line, qty: Math.max(line.qty, current?.qty ?? 0) };
   });
-  const authored = new Set(prepared.map((line) => textKey(line.itemName)));
-  return [...refilled, ...stock.filter((line) => !authored.has(textKey(line.itemName)))];
+  return [...refilled, ...stock.filter((line) => !prepared.some((entry) => same(entry, line)))];
 }
 
 // The item kinds each shop kind stocks, for the pool the tool draws from.
