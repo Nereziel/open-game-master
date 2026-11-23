@@ -328,3 +328,13 @@ different book-specific items. It now shares the source-safe
 `findCarriedItem` lookup, avoiding a false identification of the first
 item's magical properties in ambiguous cases. The actual sale mutation
 continues to use `removeItemMath`, which refuses source ambiguity.
+
+### Ambiguous item commands
+
+A source-safe lookup alone is not enough: previously `party_stash stow`
+and shop `sell` reported "item not carried" when a same-name item was
+present in multiple source books. Both tools now use
+`ambiguousCarriedItem` to return an actionable retry message identifying
+the conflicting books without changing inventory, rather than a false
+missing-item error. `findCarriedItem` shares the same source comparison.
+The sale-price helper also safely handles nullable lookup results.
