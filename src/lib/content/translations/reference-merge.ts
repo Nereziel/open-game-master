@@ -5,7 +5,7 @@ export function castingOverlayBase(
   patch: object,
 ): Record<string, unknown> {
   if (!Object.prototype.hasOwnProperty.call(patch, "contentRefs")) return { ...stored };
-  const base = { ...stored };
+  const base: Record<string, unknown> = { ...stored };
   delete base.contentRefs;
   return base;
 }
