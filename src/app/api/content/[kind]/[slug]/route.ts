@@ -2,6 +2,7 @@ import { currentUser, unauthorized } from "@/lib/auth";
 import { getEntryDetail } from "@/lib/content";
 import { withBestEffort } from "@/lib/content/entry-labels";
 import { withSupplementCzechDisplay } from "@/lib/content/translations/supplements/server-display";
+import { matchesRequestedCatalogDocument } from "@/lib/content/translations/supplements/display";
 import { bundledItemRows, bundledSpellRows } from "@/lib/rulebook/catalog-rows";
 import { bundledGearRow } from "@/lib/workshop/bundled-gear-rows";
 import { contentScopeFor } from "@/lib/content/scope";
@@ -61,6 +62,12 @@ export async function GET(
   }
 
   const entry = getEntryDetail(kind as Parameters<typeof getEntryDetail>[0], decoded);
+  const requestedDocument = new URL(request.url).searchParams.get("documentSlug");
+  if (entry && !matchesRequestedCatalogDocument(entry, requestedDocument)) {
+    // A legacy slug-only lookup may resolve a different book. Never return
+    // that book when the picker explicitly selected another document.
+    return Response.json({ error: "The selected entry is not from this source document." }, { status: 404 });
+  }
   if (entry) {
     return Response.json({ entry: withSupplementCzechDisplay(kind, withBestEffort(kind, entry, { classSlug: String(entry.data.class_slug ?? "") || undefined }), true) });
   }
