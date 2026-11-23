@@ -392,3 +392,19 @@ or equipment mutations, since the shop cannot attest to the requested
 source. The legacy stock-only purchase without `itemRef` remains
 unchanged. A future source-aware shop stock schema and validation against
 actual catalog rows is needed before honoring source-specific purchases.
+
+### Provenance-ready shop stock (not yet catalog-verified)
+
+Shop stock and prepared stock now accept an **optional** item-kind
+`contentRef`. Storage normalization validates the reference, discards
+malformed values, retains legacy lines without one, and does not combine
+equal English names from distinct sources. Shop sale-to-stock carries the
+sold item's reference; restocking compares book identity as well as name.
+Name-only stock lookup refuses ambiguous same-name rows rather than selling
+the first book's item.
+
+This is a **persistence prerequisite**, not proof that a catalog source was
+validated. `buy_item` still rejects a user/model-supplied `itemRef` until
+the shelf can attest its catalog identity. The dedicated
+`shop-source.test.ts` checks normalization, JSON round-tripping, source
+collisions, stock addition, restocking and legacy behavior.
