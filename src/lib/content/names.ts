@@ -11,9 +11,10 @@
 // (src/lib/srd/index.ts) already works for skills.
 
 import { textKey } from "@/lib/language/text-logic";
-type Locale = "en" | "fr";
+type Locale = "en" | "fr" | "cs";
 import { srdRaceId } from "@/lib/srd/race-id";
 import { frTables } from "@/lib/i18n/fr-tables";
+import { csTables } from "@/lib/i18n/cs-tables";
 
 // The tables the maps carry, as the helper's callers name them.
 export type FrNamesTable =
@@ -100,12 +101,14 @@ const ITEM_TABLES: readonly FrNamesTable[] = ["gear", "weapons", "armor", "magic
 const NONE: Record<string, Record<string, string>> = {};
 const frNames = () => frTables()?.names ?? NONE;
 const frTranslated = () => frTables()?.translated ?? NONE;
+const namesFor = (locale: Locale) => locale === "cs" ? (csTables()?.names ?? NONE) : frNames();
+const translatedFor = (locale: Locale) => locale === "fr" ? frTranslated() : NONE;
 
-function lookup(table: FrNamesTable, key: string): string | null {
+function lookup(table: FrNamesTable, key: string, locale: Locale): string | null {
   if (!key) {
     return null;
   }
-  const names = frNames()[table];
+  const names = namesFor(locale)[table];
   if (names) {
     if (table === "weapons") {
       const overridden = WEAPON_KEY_OVERRIDES.get(key);
@@ -117,7 +120,7 @@ function lookup(table: FrNamesTable, key: string): string | null {
       return names[key];
     }
   }
-  return frTranslated()[table]?.[key] ?? null;
+  return translatedFor(locale)[table]?.[key] ?? null;
 }
 
 // The keys a table tries, in order: a row's own slug first (a third-party
@@ -148,13 +151,13 @@ export function contentName(
   locale: Locale,
 ): string {
   const row: NamedRow = typeof ref === "string" ? { name: ref } : ref;
-  if (locale !== "fr" || !row.name || (row.source && row.source !== "open5e")) {
+  if ((locale !== "fr" && locale !== "cs") || !row.name || (row.source && row.source !== "open5e")) {
     return row.name;
   }
   const tables: readonly FrNamesTable[] = table === "items" ? ITEM_TABLES : [table];
   for (const each of tables) {
     for (const key of keysFor(each, row)) {
-      const hit = lookup(each, key);
+      const hit = lookup(each, key, locale);
       if (hit) {
         return hit;
       }
@@ -170,11 +173,11 @@ export function contentName(
 // not carry (an artificer's, as the French SRD does not print the class, or a
 // workshop class's) stays English.
 export function classFeatureName(classId: string, featureName: string, locale: Locale): string {
-  if (locale !== "fr" || !featureName) {
+  if ((locale !== "fr" && locale !== "cs") || !featureName) {
     return featureName;
   }
   const key = `${classId.trim().toLowerCase()}:${canonicalKey(featureName)}`;
-  return frNames().classFeatures?.[key] ?? featureName;
+  return namesFor(locale).classFeatures?.[key] ?? featureName;
 }
 
 // A species trait line ("Darkvision 60 ft", "Perception proficiency (Keen
@@ -203,11 +206,11 @@ function localizeTraitTail(tail: string): string {
 }
 
 export function speciesTraitName(raceId: string, traitLine: string, locale: Locale): string {
-  if (locale !== "fr" || !traitLine) {
+  if ((locale !== "fr" && locale !== "cs") || !traitLine) {
     return traitLine;
   }
-  const traits = (frNames().speciesTraits ?? {});
-  const extraTraits = frTranslated().speciesTraits ?? {};
+  const traits = (namesFor(locale).speciesTraits ?? {});
+  const extraTraits = translatedFor(locale).speciesTraits ?? {};
   const species = canonicalKey(srdRaceId(raceId));
   const carries = (name: string) => {
     const k = `${species}:${canonicalKey(name)}`;
@@ -220,7 +223,7 @@ export function speciesTraitName(raceId: string, traitLine: string, locale: Loca
   const bracketed = /\s*\(([^()]*)\)\s*$/.exec(traitLine);
   if (bracketed) {
     const head = traitLine.slice(0, bracketed.index);
-    const after = localizeTraitTail(traitLine.slice(bracketed.index));
+    const after = (locale === "fr" ? localizeTraitTail(traitLine.slice(bracketed.index)) : traitLine.slice(bracketed.index));
     const headHit = carries(head);
     if (headHit) {
       return `${headHit}${after}`;
@@ -236,10 +239,10 @@ export function speciesTraitName(raceId: string, traitLine: string, locale: Loca
   if (measured) {
     const bare = carries(traitLine.slice(0, measured.index));
     if (bare) {
-      return `${bare}${localizeTraitTail(traitLine.slice(measured.index))}`;
+      return `${bare}${(locale === "fr" ? localizeTraitTail(traitLine.slice(measured.index)) : traitLine.slice(measured.index))}`;
     }
   }
-  return localizeTraitTail(traitLine);
+  return locale === "fr" ? localizeTraitTail(traitLine) : traitLine;
 }
 
 // A background's granted feature as the sheet carries it ("Shelter of the
@@ -249,7 +252,7 @@ export function speciesTraitName(raceId: string, traitLine: string, locale: Loca
 // feature the map does not carry (the French SRD prints one background as an
 // example) stays English.
 export function backgroundFeatureName(featureName: string, locale: Locale): string {
-  if (locale !== "fr" || !featureName) {
+  if ((locale !== "fr" && locale !== "cs") || !featureName) {
     return featureName;
   }
   const bracketed = /\s*\(([^()]*)\)\s*$/.exec(featureName);
@@ -260,8 +263,8 @@ export function backgroundFeatureName(featureName: string, locale: Locale): stri
   const background = bracketed[1];
   const bgKey = `${canonicalKey(background)}:${canonicalKey(feature)}`;
   const hit =
-    frNames().backgroundFeatures?.[bgKey] ??
-    frTranslated().backgroundFeatures?.[bgKey];
+    namesFor(locale).backgroundFeatures?.[bgKey] ??
+    translatedFor(locale).backgroundFeatures?.[bgKey];
   if (!hit) {
     return featureName;
   }
@@ -271,13 +274,13 @@ export function backgroundFeatureName(featureName: string, locale: Locale): stri
 // A background feature's translated name when the background is already known
 // from surrounding context (e.g. BackgroundPanel).
 export function backgroundFeatureLabel(backgroundName: string, feature: string, locale: Locale): string {
-  if (locale !== "fr" || !feature) {
+  if ((locale !== "fr" && locale !== "cs") || !feature) {
     return feature;
   }
   const bgKey = `${canonicalKey(backgroundName)}:${canonicalKey(feature)}`;
   return (
-    frNames().backgroundFeatures?.[bgKey] ??
-    frTranslated().backgroundFeatures?.[bgKey] ??
+    namesFor(locale).backgroundFeatures?.[bgKey] ??
+    translatedFor(locale).backgroundFeatures?.[bgKey] ??
     feature
   );
 }
@@ -287,9 +290,9 @@ export function backgroundFeatureLabel(backgroundName: string, feature: string, 
 // name, whole or bare ("cleric:life-domain", "cleric:life"). A subclass the
 // map does not carry (a workshop or pack archetype) stays as it was stored.
 export function subclassName(classId: string, subclass: string, locale: Locale): string {
-  if (locale !== "fr" || !subclass) {
+  if ((locale !== "fr" && locale !== "cs") || !subclass) {
     return subclass;
   }
   const key = `${classId.trim().toLowerCase()}:${canonicalKey(subclass)}`;
-  return frNames().subclasses?.[key] ?? subclass;
+  return namesFor(locale).subclasses?.[key] ?? subclass;
 }
