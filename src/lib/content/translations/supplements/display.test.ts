@@ -1,6 +1,6 @@
 import { describe, expect, it } from "vitest";
 import { supplementCzechRegistry } from "./index";
-import { supplementCzechDisplay, supplementRulesForDisplay } from "./display";
+import { matchesRequestedCatalogDocument, supplementCzechDisplay, supplementRulesForDisplay } from "./display";
 import type { SupplementCatalogRow } from "./build-pack";
 
 const row = (documentSlug: string, kind: SupplementCatalogRow["kind"], slug: string, name: string): SupplementCatalogRow => ({
@@ -64,6 +64,14 @@ describe("source-scoped Czech catalog display (#107 phase 4)", () => {
     expect(supplementCzechDisplay(registry, "feats", source[3], true)?.fullRules).toContain("Moudrost");
     expect(supplementCzechDisplay(registry, "spells", source[4])?.name).toBe("Odpudivý přízrak");
     expect(supplementCzechDisplay(registry, "items", source[5], true)?.fullRules).toContain("3 náboje");
+  });
+
+  it("refuses a same-slug entry from another source document", () => {
+    expect(matchesRequestedCatalogDocument(source[0], "toh")).toBe(true);
+    expect(matchesRequestedCatalogDocument(source[0], "dmag")).toBe(false);
+    expect(matchesRequestedCatalogDocument({ source: "homebrew", documentSlug: "toh" }, "toh")).toBe(false);
+    expect(matchesRequestedCatalogDocument(undefined, "toh")).toBe(false);
+    expect(matchesRequestedCatalogDocument(source[0], null)).toBe(true);
   });
 
   it("preserves English fallback if a catalog row is genuinely untranslated", () => {
