@@ -721,21 +721,25 @@ const DOCUMENT_ORDER = `CASE document_slug WHEN 'wotc-srd' THEN 0 WHEN 'srd-2014
 export function getEntryDetail(
   kind: "spells" | "feats" | "conditions" | "backgrounds" | "races" | "classes" | "archetypes" | "items" | "monsters",
   slug: string,
+  documentSlug?: string,
 ): ContentEntry | null {
   const db = getContentDb();
   if (slug.startsWith("homebrew:")) {
     return null;
   }
-  const row = db
-    ?.prepare(`SELECT slug, name, document_slug, data_json FROM ${kind} WHERE slug = ?`)
-    .get(slug) as DetailRow | undefined;
+  // An explicitly selected Open5e book is part of the lookup identity.
+  // Legacy slug-only callers retain the original search behavior.
+  const row = documentSlug
+    ? db?.prepare(`SELECT slug, name, document_slug, data_json FROM ${kind} WHERE slug = ? AND document_slug = ?`).get(slug, documentSlug) as DetailRow | undefined
+    : db?.prepare(`SELECT slug, name, document_slug, data_json FROM ${kind} WHERE slug = ?`).get(slug) as DetailRow | undefined;
   if (kind === "spells") {
     const served = allPackSpells();
-    return served.find((entry) => entry.slug === slug) ?? (row ? served.find((entry) => spellNameMatches(entry, row.name)) ?? null : null);
+    return served.find((entry) => entry.slug === slug && (!documentSlug || entry.documentSlug === documentSlug))
+      ?? (row ? served.find((entry) => spellNameMatches(entry, row.name) && (!documentSlug || entry.documentSlug === documentSlug)) ?? null : null);
   }
   // A feat ODM wrote answers for its name where the pack has none, or has
   // only a 2024 row.
-  if (kind === "feats" && (!row || EDITION_2024_DOCUMENTS.has(row.document_slug))) {
+  if (!documentSlug && kind === "feats" && (!row || EDITION_2024_DOCUMENTS.has(row.document_slug))) {
     const authored = authoredFeatBySlug(slug);
     if (authored) {
       return authored;
@@ -745,6 +749,7 @@ export function getEntryDetail(
     return null;
   }
   if (EDITION_2024_DOCUMENTS.has(row.document_slug)) {
+    if (documentSlug) return null; // A specific 2024 book cannot stand in for SRD 5.1.
     const twin = db
       ?.prepare(`SELECT slug, name, document_slug, data_json FROM ${kind} WHERE name = ? AND ${PLAYED_DOCUMENTS_SQL} ORDER BY ${DOCUMENT_ORDER}, slug LIMIT 1`)
       .get(row.name) as DetailRow | undefined;
@@ -753,7 +758,7 @@ export function getEntryDetail(
   // Level Up's version of an SRD entry answers as the SRD's (issue #570): a
   // world pack or an old sheet naming "goblin-a5e" gets the SRD goblin.
   const served = servedSlug(kind, row.slug);
-  if (served !== row.slug) {
+  if (!documentSlug && served !== row.slug) {
     const srd = db?.prepare(`SELECT slug, name, document_slug, data_json FROM ${kind} WHERE slug = ?`).get(served) as DetailRow | undefined;
     if (srd) {
       return detailEntry(srd, kind);
