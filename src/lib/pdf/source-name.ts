@@ -11,7 +11,8 @@ export function pdfReferencedName(
   locale: Locale,
   reference?: StoredContentReference,
 ): string {
-  if (reference && (reference.sourceId !== "srd-5.1" || reference.contentType !== kind)) {
+  if (reference && (reference.sourceId !== "srd-5.1" || reference.contentType !== kind
+    || (reference.documentSlug && reference.documentSlug !== "wotc-srd"))) {
     return canonicalName;
   }
   return gameName(kind, canonicalName, locale);
