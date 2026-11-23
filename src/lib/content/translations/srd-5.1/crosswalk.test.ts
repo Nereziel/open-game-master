@@ -7,7 +7,7 @@ import { srdPageIdForCatalogRecord } from "./crosswalk";
 const pages: RulebookPage[] = [
   { id: "shield", chapter: "spells", kind: "spell", title: "Shield", md: "Spell text" },
   { id: "shield-1-2-or-3", chapter: "magic-items", kind: "item", title: "Shield, +1, +2, or +3", md: "Item text" },
-  { id: "elf-drow", chapter: "races", kind: "race", title: "Elf, Drow", md: "Race text" },
+  { id: "elf-drow", chapter: "monsters", kind: "monster", title: "Elf, Drow", md: "Monster text" },
 ];
 
 describe("SRD catalog-to-reader identity crosswalk (#107)", () => {
@@ -29,10 +29,13 @@ describe("SRD catalog-to-reader identity crosswalk (#107)", () => {
     expect(srdPageIdForCatalogRecord({ ...record, slug: "srd:missing" }, pages)).toBeNull();
   });
 
-  it("accepts only vetted non-exact names from the bundled crosswalk", () => {
+  it("uses the vetted Drow monster alias without assigning it to playable ancestry", () => {
+    expect(srdPageIdForCatalogRecord({
+      kind: "monsters", slug: "drow", name: "Drow", source: "open5e", documentSlug: "wotc-srd",
+    }, pages)).toBe("elf-drow");
     expect(srdPageIdForCatalogRecord({
       kind: "races", slug: "drow", name: "Drow", source: "open5e", documentSlug: "wotc-srd",
-    }, pages)).toBe("elf-drow");
+    }, pages)).toBeNull();
   });
 
   it("rejects ambiguous name collisions and untrusted rulebook pointers", () => {
