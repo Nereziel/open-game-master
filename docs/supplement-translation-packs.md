@@ -12,20 +12,20 @@ Tento PR **neslučuje PR #106** a nijak neupravuje anglické zdrojové katalogy,
 
 Každý z údajů byl převeden **beze změny obsahu** z konkrétního souboru větve PR #106 (`third-party-names-cs.ts`, `third-party-full-rules-cs.ts`, `third-party-feat-description-cs.ts`, `third-party-item-summary-cs.ts`, `third-party-spell-summary-cs.ts`). Původní překlady a krátké české přehledy jsou v balíčcích oddělené; dlouhé texty se neslučují ani nepřepisují. Autorské a licenční informace pocházejí ze zdrojových dokumentů Open5e, včetně atribuce vydavateli Kobold Press a příslušné licence OGL.
 
-**Pozor:** To, že byl text v PR #106 označen jako „úplný“, není důkaz pravidlové shody s originálem. Tyto texty jsou převzaté autorské návrhy a před konečným schválením vyžadují samostatný obsahový audit. Krátký přehled nikdy nezastupuje úplný text kouzla či předmětu.
+**Pozor:** To, že byl text v PR #106 označen jako „úplný“, není důkaz pravidlové shody s originálem. Tyto návrhy nejsou v aktivním registru úplných pravidel; `report.unverifiedFullRules` je počítá odděleně od `report.completeRules`. Dokud neproběhne obsahový audit podle celé zdrojové položky, zůstává úplné znění anglicky. Krátký přehled nikdy nezastupuje úplný text kouzla či předmětu.
 
 ## Bezpečný kontrakt
 
 - `tomeOfHeroesCsPack(rows)`, `deepMagicCsPack(rows)`, `vaultOfMagicCsPack(rows)` přijímají skutečné **katalogové řádky** (`source`, `documentSlug`, `kind`, `slug`, `name`), nikoli odhadnuté ID.
 - Návrhy jsou historicky indexované anglickými názvy, proto migrátor nejprve ověří `sourceId` (jen `open5e`) a druh záznamu, vyřeší jednoznačnou shodu s anglickým názvem **uvnitř knihy** a teprve potom použije **skutečný `slug` jako `contentId`** v `TranslationRegistry`.
 - Dva různé katalogové slugs se stejným jménem a druhem v jedné knize jsou nejednoznačné: překlad se nepřiřadí ani jednomu. Chybějící ID, neexistující překlad a sirotčí návrhy jsou rozlišeny v `report`.
-- Ověřené návrhy pravidlových textů se ukládají do `description`. **Stručné přehledy** se ukládají jen do `metadata.summaryCs`; `description` pak zůstává původní anglický text **toho samého** katalogového záznamu.
+- **Neauditované návrhy úplných textů** z `fullRules` se nikdy nepřenášejí do `description`. Zůstávají uložené pro pozdější obsahový audit. Až samostatně zkontrolované překlady patří do `approvedFullRules` a mohou vyplnit `description`. **Stručné přehledy** jsou jen v `metadata.summaryCs`; do auditu se jako úplná pravidla zobrazí anglický originál **téhož** katalogového záznamu.
 - `homebrew` i SRD jsou z těchto balíčků vyloučeny. Alias `deepm` / `dmag` je mapován do jednoho zdroje `deep-magic`; identická `kind + slug + name` se deduplikuje.
 - `supplementCzechRegistry(rows)` sestaví registry všech tří knih a vrátí samostatné reporty. Nevyžaduje žádné změny ukládání nebo herních výpočtů.
 
 ## Co zůstává otevřené
 
-Balíčky zatím nejsou napojené na všechny UI konzumenty. Navazující PR #111 zapojuje katalogová API, základní pickery a detaily; úplná čtečka, další editory, workshop a export do PDF patří do zbývající fáze 4. Přesun návrhů také **nedoplňuje** chybějící překlady dalších 458 kouzel Deep Magic a 556 předmětů Vault of Magic. Každé skutečné pokrytí závisí na katalogových řádcích dostupných v instalaci serveru.
+Balíčky zatím nejsou napojené na všechny UI konzumenty (čtečka, picker, detail, workshop, export do PDF); to patří do fáze 4. Přesun návrhů také **nedoplňuje** chybějící překlady dalších 458 kouzel Deep Magic a 556 předmětů Vault of Magic. Každé skutečné pokrytí závisí na katalogových řádcích dostupných v instalaci serveru.
 
 Regresní testy v `src/lib/content/translations/supplements/build-pack.test.ts` ověřují counts původních map, kolize knih, fallback, skutečné `slug`, bezpečnost homebrew a označení přehledů.
 
@@ -44,13 +44,13 @@ vracejí volitelný objekt `localizedCs`:
 
 - `name` – český zobrazovací název, zvolený podle skutečného zdroje;
 - `summary` – pouze krátký přehled, nikdy úplná pravidla;
-- `hasFullRules` – údaj, že vlastní návrh českého pravidlového textu existuje;
+- `hasFullRules` – údaj, že redakčně schválený úplný český pravidlový text existuje;
 - `fullRules` – pouze v detailové odpovědi, ne v lehkém seznamu.
 
 Kanoničtí `name`, `slug`, `data` a mechaniky v odpovědi zůstávají
 anglické a nedotčené. UI `ContentPicker`, `MultiContentPicker` a
 `InfoDialog` při české lokalizaci používají `localizedCs` a jinak
-vlastní dosavadní výstup. U pouhého přehledu detail zároveň zobrazí
+vlastní dosavadní výstup. U neauditovaného návrhu úplných pravidel detail používá anglické znění; u pouhého českého přehledu detail zároveň zobrazí
 **úplný anglický popis stejného katalogového záznamu** s
 explicitním označením. Neexistující či chybně přiřazené překlady
 nepřepisují jinou knihu. U katalogu, který není nainstalován
