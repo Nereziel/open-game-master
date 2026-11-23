@@ -74,9 +74,13 @@ describe("SRD 5.1 structured Czech/English audit (#107 phase 2)", () => {
       firstIds: review.slice(0, 40).map((item) => item.id),
       findings: review.slice(0, 20),
     }));
-    expect(Array.isArray(review)).toBe(true);
-    expect(review.every((entry) => entry.missingFromCzech.length > 0 || entry.unexpectedInCzech.length > 0)).toBe(true);
-    // These are review findings, not hard failures: unit conversions and
-    // differences in examples cannot be settled using regex alone.
+    // Editorially reviewed additions, NOT missing source mechanics:
+    // "cleric" explicitly explains percentile dice as a k100;
+    // "fighter" names the k20 in the Improved Critical explanation.
+    // Fail on every new or missing source dice signature.
+    expect(review).toEqual([
+      { id: "cleric", kind: "class", missingFromCzech: [], unexpectedInCzech: ["1d100"] },
+      { id: "fighter", kind: "class", missingFromCzech: [], unexpectedInCzech: ["1d20"] },
+    ]);
   });
 });
