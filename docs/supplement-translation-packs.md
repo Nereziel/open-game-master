@@ -100,3 +100,26 @@ Omezení: není dosud sjednoceno stránkování kombinovaných
 českých/anglických výsledků v pokročilých velkých katalozích.
 Zbývá také integrovat lokalizaci do dalšího workshopu,
 reference/čtečky a exportu do PDF.
+
+## Fáze 3 – ověření duplicit a stálosti zvoleného zdroje
+
+Zdrojová izolace se ověřuje kombinací následujících pravidel:
+
+- **Stejný anglický název v SRD a v různých knihách není totožné ID.** Vyhledávání a picker používají původní `source + documentSlug + kind + slug`; uložení používá `StoredContentReference` s `sourceId + contentType + contentId + documentSlug`. Otevření detailu kontroluje přesný katalogový dokument, nikoliv jmenný alias.
+- **Dvě odbornosti stejného názvu a různých ID v jedné knize jsou nejednoznačné.** Registr jim nepřiřadí český text podle pouhého názvu. Picker je může zobrazit jako dva samostatné zdrojové záznamy; legacy seznamy založené jen na jménu nemohou současně uložit obě – do změny schématu je povolen jen jeden výběr stejného jména. Nepředstírá se, že jsou to dvě samostatně trvale uložené odbornosti.
+- **Alias knihy Deep Magic (`dmag` / `deepm`)** se slučuje jen při shodě originálního názvu a katalogového ID. Konfliktní `kind + slug` se vyřadí z překladu a uvede v `report.ambiguous` bez vypnutí dalších položek či celé knihy.
+- Při práci s detailem se kromě přesného `sourceId + slug` kontroluje také **původní anglický název**, zapamatovaný v překladovém balíčku jako `metadata.sourceNameEnglish`. Shodné ID s neodpovídajícím anglickým názvem se nepřekládá.
+- `supplements/collision-audit.ts` vytváří oddělené reporty `crossBookNames`, `duplicateFeatsInBook`, `conflictingIds`. Server tento audit provádí nad nainstalovaným katalogem **včetně `wotc-srd`** a zpřístupňuje výsledek interní funkcí `supplementCatalogCollisionReport()`. Případné konflikty odborností či kanonických ID zapíše do serverového logu. Samotná kolize anglického názvu mezi knihami je přípustná a nic nemění na uloženém zdroji.
+
+Regresní testy `collision-audit.test.ts`, `build-pack.test.ts`,
+`display.test.ts`, `stored-reference.test.ts` a `pickerRows.test.ts`
+ověřují názvové kolize, duplicitní odbornosti, stálost přesné knihy v
+uložené referenci a detailu, bezpečný anglický fallback i neauditované
+pravidlové texty.
+
+**Omezení testovacího prostředí:** Bez instalace volitelného Open5e SQLite
+balíčku nelze tvrdit skutečné počty duplicit ve všech importovaných knihách.
+Testy ověřují chování na cílených kolizních případech; živá instance vytváří
+report skutečného katalogu. Redakční audit českých textů a případná změna
+schématu ukládání pro dvě různé stejně pojmenované odbornosti patří k
+navazujícím fázím 4/5.
