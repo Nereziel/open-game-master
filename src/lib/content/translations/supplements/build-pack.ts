@@ -105,7 +105,9 @@ export function buildSupplementCzechPack(
       // A complete-looking draft is NOT evidence of reviewed rules.
       // Only explicitly approved editorial translations replace descriptions.
       ...(approved ? { description: approved } : {}),
-      ...(summary ? { metadata: { summaryCs: summary } } : {}),
+      // Guard against a later same-slug / different-name catalog row:
+      // the translated title belongs to precisely this canonical original.
+      metadata: { sourceNameEnglish: row.name, ...(summary ? { summaryCs: summary } : {}) },
     };
     (entries[row.kind] ??= {})[row.slug] = entry;
     translated++;
