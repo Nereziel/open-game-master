@@ -19,9 +19,9 @@ export function loadCatalog(locale: Locale): Promise<void> {
     return pending;
   }
   if (locale === "cs") {
-    pending = Promise.all([import("./cs.json"), import("../content/names-cs.ts")])
-      .then(([catalog, names]) => {
-        installCsTables({ names: names.CS_NAMES_BY_TABLE });
+    pending = Promise.all([import("./cs.json"), import("../content/names-cs.ts"), import("../srd/class-resources-cs-data.ts")])
+      .then(([catalog, names, resources]) => {
+        installCsTables({ names: names.CS_NAMES_BY_TABLE, guidance: resources.RESOURCE_CS_GUIDANCE });
         installCatalog("cs", catalog.default ?? catalog);
       })
       .catch((error) => {
