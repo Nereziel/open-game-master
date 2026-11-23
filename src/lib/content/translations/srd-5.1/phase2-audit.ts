@@ -51,7 +51,9 @@ export function fullCzechRulesOnly(source: RulebookPage, localized: RulebookPage
 export function diceSignatures(text: string): readonly string[] {
   const found = new Set<string>();
   // "d4" / "k4" is an implicit 1d4, common in SRD bonuses.
-  for (const match of text.matchAll(/\b(?:(\d+)\s*)?[dk]\s*(4|6|8|10|12|20|100)\b/gi)) {
+  // Die marker and sides must be adjacent: Czech "k 12" means "to twelve",
+  // not a d12 die, and otherwise produces false mechanical-review alarms.
+  for (const match of text.matchAll(/\b(?:(\d+)\s*)?[dk](4|6|8|10|12|20|100)\b/gi)) {
     found.add(`${Number(match[1] ?? "1")}d${Number(match[2])}`);
   }
   return [...found].sort();
