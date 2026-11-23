@@ -1,6 +1,6 @@
 import { describe, expect, it } from "vitest";
 import { normalizeStock } from "@/lib/db/shops";
-import { addStock, findStockLine, takeStock } from "./shop-logic";
+import { addStock, findStockLine, refillStock, takeStock } from "./shop-logic";
 
 describe("shop stock source identity (#107)", () => {
   const srd = {
@@ -34,6 +34,18 @@ describe("shop stock source identity (#107)", () => {
     expect(takeStock(stock, "Shield", 1)).toBeNull();
     expect(stock).toHaveLength(2);
     expect(findStockLine([srd], "Shield")).toEqual(srd);
+  });
+
+  it("keeps source-specific sales separate when adding stock", () => {
+    const combined = addStock([srd], "Shield", 2, 1000, undefined, other.contentRef);
+    expect(combined).toHaveLength(2);
+    expect(combined[1].contentRef).toEqual(other.contentRef);
+    expect(addStock([srd], "Shield", 1, 1000, undefined, srd.contentRef)).toEqual([{ ...srd, qty: 2 }]);
+  });
+
+  it("refills matching books separately without losing a different source", () => {
+    const refilled = refillStock([{ ...srd, qty: 3 }, other], [{ ...srd, qty: 2 }]);
+    expect(refilled).toEqual([{ ...srd, qty: 3 }, other]);
   });
 
   it("preserves historical single-name stock behavior", () => {
