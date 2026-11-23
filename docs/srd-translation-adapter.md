@@ -272,3 +272,17 @@ The source-aware PDF name helper has isolated regression tests and is
 included in the source registry CI. This scope covers PDF item and spell
 **names**, not a claim that PDF includes translations of every rule
 description from non-SRD books.
+
+### DM inventory mutations
+
+`addRowMath` now compares the optional persisted source reference as
+part of the inventory-stack identity; equal English names and slugs
+from different books must remain separate rows. A legacy unreferenced
+row is also distinct from a positively referenced row. The AI/DM
+`grantItemMath` path, which currently grants items by name without a
+catalog provenance reference, never absorbs an existing source-verified
+stack. Old name-only items still stack as before.
+
+Regression tests in `mutation-math-source.test.ts` cover different
+books, old records, DM grants and legacy behavior. This change does not
+retroactively infer references for historical DM grants.
