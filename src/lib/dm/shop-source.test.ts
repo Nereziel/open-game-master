@@ -1,6 +1,6 @@
 import { describe, expect, it } from "vitest";
 import { normalizeStock } from "@/lib/db/shops";
-import { addStock, findStockLine, refillStock, stockReferenceMatchesCatalog, takeStock } from "./shop-logic";
+import { addStock, findStockLine, refillStock, stockFromPool, stockReferenceMatchesCatalog, takeStock } from "./shop-logic";
 
 describe("shop stock source identity (#107)", () => {
   const srd = {
@@ -66,6 +66,16 @@ describe("shop stock source identity (#107)", () => {
   it("refills matching books separately without losing a different source", () => {
     const refilled = refillStock([{ ...srd, qty: 3 }, other], [{ ...srd, qty: 2 }]);
     expect(refilled).toEqual([{ ...srd, qty: 3 }, other]);
+  });
+
+  it("carries actual source references from generated catalog pool into saved stock", () => {
+    const generated = stockFromPool([
+      { name: "Shield", cost: "1000 cp", staple: true, contentRef: srd.contentRef },
+      { name: "Rope", cost: "100 cp", staple: true },
+    ], "village", () => 0.5);
+    expect(generated.find((line) => line.itemName === "Shield")?.contentRef).toEqual(srd.contentRef);
+    expect(generated.find((line) => line.itemName === "Rope")?.contentRef).toBeUndefined();
+    expect(normalizeStock(JSON.parse(JSON.stringify(generated)))).toEqual(generated);
   });
 
   it("preserves historical single-name stock behavior", () => {
