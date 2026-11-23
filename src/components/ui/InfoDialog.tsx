@@ -13,6 +13,7 @@ import { Dialog } from "@/components/ui/Dialog";
 import type { ItemSheet } from "@/lib/help/item-sheet";
 import { firstSentence, parseRulesBlocks, parseRulesTable } from "@/lib/help/rules-text";
 import { textKey } from "@/lib/language/text-logic";
+import { supplementRulesForDisplay, type SupplementCzechDisplay } from "@/lib/content/translations/supplements/display";
 
 // The "what does this do?" affordance, used everywhere a game term appears.
 //
@@ -143,6 +144,7 @@ export function renderRules(text: string): ReactNode {
 function ContentBody({ reference }: { reference: ContentRef }) {
   // The table the dialog opened at reads its DMs' homebrew.
   const campaignId = useContentCampaign();
+  const locale = useLocale();
   const t = useT();
   const [state, setState] = useState<{ text: string | null; loading: boolean }>({
     text: null,
@@ -169,7 +171,8 @@ function ContentBody({ reference }: { reference: ContentRef }) {
         if (response.ok) {
           const data = await response.json();
           // A background's feature asked by name opens that feature.
-          const text = withNote(data?.entry, describeContentEntry(data?.entry?.data, reference.kind === "backgrounds" ? reference.name : undefined));
+          const english = describeContentEntry(data?.entry?.data, reference.kind === "backgrounds" ? reference.name : undefined);
+          const text = withNote(data?.entry, supplementRulesForDisplay(data?.entry?.localizedCs, english, locale));
           if (text) {
             if (!cancelled) {
               setState({ text, loading: false });
@@ -188,7 +191,7 @@ function ContentBody({ reference }: { reference: ContentRef }) {
           (entry: { name: string }) => textKey(entry.name) === wanted,
         );
         if (!cancelled) {
-          setState({ text: withNote(hit, describeContentEntry(hit?.data)), loading: false });
+          setState({ text: withNote(hit, supplementRulesForDisplay(hit?.localizedCs, describeContentEntry(hit?.data), locale)), loading: false });
         }
       } catch {
         if (!cancelled) {
@@ -200,7 +203,7 @@ function ContentBody({ reference }: { reference: ContentRef }) {
     return () => {
       cancelled = true;
     };
-  }, [reference.kind, reference.slug, reference.name, campaignId, t]);
+  }, [reference.kind, reference.slug, reference.name, campaignId, locale, t]);
 
   if (state.loading) {
     return (
