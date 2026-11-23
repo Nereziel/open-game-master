@@ -13,7 +13,7 @@ import { Dialog } from "@/components/ui/Dialog";
 import type { ItemSheet } from "@/lib/help/item-sheet";
 import { firstSentence, parseRulesBlocks, parseRulesTable } from "@/lib/help/rules-text";
 import { textKey } from "@/lib/language/text-logic";
-import { supplementRulesForDisplay, type SupplementCzechDisplay } from "@/lib/content/translations/supplements/display";
+import { isSupplementDocumentSlug, supplementRulesForDisplay, type SupplementCzechDisplay } from "@/lib/content/translations/supplements/display";
 
 // The "what does this do?" affordance, used everywhere a game term appears.
 //
@@ -332,7 +332,7 @@ function ItemBody({ reference }: { reference: ContentRef }) {
   }
   const sheet = state.sheet;
   if (!sheet) {
-    const fallback = reference.documentSlug ? null : itemDescriptionCs(reference.name ?? reference.slug, null, locale, reference.slug);
+    const fallback = isSupplementDocumentSlug(reference.documentSlug) ? null : itemDescriptionCs(reference.name ?? reference.slug, null, locale, reference.slug);
     if (fallback) return <div className="space-y-2 text-sm text-stone-300">{renderRules(fallback)}</div>;
     return (
       <p className="text-sm text-stone-500">
@@ -405,7 +405,7 @@ function ItemBody({ reference }: { reference: ContentRef }) {
   const localizedWeaponRows = weaponRows.map(({ label, text }) => ({ label: detail(label), text: text ? detail(text) : null }));
   const shownDescription = locale === "cs" && state.localizedCs
     ? supplementRulesForDisplay(state.localizedCs, state.original ?? sheet.description, locale)
-    : reference.documentSlug
+    : isSupplementDocumentSlug(reference.documentSlug)
       ? state.original ?? sheet.description
       : itemDescriptionCs(reference.name ?? reference.slug, sheet.description, locale, reference.slug);
 
