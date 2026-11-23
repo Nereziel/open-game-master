@@ -48,17 +48,22 @@ export function buildSupplementCzechPack(
   // from another book or from user-authored content.
   const ownRows = rows.filter((row) => translationSourceId(row) === sourceId && row.slug.trim() && row.name.trim());
   const byIdentity = new Map<string, SupplementCatalogRow>();
+  const conflictingIds = new Set<string>();
+  // Source aliases (dmag/deepm) may repeat the same entry. A conflicting
+  // title at the same canonical slug is *not* proof of identical content.
+  // Quarantine just that identity; never bring down all three book packs.
   for (const row of ownRows) {
     const key = JSON.stringify([row.kind, row.slug]);
     const previous = byIdentity.get(key);
-    // Deep Magic exists under both dmag and deepm. Same canonical slug/name
-    // may represent the same entry; conflicting duplicates are untrusted.
     if (previous && textKey(previous.name) !== textKey(row.name)) {
-      throw new Error(`Conflicting supplement catalog identity: ${key}`);
+      conflictingIds.add(key);
+      continue;
     }
-    byIdentity.set(key, previous ?? row);
+    if (!previous) byIdentity.set(key, row);
   }
-  const unique = [...byIdentity.values()];
+  const unique = [...byIdentity.entries()]
+    .filter(([key]) => !conflictingIds.has(key))
+    .map(([, row]) => row);
   const titleCount = new Map<string, number>();
   for (const row of unique) {
     const key = JSON.stringify([row.kind, textKey(row.name)]);
@@ -67,7 +72,10 @@ export function buildSupplementCzechPack(
 
   const entries: Partial<Record<SupplementKind, Record<string, TranslationEntry>>> = {};
   const seen = new Set<string>();
-  const ambiguous: string[] = [];
+  const ambiguous: string[] = [...conflictingIds].map((key) => {
+    const [kind, slug] = JSON.parse(key) as [SupplementKind, string];
+    return `${kind}:conflicting catalog slug (${slug})`;
+  });
   const missing: string[] = [];
   let translated = 0;
   let completeRules = 0;
