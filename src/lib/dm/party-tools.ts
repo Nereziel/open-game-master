@@ -138,7 +138,7 @@ export function handlePartyStash(
       if (!taken) {
         return notCarried(fresh.name, fresh.equipment.map((item) => item.name), name, isTableGearName(campaign.id, name));
       }
-      const { srdName, tags, worth, spell } = taken.item;
+      const { srdName, tags, worth, spell, contentRef } = taken.item;
       const added = addPartyItem(getParty(campaign.id).inventory, {
         name: taken.item.name,
         qty: taken.removed,
@@ -148,6 +148,7 @@ export function handlePartyStash(
         tags,
         worth,
         spell,
+        contentRef,
       });
       if ("error" in added) {
         return added;
@@ -164,7 +165,7 @@ export function handlePartyStash(
     if ("error" in taken) {
       return taken;
     }
-    const { srdName, tags, worth, spell, weight } = taken.item;
+    const { srdName, tags, worth, spell, weight, contentRef } = taken.item;
     const granted = grantItemMath(fresh.equipment, taken.item.name, taken.removed, {
       identified: taken.item.identified !== false,
       srdName,
@@ -172,6 +173,7 @@ export function handlePartyStash(
       worth,
       spell,
       weight,
+      contentRef,
     });
     // Strength x 15 is all they can carry, as a grant holds it (load-rules.ts).
     const tooHeavy = capacityProblem(fresh, granted.equipment, taken.item.name);
