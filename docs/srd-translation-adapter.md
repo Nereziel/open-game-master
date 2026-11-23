@@ -319,3 +319,12 @@ row and an unreferenced legacy row). It now returns no match in that case,
 rather than supplying the wrong book's item to a use or lookup operation.
 The unambiguous path and legacy single-item lookup are unchanged.
 `item-logic-source.test.ts` covers those distinctions.
+
+### Shop quote lookup
+
+The shop's sale-price helper used to inspect the first matching inventory
+line via `lineNamed` even when that English item name represented
+different book-specific items. It now shares the source-safe
+`findCarriedItem` lookup, avoiding a false identification of the first
+item's magical properties in ambiguous cases. The actual sale mutation
+continues to use `removeItemMath`, which refuses source ambiguity.
