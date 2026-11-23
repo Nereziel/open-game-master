@@ -1,6 +1,6 @@
 import { COPPER_PER_GOLD, formatPrice, packCostCopper } from "@/lib/srd/currency";
 import { compareNames, textKey } from "@/lib/language/text-logic";
-import { lineNamed } from "@/lib/srd/item-row";
+import { lineNamed, linesNamed } from "@/lib/srd/item-row";
 import type { StoredContentReference } from "@/lib/content/translations/stored-reference";
 
 // Shops (docs/vtt-parity-implementation-plan.md 11.1): pure pricing and
@@ -214,6 +214,19 @@ export function offerPriceCp(listCp: number): number {
 // lunga" picked from the catalog. A miss is refused with the shelf listed.
 export function findStockLine(stock: StockLine[], name: string): StockLine | null {
   const rows = stock.map((line) => ({ name: line.itemName, srdName: line.srdName }));
+  // A name-only lookup must not pick the first shelf entry when multiple
+  // source books or an unreferenced legacy line use that same name.
+  const candidates = linesNamed(rows, name);
+  if (candidates.length > 1) {
+    const matching = candidates.map((candidate) => stock[rows.indexOf(candidate)]);
+    const first = matching[0].contentRef;
+    if (matching.some((entry) => !(first && entry.contentRef
+      ? first.sourceId === entry.contentRef.sourceId
+        && first.contentType === entry.contentRef.contentType
+        && first.contentId === entry.contentRef.contentId
+        && (first.documentSlug ?? "") === (entry.contentRef.documentSlug ?? "")
+      : !first && !entry.contentRef))) return null;
+  }
   return stock[lineNamed(rows, name)] ?? null;
 }
 
