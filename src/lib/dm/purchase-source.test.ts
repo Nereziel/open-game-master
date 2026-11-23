@@ -43,4 +43,45 @@ describe("source-scoped selling outside shops (#107)", () => {
     expect("error" in result).toBe(true);
     if ("error" in result) expect(result.error).toContain("itemRef");
   });
+  it("rejects a matching book with a different document slug", () => {
+    const result = computePurchase(sheet, {
+      item: "Shield", qty: 1, action: "sell", price: 10,
+      itemRef: { ...other.contentRef, documentSlug: "another-edition" },
+    });
+    expect("error" in result).toBe(true);
+    expect(sheet.equipment).toEqual([srd, other]);
+    expect(sheet.gold).toBe(0);
+  });
+
+  it("does not mistake a legacy name-only row for a sourced item", () => {
+    const legacySheet = {
+      ...sheet,
+      equipment: [{ name: "Shield", qty: 1 }, other],
+    } as unknown as CharacterSheet;
+    const ambiguous = computePurchase(legacySheet, {
+      item: "Shield", qty: 1, action: "sell", price: 10,
+    });
+    expect("error" in ambiguous).toBe(true);
+    const selected = computePurchase(legacySheet, {
+      item: "Shield", qty: 1, action: "sell", itemRef: other.contentRef, price: 10,
+    });
+    expect("patch" in selected).toBe(true);
+    if ("patch" in selected) {
+      expect(selected.patch.equipment).toEqual([{ name: "Shield", qty: 1 }]);
+    }
+    expect(legacySheet.equipment).toHaveLength(2);
+  });
+
+  it("does not invent a source reference for a name-only purchase", () => {
+    const buyer = { ...sheet, equipment: [], gold: 50 } as unknown as CharacterSheet;
+    const result = computePurchase(buyer, {
+      item: "Shield", qty: 1, action: "buy", price: 10,
+    });
+    expect("patch" in result).toBe(true);
+    if (!("patch" in result)) return;
+    expect(result.patch.equipment).toHaveLength(1);
+    expect(result.patch.equipment?.[0]).not.toHaveProperty("contentRef");
+    expect(buyer.equipment).toEqual([]);
+  });
+
 });
