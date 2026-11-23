@@ -737,7 +737,7 @@ export function tradeCall(campaign: Campaign, args: ToolArgs): EngineCall {
   // from different books as though its magic properties were unambiguous.
   const carried = sheet ? findCarriedItem(sheet.equipment, item) : null;
   const magic = carried ? magicValueOf(carried) : null;
-  const buyers = here.filter((shop) => shop.buys && (!magic || (carried !== undefined && soldToShops(carried))));
+  const buyers = here.filter((shop) => shop.buys && (!magic || (carried != null && soldToShops(carried))));
   const buyer = buyers.find((shop) => shelved(shop)) ?? buyers.find((shop) => shop.kind === "general") ?? buyers[0];
   return buyer ? atShop(buyer.name) : listPrice;
 }
