@@ -28,3 +28,38 @@ Každý z údajů byl převeden **beze změny obsahu** z konkrétního souboru v
 Balíčky zatím nejsou napojené na všechny UI konzumenty (čtečka, picker, detail, workshop, export do PDF); to patří do fáze 4. Přesun návrhů také **nedoplňuje** chybějící překlady dalších 458 kouzel Deep Magic a 556 předmětů Vault of Magic. Každé skutečné pokrytí závisí na katalogových řádcích dostupných v instalaci serveru.
 
 Regresní testy v `src/lib/content/translations/supplements/build-pack.test.ts` ověřují counts původních map, kolize knih, fallback, skutečné `slug`, bezpečnost homebrew a označení přehledů.
+
+## První integrace čtečky/detailů a výběrů – navazující PR #111
+
+Zobrazení čte české balíčky **pouze podle celého katalogu**. Serverové
+`supplements/server-display.ts` načte skutečné kombinace
+`document_slug + slug + name` ze všech tří tabulek Open5e
+(`items`, `spells`, `feats`) a sestaví registr jednou pro danou
+read-only databázi. Nelze sestavit správný jednoznačný překlad pouze
+ze dvanácti výsledků aktuálního vyhledávání: jiný záznam stejného
+názvu může být až na další stránce.
+
+API `/api/content/{kind}` a detail `/api/content/{kind}/{slug}`
+vracejí volitelný objekt `localizedCs`:
+
+- `name` – český zobrazovací název, zvolený podle skutečného zdroje;
+- `summary` – pouze krátký přehled, nikdy úplná pravidla;
+- `hasFullRules` – údaj, že vlastní návrh českého pravidlového textu existuje;
+- `fullRules` – pouze v detailové odpovědi, ne v lehkém seznamu.
+
+Kanoničtí `name`, `slug`, `data` a mechaniky v odpovědi zůstávají
+anglické a nedotčené. UI `ContentPicker`, `MultiContentPicker` a
+`InfoDialog` při české lokalizaci používají `localizedCs` a jinak
+vlastní dosavadní výstup. U pouhého přehledu detail zároveň zobrazí
+**úplný anglický popis stejného katalogového záznamu** s
+explicitním označením. Neexistující či chybně přiřazené překlady
+nepřepisují jinou knihu. U katalogu, který není nainstalován
+nebo je nečitelný, zůstává angličtina.
+
+UI výběry zachovávají oddělené řádky z různých knih a označují zdroj.
+Části výběru, které dosud ukládají jen anglický název (zejména
+`MultiContentPicker`), jsou závislé na dokončení a spojení
+zdrojových referencí z PR #109; české názvy se neukládají jako engine
+ID. Zatím **nejsou** přepojené všechny obrazovky a české dotazy na
+rozšíření je ještě nutné propojit s vyhledáváním. Tento PR je
+dílčí krok fáze 4, nikoli dokončení celého issue.
