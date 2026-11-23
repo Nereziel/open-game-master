@@ -1,0 +1,25 @@
+name: Source-scoped translation registry
+on:
+  pull_request:
+    paths:
+      - "src/lib/content/translations/**"
+      - "docs/translation-pack-registry.md"
+      - ".github/workflows/translation-pack-registry.yml"
+  workflow_dispatch:
+
+jobs:
+  translation-packs:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+      - uses: actions/setup-node@v4
+        with:
+          node-version: "24"
+          cache: npm
+      - run: npm ci
+      - name: Registry and SRD adapter regression tests
+        run: npx vitest run src/lib/content/translations
+      # Main already fails the separate dead-code gate on four unused bindings.
+      # Check type safety here; do not conceal the baseline dead-code errors.
+      - name: TypeScript typecheck
+        run: npx tsc --noEmit --incremental false --noUnusedLocals false --noUnusedParameters false
