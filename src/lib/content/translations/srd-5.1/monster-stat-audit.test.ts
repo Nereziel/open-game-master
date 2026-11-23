@@ -5,11 +5,11 @@ import { auditMonsterStats } from "./monster-stat-audit";
 
 const english: RulebookPage = {
   id: "test-creature", kind: "monster", chapter: "monsters", title: "Test",
-  md: "*Medium monstrosity*\n\n**Armor Class** 15 (natural armor)\n\n**Hit Points** 27 (5d8+5)\n\n| STR | DEX | CON | INT | WIS | CHA |\n|:--:|:--:|:--:|:--:|:--:|:--:|\n| 14 (+2) | 10 (+0) | 12 (+1) | 3 (-4) | 10 (+0) | 6 (-2) |\n\n**Challenge** 1/2 (100 XP)\n\nOriginal.",
+  md: "*Medium monstrosity*\n\n**Armor Class** 15 (natural armor)\n\n**Hit Points** 27 (5d8+5)\n\n**Speed** 30 ft., fly 60 ft.\n\n| STR | DEX | CON | INT | WIS | CHA |\n|:--:|:--:|:--:|:--:|:--:|:--:|\n| 14 (+2) | 10 (+0) | 12 (+1) | 3 (-4) | 10 (+0) | 6 (-2) |\n\n**Challenge** 1/2 (100 XP)\n\nOriginal.",
 };
 const czech: RulebookPage = {
   ...english, title: "Testovací tvor",
-  md: "## Úplné znění pravidel v češtině\n\n*Střední obluda*\n\n**OČ** 15 (přirozená zbroj)\n\n**Životy** 27 (5k8+5)\n\n| SIL | OBR | ODL | INT | MOU | CHA |\n|:--:|:--:|:--:|:--:|:--:|:--:|\n| 14 (+2) | 10 (+0) | 12 (+1) | 3 (-4) | 10 (+0) | 6 (-2) |\n\n**Nebezpečnost** 1/2 (100 ZK)\n\nČeský text.\n\n---\n\n**Úplné původní znění SRD 5.1 v angličtině:**\n\n" + english.md,
+  md: "## Úplné znění pravidel v češtině\n\n*Střední obluda*\n\n**OČ** 15 (přirozená zbroj)\n\n**Životy** 27 (5k8+5)\n\n**Rychlost** 30 stop, létání 60 stop\n\n| SIL | OBR | ODL | INT | MOU | CHA |\n|:--:|:--:|:--:|:--:|:--:|:--:|\n| 14 (+2) | 10 (+0) | 12 (+1) | 3 (-4) | 10 (+0) | 6 (-2) |\n\n**Nebezpečnost** 1/2 (100 ZK)\n\nČeský text.\n\n---\n\n**Úplné původní znění SRD 5.1 v angličtině:**\n\n" + english.md,
 };
 
 describe("SRD monster stat-block source audit (#107)", () => {
@@ -21,10 +21,19 @@ describe("SRD monster stat-block source audit (#107)", () => {
     const wrong = { ...czech, md: czech.md
       .replace("**OČ** 15", "**OČ** 16")
       .replace("**Životy** 27", "**Životy** 28")
+      .replace("**Rychlost** 30 stop", "**Rychlost** 35 stop")
       .replace("**Nebezpečnost** 1/2", "**Nebezpečnost** 1/4")
       .replace("14 (+2)", "15 (+2)") };
     expect(auditMonsterStats([english], [wrong]).map(issue => issue.field))
-      .toEqual(["armorClass", "hitPoints", "challengeRating", "abilityScores"]);
+      .toEqual(["armorClass", "hitPoints", "challengeRating", "speed", "abilityScores"]);
+  });
+
+  it("detects changed HP dice formula or ability modifiers even when the headline score is unchanged", () => {
+    const wrong = { ...czech, md: czech.md
+      .replace("27 (5k8+5)", "27 (6k8+5)")
+      .replace("14 (+2)", "14 (+3)") };
+    expect(auditMonsterStats([english], [wrong]).map(issue => issue.field))
+      .toEqual(["hitPoints", "abilityScores"]);
   });
 
   it("reports any monster stat differences in the real bundled corpus", () => {
