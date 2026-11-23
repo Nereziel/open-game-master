@@ -73,13 +73,18 @@ describe("one SRD identity and Czech metadata between rulebook and game catalog 
   it("documents key shape mismatches and never resolves another book by the same name", () => {
     const pages = rulebookPages("en");
     const drow = pages.find((page) => page.id === "elf-drow");
-    expect(drow?.kind).toBe("race");
+    // The 2014 SRD monster appendix has a Drow stat block. A playable
+    // subrace of the same name is NOT this monster's canonical page.
+    expect(drow?.kind).toBe("monster");
     expect(PAGE_CATALOG_NAMES["elf-drow"]).toBe("Drow");
     expect(srdPageIdForCatalogRecord({
-      kind: "races", source: "open5e", slug: "drow", name: "Drow", documentSlug: "wotc-srd",
+      kind: "monsters", source: "open5e", slug: "drow", name: "Drow", documentSlug: "wotc-srd",
     }, pages)).toBe("elf-drow");
     expect(srdPageIdForCatalogRecord({
-      kind: "races", source: "open5e", slug: "drow", name: "Drow", documentSlug: "toh",
+      kind: "races", source: "open5e", slug: "drow", name: "Drow", documentSlug: "wotc-srd",
+    }, pages)).toBeNull();
+    expect(srdPageIdForCatalogRecord({
+      kind: "monsters", source: "open5e", slug: "drow", name: "Drow", documentSlug: "toh",
     }, pages)).toBeNull();
   });
 });
