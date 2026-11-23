@@ -65,7 +65,7 @@ import { revisedSpecies } from "@/lib/srd/race-id";
 // charges its own catalog's price again when the sheet is saved. `magic`
 // marks a row the pack files as a magic item, which the purse refuses in the
 // server's words. Neither is saved (submit.ts).
-export type EquipmentItem = { name: string; qty: number; slug?: string; priceCp?: number; magic?: boolean };
+export type EquipmentItem = { name: string; qty: number; slug?: string; contentRef?: import("@/lib/content/translations/stored-reference").StoredContentReference; priceCp?: number; magic?: boolean };
 
 // What the last change set aside, for the notice the wizard shows: the
 // change that did it ("race") and the picks that no longer fit. Null once
@@ -99,6 +99,8 @@ export type BuilderDraftFields = {
   spells: string[];
   bookPrepared: string[];
   cantrips: string[];
+  // Explicitly picked catalog spell identities; absent on legacy drafts.
+  spellContentRefs?: Record<string, import("@/lib/content/translations/stored-reference").StoredContentReference>;
   equipment: EquipmentItem[];
   removedAutoNames: string[];
   kitChoices: KitChoices;
@@ -223,6 +225,9 @@ export function useBuilderState({
   const [spells, setSpells] = useState<string[]>(() => storedSpells.lead.spells);
   const [bookPrepared, setBookPrepared] = useState<string[]>(() => storedSpells.lead.bookPrepared);
   const [cantrips, setCantrips] = useState<string[]>(() => storedSpells.lead.cantrips);
+  const [spellContentRefs, setSpellContentRefs] = useState<Record<string, import("@/lib/content/translations/stored-reference").StoredContentReference>>(
+    () => initial?.spellcasting?.contentRefs ?? {},
+  );
   const [casterSpells, setCasterSpells] = useState<Record<string, SpellLists>>(() => storedSpells.others);
   // One casting class's lists set by the spell step: the lead's fields, or
   // its entry in casterSpells. A list may be given as a value or an update.
@@ -238,6 +243,7 @@ export function useBuilderState({
       name: item.name,
       qty: item.qty,
       ...(item.slug ? { slug: item.slug } : {}),
+      ...(item.contentRef ? { contentRef: item.contentRef } : {}),
     })),
   );
   // Auto-added class weapons the user explicitly removed; reset on class change.
@@ -963,6 +969,7 @@ export function useBuilderState({
     spells: setSpells,
     bookPrepared: setBookPrepared,
     cantrips: setCantrips,
+    spellContentRefs: (value) => setSpellContentRefs(value ?? {}),
     equipment: setEquipment,
     removedAutoNames: setRemovedAutoNames,
     kitChoices: setKitChoices,
@@ -1053,6 +1060,7 @@ export function useBuilderState({
     spells,
     bookPrepared,
     cantrips,
+    spellContentRefs,
     equipment,
     removedAutoNames,
     kitChoices,
@@ -1137,6 +1145,7 @@ export function useBuilderState({
     spells, setSpells,
     bookPrepared, setBookPrepared,
     cantrips, setCantrips,
+    spellContentRefs, setSpellContentRefs,
     equipment, setEquipment,
     removedAutoNames, setRemovedAutoNames,
     kitChoices, setKitChoices,

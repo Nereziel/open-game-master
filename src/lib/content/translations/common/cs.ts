@@ -55,3 +55,26 @@ export const CS_DAMAGE_TYPES = {
   Slashing: "Sečné",
   Thunder: "Hromové",
 } as const;
+
+export const CS_MAGIC_SCHOOLS = {
+  Abjuration: "Vymítání",
+  Conjuration: "Vyvolávání",
+  Divination: "Věštění",
+  Enchantment: "Očarování",
+  Evocation: "Zaklínání",
+  Illusion: "Iluze",
+  Necromancy: "Nekromancie",
+  Transmutation: "Transmutace",
+} as const;
+
+export const CS_ITEM_CATEGORIES = {
+  "Wondrous item": "Divotvorný předmět",
+  Weapon: "Zbraň",
+  Armor: "Zbroj",
+  Potion: "Lektvar",
+  Ring: "Prsten",
+  Rod: "Žezlo",
+  Staff: "Berla",
+  Wand: "Hůlka",
+  Scroll: "Svitek",
+} as const;

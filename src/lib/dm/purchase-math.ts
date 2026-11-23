@@ -8,10 +8,10 @@ import { keepsFullValue, listPriceCp, saleValueCp, tradeTotalCp } from "@/lib/dm
 import { addCopper, formatCopper, formatPrice, purseCopper } from "@/lib/srd/currency";
 import type { CharacterSheet } from "@/lib/schemas/sheet";
 import type { ToolError } from "@/lib/dm/tool-errors";
-import { alreadyInPack, notCarried } from "@/lib/dm/item-logic";
+import { alreadyInPack, ambiguousCarriedItem, notCarried } from "@/lib/dm/item-logic";
 import { isTableGearName } from "@/lib/db/homebrew";
-import { lineNamed } from "@/lib/srd/item-row";
 import { cursedHold } from "@/lib/srd/cursed-items";
+import type { StoredContentReference } from "@/lib/content/translations/stored-reference";
 
 // A purchase or a sale outside a shop. The table prices it, not the model:
 // the content pack's list price (or the worth the item was given) is what a
@@ -22,10 +22,31 @@ import { cursedHold } from "@/lib/srd/cursed-items";
 export function computePurchase(
   sheet: CharacterSheet,
   // srdName: the row a bought item is, as grant_item takes it.
-  args: { item: string; price?: number; qty: number; action: "buy" | "sell"; srdName?: string },
+  args: { item: string; price?: number; qty: number; action: "buy" | "sell"; srdName?: string; itemRef?: StoredContentReference },
 ): Outcome | ToolError {
+  // This path has no trusted catalog row for a new purchase. An incoming
+  // itemRef may be copied by the model, but cannot be verified here; refuse
+  // rather than silently discard it or stamp an unverified book identity.
+  // Source-specific purchases must be resolved against a concrete catalog row
+  // before its reference can be persisted.
+  if (args.action === "buy" && args.itemRef) {
+    return {
+      error: `Cannot verify itemRef for a purchase of "${args.item}" outside a catalog shop. Retry without itemRef; no coin or inventory changed.`,
+      retry: true,
+    };
+  }
   // What is sold is the carried line, with what it is (item-tags.ts).
-  const carried = args.action === "sell" ? sheet.equipment[lineNamed(sheet.equipment, args.item)] : undefined;
+  // First resolve the actual item being sold; never compute a shop price
+  // using the first of several equally named but differently sourced items.
+  const removal = args.action === "sell"
+    ? removeItemMath(sheet.equipment, args.item, args.qty, args.itemRef)
+    : null;
+  if (args.action === "sell" && !removal) {
+    if (args.itemRef) return { error: `No unique "${args.item}" matches itemRef; nothing was sold.`, retry: true };
+    return ambiguousCarriedItem(sheet.equipment, args.item)
+      ?? notCarried(sheet.name, sheet.equipment.map((item) => item.name), args.item, isTableGearName(sheet.campaignId, args.item));
+  }
+  const carried = removal?.item;
   // An attuned cursed item is not sold away (src/lib/srd/cursed-items.ts).
   const cursed = cursedHold(sheet, carried);
   if (cursed) {
@@ -69,11 +90,8 @@ export function computePurchase(
       event: `Bought ${args.item}${args.qty > 1 ? ` x${args.qty}` : ""} for ${formatPrice(totalCp)}.`,
     };
   }
-  const removal = removeItemMath(sheet.equipment, args.item, args.qty);
-  if (!removal) {
-    return notCarried(sheet.name, sheet.equipment.map((item) => item.name), args.item, isTableGearName(sheet.campaignId, args.item));
-  }
   // A sale pays for what changes hands, so more than is held is no sale.
+  if (!removal) return { error: "No item was selected for sale.", retry: true };
   if (removal.removed < args.qty) {
     return {
       error: `${sheet.name} carries ${removal.removed} of ${removal.item.name} and cannot sell ${args.qty}; sell ${removal.removed} or fewer.`,

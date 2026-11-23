@@ -1,6 +1,8 @@
 import { COPPER_PER_GOLD, formatPrice, packCostCopper } from "@/lib/srd/currency";
 import { compareNames, textKey } from "@/lib/language/text-logic";
-import { lineNamed } from "@/lib/srd/item-row";
+import { lineNamed, linesNamed } from "@/lib/srd/item-row";
+import { sameStoredContentReference, type StoredContentReference } from "@/lib/content/translations/stored-reference";
+import { translationSourceId } from "@/lib/content/translations/registry";
 
 // Shops (docs/vtt-parity-implementation-plan.md 11.1): pure pricing and
 // stocking. Prices come from the content pack's cost strings, marked up by
@@ -20,7 +22,7 @@ export type ShopKind = (typeof SHOP_KINDS)[number];
 
 // srdName: the SRD or pack row a line named in the table's language is,
 // picked from the catalog, so what is bought is that row.
-export type StockLine = { itemName: string; qty: number; priceCp: number; note: string; srdName?: string };
+export type StockLine = { itemName: string; qty: number; priceCp: number; note: string; srdName?: string; contentRef?: StoredContentReference };
 
 // The dearest a shelf line may be priced, in copper (a million gold): high
 // enough for any legendary item, low enough that a typed slip cannot put a
@@ -211,15 +213,48 @@ export function offerPriceCp(listCp: number): number {
 // A stock line by the names a carried line answers to (lineNamed): its
 // whole name, else the row it is listed as, so "Longsword" buys the "Spada
 // lunga" picked from the catalog. A miss is refused with the shelf listed.
-export function findStockLine(stock: StockLine[], name: string): StockLine | null {
+export function findStockLine(
+  stock: StockLine[],
+  name: string,
+  contentRef?: StoredContentReference,
+): StockLine | null {
   const rows = stock.map((line) => ({ name: line.itemName, srdName: line.srdName }));
+  // Match the name before checking a source, so a supplied ID cannot select
+  // unrelated merchandise. Never guess among distinct books.
+  const candidates = linesNamed(rows, name).map((row) => stock[rows.indexOf(row)]);
+  if (contentRef) {
+    const matching = candidates.filter((line) => sameStoredContentReference(line.contentRef, contentRef));
+    return matching.length === 1 ? matching[0] : null;
+  }
+  if (candidates.length > 1) {
+    const first = candidates[0].contentRef;
+    if (candidates.some((entry) => !(first && entry.contentRef
+      ? sameStoredContentReference(first, entry.contentRef)
+      : !first && !entry.contentRef))) return null;
+  }
   return stock[lineNamed(rows, name)] ?? null;
+}
+
+// An ID copied onto a shelf is not a certificate of provenance. Only an
+// actual catalog row with the same canonical slug, document and English name
+// can attest the item. Hand-authored/legacy shelves retain name-only trading.
+export function stockReferenceMatchesCatalog(
+  line: StockLine,
+  catalog: { source: "open5e"; slug: string; name: string; documentSlug: string },
+): boolean {
+  const ref = line.contentRef;
+  if (!ref || ref.contentType !== "items" || !ref.documentSlug) return false;
+  return ref.documentSlug === catalog.documentSlug
+    && ref.contentId === catalog.slug
+    && ref.sourceId === translationSourceId(catalog)
+    && (textKey(line.itemName) === textKey(catalog.name)
+      || Boolean(line.srdName && textKey(line.srdName) === textKey(catalog.name)));
 }
 
 // Take qty of a line out of the stock, dropping it at zero; null when the
 // shop has fewer than asked.
-export function takeStock(stock: StockLine[], itemName: string, qty: number): StockLine[] | null {
-  const line = findStockLine(stock, itemName);
+export function takeStock(stock: StockLine[], itemName: string, qty: number, contentRef?: StoredContentReference): StockLine[] | null {
+  const line = findStockLine(stock, itemName, contentRef);
   if (!line || line.qty < qty) {
     return null;
   }
@@ -228,12 +263,13 @@ export function takeStock(stock: StockLine[], itemName: string, qty: number): St
 
 // Put qty of an item into stock at the keeper's list price, merging by name,
 // with the row it is.
-export function addStock(stock: StockLine[], itemName: string, qty: number, priceCp: number, srdName?: string): StockLine[] {
-  const existing = stock.find((line) => textKey(line.itemName) === textKey(itemName));
+export function addStock(stock: StockLine[], itemName: string, qty: number, priceCp: number, srdName?: string, contentRef?: StoredContentReference): StockLine[] {
+  const existing = stock.find((line) => textKey(line.itemName) === textKey(itemName)
+    && (!line.contentRef && !contentRef || sameStoredContentReference(line.contentRef, contentRef)));
   if (existing) {
     return stock.map((line) => (line === existing ? { ...line, qty: line.qty + qty } : line));
   }
-  return [...stock, { itemName: itemName.slice(0, 80), qty, priceCp: Math.max(1, Math.round(priceCp)), note: "", ...(srdName ? { srdName } : {}) }];
+  return [...stock, { itemName: itemName.slice(0, 80), qty, priceCp: Math.max(1, Math.round(priceCp)), note: "", ...(srdName ? { srdName } : {}), ...(contentRef ? { contentRef } : {}) }];
 }
 
 // The magic a shelf stocks by chance, whatever the settlement's size (SRD
@@ -272,17 +308,17 @@ function pickIndex(items: ReadonlyArray<{ rarity: string }>, random: () => numbe
 // each of the cheap things and one of anything dear. A magic item comes only
 // in the rarities the size sells.
 export function stockFromPool(
-  pool: Array<{ name: string; cost: string; category?: string; staple?: boolean; rarity?: string }>,
+  pool: Array<{ name: string; cost: string; category?: string; staple?: boolean; rarity?: string; contentRef?: StoredContentReference }>,
   size: ShopSize,
   random: () => number = Math.random,
 ): StockLine[] {
   const priced = pool
     .filter((item) => !item.rarity || SHELF_RARITIES[size].includes(item.rarity))
-    .map((item) => ({ name: item.name, cp: costToCopper(item.cost), staple: Boolean(item.staple), rarity: item.rarity ?? "" }))
-    .filter((item): item is { name: string; cp: number; staple: boolean; rarity: string } => item.cp !== null);
-  const line = (item: { name: string; cp: number }): StockLine => {
+    .map((item) => ({ name: item.name, cp: costToCopper(item.cost), staple: Boolean(item.staple), rarity: item.rarity ?? "", contentRef: item.contentRef }))
+    .filter((item): item is { name: string; cp: number; staple: boolean; rarity: string; contentRef: StoredContentReference | undefined } => item.cp !== null);
+  const line = (item: { name: string; cp: number; contentRef?: StoredContentReference }): StockLine => {
     const qty = item.cp >= 50 * COPPER_PER_GOLD ? 1 : item.cp >= 5 * COPPER_PER_GOLD ? 1 + Math.floor(random() * 3) : 2 + Math.floor(random() * 6);
-    return { itemName: item.name, qty, priceCp: item.cp, note: "" };
+    return { itemName: item.name, qty, priceCp: item.cp, note: "", ...(item.contentRef ? { contentRef: item.contentRef } : {}) };
   };
   const byName = (a: StockLine, b: StockLine) => compareNames(a.itemName, b.itemName);
   const staples = priced.filter((item) => item.staple).map(line).sort(byName);
@@ -302,13 +338,15 @@ export function stockFromPool(
 // prepared count at its prepared price, in the author's order, and anything
 // the keeper bought from the party since still on the shelf after them.
 export function refillStock(stock: StockLine[], prepared: StockLine[]): StockLine[] {
-  const now = new Map(stock.map((line) => [textKey(line.itemName), line]));
+  const same = (a: StockLine, b: StockLine) =>
+    textKey(a.itemName) === textKey(b.itemName)
+    && (!a.contentRef && !b.contentRef
+      || sameStoredContentReference(a.contentRef, b.contentRef));
   const refilled = prepared.map((line) => {
-    const current = now.get(textKey(line.itemName));
+    const current = stock.find((entry) => same(entry, line));
     return { ...line, qty: Math.max(line.qty, current?.qty ?? 0) };
   });
-  const authored = new Set(prepared.map((line) => textKey(line.itemName)));
-  return [...refilled, ...stock.filter((line) => !authored.has(textKey(line.itemName)))];
+  return [...refilled, ...stock.filter((line) => !prepared.some((entry) => same(entry, line)))];
 }
 
 // The item kinds each shop kind stocks, for the pool the tool draws from.
@@ -338,6 +376,18 @@ export function restockDue(shop: Pick<Shop, "restockDays" | "restockedAt">, inst
   return shop.restockDays > 0 && instant - shop.restockedAt >= shop.restockDays * minutesPerDay;
 }
 
+// Avoid verbose IDs on every auto-stocked item. Show exact source IDs only
+// when the same shelf name refers to multiple entries, so the DM can select
+// the intended book for purchase instead of being forced to guess.
+export function stockItemPromptName(stock: readonly StockLine[], line: StockLine): string {
+  const duplicates = stock.filter((other) => textKey(other.itemName) === textKey(line.itemName));
+  if (duplicates.length <= 1) return line.itemName;
+  const ref = line.contentRef;
+  return ref
+    ? `${line.itemName} [itemRef sourceId=${ref.sourceId} contentId=${ref.contentId}${ref.documentSlug ? ` documentSlug=${ref.documentSlug}` : ""}]`
+    : `${line.itemName} [legacy stock without source ID]`;
+}
+
 // The prompt's line per shop at the party's place: name, keeper, and what
 // is on the shelves with the asking price in coin, then who has haggled
 // there and what it came to, so the DM narrates each buyer's own price.
@@ -348,7 +398,7 @@ export function renderShopsForPrompt(shops: Array<Shop & { keeperName: string }>
   const lines = shops.slice(0, 4).map((shop) => {
     const shelf = shop.stock
       .slice(0, 12)
-      .map((line) => `${line.itemName} x${line.qty} at ${formatPrice(askingPriceCp(line.priceCp, shop.markup))}`)
+      .map((line) => `${stockItemPromptName(shop.stock, line)} x${line.qty} at ${formatPrice(askingPriceCp(line.priceCp, shop.markup))}`)
       .join("; ");
     const haggled = shop.haggles.map((deal) => {
       const paid = !deal.steps

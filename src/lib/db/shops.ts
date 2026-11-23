@@ -13,6 +13,7 @@ import {
   type StockLine,
 } from "@/lib/dm/shop-logic";
 import { srdNameFor } from "@/lib/dm/item-logic";
+import { sameStoredContentReference } from "@/lib/content/translations/stored-reference";
 
 // Shops (docs/vtt-parity-implementation-plan.md 11.1): one row per shop,
 // tied to a campaign location by id and remembered by name so a place
@@ -52,6 +53,14 @@ export const stockLineSchema = z.object({
     .max(80)
     .refine((name) => !("error" in srdNameFor(name, "stock")), "srdName is no SRD or pack item's name")
     .optional(),
+  // Catalog provenance is optional for legacy and hand-written shelves.
+  // Only item-kind references are valid for physical stock.
+  contentRef: z.object({
+    sourceId: z.string().trim().min(1).max(100),
+    contentType: z.literal("items"),
+    contentId: z.string().trim().min(1).max(200),
+    documentSlug: z.string().trim().min(1).max(100).optional(),
+  }).optional(),
 });
 
 export function normalizeStock(raw: unknown): StockLine[] {
@@ -63,19 +72,24 @@ export function normalizeStock(raw: unknown): StockLine[] {
       const record = (line ?? {}) as Record<string, unknown>;
       // A row the lists hold, as they spell it; anything else is no row.
       const listed = typeof record.srdName === "string" ? srdNameFor(record.srdName, "stock") : {};
+      const validatedRef = stockLineSchema.shape.contentRef.safeParse(record.contentRef);
+      const contentRef = validatedRef.success ? validatedRef.data : undefined;
       return {
         itemName: String(record.itemName ?? record.name ?? "").trim().slice(0, 80),
         qty: Math.max(0, Math.min(999, Math.round(Number(record.qty) || 0))),
         priceCp: Math.min(MAX_STOCK_PRICE_CP, Math.max(1, Math.round(Number(record.priceCp) || 1))),
         note: String(record.note ?? "").slice(0, 120),
         ...("srdName" in listed && listed.srdName ? { srdName: listed.srdName } : {}),
+        ...(contentRef ? { contentRef } : {}),
       };
     })
     .filter((line) => line.itemName && line.qty > 0)
     .reduce<StockLine[]>((shelf, line) => {
-      // One line per item: a second "Lantern" line would never be found by
-      // name, and could never be bought.
-      const same = shelf.find((entry) => textKey(entry.itemName) === textKey(line.itemName));
+      // Never combine distinct books (or a legacy unidentified source) just
+      // because the shelf happens to use the same English item name.
+      const same = shelf.find((entry) => textKey(entry.itemName) === textKey(line.itemName)
+        && (!entry.contentRef && !line.contentRef
+          || sameStoredContentReference(entry.contentRef, line.contentRef)));
       if (same) {
         same.qty = Math.min(999, same.qty + line.qty);
       } else {

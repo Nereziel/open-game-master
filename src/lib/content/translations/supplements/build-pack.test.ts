@@ -29,7 +29,7 @@ describe("book-specific Czech translation packs (#107, phase 3)", () => {
     expect(Object.keys(VAULT_OF_MAGIC_CS.items.fullRules)).toHaveLength(48);
   });
 
-  it("transfers full text by canonical catalog slug and only within its book", () => {
+  it("quarantines migrated full-rule drafts and retains canonical book ID", () => {
     const rows = [
       row("spells", "Lance", "lance-toh", "toh"),
       row("feats", "Boundless Reserves", "boundless-reserves", "toh"),
@@ -39,13 +39,14 @@ describe("book-specific Czech translation packs (#107, phase 3)", () => {
     ];
     const { pack, report } = tomeOfHeroesCsPack(rows);
     expect(pack.sourceId).toBe("tome-of-heroes");
-    expect(pack.entries.spells?.["lance-toh"]?.description).toContain("5k6");
+    expect(pack.entries.spells?.["lance-toh"]?.description).toBeUndefined();
     expect(pack.entries.spells?.["lance-deep"]).toBeUndefined();
     expect(pack.entries.spells?.["lance-homebrew"]).toBeUndefined();
-    expect(pack.entries.feats?.["boundless-reserves"]?.description).toContain("Moudrost");
+    expect(pack.entries.feats?.["boundless-reserves"]?.description).toBeUndefined();
     expect(pack.entries.items?.axespear?.name).toBe("Sekerokopí");
     expect(pack.entries.items?.axespear?.description).toBeUndefined();
-    expect(report.completeRules).toBe(2);
+    expect(report.completeRules).toBe(0);
+    expect(report.unverifiedFullRules).toBe(2);
   });
 
   it("keeps summary separate from the English original; never mislabels it as full rules", () => {
@@ -95,13 +96,28 @@ describe("book-specific Czech translation packs (#107, phase 3)", () => {
     expect(registry.resolve({ sourceId: "srd-5.1", contentType: "spells", contentId: "shield", locale: "cs" }, original).entry).toBe(original);
   });
 
-  it("retains Vault full translations without affecting SRD or other books", () => {
+  it("retains Vault raw drafts without publishing them as complete rules", () => {
     const { pack, report } = vaultOfMagicCsPack([
       row("items", "Ashwood Wand", "ashwood-wand", "vom"),
       row("items", "Ashwood Wand", "ashwood-wand", "wotc-srd"),
     ]);
-    expect(pack.entries.items?.["ashwood-wand"]?.description).toContain("3 náboje");
+    expect(pack.entries.items?.["ashwood-wand"]?.description).toBeUndefined();
+    expect(report.completeRules).toBe(0);
+    expect(report.unverifiedFullRules).toBe(1);
+  });
+
+  it("publishes only explicitly approved complete rule text, never raw drafts", () => {
+    const original = row("spells", "Sample Spell", "sample-spell", "toh");
+    const { pack, report } = buildSupplementCzechPack("tome-of-heroes", [original], {
+      spells: {
+        names: { "Sample Spell": "Ukázkové kouzlo" },
+        fullRules: { "Sample Spell": "NEOVĚŘENÝ návrh; nesmí přepsat úplná pravidla." },
+        approvedFullRules: { "Sample Spell": "Zkontrolované úplné znění pravidel." },
+      },
+    });
+    expect(pack.entries.spells?.["sample-spell"]?.description).toBe("Zkontrolované úplné znění pravidel.");
     expect(report.completeRules).toBe(1);
+    expect(report.unverifiedFullRules).toBe(0);
   });
 
   it("refuses English-name ambiguity until the catalog supplies unique identity", () => {

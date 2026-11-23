@@ -14,7 +14,10 @@ export type SupplementCatalogRow = Readonly<{
 }>;
 export type SupplementTable = Readonly<{
   names: Readonly<Record<string, string>>;
+  // Historical PR #106 drafts are not verified against the full source.
   fullRules?: Readonly<Record<string, string>>;
+  // Only independently reviewed complete translations may replace rules.
+  approvedFullRules?: Readonly<Record<string, string>>;
   summaries?: Readonly<Record<string, string>>;
 }>;
 export type SupplementDictionary = Readonly<Partial<Record<SupplementKind, SupplementTable>>>;
@@ -24,6 +27,7 @@ export type SupplementPackReport = Readonly<{
   catalogRows: number;
   translated: number;
   completeRules: number;
+  unverifiedFullRules: number;
   summaryOnly: number;
   nameOnly: number;
   ambiguous: readonly string[];
@@ -67,6 +71,7 @@ export function buildSupplementCzechPack(
   const missing: string[] = [];
   let translated = 0;
   let completeRules = 0;
+  let unverifiedFullRules = 0;
   let summaryOnly = 0;
   let nameOnly = 0;
 
@@ -79,24 +84,25 @@ export function buildSupplementCzechPack(
     }
     const table = dictionary[row.kind];
     const name = indexed(table?.names)[title];
-    const full = indexed(table?.fullRules)[title];
+    const draft = indexed(table?.fullRules)[title];
+    const approved = indexed(table?.approvedFullRules)[title];
     const summary = indexed(table?.summaries)[title];
-    if (!name && !full && !summary) {
+    if (!name && !draft && !approved && !summary) {
       missing.push(`${row.kind}:${row.slug}`);
       continue;
     }
     seen.add(key);
     const entry: TranslationEntry = {
       ...(name ? { name } : {}),
-      // Only complete Czech rule text is allowed in description.
-      // A summary remains display-only metadata: the same entry's English
-      // rule text continues to be visible through the registry fallback.
-      ...(full ? { description: full } : {}),
+      // A complete-looking draft is NOT evidence of reviewed rules.
+      // Only explicitly approved editorial translations replace descriptions.
+      ...(approved ? { description: approved } : {}),
       ...(summary ? { metadata: { summaryCs: summary } } : {}),
     };
     (entries[row.kind] ??= {})[row.slug] = entry;
     translated++;
-    if (full) completeRules++;
+    if (draft && !approved) unverifiedFullRules++;
+    if (approved) completeRules++;
     else if (summary) summaryOnly++;
     else nameOnly++;
   }
@@ -104,6 +110,7 @@ export function buildSupplementCzechPack(
   for (const [kind, table] of Object.entries(dictionary) as Array<[SupplementKind, SupplementTable]>) {
     const all = new Set([
       ...Object.keys(table.names), ...Object.keys(table.fullRules ?? {}),
+      ...Object.keys(table.approvedFullRules ?? {}),
       ...Object.keys(table.summaries ?? {}),
     ].map(textKey));
     for (const title of all) {
@@ -118,6 +125,7 @@ export function buildSupplementCzechPack(
       catalogRows: unique.length,
       translated,
       completeRules,
+      unverifiedFullRules,
       summaryOnly,
       nameOnly,
       ambiguous,
