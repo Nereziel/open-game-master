@@ -256,3 +256,19 @@ while missing `contentRefs` from an old client preserves the stored map.
 Remaining: other game actions and sheet update paths may still write
 name-only spell lists; they must be audited separately rather than
 retroactively guessing book origins.
+
+### PDF export (read-only)
+
+The fillable character PDF now uses the saved source references for the
+equipment and spell labels. With an explicit `sourceId=srd-5.1` reference
+for the correct kind, the shared Czech 5e game-name dictionary is used.
+With an explicit reference to another book, the renderer **does not**
+borrow the same-name SRD translation: it keeps the canonical label until
+that source's own Czech pack exists. Legacy sheets without references
+retain their previous localized display behavior. Numbers, mechanics,
+saved names and the editable PDF form fields are unchanged.
+
+The source-aware PDF name helper has isolated regression tests and is
+included in the source registry CI. This scope covers PDF item and spell
+**names**, not a claim that PDF includes translations of every rule
+description from non-SRD books.
