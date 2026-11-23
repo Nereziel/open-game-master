@@ -7,11 +7,15 @@ on:
       - "src/lib/rulebook/czech-terms.ts"
       - "src/lib/rulebook/czech-companion.ts"
       - "src/lib/content/names-cs.ts"
+      - "src/lib/content/names.ts"
+      - "src/lib/content/names-source.test.ts"
       - "docs/srd-translation-adapter.md"
       - ".github/workflows/translation-pack-registry.yml"
   pull_request:
     paths:
       - "src/lib/content/translations/**"
+      - "src/lib/content/names.ts"
+      - "src/lib/content/names-source.test.ts"
       - "src/lib/dm/shop-tools.ts"
       - "src/lib/dm/shop-logic.ts"
       - "src/lib/dm/shop-source.test.ts"
@@ -35,7 +39,7 @@ jobs:
           cache: npm
       - run: npm ci
       - name: Registry and SRD adapter regression tests
-        run: npx vitest run src/lib/content/translations "src/app/campaigns/[campaignId]/lead-edit-identity.test.ts" src/app/characters/builder/pickerRows.test.ts src/lib/pdf/source-name.test.ts src/lib/dm/mutation-math-source.test.ts src/lib/dm/party-source.test.ts src/lib/dm/item-logic-source.test.ts src/lib/dm/purchase-source.test.ts src/lib/dm/shop-source.test.ts
+        run: npx vitest run src/lib/content/translations src/lib/content/names-source.test.ts "src/app/campaigns/[campaignId]/lead-edit-identity.test.ts" src/app/characters/builder/pickerRows.test.ts src/lib/pdf/source-name.test.ts src/lib/dm/mutation-math-source.test.ts src/lib/dm/party-source.test.ts src/lib/dm/item-logic-source.test.ts src/lib/dm/purchase-source.test.ts src/lib/dm/shop-source.test.ts
       # Main already fails the separate dead-code gate on four unused bindings.
       # Check type safety here; do not conceal the baseline dead-code errors.
       - name: TypeScript typecheck
