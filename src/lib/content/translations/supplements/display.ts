@@ -48,3 +48,12 @@ export function supplementRulesForDisplay(
   if (!localized.summary) return original;
   return `**Stručný český přehled (nejde o úplná pravidla):**\n\n${localized.summary}${original ? `\n\n**Úplná pravidla (anglicky):**\n\n${original}` : ""}`;
 }
+
+// An explicit document scope in an info-link is a selection constraint, not
+// a hint. Refuse an item from another book even when its slug is identical.
+export function matchesRequestedCatalogDocument(
+  row: { source?: string; documentSlug?: string } | null | undefined,
+  documentSlug?: string | null,
+): boolean {
+  return !documentSlug || Boolean(row?.source === "open5e" && row.documentSlug === documentSlug);
+}
