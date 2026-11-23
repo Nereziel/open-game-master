@@ -59,10 +59,9 @@ import { publishEphemeral, publishPersisted, publishWithSeq } from "@/lib/events
 import type { CharacterSheet } from "@/lib/schemas/sheet";
 import { addCopper, formatCopper, formatPrice } from "@/lib/srd/currency";
 import { argumentsRefusal, noneNamed, type ToolError, type ToolResult } from "@/lib/dm/tool-errors";
-import { alreadyInPack, notCarried } from "@/lib/dm/item-logic";
+import { alreadyInPack, findCarriedItem, notCarried } from "@/lib/dm/item-logic";
 import { isTableGearName } from "@/lib/db/homebrew";
 import { containsPhrase, textKey } from "@/lib/language/text-logic";
-import { lineNamed } from "@/lib/srd/item-row";
 import type { EngineCall, ToolArgs } from "@/lib/dm/tool-merge-logic";
 
 // The shop tools (docs/vtt-parity-implementation-plan.md 11.1). The server
@@ -733,7 +732,9 @@ export function tradeCall(campaign: Campaign, args: ToolArgs): EngineCall {
   }
   // A shop buys a potion or a scroll and no other magic item (handleSellItem).
   const sheet = typeof args.characterId === "string" ? resolveSheet(campaign, args.characterId) : null;
-  const carried = sheet ? sheet.equipment[lineNamed(sheet.equipment, item)] : undefined;
+  // The sale-price quote must not inspect the first of two same-name items
+  // from different books as though its magic properties were unambiguous.
+  const carried = sheet ? findCarriedItem(sheet.equipment, item) : null;
   const magic = carried ? magicValueOf(carried) : null;
   const buyers = here.filter((shop) => shop.buys && (!magic || (carried !== undefined && soldToShops(carried))));
   const buyer = buyers.find((shop) => shelved(shop)) ?? buyers.find((shop) => shop.kind === "general") ?? buyers[0];
