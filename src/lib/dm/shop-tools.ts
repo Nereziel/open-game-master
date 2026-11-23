@@ -564,7 +564,7 @@ export function handleSellItem(campaign: Campaign, rawArguments: string, at: Tra
   const paid = addCopper({ gold: sheet.gold, copper: sheet.copper }, total);
   const patch = { gold: paid.purse.gold, copper: paid.purse.copper, equipment: removal.equipment };
   patchSheet(sheet.id, patch);
-  updateShop(shop.id, { stock: addStock(shop.stock, carried, removal.removed, listCp ?? each * 2, line.srdName) });
+  updateShop(shop.id, { stock: addStock(shop.stock, carried, removal.removed, listCp ?? each * 2, line.srdName, line.contentRef) });
   ledger(campaign, sheet, "purchase", { item: carried, qty: removal.removed, action: "sell", priceCp: each, shop: shop.name }, `Sold at ${shop.name}`, patch, `Sold ${carried}${removal.removed > 1 ? ` x${removal.removed}` : ""} for ${formatPrice(total)} at ${shop.name}.`);
   publishSheet(campaign, sheet.id);
   publishShops(campaign.id);
