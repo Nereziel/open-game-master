@@ -22,6 +22,18 @@ describe("book-scoped SRD vs supplement display identity (#107 phase 2)", () => 
       .toBe("Jiný ověřený název");
   });
 
+  it("uses the verified catalog title for bundled SRD without contaminating other books or locales", () => {
+    const srd = {
+      source: "srd", documentSlug: "wotc-srd",
+      name: "Light", slug: "srd:light", display: { name: "Světlo" },
+    };
+    expect(contentName("spells", srd, "cs")).toBe("Světlo");
+    expect(contentName("spells", srd, "en")).toBe("Light");
+    expect(contentName("spells", { ...srd, display: undefined }, "cs")).toBe("Light");
+    expect(contentName("spells", { ...srd, source: "bundled" }, "cs")).toBe("Světlo");
+    expect(contentName("spells", { ...srd, source: "bundled", documentSlug: "other" }, "cs")).toBe("Light");
+  });
+
   it("never accepts a forged source name for user-authored or bundled content", () => {
     expect(contentName("items", {
       source: "homebrew", documentSlug: "wotc-srd", name: "Shield",
