@@ -7,10 +7,14 @@ import { supplementCzechRegistry } from "./index";
 import { supplementCzechDisplay } from "./display";
 import type { SupplementCatalogRow } from "./build-pack";
 import { czechSupplementCandidates, type SupplementSearchCandidate } from "./search";
+import { auditCatalogCollisions, type CatalogCollisionAudit } from "./collision-audit";
 
 const cache = new WeakMap<object, TranslationRegistry | null>();
 const catalogRows = new WeakMap<object, readonly SupplementCatalogRow[]>();
-const DOCUMENTS = ["toh", "dmag", "deepm", "vom"] as const;
+const collisionReports = new WeakMap<object, CatalogCollisionAudit>();
+// Also scan SRD to detect a title shared by the core book and extensions.
+// The actual builders still accept only their own book's canonical IDs.
+const DOCUMENTS = ["wotc-srd", "toh", "dmag", "deepm", "vom"] as const;
 const DOCUMENT_SQL = DOCUMENTS.map(() => "?").join(", ");
 
 function registryFromCatalog(): TranslationRegistry | null {
@@ -29,6 +33,14 @@ function registryFromCatalog(): TranslationRegistry | null {
     const { registry } = supplementCzechRegistry(rows);
     cache.set(db, registry);
     catalogRows.set(db, rows);
+    const report = auditCatalogCollisions(rows);
+    collisionReports.set(db, report);
+    if (report.duplicateFeatsInBook.length || report.conflictingIds.length) {
+      console.warn("[i18n] Catalog source collisions need review", {
+        duplicateFeatsInBook: report.duplicateFeatsInBook,
+        conflictingIds: report.conflictingIds,
+      });
+    }
     return registry;
   } catch (error) {
     // An outdated or malformed pack must not break catalog routes, and
@@ -75,4 +87,13 @@ export function supplementCzechSearchCandidates(
   return registry && rows
     ? czechSupplementCandidates(registry, rows, kind, query, limit)
     : [];
+}
+
+/** Read-only diagnostic summary of actual installed catalog collisions.
+ * Never treat same-title rows across different books as duplicate game IDs. */
+export function supplementCatalogCollisionReport(): CatalogCollisionAudit | null {
+  const db = getContentDb();
+  if (!db) return null;
+  registryFromCatalog();
+  return collisionReports.get(db) ?? null;
 }
