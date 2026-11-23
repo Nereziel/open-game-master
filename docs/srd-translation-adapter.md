@@ -350,3 +350,22 @@ it never guesses an item if the ref is missing or does not match.
 The old name-only tool calls remain valid, and still refuse ambiguous
 same-name items across sources. Targeted math and party-stash tests
 cover exact source selection and invalid references.
+
+### Source-specific sales and purchase routing
+
+Both shop `sell_item` and the ordinary `purchase action=sell`
+path accept a verified optional `itemRef`:
+`{ sourceId, contentId, documentSlug? }`; its content type is
+implicitly `items`. The shop rejects wrong or unmatched references,
+while `tradeCall` forwards the ref when routing a sale to a shop.
+For sales outside a shop, `computePurchase` first identifies the
+correct carried row via `removeItemMath`, then uses **that same row**
+for all price, curse and inventory calculations; it never prices the
+first same-name row and removes another. A shop quote also looks up
+the matching source row when the ref is supplied.
+
+The visible `purchase` tool's per-item schema exposes optional
+`itemRef` for the model to copy from game state when names collide.
+All older name-only calls remain accepted and refuse conflicting
+book identities without making changes. `purchase-source.test.ts`
+exercises a source-specific sale and rejection of an invalid ref.
