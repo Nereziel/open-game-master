@@ -24,6 +24,17 @@ export function computePurchase(
   // srdName: the row a bought item is, as grant_item takes it.
   args: { item: string; price?: number; qty: number; action: "buy" | "sell"; srdName?: string; itemRef?: StoredContentReference },
 ): Outcome | ToolError {
+  // This path has no trusted catalog row for a new purchase. An incoming
+  // itemRef may be copied by the model, but cannot be verified here; refuse
+  // rather than silently discard it or stamp an unverified book identity.
+  // Source-specific purchases must be resolved against a concrete catalog row
+  // before its reference can be persisted.
+  if (args.action === "buy" && args.itemRef) {
+    return {
+      error: `Cannot verify itemRef for a purchase of "${args.item}" outside a catalog shop. Retry without itemRef; no coin or inventory changed.`,
+      retry: true,
+    };
+  }
   // What is sold is the carried line, with what it is (item-tags.ts).
   // First resolve the actual item being sold; never compute a shop price
   // using the first of several equally named but differently sourced items.
