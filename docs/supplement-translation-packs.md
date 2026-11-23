@@ -25,7 +25,7 @@ Každý z údajů byl převeden **beze změny obsahu** z konkrétního souboru v
 
 ## Co zůstává otevřené
 
-Balíčky zatím nejsou napojené na všechny UI konzumenty (čtečka, picker, detail, workshop, export do PDF); to patří do fáze 4. Přesun návrhů také **nedoplňuje** chybějící překlady dalších 458 kouzel Deep Magic a 556 předmětů Vault of Magic. Každé skutečné pokrytí závisí na katalogových řádcích dostupných v instalaci serveru.
+Balíčky zatím nejsou napojené na všechny UI konzumenty. Navazující PR #111 zapojuje katalogová API, základní pickery a detaily; úplná čtečka, další editory, workshop a export do PDF patří do zbývající fáze 4. Přesun návrhů také **nedoplňuje** chybějící překlady dalších 458 kouzel Deep Magic a 556 předmětů Vault of Magic. Každé skutečné pokrytí závisí na katalogových řádcích dostupných v instalaci serveru.
 
 Regresní testy v `src/lib/content/translations/supplements/build-pack.test.ts` ověřují counts původních map, kolize knih, fallback, skutečné `slug`, bezpečnost homebrew a označení přehledů.
 
@@ -63,3 +63,14 @@ zdrojových referencí z PR #109; české názvy se neukládají jako engine
 ID. Zatím **nejsou** přepojené všechny obrazovky a české dotazy na
 rozšíření je ještě nutné propojit s vyhledáváním. Tento PR je
 dílčí krok fáze 4, nikoli dokončení celého issue.
+
+### Přesná identita při otevření detailu
+
+Picker předává ke `slug` také `documentSlug` **jen u řádků
+Open5e**. Detailové API čte katalog přímo podle dvojice
+`(slug, document_slug)` a odmítá cizí zdroj; se stejným názvem
+se nevrací jiná kniha. Při nenalezení nelze přejít na homebrew,
+zabudované SRD ani anglický záznam jiného dokumentu.
+Staré odkazy bez `documentSlug` a záložní SRD řádky nadále
+používají původní chování. Totéž platí pro existující české
+popisy SRD vybavení: speciální fallback rozšíření je nemění.
