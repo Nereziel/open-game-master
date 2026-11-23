@@ -29,7 +29,7 @@ export function auditSrdMonsterActions(
     const full = translated && fullCzechRulesOnly(page, translated);
     if (!full) continue;
     const fields = [
-      ["saveDC", allValues(page.md,/\bDC\s*(\d+)\b/gi), allValues(full,/\bSO(?:\s+[\p{L}]+){0,6}\s+(\d+)\b/giu)],
+      ["saveDC", allValues(page.md,/\bDC(?:\s+of)?\s*(\d+)\b/gi), allValues(full,/\bSO(?:\s+[\p{L}]+){0,6}\s+(\d+)\b/giu)],
       ["attackBonus", allValues(page.md,/\+(\d+)\s+to hit\b/gi), allValues(full,/\+(\d+)\s+(?:k|na)\s+zásahu\b/gi)],
       ["recharge", allValues(page.md,/\bRecharge\s*(\d+)\s*[-–]\s*(\d+)\b/gi,true),
         allValues(full,/\b(?:obnovení|dobití|obnoví(?:\s+se)?)(?:\s+(?:při|na|hodu|po)){0,3}\s+(\d+)\s*[-–]\s*(\d+)\b/gi,true)],
