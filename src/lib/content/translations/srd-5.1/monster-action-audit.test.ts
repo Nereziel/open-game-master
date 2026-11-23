@@ -16,6 +16,12 @@ describe("SRD Czech monster action values (#107 phase 2)",()=>{
   it("preserves save difficulties, hit bonuses and recharge thresholds",()=>{
     expect(auditSrdMonsterActions([english],[czech])).toEqual([]);
   });
+  it("recognizes alternate Czech terms for spell saves, escaping grabs and recharge on a roll",()=>{
+    const variation={...czech,md:czech.md.replace("se SO 14","(SO úniku 14)")
+      .replace("se SO 16","(SO záchrany kouzla 16)")
+      .replace("obnovení 5–6","obnovení při 5–6")};
+    expect(auditSrdMonsterActions([english],[variation])).toEqual([]);
+  });
   it("detects altered action-level mechanics",()=>{
     const modified={...czech,md:czech.md.replace("SO 14","SO 15").replace("+7 k zásahu","+6 k zásahu").replace("obnovení 5–6","obnovení 4–6")};
     expect(auditSrdMonsterActions([english],[modified]).map(x=>x.field))
