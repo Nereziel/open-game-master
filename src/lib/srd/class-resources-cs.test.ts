@@ -8,8 +8,8 @@ installCsTables({ names: CS_NAMES_BY_TABLE, guidance: RESOURCE_CS_GUIDANCE });
 
 describe("Czech class resource display alongside French", () => {
   it("shows a Czech resource name without touching the English identity", () => {
-    const id = "sub_superiority_dice";
-    expect(resourceDisplayName(id, "cs")).toBe("Kostky převahy");
+    const id = "rage";
+    expect(resourceDisplayName(id, "cs")).toBe("Zuřivost");
     expect(resourceDisplayName(id, "en")).toBeNull();
   });
 
