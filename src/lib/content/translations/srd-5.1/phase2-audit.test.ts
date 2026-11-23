@@ -72,6 +72,7 @@ describe("SRD 5.1 structured Czech/English audit (#107 phase 2)", () => {
       possibleDiceMismatches: review.length,
       byKind,
       firstIds: review.slice(0, 40).map((item) => item.id),
+      findings: review.slice(0, 20),
     }));
     expect(Array.isArray(review)).toBe(true);
     expect(review.every((entry) => entry.missingFromCzech.length > 0 || entry.unexpectedInCzech.length > 0)).toBe(true);
