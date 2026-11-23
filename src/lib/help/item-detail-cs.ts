@@ -7,7 +7,7 @@ import { canonicalMagicItemDescriptionCs } from "@/lib/help/magic-item-descripti
 
 const LABELS: Readonly<Record<string, string>> = {
   "Weight": "Hmotnost", "Value": "Cena", "Damage": "Zranění",
-  "Range": "Dostřel", "Armor class": "Obranné číslo", "AC bonus": "Bonus k OČ",
+  "Range": "Dostřel", "Armor class": "Třída zbroje", "AC bonus": "Bonus k TZ",
   "Armor": "Zbroj", "Weapon": "Zbraň", "Description": "Popis",
   "None": "Žádné", "No damage": "Bez zranění",
   "Strength": "Síla", "Dexterity": "Obratnost", "Stealth": "Nenápadnost",

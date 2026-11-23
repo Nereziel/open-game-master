@@ -13,7 +13,7 @@ import { describeConditionDuration } from "@/lib/dm/condition-logic";
 import { backgroundFeatureReference, contentSlug, describeFeature } from "@/lib/help";
 import { useClassFeatureText } from "@/lib/classes/use-feature-text";
 import { ABILITIES } from "@/lib/schemas/sheet";
-import { formatModifier, skillLabel, SRD_SKILLS } from "@/lib/srd";
+import { formatModifier, SRD_SKILLS } from "@/lib/srd";
 import { abilityShortLabel } from "@/lib/srd/ability-short-label";
 import { useLocale, useT } from "@/lib/locale";
 import { wearingIsExplicit } from "@/lib/srd/armor";
@@ -341,7 +341,6 @@ export function SkillRows({
 }) {
   // The skill's name follows the reader's language; the glyph stays keyed by
   // the English name, which is what the art is filed under.
-  const locale = useLocale();
   return (
     <div className="stagger-up grid grid-cols-1 gap-x-3 gap-y-0.5 min-[420px]:grid-cols-2">
       {SRD_SKILLS.map((skill) => {

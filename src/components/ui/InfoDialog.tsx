@@ -13,6 +13,12 @@ import { Dialog } from "@/components/ui/Dialog";
 import type { ItemSheet } from "@/lib/help/item-sheet";
 import { firstSentence, parseRulesBlocks, parseRulesTable } from "@/lib/help/rules-text";
 import { textKey } from "@/lib/language/text-logic";
+import { officialCzechSpellPageId } from "@/lib/help/official-cs-reference";
+import { thirdPartyItemSummaryCs } from "@/lib/help/third-party-item-summary-cs";
+import { sameContentDocument } from "@/lib/help/content-ref-match";
+import { localizedThirdPartySpellDescription } from "@/lib/help/third-party-spell-summary-cs";
+import { thirdPartyFeatDescriptionCs } from "@/lib/help/third-party-feat-description-cs";
+import { thirdPartyFullRulesCs } from "@/lib/help/third-party-full-rules-cs";
 
 // The "what does this do?" affordance, used everywhere a game term appears.
 //
@@ -27,7 +33,7 @@ import { textKey } from "@/lib/language/text-logic";
 // `name` lets the lookup recover when a row's slug is not the plain
 // slugified name (third-party documents pick their own), by falling back to
 // a search.
-export type ContentRef = { kind: string; slug: string; name?: string };
+export type ContentRef = { kind: string; slug: string; name?: string; source?: string; documentSlug?: string; rulebook?: string };
 
 // Content-pack descriptions are markdown-ish: headings, bold, italics, tables.
 // The block structure comes from src/lib/help/rules-text.ts, which knows the
@@ -144,6 +150,7 @@ function ContentBody({ reference }: { reference: ContentRef }) {
   // The table the dialog opened at reads its DMs' homebrew.
   const campaignId = useContentCampaign();
   const t = useT();
+  const locale = useLocale();
   const [state, setState] = useState<{ text: string | null; loading: boolean }>({
     text: null,
     loading: true,
@@ -155,6 +162,36 @@ function ContentBody({ reference }: { reference: ContentRef }) {
       try {
         const { describeContentEntry } = await import("@/lib/help");
         const { needsNote } = await import("@/lib/content/levelup-logic");
+        const fullSpellRules = thirdPartyFullRulesCs(reference, locale);
+        if (fullSpellRules) {
+          if (!cancelled) setState({ text: fullSpellRules, loading: false });
+          return;
+        }
+        const licensedFeatTranslation = thirdPartyFeatDescriptionCs(reference, locale);
+        if (licensedFeatTranslation) {
+          if (!cancelled) setState({ text: licensedFeatTranslation, loading: false });
+          return;
+        }
+        const builtinFeat = locale === "cs" && reference.kind === "feats"
+          && (reference.documentSlug === "odm-expanded" || reference.documentSlug === "wotc-srd"
+            || reference.source === "srd" || reference.source === "bundled");
+        if (builtinFeat) {
+          const { builtinFeatSummaryCs } = await import("@/lib/help/feat-summary-cs");
+          const summary = builtinFeatSummaryCs(reference.name ?? "");
+          if (summary) {
+            if (!cancelled) setState({ text: `**Stručný přehled:** ${summary}`, loading: false });
+            return;
+          }
+        }
+        const srdSpellPage = locale === "cs" ? officialCzechSpellPageId(reference) : null;
+        if (srdSpellPage) {
+          const pageResponse = await fetch(`/api/rulebook/pages/${encodeURIComponent(srdSpellPage)}`, { headers: { "X-Odm-Locale": "cs" } });
+          const page = pageResponse.ok ? (await pageResponse.json())?.page : null;
+          if (page?.kind === "spell" && typeof page.md === "string" && page.md.trim()) {
+            if (!cancelled) setState({ text: page.md, loading: false });
+            return;
+          }
+        }
         // An entry built on rules this game does not play, or played from
         // mechanics the app read and nobody checked, says so first (issue
         // #570). The note is the reader's words — the keyed "best effort"
@@ -169,10 +206,11 @@ function ContentBody({ reference }: { reference: ContentRef }) {
         if (response.ok) {
           const data = await response.json();
           // A background's feature asked by name opens that feature.
-          const text = withNote(data?.entry, describeContentEntry(data?.entry?.data, reference.kind === "backgrounds" ? reference.name : undefined));
+          const entry = sameContentDocument(reference, data?.entry) ? data.entry : undefined;
+          const text = withNote(entry, describeContentEntry(entry?.data, reference.kind === "backgrounds" ? reference.name : undefined));
           if (text) {
             if (!cancelled) {
-              setState({ text, loading: false });
+              setState({ text: localizedThirdPartySpellDescription(reference, locale, text), loading: false });
             }
             return;
           }
@@ -185,10 +223,10 @@ function ContentBody({ reference }: { reference: ContentRef }) {
         );
         const results = search.ok ? ((await search.json()).results ?? []) : [];
         const hit = results.find(
-          (entry: { name: string }) => textKey(entry.name) === wanted,
+          (entry: { name: string; source?: string; documentSlug?: string }) => textKey(entry.name) === wanted && sameContentDocument(reference, entry),
         );
         if (!cancelled) {
-          setState({ text: withNote(hit, describeContentEntry(hit?.data)), loading: false });
+          setState({ text: localizedThirdPartySpellDescription(reference, locale, withNote(hit, describeContentEntry(hit?.data))), loading: false });
         }
       } catch {
         if (!cancelled) {
@@ -200,7 +238,7 @@ function ContentBody({ reference }: { reference: ContentRef }) {
     return () => {
       cancelled = true;
     };
-  }, [reference.kind, reference.slug, reference.name, campaignId, t]);
+  }, [reference.kind, reference.slug, reference.name, reference.source, reference.documentSlug, reference.rulebook, campaignId, t, locale]);
 
   if (state.loading) {
     return (
@@ -212,8 +250,7 @@ function ContentBody({ reference }: { reference: ContentRef }) {
   if (!state.text) {
     return (
       <p className="text-sm text-stone-500">
-        No description available. The content pack may not be installed, or this entry was added by
-        hand.
+        {t("No details available. The content pack may not be installed, or this item was added by hand.")}
       </p>
     );
   }
@@ -281,10 +318,11 @@ function ItemBody({ reference }: { reference: ContentRef }) {
           fetch(`/api/content/items/${encodeURIComponent(reference.slug)}${scopeQuery(campaignId)}`).then(readJson).catch(() => null),
           fetch(`/api/content/items?q=${encodeURIComponent(wanted)}&limit=20${scopeQuery(campaignId, "&")}`).then(readJson).catch(() => null),
         ]);
-        const hits = ((search?.results ?? []) as Array<{ name: string; data?: Record<string, unknown> }>)
-          .filter((entry) => textKey(entry.name) === wanted)
+        const hits = ((search?.results ?? []) as Array<{ name: string; source?: string; documentSlug?: string; data?: Record<string, unknown> }>)
+          .filter((entry) => textKey(entry.name) === wanted && sameContentDocument(reference, entry))
           .map((entry) => entry.data);
-        const sheet = buildItemSheet(name, [direct?.entry?.data, ...hits]);
+        const directData = sameContentDocument(reference, direct?.entry) ? direct.entry.data : undefined;
+        const sheet = buildItemSheet(name, [directData, ...hits]);
         if (!cancelled) {
           setState({ sheet, loading: false });
         }
@@ -298,17 +336,19 @@ function ItemBody({ reference }: { reference: ContentRef }) {
     return () => {
       cancelled = true;
     };
-  }, [reference.slug, reference.name, campaignId]);
+  }, [reference.slug, reference.name, reference.source, reference.documentSlug, campaignId]);
 
   if (state.loading) {
     return (
       <p className="flex items-center gap-2 text-sm text-stone-500">
-        <Loader2 className="size-4 animate-spin" /> Looking it up...
+        <Loader2 className="size-4 animate-spin" /> {t("Looking it up...")}
       </p>
     );
   }
   const sheet = state.sheet;
   if (!sheet) {
+    const complete = thirdPartyFullRulesCs(reference, locale);
+    if (complete) return <div className="space-y-2 text-sm text-stone-300">{renderRules(complete)}</div>;
     const fallback = itemDescriptionCs(reference.name ?? reference.slug, null, locale, reference.slug);
     if (fallback) return <div className="space-y-2 text-sm text-stone-300">{renderRules(fallback)}</div>;
     return (
@@ -380,7 +420,18 @@ function ItemBody({ reference }: { reference: ContentRef }) {
 
   const localizedArmorRows = armorRows.map(({ label, text }) => ({ label: detail(label), text: text ? detail(text) : null }));
   const localizedWeaponRows = weaponRows.map(({ label, text }) => ({ label: detail(label), text: text ? detail(text) : null }));
-  const shownDescription = itemDescriptionCs(reference.name ?? reference.slug, sheet.description, locale, reference.slug);
+  // A supplement may reuse an SRD item name but assign it different rules.
+  // Never substitute the SRD's Czech description for that separate entry.
+  const shownDescription = reference.source === "open5e"
+    && reference.documentSlug && reference.documentSlug !== "wotc-srd"
+    ? sheet.description
+    : itemDescriptionCs(reference.name ?? reference.slug, sheet.description, locale, reference.slug);
+
+  const fullCzechItemRules = thirdPartyFullRulesCs(reference, locale);
+  const supplementSummary = fullCzechItemRules ? null : thirdPartyItemSummaryCs(reference, locale);
+  const displayedDescription = fullCzechItemRules ?? (supplementSummary
+    ? `**Stručný český přehled:** ${supplementSummary}${shownDescription ? `\n\n**Úplný pravidlový popis (anglicky):**\n\n${shownDescription}` : ""}`
+    : shownDescription);
 
   return (
     <div className="space-y-4">
@@ -412,9 +463,9 @@ function ItemBody({ reference }: { reference: ContentRef }) {
           <RuleList rows={localizedWeaponRows} />
         </ItemSection>
       ) : null}
-      {shownDescription ? (
+      {displayedDescription ? (
         <ItemSection title={detail("Description")}>
-          <div className="space-y-2 border-t border-stone-800 pt-2">{renderRules(shownDescription)}</div>
+          <div className="space-y-2 border-t border-stone-800 pt-2">{renderRules(displayedDescription)}</div>
         </ItemSection>
       ) : null}
     </div>

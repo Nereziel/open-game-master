@@ -136,10 +136,6 @@ export function syncCasterLists(
   return withCasterViews(after, views);
 }
 
-export function levelMeta(entry: { level?: number }): string {
-  return entry.level !== undefined ? (entry.level === 0 ? "cantrip" : `level ${entry.level}`) : "";
-}
-
 export type SlotEdits = Record<string, { max: string; used: string }>;
 
 // Used and maximum for each slot level the sheet stores, and the pact slots

@@ -38,6 +38,7 @@ import { ABILITIES, type Ability, type CharacterSheet, type Proficiencies } from
 import { hostOffers, useCapabilities } from "@/lib/use-capabilities";
 import { useLocale, useT } from "@/lib/locale";
 import { contentName } from "@/lib/content/names";
+import { itemPickerMeta } from "@/lib/help/item-picker-labels";
 import { abilityShortLabel } from "@/lib/srd/ability-short-label";
 import { GameTerm } from "@/components/ui/GameTerm";
 import { localizeAcParts } from "@/app/characters/builder/derivedReasons";
@@ -472,9 +473,7 @@ export function LeadEditDialog({
                     })),
                   ])
                 }
-                renderMeta={(entry) =>
-                  [entry.kind, entry.rarity ?? priceText(entry.cost ?? "")].filter(Boolean).join(" · ")
-                }
+                renderMeta={(entry) => itemPickerMeta(entry, locale, priceText)}
               />
             </div>
           </div>

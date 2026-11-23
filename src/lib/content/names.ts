@@ -13,6 +13,7 @@
 import { textKey } from "@/lib/language/text-logic";
 import { translate, type Locale } from "@/lib/i18n/translate";
 import { csTables } from "@/lib/i18n/cs-tables";
+import { thirdPartyContentNameCs } from "@/lib/content/third-party-names-cs";
 import { srdRaceId } from "@/lib/srd/race-id";
 import { frTables } from "@/lib/i18n/fr-tables";
 import { genreClassCs } from "@/lib/classes/genre-class-cs";
@@ -42,6 +43,7 @@ export type NamedRow = {
   slug?: string;
   name: string;
   source?: string;
+  documentSlug?: string;
 };
 
 // The gear table is keyed by the SRD gear's gearKey (adventuring-gear.ts):
@@ -152,8 +154,14 @@ export function contentName(
   locale: Locale,
 ): string {
   const row: NamedRow = typeof ref === "string" ? { name: ref } : ref;
-  if (locale === "en" || !row.name || (row.source && row.source !== "open5e")) {
+  if (locale === "en" || !row.name || row.source === "homebrew" || (row.source && !["open5e", "srd", "bundled"].includes(row.source))) {
     return row.name;
+  }
+  // Non-SRD translations belong to the exact source book. Never translate
+  // custom content or a different publisher's identically named row.
+  if (locale === "cs" && (table === "items" || table === "spells" || table === "feats")) {
+    const fromBook = thirdPartyContentNameCs(table, row);
+    if (fromBook) return fromBook;
   }
   // Acolyte's kit contains incense sticks, not the SRD's incense blocks.
   // The full phrase is a stored inventory name, not a quantity parsed here.

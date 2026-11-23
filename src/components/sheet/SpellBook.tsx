@@ -13,7 +13,7 @@ import { contentSlug, describeContentEntry, spellRowConcentrates, spellSummary }
 import { bundledSpellFacts } from "@/lib/srd/spell-facts";
 import { replayAnimation } from "@/lib/motion/replay";
 import { spellSupportFor, spellSupportWord } from "@/lib/srd/spell-support";
-import { compareNames, searchKey, textKey } from "@/lib/language/text-logic";
+import { compareNames, searchKey } from "@/lib/language/text-logic";
 import { spellNameMatchesSearch } from "./spell-name-search";
 import { contentName } from "@/lib/content/names";
 import {
