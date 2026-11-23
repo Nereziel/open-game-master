@@ -234,13 +234,20 @@ export function removePartyItem(
   name: string,
   known: boolean,
   qty = 1,
+  reference?: StoredContentReference,
 ): { inventory: PartyItem[]; removed: number; item: PartyItem } | ToolError {
   const matching = linesNamed(inventory, name);
-  // A free-text name cannot select between two different source books.
-  if (matching.length > 1 && matching.some((item) => !samePartyItemSource(item, matching[0]))) {
-    return { error: `The pack contains more than one "${name}" from different sources. Select the exact item.`, retry: true };
+  const selected = reference
+    ? matching.filter((item) => samePartyItemSource(item, { contentRef: reference }))
+    : matching;
+  if (reference && selected.length !== 1) {
+    return { error: `The pack has no unique "${name}" matching the supplied source reference.`, retry: true };
   }
-  const index = lineNamed(inventory, name);
+  // A free-text name cannot select between two different source books.
+  if (!reference && matching.length > 1 && matching.some((item) => !samePartyItemSource(item, matching[0]))) {
+    return { error: `The pack contains more than one "${name}" from different sources. Supply itemRef to choose the book-specific item.`, retry: true };
+  }
+  const index = reference ? inventory.indexOf(selected[0]) : lineNamed(inventory, name);
   if (index < 0) {
     return known
       ? { error: `The pack does not hold "${name}".`, refused: "rules" }
