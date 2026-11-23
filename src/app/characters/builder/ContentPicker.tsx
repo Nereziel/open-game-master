@@ -8,6 +8,7 @@ import { describeContentEntry, spellSummary } from "@/lib/help";
 import { useContentSearch, type PickerEntry } from "./useContentSearch";
 import { useLocale, useT, useTp } from "@/lib/locale";
 import { contentName } from "@/lib/content/names";
+import { sourceRowIdentity } from "./pickerRows";
 
 export type { PickerEntry } from "./useContentSearch";
 
@@ -111,7 +112,7 @@ export default function ContentPicker({
           {results.map((entry, index) => {
             const verdict = judge?.(entry) ?? null;
             return (
-            <li key={entry.slug} className="flex items-center gap-1 pr-2 hover:bg-stone-800">
+            <li key={sourceRowIdentity(entry)} className="flex items-center gap-1 pr-2 hover:bg-stone-800">
               <button
                 type="button"
                 aria-disabled={verdict?.blocked || undefined}
@@ -143,7 +144,7 @@ export default function ContentPicker({
                 <span className="shrink-0 text-xs text-stone-500">
                   {entry.source === "homebrew"
                     ? t("homebrew")
-                    : (renderMeta?.(entry) ?? "")}
+                    : (renderMeta?.(entry) ?? (entry.source === "open5e" ? entry.document ?? entry.documentSlug ?? "" : ""))}
                 </span>
               </button>
               {/* The row already carries the full entry, so reading a spell
