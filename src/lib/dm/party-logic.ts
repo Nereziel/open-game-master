@@ -2,9 +2,10 @@ import { normalizeReputation } from "@/lib/dm/faction-logic";
 import { describeFormation, normalizeFormationChange, type FormationChange } from "@/lib/dm/formation-logic";
 import type { ToolError } from "@/lib/dm/tool-errors";
 import { textKey } from "@/lib/language/text-logic";
-import { lineNamed } from "@/lib/srd/item-row";
+import { lineNamed, linesNamed } from "@/lib/srd/item-row";
 import { listedItemTags } from "@/lib/schemas/item-tags";
 import type { ItemFacts } from "@/lib/dm/mutation-math";
+import type { StoredContentReference } from "@/lib/content/translations/stored-reference";
 import { PARTY_BACKSTORY_MAX } from "@/lib/dm/party-story";
 
 // The party as a thing in its own right.
@@ -31,6 +32,8 @@ export type PartyItem = {
   // False while nobody knows what it is, exactly as on a character sheet
   // (src/lib/dm/mutation-math.ts). Absent reads as true.
   identified?: boolean;
+  // Do not discard the book identity while equipment is in the party stash.
+  contentRef?: StoredContentReference;
   // What it is, kept as the sheet keeps it, so a potion stowed and taken
   // back still heals (src/lib/srd/item-tags.ts).
 } & ItemFacts;
@@ -149,7 +152,33 @@ function normalizeItem(raw: Record<string, unknown>): PartyItem | null {
     ...(tags.length ? { tags } : {}),
     ...(Number.isFinite(worth) && worth > 0 ? { worth } : {}),
     ...(typeof raw?.spell === "string" && raw.spell.trim() ? { spell: raw.spell.trim() } : {}),
+    ...(partyItemSourceRef(raw?.contentRef) ? { contentRef: partyItemSourceRef(raw?.contentRef) } : {}),
   };
+}
+
+// Only item refs are meaningful in an inventory; do not trust arbitrary
+// JSON from a preexisting party record as evidence of another source.
+function partyItemSourceRef(raw: unknown): StoredContentReference | undefined {
+  if (!raw || typeof raw !== "object") return undefined;
+  const ref = raw as Record<string, unknown>;
+  if (ref.contentType !== "items" || typeof ref.sourceId !== "string"
+      || !ref.sourceId.trim() || typeof ref.contentId !== "string"
+      || !ref.contentId.trim()) return undefined;
+  if (ref.documentSlug !== undefined && typeof ref.documentSlug !== "string") return undefined;
+  return {
+    sourceId: ref.sourceId, contentType: "items", contentId: ref.contentId,
+    ...(ref.documentSlug ? { documentSlug: ref.documentSlug } : {}),
+  };
+}
+
+function samePartyItemSource(
+  a: { contentRef?: StoredContentReference },
+  b: { contentRef?: StoredContentReference },
+): boolean {
+  const x = a.contentRef; const y = b.contentRef;
+  if (!x || !y) return !x && !y;
+  return x.sourceId === y.sourceId && x.contentType === y.contentType
+    && x.contentId === y.contentId && (x.documentSlug ?? "") === (y.documentSlug ?? "");
 }
 
 // ---- the shared pack ----
@@ -160,7 +189,7 @@ function normalizeItem(raw: Record<string, unknown>): PartyItem | null {
 // scrolls of different spells or two potions of different rows.
 export function addPartyItem(
   inventory: PartyItem[],
-  item: { name: string; qty?: number; weight?: number; identified?: boolean } & ItemFacts,
+  item: { name: string; qty?: number; weight?: number; identified?: boolean; contentRef?: StoredContentReference } & ItemFacts,
 ): { inventory: PartyItem[] } | ToolError {
   const name = item.name.trim().slice(0, PARTY_ITEM_NAME_MAX);
   if (!name) {
@@ -170,7 +199,7 @@ export function addPartyItem(
   const known = item.identified !== false;
   const index = inventory.findIndex(
     (row) =>
-      textKey(row.name) === textKey(name) && (row.identified !== false) === known && row.spell === item.spell && row.srdName === item.srdName,
+      textKey(row.name) === textKey(name) && (row.identified !== false) === known && row.spell === item.spell && row.srdName === item.srdName && samePartyItemSource(row, item),
   );
   if (index < 0) {
     if (inventory.length >= MAX_PARTY_ITEMS) {
@@ -188,6 +217,7 @@ export function addPartyItem(
           ...(item.tags?.length ? { tags: item.tags } : {}),
           ...(item.worth ? { worth: item.worth } : {}),
           ...(item.spell ? { spell: item.spell } : {}),
+          ...(item.contentRef ? { contentRef: item.contentRef } : {}),
         },
       ],
     };
@@ -205,6 +235,11 @@ export function removePartyItem(
   known: boolean,
   qty = 1,
 ): { inventory: PartyItem[]; removed: number; item: PartyItem } | ToolError {
+  const matching = linesNamed(inventory, name);
+  // A free-text name cannot select between two different source books.
+  if (matching.length > 1 && matching.some((item) => !samePartyItemSource(item, matching[0]))) {
+    return { error: `The pack contains more than one "${name}" from different sources. Select the exact item.`, retry: true };
+  }
   const index = lineNamed(inventory, name);
   if (index < 0) {
     return known
