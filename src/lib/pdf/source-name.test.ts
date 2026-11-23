@@ -12,6 +12,9 @@ describe("PDF source-scoped Czech labels (#107)", () => {
     expect(pdfReferencedName("spells", "Light", "cs", {
       sourceId: "other-book", contentType: "spells", contentId: "light", documentSlug: "toh",
     })).toBe("Light");
+    expect(pdfReferencedName("spells", "Light", "cs", {
+      sourceId: "srd-5.1", contentType: "spells", contentId: "light", documentSlug: "toh",
+    })).toBe("Light");
     expect(pdfReferencedName("items", "Shield", "cs", {
       sourceId: "other-book", contentType: "items", contentId: "shield", documentSlug: "toh",
     })).toBe("Shield");
