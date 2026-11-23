@@ -1,6 +1,6 @@
 import { describe, expect, it } from "vitest";
 import { normalizeStock } from "@/lib/db/shops";
-import { addStock, findStockLine, refillStock, takeStock } from "./shop-logic";
+import { addStock, findStockLine, refillStock, stockReferenceMatchesCatalog, takeStock } from "./shop-logic";
 
 describe("shop stock source identity (#107)", () => {
   const srd = {
@@ -26,6 +26,26 @@ describe("shop stock source identity (#107)", () => {
     expect(stock[0].qty).toBe(3);
     expect(stock[0].contentRef).toBeUndefined();
     expect(stock[1].contentRef).toEqual(srd.contentRef);
+  });
+
+  it("selects only an exact source ID and never consumes the other book", () => {
+    const stock = normalizeStock([srd, other]);
+    expect(findStockLine(stock, "Shield", other.contentRef)?.contentRef).toEqual(other.contentRef);
+    expect(takeStock(stock, "Shield", 1, other.contentRef)).toEqual([srd]);
+    expect(findStockLine(stock, "Shield", { ...other.contentRef, contentId: "wrong" })).toBeNull();
+    expect(findStockLine(stock, "Shield", { ...other.contentRef, documentSlug: "wrong-document" })).toBeNull();
+    expect(takeStock(stock, "Shield", 1, { ...other.contentRef, sourceId: "wrong" })).toBeNull();
+  });
+
+  it("requires a real catalog source, canonical slug, document and English name", () => {
+    const row = { source: "open5e" as const, slug: "shield", name: "Shield", documentSlug: "wotc-srd" };
+    expect(stockReferenceMatchesCatalog(srd, row)).toBe(true);
+    expect(stockReferenceMatchesCatalog(other, row)).toBe(false);
+    expect(stockReferenceMatchesCatalog(srd, { ...row, name: "Unrelated Item" })).toBe(false);
+    expect(stockReferenceMatchesCatalog(srd, { ...row, slug: "different-item" })).toBe(false);
+    expect(stockReferenceMatchesCatalog(srd, { ...row, documentSlug: "toh" })).toBe(false);
+    expect(stockReferenceMatchesCatalog({ ...srd, contentRef: undefined }, row)).toBe(false);
+    expect(stockReferenceMatchesCatalog({ ...srd, srdName: "Shield", itemName: "Štít" }, row)).toBe(true);
   });
 
   it("refuses name-only stock lookup or deduction when books collide", () => {
