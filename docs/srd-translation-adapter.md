@@ -286,3 +286,10 @@ stack. Old name-only items still stack as before.
 Regression tests in `mutation-math-source.test.ts` cover different
 books, old records, DM grants and legacy behavior. This change does not
 retroactively infer references for historical DM grants.
+
+When a name-only DM remove action matches different book-scoped
+references for the same displayed name, `removeItemMath` now declines
+the ambiguous choice rather than silently removing the first row.
+Single-source removals and historical name-only inventory continue to
+work. A future structured DM tool may explicitly supply a source
+reference to choose among books; this change does not guess that choice.
