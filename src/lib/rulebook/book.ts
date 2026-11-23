@@ -13,6 +13,7 @@
 // read once per process and never changes while it runs.
 import data from "./srd-5.1.json";
 import frData from "./srd-5.1-fr.json";
+import { czechCompanionBook } from "./czech-companion";
 import { buildIndex, buildIndexInSlices, searchRulebook, type RulebookIndex } from "./search";
 import type { TableLanguage } from "../schemas/game-settings-options.ts";
 import type {
@@ -25,7 +26,7 @@ import type {
   SearchResponse,
 } from "./types";
 
-export type BookLocale = "en" | "fr";
+export type BookLocale = "en" | "fr" | "cs";
 
 // The book language an Accept-Language header asks for: the most preferred
 // tag that names French or English wins (by q, ties in the header's order);
@@ -45,6 +46,7 @@ export function localeFromAcceptLanguage(header: string | null): BookLocale {
     .sort((a, b) => b.weight - a.weight || a.at - b.at);
   for (const { tag } of tags) {
     if (tag === "fr" || tag.startsWith("fr-")) return "fr";
+    if (tag === "cs" || tag.startsWith("cs-")) return "cs";
     if (tag === "en" || tag.startsWith("en-")) return "en";
   }
   return "en";
@@ -55,11 +57,11 @@ export function localeFromAcceptLanguage(header: string | null): BookLocale {
 // hands a French answer to an English request or the other way round.
 export const BOOK_LOCALE_VARY = "Accept-Language, X-Odm-Locale";
 
-// The reader's own choice (X-Odm-Locale, only "en" or "fr"; anything else is
-// ignored) wins over the browser's Accept-Language.
+// The reader's own choice (X-Odm-Locale: "en", "fr" or "cs") wins
+// over the browser's Accept-Language.
 export function bookLocaleOf(request: Request): BookLocale {
   const own = request.headers.get("x-odm-locale");
-  if (own === "fr" || own === "en") {
+  if (own === "fr" || own === "en" || own === "cs") {
     return own;
   }
   return localeFromAcceptLanguage(request.headers.get("accept-language"));
@@ -75,10 +77,10 @@ function mergedFrBook(): RulebookData {
   return { ...(frData as RulebookData), pages: enBook.pages.map((page) => frPages.get(page.id) ?? page) };
 }
 
-const books: Record<BookLocale, RulebookData> = { en: enBook, fr: mergedFrBook() };
+const books: Record<BookLocale, RulebookData> = { en: enBook, fr: mergedFrBook(), cs: czechCompanionBook(enBook) };
 
 // A book's search stems as the language the book is written in.
-const INDEX_LANGUAGE: Record<BookLocale, TableLanguage> = { en: "english", fr: "french" };
+const INDEX_LANGUAGE: Record<BookLocale, TableLanguage> = { en: "english", fr: "french", cs: "czech" };
 
 // The rules a table reaches for in the middle of a session. Every anchor is
 // asserted to exist by scripts/test-rulebook.mjs. The labels are the
