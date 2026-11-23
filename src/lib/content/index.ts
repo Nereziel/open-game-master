@@ -734,8 +734,14 @@ export function getEntryDetail(
     : db?.prepare(`SELECT slug, name, document_slug, data_json FROM ${kind} WHERE slug = ?`).get(slug) as DetailRow | undefined;
   if (kind === "spells") {
     const served = allPackSpells();
-    return served.find((entry) => entry.slug === slug && (!documentSlug || entry.documentSlug === documentSlug))
-      ?? (row ? served.find((entry) => spellNameMatches(entry, row.name) && (!documentSlug || entry.documentSlug === documentSlug)) ?? null : null);
+    if (documentSlug) {
+      // An explicit selection must never resolve another same-name spell,
+      // even within the same book. A pack row itself is the safe fallback.
+      return row ? served.find((entry) => entry.slug === slug && entry.documentSlug === documentSlug)
+        ?? detailEntry(row, kind) : null;
+    }
+    return served.find((entry) => entry.slug === slug)
+      ?? (row ? served.find((entry) => spellNameMatches(entry, row.name)) ?? null : null);
   }
   // A feat ODM wrote answers for its name where the pack has none, or has
   // only a 2024 row.
