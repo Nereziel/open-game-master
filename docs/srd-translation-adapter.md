@@ -338,3 +338,15 @@ present in multiple source books. Both tools now use
 the conflicting books without changing inventory, rather than a false
 missing-item error. `findCarriedItem` shares the same source comparison.
 The sale-price helper also safely handles nullable lookup results.
+
+### Explicit source selection in party stash
+
+The `party_stash` DM tool accepts optional `itemRef` in addition to
+`item` and `qty` for `stow` and `take`: `{ sourceId, contentId,
+documentSlug? }` (the kind is implicitly `items`). The model can copy
+this ID from the game state when two books define items of the same name.
+The tool matches both the name and the complete explicit source ref;
+it never guesses an item if the ref is missing or does not match.
+The old name-only tool calls remain valid, and still refuse ambiguous
+same-name items across sources. Targeted math and party-stash tests
+cover exact source selection and invalid references.
