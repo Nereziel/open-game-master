@@ -33,7 +33,7 @@ export const CZECH_MONSTER_NOTES_6: Readonly<Record<string, string>> = {
   "Deva": "Déva je nebeský služebník se silnými léčivými a proměňovacími schopnostmi. Jeho magické zbraně působí také **zářivé zranění** a může sesílat vybraná kouzla. Díky letu, telepatii a řadě odolností vystupuje jako mocný spojenec i protivník.",
   "Djinni": "Džin je vzdušný elementál s rychlým letem a vrozeným sesíláním kouzel. Dokáže vytvořit **vír**, jímž odhazuje či uchvacuje protivníky, a je imunní vůči blesku a hromovému zranění. Při smrti se jeho tělo rozplyne v závan větru.",
   "Dragon Turtle": "Dračí želva je obrovský vodní drak s mohutným krunýřem. Útočí kousnutím, drápy a ocasem a dokáže vydechnout **spalující páru** do rozsáhlé oblasti. Dýchá pod vodou i na vzduchu a je částečně odolná vůči ohni.",
-  "Dretch": "Dreč je slabší démon, který bojuje kousnutím a drápy. Dokáže vypustit **páchnoucí oblak**, jenž může protivníky otrávit či připravit o akce. Má obvyklé démonické odolnosti a imunitu vůči jedu, ale samostatně nepředstavuje silného bojovníka.",
+  "Dretch": "Dráč je slabší démon, který bojuje kousnutím a drápy. Dokáže vypustit **páchnoucí oblak**, jenž může protivníky otrávit či připravit o akce. Má obvyklé démonické odolnosti a imunitu vůči jedu, ale samostatně nepředstavuje silného bojovníka.",
   "Drider": "Drider spojuje tělo temného elfa s pavoučím tělem. Šplhá, bojuje zbraněmi i kousnutím a využívá **vrozená kouzla**. Díky dlouhému vidění ve tmě a obratnému pohybu je zvlášť nebezpečný v podzemních prostorech.",
   "Duergar": "Duergar je podzemní trpasličí bojovník odolný vůči jedu a řadě magických účinků. Dokáže se **zvětšit nebo stát neviditelným**; na přímém slunečním světle trpí postihem. Kromě fyzického útoku tak využívá překvapení a podmínky okolí.",
   "Dust Mephit": "Prašný mefit létá, dokáže oslepit protivníky prachovým dechem a při smrti **vybuchne oblakem prachu**. Umí sesílat spánek a skrývat se v prašném prostředí. Má slabinu vůči ohni a imunitu vůči jedu.",
@@ -125,7 +125,7 @@ export const CZECH_MONSTER_TITLES_6: Readonly<Record<string, string>> = {
   "Deva": "Déva",
   "Djinni": "Džin",
   "Dragon Turtle": "Dračí želva",
-  "Dretch": "Dreč",
+  "Dretch": "Dráč",
   "Drider": "Drider",
   "Duergar": "Duergar",
   "Dust Mephit": "Prašný mefit",
@@ -133,7 +133,7 @@ export const CZECH_MONSTER_TITLES_6: Readonly<Record<string, string>> = {
   "Efreeti": "Ifrít",
   "Elf, Drow": "Drow",
   "Erinyes": "Erínyje",
-  "Ettercap": "Pavoukovec",
+  "Ettercap": "Pavoučnatec",
   "Fire Elemental": "Ohnivý elementál"
 };
 
