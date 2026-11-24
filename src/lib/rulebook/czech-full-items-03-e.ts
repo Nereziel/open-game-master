@@ -17,7 +17,7 @@ Jako akci můžeš z hole bez utrácení nábojů seslat také jedno z těchto k
 
 Máš 50procentní šanci okamžitě se přenést do náhodně určené sféry existence a výbuchu uniknout. Pokud mu neunikneš, utrpíš silové zranění rovné 16 × počet nábojů v holi. Každý další tvor v oblasti musí provést záchranný hod na Obratnost se SO 17. Při neúspěchu utrpí zranění podle své vzdálenosti od místa výbuchu, jak uvádí tabulka. Při úspěchu utrpí poloviční zranění.
 
-**Tabulka – Hůl mágů**
+**Tabulka – Berla mágů**
 
 | Vzdálenost od středu | Zranění |
 |---------------------|---------|
