@@ -53,20 +53,20 @@ export function planBoard(
     if (lost) {
       warnings.push({
         kind: "storyboard",
-        message: `${lost} of the board's ${LINK_WORDS[kind]} ${lost === 1 ? "is" : "are"} not coming along, so the cards that pick ${lost === 1 ? "it" : "them"} arrive without ${lost === 1 ? "it" : "them"}. Tick ${IMPORT_KIND_LABELS[kind]} to keep those links.`,
+        display: { key: "Board links to omitted records ({kind}): {count}. The cards arrive without these links. Select the relevant kind to keep them.", vars: { count: lost }, kinds: { kind: [kind] } }, message: `${lost} of the board's ${LINK_WORDS[kind]} ${lost === 1 ? "is" : "are"} not coming along, so the cards that pick ${lost === 1 ? "it" : "them"} arrive without ${lost === 1 ? "it" : "them"}. Tick ${IMPORT_KIND_LABELS[kind]} to keep those links.`,
       });
     }
   }
   if (missing) {
     warnings.push({
       kind: "storyboard",
-      message: `${missing} card link${missing === 1 ? " points" : "s point"} at something that is no longer in the workshop and ${missing === 1 ? "is" : "are"} dropped.`,
+      display: { key: "Card links to records no longer in the workshop will be dropped: {count}.", vars: { count: missing } }, message: `${missing} card link${missing === 1 ? " points" : "s point"} at something that is no longer in the workshop and ${missing === 1 ? "is" : "are"} dropped.`,
     });
   }
   if (fightsAlong) {
     notes.push({
       kind: "storyboard",
-      message: `${fightsAlong} fight card${fightsAlong === 1 ? " brings the prepared fight it picks" : "s bring the prepared fights they pick"} (roster, map settings, rewards) even though Prepared encounters is not ticked.`,
+      display: { key: "Fight cards bringing their prepared encounters even without that selection: {count}. Rosters, map settings and rewards come with them.", vars: { count: fightsAlong } }, message: `${fightsAlong} fight card${fightsAlong === 1 ? " brings the prepared fight it picks" : "s bring the prepared fights they pick"} (roster, map settings, rewards) even though Prepared encounters is not ticked.`,
     });
   }
   if (board.common) {
@@ -85,7 +85,7 @@ export function planBoard(
     if (reused || copied) {
       notes.push({
         kind: "storyboard",
-        message: `From the shared workshop "${board.common.title}": ${[
+        display: { key: "Shared workshop {name}: copied records: {copied}; reused records already here: {reused}.", vars: { name: board.common.title, copied, reused } }, message: `From the shared workshop "${board.common.title}": ${[
           copied ? `${copied} record${copied === 1 ? "" : "s"} copied in` : "",
           reused ? `${reused} already in this campaign and reused` : "",
         ]
@@ -97,7 +97,7 @@ export function planBoard(
   if (board.moments) {
     notes.push({
       kind: "storyboard",
-      message: `${board.moments} scene${board.moments === 1 ? " sits" : "s sit"} on an alternative or optional route. ${board.moments === 1 ? "It arrives" : "They arrive"} as planned moments the storyteller fires or drops when the party gets there, not as beats the party must play.`,
+      display: { key: "Alternative or optional scenes: {count}. They arrive as planned moments the storyteller may trigger or drop, not required beats.", vars: { count: board.moments } }, message: `${board.moments} scene${board.moments === 1 ? " sits" : "s sit"} on an alternative or optional route. ${board.moments === 1 ? "It arrives" : "They arrive"} as planned moments the storyteller fires or drops when the party gets there, not as beats the party must play.`,
     });
   }
   // What the arc's event cap leaves out is named here, before the button,
@@ -108,18 +108,18 @@ export function planBoard(
     const titles = board.momentTitles ?? [];
     warnings.push({
       kind: "storyboard",
-      message: `The arc has room for ${eventRoom} more planned event${eventRoom === 1 ? "" : "s"} (it holds ${ARC_LIMITS.events}); ${board.moments - eventRoom} of the board's ${board.moments} scenes on routes cannot join it${nameCards(titles.slice(eventRoom))}. ${board.moments - eventRoom === 1 ? "It keeps" : "They keep"} ${board.moments - eventRoom === 1 ? "its" : "their"} full text as a prep card the storyteller can open and search, but the arc will not offer ${board.moments - eventRoom === 1 ? "it" : "them"} as a planned event.`,
+      display: { key: "Planned event capacity: {room} remaining of {limit}. Omitted route scenes: {count} of {total}{cards}. Their full text remains on prep cards, but they are not offered as planned events.", vars: { room: eventRoom, limit: ARC_LIMITS.events, count: board.moments - eventRoom, total: board.moments }, cards: titles.slice(eventRoom) }, message: `The arc has room for ${eventRoom} more planned event${eventRoom === 1 ? "" : "s"} (it holds ${ARC_LIMITS.events}); ${board.moments - eventRoom} of the board's ${board.moments} scenes on routes cannot join it${nameCards(titles.slice(eventRoom))}. ${board.moments - eventRoom === 1 ? "It keeps" : "They keep"} ${board.moments - eventRoom === 1 ? "its" : "their"} full text as a prep card the storyteller can open and search, but the arc will not offer ${board.moments - eventRoom === 1 ? "it" : "them"} as a planned event.`,
     });
   }
   if (board.beats.length || board.moments) {
     notes.push({
       kind: "storyboard",
-      message:
+      display: { key: "Every card is kept whole as a prep card the storyteller can open with read_card and find with search_lore; the arc's own lines are each card's first line." }, message:
         "Every card is kept whole as a prep card the storyteller can open with read_card and find with search_lore; the arc's own lines are each card's first line.",
     });
   }
   for (const note of board.proseNotes ?? []) {
-    notes.push({ kind: "storyboard", message: `"${note.title}" may read oddly: ${note.message}` });
+    notes.push({ kind: "storyboard", display: { key: "{title} may read oddly: {detail}", vars: { title: note.title, detail: note.message } }, message: `"${note.title}" may read oddly: ${note.message}` });
   }
 
   const arc = input.targetArc ?? (input.targetHasArc ? { beats: [], acts: 1, room: 0, actRoom: false } : null);
@@ -135,13 +135,13 @@ export function planBoard(
   };
   if (!arc) {
     if (board.arcProblem && board.beats.length) {
-      warnings.push({ kind: "storyboard", message: `${board.arcProblem} Until then the board's beats are left out.` });
+      warnings.push({ kind: "storyboard", display: { key: "{detail} Until then the board's beats are left out.", vars: { detail: board.arcProblem } }, message: `${board.arcProblem} Until then the board's beats are left out.` });
     } else if (board.beats.length > ARC_LIMITS.beats) {
       const over = board.beats.length - ARC_LIMITS.beats;
       plan.newBeats = ARC_LIMITS.beats;
       warnings.push({
         kind: "storyboard",
-        message: `An arc holds ${ARC_LIMITS.beats} beats; the board's last ${over} cannot join it${nameCards((board.beatTitles ?? []).slice(ARC_LIMITS.beats))}. ${over === 1 ? "It keeps its" : "They keep their"} full text as a prep card, but the party will not be steered to ${over === 1 ? "it" : "them"}.`,
+        display: { key: "An arc holds {limit} beats. Omitted final beats: {count}{cards}. Their full text remains on prep cards, but the party will not be steered to them.", vars: { limit: ARC_LIMITS.beats, count: over }, cards: (board.beatTitles ?? []).slice(ARC_LIMITS.beats) }, message: `An arc holds ${ARC_LIMITS.beats} beats; the board's last ${over} cannot join it${nameCards((board.beatTitles ?? []).slice(ARC_LIMITS.beats))}. ${over === 1 ? "It keeps its" : "They keep their"} full text as a prep card, but the party will not be steered to ${over === 1 ? "it" : "them"}.`,
       });
     }
     return plan;
@@ -149,7 +149,7 @@ export function planBoard(
   if (mode === "leave") {
     warnings.push({
       kind: "storyboard",
-      message: `This campaign already has a story arc. The board's places, quests, fights and notes still land; its beats do not overwrite the spine the table has been playing.${board.beats.length ? " Add them as the next act to keep them." : ""}`,
+      display: { key: board.beats.length ? "This campaign already has a story arc. The board's places, quests, fights and notes still land; its beats do not overwrite the spine the table has been playing. Add them as the next act to keep them." : "This campaign already has a story arc. The board's places, quests, fights and notes still land; its beats do not overwrite the spine the table has been playing." }, message: `This campaign already has a story arc. The board's places, quests, fights and notes still land; its beats do not overwrite the spine the table has been playing.${board.beats.length ? " Add them as the next act to keep them." : ""}`,
     });
     plan.newBeats = 0;
     return plan;
@@ -157,7 +157,7 @@ export function planBoard(
   if (!arc.actRoom || !arc.room) {
     warnings.push({
       kind: "storyboard",
-      message: "This arc is already as long as an arc gets, so the board's beats cannot join it.",
+      display: { key: "This arc is already as long as an arc gets, so the board's beats cannot join it." }, message: "This arc is already as long as an arc gets, so the board's beats cannot join it.",
     });
     plan.newBeats = 0;
     return plan;
@@ -166,20 +166,20 @@ export function planBoard(
   if (repeated) {
     notes.push({
       kind: "storyboard",
-      message: `${repeated} of the board's beats ${repeated === 1 ? "is" : "are"} already in the arc, so ${repeated === 1 ? "it is" : "they are"} not added twice.`,
+      display: { key: "Board beats already present in the arc and not added again: {count}.", vars: { count: repeated } }, message: `${repeated} of the board's beats ${repeated === 1 ? "is" : "are"} already in the arc, so ${repeated === 1 ? "it is" : "they are"} not added twice.`,
     });
   }
   if (fresh.length > arc.room) {
     const freshTitles = (board.beatTitles ?? []).filter((_, index) => !known.has(textKey(board.beats[index] ?? "")));
     warnings.push({
       kind: "storyboard",
-      message: `The arc has room for ${arc.room} more beat${arc.room === 1 ? "" : "s"} (it holds ${ARC_LIMITS.beats}); the last ${fresh.length - arc.room} of the board's cannot join it${nameCards(freshTitles.slice(arc.room))}. ${fresh.length - arc.room === 1 ? "It keeps its" : "They keep their"} full text as a prep card, but the party will not be steered to ${fresh.length - arc.room === 1 ? "it" : "them"}.`,
+      display: { key: "Beat capacity: {room} remaining of {limit}. Omitted final beats: {count}{cards}. Their full text remains on prep cards, but the party will not be steered to them.", vars: { room: arc.room, limit: ARC_LIMITS.beats, count: fresh.length - arc.room }, cards: freshTitles.slice(arc.room) }, message: `The arc has room for ${arc.room} more beat${arc.room === 1 ? "" : "s"} (it holds ${ARC_LIMITS.beats}); the last ${fresh.length - arc.room} of the board's cannot join it${nameCards(freshTitles.slice(arc.room))}. ${fresh.length - arc.room === 1 ? "It keeps its" : "They keep their"} full text as a prep card, but the party will not be steered to ${fresh.length - arc.room === 1 ? "it" : "them"}.`,
     });
   }
   if (plan.newBeats) {
     notes.push({
       kind: "storyboard",
-      message: `${plan.newBeats} beat${plan.newBeats === 1 ? "" : "s"} arrive${plan.newBeats === 1 ? "s" : ""} as act ${plan.act}, after the ${arc.beats.length} already in the arc. Played and skipped beats, and the acts already recapped, are untouched.`,
+      display: { key: "New beats: {count}, added as act {act} after {previous} existing beats. Played and skipped beats and recapped acts remain untouched.", vars: { count: plan.newBeats, act: plan.act, previous: arc.beats.length } }, message: `${plan.newBeats} beat${plan.newBeats === 1 ? "" : "s"} arrive${plan.newBeats === 1 ? "s" : ""} as act ${plan.act}, after the ${arc.beats.length} already in the arc. Played and skipped beats, and the acts already recapped, are untouched.`,
     });
   }
   return plan;
