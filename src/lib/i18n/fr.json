@@ -1,5 +1,28 @@
 {
   "messages": {
+    "Custom voice…": "Voix personnalisée…",
+    "Type any voice this server understands": "Saisissez toute voix prise en charge par ce serveur",
+    "{label}: custom voice": "{label} : voix personnalisée",
+    "The server's default voice": "Voix par défaut du serveur",
+    "{voice} · server default": "{voice} · voix par défaut du serveur",
+    "Kokoro has no {language} voice, so the narration is read by a voice of another language.": "Kokoro ne propose aucune voix pour la langue {language} ; le récit est donc lu par une voix d’une autre langue.",
+    "Heart (warm female)": "Heart (voix féminine chaleureuse)",
+    "Bella (bright female)": "Bella (voix féminine claire)",
+    "Aoede (calm female)": "Aoede (voix féminine calme)",
+    "Nicole (soft female)": "Nicole (voix féminine douce)",
+    "Michael (warm male)": "Michael (voix masculine chaleureuse)",
+    "Fenrir (deep male)": "Fenrir (voix masculine grave)",
+    "Puck (lively male)": "Puck (voix masculine enjouée)",
+    "Emma (British female)": "Emma (voix féminine britannique)",
+    "George (British male)": "George (voix masculine britannique)",
+    "Fable (British narrator)": "Fable (narrateur britannique)",
+    "Dora (Spanish female)": "Dora (voix féminine espagnole)",
+    "Alex (Spanish male)": "Alex (voix masculine espagnole)",
+    "Siwis (French female)": "Siwis (voix féminine française)",
+    "Sara (Italian female)": "Sara (voix féminine italienne)",
+    "Nicola (Italian male)": "Nicola (voix masculine italienne)",
+    "Dora (Portuguese female)": "Dora (voix féminine portugaise)",
+    "Alex (Portuguese male)": "Alex (voix masculine portugaise)",
     "Years written in it keep their numbers and read on the shared line.": "Les années qui y sont inscrites conservent leurs nombres et se lisent sur la chronologie commune.",
     "Remove {name}?": "Retirer {name} ?",
     "Reckoning of Tides": "Compte des marées",
@@ -11097,6 +11120,54 @@
     "Concussive sound: thunderwave, shatter, a giant's shout.": "Onde sonore : vague tonnante, fracassement, cri de géant."
   },
   "contexts": {
+    "Swedish": {
+      "table.language": "suédois"
+    },
+    "Spanish": {
+      "table.language": "espagnol"
+    },
+    "Russian": {
+      "table.language": "russe"
+    },
+    "Portuguese": {
+      "table.language": "portugais"
+    },
+    "Norwegian": {
+      "table.language": "norvégien"
+    },
+    "Italian": {
+      "table.language": "italien"
+    },
+    "Irish": {
+      "table.language": "irlandais"
+    },
+    "Indonesian": {
+      "table.language": "indonésien"
+    },
+    "Hungarian": {
+      "table.language": "hongrois"
+    },
+    "German": {
+      "table.language": "allemand"
+    },
+    "French": {
+      "table.language": "français"
+    },
+    "Finnish": {
+      "table.language": "finnois"
+    },
+    "Dutch": {
+      "table.language": "néerlandais"
+    },
+    "Danish": {
+      "table.language": "danois"
+    },
+    "Czech": {
+      "table.language": "tchèque"
+    },
+    "English": {
+      "table.language": "anglais"
+    },
     "retired": {
       "world.canon": "Retiré"
     },
