@@ -6,6 +6,9 @@ import { localizeEntry } from "@/lib/content/entry-descriptions";
 import { bookLocaleOf, BOOK_LOCALE_VARY } from "@/lib/rulebook/book";
 import { bundledItemRows, bundledSpellRows } from "@/lib/rulebook/catalog-rows";
 import { bundledGearRow } from "@/lib/workshop/bundled-gear-rows";
+import { bundledArchetypeRows, bundledBackgroundRows, bundledRaceRows } from "@/lib/workshop/catalog-mechanics";
+import { bundledClassRows } from "@/lib/workshop/class-catalog";
+import { ALL_CLASSES } from "@/lib/srd";
 import { contentScopeFor } from "@/lib/content/scope";
 import { findHomebrewBySlug, getAuthorsHomebrew } from "@/lib/db/homebrew";
 import type { HomebrewKind } from "@/lib/schemas/homebrew";
@@ -90,6 +93,21 @@ export async function GET(
     const row = kind === "spells" ? bundledSpellRows().find((r) => r.slug === `srd:${decoded}`)
       : kind === "items" ? bundledItemRows().find((r) => r.slug === `srd:${decoded}`) : undefined;
     if (row) return localizedResponse(row);
+  }
+  // The workshop's bundled lists also expose exact slugs for these
+  // entries. Published and scoped homebrew lookups above keep precedence.
+  const bundledRows = kind === "races" ? bundledRaceRows("", [])
+    : kind === "backgrounds" ? bundledBackgroundRows("", [])
+    : kind === "classes" ? bundledClassRows("", [])
+    : kind === "archetypes" ? ALL_CLASSES
+      .filter((klass) => decoded.startsWith(`${klass.id}-`))
+      .flatMap((klass) => bundledArchetypeRows(klass.id, "", []))
+    : [];
+  const bundledDetail = bundledRows.find((row) => row.slug === decoded);
+  if (bundledDetail) {
+    const classSlug = kind === "archetypes"
+      ? (bundledDetail.table as { classSlug?: string } | undefined)?.classSlug : undefined;
+    return localizedResponse(withBestEffort(kind, bundledDetail, { classSlug }));
   }
   return Response.json({ error: "Not found." }, { status: 404 });
 }
