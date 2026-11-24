@@ -23,6 +23,8 @@ import type { MarketRequest } from "@/lib/dm/table-tabs";
 import { GameTerm } from "@/components/ui/GameTerm";
 import { useTourPrepare } from "@/lib/tours/prepare";
 import { useT } from "@/lib/locale";
+import { itemDisplayName } from "@/lib/content/item-display";
+import { localizeCoins } from "@/lib/srd/currency";
 
 // The market (docs/vtt-parity-implementation-plan.md 11.1): the shops at
 // the party's place, stock as tiles with a price chip in coin, a Buy on
@@ -34,7 +36,7 @@ import { useT } from "@/lib/locale";
 // name opens the item card (src/components/ui/InfoDialog.tsx): its damage,
 // armour class, properties and text, so a buyer knows what the coin gets.
 
-type StockView = { itemName: string; qty: number; priceCp: number; askingCp: number; note: string };
+type StockView = { srdName?: string; itemName: string; qty: number; priceCp: number; askingCp: number; note: string };
 type ShopView = {
   id: string;
   name: string;
@@ -255,7 +257,7 @@ export function MarketPanel({
       } else if (action === "haggle") {
         // The haggler's new markup against the shop's own: equal when the
         // step met an end of the ladder.
-        setError(haggleOutcome(t, Number(data.result?.steps) || 0, Number(data.result?.markup) !== shop.markup, String(data.result?.prices ?? "")));
+        setError(haggleOutcome(t, Number(data.result?.steps) || 0, Number(data.result?.markup) !== shop.markup, t(String(data.result?.prices ?? ""))));
       }
       setReload((current) => current + 1);
     } finally {
@@ -344,8 +346,8 @@ export function MarketPanel({
         <InfoDialog
           open
           onOpenChange={(open) => !open && setDetails(null)}
-          title={details.itemName}
-          meta={t("{price} here, {qty} on the shelf", { price: formatPrice(details.askingCp), qty: details.qty })}
+          title={itemDisplayName({ name: details.itemName, srdName: details.srdName }, t.locale)}
+          meta={t("{price} here, {qty} on the shelf", { price: localizeCoins(formatPrice(details.askingCp), t.locale), qty: details.qty })}
           note={details.note || undefined}
           reference={{ kind: "items", slug: contentSlug(details.itemName), name: details.itemName }}
           icon={cardArtwork({ kind: "item", key: details.itemName, family: "item-gear" }, genre)}
@@ -358,7 +360,7 @@ export function MarketPanel({
         aside={
           mySheet ? (
             <span key={coinFx?.at ?? 0} className="pk-chip relative py-0.5 text-xs text-amber-200">
-              <GameIcon icon={{ kind: "glyph", key: "coin-purse" }} size="size-5" /> {formatCopper(purse)}
+              <GameIcon icon={{ kind: "glyph", key: "coin-purse" }} size="size-5" /> {localizeCoins(formatCopper(purse), t.locale)}
               {coinFx ? <span aria-hidden className={cn("coin-arc pointer-events-none absolute -left-3 top-1/2 text-amber-300", coinFx.direction === "out" && "coin-arc-out")}>●</span> : null}
             </span>
           ) : null
@@ -532,7 +534,7 @@ export function MarketPanel({
               </p>
             ) : mySheet && shop.yourHaggle !== null ? (
               <p data-haggle-rules="" className="text-[11px] leading-snug text-stone-500">
-                {haggledLine(t, shop.yourHaggle, shop.yourPrices ?? "")}
+                {haggledLine(t, shop.yourHaggle, t(shop.yourPrices ?? ""))}
               </p>
             ) : null}
             {/* Columns follow the panel, not the window: the side panel is
@@ -546,27 +548,27 @@ export function MarketPanel({
                   <ContextMenu
                     as="li"
                     key={line.itemName}
-                    label={line.itemName}
+                    label={itemDisplayName({ name: line.itemName, srdName: line.srdName }, t.locale)}
                     items={[
                       { id: "details", label: t("Details"), glyph: "system-rules", onSelect: () => setDetails(line) },
-                      ...(trades ? [{ id: "buy", label: t("Buy for {price}", { price: formatPrice(line.askingCp) }), glyph: coinGlyph(line.askingCp), disabled: cannotBuy, onSelect: () => void counter(shop, "buy", line.itemName) }] : []),
+                      ...(trades ? [{ id: "buy", label: t("Buy for {price}", { price: localizeCoins(formatPrice(line.askingCp), t.locale) }), glyph: coinGlyph(line.askingCp), disabled: cannotBuy, onSelect: () => void counter(shop, "buy", line.itemName) }] : []),
                     ]}
                     className="flex flex-col justify-between rounded-lg border border-stone-700/60 bg-stone-900/50 p-2 transition-transform duration-[var(--dur-quick,150ms)] hover:-translate-y-0.5 hover:border-amber-500/40"
                   >
                     <button
                       type="button"
                       onClick={() => setDetails(line)}
-                      aria-label={t("Details of {item}", { item: line.itemName })}
+                      aria-label={t("Details of {item}", { item: itemDisplayName({ name: line.itemName, srdName: line.srdName }, t.locale) })}
                       className="pk-tap flex min-w-0 items-center gap-1.5 rounded text-left text-xs text-stone-200 hover:text-amber-100 focus-visible:outline focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-amber-400"
                     >
                       <GameIcon icon={{ kind: "item", key: line.itemName, family: "item-gear" }} size="size-7" />
-                      <span className="truncate">{line.itemName}</span>
+                      <span className="truncate">{itemDisplayName({ name: line.itemName, srdName: line.srdName }, t.locale)}</span>
                       <Info aria-hidden className="size-3.5 shrink-0 text-stone-500" />
                     </button>
                     <span className="mt-1.5 flex flex-wrap items-center justify-between gap-1">
                       <span className="pk-chip max-w-full whitespace-normal text-amber-200">
                         <GameIcon icon={{ kind: "glyph", key: coinGlyph(line.askingCp) }} size="size-4" />
-                        {formatPrice(line.askingCp)}
+                        {localizeCoins(formatPrice(line.askingCp), t.locale)}
                       </span>
                       <span className="text-[11px] tabular-nums text-stone-500">x{line.qty}</span>
                     </span>
