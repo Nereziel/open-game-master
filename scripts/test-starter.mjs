@@ -210,11 +210,11 @@ test("the Czech starter seed and stored campaign use the localized premise and s
   assert.equal(created.gameSettings.campaignLength, "short");
 });
 
-test("Czech ready-made heroes localize narrative text without changing canonical sheets", () => {
-  const summaries = pregenSummaries("cs");
+for (const locale of ["fr", "cs"]) test(locale + " ready-made heroes localize narrative text without changing canonical sheets", () => {
+  const summaries = pregenSummaries(locale);
   assert.equal(summaries.length, 4);
   for (const original of PREGENS) {
-    const hero = pregenById(original.id, "cs");
+    const hero = pregenById(original.id, locale);
     const summary = summaries.find((row) => row.id === original.id);
     assert.ok(hero && summary, original.id);
     assert.notEqual(hero.tagline, original.tagline);
@@ -226,7 +226,7 @@ test("Czech ready-made heroes localize narrative text without changing canonical
     assert.deepEqual(pregenById(original.id, "en"), original);
     assert.equal(pregenSummaries("fr").find((row) => row.id === original.id).tagline, pregenById(original.id, "fr").tagline);
   }
-  assert.equal(pregenById("nobody", "cs"), null);
+  assert.equal(pregenById("nobody", locale), null);
 });
 
 removeTempDir(dir);
