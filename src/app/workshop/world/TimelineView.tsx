@@ -93,7 +93,7 @@ export function TimelineView({ api, world, onOpen }: { api: WorldApi; world: Wor
           const issues = event.refs
             .map((ref) => byRef.get(ref))
             .filter((entity) => entity !== undefined)
-            .map((entity) => ({ entity, issue: lifespanIssue(lifespan(typeOf(doc, entity), entity.entry, doc.calendars), at) }))
+            .map((entity) => ({ entity, issue: lifespanIssue(lifespan(typeOf(doc, entity), entity.entry, doc.calendars), at, t.locale) }))
             .filter((entry) => entry.issue);
           if (editing?.id === event.id) {
             return (
