@@ -745,11 +745,23 @@
     "species": {
       "acid-cap": {
         "englishName": "Acid Cap",
-        "name": "Kyselinový klobouk"
+        "name": "Kyselinový klobouk",
+        "original": {
+          "desc": "You were one of the warriors and guardians of your clan, using your strength and acid spores to protect your clanmates and your territory.",
+          "asi_desc": "***Ability Score Increase.*** Your Strength score increases by 1.",
+          "traits": "***Acid Cap Resistance.*** You have resistance to acid damage.\n\n***Acid Spores.*** When you are hit by a melee weapon attack within 5 feet of you, you can use your reaction to emit acidic spores. If you do, the attacker takes acid damage equal to half your level (rounded up). You can use your acid spores a number of times equal to your Constitution modifier (a minimum of once). You regain any expended uses when you finish a long rest.\n\n***Clan Athlete.*** You have proficiency in the Athletics skill."
+        },
+        "description": "Patřil jsi mezi bojovníky a strážce svého klanu a svou silou a kyselými spórami jsi chránil jeho členy i území.\n\n**Zvýšení hodnot vlastností.** Tvá Síla se zvýší o 1.\n**Odolnost kyselinového klobouku.** Máš odolnost vůči kyselinovému zranění.\n**Kyselé spóry.** Když tě zasáhne útok na blízko zbraní vedený do 5 stop od tebe, můžeš reakcí vypustit kyselé spóry. Pokud to uděláš, útočník utrpí kyselinové zranění rovné polovině tvé úrovně (zaokrouhlené nahoru). Spóry můžeš použít tolikrát, kolik činí tvá oprava Odolnosti (nejméně jednou). Všechna utracená použití obnovíš po důkladném odpočinku.\n**Klanový atlet.** Jsi zdatný v Atletice."
       },
       "bhain-kwai": {
         "englishName": "Bhain Kwai",
-        "name": "Bhain Kwai"
+        "name": "Bhain Kwai",
+        "original": {
+          "desc": "You are a minotaur adapted to life in the bogs and wetlands of the world.",
+          "asi_desc": "***Ability Score Increase.*** Your Constitution score increases by 2, and your Strength score increases by 1.",
+          "traits": "***Strong Back.*** Your carrying capacity is your Strength score multiplied by 20, instead of by 15.\n\n***Wetland Dweller.*** You are adapted to your home terrain. Difficult terrain composed of mud or from wading through water up to waist deep doesn't cost you extra movement. You have a swimming speed of 25 feet."
+        },
+        "description": "Jsi minotaur přizpůsobený životu v bažinách a mokřadech světa.\n\n**Zvýšení hodnot vlastností.** Tvá Odolnost se zvýší o 2 a Síla o 1.\n**Silná záda.** Tvá nosnost se rovná hodnotě tvé Síly vynásobené 20 namísto 15.\n**Obyvatel mokřadů.** Jsi přizpůsobený svému domácímu terénu. Obtížný terén tvořený blátem nebo broděním vodou sahající nejvýše po pás tě nestojí dodatečný pohyb. Máš rychlost plavání 25 stop."
       },
       "catfolk": {
         "englishName": "Catfolk",
@@ -785,7 +797,13 @@
       },
       "delver": {
         "englishName": "Delver",
-        "name": "Hlubinný průzkumník"
+        "name": "Hlubinný průzkumník",
+        "original": {
+          "desc": "You are one of the workers whose labors prop up most of drow society. You were trained from birth to follow orders and serve the collective. You learned your trade well, whether it was building or fighting or erecting the traps that protected passages to your population centers.",
+          "asi_desc": "***Ability Score Increase.*** Your Strength or Dexterity score increases by 1.",
+          "traits": "***Rapport with Insects.*** Your caste's years of working alongside the giant spiders and beetles that your people utilized in building and defending cities has left your caste with an innate affinity with the creatures. You can communicate simple ideas with insect-like beasts with an Intelligence of 3 or lower, such as spiders, beetles, wasps, scorpions, and centipedes. You can understand them in return, though this understanding is often limited to knowing the creature's current or most recent state, such as “hungry,” “content,” or “in danger.” Delver drow often keep such creatures as pets, mounts, or beasts of burden.\n\n***Specialized Training.*** You are proficient in one skill and one tool of your choice.\n\n***Martial Excellence.*** You are proficient with one martial weapon of your choice and with light armor."
+        },
+        "description": "Jsi jedním z dělníků, jejichž práce podpírá většinu drowí společnosti. Od narození jsi byl vychováván k poslušnosti a službě celku. Dobře ses naučil své řemeslo, ať už šlo o stavění, boj nebo zřizování pastí chránících průchody k vašim sídlům.\n\n**Zvýšení hodnot vlastností.** Tvá Síla nebo Obratnost se zvýší o 1.\n**Spřízněnost s hmyzem.** Léta, po která tvá kasta pracovala po boku obřích pavouků a brouků využívaných při stavbě a obraně měst, jí dala vrozenou spřízněnost s těmito tvory. Dokážeš sdělovat jednoduché myšlenky hmyzu podobným zvířatům s Inteligencí 3 nebo nižší, například pavoukům, broukům, vosám, štírům a stonožkám. Rozumíš i jim, ale často jen natolik, abys poznal jejich současný či poslední stav, například „hladový“, „spokojený“ nebo „v nebezpečí“. Drowové průzkumníci často tyto tvory chovají jako mazlíčky, jezdecká nebo tažná zvířata.\n**Specializovaný výcvik.** Jsi zdatný v jedné dovednosti a s jedním druhem náčiní dle své volby.\n**Bojová zdatnost.** Jsi zdatný s jednou vojenskou zbraní dle své volby a s lehkou zbrojí."
       },
       "erina": {
         "englishName": "Erina",
@@ -837,7 +855,13 @@
       },
       "dwarf-chassis": {
         "englishName": "Dwarf Chassis",
-        "name": "Trpasličí tělo"
+        "name": "Trpasličí tělo",
+        "original": {
+          "desc": "The original dwarven gearforged engineers valued function over form, eschewing aesthetics in favor of instilling their chassis with toughness and strength. The chassis' metal face is clearly crafted to look dwarven, but its countenance is entirely unactuated and forged of a dark metal—often brass—sometimes with a lighter-colored mane of hair and a braided beard and mustaches made of fine metal strands. The gearforged's eyes glow a dark turquoise, staring dispassionately with a seemingly blank expression. Armor and helms worn by the gearforged are often styled to appear as if they were integrated into its chassis, making it all-but-impossible to tell where the armor ends and the gearforged begins.",
+          "asi_desc": "***Ability Score Increase.*** Your Constitution score increases by 1.",
+          "traits": "***Always Armed.*** Every dwarf knows that it's better to leave home without pants than without your weapon. Choose a weapon with which you are proficient and that doesn't have the two-handed property. You can integrate this weapon into one of your arms. While the weapon is integrated, you can't be disarmed of it by any means, though you can use an action to remove the weapon. You can draw or sheathe the weapon as normal, the weapon folding into or springing from your arm instead of a sheath. While the integrated weapon is drawn in this way, it is considered held in that arm's hand, which can't be used for other actions such as casting spells. You can integrate a new weapon or replace an integrated weapon as part of a short or long rest. You can have up to two weapons integrated at a time, one per arm. You have advantage on Dexterity (Sleight of Hand) checks to conceal an integrated weapon.\n\n***Remembered Training.*** You remember some of your combat training from your previous life. You have proficiency with two martial weapons of your choice and with light and medium armor."
+        },
+        "description": "Původní trpasličí konstruktéři strojotvorů upřednostňovali funkci před vzhledem a místo estetiky vtiskovali svým tělům houževnatost a sílu. Kovová tvář je zjevně vytvořena podle trpasličího vzoru, ale zcela nehybná a vykovaná z tmavého kovu, často mosazi, někdy se světlejší hřívou vlasů a spleteným vousem a knírem z jemných kovových vláken. Oči strojotvora temně tyrkysově září a nezúčastněně hledí s prázdným výrazem. Zbroje a přilby strojotvorů bývají upravené tak, aby působily jako součást jejich těla; téměř nelze poznat, kde končí zbroj a začíná strojotvor.\n\n**Zvýšení hodnot vlastností.** Tvá Odolnost se zvýší o 1.\n**Vždy ozbrojený.** Každý trpaslík ví, že je lepší odejít z domu bez kalhot než bez zbraně. Vyber zbraň, se kterou jsi zdatný a která nemá vlastnost obouruční. Můžeš ji zabudovat do jedné paže. Dokud je zbraň zabudovaná, nelze tě jí žádným způsobem odzbrojit, ale můžeš ji akcí vyjmout. Zbraň můžeš normálně tasit a schovávat, přičemž se skládá do paže nebo z ní vyskočí místo pochvy. Když je zabudovaná zbraň takto tasená, považuje se za drženou v ruce příslušné paže; tuto ruku nemůžeš použít k jiným akcím, například sesílání kouzel. Během krátkého či důkladného odpočinku můžeš zabudovat novou zbraň nebo stávající vyměnit. Současně můžeš mít až dvě zabudované zbraně, po jedné v každé paži. Máš výhodu k ověřením Obratnosti (Čachrů) při skrývání zabudované zbraně.\n**Vzpomínka na výcvik.** Pamatuješ si část bojového výcviku ze svého předchozího života. Jsi zdatný se dvěma vojenskými zbraněmi dle své volby a s lehkou a střední zbrojí."
       },
       "gearforged": {
         "englishName": "Gearforged",
@@ -857,15 +881,33 @@
       },
       "human-chassis": {
         "englishName": "Human Chassis",
-        "name": "Lidské tělo"
+        "name": "Lidské tělo",
+        "original": {
+          "desc": "As humans invented the first gearforged, it should be no surprise that the human chassis remains the one that is most frequently encountered. However, it would be a mistake to assume that simply because the original chassis is more commonplace that there is anything common about them. While dwarves, gnomes, and kobolds have made clever additions and changes to the base model, the human chassis remains extremely versatile and is battle-proven.",
+          "asi_desc": "***Ability Score Increase.*** One ability score of your choice increases by 1.",
+          "traits": "***Adaptable Acumen.*** You gain proficiency in two skills or tools of your choice. Choose one of those skills or tools or another skill or tool proficiency you have. Your proficiency bonus is doubled for any ability check you make that uses the chosen skill or tool.\n\n***Inspired Ingenuity.*** When you roll a 9 or lower on the d20 for an ability check, you can use a reaction to change the roll to a 10. You can't use this trait again until you finish a short or long rest."
+        },
+        "description": "Protože lidé vynalezli první strojotvory, není překvapivé, že lidské tělo zůstává nejčastějším typem. Bylo by však chybou pokládat původní tělo za obyčejné jen proto, že je běžnější. Trpaslíci, gnómové a koboldi přidali k základnímu modelu důmyslná vylepšení a změny, ale lidské tělo zůstává nesmírně všestranné a prověřené bojem.\n\n**Zvýšení hodnot vlastností.** Jedna hodnota vlastnosti dle tvé volby se zvýší o 1.\n**Přizpůsobivá bystrost.** Získáš zdatnost ve dvou dovednostech či s náčiním dle své volby. Vyber jednu z těchto dovedností nebo náčiní nebo jinou dovednost či náčiní, se kterými jsi zdatný. Tvůj zdatnostní bonus se zdvojnásobí pro každé ověření vlastnosti, které využívá vybranou dovednost či náčiní.\n**Inspirativní vynalézavost.** Když při ověření vlastnosti hodíš na k20 číslo 9 nebo méně, můžeš reakcí změnit výsledek hodu na 10. Tento rys nemůžeš znovu použít, dokud si krátce nebo důkladně neodpočineš."
       },
       "humanhalf-elf-heritage": {
         "englishName": "Human/Half-Elf Heritage",
-        "name": "Dědictví lidí či půlelfů"
+        "name": "Dědictví lidí či půlelfů",
+        "original": {
+          "desc": "Your darakhul character was a human or half-elf before transforming into a darakhul. Where there was once light there is now darkness. Where there was once love there is now hunger. You know if the darkness and hunger become all-consuming, you are truly lost. But the powers of your new form are strangely comfortable. How much of your old self is still there, and what can this new form give you that your old one couldn't? ",
+          "asi_desc": "***Ability Score Increase.*** One ability score of your choice, other than Constitution, increases by 2.",
+          "traits": "***Versatility.*** The training and experience of your early years was not lost when you became a darakhul. You have proficiency in two skills and one tool of your choice."
+        },
+        "description": "Tvůj darakhul byl před přeměnou člověkem nebo půlelfem. Kde kdysi bylo světlo, je nyní temnota. Kde kdysi byla láska, je nyní hlad. Víš, že jestli tě temnota a hlad zcela pohltí, jsi opravdu ztracený. Moc nové podoby je však podivně příjemná. Kolik z tvého starého já zůstalo a co ti nová podoba může dát, co předchozí nemohla?\n\n**Zvýšení hodnot vlastností.** Jedna hodnota vlastnosti dle tvé volby kromě Odolnosti se zvýší o 2.\n**Všestrannost.** Výcvik a zkušenosti z raných let se přeměnou na darakhula neztratily. Jsi zdatný ve dvou dovednostech a s jedním druhem náčiní dle své volby."
       },
       "malkin": {
         "englishName": "Malkin",
-        "name": "Malkin"
+        "name": "Malkin",
+        "original": {
+          "desc": "It's often said curiosity killed the cat, and this applies with equal frequency to catfolk. As a malkin catfolk you are adept at finding clever solutions to escape difficult situations, even (or perhaps especially) situations of your own making. Your diminutive size also gives you an uncanny nimbleness that helps you avoid the worst consequences of your intense inquisitiveness. Most often found in densely populated regions, these catfolk are as curious about the comings and goings of other humanoids as they are about natural or magical phenomena and artifacts. While malkins are sometimes referred to as \"housecats\" by other humanoids and even by other catfolk, doing so in a malkin's hearing is a surefire way to get a face full of claws...",
+          "asi_desc": "***Ability Score Increase.*** Your Intelligence score increases by 1.",
+          "traits": "***Curiously Clever.*** You have proficiency in the Investigation skill.\n\n***Charmed Curiosity.*** When you roll a 1 on the d20 for a Dexterity check or saving throw, you can reroll the die and must use the new roll."
+        },
+        "description": "Často se říká, že zvědavost zabila kočku, a u kočkolidi tomu bývá stejně často. Jako malkin dovedeš hledat důmyslná řešení, jak se dostat z obtížných situací, i (nebo zejména) ze situací, které jsi sám způsobil. Malý vzrůst ti navíc dává neobyčejnou hbitost, která pomáhá uniknout nejhorším důsledkům tvé intenzivní zvídavosti. Tito kočkolidé se nejčastěji vyskytují v hustě osídlených oblastech a zajímají se o počínání jiných humanoidů stejně jako o přírodní či magické jevy a artefakty. Ostatní humanoidi i jiní kočkolidé někdy malkiny nazývají „domácími kočkami“, ale říct to před malkinem je spolehlivý způsob, jak schytat drápy do tváře...\n\n**Zvýšení hodnot vlastností.** Tvá Inteligence se zvýší o 1.\n**Zvědavý důvtip.** Jsi zdatný v Pátrání.\n**Šťastná zvědavost.** Když při ověření Obratnosti či záchranném hodu na Obratnost hodíš na k20 číslo 1, můžeš kostkou hodit znovu a musíš použít nový výsledek."
       },
       "minotaur": {
         "englishName": "Minotaur",
@@ -901,7 +943,13 @@
       },
       "mutated": {
         "englishName": "Mutated",
-        "name": "Zmutovaný"
+        "name": "Zmutovaný",
+        "original": {
+          "desc": "Most derro go through the process of indoctrination into their society and come out of it with visions and delusion, paranoia and mania. You, on the other hand, were not affected as much mentally as you were physically. The connection to the dark deities of your people made you stronger and gave you a physical manifestation of their gift that other derro look upon with envy and awe.",
+          "asi_desc": "***Ability Score Increase.*** Your Strength score increases by 1. ",
+          "traits": "***Athletic Training.*** You have proficiency in the Athletics skill, and you are proficient with two martial weapons of your choice.\n\n***Otherworldly Influence.*** Your close connection to the strange powers that your people worship has mutated your form. Choose one of the following:\n* **Alien Appendage.** You have a tentacle-like growth on your body. This tentacle is a natural melee weapon, which you can use to make unarmed strikes. When you hit with it, your tentacle deals bludgeoning damage equal to 1d4 + your Strength modifier, instead of the bludgeoning damage normal for an unarmed strike. This tentacle has a reach of 5 feet and can lift a number of pounds equal to double your Strength score. The tentacle can't wield weapons or shields or perform tasks that require manual precision, such as performing the somatic components of a spell, but it can perform simple tasks, such as opening an unlocked door or container, stowing or retrieving an object, or pouring the contents out of a vial.\n* **Tainted Blood.** Your blood is tainted by your connection with otherworldly entities. When you take piercing or slashing damage, you can use your reaction to force your blood to spray out of the wound. You and each creature within 5 feet of you take necrotic damage equal to your level. Once you use this trait, you can't use it again until you finish a short or long rest.\n* **Tenebrous Flesh.** Your skin is rubbery and tenebrous, granting you a +1 bonus to your Armor Class."
+        },
+        "description": "Většina derrů projde vštěpováním pravidel své společnosti a vyjde z něj s vidinami a bludy, paranoiou a mánií. Tebe tento proces zasáhl spíš tělesně než duševně. Spojení s temnými božstvy tvého lidu tě posílilo a dalo ti tělesný projev jejich daru, na který jiní derrové hledí se závistí a úctou.\n\n**Zvýšení hodnot vlastností.** Tvá Síla se zvýší o 1.\n**Atletický výcvik.** Jsi zdatný v Atletice a se dvěma vojenskými zbraněmi dle své volby.\n**Nadpozemský vliv.** Tvé úzké spojení s podivnými silami, které tvůj lid uctívá, zmutovalo tvou podobu. Vyber jednu z následujících možností:\n\n- **Cizorodý výrůstek.** Na těle máš výrůstek podobný chapadlu. Je přirozenou zbraní na blízko, kterou můžeš používat k úderům beze zbraně. Při zásahu způsobí drtivé zranění 1k4 + tvá oprava Síly namísto běžného drtivého zranění úderu beze zbraně. Chapadlo má dosah 5 stop a zvedne počet liber rovný dvojnásobku hodnoty tvé Síly. Nemůže držet zbraně či štíty ani provádět úkoly vyžadující přesnou práci rukou, například pohybové složky kouzla. Dokáže však provést jednoduché úkoly, například otevřít nezamčené dveře či nádobu, uložit či vyjmout předmět nebo vylít obsah lahvičky.\n- **Poskvrněná krev.** Tvá krev je poskvrněná spojením s nadpozemskými bytostmi. Když utrpíš bodné či sečné zranění, můžeš reakcí nechat z rány vystříknout krev. Ty a každý tvor do 5 stop od tebe utrpíte nekrotické zranění rovné tvé úrovni. Po použití tento rys nemůžeš znovu použít, dokud si krátce nebo důkladně neodpočineš.\n- **Temné tělo.** Tvá kůže je gumovitá a temná a poskytuje ti bonus +1 k OČ."
       },
       "shade": {
         "englishName": "Shade",
@@ -937,75 +985,183 @@
       },
       "boghaid": {
         "englishName": "Boghaid",
-        "name": "Boghaid"
+        "name": "Boghaid",
+        "original": {
+          "desc": "You are a minotaur adapted to life in cold climates and high altitudes.",
+          "asi_desc": "***Ability Score Increase.*** Your Wisdom score increases by 2, and your Constitution score increases by 1.",
+          "traits": "***Highlander.*** You are adapted to life at high altitudes, and you suffer no ill effects or penalties from elevations above 8,000 feet.\n\n***Storied Culture.*** You have proficiency in the Performance skill, and you gain proficiency with one of the following musical instruments: bagpipes, drum, horn, or shawm.\n\n***Wooly.*** Your thick, wooly coat of hair keeps you warm, allowing you to function in cold weather without special clothing or gear. You have advantage on saving throws against spells and other effects that deal cold damage."
+        },
+        "description": "Jsi minotaur přizpůsobený životu v chladném podnebí a vysokých nadmořských výškách.\n\n**Zvýšení hodnot vlastností.** Tvá Moudrost se zvýší o 2 a Odolnost o 1.\n**Horale.** Jsi přizpůsobený vysokým nadmořským výškám a netrpíš žádnými škodlivými účinky ani postihy z pobytu ve výškách nad 8 000 stop.\n**Kultura příběhů.** Jsi zdatný v Umění a získáš zdatnost s jedním z těchto hudebních nástrojů: dudy, buben, roh či šalmaj.\n**Vlnatá srst.** Hustá vlnatá srst tě udržuje v teple a umožňuje ti fungovat v chladném počasí bez zvláštního oděvu či vybavení. Máš výhodu k záchranným hodům proti kouzlům a jiným účinkům způsobujícím chladné zranění."
       },
       "derro-heritage": {
         "englishName": "Derro Heritage",
-        "name": "Dědictví derrů"
+        "name": "Dědictví derrů",
+        "original": {
+          "desc": "Your darakhul character was a derro before transforming into a darakhul. For you, the quieting of the otherworldly voices did not bring peace and tranquility. The impulses simply became more focused, and the desire to feast on flesh overwhelmed other urges. The darkness is still there; it just has a new, clearer form.",
+          "asi_desc": "***Ability Score Increase.*** Your Charisma score increases by 2.",
+          "traits": "***Calculating Insanity.*** The insanity of your race was compressed into a cold, hard brilliance when you took on your darakhul form. These flashes of brilliance come to you at unexpected moments. You know the true strike cantrip. Charisma is your spellcasting ability for it. You can cast true strike as a bonus action a number of times equal to your Charisma modifier (a minimum of once). You regain any expended uses when you finish a long rest."
+        },
+        "description": "Tvůj darakhul byl před přeměnou derrem. Umlknutí hlasů z jiných sfér ti nepřineslo klid ani mír. Nutkání se jen více soustředila a touha hodovat na mase přehlušila ostatní pudy. Temnota zůstala, pouze má novou, jasnější podobu.\n\n**Zvýšení hodnot vlastností.** Tvé Charisma se zvýší o 2.\n**Vypočítavé šílenství.** Šílenství tvé rasy se přeměnou na darakhula soustředilo do chladné, neúprosné geniality. Její záblesky přicházejí v nečekaných chvílích. Znáš trik Pravý úder. Tvou sesílací vlastností je Charisma. Pravý úder můžeš seslat jako bonusovou akci tolikrát, kolik činí tvá oprava Charismatu (nejméně jednou). Všechna utracená použití obnovíš po důkladném odpočinku."
       },
       "dragonborn-heritage": {
         "englishName": "Dragonborn Heritage",
-        "name": "Dědictví drakorozených"
+        "name": "Dědictví drakorozených",
+        "original": {
+          "desc": "Your darakhul character was a dragonborn before transforming into a darakhul. The dark power of undeath overwhelmed your elemental nature, replacing it with the foul energy and strength of the undead. Occasionally, your draconic heritage echoes a peal of raw power through your form, but it is quickly converted into necrotic waves.",
+          "asi_desc": "***Ability Score Increase.*** Your Strength score increases by 2.",
+          "traits": "***Corrupted Bite.*** The inherent breath weapon of your draconic heritage is corrupted by the necrotic energy of your new darakhul form. Instead of forming a line or cone, your breath weapon now oozes out of your ghoulish maw. As a bonus action, you breathe necrotic energy onto your fangs and make one bite attack. If the attack hits, it deals extra necrotic damage equal to your level. You can't use this trait again until you finish a long rest."
+        },
+        "description": "Tvůj darakhul byl před přeměnou drakorozeným. Temná moc nemrtvých přemohla tvou živlovou podstatu a nahradila ji odpornou energií a silou nemrtvých. Občas se tvým tělem rozezní ozvěna ryzí síly dračího dědictví, která se však rychle promění v nekrotické vlny.\n\n**Zvýšení hodnot vlastností.** Tvá Síla se zvýší o 2.\n**Zkažené kousnutí.** Vrozená dechová zbraň tvého dračího dědictví je zkažena nekrotickou energií nové darakhulské podoby. Místo linie nebo kuželu nyní dechová zbraň vytéká z tvé ghúlí tlamy. Bonusovou akcí vydechneš nekrotickou energii na své tesáky a provedeš jeden útok kousnutím. Při zásahu způsobí útok dodatečné nekrotické zranění rovné tvé úrovni. Tento rys nemůžeš znovu použít, dokud si důkladně neodpočineš."
       },
       "drow-heritage": {
         "englishName": "Drow Heritage",
-        "name": "Drowí dědictví"
+        "name": "Drowí dědictví",
+        "original": {
+          "desc": "Your darakhul character was a drow before transforming into a darakhul. Your place within the highly regimented drow society doesn't feel that much different from your new place in the darakhul empires. But an uncertainty buzzes in your mind, and a hunger gnaws at your gut. You are now what you once hated and feared. Does it feel right, or is it something you fight against?",
+          "asi_desc": "***Ability Score Increase.*** Your Intelligence score increases by 2.",
+          "traits": "***Poison Bite.*** When you hit with your bite attack, you can release venom into your foe. If you do, your bite deals an extra 1d6 poison damage. The damage increases to 3d6 at 11th level. After you release this venom into a creature, you can't do so again until you finish a short or long rest."
+        },
+        "description": "Tvůj darakhul byl před přeměnou drowem. Tvé místo v přísně uspořádané drowí společnosti se příliš neliší od tvého nového místa v darakhulských říších. V mysli ti však hlodá nejistota a v žaludku hlad. Stal ses tím, co jsi kdysi nenáviděl a čeho ses bál. Připadá ti to správné, nebo proti tomu bojuješ?\n\n**Zvýšení hodnot vlastností.** Tvá Inteligence se zvýší o 2.\n**Jedovaté kousnutí.** Když zasáhneš útokem kousnutím, můžeš do protivníka vypustit jed. V tom případě kousnutí způsobí dodatečné jedové zranění 1k6. Na 11. úrovni se toto zranění zvýší na 3k6. Jakmile do tvora vypustíš jed, nemůžeš to zopakovat, dokud si krátce nebo důkladně neodpočineš."
       },
       "dwarf-heritage": {
         "englishName": "Dwarf Heritage",
-        "name": "Trpasličí dědictví"
+        "name": "Trpasličí dědictví",
+        "original": {
+          "desc": "Your darakhul character was a dwarf before transforming into a darakhul. The hum of the earth, the tranquility of the stone and the dust, drained from you as the darakhul fever overwhelmed your once-resilient body. The stone is still there, but its touch has gone from a welcome embrace to a cold grip of death. But it's all the same to you now. ",
+          "asi_desc": "***Ability Score Increase.*** Your Wisdon score increases by 2.",
+          "traits": "***Dwarven Stoutness.*** Your hit point maximum increases by 1, and it increases by 1 every time you gain a level."
+        },
+        "description": "Tvůj darakhul byl před přeměnou trpaslíkem. Hučení země, klid kamene a prachu z tebe vyprchaly, když darakhulská horečka přemohla tvé kdysi odolné tělo. Kámen je stále přítomný, ale jeho dotyk se z vítaného objetí změnil v chladné sevření smrti. Tobě už je to však jedno.\n\n**Zvýšení hodnot vlastností.** Tvá Moudrost se zvýší o 2.\n**Trpasličí houževnatost.** Maximum tvých životů se zvýší o 1 a o 1 se zvýší pokaždé, když získáš úroveň."
       },
       "elfshadow-fey-heritage": {
         "englishName": "Elf/Shadow Fey Heritage",
-        "name": "Dědictví elfů či stínových víl"
+        "name": "Dědictví elfů či stínových víl",
+        "original": {
+          "desc": "Your darakhul character was an elf or shadow fey (see *Midgard Heroes Handbook*) before transforming into a darakhul. The deathly power coursing through you reminds you of the lithe beauty and magic of your former body. If you just use your imagination, the blood tastes like wine once did. The smell of rotting flesh has the bouquet of wildflowers. The moss beneath the surface feels like the leaves of the forest.",
+          "asi_desc": "***Ability Score Increase.*** Your Dexterity score increases by 2.",
+          "traits": "***Supernatural Senses.*** Your keen elven senses are honed even more by the power of undeath and the hunger within you. You can now smell when blood is in the air. You have proficiency in the Perception skill, and you have advantage on Wisdom (Perception) checks to notice or find a creature within 30 feet of you that doesn't have all of its hit points."
+        },
+        "description": "Tvůj darakhul byl před přeměnou elfem nebo stínovou vílou (viz Midgard Heroes Handbook). Smrtelná moc proudící tvým tělem ti připomíná pružnou krásu a magii tvé někdejší podoby. Stačí zapojit představivost a krev chutná jako kdysi víno. Pach hnijícího masa má vůni polních květin. Mech pod zemí působí na dotek jako listí v lese.\n\n**Zvýšení hodnot vlastností.** Tvá Obratnost se zvýší o 2.\n**Nadpřirozené smysly.** Tvé bystré elfí smysly ještě více zbystřila moc nemrtvých a hlad v tobě. Nyní dokážeš vycítit krev ve vzduchu. Jsi zdatný ve Vnímání a máš výhodu k ověřením Moudrosti (Vnímání) při snaze všimnout si nebo najít tvora do 30 stop od tebe, který nemá všechny své životy."
       },
       "far-touched": {
         "englishName": "Far-Touched",
-        "name": "Dotčený dálavami"
+        "name": "Dotčený dálavami",
+        "original": {
+          "desc": "You grew up firmly ensconced in the mad traditions of the derro, your mind touched by the raw majesty and power of your society's otherworldly deities. Your abilities in other areas have made you more than a typical derro, of course. But no matter how well-trained and skilled you get in other magical or martial arts, the voices of your gods forever reverberate in your ears, driving you forward to do great or terrible things.",
+          "asi_desc": "***Ability Score Increase.*** Your Charisma score increases by 1.",
+          "traits": "***Insanity.*** You have advantage on saving throws against being charmed or frightened. In addition, you can read and understand Void Speech, but you can speak only a few words of the dangerous and maddening language—the words necessary for using the spells in your Mad Fervor trait.\n\n***Mad Fervor.*** The driving force behind your insanity has blessed you with a measure of its power. You know the vicious mockery cantrip. When you reach 3rd level, you can cast the enthrall spell with this trait, and starting at 5th level, you can cast the fear spell with it. Once you cast a non-cantrip spell with this trait, you can't do so again until you finish a long rest. Charisma is your spellcasting ability for these spells. If you are using Deep Magic for 5th Edition, these spells are instead crushing curse, maddening whispers, and alone, respectively."
+        },
+        "description": "Vyrůstal jsi pevně zakořeněný v šílených tradicích derrů; tvou mysl zasáhla ryzí vznešenost a moc nadpozemských božstev vaší společnosti. Schopnosti v jiných oblastech z tebe samozřejmě učinily víc než běžného derra. Ať však budeš jakkoli vycvičený v jiných magických či bojových uměních, hlasy tvých bohů ti budou navždy znít v uších a hnát tě k velkým či strašlivým činům.\n\n**Zvýšení hodnot vlastností.** Tvé Charisma se zvýší o 1.\n**Šílenství.** Máš výhodu k záchranným hodům proti zmámení a vystrašení. Navíc umíš číst a rozumíš Řeči prázdnoty, ale dokážeš vyslovit jen několik slov tohoto nebezpečného a šílenství vyvolávajícího jazyka – slova potřebná pro kouzla rysu Šílené zanícení.\n**Šílené zanícení.** Síla stojící za tvým šílenstvím tě obdařila částí své moci. Znáš trik Krutý výsměch. Na 3. úrovni můžeš tímto rysem seslat Nadchnutí a od 5. úrovně Strach. Jakmile tímto rysem sešleš kouzlo jiné než trik, nemůžeš to zopakovat, dokud si důkladně neodpočineš. Tvou sesílací vlastností pro tato kouzla je Charisma. Používáte-li Deep Magic pro 5. edici, jsou těmito kouzly namísto toho Drtivá kletba, Šílenství vyvolávající šepoty a Osamění, v tomto pořadí."
       },
       "favored": {
         "englishName": "Favored",
-        "name": "Obdařený"
+        "name": "Obdařený",
+        "original": {
+          "desc": "A few special mushroomfolk grow to become shamans, generals, and other types of leaders. Your spores invite cooperation, peace, and healing among your allies. Others look to you for guidance and succor in the harsh underground environs.",
+          "asi_desc": "***Ability Score Increase.*** Your Charisma score increases by 1.",
+          "traits": "***Blessed Help.*** Your intuition and connection to your allies allows you to assist and protect them. You know the spare the dying cantrip. When you reach 3rd level, you can cast the bless spell once with this trait and regain the ability to do so when you finish a long rest. Charisma is your spellcasting ability for these spells.\n\n***Clan Leader.*** You have proficiency in the Persuasion skill.\n\n***Restful Spores.*** If you or any friendly creatures within 30 feet of you regain hit points at the end of a short rest by spending one or more Hit Dice, each of those creatures regains additional hit points equal to your proficiency bonus. Once a creature benefits from your restful spores, it can't do so again until it finishes a long rest."
+        },
+        "description": "Někteří výjimeční houboví lidé se stávají šamany, generály a jinými vůdci. Tvé spóry podporují spolupráci, mír a léčení spojenců. Ostatní u tebe hledají vedení a pomoc v drsném podzemním prostředí.\n\n**Zvýšení hodnot vlastností.** Tvé Charisma se zvýší o 1.\n**Požehnaná pomoc.** Tvá intuice a spojení se spojenci ti umožňuje pomáhat jim a chránit je. Znáš trik Ušetři umírajícího. Na 3. úrovni můžeš tímto rysem jednou seslat Požehnání a schopnost tak učinit obnovíš po důkladném odpočinku. Tvou sesílací vlastností je Charisma.\n**Vůdce klanu.** Jsi zdatný v Přesvědčování.\n**Odpočinkové spóry.** Pokud si ty nebo přátelští tvorové do 30 stop od tebe na konci krátkého odpočinku obnovíte životy utracením jedné či více Kostek životů, každý z těchto tvorů si obnoví dodatečné životy rovné tvému zdatnostnímu bonusu. Jakmile tvor využije tvé odpočinkové spóry, nemůže je znovu využít, dokud si důkladně neodpočine."
       },
       "fever-bit": {
         "englishName": "Fever-Bit",
-        "name": "Poznamenaný horečkou"
+        "name": "Poznamenaný horečkou",
+        "original": {
+          "desc": "You were once a typical drow, then you fell victim to the ravaging claws and teeth of a darakhul. The deadly darakhul fever almost took your life, but, when you were on the verge of succumbing, you rallied and survived. You were changed, however, in ways that even the greatest healers of your people can't fathom. But now that you are immune to darakhul fever, your commanders have a job for you.",
+          "asi_desc": "***Ability Score Increase.*** Your Constitution score increases by 1.",
+          "traits": "***Deathly Resilience.*** Your long exposure to the life-sapping energies of darakhul fever has made you more resilient. You have resistance to necrotic damage, and advantage on death saving throws.\n\n***Iron Constitution.*** You are immune to disease.\n\n***Near-Death Experience.*** Your brush with death has made you more stalwart in the face of danger. You have advantage on saving throws against being frightened."
+        },
+        "description": "Kdysi jsi byl běžným drowem, poté ses stal obětí ničivých drápů a zubů darakhula. Smrtící darakhulská horečka tě téměř připravila o život, ale na pokraji smrti ses vzchopil a přežil. Změnila tě však způsobem, který nedokážou pochopit ani největší léčitelé tvého lidu. Nyní jsi vůči darakhulské horečce imunní a tví velitelé pro tebe mají práci.\n\n**Zvýšení hodnot vlastností.** Tvá Odolnost se zvýší o 1.\n**Odolnost vůči smrti.** Dlouhodobé vystavení život vysávající energii darakhulské horečky tě zocelilo. Máš odolnost vůči nekrotickému zranění a výhodu k záchranným hodům proti smrti.\n**Železná konstituce.** Máš imunitu vůči nemocem.\n**Zkušenost blízké smrti.** Setkání se smrtí tě učinilo neochvějnějším tváří v tvář nebezpečí. Máš výhodu k záchranným hodům proti vystrašení."
       },
       "gnome-chassis": {
         "englishName": "Gnome Chassis",
-        "name": "Gnómí tělo"
+        "name": "Gnómí tělo",
+        "original": {
+          "desc": "Crafted for both exceptional functionality and aesthetic beauty, a gnome chassis' skin is clearly metallic but is meticulously colored to closely match gnomish skin tones, except at the joints, where gears and darker steel pistons are visible. Gnome chassis are almost always bald, with elaborate artistic patterns painted or etched on the face and skull in lieu of hair. Their eyes are vivid and lifelike, as is the chassis' gnomish face, which has a sculpted metal nose and articulated mouth and jaw. The gnome artisans who pioneered the first gearforged chassis saw it as an opportunity to not merely build a better body but to make it a work of art.",
+          "asi_desc": "***Ability Score Increase.*** Your Intelligence score increases by 1.",
+          "traits": "***Mental Fortitude.*** When creating their first gearforged, gnome engineers put their efforts toward ensuring that the gnomish mind remained a mental fortress, though they were unable to fully replicate the gnomish mind's resilience once transferred to a soul gem. Choose Intelligence, Wisdom, or Charisma. You have advantage on saving throws made with that ability score against magic.\n\n***Quick Fix.*** When you are below half your hit point maximum, you can use a bonus action to apply a quick patch up to your damaged body. You gain temporary hit points equal to your proficiency bonus. You can't use this trait again until you finish a short or long rest."
+        },
+        "description": "Gnómí tělo je vyrobeno s důrazem na výjimečnou funkčnost i krásu. Jeho kůže je zjevně kovová, ale pečlivě zbarvená tak, aby odpovídala gnómím odstínům pleti, kromě kloubů s viditelnými ozubenými koly a tmavšími ocelovými písty. Gnómí těla jsou téměř vždy holohlavá, místo vlasů mají na tváři a lebce namalované či vyryté složité umělecké vzory. Jejich oči jsou živé jako skutečné, stejně jako gnómí tvář s tvarovaným kovovým nosem a pohyblivými ústy a čelistí. Gnómští řemeslníci, kteří vytvořili první taková těla, to viděli jako příležitost nejen vybudovat lepší tělo, ale i umělecké dílo.\n\n**Zvýšení hodnot vlastností.** Tvá Inteligence se zvýší o 1.\n**Duševní nezdolnost.** Při tvorbě prvního strojotvora se gnómští konstruktéři snažili zajistit, aby gnómí mysl zůstala duševní pevností, ale po přenesení do duševního drahokamu nedokázali její odolnost zcela napodobit. Vyber Inteligenci, Moudrost nebo Charisma. Máš výhodu k záchranným hodům na vybranou vlastnost proti magii.\n**Rychlá oprava.** Když máš méně než polovinu maxima životů, můžeš bonusovou akcí rychle zalátat poškozené tělo. Získáš dočasné životy rovné svému zdatnostnímu bonusu. Tento rys nemůžeš znovu použít, dokud si krátce nebo důkladně neodpočineš."
       },
       "gnome-heritage": {
         "englishName": "Gnome Heritage",
-        "name": "Gnómí dědictví"
+        "name": "Gnómí dědictví",
+        "original": {
+          "desc": "Your darakhul character was a gnome before transforming into a darakhul. The spark of magic that drove you before your transformation still burns inside of you, but now it is a constant ache instead of a source of creation and inspiration. This ache is twisted by your hunger, making you hunger for magic itself. ",
+          "asi_desc": "***Ability Score Increase.*** Your Intelligence score increases by 2.",
+          "traits": "***Magical Hunger.*** When a creature you can see within 30 feet of you casts a spell, you can use your reaction to consume the spell's residual magic. Your consumption doesn't counter or otherwise affect the spell or the spellcaster. When you consume this residual magic, you gain temporary hit points (minimum of 1) equal to your Constitution modifier, and you can't use this trait again until you finish a short or long rest."
+        },
+        "description": "Tvůj darakhul byl před přeměnou gnómem. Jiskra magie, která tě poháněla před přeměnou, v tobě stále hoří, ale nyní je místo zdroje tvořivosti a inspirace neustálou bolestí. Hlad tuto bolest pokřivil a vyvolává v tobě hlad po magii samotné.\n\n**Zvýšení hodnot vlastností.** Tvá Inteligence se zvýší o 2.\n**Magický hlad.** Když tvor, kterého vidíš do 30 stop od sebe, sešle kouzlo, můžeš reakcí pohltit zbytkovou magii kouzla. Pohlcení kouzlo ani sesilatele nezruší ani jinak neovlivní. Když zbytkovou magii pohltíš, získáš dočasné životy rovné své opravě Odolnosti (nejméně 1). Tento rys nemůžeš znovu použít, dokud si krátce nebo důkladně neodpočineš."
       },
       "halfling-heritage": {
         "englishName": "Halfling Heritage",
-        "name": "Hobití dědictví"
+        "name": "Hobití dědictví",
+        "original": {
+          "desc": "Your darakhul character was a halfling before transforming into a darakhul. Everything you loved as a halfling—food, drink, exploration, adventure— still drives you in your undead form; it is simply a more ghoulish form of those pleasures now: raw flesh instead of stew, warm blood instead of cold mead. You still want to explore the dark corners of the world, but now you seek something different. ",
+          "asi_desc": "***Ability Score Increase.*** Your Dexterity score increases by 2.",
+          "traits": "***Ill Fortune.*** Your uncanny halfling luck has taken a dark turn since your conversion to an undead creature. When a creature rolls a 20 on the d20 for an attack roll against you, the creature must reroll the attack and use the new roll. If the second attack roll misses you, the attacking creature takes necrotic damage equal to twice your Constitution modifier (minimum of 2)."
+        },
+        "description": "Tvůj darakhul byl před přeměnou hobitem. Všechno, co jsi jako hobit miloval – jídlo, pití, objevování a dobrodružství – tě stále žene v nemrtvé podobě; jen mají tato potěšení ghúlí podobu: syrové maso místo dušeného, teplá krev místo studené medoviny. Stále chceš prozkoumávat temná zákoutí světa, ale nyní v nich hledáš něco jiného.\n\n**Zvýšení hodnot vlastností.** Tvá Obratnost se zvýší o 2.\n**Neštěstí.** Tvé zvláštní hobití štěstí po přeměně v nemrtvého nabralo temný směr. Když tvor při hodu na útok proti tobě hodí na k20 číslo 20, musí hod na útok zopakovat a použít nový výsledek. Pokud tě druhý hod na útok mine, utrpí útočící tvor nekrotické zranění rovné dvojnásobku tvé opravy Odolnosti (nejméně 2)."
       },
       "kobold-chassis": {
         "englishName": "Kobold Chassis",
-        "name": "Koboldí tělo"
+        "name": "Koboldí tělo",
+        "original": {
+          "desc": "Kobolds are naturally curious tinkerers, constantly modifying their devices and tools. As such, kobolds, in spite of what many dwarf or gnome engineers might say, were the second race to master the nuances of gearforged creation after studying human gearforged. However, most of these early kobold gearforged no longer exist, as the more draconic forms (homages to the kobolds' draconic masters) proved too alien to the kobold soul gems to maintain stable, long-term connections with the bodies. Kobold engineers have since resolved that problem, and kobold gearforged can be found among many kobold communities, aiding its members and tinkering right alongside their scale-and-blood brethren.",
+          "asi_desc": "***Ability Score Increase.*** Your Dexterity score increases by 1.",
+          "traits": "***Clutch Aide.*** Kobolds spend their lives alongside their clutchmates, both those hatched around the same time as them and those they choose later in life, and you retain much of this group-oriented intuition. You can take the Help action as a bonus action.\n\n***Resourceful.*** If you have at least one set of tools, you can cobble together one set of makeshift tools of a different type with 1 minute of work. For example, if you have cook's utensils, you can use them to create a temporary set of thieves' tools. The makeshift tools last for 10 minutes then collapse into their component parts, returning your tools to their normal forms. While the makeshift tools exist, you can't use the set of tools you used to create the makeshift tools. At the GM's discretion, you might not be able to replicate some tools, such as an alchemist's alembic or a disguise kit's cosmetics. A creature other than you that uses the makeshift tools has disadvantage on the check."
+        },
+        "description": "Koboldi jsou přirozeně zvídaví kutilové, kteří neustále upravují svá zařízení a nástroje. Navzdory tomu, co by tvrdili mnozí trpasličí či gnómští konstruktéři, byli po prostudování lidských strojotvorů druhou rasou, která ovládla jemnosti jejich tvorby. Většina těchto raných koboldích strojotvorů však již neexistuje, protože dračí podoby (pocta dračím pánům koboldů) byly jejich duševním drahokamům příliš cizí, než aby s těly udržely stabilní dlouhodobé spojení. Koboldští konstruktéři tento problém mezitím vyřešili a koboldí strojotvory lze nalézt v mnoha koboldích komunitách, kde pomáhají jejich členům a kutí po boku šupinatých a živých soukmenovců.\n\n**Zvýšení hodnot vlastností.** Tvá Obratnost se zvýší o 1.\n**Pomoc družině.** Koboldi tráví život po boku druhů ze snůšky, ať se vylíhli ve stejnou dobu, nebo si je vybrali později. Mnoho z této skupinové intuice ti zůstalo. Akci Pomoc můžeš provést jako bonusovou akci.\n**Vynalézavost.** Máš-li alespoň jednu sadu náčiní, můžeš za 1 minutu práce sestavit provizorní sadu jiného typu. Například z kuchařského náčiní vytvoříš dočasné zlodějské náčiní. Provizorní náčiní vydrží 10 minut a poté se rozpadne na součásti a tvé náčiní se vrátí do původní podoby. Dokud provizorní náčiní existuje, nemůžeš používat sadu, z níž jsi je vytvořil. Podle uvážení PJ nemusí být možné napodobit některé nástroje, například alchymistický alembik nebo líčidla z převlekové soupravy. Jiný tvor než ty má při použití provizorního náčiní nevýhodu k ověření."
       },
       "kobold-heritage": {
         "englishName": "Kobold Heritage",
-        "name": "Koboldí dědictví"
+        "name": "Koboldí dědictví",
+        "original": {
+          "desc": "Your darakhul character was a kobold before transforming into a darakhul. The dark, although it was often your home, generally held terrors that you needed to survive. Now you are the dark, and its pull on your soul is strong. You fight to keep a grip on the intellect and cunning that sustained you in your past life. Sometimes it is easy, but often the driving hunger inside you makes it hard to think as clearly as you once did.",
+          "asi_desc": "***Ability Score Increase.*** Your Intelligence score increases by 2.",
+          "traits": "***Devious Bite.*** When you hit a creature with your bite attack and you have advantage on the attack roll, your bite deals an extra 1d4 piercing damage."
+        },
+        "description": "Tvůj darakhul byl před přeměnou koboldem. Temnota, byť často tvým domovem, obvykle skrývala hrůzy, které jsi musel přežít. Nyní jsi sám temnotou a její přitažlivost pro tvou duši je silná. Bojuješ, abys neztratil důvtip a lstivost, které tě udržely naživu dříve. Někdy je to snadné, ale často ti neodbytný hlad brání myslet tak jasně jako kdysi.\n\n**Zvýšení hodnot vlastností.** Tvá Inteligence se zvýší o 2.\n**Lstivé kousnutí.** Když zasáhneš tvora útokem kousnutím a máš výhodu k hodu na útok, způsobí kousnutí dodatečné bodné zranění 1k4."
       },
       "morel": {
         "englishName": "Morel",
-        "name": "Smrž"
+        "name": "Smrž",
+        "original": {
+          "desc": "Your specialty for your clan was acting as a scout and a wayfinder. Your abilities to avoid problems and locate new sources of food for your clan was instrumental in their survival, and your interactions with other clans helped keep your people alive and well.",
+          "asi_desc": "***Ability Score Increase.*** Your Dexterity score increases by 1.",
+          "traits": "***Adaptable Camouflage.*** If you spend at least 1 minute in an environment with ample naturally occurring plants or fungi, such as a grassland, a forest, or an underground fungal cavern, you can adjust your natural coloration to blend in with the local plant life. If you do so, you have advantage on Dexterity (Stealth) checks for the next 24 hours while in that environment.\n\n***Clan Scout.*** You have proficiency in the Stealth skill."
+        },
+        "description": "Tvou specializací v klanu byla práce zvěda a hledání cest. Schopnost vyhnout se problémům a nacházet nové zdroje potravy byla zásadní pro přežití klanu a tvé styky s jinými klany pomáhaly udržet tvůj lid při životě a zdraví.\n\n**Zvýšení hodnot vlastností.** Tvá Obratnost se zvýší o 1.\n**Přizpůsobivé maskování.** Strávíš-li alespoň 1 minutu v prostředí s hojným výskytem přirozených rostlin či hub, například na travnaté pláni, v lese nebo podzemní houbové jeskyni, můžeš upravit své přirozené zbarvení tak, aby splývalo s místní vegetací. Pokud to uděláš, máš následujících 24 hodin výhodu k ověřením Obratnosti (Nenápadnosti), dokud jsi v tomto prostředí.\n**Klanový zvěd.** Jsi zdatný v Nenápadnosti."
       },
       "pantheran": {
         "englishName": "Pantheran",
-        "name": "Pantheran"
+        "name": "Pantheran",
+        "original": {
+          "desc": "Pantheran catfolk are a wise, observant, and patient people who pride themselves on being resourceful and self-sufficient. Less social than many others of their kind, these catfolk typically dwell in small, close-knit family groups in the forests, jungles, and grasslands of the world, away from larger population centers or cities. Their family clans teach the importance of living off of and protecting the natural world, and pantherans act swiftly and mercilessly when their forest homes are threatened by outside forces. Conversely, pantherans can be the most fierce and loyal of neighbors to villages who respect nature and who take from the land and forest no more than they need. As a pantheran, you value nature and kinship, and your allies know they can count on your wisdom and, when necessary, your claws.",
+          "asi_desc": "***Ability Score Increase.*** Your Wisdom score increases by 1.",
+          "traits": "***Hunter's Charge.*** Once per turn, if you move at least 10 feet toward a target and hit it with a melee weapon attack in the same turn, you can use a bonus action to attack that creature with your Cat's Claws. You can use this trait a number of times per day equal to your proficiency bonus, and you regain all expended uses when you finish a long rest.\n\n***One With the Wilds.*** You have proficiency in one of the following skills of your choice: Insight, Medicine, Nature, or Survival."
+        },
+        "description": "Pantheranští kočkolidé jsou moudří, všímaví a trpěliví a pyšní se vynalézavostí a soběstačností. Jsou méně společenští než mnozí jiní příslušníci jejich druhu; obvykle žijí v malých semknutých rodinných skupinách v lesích, džunglích a travnatých pláních, daleko od větších sídel či měst. Rodinné klany učí, jak je důležité žít z přírody a chránit ji; pantherané jednají rychle a nemilosrdně, pokud jejich lesní domovy ohrožují vnější síly. Naopak dokážou být nejdivočejšími a nejvěrnějšími sousedy vesnic, které ctí přírodu a neberou z půdy a lesa více, než potřebují. Jako pantheran si ceníš přírody a příbuzenství a tví spojenci vědí, že se mohou spolehnout na tvou moudrost a v případě potřeby na tvé drápy.\n\n**Zvýšení hodnot vlastností.** Tvá Moudrost se zvýší o 1.\n**Lovcova zteč.** Jednou za tah, pokud se pohneš alespoň 10 stop k cíli a v témže tahu ho zasáhneš útokem na blízko zbraní, můžeš bonusovou akcí zaútočit na tohoto tvora Kočičími drápy. Tento rys můžeš použít za den tolikrát, kolik činí tvůj zdatnostní bonus, a všechna utracená použití obnovíš po důkladném odpočinku.\n**Jedno s divočinou.** Jsi zdatný v jedné z následujících dovedností dle své volby: Vhled, Lékařství, Příroda nebo Přežití."
       },
       "purified": {
         "englishName": "Purified",
-        "name": "Očištěný"
+        "name": "Očištěný",
+        "original": {
+          "desc": "You were born into the caste that produces the leaders and planners, the priests and wizards, the generals and officers of drow society. Your people, it is believed, were tested by the beneficent powers you worship, and you passed those tests to become something more. Your innate magic proves your superiority over your fellows.",
+          "asi_desc": "***Ability Score Increase.*** Your Charisma score increases by 1.",
+          "traits": "***Innate Spellcasting.*** You know the poison spray cantrip. When you reach 3rd level, you can cast suggestion once with this trait and regain the ability to do so when you finish a long rest. When you reach 5th level, you can cast the tongues spell once and regain the ability to do so when you finish a long rest. Intelligence is your spellcasting ability for these spells.\n\n***Born Leader.*** You gain proficiency with two of the following skills of your choice: History, Insight, Performance, and Persuasion."
+        },
+        "description": "Narodil ses do kasty, z níž vycházejí vůdci a plánovači, kněží a kouzelníci, generálové a důstojníci drowí společnosti. Věří se, že váš lid byl podroben zkouškám dobrotivých sil, které uctíváte, a že jsi těmito zkouškami prošel, aby ses stal něčím víc. Tvá vrozená magie dokazuje tvou nadřazenost nad soukmenovci.\n\n**Zvýšení hodnot vlastností.** Tvé Charisma se zvýší o 1.\n**Vrozené sesílání kouzel.** Znáš trik Jedový sprej. Na 3. úrovni můžeš tímto rysem jednou seslat Sugesci a schopnost tak učinit obnovíš po důkladném odpočinku. Na 5. úrovni můžeš jednou seslat Jazyky a schopnost tak učinit obnovíš po důkladném odpočinku. Tvou sesílací vlastností je Inteligence.\n**Rozený vůdce.** Získáš zdatnost ve dvou z těchto dovedností dle své volby: Historie, Vhled, Umění a Přesvědčování."
       },
       "ravenfolk": {
         "englishName": "Ravenfolk",
-        "name": "Havraní lidé"
+        "name": "Havraní lidé",
+        "original": {
+          "desc": "Your darakhul character was a ravenfolk (see Midgard Heroes Handbook) before transforming into a darakhul. Your new form feels different. It is more powerful and less fidgety, and your beak has become razor sharp. There is still room for trickery, of course. But with your new life comes a disconnection from the All Father. Does this loss gnaw at you like your new hunger or do you feel freed from the destiny of your people?",
+          "asi_desc": "***Ability Score Increase.*** Your Dexterity score increases by 2.",
+          "traits": "***Sudden Bite and Flight.*** If you surprise a creature during the first round of combat, you can make a bite attack as a bonus action. If it hits, you can immediately take the Dodge action as a reaction."
+        },
+        "description": "Tvůj darakhul byl před přeměnou havraním člověkem (viz Midgard Heroes Handbook). Tvá nová podoba působí jinak. Je mocnější a méně neklidná a tvůj zobák získal ostří břitvy. Stále je samozřejmě prostor pro lstivost. S novým životem však přichází odloučení od Všeotce. Hlodá v tobě tato ztráta stejně jako nový hlad, nebo se cítíš osvobozený od osudu svého lidu?\n\n**Zvýšení hodnot vlastností.** Tvá Obratnost se zvýší o 2.\n**Náhlé kousnutí a únik.** Pokud během prvního kola boje překvapíš tvora, můžeš bonusovou akcí provést útok kousnutím. Pokud zasáhne, můžeš ihned reakcí provést akci Uhýbání."
       },
       "satarre": {
         "englishName": "Satarre",
@@ -1025,15 +1181,33 @@
       },
       "tiefling-heritage": {
         "englishName": "Tiefling Heritage",
-        "name": "Tieflingské dědictví"
+        "name": "Tieflingské dědictví",
+        "original": {
+          "desc": "Your darakhul character was a tiefling before transforming into a darakhul. You are no stranger to the pull of powerful forces raging through your blood. You have traded one dark pull for another, and this one seems much stronger. Is that a good feeling, or do you miss your old one?",
+          "asi_desc": "***Ability Score Increase.*** Your Charisma score increases by 1.",
+          "traits": "***Necrotic Rebuke.*** When you are hit by a weapon attack, you can use a reaction to envelop the attacker in shadowy flames. The attacker takes necrotic damage equal to your Charisma modifier (minimum of 1), and it has disadvantage on attack rolls until the end of its next turn. You must finish a long rest before you can use this feature again."
+        },
+        "description": "Tvůj darakhul byl před přeměnou tieflingem. Přitažlivost mocných sil zuřících v tvé krvi ti není cizí. Vyměnil jsi jednu temnou přitažlivost za jinou a tato se zdá mnohem silnější. Je to dobrý pocit, nebo se ti stýská po předchozí?\n\n**Zvýšení hodnot vlastností.** Tvé Charisma se zvýší o 1.\n**Nekrotické pokárání.** Když tě zasáhne útok zbraní, můžeš reakcí zahalit útočníka stínovými plameny. Útočník utrpí nekrotické zranění rovné tvé opravě Charismatu (nejméně 1) a má nevýhodu k hodům na útok až do konce svého příštího tahu. Než tuto schopnost znovu použiješ, musíš si důkladně odpočinout."
       },
       "trollkin-heritage": {
         "englishName": "Trollkin Heritage",
-        "name": "Dědictví trollích potomků"
+        "name": "Dědictví trollích potomků",
+        "original": {
+          "desc": "Your darakhul character was a trollkin (see *Midgard Heroes Handbook*) before transforming into a darakhul. Others saw you as a monster because of your ancestry. You became inured to the fearful looks and hurried exits of those around you. If only they could see you now. Does your new state make you seek revenge on them, or are you able to maintain your self-control despite the new urges you feel?",
+          "asi_desc": "***Ability Score Increase.*** Your Strength score increases by 2.",
+          "traits": "***Regenerative Bite.*** The regenerative powers of your trollkin heritage are less potent than they were in life and need a little help. As an action, you can make a bite attack against a creature that isn't undead or a construct. On a hit, you regain hit points (minimum of 1) equal to half the amount of damage dealt. Once you use this trait, you can't use it again until you finish a long rest."
+        },
+        "description": "Tvůj darakhul byl před přeměnou potomkem trollů (viz Midgard Heroes Handbook). Ostatní tě kvůli tvému původu považovali za nestvůru. Přivykl jsi vystrašeným pohledům a uspěchaným odchodům lidí kolem sebe. Kdyby tě tak viděli teď. Vede tě nový stav k pomstě, nebo dokážeš zachovat sebeovládání navzdory novým pudům?\n\n**Zvýšení hodnot vlastností.** Tvá Síla se zvýší o 2.\n**Regenerující kousnutí.** Regenerační síly tvého trollího dědictví jsou slabší než za života a potřebují trochu pomoci. Akcí můžeš provést útok kousnutím proti tvorovi, který není nemrtvý ani konstrukt. Při zásahu si obnovíš počet životů rovný polovině způsobeného zranění (nejméně 1). Po použití tento rys nemůžeš znovu použít, dokud si důkladně neodpočineš."
       },
       "uncorrupted": {
         "englishName": "Uncorrupted",
-        "name": "Nezkorumpovaný"
+        "name": "Nezkorumpovaný",
+        "original": {
+          "desc": "Someone in your past failed to do their job of driving you to the brink of insanity. It might have been a doting parent that decided to buck tradition. It might have been a touched seer who had visions of your future without the connections to the mad gods your people serve. It might have been a whole outcast community of derro rebels who refused to serve the madness of your ancestors. Whatever happened in your past, you are quite sane—or at least quite sane for a derro.",
+          "asi_desc": "***Ability Score Increase.*** Your Wisdom score increases by 1.",
+          "traits": "***Psychic Barrier.*** Your time among your less sane brethren has inured you to their madness. You have resistance to psychic damage, and you have advantage on ability checks and saving throws made against effects that inflict insanity, such as spells like contact other plane and symbol, and effects that cause short-term, long-term, or indefinite madness.\n\n***Studied Insight.*** You are skilled at discerning other creature's motives and intentions. You have proficiency in the Insight skill, and, if you study a creature for at least 1 minute, you have advantage on any initiative checks in combat against that creature for the next hour."
+        },
+        "description": "Někdo ve tvé minulosti nesplnil svůj úkol dovést tě na pokraj šílenství. Mohl to být milující rodič, který se rozhodl vzepřít tradici. Mohl to být osvícený věštec, který měl vidění tvé budoucnosti bez spojení se šílenými bohy, jimž tvůj lid slouží. Mohla to být celá vyvržená komunita derrských rebelů odmítajících sloužit šílenství předků. Ať se v tvé minulosti stalo cokoli, jsi docela příčetný – alespoň na derra.\n\n**Zvýšení hodnot vlastností.** Tvá Moudrost se zvýší o 1.\n**Psychická bariéra.** Čas strávený mezi méně příčetnými soukmenovci tě vůči jejich šílenství obrnil. Máš odolnost vůči psychickému zranění a výhodu k ověřením vlastností a záchranným hodům proti účinkům vyvolávajícím šílenství, například kouzlům Kontaktuj jinou sféru a Symbol a účinkům způsobujícím krátkodobé, dlouhodobé nebo časově neomezené šílenství.\n**Prostudovaný vhled.** Umíš rozpoznávat pohnutky a úmysly jiných tvorů. Jsi zdatný ve Vhledu a pokud studuješ tvora alespoň 1 minutu, máš následující hodinu výhodu ke všem ověřením iniciativy v boji proti tomuto tvorovi."
       }
     },
     "subclasses": {
