@@ -1,0 +1,578 @@
+{
+  "athlete": {
+    "englishName": "Athlete",
+    "original": {
+      "desc": "Increase your Strength or Dexterity by 1, to a maximum of 20. Standing up from prone costs only 5 feet of movement, climbing costs no extra movement, and you can make a running jump after moving only 5 feet.",
+      "prerequisite": ""
+    },
+    "description": "Zvyš svou Sílu nebo Obratnost o 1, nejvýše na 20. Vstávání ze země tě stojí jen 5 stop pohybu, šplhání tě nestojí žádný pohyb navíc a skok s rozběhem můžeš provést už po uražení 5 stop."
+  },
+  "actor": {
+    "englishName": "Actor",
+    "original": {
+      "desc": "Increase your Charisma by 1, to a maximum of 20. You have advantage on Deception and Performance checks when passing yourself off as someone else, and you can mimic the speech or sounds of a creature you have heard for at least 1 minute.",
+      "prerequisite": ""
+    },
+    "description": "Zvyš své Charisma o 1, nejvýše na 20. Když se vydáváš za někoho jiného, máš výhodu k ověřením Klamání a Vystupování. Umíš napodobit řeč nebo zvuky tvora, kterého jsi slyšel alespoň 1 minutu."
+  },
+  "charger": {
+    "englishName": "Charger",
+    "original": {
+      "desc": "After you Dash, you can use a bonus action to make one melee attack or to shove a creature. If you moved at least 10 feet in a straight line first, the attack deals an extra 5 damage or the shove pushes 10 extra feet.",
+      "prerequisite": ""
+    },
+    "description": "Po akci Sprint můžeš bonusovou akcí provést jeden útok na blízko nebo strčit do tvora. Pokud ses předtím pohnul alespoň o 10 stop přímo vpřed, útok způsobí o 5 zranění více nebo odstrčíš tvora o dalších 10 stop."
+  },
+  "crossbow-expert": {
+    "englishName": "Crossbow Expert",
+    "original": {
+      "desc": "You ignore the loading property of crossbows you are proficient with, being within 5 feet of a hostile creature gives you no disadvantage on ranged attacks, and when you take the Attack action with a one-handed weapon you can use a bonus action to attack with a hand crossbow you are holding.",
+      "prerequisite": ""
+    },
+    "description": "Ignoruješ vlastnost Nabíjecí u kuší, s nimiž jsi zdatný. Přítomnost nepřátelského tvora do 5 stop od tebe ti nedává nevýhodu k útokům na dálku. Když provedeš akci Útok jednoruční zbraní, můžeš bonusovou akcí zaútočit ruční kuší, kterou držíš."
+  },
+  "defensive-duelist": {
+    "englishName": "Defensive Duelist",
+    "original": {
+      "desc": "When a creature hits you with a melee attack while you wield a finesse weapon you are proficient with, you can use your reaction to add your proficiency bonus to your AC against that attack, possibly turning it into a miss.",
+      "prerequisite": "Dexterity 13 or higher"
+    },
+    "description": "*Požadavek: Obratnost 13 nebo vyšší.*\n\nKdyž tě tvor zasáhne útokem na blízko a třímáš vytříbenou zbraň, s níž jsi zdatný, můžeš reakcí přičíst svůj zdatnostní bonus k TZ proti tomuto útoku. Tím se zásah může změnit v minutí."
+  },
+  "dual-wielder": {
+    "englishName": "Dual Wielder",
+    "original": {
+      "desc": "You gain +1 AC while wielding a separate melee weapon in each hand, you can two-weapon fight with weapons that lack the light property, and you can draw or stow two one-handed weapons at once.",
+      "prerequisite": ""
+    },
+    "description": "Získáváš +1 k TZ, pokud v každé ruce třímáš jinou zbraň na blízko. Můžeš bojovat dvěma zbraněmi, i když nemají vlastnost Lehká, a můžeš tasit či schovat dvě jednoruční zbraně najednou."
+  },
+  "dungeon-delver": {
+    "englishName": "Dungeon Delver",
+    "original": {
+      "desc": "You have advantage on Perception and Investigation checks to detect secret doors, advantage on saving throws against traps, resistance to trap damage, and you can search for traps while travelling at a normal pace.",
+      "prerequisite": ""
+    },
+    "description": "Máš výhodu k ověřením Vnímání a Pátrání při odhalování tajných dveří a k záchranným hodům proti pastem. Máš odolání vůči zranění z pastí a můžeš je hledat i při cestování běžným tempem."
+  },
+  "durable": {
+    "englishName": "Durable",
+    "original": {
+      "desc": "Increase your Constitution by 1, to a maximum of 20. When you roll a Hit Die to regain hit points, the minimum you regain is twice your Constitution modifier.",
+      "prerequisite": ""
+    },
+    "description": "Zvyš svou Odolnost o 1, nejvýše na 20. Když hodíš kostkou životů, abys obnovil životy, obnovíš jich nejméně dvojnásobek své opravy Odolnosti."
+  },
+  "elven-accuracy": {
+    "englishName": "Elven Accuracy",
+    "original": {
+      "desc": "Increase your Dexterity, Intelligence, Wisdom, or Charisma by 1, to a maximum of 20. Whenever you have advantage on an attack roll using Dexterity, Intelligence, Wisdom, or Charisma, you can reroll one of the dice once. The server rolls a third d20 and keeps the highest.",
+      "prerequisite": "Elf or half-elf"
+    },
+    "description": "*Požadavek: Elf nebo půlelf.*\n\nZvyš svou Obratnost, Inteligenci, Moudrost nebo Charisma o 1, nejvýše na 20. Kdykoli máš výhodu k hodu na útok využívajícímu některou z těchto vlastností, můžeš jednou přehodit jednu z kostek. Server hodí třetí k20 a použije nejvyšší výsledek."
+  },
+  "elemental-adept": {
+    "englishName": "Elemental Adept",
+    "original": {
+      "desc": "Choose acid, cold, fire, lightning or thunder. Your spells of that damage type ignore resistance, and any 1 rolled on their damage dice counts as a 2. You can take this feat more than once, choosing a different type each time.",
+      "prerequisite": "The ability to cast at least one spell"
+    },
+    "description": "*Požadavek: Schopnost seslat alespoň jedno kouzlo.*\n\nZvol kyselinové, chladné, ohnivé, bleskové nebo hromové zranění. Tvá kouzla tohoto typu zranění ignorují odolání a každá 1 na jejich kostkách zranění se počítá jako 2. Tuto odbornost můžeš získat opakovaně, pokaždé pro jiný typ zranění."
+  },
+  "great-weapon-master": {
+    "englishName": "Great Weapon Master",
+    "original": {
+      "desc": "On a critical hit or when you drop a creature to 0 hit points with a melee weapon, you can make one melee weapon attack as a bonus action. Before attacking with a heavy weapon you are proficient with, you can take a -5 penalty to the attack roll in exchange for +10 damage on a hit.",
+      "prerequisite": ""
+    },
+    "description": "Když dosáhneš kritického zásahu nebo snížíš zbraní na blízko životy tvora na 0, můžeš bonusovou akcí provést jeden útok zbraní na blízko. Před útokem těžkou zbraní, s níž jsi zdatný, můžeš přijmout postih −5 k hodu na útok výměnou za +10 ke zranění při zásahu."
+  },
+  "healer": {
+    "englishName": "Healer",
+    "original": {
+      "desc": "When you stabilize a creature with a healer's kit it also regains 1 hit point. As an action you can spend a use of a healer's kit to restore 1d6 + 4 hit points plus the creature's Hit Dice to a creature, once each per rest.",
+      "prerequisite": ""
+    },
+    "description": "Když stabilizuješ tvora pomocí léčitelské soupravy, obnoví si také 1 život. Jako akci můžeš spotřebovat jedno použití soupravy a obnovit tvorovi 1k6 + 4 životy plus počet jeho kostek životů, jednou u každého tvora za odpočinek."
+  },
+  "heavily-armored": {
+    "englishName": "Heavily Armored",
+    "original": {
+      "desc": "Increase your Strength by 1, to a maximum of 20, and gain proficiency with heavy armor.",
+      "prerequisite": "Proficiency with medium armor"
+    },
+    "description": "*Požadavek: Zdatnost se středními zbrojemi.*\n\nZvyš svou Sílu o 1, nejvýše na 20, a získáš zdatnost s těžkými zbrojemi."
+  },
+  "heavy-armor-master": {
+    "englishName": "Heavy Armor Master",
+    "original": {
+      "desc": "Increase your Strength by 1, to a maximum of 20. While you wear heavy armor, bludgeoning, piercing and slashing damage from nonmagical attacks is reduced by 3.",
+      "prerequisite": "Proficiency with heavy armor"
+    },
+    "description": "*Požadavek: Zdatnost s těžkými zbrojemi.*\n\nZvyš svou Sílu o 1, nejvýše na 20. Když máš na sobě těžkou zbroj, drtivé, bodné a sečné zranění z nemagických útoků se sníží o 3."
+  },
+  "inspiring-leader": {
+    "englishName": "Inspiring Leader",
+    "original": {
+      "desc": "You can spend 10 minutes rallying up to six friendly creatures within 30 feet who can hear and understand you. Each gains temporary hit points equal to your level plus your Charisma modifier, and cannot benefit again until it finishes a rest.",
+      "prerequisite": "Charisma 13 or higher"
+    },
+    "description": "*Požadavek: Charisma 13 nebo vyšší.*\n\nMůžeš strávit 10 minut povzbuzováním až šesti přátelských tvorů do 30 stop, kteří tě slyší a rozumějí ti. Každý získá dočasné životy ve výši tvé úrovně + opravy Charismatu a znovu z toho může těžit až po dokončení odpočinku."
+  },
+  "keen-mind": {
+    "englishName": "Keen Mind",
+    "original": {
+      "desc": "Increase your Intelligence by 1, to a maximum of 20. You always know which way is north and how many hours remain before sunrise or sunset, and you accurately recall anything you have seen or heard in the past month.",
+      "prerequisite": ""
+    },
+    "description": "Zvyš svou Inteligenci o 1, nejvýše na 20. Vždy víš, kde je sever a kolik hodin zbývá do východu nebo západu slunce. Přesně si vybavíš vše, co jsi viděl nebo slyšel za uplynulý měsíc."
+  },
+  "lightly-armored": {
+    "englishName": "Lightly Armored",
+    "original": {
+      "desc": "Increase your Strength or Dexterity by 1, to a maximum of 20, and gain proficiency with light armor.",
+      "prerequisite": ""
+    },
+    "description": "Zvyš svou Sílu nebo Obratnost o 1, nejvýše na 20, a získáš zdatnost s lehkými zbrojemi."
+  },
+  "linguist": {
+    "englishName": "Linguist",
+    "original": {
+      "desc": "Increase your Intelligence by 1, to a maximum of 20. You learn three languages and can create written ciphers that others cannot read without an Intelligence check against a DC of 8 plus your Intelligence modifier and proficiency bonus.",
+      "prerequisite": ""
+    },
+    "description": "Zvyš svou Inteligenci o 1, nejvýše na 20. Naučíš se tři jazyky a můžeš vytvářet písemné šifry, které ostatní nerozluští bez ověření Inteligence proti SO 8 + tvá oprava Inteligence + zdatnostní bonus."
+  },
+  "lucky": {
+    "englishName": "Lucky",
+    "original": {
+      "desc": "You have three luck points, regained on a long rest. Spend one to roll an extra d20 on your own attack roll, ability check or saving throw and choose which die to use, or to roll an extra d20 on an attack made against you and choose which the attacker uses.",
+      "prerequisite": ""
+    },
+    "description": "Máš tři body štěstí, které se obnovují po dlouhém odpočinku. Utrať jeden, abys ke svému hodu na útok, ověření vlastnosti nebo záchrannému hodu hodil další k20 a vybral, kterou kostku použiješ. Můžeš také hodit další k20 při útoku proti tobě a vybrat, kterou kostku útočník použije."
+  },
+  "magic-initiate": {
+    "englishName": "Magic Initiate",
+    "original": {
+      "desc": "Choose a class: bard, cleric, druid, sorcerer, warlock or wizard. You learn two cantrips of your choice from that class's spell list. Choose one 1st-level spell from the same list: you learn it and can cast it once without expending a spell slot, at its lowest level, and again after a long rest. Your spellcasting ability for these spells depends on the class you chose: Charisma for bard, sorcerer or warlock; Wisdom for cleric or druid; Intelligence for wizard.",
+      "prerequisite": ""
+    },
+    "description": "Zvol povolání: bard, klerik, druid, čaroděj, černokněžník nebo kouzelník. Naučíš se dva triky podle svého výběru z jeho seznamu kouzel. Z téhož seznamu vyber jedno kouzlo 1. úrovně: naučíš se je a můžeš je jednou seslat na nejnižší úrovni bez utracení pozice kouzel, znovu po dlouhém odpočinku. Sesílací vlastností je Charisma pro barda, čaroděje a černokněžníka, Moudrost pro klerika a druida, Inteligence pro kouzelníka."
+  },
+  "mage-slayer": {
+    "englishName": "Mage Slayer",
+    "original": {
+      "desc": "When a creature within 5 feet casts a spell you can use your reaction to attack it. When you damage a creature concentrating on a spell it has disadvantage on the concentration save, and you have advantage on saves against spells cast by creatures within 5 feet.",
+      "prerequisite": ""
+    },
+    "description": "Když tvor do 5 stop od tebe sesílá kouzlo, můžeš na něj reakcí zaútočit. Když zraníš tvora soustředícího se na kouzlo, má nevýhodu k záchrannému hodu na udržení soustředění. Máš výhodu k záchranným hodům proti kouzlům seslaným tvory do 5 stop od tebe."
+  },
+  "martial-adept": {
+    "englishName": "Martial Adept",
+    "original": {
+      "desc": "You learn two maneuvers from the Battle Master list and gain one superiority die of d6, which refills on a short or long rest.",
+      "prerequisite": ""
+    },
+    "description": "Naučíš se dva manévry ze seznamu Taktika a získáš jednu kostku převahy k6. Obnoví se po krátkém nebo dlouhém odpočinku."
+  },
+  "medium-armor-master": {
+    "englishName": "Medium Armor Master",
+    "original": {
+      "desc": "Wearing medium armor does not impose disadvantage on Stealth checks, and if your Dexterity is 16 or higher you add 3 rather than 2 to your AC from medium armor.",
+      "prerequisite": "Proficiency with medium armor"
+    },
+    "description": "*Požadavek: Zdatnost se středními zbrojemi.*\n\nNošení střední zbroje ti nedává nevýhodu k ověřením Nenápadnosti. Pokud máš Obratnost alespoň 16, přičítáš ke své TZ ve střední zbroji 3 místo 2."
+  },
+  "mobile": {
+    "englishName": "Mobile",
+    "original": {
+      "desc": "Your speed increases by 10 feet, difficult terrain costs no extra movement when you Dash, and when you make a melee attack against a creature it cannot make opportunity attacks against you for the rest of the turn.",
+      "prerequisite": ""
+    },
+    "description": "Tvá rychlost se zvýší o 10 stop. Při akci Sprint tě těžký terén nestojí pohyb navíc. Když na tvora zaútočíš na blízko, nemůže proti tobě po zbytek tahu provádět příležitostné útoky."
+  },
+  "moderately-armored": {
+    "englishName": "Moderately Armored",
+    "original": {
+      "desc": "Increase your Strength or Dexterity by 1, to a maximum of 20, and gain proficiency with medium armor and shields.",
+      "prerequisite": "Proficiency with light armor"
+    },
+    "description": "*Požadavek: Zdatnost s lehkými zbrojemi.*\n\nZvyš svou Sílu nebo Obratnost o 1, nejvýše na 20, a získáš zdatnost se středními zbrojemi a štíty."
+  },
+  "mounted-combatant": {
+    "englishName": "Mounted Combatant",
+    "original": {
+      "desc": "While mounted you have advantage on melee attacks against unmounted creatures smaller than your mount, you can redirect an attack aimed at your mount to yourself, and your mount takes no damage on a successful Dexterity save and half on a failure.",
+      "prerequisite": ""
+    },
+    "description": "Při jízdě na jezdeckém tvorovi máš výhodu k útokům na blízko proti nesedícím tvorům menším než tvůj jezdecký tvor. Útok mířený na něj můžeš přesměrovat na sebe. Při úspěšném záchranném hodu na Obratnost neutrpí žádné zranění a při neúspěchu utrpí jen polovinu."
+  },
+  "observant": {
+    "englishName": "Observant",
+    "original": {
+      "desc": "Increase your Intelligence or Wisdom by 1, to a maximum of 20. You can read lips, and you gain a +5 bonus to your passive Perception and passive Investigation.",
+      "prerequisite": ""
+    },
+    "description": "Zvyš svou Inteligenci nebo Moudrost o 1, nejvýše na 20. Umíš odezírat ze rtů a získáváš bonus +5 k pasivnímu Vnímání i pasivnímu Pátrání."
+  },
+  "polearm-master": {
+    "englishName": "Polearm Master",
+    "original": {
+      "desc": "When you take the Attack action with a glaive, halberd, quarterstaff or spear you can use a bonus action to strike with the opposite end for 1d4 bludgeoning damage. You also get an opportunity attack when a creature enters your reach with such a weapon.",
+      "prerequisite": ""
+    },
+    "description": "Když provedeš akci Útok kůsou, halapartnou, holí nebo kopím, můžeš bonusovou akcí udeřit opačným koncem za 1k4 drtivého zranění. Také můžeš provést příležitostný útok, když tvor vstoupí do tvého dosahu s takovou zbraní."
+  },
+  "resilient": {
+    "englishName": "Resilient",
+    "original": {
+      "desc": "Increase one ability score by 1, to a maximum of 20, and gain proficiency in saving throws with that ability.",
+      "prerequisite": ""
+    },
+    "description": "Zvyš hodnotu jedné vlastnosti o 1, nejvýše na 20, a získáš zdatnost v záchranných hodech na tuto vlastnost."
+  },
+  "ritual-caster": {
+    "englishName": "Ritual Caster",
+    "original": {
+      "desc": "You gain a ritual book holding two 1st-level ritual spells from a class you choose, and you can cast any ritual in it. You can add further rituals of a level you can cast to the book by copying them.",
+      "prerequisite": "Intelligence or Wisdom 13 or higher"
+    },
+    "description": "*Požadavek: Inteligence nebo Moudrost 13 či vyšší.*\n\nZískáš knihu rituálů se dvěma rituálními kouzly 1. úrovně z povolání podle svého výběru a můžeš sesílat všechny rituály v ní. Další rituály úrovně, kterou dokážeš seslat, můžeš do knihy přepisovat."
+  },
+  "sentinel": {
+    "englishName": "Sentinel",
+    "original": {
+      "desc": "A creature you hit with an opportunity attack has its speed reduced to 0 for that turn, creatures provoke opportunity attacks from you even if they Disengage, and when a creature within 5 feet attacks someone other than you, you can use your reaction to make a melee attack against it.",
+      "prerequisite": ""
+    },
+    "description": "Tvor, kterého zasáhneš příležitostným útokem, má po zbytek daného tahu rychlost 0. Tvorové u tebe vyvolávají příležitostné útoky, i když použijí Odpoutání. Když tvor do 5 stop od tebe zaútočí na někoho jiného, můžeš proti němu reakcí provést útok na blízko."
+  },
+  "sharpshooter": {
+    "englishName": "Sharpshooter",
+    "original": {
+      "desc": "Attacking at long range gives you no disadvantage, your ranged attacks ignore half and three-quarters cover, and before a ranged attack with a weapon you are proficient with you can take a -5 penalty to the attack roll in exchange for +10 damage on a hit.",
+      "prerequisite": ""
+    },
+    "description": "Útoky na dlouhou vzdálenost ti nedávají nevýhodu a tvé útoky na dálku ignorují poloviční a tříčtvrteční kryt. Před útokem na dálku zbraní, s níž jsi zdatný, můžeš přijmout postih −5 k hodu na útok výměnou za +10 ke zranění při zásahu."
+  },
+  "shield-master": {
+    "englishName": "Shield Master",
+    "original": {
+      "desc": "If you take the Attack action you can use a bonus action to shove a creature within 5 feet with your shield. You add your shield's AC bonus to Dexterity saves against effects that target only you, and you can use a reaction to take no damage on a successful Dexterity save.",
+      "prerequisite": ""
+    },
+    "description": "Pokud provedeš akci Útok, můžeš bonusovou akcí strčit štítem do tvora do 5 stop od tebe. Bonus štítu k TZ přičítáš k záchranným hodům na Obratnost proti účinkům cíleným pouze na tebe. Při úspěšném záchranném hodu na Obratnost můžeš reakcí neutrpět žádné zranění."
+  },
+  "skulker": {
+    "englishName": "Skulker",
+    "original": {
+      "desc": "You can hide when lightly obscured, missing with a ranged attack does not reveal your position, and dim light does not impose disadvantage on your Perception checks that rely on sight.",
+      "prerequisite": "Dexterity 13 or higher"
+    },
+    "description": "*Požadavek: Obratnost 13 nebo vyšší.*\n\nMůžeš se schovat, když jsi lehce zahalený. Pokud mineš útokem na dálku, neprozradíš svou pozici. Šero ti nedává nevýhodu k ověřením Vnímání závislým na zraku."
+  },
+  "spell-sniper": {
+    "englishName": "Spell Sniper",
+    "original": {
+      "desc": "The range of your attack-roll spells doubles, they ignore half and three-quarters cover, and you learn one attack cantrip from the bard, cleric, druid, sorcerer, warlock or wizard list.",
+      "prerequisite": "The ability to cast at least one spell"
+    },
+    "description": "*Požadavek: Schopnost seslat alespoň jedno kouzlo.*\n\nDosah tvých kouzel vyžadujících hod na útok se zdvojnásobí a tato kouzla ignorují poloviční i tříčtvrteční kryt. Naučíš se jeden útočný trik ze seznamu barda, klerika, druida, čaroděje, černokněžníka nebo kouzelníka."
+  },
+  "tavern-brawler": {
+    "englishName": "Tavern Brawler",
+    "original": {
+      "desc": "Increase your Strength or Constitution by 1, to a maximum of 20. You are proficient with improvised weapons, your unarmed strike deals 1d4 damage, and when you hit with an unarmed strike or improvised weapon you can use a bonus action to try to grapple.",
+      "prerequisite": ""
+    },
+    "description": "Zvyš svou Sílu nebo Odolnost o 1, nejvýše na 20. Jsi zdatný s improvizovanými zbraněmi, tvůj neozbrojený úder způsobuje 1k4 zranění a při zásahu neozbrojeným úderem nebo improvizovanou zbraní se můžeš bonusovou akcí pokusit tvora uchopit."
+  },
+  "tough": {
+    "englishName": "Tough",
+    "original": {
+      "desc": "Your hit point maximum increases by twice your level, and by 2 more each time you gain a level.",
+      "prerequisite": ""
+    },
+    "description": "Tvé maximum životů se zvýší o dvojnásobek tvé úrovně a o další 2 při každém postupu na vyšší úroveň."
+  },
+  "war-caster": {
+    "englishName": "War Caster",
+    "original": {
+      "desc": "You have advantage on Constitution saves to maintain concentration, you can cast with somatic components while holding weapons or a shield, and you can cast a one-action spell targeting one creature as an opportunity attack.",
+      "prerequisite": "The ability to cast at least one spell"
+    },
+    "description": "*Požadavek: Schopnost seslat alespoň jedno kouzlo.*\n\nMáš výhodu k záchranným hodům na Odolnost při udržování soustředění. Kouzla s pohybovými složkami můžeš sesílat i při držení zbraní či štítu. Místo příležitostného útoku můžeš seslat kouzlo s dobou sesílání jedné akce, které cílí na jednoho tvora."
+  },
+  "weapon-master": {
+    "englishName": "Weapon Master",
+    "original": {
+      "desc": "Increase your Strength or Dexterity by 1, to a maximum of 20, and gain proficiency with four weapons of your choice.",
+      "prerequisite": ""
+    },
+    "description": "Zvyš svou Sílu nebo Obratnost o 1, nejvýše na 20, a získáš zdatnost se čtyřmi zbraněmi podle svého výběru."
+  },
+  "fey-touched": {
+    "englishName": "Fey Touched",
+    "original": {
+      "desc": "Increase your Intelligence, Wisdom or Charisma by 1, to a maximum of 20. You learn misty step and one 1st-level divination or enchantment spell, each castable once per long rest without a slot as well as with slots.",
+      "prerequisite": ""
+    },
+    "description": "Zvyš svou Inteligenci, Moudrost nebo Charisma o 1, nejvýše na 20. Naučíš se Mlžný krok a jedno kouzlo 1. úrovně ze školy věštění nebo očarování. Každé z nich můžeš seslat jednou za dlouhý odpočinek bez utracení pozice kouzel i s využitím pozic kouzel."
+  },
+  "shadow-touched": {
+    "englishName": "Shadow Touched",
+    "original": {
+      "desc": "Increase your Intelligence, Wisdom or Charisma by 1, to a maximum of 20. You learn invisibility and one 1st-level illusion or necromancy spell, each castable once per long rest without a slot as well as with slots.",
+      "prerequisite": ""
+    },
+    "description": "Zvyš svou Inteligenci, Moudrost nebo Charisma o 1, nejvýše na 20. Naučíš se Neviditelnost a jedno kouzlo 1. úrovně ze školy iluze nebo nekromancie. Každé z nich můžeš seslat jednou za dlouhý odpočinek bez utracení pozice kouzel i s využitím pozic kouzel."
+  },
+  "telekinetic": {
+    "englishName": "Telekinetic",
+    "original": {
+      "desc": "Increase your Intelligence, Wisdom or Charisma by 1, to a maximum of 20. You learn mage hand and can cast it without components at 30 extra feet, and as a bonus action you can shove a creature within 30 feet 5 feet on a failed Strength save.",
+      "prerequisite": ""
+    },
+    "description": "Zvyš svou Inteligenci, Moudrost nebo Charisma o 1, nejvýše na 20. Naučíš se Mágovu ruku a můžeš ji sesílat bez složek s dosahem prodlouženým o 30 stop. Bonusovou akcí můžeš posunout tvora do 30 stop o 5 stop, pokud neuspěje v záchranném hodu na Sílu."
+  },
+  "telepathic": {
+    "englishName": "Telepathic",
+    "original": {
+      "desc": "Increase your Intelligence, Wisdom or Charisma by 1, to a maximum of 20. You can speak telepathically to any creature within 60 feet that shares a language with you, and you can cast detect thoughts once per long rest without a slot.",
+      "prerequisite": ""
+    },
+    "description": "Zvyš svou Inteligenci, Moudrost nebo Charisma o 1, nejvýše na 20. Můžeš telepaticky mluvit s každým tvorem do 60 stop, se kterým sdílíš jazyk, a jednou za dlouhý odpočinek můžeš seslat Odhal myšlenky bez utracení pozice kouzel."
+  },
+  "eldritch-adept": {
+    "englishName": "Eldritch Adept",
+    "original": {
+      "desc": "You learn one Eldritch Invocation of your choice whose prerequisites you meet. You can replace it when you gain a level.",
+      "prerequisite": "Spellcasting or Pact Magic"
+    },
+    "description": "*Požadavek: Sesílání kouzel nebo Magie daná paktem.*\n\nNaučíš se jedno tajemné vzývání dle svého výběru, jehož předpoklady splňuješ. Při postupu na další úroveň je můžeš vyměnit."
+  },
+  "metamagic-adept": {
+    "englishName": "Metamagic Adept",
+    "original": {
+      "desc": "You learn two Metamagic options from the sorcerer list and gain 2 sorcery points to spend on them, refilled on a long rest.",
+      "prerequisite": "Spellcasting or Pact Magic"
+    },
+    "description": "*Požadavek: Sesílání kouzel nebo Magie daná paktem.*\n\nNaučíš se dvě možnosti metamagie ze seznamu čaroděje a získáš 2 body magie, které na ně můžeš utrácet. Obnoví se po dlouhém odpočinku."
+  },
+  "skill-expert": {
+    "englishName": "Skill Expert",
+    "original": {
+      "desc": "Increase one ability score by 1, to a maximum of 20. You gain proficiency in one skill, and expertise in one skill you are already proficient in.",
+      "prerequisite": ""
+    },
+    "description": "Zvyš hodnotu jedné vlastnosti o 1, nejvýše na 20. Získáš zdatnost v jedné dovednosti a kvalifikaci v jedné dovednosti, v níž už jsi zdatný."
+  },
+  "chef": {
+    "englishName": "Chef",
+    "original": {
+      "desc": "Increase your Constitution or Wisdom by 1, to a maximum of 20, and gain proficiency with cook's utensils. Cooking during a short rest lets allies regain an extra 1d8 hit points, and with an hour's work as you finish a long rest you make a number of treats equal to your proficiency bonus that keep for 8 hours: a creature eats one as a bonus action and gains temporary hit points equal to your proficiency bonus.",
+      "prerequisite": ""
+    },
+    "description": "Zvyš svou Odolnost nebo Moudrost o 1, nejvýše na 20, a získáš zdatnost s kuchařským náčiním. Vařením při krátkém odpočinku umožníš spojencům obnovit si navíc 1k8 životů. Hodinou práce při dokončování dlouhého odpočinku připravíš počet pochoutek rovný tvému zdatnostnímu bonusu. Vydrží 8 hodin; tvor může jednu sníst bonusovou akcí a získat dočasné životy rovné tvému zdatnostnímu bonusu."
+  },
+  "crusher": {
+    "englishName": "Crusher",
+    "original": {
+      "desc": "Increase your Strength or Constitution by 1, to a maximum of 20. Once per turn when you deal bludgeoning damage you can move the creature 5 feet, and a critical hit with bludgeoning damage gives attackers advantage against it until your next turn.",
+      "prerequisite": ""
+    },
+    "description": "Zvyš svou Sílu nebo Odolnost o 1, nejvýše na 20. Jednou za tah, když způsobíš tvorovi drtivé zranění, ho můžeš posunout o 5 stop. Kritický zásah s drtivým zraněním dává útočníkům výhodu k útokům proti tomuto tvorovi až do tvého dalšího tahu."
+  },
+  "piercer": {
+    "englishName": "Piercer",
+    "original": {
+      "desc": "Increase your Strength or Dexterity by 1, to a maximum of 20. Once per turn when you deal piercing damage you can reroll one damage die, and a critical hit with piercing damage adds one extra damage die.",
+      "prerequisite": ""
+    },
+    "description": "Zvyš svou Sílu nebo Obratnost o 1, nejvýše na 20. Jednou za tah, když způsobíš bodné zranění, můžeš přehodit jednu kostku zranění. Kritický zásah s bodným zraněním přidává jednu kostku zranění navíc."
+  },
+  "slasher": {
+    "englishName": "Slasher",
+    "original": {
+      "desc": "Increase your Strength or Dexterity by 1, to a maximum of 20. Once per turn when you deal slashing damage you can reduce the target's speed by 10 feet, and a critical hit with slashing damage gives it disadvantage on attack rolls until your next turn.",
+      "prerequisite": ""
+    },
+    "description": "Zvyš svou Sílu nebo Obratnost o 1, nejvýše na 20. Jednou za tah, když způsobíš sečné zranění, můžeš snížit rychlost cíle o 10 stop. Kritický zásah se sečným zraněním mu dává nevýhodu k hodům na útok až do tvého dalšího tahu."
+  },
+  "poisoner": {
+    "englishName": "Poisoner",
+    "original": {
+      "desc": "You ignore resistance to poison damage, you can coat a weapon as a bonus action so its next hit forces a DC 14 Constitution save for 2d8 poison damage and the poisoned condition, and you gain proficiency with the poisoner's kit.",
+      "prerequisite": ""
+    },
+    "description": "Ignoruješ odolání vůči jedovému zranění. Bonusovou akcí můžeš potřít zbraň jedem, takže její příští zásah vyvolá záchranný hod na Odolnost proti SO 14; při neúspěchu způsobí 2k8 jedového zranění a stav Otrávený. Získáš zdatnost s travičskou soupravou."
+  },
+  "gunner": {
+    "englishName": "Gunner",
+    "original": {
+      "desc": "Increase your Dexterity by 1, to a maximum of 20. You gain proficiency with firearms, ignore their loading property, and being within 5 feet of a hostile creature gives you no disadvantage on ranged attacks.",
+      "prerequisite": ""
+    },
+    "description": "Zvyš svou Obratnost o 1, nejvýše na 20. Získáš zdatnost s palnými zbraněmi, ignoruješ jejich vlastnost Nabíjecí a přítomnost nepřátelského tvora do 5 stop od tebe ti nedává nevýhodu k útokům na dálku."
+  },
+  "alert": {
+    "englishName": "Alert",
+    "original": {
+      "desc": "Your guard never quite drops. Add 5 to every initiative roll you make. While you are conscious no ambush catches you off guard, and an attacker hidden from your sight gets no advantage against you merely because you cannot see it.",
+      "prerequisite": ""
+    },
+    "description": "Nikdy zcela nepolevíš v ostražitosti. Ke každému hodu na iniciativu si přičítáš 5. Dokud jsi při vědomí, nemůže tě přepad překvapit a útočník, kterého nevidíš, proti tobě nezískává výhodu jen proto, že ho nevidíš."
+  },
+  "skilled": {
+    "englishName": "Skilled",
+    "original": {
+      "desc": "Pick any three skills or tools, in any combination, and gain proficiency with each. This feat raises no ability score.",
+      "prerequisite": ""
+    },
+    "description": "Vyber libovolné tři dovednosti či nástroje v libovolné kombinaci a získáš s nimi zdatnost. Tato odbornost nezvyšuje žádnou vlastnost."
+  },
+  "savage-attacker": {
+    "englishName": "Savage Attacker",
+    "original": {
+      "desc": "Once on each of your turns, when you roll damage for a melee weapon attack, you can roll the weapon's damage dice a second time and keep whichever total you like.",
+      "prerequisite": ""
+    },
+    "description": "Jednou v každém svém tahu, když házíš na zranění při útoku zbraní na blízko, můžeš kostkami zranění zbraně hodit podruhé a použít libovolný z obou součtů."
+  },
+  "fighting-initiate": {
+    "englishName": "Fighting Initiate",
+    "original": {
+      "desc": "Your martial training has taught you a fighting technique of your own. Choose one Fighting Style from the fighter's list that you do not already have; you gain it.",
+      "prerequisite": "Proficiency with a martial weapon"
+    },
+    "description": "*Požadavek: Zdatnost s vojenskou zbraní.*\n\nBojový výcvik tě naučil vlastní bojovou techniku. Vyber si jeden bojový styl ze seznamu bojovníka, který ještě nemáš, a získáš ho."
+  },
+  "prodigy": {
+    "englishName": "Prodigy",
+    "original": {
+      "desc": "You have a knack for picking things up. You gain proficiency in one skill of your choice, proficiency with one tool of your choice, and you learn one language of your choice. You also gain expertise in one skill you are proficient in.",
+      "prerequisite": "Half-elf, half-orc, or human"
+    },
+    "description": "*Požadavek: Půlelf, půlork nebo člověk.*\n\nMáš nadání rychle se učit. Získáš zdatnost v jedné dovednosti a s jedním nástrojem dle svého výběru a naučíš se jeden jazyk dle svého výběru. Získáš také kvalifikaci v jedné dovednosti, v níž jsi zdatný."
+  },
+  "grappler": {
+    "englishName": "Grappler",
+    "original": {
+      "desc": "Attacks you make against a creature you are grappling have advantage. As an action you may attempt to pin a creature you have grappled with a second grapple check; on a success, both you and it are restrained until the grapple ends.",
+      "prerequisite": "Strength 13 or higher"
+    },
+    "description": "*Požadavek: Síla 13 nebo vyšší.*\n\nMáš výhodu k útokům proti tvorovi, kterého držíš. Akcí se můžeš pokusit spoutat drženého tvora druhým ověřením uchopení. Při úspěchu jste oba zadržení, dokud uchopení neskončí."
+  },
+  "squat-nimbleness": {
+    "englishName": "Squat Nimbleness",
+    "original": {
+      "desc": "Increase your Strength or Dexterity by 1, to a maximum of 20. Your walking speed increases by 5 feet. You gain proficiency in the Acrobatics or Athletics skill. You have advantage on the check you make to escape a grapple.",
+      "prerequisite": "Dwarf or a Small race"
+    },
+    "description": "*Požadavek: Trpaslík nebo rasa velikosti Malá.*\n\nZvyš svou Sílu nebo Obratnost o 1, nejvýše na 20. Tvá rychlost chůze se zvýší o 5 stop. Získáš zdatnost v Akrobacii nebo Atletice a máš výhodu k ověření při úniku z uchopení."
+  },
+  "infernal-constitution": {
+    "englishName": "Infernal Constitution",
+    "original": {
+      "desc": "Increase your Constitution by 1, to a maximum of 20. Fiendish blood steels your body: you have resistance to cold and poison damage, and you have advantage on saving throws against being poisoned.",
+      "prerequisite": "Tiefling"
+    },
+    "description": "*Požadavek: Tiefling.*\n\nZvyš svou Odolnost o 1, nejvýše na 20. Běsovská krev zoceluje tvé tělo: máš odolání vůči chladnému a jedovému zranění a výhodu k záchranným hodům proti otrávení."
+  },
+  "fey-teleportation": {
+    "englishName": "Fey Teleportation",
+    "original": {
+      "desc": "Increase your Intelligence or Charisma by 1, to a maximum of 20. You learn to speak, read, and write Sylvan. You can cast misty step once per short rest without a spell slot, and with your spell slots as well. Intelligence is your spellcasting ability for this spell.",
+      "prerequisite": "High elf"
+    },
+    "description": "*Požadavek: Vysoký elf.*\n\nZvyš svou Inteligenci nebo Charisma o 1, nejvýše na 20. Naučíš se mluvit sylvánsky, číst a psát v tomto jazyce. Mlžný krok můžeš seslat jednou za krátký odpočinek bez utracení pozice kouzel a také pomocí svých pozic kouzel. Sesílací vlastností pro toto kouzlo je Inteligence."
+  },
+  "wood-elf-magic": {
+    "englishName": "Wood Elf Magic",
+    "original": {
+      "desc": "You learn one cantrip of your choice from the druid spell list. You can also cast longstrider and pass without trace, each once per long rest without a spell slot. Wisdom is your spellcasting ability for these spells.",
+      "prerequisite": "Wood elf"
+    },
+    "description": "*Požadavek: Lesní elf.*\n\nNaučíš se jeden trik dle svého výběru ze seznamu druida. Můžeš také sesílat Dlouhokrok a Projdi beze stop, každé jednou za dlouhý odpočinek bez utracení pozice kouzel. Sesílací vlastností pro tato kouzla je Moudrost."
+  },
+  "drow-high-magic": {
+    "englishName": "Drow High Magic",
+    "original": {
+      "desc": "You can cast detect magic at will, without a spell slot. You can also cast levitate and dispel magic, each once per long rest without a spell slot. Charisma is your spellcasting ability for these spells.",
+      "prerequisite": "Drow"
+    },
+    "description": "*Požadavek: Drow.*\n\nNajdi magii můžeš sesílat dle libosti bez utrácení pozice kouzel. Můžeš také sesílat Levitaci a Rozptyl magii, každé jednou za dlouhý odpočinek bez utracení pozice kouzel. Sesílací vlastností pro tato kouzla je Charisma."
+  },
+  "artificer-initiate": {
+    "englishName": "Artificer Initiate",
+    "original": {
+      "desc": "You learn one cantrip of your choice from the artificer spell list. Choose one 1st-level spell from the artificer spell list: you learn it, and you can cast it once without a spell slot, regaining that use when you finish a long rest, as well as with your spell slots. Intelligence is your spellcasting ability for these spells. You also gain proficiency with one type of artisan's tools of your choice.",
+      "prerequisite": ""
+    },
+    "description": "Naučíš se jeden trik dle svého výběru ze seznamu divotvůrce. Zvol jedno kouzlo 1. úrovně z jeho seznamu: naučíš se je a můžeš je seslat jednou bez utracení pozice kouzel; použití se obnoví po dlouhém odpočinku. Můžeš je sesílat také pomocí svých pozic kouzel. Sesílací vlastností pro tato kouzla je Inteligence. Získáš také zdatnost s jedním druhem řemeslnického náčiní dle svého výběru."
+  },
+  "dragon-hide": {
+    "englishName": "Dragon Hide",
+    "original": {
+      "desc": "Increase your Strength, Constitution, or Charisma by 1, to a maximum of 20. Your scales harden: while you wear no armor, your Armor Class is 13 + your Dexterity modifier, and a shield still adds to it. Your claws are natural weapons: your unarmed strikes deal 1d4 slashing damage plus your Strength modifier instead of the usual damage.",
+      "prerequisite": "Dragonborn"
+    },
+    "description": "*Požadavek: Drakorozený.*\n\nZvyš svou Sílu, Odolnost nebo Charisma o 1, nejvýše na 20. Tvé šupiny ztvrdnou: bez zbroje je tvá TZ 13 + oprava Obratnosti a štít k ní stále přidává svůj bonus. Tvé drápy jsou přirozené zbraně: neozbrojené údery místo obvyklého zranění způsobují 1k4 sečného zranění + oprava Síly."
+  },
+  "dwarven-fortitude": {
+    "englishName": "Dwarven Fortitude",
+    "original": {
+      "desc": "Increase your Constitution by 1, to a maximum of 20. Whenever you take the Dodge action in combat, you can spend one Hit Die to heal yourself, rolling it and regaining that many hit points plus your Constitution modifier.",
+      "prerequisite": "Dwarf"
+    },
+    "description": "*Požadavek: Trpaslík.*\n\nZvyš svou Odolnost o 1, nejvýše na 20. Kdykoli v boji provedeš akci Uhýbání, můžeš utratit jednu kostku životů, hodit jí a obnovit si tolik životů, kolik padlo, plus svou opravu Odolnosti."
+  },
+  "fade-away": {
+    "englishName": "Fade Away",
+    "original": {
+      "desc": "Increase your Dexterity or Intelligence by 1, to a maximum of 20. Right after you take damage, you can use your reaction to turn invisible until the end of your next turn, or until you attack or cast a spell. Once you do so, you can't again until you finish a short or long rest.",
+      "prerequisite": "Gnome"
+    },
+    "description": "*Požadavek: Gnóm.*\n\nZvyš svou Obratnost nebo Inteligenci o 1, nejvýše na 20. Ihned poté, co utrpíš zranění, se můžeš reakcí stát neviditelným až do konce svého příštího tahu nebo dokud nezaútočíš či nesešleš kouzlo. Znovu můžeš schopnost použít až po krátkém nebo dlouhém odpočinku."
+  },
+  "dragon-fear": {
+    "englishName": "Dragon Fear",
+    "original": {
+      "desc": "Increase your Strength, Constitution, or Charisma by 1, to a maximum of 20. Instead of exhaling destructive energy, you can spend a use of your Breath Weapon on a roar: each creature of your choice within 30 feet makes a Wisdom saving throw against 8 + your proficiency bonus + your Charisma modifier or is frightened of you for 1 minute. A frightened creature repeats the save at the end of each of its turns, ending the effect on a success.",
+      "prerequisite": "Dragonborn"
+    },
+    "description": "*Požadavek: Drakorozený.*\n\nZvyš svou Sílu, Odolnost nebo Charisma o 1, nejvýše na 20. Místo vydechnutí ničivé energie můžeš utratit jedno použití Dechové zbraně na řev: každý tvor dle tvého výběru do 30 stop musí uspět v záchranném hodu na Moudrost proti SO 8 + tvůj zdatnostní bonus + oprava Charismatu, jinak je tebou vystrašený na 1 minutu. Vystrašený tvor hod opakuje na konci každého svého tahu a při úspěchu účinek končí."
+  },
+  "second-chance": {
+    "englishName": "Second Chance",
+    "original": {
+      "desc": "Increase your Dexterity, Constitution, or Charisma by 1, to a maximum of 20. When a creature you can see hits you with an attack roll, you can use your reaction to make it roll that attack again, and it must use the new roll. Once you do so, you can't again until you roll initiative or finish a short or long rest.",
+      "prerequisite": "Halfling"
+    },
+    "description": "*Požadavek: Půlčík.*\n\nZvyš svou Obratnost, Odolnost nebo Charisma o 1, nejvýše na 20. Když tě tvor, kterého vidíš, zasáhne hodem na útok, můžeš reakcí přimět tvora hodit na tento útok znovu. Musí použít nový výsledek. Další použití je možné až po hodu na iniciativu nebo dokončení krátkého či dlouhého odpočinku."
+  },
+  "flames-of-phlegethos": {
+    "englishName": "Flames of Phlegethos",
+    "original": {
+      "desc": "Increase your Intelligence or Charisma by 1, to a maximum of 20. When you roll fire damage for a spell you cast, any 1 on its fire damage dice is rolled again, and the new roll is used. Whenever you cast a spell that deals fire damage, flames wreathe you until the end of your next turn. They don't harm you or anything you carry, they shed bright light for 30 feet and dim light for 30 feet more, and a creature within 5 feet of you that hits you with a melee attack takes 1d4 fire damage.",
+      "prerequisite": "Tiefling"
+    },
+    "description": "*Požadavek: Tiefling.*\n\nZvyš svou Inteligenci nebo Charisma o 1, nejvýše na 20. Při hodu na ohnivé zranění svého kouzla přehodíš každou 1 na kostkách ohnivého zranění a použiješ nový výsledek. Kdykoli sešleš kouzlo způsobující ohnivé zranění, obklopí tě plameny až do konce tvého dalšího tahu. Neubližují tobě ani ničemu, co neseš, vydávají jasné světlo do 30 stop a šero na dalších 30 stop. Tvor do 5 stop od tebe, který tě zasáhne útokem na blízko, utrpí 1k4 ohnivého zranění."
+  },
+  "orcish-fury": {
+    "englishName": "Orcish Fury",
+    "original": {
+      "desc": "Increase your Strength or Constitution by 1, to a maximum of 20. When you hit with a weapon attack, you can roll one of the weapon's damage dice one more time and add it to the damage, of the weapon's own type. Once you do so, you can't again until you finish a short or long rest. Right after you use your Relentless Endurance, you can use your reaction to make one weapon attack.",
+      "prerequisite": "Half-orc"
+    },
+    "description": "*Požadavek: Půlork.*\n\nZvyš svou Sílu nebo Odolnost o 1, nejvýše na 20. Při zásahu útokem zbraní můžeš jednou navíc hodit jednou z kostek zranění zbraně a přičíst výsledek ke zranění stejného typu, jaký má zbraň. Znovu můžeš schopnost použít po krátkém nebo dlouhém odpočinku. Ihned po použití své Neúnavné houževnatosti můžeš reakcí provést jeden útok zbraní."
+  },
+  "bountiful-luck": {
+    "englishName": "Bountiful Luck",
+    "original": {
+      "desc": "When an ally you can see within 30 feet of you rolls a 1 on the d20 of an attack roll, an ability check or a saving throw, you can use your reaction to let them roll that die again, and they must use the new roll. Once you do so, your own Lucky trait does nothing until the end of your next turn.",
+      "prerequisite": "Halfling"
+    },
+    "description": "*Požadavek: Půlčík.*\n\nKdyž spojenec, kterého vidíš do 30 stop od sebe, hodí 1 na k20 při hodu na útok, ověření vlastnosti nebo záchranném hodu, můžeš reakcí dovolit mu přehodit kostku. Musí použít nový výsledek. Poté tvůj vlastní rys Štěstí nefunguje až do konce tvého dalšího tahu."
+  }
+}
