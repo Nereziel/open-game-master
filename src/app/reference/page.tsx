@@ -193,7 +193,7 @@ export default function ReferencePage() {
   }, [terms, query]);
 
   useEffect(() => {
-    searchKey.current = `${kind}|${query}`;
+    searchKey.current = `${locale}|${kind}|${query}`;
     if (kind === "glossary") {
       return;
     }
@@ -222,7 +222,7 @@ export default function ReferencePage() {
         if (query.trim()) {
           params.set("q", query.trim());
         }
-        const response = await fetch(`/api/content/${kind}?${params}`);
+        const response = await fetch(`/api/content/${kind}?${params}`, { headers: { "X-Odm-Locale": locale } });
         if (cancelled) {
           return;
         }
@@ -247,21 +247,21 @@ export default function ReferencePage() {
       cancelled = true;
       clearTimeout(timer);
     };
-  }, [kind, query]);
+  }, [kind, query, locale]);
 
   // The next page of the same search, added under what is already shown.
   async function loadMore() {
     if (kind === "glossary" || kind === "rulings" || loadingMore) {
       return;
     }
-    const asked = `${kind}|${query}`;
+    const asked = `${locale}|${kind}|${query}`;
     setLoadingMore(true);
     try {
       const params = new URLSearchParams({ limit: String(PAGE), offset: String(packRows(rows)), all: "1" });
       if (query.trim()) {
         params.set("q", query.trim());
       }
-      const response = await fetch(`/api/content/${kind}?${params}`);
+      const response = await fetch(`/api/content/${kind}?${params}`, { headers: { "X-Odm-Locale": locale } });
       if (!response.ok) {
         return;
       }
