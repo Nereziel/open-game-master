@@ -1,3 +1,5 @@
+import backgroundFeatureCs from "@/lib/help/background-feature-descriptions-cs.json";
+import { translate } from "@/lib/i18n/translate";
 // Original setting-specific backgrounds layered on top of the SRD/Open5e
 // lists, mirroring the custom class catalog: each entry carries the genres
 // that surface it in the picker's recommended group. Skills, tools,
@@ -51,15 +53,23 @@ export function backgroundFeatureFor(
 // What a background's feature does, by the feature's name, for the sheet's
 // chip and the builder's background line. Covers the SRD list and the
 // setting catalog; a content-pack feature carries its text on its own row.
-export function describeBackgroundFeature(featureName: string): string | null {
+export function describeBackgroundFeature(featureName: string, locale: "en" | "fr" | "cs" = "en"): string | null {
   const wanted = textKey(featureName);
   if (!wanted) {
     return null;
   }
   const custom = CUSTOM_BACKGROUNDS.find((entry) => textKey(entry.feature) === wanted);
   if (custom) {
-    return custom.featureDesc;
+    return localizeBackgroundFeatureText(custom.featureDesc, locale);
   }
   const srd = SRD_BACKGROUNDS.find((entry) => textKey(entry.feature) === wanted);
-  return srd?.featureDesc ?? null;
+  return srd ? localizeBackgroundFeatureText(srd.featureDesc, locale) : null;
+}
+
+// The source text, not a feature name, identifies a reviewed description.
+export function localizeBackgroundFeatureText(text: string, locale: "en" | "fr" | "cs"): string {
+  if (locale !== "cs") return text;
+  const translated = translate(locale, text);
+  const reviewed: Readonly<Record<string, string>> = backgroundFeatureCs;
+  return translated !== text ? translated : Object.hasOwn(reviewed, text) ? reviewed[text] : text;
 }

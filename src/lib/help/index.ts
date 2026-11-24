@@ -14,6 +14,9 @@ import glossaryJson from "@/lib/help/glossary.json";
 import srdFeaturesJson from "@/lib/help/srd-features.json";
 import starterSpellsJson from "@/lib/help/starter-spells.json";
 import skillsJson from "@/lib/srd/skills.json";
+import { skillLabel } from "@/lib/srd";
+import { speciesTraitName } from "@/lib/content/names";
+import { damageTypeWord } from "@/lib/dm/damage-logic";
 import { describeBackgroundFeature } from "@/lib/backgrounds";
 import { classFeatureDescription, spellClassFor } from "@/lib/classes";
 import { srdRaceFor } from "@/lib/content/race-options";
@@ -39,6 +42,9 @@ export type GlossaryTerm = {
   short: string;
   // The French of `short`, present on every entry.
   shortFr?: string;
+  cs?: string;
+  shortCs?: string;
+  longCs?: string;
   long?: string;
   // The French of `long`, present wherever `long` is.
   longFr?: string;
@@ -105,34 +111,42 @@ export function describeFeature(classId: string, subclass: string, name: string,
   // option list, before any of the feature tables are consulted.
   const option = findOptionByFeatureName(name);
   if (option) {
+    if (locale === "cs") {
+      const description = translate(locale, option.d);
+      return option.req ? `${description} (Vyžaduje: ${translate(locale, option.req)}.)` : description;
+    }
     return option.req ? `${option.d} (Requires ${option.req}.)` : option.d;
   }
   // A workshop subclass's pick ("Bloodline (Storm)") from the subclasses the
   // page registered (issue #833).
   const pick = subclassChoicePickDescription(name);
   if (pick) {
-    return pick;
+    return locale === "cs" ? translate(locale, pick) : pick;
   }
   // Written beside such a pick: the element its option deals in. The
   // element's sentence stays the engine's English: it quotes the subclass's
   // own rules text (rulebook prose, not a table word).
   const element = choiceDamageTypeOf(name);
   if (element) {
+    if (locale === "cs") return `Zvolený živel (${translate(locale, element.label)}): ${damageTypeWord(element.type, locale)} zranění. Živlová afinita, pokud ji archetyp má, posiluje kouzla tohoto typu zranění a poskytuje vůči němu odolání.`;
     return `The element of the ${element.label} chosen: ${element.type}. Elemental Affinity, where the subclass has it, adds to spells of this damage type and resists it.`;
   }
   const resource = matchResource(name);
   const classText = classFeatureDescription(classId, name);
   const found =
     subclassFeatureDescription(classId, subclass, name) ??
-    (classText && locale === "cs" ? translate(locale, classText) : classText) ??
+    classText ??
     exactSrdText(classId, name) ??
     // The background's feature sits on the sheet as "Shelter of the
     // Faithful (Acolyte)"; the bare name finds its text.
-    describeBackgroundFeature(baseName(name)) ??
+    describeBackgroundFeature(baseName(name), locale) ??
     (resource ? resourceGuidance(resource.id, locale) ?? resource.guidance : null) ??
     guidanceFor({ class: classId, features: [], feature: name }) ??
     looseSrdText(classId, name);
-  return stripLeadingLabel(found, name);
+  // Localize the text chosen by the original resolution order, not a less
+  // specific description that happens to have a translation.
+  const localized = found && locale === "cs" ? translate(locale, found) : found;
+  return stripLeadingLabel(localized, name);
 }
 
 // Where a sheet's feature chip finds text the bundled tables do not hold: a
@@ -157,9 +171,17 @@ export function backgroundFeatureReference(
 // ("Darkvision 60 ft", "Powerful Build (count as one size larger for
 // carrying)"), so the trait list IS the description. A pack slug or the
 // pack's "odm-" copy of a bundled race resolves to the same entry.
-export function describeRace(raceId: string): string | null {
+export function describeRace(raceId: string, locale: Locale = "en"): string | null {
   const race = srdRaceFor(raceId);
-  return race ? race.traits.join(". ") + "." : null;
+  return race ? race.traits.map((trait) => locale === "cs" ? speciesTraitName(raceId, trait, locale) : trait).join(". ") + "." : null;
+}
+
+// The sheet stores the canonical trait line; use the same reader-facing map
+// as its title rather than looking up a class feature with the same name.
+export function describeRaceTrait(raceId: string, name: string, locale: Locale): string | null {
+  if (locale !== "cs") return null;
+  const localized = speciesTraitName(raceId, name, locale);
+  return localized !== name ? localized : null;
 }
 
 const SKILLS = (skillsJson as { skills: Array<{ id: string; name: string; fr?: string; ability: string }> })
@@ -179,11 +201,11 @@ export function describeSkill(
     return null;
   }
   const ability = glossaryTerm(skill.ability);
-  const skillName = locale === "fr" && skill.fr ? skill.fr : skill.name;
+  const skillName = skillLabel(skill.id, locale);
   const abilityName =
-    locale === "fr" && ability?.fr ? ability.fr : ability?.term ?? skill.ability.toUpperCase();
+    (locale === "cs" ? ability?.cs : locale === "fr" ? ability?.fr : undefined) ?? ability?.term ?? skill.ability.toUpperCase();
   return `${t("{skill} uses {ability}.", { skill: skillName, ability: abilityName })} ${
-    (locale === "fr" && ability?.shortFr ? ability.shortFr : ability?.short) ?? ""
+    (locale === "cs" ? ability?.shortCs : locale === "fr" ? ability?.shortFr : undefined) ?? ability?.short ?? ""
   }`.trim();
 }
 
@@ -225,6 +247,12 @@ export function describeContentEntry(data: Record<string, unknown> | undefined, 
   }
   const focusFeature = typeof data.feature === "string" ? data.feature.trim() : "";
   const focusText = textOf(data.feature_desc).trim();
+  if (focus && focusFeature && textKey(focus) === textKey(focusFeature) && typeof data.localized_desc === "string" && data.localized_desc.trim()) {
+    // Reviewed expansion backgrounds carry one complete translated display
+    // description, not separately aligned paragraphs. Prefer it to an
+    // English-only feature excerpt; never fabricate a translated excerpt.
+    return normalizeRulesText(data.localized_desc) || null;
+  }
   if (focus && focusFeature && focusText && textKey(focus) === textKey(focusFeature)) {
     return normalizeRulesText(`**Feature: ${focusFeature}.** ${focusText}`) || null;
   }

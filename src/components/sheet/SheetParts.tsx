@@ -9,7 +9,7 @@ import { CountPop } from "@/components/ui/Reveal";
 import { cn } from "@/lib/cn";
 import { conditionIconKey } from "@/lib/battlemap/condition-glyphs";
 import { describeConditionDuration } from "@/lib/dm/condition-logic";
-import { backgroundFeatureReference, contentSlug, describeFeature } from "@/lib/help";
+import { backgroundFeatureReference, contentSlug, describeFeature, describeRaceTrait } from "@/lib/help";
 import { useClassFeatureText } from "@/lib/classes/use-feature-text";
 import { ABILITIES } from "@/lib/schemas/sheet";
 import { formatModifier, skillLabel, SRD_SKILLS } from "@/lib/srd";
@@ -439,7 +439,8 @@ export function FeatureChips({
         icon: { kind: "feature" as const, key: feature.name, family: `class-${classId.toLowerCase()}` },
         note: feature.source === "story" ? t("(story)") : undefined,
         meta: feature.level ? t("Level {level}", { level: feature.level }) : undefined,
-        text: describeFeature(classId, subclass ?? "", feature.name, locale) ?? undefined,
+        text: (feature.source === "race" && raceId ? describeRaceTrait(raceId, feature.name, locale) : null)
+          ?? describeFeature(feature.classId ?? classId, subclass ?? "", feature.name, locale) ?? undefined,
         reference: backgroundFeatureReference(feature, background, classId, subclass ?? "") ?? undefined,
       }))}
     />

@@ -35,11 +35,10 @@ export function GameTerm({
   if (!entry) {
     return <>{children}</>;
   }
-  const label = locale === "fr" && entry.fr ? entry.fr : (children ?? entry.term);
-  const french = locale === "fr";
+  const label = (locale === "cs" ? entry.cs : locale === "fr" ? entry.fr : undefined) ?? (children ?? entry.term);
   const body = [
-    french && entry.shortFr ? entry.shortFr : entry.short,
-    french && entry.longFr ? entry.longFr : entry.long,
+    (locale === "cs" ? entry.shortCs : locale === "fr" ? entry.shortFr : undefined) ?? entry.short,
+    (locale === "cs" ? entry.longCs : locale === "fr" ? entry.longFr : undefined) ?? entry.long,
   ]
     .filter(Boolean)
     .join("\n\n");

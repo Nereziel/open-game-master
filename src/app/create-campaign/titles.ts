@@ -139,6 +139,205 @@ const BANKS_FR: Record<string, Bank> = {
   },
 };
 
+// Czech marks and places are phrases independent of the noun's gender.
+const BANKS_CS: Record<string, Bank> = {
+  "high_fantasy": {
+    "things": [
+      "Koruna",
+      "Přísaha",
+      "Trůn",
+      "Žár",
+      "Čepel",
+      "Propast",
+      "Příliv",
+      "Píseň",
+      "Drak",
+      "Lucerna"
+    ],
+    "places": [
+      "v Popelavém království",
+      "u Šedých vod",
+      "v Potopené tvrzi",
+      "na Trnovém hradě",
+      "ve Stříbrné marce",
+      "ve Vaelu",
+      "na Staré cestě",
+      "v Žáropádu"
+    ],
+    "marks": [
+      "bez dědice",
+      "z mlh",
+      "zapomnění",
+      "v plamenech",
+      "beze slov",
+      "bez konce",
+      "z dávných časů"
+    ]
+  },
+  "dark_fantasy": {
+    "things": [
+      "Hniloba",
+      "Hlad",
+      "Hranice",
+      "Zvon",
+      "Koruna",
+      "Rána",
+      "Závoj",
+      "Hrob"
+    ],
+    "places": [
+      "v Prokletém údolí",
+      "v Havranově",
+      "v Popelavém opatství",
+      "na Konci úsvitu",
+      "u Utopeného chóru"
+    ],
+    "marks": [
+      "z temnot",
+      "bez naděje",
+      "beze dna",
+      "z krve",
+      "bez milosti",
+      "z popela"
+    ]
+  },
+  "mystery": {
+    "things": [
+      "Dopis",
+      "Klíč",
+      "Medailon",
+      "Účetní kniha",
+      "Portrét",
+      "Hodiny",
+      "Maškarní ples",
+      "Závěť"
+    ],
+    "places": [
+      "na Černoleském panství",
+      "v Harrowově ulici",
+      "ve Zlatém divadle",
+      "v sídle Fenwickových",
+      "v nočním vlaku"
+    ],
+    "marks": [
+      "bez adresy",
+      "o půlnoci",
+      "beze slov",
+      "v rudé",
+      "poslední hodiny",
+      "beze stopy"
+    ]
+  },
+  "horror": {
+    "things": [
+      "Hlad",
+      "Šepot",
+      "Zvon",
+      "Temnota",
+      "Dveře",
+      "Ukolébavka",
+      "Návštěvník",
+      "Sklizeň"
+    ],
+    "places": [
+      "u Dutého potoka",
+      "v ústavu",
+      "v Solných močálech",
+      "u majáku",
+      "ve Vdovině útočišti"
+    ],
+    "marks": [
+      "bez konce",
+      "utopenců",
+      "z hlubin",
+      "beze zvuku",
+      "posledního dechu",
+      "bez tváře"
+    ]
+  },
+  "cyberpunk": {
+    "things": [
+      "Signál",
+      "Duch",
+      "Protokol",
+      "Šum",
+      "Kontrakt",
+      "Obvod",
+      "Porucha",
+      "Neon"
+    ],
+    "places": [
+      "v sektoru devět",
+      "v podzemním městě",
+      "ve věžích Kowloonu",
+      "ve Skleněné věži",
+      "na nočním trhu"
+    ],
+    "marks": [
+      "mimo síť",
+      "z chromu",
+      "bez spojení",
+      "v utajení",
+      "na nule",
+      "bez ozvěny"
+    ]
+  },
+  "steampunk": {
+    "things": [
+      "Stroj",
+      "Soukolí",
+      "Vzducholoď",
+      "Automat",
+      "Výheň",
+      "Kompas",
+      "Výprava",
+      "Patent"
+    ],
+    "places": [
+      "v Mosazném přístavu",
+      "v Železné čtvrti",
+      "v Oblačných docích",
+      "v Ozubeném městě",
+      "na Měděné trati"
+    ],
+    "marks": [
+      "z mosazi",
+      "poslední cesty",
+      "bez návratu",
+      "beze zvuku",
+      "na pružinu",
+      "ze zlata"
+    ]
+  },
+  "post_apocalyptic": {
+    "things": [
+      "Pustina",
+      "Signál",
+      "Konvoj",
+      "Voda",
+      "Spad",
+      "Rádio",
+      "Bunkr",
+      "Prach"
+    ],
+    "places": [
+      "u Vyschlého moře",
+      "na silnici 66",
+      "ve Skleněné poušti",
+      "v Rezavém městě",
+      "v Mrtvé zóně"
+    ],
+    "marks": [
+      "posledního dne",
+      "v plamenech",
+      "bez frekvence",
+      "z rzi",
+      "bez vln",
+      "po konci světa"
+    ]
+  }
+};
+
 const pickOne = <T,>(list: T[], random: () => number) => list[Math.floor(random() * list.length) % list.length];
 
 // Titles start the sentence they are, so the thing's article is capitalised
@@ -147,12 +346,13 @@ const cap = (title: string) => title.charAt(0).toUpperCase() + title.slice(1);
 
 export function rollCampaignTitle(genre: string, current = "", random: () => number = Math.random, locale: Locale = "en"): string {
   const french = locale === "fr";
-  const bank = french ? BANKS_FR[genre] ?? FANTASY_FR : BANKS[genre] ?? FANTASY;
+  const czech = locale === "cs";
+  const bank = czech ? BANKS_CS[genre] ?? BANKS_CS.high_fantasy : french ? BANKS_FR[genre] ?? FANTASY_FR : BANKS[genre] ?? FANTASY;
   for (let attempt = 0; attempt < 8; attempt += 1) {
     const shape = Math.floor(random() * 3);
     // The three shapes: « Le X Y », « Le X de Z », « Le X Y de Z » in
     // French; "The X Y", "X of Z", "The X Y of Z" in English.
-    const title = french
+    const title = french || czech
       ? cap(
           shape === 0
             ? `${pickOne(bank.things, random)} ${pickOne(bank.marks, random)}`
@@ -167,7 +367,7 @@ export function rollCampaignTitle(genre: string, current = "", random: () => num
           : `The ${pickOne(bank.marks, random)} ${pickOne(bank.things, random)} of ${pickOne(bank.places, random)}`;
     if (title !== current) return title;
   }
-  return french
+  return french || czech
     ? cap(`${pickOne(bank.things, random)} ${pickOne(bank.places, random)}`)
     : `${pickOne(bank.things, random)} of ${pickOne(bank.places, random)}`;
 }
