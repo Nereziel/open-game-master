@@ -205,4 +205,21 @@ for (const [locale, catalog] of [["fr", frCatalog], ["cs", csCatalog]]) {
 assert.equal(translatePlural("cs", "another skill", "{count} other skills", { count: 2 }), "2 další dovednosti");
 assert.equal(translatePlural("cs", "another skill", "{count} other skills", { count: 5 }), "5 dalších dovedností");
 
+// Admin language labels and model explanations are UI translations, not
+// model identifiers. Interpolation must preserve the operator's model name.
+const adminModel = "Xenova/multilingual-e5-small";
+for (const [locale, expectedLabel] of [["en", "Server language"], ["fr", "Langue du serveur"], ["cs", "Jazyk serveru"]]) {
+  assert.equal(translate(locale, "Server language"), expectedLabel);
+  for (const key of [
+    "Memory search reads with {model}, set by EMBEDDING_MODEL in .env.server. Remove that line to let the language choose.",
+    "Memory search reads with {model}, which reads English.",
+    "Memory search reads with {model}, which reads every table language.",
+  ]) {
+    const message = translate(locale, key, { model: adminModel });
+    assert.ok(message.includes(adminModel), locale);
+    assert.ok(!message.includes("{model}"), locale);
+    if (locale !== "en") assert.notEqual(message, translate("en", key, { model: adminModel }));
+  }
+}
+
 console.log("test-i18n-gettext: all assertions and catalog placeholder checks passed");
