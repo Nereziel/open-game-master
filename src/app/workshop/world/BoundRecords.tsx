@@ -9,6 +9,7 @@ import { BINDINGS_MAX, isPlaceBinding, type Binding, type BindingKind, type Plac
 import type { WorldEntity } from "@/lib/db/world-forge";
 import type { WorldApi } from "./useWorld";
 import type { OpenSystem } from "./WorldForgePanel";
+import { worldBoundName, worldBoundDetail } from "@/lib/worldforge/display";
 import { useT } from "@/lib/locale";
 
 // "Use at the table": the playable records a World entry stands for (audit
@@ -167,8 +168,8 @@ export function BoundRecords({
           <span className="text-[10px] uppercase tracking-[0.12em] text-stone-500">{t(WORD_KEYS[record.kind].one)}</span>
           {record.found ? (
             <span className="text-stone-100">
-              {record.name}
-              {record.detail ? <span className="text-stone-500"> · {record.detail}</span> : null}
+              {worldBoundName(record, t.locale)}
+              {record.detail ? <span className="text-stone-500"> · {worldBoundDetail(t, record)}</span> : null}
             </span>
           ) : (
             <span className="text-amber-300">{t("Not found at this table any more")}</span>
