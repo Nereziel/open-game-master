@@ -282,9 +282,7 @@ export function ContentImportPicker({
   }
 
   // Said beside an import's note too, less what the note already says.
-  const unsaid = note?.result
-    ? standing.messages.filter((message) => !importNames(note.result?.worldConflicts).includes(message))
-    : standingUnsaid(standing.messages, note?.text);
+  const unsaid = standingUnsaid(standing.messages, note?.text, note?.result ? importNames(note.result.worldConflicts) : undefined);
   const unsaidText = importResultNotesText(unsaid, standing.displays, t);
   const unsaidLine = unsaid.length ? (
     <p className="flex items-start gap-1.5 text-xs text-amber-300/90" data-testid="import-kept-standing">
