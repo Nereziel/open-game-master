@@ -29,7 +29,7 @@ import { SectionHead } from "@/components/ui/SectionHead";
 import { Select } from "@/components/ui/Select";
 import { Field, FieldLabel, OptionalStepper, addChip, chip, chipOn, chipRow, rowIcon } from "@/app/workshop/kit";
 import { textKey } from "@/lib/language/text-logic";
-import { translate } from "@/lib/messages-logic";
+import { skillLabel } from "@/lib/srd";
 import { useLocale, useT } from "@/lib/locale";
 import { gameTermWord } from "@/lib/i18n/game-term-labels";
 
@@ -62,8 +62,7 @@ function signed(value: number): string {
 type Setter = (patch: Partial<EnemyStats>) => void;
 
 const capital = (text: string) => text.replace(/(^|\s)\S/g, (letter) => letter.toUpperCase());
-const ALIGNMENT_OPTIONS = ALIGNMENTS.map((alignment) => ({ value: alignment as string, label: alignment ? capital(alignment) : "Unstated" }));
-const SECTION_OPTIONS = TRAIT_SECTIONS.map((section) => ({ value: section, label: SECTION_LABELS[section] }));
+
 // The painted glyph for a sense; the names are the engine's keys.
 const SENSE_GLYPHS: Record<string, string> = {
   blindsight: "sense-blindsight",
@@ -75,15 +74,7 @@ const SENSE_GLYPHS: Record<string, string> = {
 // What each skill and alignment means, for the ⓘ beside those lists. The
 // alignment blurbs are the character builder's; the bestiary's list uses
 // the spelled-out names, so they are matched by name.
-const en = (key: string, vars?: Record<string, string | number>) => translate("en", key, vars);
-const SKILL_GLOSSARY: GlossaryEntry[] = SKILL_NAMES.flatMap((name) => {
-  const blurb = describeSkill(en, name.toLowerCase().replace(/\s+/g, "_")) ?? describeSkill(en, name);
-  return blurb ? [{ name, blurb }] : [];
-});
-const ALIGNMENT_GLOSSARY: GlossaryEntry[] = Object.values(ALIGNMENT_LABELS).map((entry) => ({
-  name: entry.name,
-  blurb: entry.blurb,
-}));
+const skillId = (name: string) => name.toLowerCase().replace(/\s+/g, "_");
 
 export function AbilityScores({ draft, onChange }: { draft: MonsterDraft; onChange: (draft: MonsterDraft) => void }) {
   const t = useT();
@@ -134,13 +125,13 @@ export function AbilityScores({ draft, onChange }: { draft: MonsterDraft; onChan
           <div key={ability} className="flex flex-col gap-1">
             <span className="flex items-center gap-1">
               <GameIcon icon={{ kind: "glyph", key: `ability-${ability}` }} size="size-5" />
-              <FieldLabel className="uppercase">{ability}</FieldLabel>
+              <FieldLabel className="uppercase">{t(ability.toUpperCase())}</FieldLabel>
               {typeof scores[ability] === "number" ? (
                 <span className="text-[11px] text-stone-400">{signed(abilityMod(scores[ability] as number))}</span>
               ) : null}
             </span>
             <OptionalStepper
-              label={t("{ability} score", { ability: ability.toUpperCase() })}
+              label={t("{ability} score", { ability: t(ability.toUpperCase()) })}
               min={1}
               max={50}
               fallback={10}
@@ -160,6 +151,11 @@ export function SkillsAndSenses({ draft, onChange }: { draft: MonsterDraft; onCh
   const stats = draft.stats;
   const set: Setter = (patch) => onChange({ ...draft, stats: { ...stats, ...patch } });
   const skills = stats.skills ?? {};
+  const skillGlossary: GlossaryEntry[] = SKILL_NAMES.flatMap((name) => {
+    const id = skillId(name);
+    const blurb = describeSkill(t, id, locale);
+    return blurb ? [{ name: skillLabel(id, locale), blurb }] : [];
+  });
   const senses = stats.senses ?? {};
   const passiveDefault = 10 + (skills.perception ?? stats.saveMods?.wis ?? 0);
   const setSense = (name: keyof NonNullable<EnemyStats["senses"]>, value: number | "") => {
@@ -177,7 +173,7 @@ export function SkillsAndSenses({ draft, onChange }: { draft: MonsterDraft; onCh
         <SectionHead title={t("Skills and senses")} glyph="skill-perception" className="mb-1" />
         <span className="flex items-center gap-1">
           <FieldLabel>{t("Skills (tap to add, type the bonus)")}</FieldLabel>
-          <OptionGlossary title={t("Skills")} entries={SKILL_GLOSSARY} />
+          <OptionGlossary title={t("Skills")} entries={skillGlossary} />
         </span>
         <div className={cn("stagger-pop", chipRow)}>
           {SKILL_NAMES.map((name) => {
@@ -200,12 +196,12 @@ export function SkillsAndSenses({ draft, onChange }: { draft: MonsterDraft; onCh
                   className={cn(ui.btnSmall, chip, on && chipOn)}
                 >
                   <GameIcon icon={{ kind: "glyph", key: `skill-${name.toLowerCase().replace(/\s+/g, "-")}` }} size="size-4" />
-                  {name}
+                  {skillLabel(skillId(name), locale)}
                 </button>
                 {on ? (
                   <NumberStepper
                     size="sm"
-                    label={t("{name} bonus", { name })}
+                    label={t("{name} bonus", { name: skillLabel(skillId(name), locale) })}
                     min={-5}
                     max={20}
                     value={bonus}
@@ -265,6 +261,8 @@ export function LanguagesAndHabitat({ draft, onChange }: { draft: MonsterDraft; 
   const t = useT();
   const stats = draft.stats;
   const set: Setter = (patch) => onChange({ ...draft, stats: { ...stats, ...patch } });
+  const alignmentOptions = ALIGNMENTS.map((alignment) => ({ value: alignment as string, label: t(alignment ? capital(alignment) : "Unstated") }));
+  const alignmentGlossary: GlossaryEntry[] = Object.values(ALIGNMENT_LABELS).map((entry) => ({ name: t(entry.name), blurb: t(entry.blurb) }));
   const environment = stats.environment ?? [];
   const spells = stats.spells ?? [];
   return (
@@ -276,23 +274,23 @@ export function LanguagesAndHabitat({ draft, onChange }: { draft: MonsterDraft; 
             <input
               value={stats.languages ?? ""}
               maxLength={200}
-              placeholder="Common, Goblin"
+              placeholder={t("Common, Goblin")}
               onChange={(event) => set({ languages: event.target.value || undefined })}
               className={cn(ui.input, "min-w-32 flex-1")}
             />
             <AddFromList
               prompt={t("Add")}
-              options={LANGUAGES}
+              options={LANGUAGES.map((value) => ({ value, label: t(value, { context: "character.language" }) }))}
               onPick={(term) => set({ languages: appendTerm(stats.languages ?? "", term) })}
             />
           </div>
         </Field>
-        <Field label={t("Alignment")} aside={<OptionGlossary title={t("Alignments")} entries={ALIGNMENT_GLOSSARY} />}>
+        <Field label={t("Alignment")} aside={<OptionGlossary title={t("Alignments")} entries={alignmentGlossary} />}>
           <Select
             label={t("Alignment")}
             value={stats.alignment ?? ""}
             onChange={(next) => set({ alignment: next || undefined })}
-            options={ALIGNMENT_OPTIONS}
+            options={alignmentOptions}
           />
         </Field>
       </div>
@@ -305,7 +303,7 @@ export function LanguagesAndHabitat({ draft, onChange }: { draft: MonsterDraft; 
           key={spells.join("|")}
           maxLength={800}
           aria-label={t("Spells known")}
-          placeholder="Fire Bolt, Shield, Misty Step"
+          placeholder={t("Fire Bolt, Shield, Misty Step")}
           onBlur={(event) => {
             const next = event.target.value.split(",").map((name) => name.trim()).filter(Boolean);
             if (next.join("|") !== spells.join("|")) {
@@ -345,7 +343,7 @@ export function LanguagesAndHabitat({ draft, onChange }: { draft: MonsterDraft; 
                 }}
                 className={cn(ui.btnSmall, chip, on && chipOn)}
               >
-                {place}
+                {t(capital(place))}
               </button>
             );
           })}
@@ -373,7 +371,7 @@ export function SectionedTraitEditor({ draft, onChange }: { draft: MonsterDraft;
                 label={t("Section")}
                 value={section}
                 onChange={(next) => setTraits(traits.map((row, at) => (at === index ? withSection(row, next) : row)))}
-                options={SECTION_OPTIONS}
+                options={TRAIT_SECTIONS.map((value) => ({ value, label: t(SECTION_LABELS[value]) }))}
               />
             </span>
             <input
@@ -382,7 +380,7 @@ export function SectionedTraitEditor({ draft, onChange }: { draft: MonsterDraft;
               onChange={(event) =>
                 setTraits(traits.map((row, at) => (at === index ? withSection(event.target.value, section) : row)))
               }
-              placeholder="Fire Breath (Recharge 5-6): DC 15 Dex save, 6d6 fire, half on a success"
+              placeholder={t("Fire Breath (Recharge 5-6): DC 15 Dex save, 6d6 fire, half on a success")}
               className={cn(ui.input, "min-w-40 flex-1")}
             />
             <button
@@ -405,7 +403,7 @@ export function SectionedTraitEditor({ draft, onChange }: { draft: MonsterDraft;
               onClick={() => setTraits([...traits, withSection("", section)])}
               className={cn(ui.btnSmall, addChip)}
             >
-              <Plus className="size-3" /> {SECTION_LABELS[section]}
+              <Plus className="size-3" /> {t(SECTION_LABELS[section])}
             </button>
           ))}
         </div>
