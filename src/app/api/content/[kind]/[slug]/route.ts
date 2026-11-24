@@ -86,7 +86,7 @@ export async function GET(
   const brewed = homebrewKind ? findHomebrewBySlug(scope.userIds, homebrewKind, decoded) : null;
   if (brewed) return asEntry(brewed);
   // The info button may know the canonical ID without the bundled srd: prefix.
-  if (locale === "cs" && !decoded.includes(":")) {
+  if (!decoded.includes(":")) {
     const row = kind === "spells" ? bundledSpellRows().find((r) => r.slug === `srd:${decoded}`)
       : kind === "items" ? bundledItemRows().find((r) => r.slug === `srd:${decoded}`) : undefined;
     if (row) return Response.json({ entry: localize(row) });
