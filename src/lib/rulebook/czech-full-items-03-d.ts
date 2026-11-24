@@ -32,15 +32,15 @@ Když držíš tento štít, máš výhodu k záchranným hodům proti kouzlům 
 
 Tato černá koule o průměru 2 stopy je otvorem v mnohovesmíru. Vznáší se v prostoru a stabilizuje ji okolní magické pole.
 
-Koule naprosto zničí veškerou hmotu, kterou prochází nebo která prochází jí. Výjimkou jsou artefakty. Pokud není artefakt výslovně náchylný ke zničení *sférou zničení*, projde koulí bez újmy. Cokoli jiného, co se koule dotkne, ale není jí zcela pohlceno a zničeno, utrpí silové zranění 4k10.
+Koule naprosto zničí veškerou hmotu, kterou prochází nebo která prochází jí. Výjimkou jsou artefakty. Pokud není artefakt náchylný ke zranění způsobenému *koulí zničení*, projde koulí bez újmy. Cokoli jiného, co se koule dotkne, ale není jí zcela pohlceno a zničeno, utrpí silové zranění 4k10.
 
 Dokud ji někdo neovládne, koule zůstává na místě. Pokud jsi do 60 stop od neovládané koule, můžeš jako akci provést ověření Inteligence (Mystiky) se SO 25. Při úspěchu se koule vznášením pohne směrem podle tvé volby až o počet stop rovný 5 × tvá oprava Inteligence (nejméně 5 stop). Při neúspěchu se koule pohne o 10 stop k tobě. Tvor, do jehož prostoru koule vstoupí, musí uspět v záchranném hodu na Obratnost se SO 13, jinak se ho dotkne a utrpí silové zranění 4k10.
 
 Pokusíš-li se ovládnout kouli, kterou už řídí jiný tvor, provedeš ověření Inteligence (Mystiky) v soupeření s jeho ověřením Inteligence (Mystiky). Vítěz soupeření získá kontrolu nad koulí a může s ní běžně pohybovat vznášením.
 
-Pokud se koule dotkne portálu mezi sférami, například portálu vytvořeného kouzlem *brána*, nebo mimodimenzionálního prostoru, například v *přenosné díře*, PJ náhodně určí, co se stane, podle následující tabulky.
+Pokud se koule dotkne portálu mezi sférami, například portálu vytvořeného kouzlem *brána*, nebo mimodimenzionálního prostoru, například v *přenosném otvoru*, PJ náhodně určí, co se stane, podle následující tabulky.
 
-**Tabulka – Sféra zničení**
+**Tabulka – Koule zničení**
 
 | k100 | Výsledek |
 |------|----------|
@@ -87,7 +87,7 @@ Hůl má 20 nábojů pro následující vlastnosti. Každý den za úsvitu si ob
 
 Máš 50procentní šanci okamžitě se přenést do náhodně určené sféry existence a výbuchu uniknout. Pokud mu neunikneš, utrpíš silové zranění rovné 16 × počet nábojů v holi. Každý další tvor v oblasti musí provést záchranný hod na Obratnost se SO 17. Při neúspěchu utrpí zranění podle své vzdálenosti od místa výbuchu, jak uvádí tabulka. Při úspěchu utrpí poloviční zranění.
 
-**Tabulka – Hůl moci**
+**Tabulka – Berla moci**
 
 | Vzdálenost od středu | Zranění |
 |---------------------|---------|
