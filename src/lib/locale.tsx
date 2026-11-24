@@ -1,9 +1,8 @@
 "use client";
 
 import { Suspense, createContext, use, useCallback, useContext, useEffect, useMemo, useSyncExternalStore, type ReactNode } from "react";
-import { loadCatalog } from "./i18n/catalog-loader";
+import { loadCatalog, catalogReady } from "./i18n/catalog-loader";
 import { LOCALE_COOKIE, parseLocale } from "./i18n/locale";
-import { catalogInstalled } from "./i18n/translate";
 import { localeTag, translate, translatePlural, type Locale, type MessageKey, type MessageVars } from "./messages-logic";
 
 // The interface's language, beside the theme and the scale (theme-mode.ts).
@@ -136,7 +135,7 @@ export function writeLocaleChoice(choice: LocaleChoice) {
 // English, then every translated string switches together when it lands.
 function shownLocale(): Locale {
   const wanted = resolveLocale(readLocaleChoice());
-  if (catalogInstalled(wanted)) {
+  if (catalogReady(wanted)) {
     return wanted;
   }
   void loadCatalog(wanted).then(() => {
@@ -153,7 +152,7 @@ export function applyLocale() {
     return;
   }
   const wanted = resolveLocale(readLocaleChoice());
-  document.documentElement.lang = localeTag(catalogInstalled(wanted) ? wanted : "en");
+  document.documentElement.lang = localeTag(catalogReady(wanted) ? wanted : "en");
 }
 
 export function useLocale(): Locale {
