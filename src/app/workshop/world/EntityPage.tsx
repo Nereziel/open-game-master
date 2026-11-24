@@ -94,7 +94,7 @@ export function EntityPage({
   const events = sortEvents(doc.events.filter((event) => event.refs.includes(entity.ref)), doc.calendars);
   const secrets = doc.secrets.filter((secret) => secret.subject === entity.ref || secret.knownBy.includes(entity.ref));
   const span = lifespan(type, entity.entry, doc.calendars);
-  const lifeLine = formatLifespan(type, entity.entry, doc.calendars);
+  const lifeLine = formatLifespan(type, entity.entry, doc.calendars, t.locale);
   // One account, and each other text under its own name
   // (src/lib/worldforge/account.ts): a place's arrival text beside its
   // article, a lore entry's older article waiting for the author's choice.
@@ -324,7 +324,7 @@ export function EntityPage({
           <h4 className="eyebrow text-[10px] text-amber-400/80">{t("On the timeline")}</h4>
           {events.map((event) => {
             const when = formatYear(event.when, doc.calendars).primary;
-            const issue = lifespanIssue(span, absoluteYear(event.when, doc.calendars));
+            const issue = lifespanIssue(span, absoluteYear(event.when, doc.calendars), t.locale);
             return (
               <p key={event.id} className="text-sm text-stone-300">
                 <span className="text-stone-500">{when || t("Undated")}</span> {event.title}
