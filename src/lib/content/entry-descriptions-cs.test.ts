@@ -16,6 +16,8 @@ import featFixture from "../../../scripts/fixtures/reader-golden/feat.json";
 import backgroundFixture from "../../../scripts/fixtures/reader-golden/background.json";
 import expansionTranslations from "./expansion-descriptions-cs.json";
 import { packFeatText } from "@/lib/srd/feat-text";
+import { authoredFeatEntries } from "./authored-feats";
+import authoredFeatTranslations from "./authored-feat-descriptions-cs.json";
 import { contentName, contentNameMatches, localizedExpansionName, archetypeDisplayName, speciesTraitName } from "./names";
 import "../i18n/cs-catalog";
 import "../i18n/fr-catalog";
@@ -575,5 +577,40 @@ describe("Core SRD archetype display", () => {
     const row = { name: "Battle Master", slug: "fighter-battle-master", source: "bundled", documentSlug: "wotc-srd", data: { desc: "Different rules" } };
     expect(localizeEntry("archetypes", row, "cs")).toBe(row);
     expect(localizeEntry("archetypes", row, "fr")).toBe(row);
+  });
+});
+
+describe("Reviewed ODM authored feat rules", () => {
+  it("serves all 72 authored descriptions and preserves mechanical input", () => {
+    const rows = authoredFeatEntries();
+    expect(rows).toHaveLength(72);
+    expect(Object.keys(authoredFeatTranslations)).toHaveLength(rows.length);
+    let prerequisites = 0;
+    for (const row of rows) {
+      const original = packFeatText(row.data);
+      if (original.prerequisite) prerequisites++;
+      const result = localizeEntry("feats", row, "cs");
+      const { localized_desc, ...canonical } = result.data;
+      expect(typeof localized_desc, row.name).toBe("string");
+      expect(String(localized_desc), row.name).not.toContain(original.desc);
+      expect(String(localized_desc).includes("*Požadavek:"), row.name).toBe(Boolean(original.prerequisite));
+      expect(canonical).toEqual(row.data);
+      expect(packFeatText(result.data)).toEqual(original);
+      expect(result.slug).toBe(row.slug);
+      expect(result.name).toBe(row.name);
+      expect(localizeEntry("feats", row, "en")).toBe(row);
+      expect(localizeEntry("feats", row, "fr")).toBe(row);
+      expect(localizeEntry("feats", { ...row, slug: "odm-" + row.slug }, "cs").data.localized_desc).toBe(localized_desc);
+      for (const foreign of [
+        { ...row, documentSlug: "unrelated-book" },
+        { ...row, source: "homebrew" },
+        { ...row, slug: "different-slug" },
+        { ...row, data: { ...row.data, desc: original.desc + " Changed." } },
+        { ...row, data: { ...row.data, prerequisite: original.prerequisite + " Changed." } },
+      ]) {
+        expect(localizeEntry("feats", foreign, "cs")).toBe(foreign);
+      }
+    }
+    expect(prerequisites).toBe(30);
   });
 });
