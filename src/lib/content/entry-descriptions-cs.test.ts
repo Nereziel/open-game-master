@@ -1,7 +1,7 @@
 import { describe, expect, it } from "vitest";
 import gearFr from "./item-descriptions-fr.json";
 import gearCs from "./item-descriptions-cs.json";
-import { buildItemSheet } from "../help/item-sheet";
+import { buildItemSheet, itemCardRows } from "../help/item-sheet";
 import { czechGearDescription } from "./entry-descriptions-cs";
 import { localizeEntry } from "./entry-descriptions";
 import { bundledItemRows, bundledSpellRows } from "@/lib/rulebook/catalog-rows";
@@ -398,5 +398,28 @@ describe("Czech everyday equipment display", () => {
   it("prefers reviewed localized prose for a matching background feature", () => {
     const data = { feature: "Secret Lore", feature_desc: "English description.", localized_desc: "Tajná znalost a její pravidla." };
     expect(describeContentEntry(data, "Secret Lore")).toBe(data.localized_desc);
+  });
+});
+
+describe("Item information card source identity", () => {
+  it("never borrows localized prose from a different book or homebrew with the same name", () => {
+    const core = { name: "Torch", slug: "torch", source: "open5e", documentSlug: "wotc-srd", data: { desc: "Core torch", localized_desc: "Pochodeň ze SRD" } };
+    const foreign = { name: "Torch", slug: "torch-toh", source: "open5e", documentSlug: "toh", data: { desc: "Different torch" } };
+    const brew = { name: "Torch", slug: "homebrew:torch", source: "homebrew", documentSlug: "homebrew", data: { desc: "My torch" } };
+    const otherBrew = { ...brew, slug: "homebrew:other", data: { localized_desc: "Unrelated" } };
+    for (const locale of ["en", "fr", "cs"] as const) {
+      expect(buildItemSheet("Torch", itemCardRows("Torch", foreign, [core, brew]), { locale })?.description).toBe("Different torch");
+      expect(buildItemSheet("Torch", itemCardRows("Torch", brew, [core, foreign, otherBrew]), { locale })?.description).toBe("My torch");
+      expect(itemCardRows("Torch", null, [foreign, core])).toEqual([foreign.data]);
+    }
+  });
+
+  it("still combines complementary SRD rows without borrowing another source", () => {
+    const stats = { name: "Torch", slug: "torch", source: "open5e", documentSlug: "wotc-srd", data: { weight: "1 lb." } };
+    const prose = { ...stats, slug: "torch-v2", documentSlug: "srd-2014", data: { desc: "English prose", localized_desc: "Český popis" } };
+    const other = { ...prose, documentSlug: "srd-2024", data: { localized_desc: "Wrong edition" } };
+    const rows = itemCardRows("Torch", stats, [other, prose]);
+    expect(rows).toEqual([stats.data, prose.data]);
+    expect(buildItemSheet("Torch", rows, { locale: "cs" })?.description).toBe("Český popis");
   });
 });
