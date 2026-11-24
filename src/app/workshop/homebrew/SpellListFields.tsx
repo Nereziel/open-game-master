@@ -154,7 +154,7 @@ export function CustomSpellList({
   const locale = useLocale();
   // A published class's name in the reader's language fills the list-pick
   // labels; English keeps the raw id, byte-identical to upstream's template.
-  const classWord = (id: string) => (locale === "fr" ? classDisplayNameFor(id, locale) : id);
+  const classWord = (id: string) => (locale === "en" ? id : classDisplayNameFor(id, locale));
   const [filling, setFilling] = useState("");
   // Levels of the picked names the checklist does not know (the pack's, the
   // author's homebrew), one lookup each, kept for the page's life.
