@@ -59,12 +59,12 @@ export function castingNumbers(input: {
   spellSaveDc: number | null | undefined;
   spellAttack: number | null | undefined;
   spellSlots: Record<string, { max: number }>;
-}): { dc: string | null; attack: string | null; slots: Array<{ level: number; label: string; max: number }> } {
+}, t: (key: string) => string = (key) => key): { dc: string | null; attack: string | null; slots: Array<{ level: number; label: string; max: number }> } {
   const slots = Object.entries(input.spellSlots)
     .map(([level, slot]) => ({ level: Number(level), max: slot.max }))
     .filter((slot) => slot.max > 0 && slot.level >= 1 && slot.level <= 9)
     .sort((a, b) => a.level - b.level)
-    .map((slot) => ({ ...slot, label: ORDINALS[slot.level] }));
+    .map((slot) => ({ ...slot, label: t(ORDINALS[slot.level]) }));
   return {
     dc: typeof input.spellSaveDc === "number" ? String(input.spellSaveDc) : null,
     attack: typeof input.spellAttack === "number" ? formatModifier(input.spellAttack) : null,
