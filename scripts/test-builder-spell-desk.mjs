@@ -20,7 +20,7 @@ const { SpellBook } = await import("../src/components/sheet/SpellBook.tsx");
 const filters = await import("../src/components/sheet/spellFilters.ts");
 const { installCatalog } = await import("../src/lib/i18n/translate.ts");
 const desk = await import("../src/app/characters/builder/spellDesk.ts");
-const { preparedCapLine, builderSpellAdvice, builderCasting } = await import("../src/app/characters/builder/casting.ts");
+const { preparedCapLine, preparedFormulaLine, preparedFormula, builderSpellAdvice, builderCasting } = await import("../src/app/characters/builder/casting.ts");
 const { thirdCasterSchoolProblem } = await import("../src/lib/srd/third-caster.ts");
 const { bundledSpellSchool } = await import("../src/lib/srd/spell-facts.ts");
 const { escapeIsOwned, OWNS_ESCAPE } = await import("../src/lib/owned-escape.ts");
@@ -212,6 +212,39 @@ test("each cap the step holds says its working", () => {
   const bard = desk.capLines({ className: "Bard", level: 2, cantripCap: 2, spellbookCap: null, spellCap: { label: "spells known", count: 5 }, known: true });
   assert.equal(bard.at(-1).line, "5, from the Bard table at level 2");
   assert.equal(bard.at(-1).label, "Known");
+});
+
+test("spell caps and limit formulas read in EN/FR/CS without changing counts", () => {
+  const words = {
+    en: { name: "Wizard", labels: ["Cantrips", "Spellbook", "Prepared"], lines: ["3, from the Wizard table at level 3", "6 at level 1 + 2 a level after = 10", "Wizard level 3 + INT +3 = 6"], book1: "6 at level 1", known: "Known", half: "Custom Caster level 5, halved (2) + WIS -3 = 1 (never fewer than 1)", formula: "Wisdom modifier (-3) + half your level, rounded down (2), and never fewer than 1", full: "Intelligence modifier (+3) + level (3)" },
+    fr: { name: "Magicien", labels: ["Sorts mineurs", "Grimoire", "Préparés"], lines: ["3, d’après la table de la classe Magicien au niveau 3", "6 au niveau 1 + 2 par niveau supplémentaire = 10", "Magicien, niveau 3 + INT +3 = 6"], book1: "6 au niveau 1", known: "Connu", half: "Custom Caster, niveau 5, divisé par deux (2) + SAG -3 = 1 (minimum 1)", formula: "modificateur de Sagesse (-3) + moitié du niveau, arrondie à l’inférieur (2), avec un minimum de 1", full: "modificateur de Intelligence (+3) + niveau (3)" },
+    cs: { name: "Kouzelník", labels: ["Triky", "Kniha kouzel", "Připraveno"], lines: ["3, podle tabulky povolání Kouzelník pro 3. úroveň", "6 na 1. úrovni + 2 za každou další úroveň = 10", "Kouzelník, 3. úroveň + INT +3 = 6"], book1: "6 na 1. úrovni", known: "Známé", half: "Custom Caster, 5. úroveň, polovina (2) + MDR -3 = 1 (nejméně 1)", formula: "oprava vlastnosti Moudrost (-3) + polovina úrovně, zaokrouhlená dolů (2), nejméně však 1", full: "oprava vlastnosti Inteligence (+3) + úroveň (3)" },
+  };
+  const sum = { ability: "int", mod: 3, level: 3, levelPart: 3 };
+  const half = { ability: "wis", mod: -3, level: 5, levelPart: 2 };
+  const before = JSON.stringify([sum, half]);
+  for (const locale of ["en", "fr", "cs"]) {
+    const w = words[locale];
+    if (locale !== "en") installCatalog(locale, JSON.parse(read(`src/lib/i18n/${locale}.json`)));
+    const input = { className: w.name, level: 3, cantripCap: 3, spellbookCap: 10, spellCap: { label: "spells prepared", count: 6, sum }, known: false };
+    const snapshot = JSON.stringify(input);
+    const lines = desk.capLines(input, locale);
+    assert.deepEqual(lines.map((line) => line.id), ["cantrips", "spellbook", "list"]);
+    assert.deepEqual(lines.map((line) => line.label), w.labels);
+    assert.deepEqual(lines.map((line) => line.line), w.lines);
+    assert.equal(JSON.stringify(input), snapshot);
+    assert.equal(desk.capLines({ ...input, level: 1, spellbookCap: 6 }, locale)[1].line, w.book1);
+    const known = desk.capLines({ ...input, cantripCap: null, spellbookCap: null, spellCap: { label: "spells known", count: 3 }, known: true }, locale);
+    assert.deepEqual(known, [{ id: "list", label: w.known, line: w.lines[0] }]);
+    const preparedWithoutSum = desk.capLines({ ...input, cantripCap: null, spellbookCap: null, spellCap: { label: "spells prepared", count: 3 }, known: false }, locale);
+    assert.deepEqual(preparedWithoutSum, [{ id: "list", label: w.labels[2], line: w.lines[0] }]);
+    assert.deepEqual(desk.capLines({ ...input, cantripCap: null, spellbookCap: null, spellCap: null }, locale), []);
+    assert.equal(preparedCapLine("Custom Caster", half, 1, locale), w.half);
+    assert.equal(preparedFormulaLine(half, locale), w.formula);
+    assert.equal(preparedFormulaLine(sum, locale), w.full);
+  }
+  assert.equal(preparedFormula("int", 3, "wizard", 3), words.en.full);
+  assert.equal(JSON.stringify([sum, half]), before);
 });
 
 test("the casting numbers are the sheet's, slots in order", () => {
