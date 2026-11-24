@@ -8,6 +8,8 @@ import { bundledItemRows, bundledSpellRows } from "@/lib/rulebook/catalog-rows";
 import { czechFullTranslation } from "@/lib/rulebook/czech-companion";
 import { rulebookPages } from "@/lib/rulebook/book";
 import { SRD_BACKGROUNDS } from "@/lib/srd";
+import { CUSTOM_BACKGROUNDS, describeBackgroundFeature } from "@/lib/backgrounds";
+import { translate } from "@/lib/i18n/translate";
 import { describeContentEntry } from "@/lib/help";
 import spellFixture from "../../../scripts/fixtures/reader-golden/spell.json";
 import featFixture from "../../../scripts/fixtures/reader-golden/feat.json";
@@ -466,6 +468,25 @@ describe("Core race and background presentation", () => {
     }
   });
 
+  it("reuses the installed gettext translations for every ODM genre background", () => {
+    expect(CUSTOM_BACKGROUNDS).toHaveLength(36);
+    for (const background of CUSTOM_BACKGROUNDS) {
+      const row = { name: background.name, slug: background.id, source: "bundled", documentSlug: "odm", data: { desc: background.blurb, feature: background.feature, feature_desc: background.featureDesc } as Record<string, unknown> };
+      const result = localizeEntry("backgrounds", row, "cs");
+      const { localized_desc, ...original } = result.data;
+      expect(contentName("backgrounds", row, "cs"), row.slug).not.toBe(row.name);
+      for (const key of ["name", "blurb", "feature", "featureDesc"] as const) {
+        expect(translate("cs", background[key]), row.slug + " " + key).not.toBe(background[key]);
+      }
+      expect(describeBackgroundFeature(background.feature, "cs")).toBe(translate("cs", background.featureDesc));
+      expect(String(localized_desc), row.slug).toContain(translate("cs", background.featureDesc));
+      expect(String(localized_desc), row.slug).toContain(translate("cs", background.blurb));
+      expect(String(localized_desc), row.slug).not.toContain("**Feature:");
+      expect(original).toEqual(row.data);
+      expect(localizeEntry("backgrounds", row, "en")).toBe(row);
+    }
+  });
+
   it("reuses the exact reviewed Czech feature text for a bundled background", () => {
     const background = SRD_BACKGROUNDS.find((entry) => entry.id === "acolyte")!;
     const row = { name: background.name, slug: background.id, source: "bundled", documentSlug: "odm", data: { desc: background.blurb, feature: background.feature, feature_desc: background.featureDesc } as Record<string, unknown> };
@@ -512,6 +533,16 @@ describe("Core SRD archetype display", () => {
           expect(localizeEntry("archetypes", foreign, "cs")).toBe(foreign);
         }
       }
+    }
+  });
+  it("extracts all twelve French sections from the official localized book", () => {
+    for (const [classId, name] of examples) {
+      const row = { name, slug: classId + "-" + name.toLowerCase().replace(/ /g, "-"), documentSlug: "wotc-srd", source: "bundled", data: { desc: "Canonical rules", class: classId } as Record<string, unknown> };
+      const result = localizeEntry("archetypes", row, "fr");
+      const { localized_desc, ...original } = result.data;
+      expect(String(localized_desc), name).toMatch(/^### /);
+      expect(String(localized_desc).length, name).toBeGreaterThan(100);
+      expect(original).toEqual(row.data);
     }
   });
   it("does not substitute another subclass from the same class", () => {
