@@ -9,7 +9,7 @@
           "higher_level": "When you cast this spell using a spell slot of 4th level or higher, you can affect one additional creature for each slot level above 3rd.",
           "duration": "Up to 1 minute"
         },
-        "description": "**Trvání:** Až 1 minuta\n\nVyber až tři ochotné tvory v dosahu, včetně sebe. Po dobu trvání kouzla se rychlost chůze každého cíle zdvojnásobí. Každý cíl také může v každém svém tahu použít bonusovou akci k provedení akce Sprint a má výhodu k záchranným hodům na Obratnost.\n\n**Na vyšších úrovních.** Když sešleš toto kouzlo použitím pozice kouzla 4. či vyšší úrovně, můžeš ovlivnit jednoho dalšího tvora za každou úroveň pozice nad 3."
+        "description": "**Kouzlo 3. úrovně, proměny**\n**Vyvolání:** 1 akce\n**Dosah:** Dotyk\n**Složky:** V, P, S (dětská káča)\n**Trvání:** Soustředění, až 1 minuta\n**Povolání:** Bard, Klerik, Druid, Čaroděj, Kouzelník\n\nVyber až tři ochotné tvory v dosahu; můžeš mezi ně zahrnout sebe. Po dobu trvání kouzla se rychlost chůze každého cíle zdvojnásobí. Každý z nich může také v každém svém tahu provést bonusovou akcí Sprint a má výhodu k záchranným hodům na Obratnost.\n\n**Na vyšších úrovních.** Pokud použiješ pozici kouzla 4. nebo vyšší úrovně, můžeš ovlivnit jednoho dalšího tvora za každou úroveň pozice nad třetí."
       },
       "blood-armor": {
         "englishName": "Blood Armor",
@@ -19,7 +19,7 @@
           "higher_level": "",
           "duration": "1 hour"
         },
-        "description": "**Trvání:** 1 hodina\n\nKdyž zasáhneš protivníka útokem na blízko zbraní, můžeš okamžitě seslat **Krvavou zbroj** jako bonusovou akci. Zasažený protivník musí mít krev; pokud cíl nekrvácí, kouzlo skončí bez účinku. Krev vytékající z protivníka magicky nabude na objemu a vytvoří kolem tebe zbroj, která ti po dobu trvání kouzla poskytuje OČ 18 + oprava Obratnosti. Tato zbroj nemá požadavek na Sílu, nebrání sesílání kouzel a nezpůsobuje nevýhodu k ověřením Obratnosti (Nenápadnosti).\n\nPokud byl zasažený tvor nebešťan, **Krvavá zbroj** ti po dobu trvání kouzla také poskytuje výhodu k záchranným hodům na Charisma."
+        "description": "**Kouzlo 3. úrovně, nekromancie**\n**Vyvolání:** 1 bonusová akce\n**Dosah:** Sesilatel\n**Složky:** V, P (musíš právě zasáhnout protivníka zbraní na blízko)\n**Trvání:** 1 hodina\n**Povolání:** Čaroděj, Černokněžník, Kouzelník\n\nKdyž zasáhneš protivníka útokem na blízko zbraní, můžeš okamžitě seslat **Krvavou zbroj** jako bonusovou akci. Zasažený protivník musí mít krev; pokud cíl nekrvácí, kouzlo skončí bez účinku. Krev vytékající z protivníka magicky nabude na objemu a vytvoří kolem tebe zbroj, která ti po dobu trvání kouzla poskytuje OČ 18 + oprava Obratnosti. Tato zbroj nemá požadavek na Sílu, nebrání sesílání kouzel a nezpůsobuje nevýhodu k ověřením Obratnosti (Nenápadnosti).\n\nPokud byl zasažený tvor nebešťan, **Krvavá zbroj** ti po dobu trvání kouzla také poskytuje výhodu k záchranným hodům na Charisma."
       },
       "black-sunshine": {
         "englishName": "Black Sunshine",
@@ -29,7 +29,7 @@
           "higher_level": "",
           "duration": "Up to 1 minute"
         },
-        "description": "**Trvání:** Až 1 minuta\n\nPozvedneš vadnou perlu a ta zmizí. V ruce ti zůstane magická koule, která pulzuje slabým purpurovým světlem. Spojenci, které určíš, se stanou neviditelnými, pokud jsou do 60 stop od tebe a světlo z koule může dosáhnout prostoru, který zaujímají. Neviditelný tvor stále vrhá slabý purpurový stín.\n\nKouli lze použít jako vrhací zbraň k útoku na nepřítele. Při zásahu koule exploduje v záblesku světla a kouzlo skončí. Zacílený nepřítel a každý tvor do 10 stop od něj musí uspět v záchranném hodu na Obratnost, jinak oslepne na 1 minutu. Takto oslepený tvor opakuje záchranný hod na konci každého svého tahu a při úspěchu pro něj účinek skončí."
+        "description": "**Kouzlo 8. úrovně, iluze**\n**Vyvolání:** 1 akce\n**Dosah:** Sesilatel (poloměr 60 stop)\n**Složky:** V, S (zbarvená perla s vadou, kterou kouzlo spotřebuje)\n**Trvání:** Soustředění, až 1 minuta\n**Povolání:** Čaroděj, Kouzelník\n\nPozvedneš vadnou perlu a ta zmizí. V ruce ti zůstane magická koule, která pulzuje slabým purpurovým světlem. Spojenci, které určíš, se stanou neviditelnými, pokud jsou do 60 stop od tebe a světlo z koule může dosáhnout prostoru, který zaujímají. Neviditelný tvor stále vrhá slabý purpurový stín.\n\nKouli lze použít jako vrhací zbraň k útoku na nepřítele. Při zásahu koule exploduje v záblesku světla a kouzlo skončí. Zacílený nepřítel a každý tvor do 10 stop od něj musí uspět v záchranném hodu na Obratnost, jinak oslepne na 1 minutu. Takto oslepený tvor opakuje záchranný hod na konci každého svého tahu a při úspěchu pro něj účinek skončí."
       },
       "steal-warmth": {
         "englishName": "Steal Warmth",
@@ -39,7 +39,7 @@
           "higher_level": "When you cast this spell using a spell slot of 4th level or higher, the distance to the target you can affect with this spell increases by 5 feet for each slot level above 3rd.",
           "duration": "Instantaneous"
         },
-        "description": "**Trvání:** Ihned\n\nKdyž sešleš **Krádež tepla** po utrpění chladného zranění, vyber živého tvora do 5 stop od sebe. Tento tvor utrpí chladné zranění místo tebe, nebo polovinu tohoto zranění při úspěšném záchranném hodu na Odolnost. Obnovíš si tolik životů, kolik chladného zranění cíl utrpěl.\n\n**Na vyšších úrovních.** Když sešleš toto kouzlo použitím pozice kouzla 4. či vyšší úrovně, vzdálenost, na kterou můžeš cílového tvora kouzlem ovlivnit, se zvětší o 5 stop za každou úroveň pozice nad 3."
+        "description": "**Kouzlo 3. úrovně, nekromancie**\n**Vyvolání:** 1 reakce, kterou provedeš, když utrpíš chladné zranění způsobené magií\n**Dosah:** Sesilatel\n**Složky:** V, P\n**Trvání:** Ihned\n**Povolání:** Čaroděj, Černokněžník, Kouzelník\n\nKdyž sešleš **Krádež tepla** po utrpění chladného zranění, vyber živého tvora do 5 stop od sebe. Tento tvor utrpí chladné zranění místo tebe, nebo polovinu tohoto zranění při úspěšném záchranném hodu na Odolnost. Obnovíš si tolik životů, kolik chladného zranění cíl utrpěl.\n\n**Na vyšších úrovních.** Když sešleš toto kouzlo použitím pozice kouzla 4. či vyšší úrovně, vzdálenost, na kterou můžeš cílového tvora kouzlem ovlivnit, se zvětší o 5 stop za každou úroveň pozice nad 3."
       },
       "tree-heal": {
         "englishName": "Tree Heal",
@@ -49,7 +49,7 @@
           "higher_level": "",
           "duration": "Instantaneous"
         },
-        "description": "**Trvání:** Ihned\n\nDotkneš se rostliny a ta si obnoví 1k4 životů. Místo toho ji můžeš vyléčit z jedné nemoci nebo ji zbavit škůdců. Jakmile sešleš toto kouzlo na rostlinu nebo rostlinného tvora, nemůžeš je na stejný cíl znovu seslat po dobu 24 hodin. Toto kouzlo lze použít pouze na rostliny a rostlinné tvory."
+        "description": "**Trik, zaklínání**\n**Vyvolání:** 1 akce\n**Dosah:** Dotyk\n**Složky:** V, P\n**Trvání:** Ihned\n**Povolání:** Druid\n\nDotkneš se rostliny a ta si obnoví 1k4 životů. Místo toho ji můžeš vyléčit z jedné nemoci nebo ji zbavit škůdců. Jakmile sešleš toto kouzlo na rostlinu nebo rostlinného tvora, nemůžeš je na stejný cíl znovu seslat po dobu 24 hodin. Toto kouzlo lze použít pouze na rostliny a rostlinné tvory."
       },
       "clash-of-glaciers": {
         "englishName": "Clash of Glaciers",
@@ -59,7 +59,7 @@
           "higher_level": "When you cast this spell using a spell slot of 6th level or higher, the damage increases by 1d6 for each slot level above 5th. You decide whether each extra die deals bludgeoning or cold damage.",
           "duration": "Instantaneous"
         },
-        "description": "**Trvání:** Ihned\n\nVyčaruješ ledové balvany, které drtí tvory v linii dlouhé 100 stop. Každý tvor v oblasti utrpí drtivé zranění 5k6 a chladné zranění 5k6, nebo poloviční zranění při úspěšném záchranném hodu na Obratnost.\n\n**Na vyšších úrovních.** Když sešleš toto kouzlo použitím pozice kouzla 6. či vyšší úrovně, zranění se zvýší o 1k6 za každou úroveň pozice nad 5. U každé dodatečné kostky rozhodneš, zda způsobí drtivé, nebo chladné zranění."
+        "description": "**Kouzlo 5. úrovně, zaklínání**\n**Vyvolání:** 1 akce\n**Dosah:** Sesilatel (linie dlouhá 100 stop)\n**Složky:** V, P, S (kus popraskaného skla)\n**Trvání:** Ihned\n**Povolání:** Druid, Čaroděj, Černokněžník, Kouzelník\n\nVyčaruješ ledové balvany, které drtí tvory v linii dlouhé 100 stop. Každý tvor v oblasti utrpí drtivé zranění 5k6 a chladné zranění 5k6, nebo poloviční zranění při úspěšném záchranném hodu na Obratnost.\n\n**Na vyšších úrovních.** Když sešleš toto kouzlo použitím pozice kouzla 6. či vyšší úrovně, zranění se zvýší o 1k6 za každou úroveň pozice nad 5. U každé dodatečné kostky rozhodneš, zda způsobí drtivé, nebo chladné zranění."
       },
       "biting-arrow": {
         "englishName": "Biting Arrow",
@@ -69,7 +69,7 @@
           "higher_level": "The spell’s damage, for both the ranged attack and the cold damage, increases by 1d6 when you reach 5th level (+1d6 and 2d6), 11th level (+2d6 and 3d6), and 17th level (+3d6 and 4d6).",
           "duration": "1 round"
         },
-        "description": "**Trvání:** 1 kolo\n\nV rámci akce použité k seslání tohoto kouzla provedeš útok na dálku zbraní – lukem, kuší nebo vrhací zbraní. Bez ohledu na dostřel zbraně je účinek omezen na 120 stop. Je-li cíl v dlouhém dostřelu zbraně, provedeš útok s nevýhodou.\n\nPokud útok zbraní zasáhne, způsobí zranění jako obvykle. Navíc se cíl až do začátku tvého příštího tahu pokryje tenkou vrstvou jinovatky. Pokud cíl použije svou reakci před začátkem tvého příštího tahu, okamžitě utrpí chladné zranění 1k6 a kouzlo skončí.\n\n**Na vyšších úrovních.** Zranění kouzla při útoku na dálku i následné chladné zranění se zvýší o 1k6, když dosáhneš 5. úrovně (+1k6 a 2k6), 11. úrovně (+2k6 a 3k6) a 17. úrovně (+3k6 a 4k6)."
+        "description": "**Trik, zaklínání**\n**Vyvolání:** 1 akce\n**Dosah:** Sesilatel\n**Složky:** V, S (šíp nebo vrhací zbraň)\n**Trvání:** 1 kolo\n**Povolání:** Druid, Čaroděj, Kouzelník\n\nV rámci akce použité k seslání tohoto kouzla provedeš útok na dálku zbraní – lukem, kuší nebo vrhací zbraní. Bez ohledu na dostřel zbraně je účinek omezen na 120 stop. Je-li cíl v dlouhém dostřelu zbraně, provedeš útok s nevýhodou.\n\nPokud útok zbraní zasáhne, způsobí zranění jako obvykle. Navíc se cíl až do začátku tvého příštího tahu pokryje tenkou vrstvou jinovatky. Pokud cíl použije svou reakci před začátkem tvého příštího tahu, okamžitě utrpí chladné zranění 1k6 a kouzlo skončí.\n\n**Na vyšších úrovních.** Zranění kouzla při útoku na dálku i následné chladné zranění se zvýší o 1k6, když dosáhneš 5. úrovně (+1k6 a 2k6), 11. úrovně (+2k6 a 3k6) a 17. úrovně (+3k6 a 4k6)."
       },
       "abhorrent-apparition": {
         "englishName": "Abhorrent Apparition",
@@ -79,7 +79,7 @@
           "higher_level": "If you cast this spell using a spell slot of 5th level or higher, the damage increases by 1d8 for each slot level above 4th.",
           "duration": "Instantaneous"
         },
-        "description": "**Trvání:** Ihned\n\nVdechneš děsivou tvář tykvi a hodíš ji před sebe na místo v dosahu, které určíš. Každý tvor do 15 stop od tohoto místa utrpí psychické zranění 6k8 a je tebou vystrašený po dobu 1 minuty. Úspěšný záchranný hod na Moudrost zranění sníží na polovinu a zabrání vystrašení. Takto vystrašený tvor opakuje záchranný hod na konci každého svého tahu a při úspěchu pro něj účinek skončí.\n\n**Na vyšších úrovních.** Když sešleš toto kouzlo použitím pozice kouzla 5. či vyšší úrovně, zranění se zvýší o 1k8 za každou úroveň pozice nad 4."
+        "description": "**Kouzlo 4. úrovně, iluze**\n**Vyvolání:** 1 akce\n**Dosah:** 60 stop\n**Složky:** S (tykev s vyřezanou tváří)\n**Trvání:** Ihned\n**Povolání:** Bard, Čaroděj, Kouzelník\n\nVdechneš děsivou tvář tykvi a hodíš ji před sebe na místo v dosahu, které určíš. Každý tvor do 15 stop od tohoto místa utrpí psychické zranění 6k8 a je tebou vystrašený po dobu 1 minuty. Úspěšný záchranný hod na Moudrost zranění sníží na polovinu a zabrání vystrašení. Takto vystrašený tvor opakuje záchranný hod na konci každého svého tahu a při úspěchu pro něj účinek skončí.\n\n**Na vyšších úrovních.** Když sešleš toto kouzlo použitím pozice kouzla 5. či vyšší úrovně, zranění se zvýší o 1k8 za každou úroveň pozice nad 4."
       },
       "acid-gate": {
         "englishName": "Acid Gate",
@@ -107,7 +107,13 @@
       },
       "ally-aegis": {
         "englishName": "Ally Aegis",
-        "name": "Ochrana spojence"
+        "name": "Ochrana spojence",
+        "original": {
+          "desc": "When you see an ally within range in imminent danger, you can use your reaction to protect that creature with a shield of magical force. Until the start of your next turn, your ally has a +5 bonus to AC and is immune to force damage. In addition, if your ally must make a saving throw against an enemy’s spell that deals damage, the ally takes half as much damage on a failed saving throw and no damage on a successful save. Ally aegis offers no protection, however, against psychic damage from any source.\n",
+          "higher_level": "When you cast this spell using a spell slot of 7th level or higher, you can target one additional ally for each slot level above 6th.",
+          "duration": "1 round"
+        },
+        "description": "**Kouzlo 6. úrovně, ochrana**\n**Vyvolání:** 1 reakce, kterou provedeš, když je spojenec zasažen útokem nebo se stane cílem kouzla způsobujícího jiné než psychické zranění\n**Dosah:** 60 stop\n**Složky:** V, P\n**Trvání:** 1 kolo\n**Povolání:** Bard, Klerik, Čaroděj, Kouzelník\n\nKdyž vidíš spojence v dosahu v bezprostředním nebezpečí, můžeš ho reakcí ochránit štítem magické síly. Do začátku tvého příštího tahu má spojenec bonus +5 ke třídě zbroje a imunitu proti silovému zranění. Pokud musí provést záchranný hod proti nepřátelskému kouzlu způsobujícímu zranění, utrpí při neúspěchu pouze polovinu zranění a při úspěchu žádné. Proti psychickému zranění z jakéhokoli zdroje však toto kouzlo neposkytuje žádnou ochranu.\n\n**Na vyšších úrovních.** Při seslání s použitím pozice 7. nebo vyšší úrovně můžeš ovlivnit jednoho dalšího spojence za každou úroveň pozice nad šestou."
       },
       "alone": {
         "englishName": "Alone",
@@ -127,7 +133,13 @@
       },
       "analyze-device": {
         "englishName": "Analyze Device",
-        "name": "Analyzuj zařízení"
+        "name": "Analyzuj zařízení",
+        "original": {
+          "desc": "You discover all mechanical properties, mechanisms, and functions of a single construct or clockwork device, including how to activate or deactivate those functions, if appropriate.",
+          "higher_level": "",
+          "duration": "Instantaneous"
+        },
+        "description": "**Kouzlo 1. úrovně, věštění**\n**Vyvolání:** 1 hodina\n**Dosah:** Dotyk\n**Složky:** V, P, S (sada hodinářských nástrojů)\n**Trvání:** Ihned\n**Povolání:** Bard, Čaroděj, Kouzelník\n\nOdhalíš veškeré mechanické vlastnosti, mechanismy a funkce jednoho konstruktu nebo hodinového stroje, včetně vhodných způsobů jejich zapnutí a vypnutí, pokud takové způsoby existují."
       },
       "ancestors-strength": {
         "englishName": "Ancestor’s Strength",
@@ -159,7 +171,13 @@
       },
       "anticipate-arcana": {
         "englishName": "Anticipate Arcana",
-        "name": "Předvídej magii"
+        "name": "Předvídej magii",
+        "original": {
+          "desc": "Your foresight gives you an instant to ready your defenses against a magical attack. When you cast **anticipate arcana**, you have advantage on saving throws against spells and other magical effects until the start of your next turn.",
+          "higher_level": "",
+          "duration": "Instantaneous"
+        },
+        "description": "**Kouzlo 3. úrovně, věštění**\n**Vyvolání:** 1 reakce, kterou provedeš, když nepřítel, kterého vidíš, sesílá kouzlo\n**Dosah:** Sesilatel\n**Složky:** V, P\n**Trvání:** Ihned\n**Povolání:** Klerik, Paladin, Čaroděj, Černokněžník, Kouzelník\n\nDíky krátkému záblesku předvídavosti se dokážeš připravit na magický útok. Od okamžiku seslání do začátku svého příštího tahu máš výhodu k záchranným hodům proti kouzlům a jiným magickým účinkům."
       },
       "anticipate-attack": {
         "englishName": "Anticipate Attack",
@@ -167,7 +185,13 @@
       },
       "anticipate-weakness": {
         "englishName": "Anticipate Weakness",
-        "name": "Předvídej slabinu"
+        "name": "Předvídej slabinu",
+        "original": {
+          "desc": "With a quick glance into the future, you pinpoint where a gap is about to open in your foe’s defense, and then you strike. After casting **anticipate weakness**, you have advantage on attack rolls until the end of your turn.",
+          "higher_level": "",
+          "duration": "Instantaneous"
+        },
+        "description": "**Kouzlo 1. úrovně, věštění**\n**Vyvolání:** 1 bonusová akce\n**Dosah:** Sesilatel\n**Složky:** V, P\n**Trvání:** Ihned\n**Povolání:** Bard, Klerik, Druid, Hraničář, Čaroděj, Černokněžník, Kouzelník\n\nKrátce nahlédneš do budoucnosti a poznáš, kde se v obraně protivníka otevře slabina, a pak udeříš. Po seslání tohoto kouzla máš výhodu ke všem hodům na útok až do konce svého tahu."
       },
       "arcane-sight": {
         "englishName": "Arcane Sight",
@@ -191,11 +215,23 @@
       },
       "auspicious-warning": {
         "englishName": "Auspicious Warning",
-        "name": "Příznivé varování"
+        "name": "Příznivé varování",
+        "original": {
+          "desc": "Just in time, you call out a fortunate warning to a creature within range. The target rolls a d4 and adds the number rolled to an attack roll, ability check, or saving throw that it has just made and uses the new result for determining success or failure.",
+          "higher_level": "",
+          "duration": "Instantaneous"
+        },
+        "description": "**Kouzlo 1. úrovně, očarování**\n**Vyvolání:** 1 reakce, kterou provedeš, když spojenec hodí na útok, ověření vlastnosti nebo záchranný hod\n**Dosah:** 30 stop\n**Složky:** V\n**Trvání:** Ihned\n**Povolání:** Bard, Čaroděj, Kouzelník\n\nV pravý okamžik varuješ tvora v dosahu. Cíl hodí k4 a výsledek přičte k hodu na útok, ověření vlastnosti nebo záchrannému hodu, který právě provedl. Úspěch či neúspěch se určí podle nového součtu."
       },
       "avoid-grievous-injury": {
         "englishName": "Avoid Grievous Injury",
-        "name": "Odvrať těžké zranění"
+        "name": "Odvrať těžké zranění",
+        "original": {
+          "desc": "You cast this spell when a foe strikes you with a critical hit but before damage dice are rolled. The critical hit against you becomes a normal hit.",
+          "higher_level": "",
+          "duration": "Instantaneous"
+        },
+        "description": "**Kouzlo 1. úrovně, věštění**\n**Vyvolání:** 1 reakce, kterou provedeš, když tě zasáhne kritický zásah\n**Dosah:** Sesilatel\n**Složky:** V, P\n**Trvání:** Ihned\n**Povolání:** Bard, Klerik, Druid, Čaroděj, Černokněžník, Kouzelník\n\nSešleš toto kouzlo, když tě protivník kriticky zasáhne, ale ještě před hodem kostkami zranění. Kritický zásah proti tobě se změní v běžný zásah."
       },
       "blizzard": {
         "englishName": "Blizzard",
@@ -215,11 +251,23 @@
       },
       "crushing-curse": {
         "englishName": "Crushing Curse",
-        "name": "Drtivá kletba"
+        "name": "Drtivá kletba",
+        "original": {
+          "desc": "You speak a word of Void Speech. Choose a creature you can see within range. If the target can hear you, it must succeed on a Wisdom saving throw or take 1d6 psychic damage and be deafened for 1 minute, except that it can still hear Void Speech. A creature deafened in this way can repeat the saving throw at the end of each of its turns, ending the effect on a success.",
+          "higher_level": "This spell’s damage increases by 1d6 when you reach 5th level (2d6), 11th level (3d6), and 17th level (4d6).",
+          "duration": "Instantaneous"
+        },
+        "description": "**Trik, očarování**\n**Vyvolání:** 1 akce\n**Dosah:** 60 stop\n**Složky:** V, P\n**Trvání:** Ihned\n**Povolání:** \n\nProneseš slovo Řeči prázdnoty. Vyber tvora, kterého vidíš v dosahu. Pokud tě cíl slyší, musí uspět v záchranném hodu na Moudrost, jinak utrpí 1k6 psychického zranění a na jednu minutu ohluchne. I během tohoto ohluchnutí však stále slyší Řeč prázdnoty. Takto ohluchlý tvor může na konci každého svého tahu záchranný hod opakovat; při úspěchu účinek skončí.\n\n**Na vyšších úrovních.** Zranění se zvýší o 1k6 na 5. úrovni (2k6), 11. úrovni (3k6) a 17. úrovni (4k6)."
       },
       "destructive-resonance": {
         "englishName": "Destructive Resonance",
-        "name": "Ničivá rezonance"
+        "name": "Ničivá rezonance",
+        "original": {
+          "desc": "You shout a scathing string of Void Speech that assaults the minds of those before you. Each creature in a 15-foot cone that can hear you takes 4d6 psychic damage, or half that damage with a successful Wisdom saving throw. A creature damaged by this spell can’t take reactions until the start of its next turn.\n",
+          "higher_level": "When you cast this spell using a spell slot of 3rd level or higher, the damage increases by 1d6 for each slot level above 2nd.",
+          "duration": "Instantaneous"
+        },
+        "description": "**Kouzlo 2. úrovně, očarování**\n**Vyvolání:** 1 akce\n**Dosah:** Sesilatel (kužel 15 stop)\n**Složky:** V, P\n**Trvání:** Ihned\n**Povolání:** \n\nVykřikneš ničivou posloupnost slov Řeči prázdnoty, která zasáhne mysl tvorů před tebou. Každý tvor v kuželu o délce 15 stop, který tě slyší, utrpí 4k6 psychického zranění; při úspěšném záchranném hodu na Moudrost utrpí polovinu. Tvor zraněný tímto kouzlem nemůže do začátku svého příštího tahu provádět reakce.\n\n**Na vyšších úrovních.** Pokud použiješ pozici kouzla 3. nebo vyšší úrovně, zranění se zvýší o 1k6 za každou úroveň pozice nad druhou."
       },
       "earthskimmer": {
         "englishName": "Earthskimmer",
@@ -259,7 +307,13 @@
       },
       "pummelstone": {
         "englishName": "Pummelstone",
-        "name": "Bičující kámen"
+        "name": "Bičující kámen",
+        "original": {
+          "desc": "You cause a fist-sized chunk of stone to appear and hurl itself against the spell’s target. Make a ranged spell attack. On a hit, the target takes 1d6 bludgeoning damage and must roll a d4 when it makes an attack roll or ability check during its next turn, subtracting the result of the d4 from the attack or check roll.",
+          "higher_level": "The spell’s damage increases by 1d6 when you reach 5th level (2d6), 11th level (3d6), and 17th level (4d6).",
+          "duration": "Instantaneous"
+        },
+        "description": "**Trik, vyvolávání**\n**Vyvolání:** 1 akce\n**Dosah:** 60 stop\n**Složky:** V, P, S (kamínek)\n**Trvání:** Ihned\n**Povolání:** Čaroděj, Černokněžník, Kouzelník\n\nVytvoříš kámen o velikosti pěsti a vrhneš jej na cíl. Proveď útok kouzlem na dálku. Při zásahu cíl utrpí 1k6 drtivého zranění. Kdykoli během svého příštího tahu provede hod na útok nebo ověření vlastnosti, musí hodit k4 a jeho výsledek odečíst od daného hodu.\n\n**Na vyšších úrovních.** Zranění se zvýší o 1k6 na 5. úrovni (2k6), 11. úrovni (3k6) a 17. úrovni (4k6)."
       },
       "pyroclasm": {
         "englishName": "Pyroclasm",
@@ -287,7 +341,13 @@
       },
       "wind-lash": {
         "englishName": "Wind Lash",
-        "name": "Větrný bič"
+        "name": "Větrný bič",
+        "original": {
+          "desc": "Your swift gesture creates a solid lash of howling wind. Make a melee spell attack against the target. On a hit, the target takes 1d8 slashing damage from the shearing wind and is pushed 5 feet away from you.",
+          "higher_level": "The spell’s damage increases by 1d8 when you reach 5th level (2d8), 11th level (3d8), and 17th level (4d8).",
+          "duration": "Instantaneous"
+        },
+        "description": "**Trik, zaklínání**\n**Vyvolání:** 1 akce\n**Dosah:** 20 stop\n**Složky:** V, P\n**Trvání:** Ihned\n**Povolání:** Čaroděj, Černokněžník, Kouzelník\n\nRychlým gestem vytvoříš pevný bič z kvílejícího větru. Proveď útok kouzlem na blízko proti cíli. Při zásahu cíl utrpí 1k8 sečného zranění a je odstrčen o 5 stop od tebe.\n\n**Na vyšších úrovních.** Zranění kouzla se zvýší o 1k8 na 5. úrovni (2k8), 11. úrovni (3k8) a 17. úrovni (4k8)."
       },
       "wind-tunnel": {
         "englishName": "Wind Tunnel",
@@ -295,7 +355,13 @@
       },
       "word-of-misfortune": {
         "englishName": "Word of Misfortune",
-        "name": "Slovo neštěstí"
+        "name": "Slovo neštěstí",
+        "original": {
+          "desc": "You hiss a word of Void Speech. Choose one creature you can see within range. The next time the target makes a saving throw during the spell’s duration, it must roll a d4 and subtract the result from the total of the saving throw. The spell then ends.",
+          "higher_level": "",
+          "duration": "Up to 1 minute."
+        },
+        "description": "**Trik, očarování**\n**Vyvolání:** 1 akce\n**Dosah:** 60 stop\n**Složky:** V, P\n**Trvání:** Soustředění, až 1 minuta\n**Povolání:** \n\nZasyčíš slovo Řeči prázdnoty. Vyber tvora, kterého vidíš v dosahu. Až tento tvor během trvání kouzla příště provede záchranný hod, musí hodit k4 a výsledek odečíst od celkového výsledku záchranného hodu. Potom kouzlo skončí."
       }
     }
   },
@@ -1328,11 +1394,23 @@
       },
       "convey-inner-peace": {
         "englishName": "Convey Inner Peace",
-        "name": "Předej vnitřní klid"
+        "name": "Předej vnitřní klid",
+        "original": {
+          "desc": "You imbue yourself and up to five willing creatures within range with the ability to enter a meditative trance like an elf. Once before the spell ends, an affected creature can complete a long rest in 4 hours, meditating as an elf does while in trance. After resting in this way, each creature gains the same benefit it would normally gain from 8 hours of rest.",
+          "higher_level": "",
+          "duration": "24 hours"
+        },
+        "description": "**Kouzlo 5. úrovně, proměny**\n**Vyvolání:** 1 akce\n**Dosah:** 30 stop\n**Složky:** V, P, S\n**Trvání:** 24 hodin\n**Povolání:** Bard, Klerik, Druid, Čaroděj, Černokněžník, Kouzelník\n\nSobě a až pěti ochotným tvorům v dosahu propůjčíš schopnost vstoupit do meditačního transu podobného elfímu. Každý ovlivněný tvor může jednou před skončením kouzla dokončit důkladný odpočinek během 4 hodin meditace, stejně jako elf v transu. Po takovém odpočinku získá stejné výhody, jaké by běžně získal po 8 hodinách odpočinku."
       },
       "crown-of-thorns": {
         "englishName": "Crown of Thorns",
-        "name": "Trnová koruna"
+        "name": "Trnová koruna",
+        "original": {
+          "desc": "You create a psychic binding on the mind of a creature within range. Until this spell ends, the creature must make a Charisma saving throw each time it casts a spell. On a failed save, it takes 2d6 psychic damage, and it fails to cast the spell. It doesn't expend a spell slot if it fails to cast the spell.",
+          "higher_level": "",
+          "duration": "Up to 1 minute"
+        },
+        "description": "**Kouzlo 4. úrovně, očarování**\n**Vyvolání:** 1 akce\n**Dosah:** 30 stop\n**Složky:** V, P, S\n**Trvání:** Soustředění, až 1 minuta\n**Povolání:** Druid, Čaroděj, Černokněžník, Kouzelník\n\nVytvoříš psychická pouta kolem mysli tvora v dosahu. Dokud kouzlo trvá, musí tvor při každém pokusu o seslání kouzla provést záchranný hod na Charisma. Při neúspěchu utrpí 2k6 psychického zranění a jeho kouzlo se nepodaří seslat. Pozici kouzla při neúspěšném seslání nevyčerpá."
       },
       "damaging-intel": {
         "englishName": "Damaging Intel",
@@ -1364,7 +1442,13 @@
       },
       "feint": {
         "englishName": "Feint",
-        "name": "Finta"
+        "name": "Finta",
+        "original": {
+          "desc": "You create a momentary, flickering duplicate of yourself just as you make an attack against a creature. You have advantage on the next attack roll you make against the target before the end of your next turn as it's distracted by your illusory copy.",
+          "higher_level": "",
+          "duration": "1 round"
+        },
+        "description": "**Kouzlo 1. úrovně, iluze**\n**Vyvolání:** 1 bonusová akce\n**Dosah:** 30 stop\n**Složky:** V\n**Trvání:** 1 kolo\n**Povolání:** Klerik, Paladin, Černokněžník, Kouzelník\n\nPrávě když útočíš na tvora, vytvoříš na okamžik mihotavého dvojníka sebe sama. Iluze cíl rozptýlí, takže máš výhodu k příštímu hodu na útok proti tomuto cíli, který provedeš před koncem svého příštího tahu."
       },
       "fey-food": {
         "englishName": "Fey Food",
@@ -1428,11 +1512,23 @@
       },
       "lance": {
         "englishName": "Lance",
-        "name": "Silové kopí"
+        "name": "Silové kopí",
+        "original": {
+          "desc": "You create a shimmering lance of force and hurl it toward a creature you can see within range. Make a ranged spell attack against the target. On a hit, the target takes 5d6 force damage, and it is restrained by the lance until the end of its next turn.",
+          "higher_level": "",
+          "duration": "Instantaneous"
+        },
+        "description": "**Kouzlo 2. úrovně, vyvolávání**\n**Vyvolání:** 1 akce\n**Dosah:** 30 stop\n**Složky:** V, P\n**Trvání:** Ihned\n**Povolání:** Paladin, Kouzelník\n\nVytvoříš třpytivé kopí tvořené magickou silou a vrhneš je na tvora, kterého vidíš v dosahu. Proveď útok kouzlem na dálku proti cíli. Při zásahu utrpí cíl 5k6 silového zranění a kopí jej zadrží do konce jeho příštího tahu."
       },
       "less-fool-i": {
         "englishName": "Less Fool, I",
-        "name": "Mě neobelstíš"
+        "name": "Mě neobelstíš",
+        "original": {
+          "desc": "A creature you touch becomes less susceptible to lies and magical influence. For the duration, other creatures have disadvantage on Charisma checks to influence the protected creature, and the creature has advantage on spells that cause it to become charmed or frightened.",
+          "higher_level": "If you cast this spell using a spell slot of 3rd level or higher, the duration is concentration, up to 1 hour. If you use a spell slot of 5th level or higher, the duration is 8 hours. If you use a spell slot of 7th level or higher, the duration is 24 hours. If you use a 9th level spell slot, the duration is 1 year. Using a spell slot of 5th level or higher grants a duration that doesn't require concentration.",
+          "duration": "Up to 10 minutes"
+        },
+        "description": "**Kouzlo 1. úrovně, věštění**\n**Vyvolání:** 1 akce\n**Dosah:** Dotyk\n**Složky:** V, P\n**Trvání:** Soustředění, až 10 minut\n**Povolání:** Bard, Klerik\n\nTvor, kterého se dotkneš, se stane méně náchylným ke lžím a magickému ovlivňování. Po dobu trvání kouzla mají ostatní tvorové nevýhodu k ověřením Charismatu, jimiž se snaží chráněného tvora ovlivnit, a chráněný tvor má výhodu proti kouzlům, která způsobují stav zmámený nebo vystrašený (originál neupřesňuje, k jakému hodu se výhoda vztahuje).\n\n**Na vyšších úrovních.** Při použití pozice 3. nebo vyšší úrovně je trvání soustředění, až 1 hodina. Při použití pozice 5. nebo vyšší úrovně trvá kouzlo 8 hodin; při pozici 7. nebo vyšší úrovně 24 hodin; při použití pozice 9. úrovně 1 rok. Při seslání z pozice 5. nebo vyšší úrovně již není potřeba soustředění."
       },
       "life-burst": {
         "englishName": "Life Burst",
@@ -1464,7 +1560,13 @@
       },
       "misdirection": {
         "englishName": "Misdirection",
-        "name": "Odvedení pozornosti"
+        "name": "Odvedení pozornosti",
+        "original": {
+          "desc": "You create a brief flash of light, loud sound, or other distraction that interrupts a creature's attack. When a creature you can see within range makes an attack, you can impose disadvantage on its attack roll.",
+          "higher_level": "",
+          "duration": "Instantaneous"
+        },
+        "description": "**Kouzlo 1. úrovně, iluze**\n**Vyvolání:** 1 reakce, kterou provedeš, když vidíš tvora do 30 stop od sebe provádět útok\n**Dosah:** 30 stop\n**Složky:** P\n**Trvání:** Ihned\n**Povolání:** Kouzelník\n\nVytvoříš krátký záblesk světla, hlasitý zvuk nebo jiné rozptýlení, které naruší útok tvora. Když tvor, kterého vidíš v dosahu, provádí útok, můžeš mu způsobit nevýhodu k jeho hodu na útok."
       },
       "mud": {
         "englishName": "Mud",
@@ -1488,7 +1590,13 @@
       },
       "oversized-paws": {
         "englishName": "Oversized Paws",
-        "name": "Obří tlapy"
+        "name": "Obří tlapy",
+        "original": {
+          "desc": "Until this spell ends, the hands and feet of one willing creature within range become oversized and more powerful. For the duration, the creature adds 1d4 to damage it deals with its unarmed strike.",
+          "higher_level": "When you cast this spell using a spell slot of 3rd level or higher, you can target one additional creature for each spell slot above 2nd.",
+          "duration": "Up to 1 minute"
+        },
+        "description": "**Kouzlo 2. úrovně, proměny**\n**Vyvolání:** 1 akce\n**Dosah:** 30 stop\n**Složky:** V, P, S\n**Trvání:** Soustředění, až 1 minuta\n**Povolání:** Druid, Hraničář\n\nRuce a nohy jednoho ochotného tvora v dosahu se zvětší a zesílí. Po dobu trvání kouzla přičítá tento tvor 1k4 ke zranění, které způsobuje údery beze zbraně.\n\n**Na vyšších úrovních.** Při seslání s použitím pozice 3. nebo vyšší úrovně můžeš cílit na jednoho dalšího tvora za každou úroveň pozice nad druhou."
       },
       "pincer": {
         "englishName": "Pincer",
@@ -1528,7 +1636,13 @@
       },
       "retribution": {
         "englishName": "Retribution",
-        "name": "Odplata"
+        "name": "Odplata",
+        "original": {
+          "desc": "You wrap yourself in shimmering ethereal armor. The next time a creature hits you with a melee attack, it takes force damage equal to half the damage it dealt to you, and it must make a Strength saving throw. On a failed save, the creature is pushed up to 5 feet away from you. Then the spell ends.",
+          "higher_level": "",
+          "duration": "1 hour"
+        },
+        "description": "**Kouzlo 1. úrovně, ochrana**\n**Vyvolání:** 1 akce\n**Dosah:** Sesilatel\n**Složky:** V\n**Trvání:** 1 hodina\n**Povolání:** Kouzelník\n\nZahalíš se třpytivou éterickou zbrojí. Příští tvor, který tě zasáhne útokem na blízko, utrpí silové zranění rovné polovině zranění, které ti právě způsobil, a musí provést záchranný hod na Sílu. Při neúspěchu je odstrčen až 5 stop od tebe. Poté kouzlo skončí."
       },
       "rockfall-ward": {
         "englishName": "Rockfall Ward",
@@ -1536,11 +1650,23 @@
       },
       "sacrifice-pawn": {
         "englishName": "Sacrifice Pawn",
-        "name": "Obětuj pěšce"
+        "name": "Obětuj pěšce",
+        "original": {
+          "desc": "Sometimes one must fall so others might rise. When a friendly creature you can see within range drops to 0 hit points, you can harness its escaping life energy to heal yourself. You regain hit points equal to the fallen creature's level (or CR for a creature without a level) + your spellcasting ability modifier.",
+          "higher_level": "",
+          "duration": "Instantaneous"
+        },
+        "description": "**Kouzlo 4. úrovně, nekromancie**\n**Vyvolání:** 1 reakce, kterou provedeš, když přátelský tvor do 60 stop klesne na 0 životů\n**Dosah:** 60 stop\n**Složky:** V\n**Trvání:** Ihned\n**Povolání:** Černokněžník, Kouzelník\n\nNěkdy musí jeden padnout, aby jiní mohli povstat. Když přátelský tvor, kterého vidíš v dosahu, klesne na 0 životů, využiješ jeho unikající životní energii k vlastnímu léčení. Obnovíš si počet životů rovný úrovni padlého tvora (nebo jeho nebezpečnosti, pokud nemá úroveň) + tvá oprava sesílací vlastnosti."
       },
       "sacrificial-healing": {
         "englishName": "Sacrificial Healing",
-        "name": "Obětní léčení"
+        "name": "Obětní léčení",
+        "original": {
+          "desc": "You heal another creature's wounds by taking them upon yourself or transferring them to another willing creature in range. Roll 4d8. The number rolled is the amount of damage healed by the target and the damage you take, as its wounds close and similar damage appears on your body (or the body of the other willing target of the spell).",
+          "higher_level": "",
+          "duration": "Instantaneous"
+        },
+        "description": "**Kouzlo 4. úrovně, nekromancie**\n**Vyvolání:** 1 akce\n**Dosah:** Dotyk\n**Složky:** V, P, S\n**Trvání:** Ihned\n**Povolání:** Bard, Čaroděj, Kouzelník\n\nVyléčíš zranění jiného tvora tím, že je převezmeš na sebe nebo je přeneseš na jiného ochotného tvora v dosahu. Hoď 4k8. Cíl si obnoví tolik životů, kolik padlo, a ty utrpíš stejné množství zranění. Pokud sis místo sebe zvolil jiného ochotného tvora v dosahu, utrpí toto zranění on, zatímco rány léčeného cíle se uzavřou a odpovídající zranění se objeví na těle tvora, který je převzal."
       },
       "safe-transposition": {
         "englishName": "Safe Transposition",
@@ -1560,7 +1686,13 @@
       },
       "sightburst": {
         "englishName": "Sightburst",
-        "name": "Záblesk zraku"
+        "name": "Záblesk zraku",
+        "original": {
+          "desc": "A wave of echoing sound emanates from you. Until the start of your next turn, you have blindsight out to a range of 100 feet, and you know the location of any natural hazards within that area. You have advantage on saving throws made against hazards detected with this spell.",
+          "higher_level": "When you cast this spell using a spell slot of 3rd level or higher, the duration is concentration, up to 1 minute. When you use a spell slot of 5th level or higher, the duration is concentration, up to 10 minutes. When you use a spell slot of 7th level or higher, the duration is concentration, up to 1 hour.",
+          "duration": "1 round"
+        },
+        "description": "**Kouzlo 2. úrovně, věštění**\n**Vyvolání:** 1 akce\n**Dosah:** Sesilatel (poloměr 100 stop)\n**Složky:** V, P\n**Trvání:** 1 kolo\n**Povolání:** Klerik, Čaroděj, Černokněžník, Kouzelník\n\nVyšleš ze sebe vlnu odrážejícího se zvuku. Do začátku svého příštího tahu získáš slepozrak do vzdálenosti 100 stop a znáš polohu všech přirozených nebezpečí v této oblasti. K záchranným hodům proti nebezpečím odhaleným tímto kouzlem máš výhodu.\n\n**Na vyšších úrovních.** Sešleš-li kouzlo s použitím pozice 3. nebo vyšší úrovně, trvání je soustředění, až 1 minuta. Při použití pozice 5. nebo vyšší úrovně je trvání soustředění, až 10 minut. Při použití pozice 7. nebo vyšší úrovně je trvání soustředění, až 1 hodina."
       },
       "silvershout": {
         "englishName": "Silvershout",
@@ -1572,7 +1704,13 @@
       },
       "sneer": {
         "englishName": "Sneer",
-        "name": "Pohrdavý úšklebek"
+        "name": "Pohrdavý úšklebek",
+        "original": {
+          "desc": "You curl your lip in disgust at a creature you can see within range. The target must succeed on a Charisma saving throw or take psychic damage equal to 2d4 + your spellcasting ability modifier.",
+          "higher_level": "",
+          "duration": "Instantaneous"
+        },
+        "description": "**Kouzlo 1. úrovně, zaklínání**\n**Vyvolání:** 1 bonusová akce\n**Dosah:** 30 stop\n**Složky:** P\n**Trvání:** Ihned\n**Povolání:** Bard, Čaroděj, Černokněžník, Kouzelník\n\nPohrdavě se ušklíbneš na tvora, kterého vidíš v dosahu. Cíl musí uspět v záchranném hodu na Charisma, jinak utrpí psychické zranění ve výši 2k4 + tvá oprava sesílací vlastnosti."
       },
       "spiked-barricade": {
         "englishName": "Spiked Barricade",
@@ -1580,7 +1718,13 @@
       },
       "spite": {
         "englishName": "Spite",
-        "name": "Zášť"
+        "name": "Zášť",
+        "original": {
+          "desc": "You prick your finger and anoint your forehead with your own blood, taking 1 piercing damage and warding yourself against hostile attacks. The first time a creature hits you with an attack during this spell's duration, it takes 3d6 psychic damage. Then the spell ends.",
+          "higher_level": "When you cast this spell using a spell slot of 3rd level or higher, the damage increases by 1d6 for each slot level above 2nd.",
+          "duration": "1 hour"
+        },
+        "description": "**Kouzlo 2. úrovně, ochrana**\n**Vyvolání:** 1 akce\n**Dosah:** Sesilatel\n**Složky:** P\n**Trvání:** 1 hodina\n**Povolání:** Bard, Čaroděj, Kouzelník\n\nPíchneš se do prstu a vlastní krví si pomažeš čelo, čímž utrpíš bodné zranění 1 a ochráníš se proti nepřátelským útokům. První tvor, který tě během trvání kouzla zasáhne útokem, utrpí 3k6 psychického zranění. Poté kouzlo skončí.\n\n**Na vyšších úrovních.** Sešleš-li toto kouzlo s použitím pozice 3. nebo vyšší úrovně, zranění se zvýší o 1k6 za každou úroveň pozice nad druhou."
       },
       "steam-gout": {
         "englishName": "Steam Gout",
@@ -1588,7 +1732,13 @@
       },
       "stone-aegis": {
         "englishName": "Stone Aegis",
-        "name": "Kamenná záštita"
+        "name": "Kamenná záštita",
+        "original": {
+          "desc": "A rocky coating covers your body, protecting you. Until the start of your next turn, you gain 5 temporary hit points and a +2 bonus to Armor Class, including against the triggering attack.\n  At the start of each of your subsequent turns, you can use a bonus action to extend the duration of the AC bonus until the start of your following turn, for up to 1 minute.",
+          "higher_level": "",
+          "duration": "Up to 1 minute"
+        },
+        "description": "**Kouzlo 1. úrovně, proměny**\n**Vyvolání:** 1 reakce, kterou provedeš, když tě zasáhne útok\n**Dosah:** Sesilatel\n**Složky:** V, P\n**Trvání:** Až 1 minuta\n**Povolání:** Klerik, Druid, Černokněžník\n\nTvé tělo pokryje ochranná vrstva kamene. Do začátku tvého příštího tahu získáš 5 dočasných životů a bonus +2 ke třídě zbroje, a to i proti útoku, který vyvolal tuto reakci.\n\nNa začátku každého svého dalšího tahu můžeš bonusovou akcí prodloužit trvání bonusu ke třídě zbroje do začátku svého následujícího tahu. Takto jej můžeš udržovat nejvýše 1 minutu."
       },
       "stone-fetch": {
         "englishName": "Stone Fetch",

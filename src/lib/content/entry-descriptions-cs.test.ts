@@ -132,3 +132,21 @@ describe("Tome of Heroes magic items", () => {
     }
   });
 });
+
+
+describe("Reviewed external spell texts from Open5e", () => {
+  it("includes 14 Tome of Heroes and 19 Deep Magic spell descriptions", () => {
+    for (const [documentSlug, spells, expected] of [
+      ["toh", expansionTranslations.toh.spells, 14],
+      ["dmag", expansionTranslations.dmag.spells, 19],
+    ] as const) {
+      const rows = Object.entries(spells).filter(([, hit]) => "description" in hit);
+      expect(rows).toHaveLength(expected);
+      for (const [slug, hit] of rows) {
+        if (!("description" in hit) || !("original" in hit)) throw new Error(slug);
+        const row = { slug, name: hit.englishName, documentSlug, source: "open5e", data: hit.original as Record<string, unknown> };
+        expect(localizeEntryCs("spells", row).data.localized_desc).toBe(hit.description);
+      }
+    }
+  });
+});
