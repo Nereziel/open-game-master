@@ -140,7 +140,10 @@ export function chipName(name: string, locale: Locale): string {
   if (locale === "en" || !name) return name;
   const key = textKey(name);
   const coined = CHIP_COINED_KEY[key];
-  if (coined) return translate(locale, coined);
+  if (coined) {
+    const label = translate(locale, coined);
+    if (label !== coined) return label;
+  }
   const row = CHIP_FEATURE_ROW[key];
   if (row) {
     const print = localizedTables(locale)?.names.classFeatures?.[row];
@@ -182,14 +185,14 @@ export function cardDisplayName(card: HandCard, locale: Locale): string {
   if (id.startsWith("rider:")) {
     return contentName("feats", card.name, locale);
   }
-  if (id.startsWith("attack:") || id.startsWith("offhand:")) {
-    return contentName("items", card.name, locale);
-  }
   // The reaction and option cards wear the feature's, spell's or maneuver's
   // own name (chipName above); the granted attacks wear the spell that laid
   // the condition, the same tables read it.
   if (id.startsWith("reaction:") || id.startsWith("option:") || id.startsWith("attack:granted:")) {
     return chipName(card.name, locale);
+  }
+  if (id.startsWith("attack:") || id.startsWith("offhand:")) {
+    return contentName("items", card.name, locale);
   }
   return card.name;
 }
