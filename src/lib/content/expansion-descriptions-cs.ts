@@ -1,8 +1,8 @@
 import data from "./expansion-descriptions-cs.json";
+import { expansionTranslation, type ExpansionRow, type ExpansionIndex } from "./expansion-identity";
 
 // Display-only, source-separated translations. Original rule fields are
 // retained for exact matching; a changed upstream text falls back to English.
-type Row = { slug?: string; name?: string; source?: string; documentSlug?: string };
 type Translation = {
   englishName: string;
   name: string;
@@ -10,23 +10,10 @@ type Translation = {
   description?: string;
   metadataDescription?: string;
 };
-const books: Record<string, Record<string, Record<string, Translation>>> = data;
+const books: ExpansionIndex<Translation> = data;
 
-function translation(table: string, row: Row): Translation | undefined {
-  if (!row || row.source !== "open5e" || !row.documentSlug || !row.slug) return undefined;
-  const book = Object.hasOwn(books, row.documentSlug) ? books[row.documentSlug] : undefined;
-  const kind = table === "races" ? "species" : table === "archetypes" ? "subclasses" : table;
-  const entries = book && Object.hasOwn(book, kind) ? book[kind] : undefined;
-  const hit = entries && Object.hasOwn(entries, row.slug) ? entries[row.slug] : undefined;
-  return hit?.englishName === row.name ? hit : undefined;
-}
-
-export function expansionNameCs(table: string, row: Row): string | undefined {
-  return translation(table, row)?.name;
-}
-
-export function expansionDescriptionCs(table: string, row: Row & { data?: Record<string, unknown> }): string | undefined {
-  const hit = translation(table, row);
+export function expansionDescriptionCs(table: string, row: ExpansionRow & { data?: Record<string, unknown> }): string | undefined {
+  const hit = expansionTranslation(books, table, row);
   if (!hit || !(hit.description || hit.metadataDescription) || !hit.original || !row.data) return undefined;
   const source = row.data;
   // Exact text and metadata from the checked-in golden row, not an inferred
