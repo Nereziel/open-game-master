@@ -43,8 +43,8 @@ const frCatalog = JSON.parse(fs.readFileSync(new URL("../src/lib/i18n/fr.json", 
 // JSON.parse keeps the last of two equal keys without a word, so a key that
 // two branches each add merges cleanly and one translation silently wins.
 // Walk the text itself: within each object every key is said once.
-{
-  const text = fs.readFileSync(new URL("../src/lib/i18n/fr.json", import.meta.url), "utf8");
+function assertUniqueCatalogKeys(locale) {
+  const text = fs.readFileSync(new URL(`../src/lib/i18n/${locale}.json`, import.meta.url), "utf8");
   const seen = [new Set()];
   const repeated = [];
   const token = /"(?:[^"\\]|\\.)*"(\s*:)?|[{}]/g;
@@ -58,7 +58,7 @@ const frCatalog = JSON.parse(fs.readFileSync(new URL("../src/lib/i18n/fr.json", 
       keys.add(key);
     }
   }
-  assert.deepEqual(repeated, [], "fr.json says each key once within its object");
+  assert.deepEqual(repeated, [], `${locale}.json says each key once within its object`);
 }
 
 // 1. English returns the source string verbatim with interpolation
@@ -152,26 +152,42 @@ assert.equal(glossaryText([{ name: "light", blurb: "Custom text" }], "cs"), "lig
 assert.equal(glossaryText(glossaryFor(["Light"], WEAPON_PROPERTY_BLURBS), "cs").split(":")[0], "Lehká");
 assert.equal(glossaryText(glossaryFor(["loading"], WEAPON_PROPERTY_BLURBS), "cs").split(":")[0], "Nabíjecí");
 
-// 6. Catalog integrity: every French entry preserves the English {placeholders}
-// (omitting English-only {article} where French uses no indefinite article).
+// 6. Every registered translated catalog uses the same integrity checks.
+// The upstream English-only {article} slot may be omitted by a translation.
 const varsOf = (s) =>
   [...s.matchAll(/\{([a-zA-Z0-9_]+)\}/g)]
     .map((m) => m[1])
     .filter((v) => v !== "article")
     .sort();
-for (const [en, fr] of Object.entries(frCatalog.messages)) {
-  assert.deepEqual(varsOf(fr), varsOf(en), `Placeholder mismatch in messages for: ${en}`);
-}
-for (const [en, ctxMap] of Object.entries(frCatalog.contexts)) {
-  for (const [ctx, fr] of Object.entries(ctxMap)) {
-    assert.deepEqual(varsOf(fr), varsOf(en), `Placeholder mismatch in contexts[${ctx}] for: ${en}`);
+const { LOCALE_METADATA } = await import("../src/lib/i18n/locale.ts");
+const pluralArity = { fr: 2, cs: 3 };
+for (const locale of Object.keys(LOCALE_METADATA).filter((id) => id !== "en")) {
+  assertUniqueCatalogKeys(locale);
+  const catalog = JSON.parse(fs.readFileSync(new URL(`../src/lib/i18n/${locale}.json`, import.meta.url), "utf8"));
+  const check = (key, value, location) => {
+    assert.equal(typeof value, "string", `${locale}: expected string at ${location}: ${key}`);
+    if (key) assert.ok(value.trim(), `${locale}: empty translation at ${location}: ${key}`);
+    assert.deepEqual(varsOf(value), varsOf(key), `${locale}: placeholder mismatch at ${location}: ${key}`);
+  };
+  for (const [key, value] of Object.entries(catalog.messages)) check(key, value, "messages");
+  for (const [key, contexts] of Object.entries(catalog.contexts)) {
+    for (const [context, value] of Object.entries(contexts)) check(key, value, `contexts[${context}]`);
+  }
+  for (const [key, forms] of Object.entries(catalog.plurals)) {
+    assert.ok(Array.isArray(forms) && forms.length === pluralArity[locale], `${locale}: invalid plural tuple: ${key}`);
+    const parts = key.split("\0");
+    assert.equal(parts.length, 2, `${locale}: invalid plural key`);
+    forms.forEach((value, index) => check(parts[index === 0 ? 0 : 1], value, `plural[${index}]`));
   }
 }
-for (const [key, pair] of Object.entries(frCatalog.plurals)) {
-  assert.ok(Array.isArray(pair) && pair.length === 2, `Expected [one, other] tuple for plural: ${key}`);
-  const [enOne, enOther] = key.split("\0");
-  assert.deepEqual(varsOf(pair[0]), varsOf(enOne), `Placeholder mismatch in plural[0] for: ${key}`);
-  assert.deepEqual(varsOf(pair[1]), varsOf(enOther), `Placeholder mismatch in plural[1] for: ${key}`);
+
+const { TABLE_LANGUAGE_HELP } = await import("../src/lib/schemas/game-settings-options.ts");
+assert.equal(translate("en", TABLE_LANGUAGE_HELP), TABLE_LANGUAGE_HELP);
+for (const [locale, catalog] of [["fr", frCatalog], ["cs", csCatalog]]) {
+  assert.ok(catalog.messages[TABLE_LANGUAGE_HELP], `${locale}: missing table language help`);
+  assert.equal(translate(locale, TABLE_LANGUAGE_HELP), catalog.messages[TABLE_LANGUAGE_HELP]);
 }
+assert.equal(translatePlural("cs", "another skill", "{count} other skills", { count: 2 }), "2 další dovednosti");
+assert.equal(translatePlural("cs", "another skill", "{count} other skills", { count: 5 }), "5 dalších dovedností");
 
 console.log("test-i18n-gettext: all assertions and catalog placeholder checks passed");
