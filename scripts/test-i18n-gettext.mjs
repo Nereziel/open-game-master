@@ -429,7 +429,7 @@ for (const locale of ["en", "fr", "cs"]) {
 assert.deepEqual([ABILITY_ORDER, SKILL_NAMES, SENSE_NAMES, ENVIRONMENTS, TRAIT_SECTIONS, DAMAGE_TYPES, CONDITIONS, LANGUAGES], vocabulariesBefore);
 
 // Mechanical term inputs accept exact translated words, but not fragments,
- // unknown words, compound clauses or ambiguous aliases.
+// unknown words, compound clauses or ambiguous aliases.
 const { canonicalRuleTerm, canonicalRuleTermList, ruleTermOptions, ruleTermLabel } = await import("../src/lib/i18n/rule-term-input.ts");
 for (const locale of ["en", "fr", "cs"]) {
   const t = (key, vars) => translate(locale, key, vars);
@@ -440,6 +440,8 @@ for (const locale of ["en", "fr", "cs"]) {
       assert.equal(canonicalRuleTerm(label, options), value, locale + ": " + label);
       assert.equal(ruleTermLabel(value, options), label);
       assert.equal(canonicalRuleTerm(label + " custom", options), label + " custom");
+      assert.equal(canonicalRuleTerm(label + "!", options), label + "!");
+      assert.equal(canonicalRuleTerm(label.toUpperCase(), options), value);
       assert.equal(ruleTermLabel("custom effect", options), "custom effect");
     }
     const first = options[0], second = options[1];
