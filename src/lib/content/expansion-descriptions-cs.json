@@ -2438,51 +2438,255 @@
     "spells": {
       "ambush-chute": {
         "englishName": "Ambush Chute",
-        "name": "Přepadová šachta"
+        "name": "Přepadová šachta",
+        "original": {
+          "desc": "You touch a wooden, plaster, or stone surface and create a passage with two trapdoors. The first trapdoor appears where you touch the surface, and the other appears at a point you can see up to 30 feet away. The two trapdoors can be wooden with a metal ring handle, or they can match the surrounding surfaces, each with a small notch for opening the door. The two trapdoors are connected by an extradimensional passage that is up to 5 feet wide, up to 5 feet tall, and up to 30 feet long. The trapdoors don't need to be on the same surface, allowing the passage to connect two separated locations, such as the two sides of a chasm or river. The passage is always straight and level for creatures inside it, and the creatures exit the tunnel in such a way that allows them to maintain the same orientation as when they entered the passage. No more than five creatures can transit the passage at the same time.\n  When the spell ends and the trapdoors disappear, any creatures or objects still in the passage created by the spell are safely ejected to an unoccupied space nearest the end of the passage closest to them.",
+          "higher_level": "When you cast this spell using a spell slot of 4th level or higher, the length of the passage and the distance you can place the second trapdoor increases by 10 feet for each slot level above 3rd.",
+          "duration": "Up to 10 minutes",
+          "school": "conjuration",
+          "spell_level": 3,
+          "casting_time": "1 action",
+          "range": "Touch",
+          "requires_concentration": true,
+          "requires_verbal_components": true,
+          "requires_somatic_components": true,
+          "requires_material_components": false,
+          "material": "",
+          "can_be_cast_as_ritual": false,
+          "dnd_class": "Sorceror, Warlock, Wizard"
+        },
+        "description": "**Vyvolávání 3. úrovně**\n**Vyvolání:** 1 akce\n**Dosah:** Dotyk\n**Složky:** V, P\n**Trvání:** Soustředění, až 10 minut\n**Povolání:** Čaroděj, Černokněžník, Kouzelník\n\nDotkneš se dřevěného, omítnutého nebo kamenného povrchu a vytvoříš průchod se dvěma poklopy. První poklop se objeví v místě dotyku a druhý v bodě, který vidíš do 30 stop od něj. Poklopy mohou být dřevěné s kovovým kruhovým madlem, nebo mohou splývat s okolním povrchem a každý má malý zářez k otevření. Spojuje je mimodimenzionální průchod široký až 5 stop, vysoký až 5 stop a dlouhý až 30 stop. Poklopy nemusejí být na stejném povrchu, takže průchod může spojovat dvě oddělená místa, například protilehlé strany propasti či řeky. Pro tvory uvnitř je průchod vždy rovný a vodorovný; tvorové z něj vycházejí se stejnou orientací, s jakou do něj vstoupili. Průchodem může současně procházet nejvýše pět tvorů.\n\nKdyž kouzlo skončí a poklopy zmizí, všichni tvorové a předměty dosud uvnitř průchodu jsou bezpečně vypuzeni do volného prostoru nejblíže tomu konci průchodu, který je jim blíž.\n\n**Na vyšších úrovních.** Sešleš-li kouzlo s použitím pozice 4. či vyšší úrovně, délka průchodu a vzdálenost, do níž můžeš umístit druhý poklop, se zvýší o 10 stop za každou úroveň pozice nad 3."
       },
       "armored-formation": {
         "englishName": "Armored Formation",
-        "name": "Obrněná formace"
+        "name": "Obrněná formace",
+        "original": {
+          "desc": "You bolster the defenses of those nearby. Choose up to twelve willing creatures in range. When an affected creature is within 5 feet of at least one other affected creature, they create a formation. The formation must be a contiguous grouping of affected creatures, and each affected creature must be within 5 feet of at least one other affected creature within the formation. If the formation ever has less than two affected creatures, it ends, and an affected creature that moves further than 5 feet from other creatures in formation is no longer in that formation. Affected creatures don't have to all be in the same formation, and they can create or end as many formations of various sizes as they want for the duration of the spell. Each creature in a formation gains a bonus depending on how many affected creatures are in that formation.\n  ***Two or More Creatures.*** Each creature gains a +2 bonus to AC.\n  ***Four or More Creatures.*** Each creature gains a +2 bonus to AC, and when it hits with any weapon, it deals an extra 1d6 damage of the weapon's type.\n  ***Six or More Creatures.*** Each creature gains a +3 bonus to AC, and when it hits with any weapon, it deals an extra 2d6 damage of the weapon's type.",
+          "higher_level": "",
+          "duration": "Up to 10 minutes",
+          "school": "abjuration",
+          "spell_level": 3,
+          "casting_time": "1 bonus action",
+          "range": "60 Feet",
+          "requires_concentration": true,
+          "requires_verbal_components": true,
+          "requires_somatic_components": true,
+          "requires_material_components": true,
+          "material": "",
+          "can_be_cast_as_ritual": false,
+          "dnd_class": "Bard, Sorceror, Warlock, Wizard"
+        },
+        "description": "**Vymítání 3. úrovně**\n**Vyvolání:** 1 bonusová akce\n**Dosah:** 60 stop\n**Složky:** V, P, S (surovina ve zdroji neuvedena)\n**Trvání:** Soustředění, až 10 minut\n**Povolání:** Bard, Čaroděj, Černokněžník, Kouzelník\n\nPosílíš obranu okolních tvorů. Vyber až dvanáct ochotných tvorů v dosahu. Když je ovlivněný tvor do 5 stop od alespoň jednoho jiného ovlivněného tvora, vytvoří formaci. Formace musí být souvislou skupinou ovlivněných tvorů a každý z nich musí být do 5 stop od alespoň jednoho dalšího ovlivněného tvora v téže formaci. Pokud ve formaci zůstanou méně než dva ovlivnění tvorové, formace zanikne. Ovlivněný tvor, který se vzdálí od ostatních tvorů ve formaci na více než 5 stop, již do ní nepatří. Všichni ovlivnění tvorové nemusejí být v jedné formaci; po dobu trvání kouzla mohou libovolně vytvářet a rušit formace různých velikostí. Každý tvor ve formaci získává bonus podle počtu ovlivněných tvorů v dané formaci.\n\n**Dva či více tvorů.** Každý získá bonus +2 k OČ.\n**Čtyři či více tvorů.** Každý získá bonus +2 k OČ a při zásahu jakoukoli zbraní způsobí dodatečné zranění 1k6 typu dané zbraně.\n**Šest či více tvorů.** Každý získá bonus +3 k OČ a při zásahu jakoukoli zbraní způsobí dodatečné zranění 2k6 typu dané zbraně."
       },
       "babble": {
         "englishName": "Babble",
-        "name": "Blábolení"
+        "name": "Blábolení",
+        "original": {
+          "desc": "This spell causes the speech of affected creatures to sound like nonsense. Each creature in a 30-foot-radius sphere centered on a point you choose within range must succeed on an Intelligence saving throw when you cast this spell or be affected by it.\n  An affected creature cannot communicate in any spoken language that it knows. When it speaks, the words come out as gibberish. Spells with verbal components cannot be cast. The spell does not affect telepathic communication, nonverbal communication, or sounds emitted by any creature that does not have a spoken language. As an action, a creature under the effect of this spell can attempt another Intelligence saving throw against the effect. On a successful save, the spell ends.",
+          "higher_level": "",
+          "duration": "Up to 10 minutes",
+          "school": "enchantment",
+          "spell_level": 5,
+          "casting_time": "1 action",
+          "range": "60 Feet",
+          "requires_concentration": true,
+          "requires_verbal_components": true,
+          "requires_somatic_components": true,
+          "requires_material_components": false,
+          "material": "",
+          "can_be_cast_as_ritual": false,
+          "dnd_class": "Bard, Sorceror, Wizard"
+        },
+        "description": "**Očarování 5. úrovně**\n**Vyvolání:** 1 akce\n**Dosah:** 60 stop\n**Složky:** V, P\n**Trvání:** Soustředění, až 10 minut\n**Povolání:** Bard, Čaroděj, Kouzelník\n\nŘeč ovlivněných tvorů začne znít nesmyslně. Každý tvor v kouli o poloměru 30 stop se středem v bodě, který zvolíš v dosahu, musí při seslání kouzla uspět v záchranném hodu na Inteligenci, jinak ho kouzlo ovlivní.\n\nOvlivněný tvor nemůže komunikovat žádným mluveným jazykem, který zná. Když mluví, vycházejí z něj nesrozumitelné žvásty. Nemůže sesílat kouzla s verbálními složkami. Kouzlo neovlivňuje telepatickou komunikaci, neverbální komunikaci ani zvuky vydávané tvory, kteří nemají mluvený jazyk. Ovlivněný tvor může akcí provést další záchranný hod na Inteligenci proti účinku. Při úspěchu pro něj kouzlo skončí."
       },
       "battle-mind": {
         "englishName": "Battle Mind",
-        "name": "Bojová mysl"
+        "name": "Bojová mysl",
+        "original": {
+          "desc": "You gain a preternatural sense of the surrounding area, allowing you insights you can share with comrades to provide them with an edge in combat. You gain advantage on Wisdom (Perception) checks made when determining surprise at the beginning of a combat encounter. If you are not surprised, then neither are your allies. When you are engaged in combat while the spell is active, you can use a bonus action on your turn to produce one of the following effects (allies must be able to see or hear you in order to benefit):\n* One ally gains advantage on its next attack roll, saving throw, or ability check.\n* An enemy has disadvantage on the next attack roll it makes against you or an ally.\n* You divine the location of an invisible or hidden creature and impart that knowledge to any allies who can see or hear you. This knowledge does not negate any advantages the creature has, it only allows your allies to be aware of its location at the time. If the creature moves after being detected, its new location is not imparted to your allies.\n* Three allies who can see and hear you on your turn are given the benefit of a *bless*, *guidance*, or *resistance spell* on their turns; you choose the benefit individually for each ally. An ally must use the benefit on its turn, or the benefit is lost.",
+          "higher_level": "",
+          "duration": "Up to 10 minutes",
+          "school": "divination",
+          "spell_level": 5,
+          "casting_time": "1 action",
+          "range": "Self",
+          "requires_concentration": true,
+          "requires_verbal_components": true,
+          "requires_somatic_components": true,
+          "requires_material_components": true,
+          "material": "",
+          "can_be_cast_as_ritual": true,
+          "dnd_class": "Bard, Paladin, Sorceror, Wizard"
+        },
+        "description": "**Věštění 5. úrovně (rituál)**\n**Vyvolání:** 1 akce\n**Dosah:** Sesilatel\n**Složky:** V, P, S (surovina ve zdroji neuvedena)\n**Trvání:** Soustředění, až 10 minut\n**Povolání:** Bard, Paladin, Čaroděj, Kouzelník\n\nZískáš nadpřirozené vnímání okolí, díky němuž můžeš sdílet své poznatky s druhy a poskytnout jim výhodu v boji. Máš výhodu k ověřením Moudrosti (Vnímání) při určování překvapení na začátku střetnutí. Pokud nejsi překvapený ty, nejsou překvapení ani tvoji spojenci. Bojuješ-li, zatímco kouzlo trvá, můžeš ve svém tahu bonusovou akcí vyvolat jeden z následujících účinků (spojenci tě musejí vidět nebo slyšet, aby z něj měli užitek):\n\n- Jeden spojenec má výhodu ke svému příštímu hodu na útok, záchrannému hodu nebo ověření vlastnosti.\n- Jeden nepřítel má nevýhodu ke svému příštímu hodu na útok proti tobě či spojenci.\n- Vyvěštíš polohu neviditelného nebo ukrytého tvora a sdělíš ji všem spojencům, kteří tě vidí nebo slyší. Tento poznatek neruší žádné výhody tvora, pouze spojencům umožňuje znát jeho okamžitou polohu. Pohne-li se tvor po odhalení, jeho novou polohu spojencům nesdělíš.\n- Tři spojenci, kteří tě ve tvém tahu vidí i slyší, získají ve svých tazích účinek kouzla *požehnání*, *vedení* nebo *odolnost*. Pro každého spojence vybereš účinek zvlášť. Spojenec ho musí využít ve svém tahu, jinak o něj přijde."
       },
       "beast-within": {
         "englishName": "Beast Within",
-        "name": "Vnitřní bestie"
+        "name": "Vnitřní bestie",
+        "original": {
+          "desc": "You imbue a willing creature with a touch of lycanthropy. The target gains a few bestial qualities appropriate to the type of lycanthrope you choose, such as tufts of fur, elongated claws, a fang-lined maw or tusks, and similar features. For the duration, the target has resistance to bludgeoning, piercing, and slashing damage from nonmagical attacks that aren't silvered. In addition, the target has advantage on Wisdom (Perception) checks that rely on hearing or smell. Finally, the creature can use its new claws and jaw or tusks to make unarmed strikes. The claws deal slashing damage equal to 1d4 + the target's Strength modifier on a hit. The bite deals piercing damage equal to 1d6 + the target's Strength modifier on a hit. The target's bite doesn't inflict lycanthropy.",
+          "higher_level": "When you cast this spell using a spell slot of 5th level or higher, you can target one additional creature for each spell slot above 4th.",
+          "duration": "Up to 1 hour",
+          "school": "transmutation",
+          "spell_level": 4,
+          "casting_time": "1 round",
+          "range": "30 Feet",
+          "requires_concentration": true,
+          "requires_verbal_components": true,
+          "requires_somatic_components": true,
+          "requires_material_components": true,
+          "material": "",
+          "can_be_cast_as_ritual": false,
+          "dnd_class": "Druid, Ranger, Warlock"
+        },
+        "description": "**Transmutace 4. úrovně**\n**Vyvolání:** 1 kolo\n**Dosah:** 30 stop\n**Složky:** V, P, S (surovina ve zdroji neuvedena)\n**Trvání:** Soustředění, až 1 hodina\n**Povolání:** Druid, Hraničář, Černokněžník\n\nPropůjčíš ochotnému tvorovi zárodek lykantropie. Cíl získá několik zvířecích znaků odpovídajících vybranému druhu lykantropa, například chomáče srsti, prodloužené drápy, tlamu plnou tesáků či kly a podobné rysy. Po dobu trvání má cíl odolnost vůči drtivému, bodnému a sečnému zranění z nemagických útoků neprovedených postříbřenými zbraněmi. Navíc má výhodu k ověřením Moudrosti (Vnímání) závislým na sluchu nebo čichu. Novými drápy a čelistí či kly může provádět údery beze zbraně. Drápy při zásahu způsobí sečné zranění 1k4 + oprava Síly cíle. Kousnutí při zásahu způsobí bodné zranění 1k6 + oprava Síly cíle. Kousnutí cíle nezpůsobuje lykantropii.\n\n**Na vyšších úrovních.** Sešleš-li kouzlo s použitím pozice 5. či vyšší úrovně, můžeš zacílit jednoho dalšího tvora za každou úroveň pozice nad 4."
       },
       "betraying-bauble": {
         "englishName": "Betraying Bauble",
-        "name": "Zrádná cetka"
+        "name": "Zrádná cetka",
+        "original": {
+          "desc": "When you cast this spell, you touch a pair of objects. Each object must be small enough to fit in one hand. While holding one of the objects, you can sense the direction to the other object's location.\n  If the paired object is in motion, you know the direction and relative speed of its movement (walking, running, galloping, or similar). When the two objects are within 30 feet of each other, they vibrate faintly unless they are touching. If you aren't holding either item and the spell hasn't ended, you can sense the direction of the closest of the two objects within 1,000 feet of you, and you can sense if it is in motion. If neither object is within 1,000 feet of you, you sense the closest object as soon as you come within 1,000 feet of one of them. If an inch or more of lead blocks a direct path between you and an affected object, you can't sense that object.",
+          "higher_level": "",
+          "duration": "24 hours",
+          "school": "divination",
+          "spell_level": 2,
+          "casting_time": "1 action",
+          "range": "Touch",
+          "requires_concentration": false,
+          "requires_verbal_components": true,
+          "requires_somatic_components": true,
+          "requires_material_components": false,
+          "material": "",
+          "can_be_cast_as_ritual": false,
+          "dnd_class": "Sorceror, Warlock, Wizard"
+        },
+        "description": "**Věštění 2. úrovně**\n**Vyvolání:** 1 akce\n**Dosah:** Dotyk\n**Složky:** V, P\n**Trvání:** 24 hodin\n**Povolání:** Čaroděj, Černokněžník, Kouzelník\n\nPři seslání kouzla se dotkneš dvou předmětů. Každý musí být dost malý, aby se vešel do jedné ruky. Dokud držíš jeden z předmětů, vnímáš směr k poloze druhého.\n\nJe-li spárovaný předmět v pohybu, znáš směr i přibližnou rychlost jeho pohybu (chůze, běh, cval apod.). Když jsou oba předměty do 30 stop od sebe, jemně vibrují, pokud se vzájemně nedotýkají. Nedržíš-li ani jeden a kouzlo dosud neskončilo, vnímáš směr k bližšímu z obou předmětů, je-li do 1 000 stop od tebe, a poznáš, zda se pohybuje. Není-li do 1 000 stop od tebe ani jeden, ucítíš bližší, jakmile se k jednomu přiblížíš na 1 000 stop. Blokuje-li přímou cestu mezi tebou a ovlivněným předmětem vrstva olova silná alespoň 1 palec, nemůžeš tento předmět vnímat."
       },
       "bloodlust": {
         "englishName": "Bloodlust",
-        "name": "Krvežíznivost"
+        "name": "Krvežíznivost",
+        "original": {
+          "desc": "You imbue a willing creature that you can see within range with vitality and fury. The target gains 1d6 temporary hit points, has advantage on Strength checks, and deals an extra 1d6 damage when it hits with a weapon attack. When the spell ends, the target suffers one level of exhaustion for 1 minute.",
+          "higher_level": "",
+          "duration": "Up to 1 minute",
+          "school": "enchantment",
+          "spell_level": 2,
+          "casting_time": "1 action",
+          "range": "30 Feet",
+          "requires_concentration": true,
+          "requires_verbal_components": true,
+          "requires_somatic_components": true,
+          "requires_material_components": false,
+          "material": "",
+          "can_be_cast_as_ritual": false,
+          "dnd_class": "Wizard"
+        },
+        "description": "**Očarování 2. úrovně**\n**Vyvolání:** 1 akce\n**Dosah:** 30 stop\n**Složky:** V, P\n**Trvání:** Soustředění, až 1 minuta\n**Povolání:** Kouzelník\n\nNaplníš ochotného tvora, kterého vidíš v dosahu, životní silou a zuřivostí. Cíl získá 1k6 dočasných životů, má výhodu k ověřením Síly a při zásahu útokem zbraní způsobí dodatečné zranění 1k6. Když kouzlo skončí, cíl utrpí jeden stupeň únavy na 1 minutu."
       },
       "blunted-edge": {
         "englishName": "Blunted Edge",
-        "name": "Otupené ostří"
+        "name": "Otupené ostří",
+        "original": {
+          "desc": "Choose a creature that you can see within range. The target must succeed on a Wisdom saving throw or have disadvantage on weapon attack rolls. In addition, when an affected creature rolls damage dice for a successful attack, it must roll the weapon's damage dice twice and use the lower total. At the end of each of its turns, the target can make another Wisdom saving throw. On a success, the spell ends on the target.",
+          "higher_level": "When you cast this spell using a spell slot of 4th level or higher, you can target one additional creature for each slot level above 3rd. The creatures must be within 30 feet of each other when you target them.",
+          "duration": "Up to 1 minute",
+          "school": "enchantment",
+          "spell_level": 3,
+          "casting_time": "1 action",
+          "range": "60 Feet",
+          "requires_concentration": true,
+          "requires_verbal_components": true,
+          "requires_somatic_components": true,
+          "requires_material_components": false,
+          "material": "",
+          "can_be_cast_as_ritual": false,
+          "dnd_class": "Cleric, Sorceror, Warlock, Wizard"
+        },
+        "description": "**Očarování 3. úrovně**\n**Vyvolání:** 1 akce\n**Dosah:** 60 stop\n**Složky:** V, P\n**Trvání:** Soustředění, až 1 minuta\n**Povolání:** Klerik, Čaroděj, Černokněžník, Kouzelník\n\nVyber tvora, kterého vidíš v dosahu. Cíl musí uspět v záchranném hodu na Moudrost, jinak má nevýhodu k hodům na útok zbraní. Navíc při hodu na zranění za úspěšný útok musí ovlivněný tvor hodit kostkami zranění zbraně dvakrát a použít nižší součet. Na konci každého svého tahu může cíl provést další záchranný hod na Moudrost. Při úspěchu pro něj kouzlo skončí.\n\n**Na vyšších úrovních.** Sešleš-li kouzlo s použitím pozice 4. či vyšší úrovně, můžeš zacílit jednoho dalšího tvora za každou úroveň pozice nad 3. Při zacílení musejí být tvorové do 30 stop od sebe."
       },
       "bolster-fortifications": {
         "englishName": "Bolster Fortifications",
-        "name": "Posílení opevnění"
+        "name": "Posílení opevnění",
+        "original": {
+          "desc": "You create a ward that bolsters a structure or a collection of structures that occupy up to 2,500 square feet of floor space. The bolstered structures can be up to 20 feet tall and shaped as you desire. You can ward several small buildings in a stronghold by dividing the area among them, as long as you can walk into each contiguous area while you are casting the spell. For the purpose of this spell, “structures” include walls, such as the palisade that might surround a small fort, provided the wall is no more than 20 feet tall.\n  For the duration, each structure you bolstered has a damage threshold of 5. If a structure already has a damage threshold, that threshold increases by 5.\n  This spell protects only the walls, support beams, roofs, and similar that make up the core components of the structure. It doesn't bolster objects within the structures, such as furniture.\n  The protected structure or structures radiate magic. A *dispel magic* cast on a structure removes the bolstering from only that structure. You can create a permanently bolstered structure or collection of structures by casting this spell there every day for one year.",
+          "higher_level": "When you cast this spell using a spell slot of 4th level or higher, the square feet of floor space you can bolster increases by 500 and the damage threshold increases by 2 for each slot level above 3rd.",
+          "duration": "8 hours",
+          "school": "abjuration",
+          "spell_level": 3,
+          "casting_time": "10 minutes",
+          "range": "120 Feet",
+          "requires_concentration": false,
+          "requires_verbal_components": true,
+          "requires_somatic_components": true,
+          "requires_material_components": true,
+          "material": "",
+          "can_be_cast_as_ritual": false,
+          "dnd_class": "Bard, Wizard"
+        },
+        "description": "**Vymítání 3. úrovně**\n**Vyvolání:** 10 minut\n**Dosah:** 120 stop\n**Složky:** V, P, S (surovina ve zdroji neuvedena)\n**Trvání:** 8 hodin\n**Povolání:** Bard, Kouzelník\n\nVytvoříš ochranu, která zpevní stavbu nebo soubor staveb o celkové podlahové ploše až 2 500 čtverečních stop. Zpevněné stavby mohou být vysoké až 20 stop a mít libovolný tvar. Můžeš ochránit několik malých budov v pevnosti rozdělením plochy mezi ně, pokud během sesílání kouzla dokážeš vejít do každé souvislé oblasti. Pro účely tohoto kouzla zahrnují „stavby“ také zdi, například palisádu kolem malé pevnosti, pokud nejsou vyšší než 20 stop.\n\nPo dobu trvání má každá zpevněná stavba práh zranění 5. Má-li již práh zranění, zvýší se o 5.\n\nKouzlo chrání pouze zdi, nosné trámy, střechy a podobné základní části stavby. Nezpevňuje předměty uvnitř staveb, například nábytek.\n\nChráněné stavby vyzařují magii. *Rozptyl magii* seslaný na jednu stavbu odstraní zpevnění pouze z ní. Trvale zpevněnou stavbu či soubor staveb vytvoříš, budeš-li tam sesílat toto kouzlo každý den po dobu jednoho roku.\n\n**Na vyšších úrovních.** Sešleš-li kouzlo s použitím pozice 4. či vyšší úrovně, plocha, kterou můžeš zpevnit, se zvýší o 500 čtverečních stop a práh zranění o 2 za každou úroveň pozice nad 3."
       },
       "bound-haze": {
         "englishName": "Bound Haze",
-        "name": "Spoutaný opar"
+        "name": "Spoutaný opar",
+        "original": {
+          "desc": "You cause a swirling gyre of dust, small rocks, and wind to encircle a creature you can see within range. The target must succeed on a Dexterity saving throw or have disadvantage on attack rolls and on Wisdom (Perception) checks. At the end of each of its turns, the target can make a Dexterity saving throw. On a success, the spell ends.\n  In addition, if the target is within a cloud or gas, such as the area of a *fog cloud* spell or a dretch's Fetid Cloud, the affected target has disadvantage on this spell's saving throws and on any saving throws associated with being in the cloud or gas, such as the saving throw to reduce the poison damage the target might take from starting its turn in the area of a *cloudkill* spell.",
+          "higher_level": "If you cast this spell using a spell slot of 4th level or higher, the duration is 1 minute, and the spell doesn't require concentration.",
+          "duration": "Up to 1 minute",
+          "school": "conjuration",
+          "spell_level": 3,
+          "casting_time": "1 action",
+          "range": "120 Feet",
+          "requires_concentration": true,
+          "requires_verbal_components": true,
+          "requires_somatic_components": true,
+          "requires_material_components": false,
+          "material": "",
+          "can_be_cast_as_ritual": false,
+          "dnd_class": "Sorceror, Warlock, Wizard"
+        },
+        "description": "**Vyvolávání 3. úrovně**\n**Vyvolání:** 1 akce\n**Dosah:** 120 stop\n**Složky:** V, P\n**Trvání:** Soustředění, až 1 minuta\n**Povolání:** Čaroděj, Černokněžník, Kouzelník\n\nNecháš vír prachu, drobných kamenů a větru obklopit tvora, kterého vidíš v dosahu. Cíl musí uspět v záchranném hodu na Obratnost, jinak má nevýhodu k hodům na útok a k ověřením Moudrosti (Vnímání). Na konci každého svého tahu může provést záchranný hod na Obratnost. Při úspěchu kouzlo skončí.\n\nJe-li navíc cíl v oblaku či plynu, například v oblasti kouzla *mlžný oblak* nebo páchnoucího oblaku dretche, má ovlivněný cíl nevýhodu k záchranným hodům proti tomuto kouzlu i ke všem záchranným hodům souvisejícím s pobytem v daném oblaku či plynu, například k záchrannému hodu na snížení jedového zranění, které by mohl utrpět na začátku tahu v oblasti kouzla *smrtící oblak*.\n\n**Na vyšších úrovních.** Sešleš-li kouzlo s použitím pozice 4. či vyšší úrovně, trvání je 1 minuta a kouzlo nevyžaduje soustředění."
       },
       "burst-stone": {
         "englishName": "Burst Stone",
-        "name": "Tříštivý kámen"
+        "name": "Tříštivý kámen",
+        "original": {
+          "desc": "You cause the ground at a point you can see within range to explode. The ground must be sand, earth, or unworked rock. Each creature within 10 feet of that point must make a Dexterity saving throw. On a failed save, the creature takes 4d8 bludgeoning damage and is knocked prone. On a successful save, the creature takes half as much damage and isn't knocked prone. The area then becomes difficult terrain with a 5-foot-deep pit centered on the point you chose.",
+          "higher_level": "When you cast this spell using a spell slot of 4th level or higher, the damage increases by 1d8 for each slot level above 3rd.",
+          "duration": "Instantaneous",
+          "school": "evocation",
+          "spell_level": 3,
+          "casting_time": "1 action",
+          "range": "120 Feet",
+          "requires_concentration": false,
+          "requires_verbal_components": true,
+          "requires_somatic_components": true,
+          "requires_material_components": false,
+          "material": "",
+          "can_be_cast_as_ritual": false,
+          "dnd_class": "Druid, Sorceror, Warlock, Wizard"
+        },
+        "description": "**Zaklínání 3. úrovně**\n**Vyvolání:** 1 akce\n**Dosah:** 120 stop\n**Složky:** V, P\n**Trvání:** ihned\n**Povolání:** Druid, Čaroděj, Černokněžník, Kouzelník\n\nNecháš zem v bodě, který vidíš v dosahu, vybuchnout. Musí jít o písek, zeminu nebo neopracovanou skálu. Každý tvor do 10 stop od tohoto bodu si musí hodit záchranný hod na Obratnost. Při neúspěchu utrpí drtivé zranění 4k8 a je sražen k zemi. Při úspěchu utrpí poloviční zranění a není sražen k zemi. Oblast se poté stane obtížným terénem s jámou hlubokou 5 stop, jejíž střed je ve zvoleném bodě.\n\n**Na vyšších úrovních.** Sešleš-li kouzlo s použitím pozice 4. či vyšší úrovně, zranění se zvýší o 1k8 za každou úroveň pozice nad 3."
       },
       "butterfly-effect": {
         "englishName": "Butterfly Effect",
-        "name": "Motýlí efekt"
+        "name": "Motýlí efekt",
+        "original": {
+          "desc": "You cause a cloud of illusory butterflies to swarm around a target you can see within range. The target must succeed on a Charisma saving throw or be charmed for the duration. While charmed, the target can't take reactions and must roll a d10 at the start of each of its turns to determine its behavior for that turn.\n\n| d10  | Behavior          |\n|------|-------------------|\n| 1    | The creature uses all its movement to move in a random direction. To determine the direction, roll a d8 and assign a direction to each die face. The creature doesn't take an action this turn. |\n| 2-6  | The creature doesn't take an action this turn. |\n| 7-8  | The creature uses its action to make a melee attack against a randomly determined creature within its reach. If there is no creature within its reach, the creature does nothing this turn. |\n| 9-10 | The creature can act and move normally. |\n\nAt the end of each of its turns, and each time it takes damage, the target can make another Charisma saving throw. On a success, the spell ends on the target.",
+          "higher_level": "When you cast this spell using a spell slot of 3rd level or higher, you can target one additional creature for each slot level above 2nd. The creatures must be within 30 feet of each other when you target them.",
+          "duration": "Up to 1 minute",
+          "school": "enchantment",
+          "spell_level": 2,
+          "casting_time": "1 action",
+          "range": "60 Feet",
+          "requires_concentration": true,
+          "requires_verbal_components": true,
+          "requires_somatic_components": false,
+          "requires_material_components": true,
+          "material": "",
+          "can_be_cast_as_ritual": false,
+          "dnd_class": "Bard, Druid, Sorceror, Warlock, Wizard"
+        },
+        "description": "**Očarování 2. úrovně**\n**Vyvolání:** 1 akce\n**Dosah:** 60 stop\n**Složky:** V, S (surovina ve zdroji neuvedena)\n**Trvání:** Soustředění, až 1 minuta\n**Povolání:** Bard, Druid, Čaroděj, Černokněžník, Kouzelník\n\nNecháš roj iluzorních motýlů vířit kolem cíle, který vidíš v dosahu. Cíl musí uspět v záchranném hodu na Charisma, jinak je po dobu trvání zmámený. Dokud je zmámený, nemůže provádět reakce a na začátku každého svého tahu musí hodit k10, aby určil své chování v daném tahu.\n\n| k10 | Chování |\n|---|---|\n| 1 | Tvor využije všechen svůj pohyb k pohybu náhodným směrem. Směr urči hodem k8, přičemž každé stěně kostky přiřaď směr. Tvor v tomto tahu neprovede akci. |\n| 2–6 | Tvor v tomto tahu neprovede akci. |\n| 7–8 | Tvor použije svou akci k útoku na blízko proti náhodně určenému tvorovi ve svém dosahu. Pokud žádného tvora v dosahu nemá, v tomto tahu nic nedělá. |\n| 9–10 | Tvor může normálně jednat a pohybovat se. |\n\nNa konci každého svého tahu a pokaždé, když utrpí zranění, může cíl provést další záchranný hod na Charisma. Při úspěchu pro něj kouzlo skončí.\n\n**Na vyšších úrovních.** Sešleš-li kouzlo s použitím pozice 3. či vyšší úrovně, můžeš zacílit jednoho dalšího tvora za každou úroveň pozice nad 2. Při zacílení musejí být tvorové do 30 stop od sebe."
       },
       "calm-beasts": {
         "englishName": "Calm Beasts",
