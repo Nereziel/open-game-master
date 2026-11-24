@@ -1,5 +1,5 @@
 import JSZip from "jszip";
-import { escapeXml, type StoryChapter, type StoryDocument } from "@/lib/export/story-document";
+import { escapeXml, storyPresentation, type StoryChapter, type StoryDocument } from "@/lib/export/story-document";
 
 // Renders a StoryDocument as an .odt (OpenDocument Text): a ZIP of ODF XML
 // parts. Chapters are outline-level headings, so LibreOffice indexes them into
@@ -46,11 +46,11 @@ function summaryParagraphs(text: string): string {
     .join("");
 }
 
-function chapterBody(chapter: StoryChapter): string {
+function chapterBody(chapter: StoryChapter, transcriptLabel: string): string {
   const highlights = bulletList(chapter.highlights);
   const summary = chapter.summary.trim() ? summaryParagraphs(chapter.summary) : "";
   const transcript = chapter.transcript.length
-    ? `<text:h text:style-name="Heading_20_2" text:outline-level="2">Transcript</text:h>` +
+    ? `<text:h text:style-name="Heading_20_2" text:outline-level="2">${escapeXml(transcriptLabel)}</text:h>` +
       chapter.transcript
         .map(
           (line) =>
@@ -73,7 +73,7 @@ function chapterBody(chapter: StoryChapter): string {
   );
 }
 
-function tableOfContents(chapters: StoryChapter[]): string {
+function tableOfContents(chapters: StoryChapter[], contentsLabel: string): string {
   const entries = chapters
     .map(
       (chapter) =>
@@ -83,7 +83,7 @@ function tableOfContents(chapters: StoryChapter[]): string {
     .join("");
   return `<text:table-of-content text:style-name="Sect1" text:protected="true" text:name="Table of Contents">
     <text:table-of-content-source text:outline-level="10" text:use-outline-level="true">
-      <text:index-title-template text:style-name="Contents_20_Heading">Contents</text:index-title-template>
+      <text:index-title-template text:style-name="Contents_20_Heading">${escapeXml(contentsLabel)}</text:index-title-template>
       <text:table-of-content-entry-template text:outline-level="1" text:style-name="Contents_20_1">
         <text:index-entry-link-start text:style-name="Internet_20_Link"/>
         <text:index-entry-chapter/>
@@ -94,22 +94,18 @@ function tableOfContents(chapters: StoryChapter[]): string {
       </text:table-of-content-entry-template>
     </text:table-of-content-source>
     <text:index-body>
-      <text:index-title text:name="Table of Contents_Head"><text:p text:style-name="Contents_20_Heading">Contents</text:p></text:index-title>
+      <text:index-title text:name="Table of Contents_Head"><text:p text:style-name="Contents_20_Heading">${escapeXml(contentsLabel)}</text:p></text:index-title>
       ${entries}
     </text:index-body>
   </text:table-of-content>`;
 }
 
 function buildContentXml(doc: StoryDocument): string {
-  const metaBits = [
-    doc.meta.theme,
-    `Level ${doc.meta.startingLevel} start`,
-    doc.meta.difficulty,
-    doc.meta.status,
-  ].filter(Boolean);
+  const view = storyPresentation(doc);
+  const { metaBits } = view;
 
   const questLog = doc.questLog.length
-    ? `<text:h text:style-name="Heading_20_1" text:outline-level="1">Quest Log</text:h>` +
+    ? `<text:h text:style-name="Heading_20_1" text:outline-level="1">${escapeXml(view.questLog)}</text:h>` +
       bulletList(doc.questLog)
     : "";
 
@@ -117,9 +113,9 @@ function buildContentXml(doc: StoryDocument): string {
     paragraph("Title", doc.title) +
     paragraph("Subtitle", metaBits.join("  ·  ")) +
     (doc.premise.trim() ? paragraph("Standard", doc.premise) : "") +
-    tableOfContents(doc.chapters) +
+    tableOfContents(doc.chapters, view.contents) +
     questLog +
-    doc.chapters.map(chapterBody).join("");
+    doc.chapters.map((chapter) => chapterBody(chapter, view.transcript)).join("");
 
   return `<?xml version="1.0" encoding="UTF-8"?>
 <office:document-content ${OFFICE_NS} office:version="1.3">
@@ -184,7 +180,8 @@ function buildMetaXml(doc: StoryDocument): string {
 <office:document-meta ${OFFICE_NS} office:version="1.3">
   <office:meta>
     <meta:generator>Open Game Master</meta:generator>
-    <dc:title>${escapeXml(doc.title)} — Story</dc:title>
+    <dc:title>${escapeXml(storyPresentation(doc).title)}</dc:title>
+    <dc:language>${escapeXml(doc.storyLanguage ?? "und")}</dc:language>
     <dc:creator>Open Game Master</dc:creator>
     <meta:creation-date>${escapeXml(doc.meta.exportedAt)}</meta:creation-date>
     <dc:date>${escapeXml(doc.meta.exportedAt)}</dc:date>
