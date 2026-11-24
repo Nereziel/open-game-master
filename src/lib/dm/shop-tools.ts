@@ -393,6 +393,11 @@ function awayFromCounter(campaign: Campaign, sheet: CharacterSheet): string | nu
 // anyone, at any shop, which is how a fallen friend's goods or an errand to
 // the last town are settled.
 export type TradeAt = { atCounter?: boolean };
+type TradeNotice = { key: string; vars?: Record<string, string | number> };
+// Keep the model\'s English instructions intact; only a Market request gets a display notice.
+function counterNotice(at: TradeAt, key: string, vars?: TradeNotice["vars"]): { notice?: TradeNotice } {
+  return at.atCounter ? { notice: { key, vars } } : {};
+}
 
 // The shop is not where the party stands now, by the rule the Market lists
 // by, so a stale panel or a kept shop id cannot skip the travel there.
@@ -414,14 +419,14 @@ function shopElsewhere(campaign: Campaign, shop: Shop, nothing: string): (ToolEr
 
 // Why the Market's counter turns a purchase or a sale away, or null. Asked
 // before the shelf, the purse or the pack is read.
-function counterRefusal(campaign: Campaign, sheet: CharacterSheet, shop: Shop, verb: "buy" | "sell"): ToolError | null {
+function counterRefusal(campaign: Campaign, sheet: CharacterSheet, shop: Shop, verb: "buy" | "sell"): (ToolError & { notice?: TradeNotice; away?: true }) | null {
   const nothing = "Nothing changed hands.";
   const elsewhere = shopElsewhere(campaign, shop, nothing);
   if (elsewhere) {
-    return elsewhere;
+    return { ...elsewhere, notice: { key: "The shop is not where the party is now.", vars: { shop: shop.name } } };
   }
   const away = awayFromCounter(campaign, sheet);
-  return away ? { error: `${away} and cannot ${verb}. ${nothing}`, refused: "rules" } : null;
+  return away ? { error: `${away} and cannot ${verb}. ${nothing}`, refused: "rules", notice: { key: "{name} cannot trade right now.", vars: { name: sheet.name } } } : null;
 }
 
 export function handleBuyItem(campaign: Campaign, rawArguments: string, at: TradeAt = {}): ToolResult {
@@ -444,10 +449,10 @@ export function handleBuyItem(campaign: Campaign, rawArguments: string, at: Trad
   }
   const line = findStockLine(shop.stock, args.item);
   if (!line) {
-    return { error: `${shop.name} does not stock "${args.item}". On the shelf: ${shop.stock.map((entry) => entry.itemName).join(", ") || "nothing"}.`, refused: "rules" };
+    return { error: `${shop.name} does not stock "${args.item}". On the shelf: ${shop.stock.map((entry) => entry.itemName).join(", ") || "nothing"}.`, refused: "rules", ...counterNotice(at, "{shop} does not stock {item}.", { shop: shop.name, item: args.item }) };
   }
   if (line.qty < args.qty) {
-    return { error: `${shop.name} has only ${line.qty} of ${line.itemName}.`, retry: true };
+    return { error: `${shop.name} has only ${line.qty} of ${line.itemName}.`, retry: true, ...counterNotice(at, "{shop} has only {qty} of {item}.", { shop: shop.name, qty: line.qty, item: line.itemName }) };
   }
   // The buyer's own price: the shop's, moved by a haggle they were at the
   // counter for.
@@ -455,14 +460,14 @@ export function handleBuyItem(campaign: Campaign, rawArguments: string, at: Trad
   const total = each * args.qty;
   const purse = { gold: sheet.gold, copper: sheet.copper };
   if (purse.gold * 100 + purse.copper < total) {
-    return { error: `${line.itemName} x${args.qty} costs ${formatPrice(total)}; ${sheet.name} carries ${formatCopper(purse.gold * 100 + purse.copper)}. They cannot afford it.`, refused: "rules" };
+    return { error: `${line.itemName} x${args.qty} costs ${formatPrice(total)}; ${sheet.name} carries ${formatCopper(purse.gold * 100 + purse.copper)}. They cannot afford it.`, refused: "rules", ...counterNotice(at, "Not enough money: {item} x{qty} costs {price}; {name} has {purse}.", { item: line.itemName, qty: args.qty, price: formatPrice(total), name: sheet.name, purse: formatCopper(purse.gold * 100 + purse.copper) }) };
   }
   const paid = addCopper(purse, -total);
   const items = grantItemMath(sheet.equipment, line.itemName, args.qty, line.srdName ? { srdName: line.srdName } : {});
   // Strength x 15 pounds is all a character can carry (src/lib/dm/load-rules.ts).
   const tooHeavy = capacityProblem(sheet, items.equipment, line.itemName, paid.purse);
   if (tooHeavy) {
-    return { ...tooHeavy, error: `${tooHeavy.error} Nothing was bought.` };
+    return { ...tooHeavy, error: `${tooHeavy.error} Nothing was bought.`, ...counterNotice(at, "{name} cannot carry the purchase.", { name: sheet.name }) };
   }
   const patch = { gold: paid.purse.gold, copper: paid.purse.copper, equipment: items.equipment };
   patchSheet(sheet.id, patch);
@@ -498,18 +503,18 @@ export function handleSellItem(campaign: Campaign, rawArguments: string, at: Tra
     return refused;
   }
   if (!shop.buys) {
-    return { error: `${shop.name} does not buy.`, refused: "rules" };
+    return { error: `${shop.name} does not buy.`, refused: "rules", ...counterNotice(at, "{shop} does not buy items.", { shop: shop.name }) };
   }
   const removal = removeItemMath(sheet.equipment, args.item, args.qty);
   if (!removal) {
-    return notCarried(sheet.name, sheet.equipment.map((item) => item.name), args.item, isTableGearName(campaign.id, args.item));
+    return { ...notCarried(sheet.name, sheet.equipment.map((item) => item.name), args.item, isTableGearName(campaign.id, args.item)), ...counterNotice(at, "{name} does not carry {item}.", { name: sheet.name, item: args.item }) };
   }
   const line = removal.item;
   const carried = line.name;
   // An attuned cursed item is not sold away (src/lib/srd/cursed-items.ts).
   const cursed = cursedHold(sheet, line);
   if (cursed) {
-    return { error: cursed, refused: "rules" };
+    return { error: cursed, refused: "rules", ...counterNotice(at, "This cursed item cannot be sold.") };
   }
   // SRD 5.1, Selling Treasure: "Finding someone to buy a potion or a scroll
   // isn't too hard, but other items are out of the realm of most but the
@@ -517,7 +522,7 @@ export function handleSellItem(campaign: Campaign, rawArguments: string, at: Tra
   // needs a buyer the story provides, settled with purchase and no shop.
   const magic = magicValueOf(line);
   if (magic && !soldToShops(line)) {
-    return { error: `${shop.name} does not buy ${carried}: no shop buys a magic item other than a potion or a scroll, only one of the wealthiest nobles. A buyer the story provides is settled with purchase, no shop named. Nothing was sold.`, refused: "rules" };
+    return { error: `${shop.name} does not buy ${carried}: no shop buys a magic item other than a potion or a scroll, only one of the wealthiest nobles. A buyer the story provides is settled with purchase, no shop named. Nothing was sold.`, refused: "rules", ...counterNotice(at, "{shop} does not buy this kind of magic item. Only potions and scrolls can be sold in shops.", { shop: shop.name }) };
   }
   // Gems, jewelry, art and trade goods keep their full value (SRD 5.1,
   // Selling Treasure), priced by the worth they were given; a name is never
@@ -573,7 +578,7 @@ export function handleHaggle(campaign: Campaign, rawArguments: string, at: Trade
   }
   const away = awayFromCounter(campaign, sheet);
   if (away) {
-    return { error: `${away} and cannot haggle. Nothing was rolled.`, refused: "rules" };
+    return { error: `${away} and cannot haggle. Nothing was rolled.`, refused: "rules", ...counterNotice(at, "{name} cannot haggle right now.", { name: sheet.name }) };
   }
   const company: CharacterSheet[] = [];
   for (const ref of args.presentCharacterIds) {
@@ -593,13 +598,13 @@ export function handleHaggle(campaign: Campaign, rawArguments: string, at: Trade
   // before anything is rolled or a try is used.
   const elsewhere = at.atCounter ? shopElsewhere(campaign, shop, "Nothing was rolled.") : null;
   if (elsewhere) {
-    return elsewhere;
+    return { ...elsewhere, ...counterNotice(at, "The shop is not where the party is now.") };
   }
   if (dealFor(shop, sheet.id)) {
-    return { error: `${sheet.name} already tried their luck with ${shop.name}'s keeper.`, refused: "rules" };
+    return { error: `${sheet.name} already tried their luck with ${shop.name}'s keeper.`, refused: "rules", ...counterNotice(at, "{name} has already haggled at {shop}.", { name: sheet.name, shop: shop.name }) };
   }
   if (skill === "deception" && shop.haggles.some((deal) => deal.skill === "deception")) {
-    return { error: `${shop.name}'s keeper has been lied to once already and will not fall for it again. Persuasion or intimidation may still be tried.`, refused: "rules" };
+    return { error: `${shop.name}'s keeper has been lied to once already and will not fall for it again. Persuasion or intimidation may still be tried.`, refused: "rules", ...counterNotice(at, "The keeper will not accept another deception attempt. Try persuasion or intimidation.") };
   }
   // Someone named at the counter who cannot be there is the call's to fix:
   // the haggle goes ahead without them once they are left out.
@@ -619,7 +624,7 @@ export function handleHaggle(campaign: Campaign, rawArguments: string, at: Trade
     { ...rollExtrasFor(campaign, sheet, "skill_check"), keepHeldDie: waits },
   );
   if ("error" in resolved || "autoFail" in resolved) {
-    return "error" in resolved ? resolved : { error: `${sheet.name} cannot make that check.`, refused: "rules" };
+    return { ...("error" in resolved ? resolved : { error: `${sheet.name} cannot make that check.`, refused: "rules" as const }), ...counterNotice(at, "{name} cannot make that check.", { name: sheet.name }) };
   }
   spendRollCarriers(campaign.id, sheet.id, resolved.spendInspiration);
   // The player's own d20 (src/lib/dm/character-roll.ts): on physical dice
