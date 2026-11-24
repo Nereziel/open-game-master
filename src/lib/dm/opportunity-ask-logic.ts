@@ -69,9 +69,15 @@ export function smiteSlotOf(casting: { slots?: Record<string, { max: number; use
 // The card's smite choice in words: "Strike and smite (1st-level slot)", or
 // on a mounted pair's card, where each of the two has its own pair of
 // buttons, "Strike Goblin and smite (1st-level slot)", beside "Strike Goblin".
-export function smiteChoiceLine(slot: number, at?: string): string {
+type OpportunityT = (key: string, vars?: Record<string, string | number>) => string;
+
+export function smiteChoiceLine(slot: number, at?: string, t?: OpportunityT): string {
   const suffix = slot === 1 ? "st" : slot === 2 ? "nd" : slot === 3 ? "rd" : "th";
-  return `Strike ${at ? `${at} ` : ""}and smite (${slot}${suffix}-level slot)`;
+  const ordinal = `${slot}${suffix}`;
+  if (t) return at
+    ? t("Strike {target} and smite ({ordinal}-level slot)", { target: at, ordinal: t(ordinal) })
+    : t("Strike and smite ({ordinal}-level slot)", { ordinal: t(ordinal) });
+  return `Strike ${at ? `${at} ` : ""}and smite (${ordinal}-level slot)`;
 }
 
 const MOVES: Record<OpportunityTrigger, (whose: string) => string> = {
@@ -81,12 +87,32 @@ const MOVES: Record<OpportunityTrigger, (whose: string) => string> = {
   echo: (whose) => `is moving away from ${whose} echo`,
 };
 
+const PLAYER_MOVES: Record<OpportunityTrigger, string> = {
+  leaves: "{walker} is moving out of your reach",
+  enters: "{walker} is moving into your reach",
+  within: "{walker} is moving within your reach",
+  echo: "{walker} is moving away from your echo",
+};
+const WATCHER_MOVES: Record<OpportunityTrigger, string> = {
+  leaves: "{walker} is moving out of {name}'s reach",
+  enters: "{walker} is moving into {name}'s reach",
+  within: "{walker} is moving within {name}'s reach",
+  echo: "{walker} is moving away from {name}'s echo",
+};
+
 // The player's own card: "The Goblin is moving out of your reach. Take your
 // opportunity attack with your Longsword? It uses your reaction."
 // With a rider on the walker's back: "The Wolf is moving out of your reach
 // with Goblin on its back. Take your opportunity attack with your Longsword,
 // and at which of them? It uses your reaction."
-export function askLine(ask: Pick<OpportunityAsk, "walker" | "weapon" | "trigger" | "rider">): string {
+export function askLine(ask: Pick<OpportunityAsk, "walker" | "weapon" | "trigger" | "rider">, t?: OpportunityT): string {
+  // Only the UI supplies a translator; the parked roll keeps its canonical reason.
+  if (t) {
+    const movement = t(PLAYER_MOVES[ask.trigger], { walker: ask.walker });
+    return ask.rider
+      ? t("{movement} with {rider} on its back. Take your opportunity attack with your {weapon}, and at which of them? It uses your reaction.", { movement, rider: ask.rider.name, weapon: ask.weapon })
+      : t("{movement}. Take your opportunity attack with your {weapon}? It uses your reaction.", { movement, weapon: ask.weapon });
+  }
   if (ask.rider) {
     return `${ask.walker} ${MOVES[ask.trigger]("your")} with ${ask.rider.name} on its back. Take your opportunity attack with your ${ask.weapon}, and at which of them? It uses your reaction.`;
   }
@@ -94,7 +120,8 @@ export function askLine(ask: Pick<OpportunityAsk, "walker" | "weapon" | "trigger
 }
 
 // What everyone else at the table reads while the player decides.
-export function waitLine(ask: Pick<OpportunityAsk, "walker" | "trigger">, name: string): string {
+export function waitLine(ask: Pick<OpportunityAsk, "walker" | "trigger">, name: string, t?: OpportunityT): string {
+  if (t) return t("{movement}. {name} is deciding whether to take an opportunity attack.", { movement: t(WATCHER_MOVES[ask.trigger], { walker: ask.walker, name }), name });
   return `${ask.walker} ${MOVES[ask.trigger](`${name}'s`)}. ${name} is deciding whether to take an opportunity attack.`;
 }
 
