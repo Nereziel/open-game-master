@@ -1,6 +1,6 @@
 "use client";
 
-import { worldLinkLabel } from "@/lib/worldforge/display";
+import { worldLinkLabel, worldOutlineAssetLine } from "@/lib/worldforge/display";
 
 import { Check, CircleAlert, Loader2, RotateCcw, Wand2 } from "lucide-react";
 import { useState } from "react";
@@ -238,7 +238,7 @@ export function OutlineView({ api, world, onOpen, onOpenSystem }: { api: WorldAp
               <ul className="flex flex-col gap-1.5">
                 {assets.map((row) => (
                   <OutlineRow key={row.key} name={names[row.key] ?? row.name} summary={row.summary} picked={Boolean(picked[row.key])} existing={false} onPick={(value) => setPicked((now) => ({ ...now, [row.key]: value }))} onName={(value) => setNames((now) => ({ ...now, [row.key]: value }))}>
-                    <span className="pk-chip text-[11px] text-stone-300">{assetLine(row)}</span>
+                    <span className="pk-chip text-[11px] text-stone-300">{worldOutlineAssetLine(t, row)}</span>
                   </OutlineRow>
                 ))}
               </ul>
@@ -310,7 +310,7 @@ export function OutlineView({ api, world, onOpen, onOpenSystem }: { api: WorldAp
                   </div>
                   {task.state === "made" && task.made ? (
                     <p className="text-xs text-stone-400">
-                      {t("Made {name} in {lands}: {detail}.", { name: task.made.name, lands: task.made.lands, detail: task.made.detail })}{task.made.entryError ? ` ${t("Its World entry was not made: {error}", { error: task.made.entryError })}` : ""}
+                      {t("Made {name} in {lands}: {detail}.", { name: task.made.name, lands: t(task.made.lands), detail: task.made.detail })}{task.made.entryError ? ` ${t("Its World entry was not made: {error}", { error: task.made.entryError })}` : ""}
                     </p>
                   ) : null}
                   {task.state === "failed" ? <p className="text-xs text-ember-300" role="alert">{task.error}</p> : null}
@@ -340,11 +340,6 @@ export function OutlineView({ api, world, onOpen, onOpenSystem }: { api: WorldAp
       ) : null}
     </div>
   );
-}
-
-function assetLine(row: OutlineAsset): string {
-  if (row.kind === "creature") return `Creature, CR ${row.cr < 1 ? `1/${Math.round(1 / row.cr)}` : row.cr}${row.basis ? `, built on the ${row.basis}` : ", original"} · Bestiary`;
-  return `Item, ${row.itemKind.replace(/_/g, " ")} · Homebrew`;
 }
 
 function OutlineRow({ name, summary, picked, existing, onPick, onName, onOpen, children }: { name: string; summary: string; picked: boolean; existing: boolean; onPick: (value: boolean) => void; onName: (value: string) => void; onOpen?: () => void; children: React.ReactNode }) {
