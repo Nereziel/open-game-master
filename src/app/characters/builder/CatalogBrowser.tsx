@@ -392,7 +392,7 @@ export default function CatalogBrowser({
                                       reading it before adding costs nothing. */}
                                   <InfoButton
                                     label={rowName(entry)}
-                                    meta={kind === "spells" ? spellSummary(entry.data) : undefined}
+                                    meta={kind === "spells" ? spellSummary(entry.data, t.locale) : undefined}
                                     text={describeContentEntry(entry.data)}
                                     reference={
                                       entry.source === "homebrew"
