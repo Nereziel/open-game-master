@@ -455,4 +455,28 @@ assert.equal(canonicalRuleTerm("alpha", ambiguousTerms), "alpha");
 assert.equal(canonicalRuleTerm("", ambiguousTerms), "");
 assert.equal(canonicalRuleTerm("alpha/beta", ambiguousTerms), "alpha/beta");
 
+// Bestiary spell references are presentation-only and survive validation.
+const bestiarySpellDisplay = await import("../src/lib/bestiary/spell-display.ts");
+const bestiaryBlockCheck = await import("../src/lib/bestiary/block-check.ts");
+const bestiaryPrinted = await import("../src/lib/bestiary/printed-block.ts");
+const selectedSpell = { name: "Shield", level: 1, reference: { name: "Shield", slug: "srd:shield", documentSlug: "wotc-srd", source: "srd" } };
+for (const [locale, label] of [["en", "Shield"], ["fr", "Bouclier"], ["cs", "Štít"]]) {
+  assert.equal(bestiarySpellDisplay.monsterSpellLabel(selectedSpell, locale), label);
+  assert.equal(bestiarySpellDisplay.monsterSpellLabel({ name: "Shield", level: 1 }, locale), "Shield");
+  assert.equal(bestiarySpellDisplay.monsterSpellLabel({ ...selectedSpell, reference: { ...selectedSpell.reference, source: "homebrew", documentSlug: "homebrew" } }, locale), "Shield");
+  assert.equal(bestiarySpellDisplay.monsterSpellLabel({ ...selectedSpell, reference: { ...selectedSpell.reference, documentSlug: "unknown-book" } }, locale), "Shield");
+  assert.equal(bestiarySpellDisplay.monsterSpellLabel({ ...selectedSpell, name: "Custom Shield" }, locale), "Custom Shield");
+}
+assert.deepEqual(bestiaryBlockCheck.checkSpellcasting({ slots: { 1: 2 }, spells: [selectedSpell] })?.spells, [selectedSpell]);
+assert.deepEqual(bestiaryBlockCheck.checkSpellcasting({ slots: { 1: 2 }, spells: [{ ...selectedSpell, reference: { ...selectedSpell.reference, name: "Other" } }] })?.spells, [{ name: "Shield", level: 1 }]);
+const printedSourceExample = { name: "Owlbear", slug: "owlbear", documentSlug: "wotc-srd", rulebook: "owlbear" };
+const printedSnapshot = { traits: [], actions: [{ name: "Claw", desc: "An original line.", engine: "runs" }], reactions: [], legendary: [], source: printedSourceExample };
+const checkedPrinted = bestiaryPrinted.normalizePrintedBlock(printedSnapshot);
+assert.deepEqual(checkedPrinted?.source, printedSourceExample);
+assert.equal(bestiaryPrinted.samePrintedEntries(checkedPrinted, { ...printedSnapshot, source: undefined }), true);
+assert.equal(bestiaryPrinted.samePrintedEntries(checkedPrinted, { ...printedSnapshot, actions: [{ ...printedSnapshot.actions[0], desc: "A changed line." }] }), false);
+assert.equal(bestiaryPrinted.samePrintedEntries(checkedPrinted, { ...printedSnapshot, legendaryDesc: "Changed." }), false);
+assert.equal(bestiaryPrinted.samePrintedEntries(checkedPrinted, { ...printedSnapshot, actions: [] }), false);
+assert.equal(bestiaryPrinted.samePrintedEntries(checkedPrinted, { ...printedSnapshot, actions: [{ ...printedSnapshot.actions[0], engine: "text" }] }), false);
+
 console.log("test-i18n-gettext: all assertions and catalog placeholder checks passed");
