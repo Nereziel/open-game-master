@@ -1,5 +1,11 @@
 {
   "messages": {
+    "Nothing more": "Nic dalšího",
+    "Timeline mentions: {count}": "Zmínky v časové ose: {count}",
+    "Secret subjects or knowers: {count}": "Subjekty nebo znalci tajemství: {count}",
+    "Map pins: {count}": "Mapové značky: {count}",
+    "Links: {count}": "Vazby: {count}",
+    "World entries: {count}": "Záznamy světa: {count}",
     "Translated published reference": "Přeložený odkazový statblok",
     "Reference text from the source book, not the edited monster's rules.": "Text ze zdrojové příručky, nikoli pravidla upravené nestvůry.",
     "Unaligned": "Bez přesvědčení",
@@ -13010,6 +13016,147 @@
     "1/long rest, for 1 minute you and adjacent allies have resistance to all damage.": "Jednou za dlouhý odpočinek máte ty a sousedící spojenci po dobu 1 minuty odolnost vůči všemu zranění."
   },
   "contexts": {
+    "New beats: {count}, added as act {act} after {previous} existing beats. Played and skipped beats and recapped acts remain untouched.": {
+      "workshop.import.plan": "Nové dějové body: {count}, přidané jako dějství {act} za dosavadních {previous} bodů. Odehrané a přeskočené body ani již shrnutá dějství se nezmění."
+    },
+    "Beat capacity: {room} remaining of {limit}. Omitted final beats: {count}{cards}. Their full text remains on prep cards, but the party will not be steered to them.": {
+      "workshop.import.plan": "Volná kapacita dějových bodů: {room} z {limit}. Vynechané závěrečné body: {count}{cards}. Úplný text zůstane na přípravných kartách, ale družina k nim nebude vedena."
+    },
+    "Board beats already present in the arc and not added again: {count}.": {
+      "workshop.import.plan": "Dějové body scénáře, které již v oblouku jsou a nepřidají se znovu: {count}."
+    },
+    "This arc is already as long as an arc gets, so the board's beats cannot join it.": {
+      "workshop.import.plan": "Tento příběhový oblouk již dosáhl maximální délky, takže do něj nelze přidat dějové body scénáře."
+    },
+    "This campaign already has a story arc. The board's places, quests, fights and notes still land; its beats do not overwrite the spine the table has been playing. Add them as the next act to keep them.": {
+      "workshop.import.plan": "Tato kampaň již má příběhový oblouk. Místa, úkoly, střetnutí a poznámky ze scénáře se importují, ale jeho dějové body nepřepíšou rozehraný příběh. Pro jejich zachování je přidejte jako další dějství."
+    },
+    "An arc holds {limit} beats. Omitted final beats: {count}{cards}. Their full text remains on prep cards, but the party will not be steered to them.": {
+      "workshop.import.plan": "Příběhový oblouk pojme {limit} dějových bodů. Vynechané závěrečné body: {count}{cards}. Úplný text zůstane na přípravných kartách, ale družina k nim nebude vedena."
+    },
+    "{detail} Until then the board's beats are left out.": {
+      "workshop.import.plan": "{detail} Do té doby se dějové body scénáře nepřenesou."
+    },
+    "{title} may read oddly: {detail}": {
+      "workshop.import.plan": "Karta {title} může působit nejasně: {detail}"
+    },
+    "Every card is kept whole as a prep card the storyteller can open with read_card and find with search_lore; the arc's own lines are each card's first line.": {
+      "workshop.import.plan": "Každá karta se zachová celá jako přípravná karta, kterou vypravěč může otevřít pomocí read_card a najít pomocí search_lore. Do příběhového oblouku vstupuje první řádek každé karty."
+    },
+    "Planned event capacity: {room} remaining of {limit}. Omitted route scenes: {count} of {total}{cards}. Their full text remains on prep cards, but they are not offered as planned events.": {
+      "workshop.import.plan": "Volná kapacita plánovaných událostí: {room} z {limit}. Vynechané scény na trasách: {count} z {total}{cards}. Úplný text zůstane na přípravných kartách, ale scény nebudou nabízeny jako plánované události."
+    },
+    "Alternative or optional scenes: {count}. They arrive as planned moments the storyteller may trigger or drop, not required beats.": {
+      "workshop.import.plan": "Alternativní nebo volitelné scény: {count}. Přenesou se jako plánované události, které vypravěč může spustit nebo vynechat, nikoli jako povinné dějové body."
+    },
+    "Shared workshop {name}: copied records: {copied}; reused records already here: {reused}.": {
+      "workshop.import.plan": "Sdílená dílna {name}: zkopírované záznamy: {copied}; znovu využité zdejší záznamy: {reused}."
+    },
+    "Fight cards bringing their prepared encounters even without that selection: {count}. Rosters, map settings and rewards come with them.": {
+      "workshop.import.plan": "Bojové karty přenášející připravená střetnutí i bez výběru této kategorie: {count}. Přenesou se seznamy protivníků, nastavení map i odměny."
+    },
+    "Card links to records no longer in the workshop will be dropped: {count}.": {
+      "workshop.import.plan": "Počet odstraněných vazeb karet na záznamy, které již v dílně nejsou: {count}."
+    },
+    "Board links to omitted records ({kind}): {count}. The cards arrive without these links. Select the relevant kind to keep them.": {
+      "workshop.import.plan": "Vazby scénáře na vynechané záznamy ({kind}): {count}. Karty se přenesou bez těchto vazeb. Vyberte příslušnou kategorii, chcete-li je zachovat."
+    },
+    "Shops imported as authored: {count}; stock lines: {lines}. Existing purchases, sales and haggles are not reset.": {
+      "workshop.import.plan": "Obchody importované podle návrhu autora: {count}; řádky zásob: {lines}. Dosavadní nákupy, prodeje ani smlouvání se nevynulují."
+    },
+    "Shops without their keeper: {count}. They arrive without a keeper. Select NPCs to bring the keepers.": {
+      "workshop.import.plan": "Obchody bez obchodníka: {count}. Přenesou se bez obsluhy. Vyberte Nehráčské postavy, chcete-li přenést i obchodníky."
+    },
+    "Shops without their place: {count}. They arrive unplaced and open wherever a place of that name exists. Select Places to keep their location.": {
+      "workshop.import.plan": "Obchody bez svého místa: {count}. Přenesou se bez umístění a otevřou se na místě se shodným názvem, pokud existuje. Vyberte Místa, chcete-li zachovat jejich umístění."
+    },
+    "Hand-built monsters copied into this table's bestiary: {count} ({names}). NPCs, fights and roll tables keep their original combat behavior.": {
+      "workshop.import.plan": "Vlastní nestvůry zkopírované do bestiáře této hry: {count} ({names}). Nehráčské postavy, střetnutí a tabulky hodů si zachovají původní bojové chování."
+    },
+    "Roll-table rows referencing omitted NPCs, lore or tables: {count}. They refer to a matching record here, or nothing. Select the relevant kinds to bring the records.": {
+      "workshop.import.plan": "Řádky tabulek hodů odkazující na vynechané nehráčské postavy, historii světa nebo tabulky: {count}. Odkážou na zdejší odpovídající záznam, nebo zůstanou bez odkazu. Vyberte příslušné kategorie pro jejich přenos."
+    },
+    "Hand-built items copied into this table's Homebrew: {count} ({names}). World entries, shops and roll tables keep their references.": {
+      "workshop.import.plan": "Vlastní předměty zkopírované mezi domácí obsah této hry: {count} ({names}). Záznamy světa, obchody a tabulky hodů si zachovají odkazy."
+    },
+    "Places are not included, so the region map arrives without its markers. It will place them again as the party travels.": {
+      "workshop.import.plan": "Místa nejsou zahrnuta, takže mapa regionu se přenese bez značek. Značky se znovu umístí při cestování družiny."
+    },
+    "Prepared encounters referencing hand-built monsters: {count}. The monsters stay in their creator's bestiary; the roster resolves only if the campaign owner is that creator.": {
+      "workshop.import.plan": "Připravená střetnutí odkazující na vlastní nestvůry: {count}. Nestvůry zůstávají v bestiáři autora; seznam protivníků funguje pouze tehdy, je-li autor vlastníkem kampaně."
+    },
+    "Places without their battle map: {count}. Select Battle maps to keep the links.": {
+      "workshop.import.plan": "Místa bez své bojové mapy: {count}. Vyberte Bojové mapy, chcete-li zachovat vazby."
+    },
+    "Prepared encounters without their battle map: {count}. They deploy on generated maps using their own settings. Select Battle maps to keep the links.": {
+      "workshop.import.plan": "Připravená střetnutí bez své bojové mapy: {count}. Použijí vygenerované mapy podle vlastního nastavení. Vyberte Bojové mapy, chcete-li zachovat vazby."
+    },
+    "{kind}: previously imported entries arrive again as second copies.": {
+      "workshop.import.plan": "{kind}: dříve importované záznamy se přenesou znovu jako další kopie."
+    },
+    "{kind}: {count} previously imported entries are kept with this campaign's edits.": {
+      "workshop.import.plan": "{kind}: počet dříve importovaných záznamů zachovaných včetně úprav kampaně: {count}."
+    },
+    "{kind}: {count} entries conflict by name and will be numbered.": {
+      "workshop.import.plan": "{kind}: počet záznamů se shodným názvem: {count}. Importované názvy dostanou číslo."
+    },
+    "This campaign already has a region map. Importing replaces it.": {
+      "workshop.import.plan": "Tato kampaň již má mapu regionu. Import ji nahradí."
+    },
+    "World places have links to omitted records ({kind}): {count}. These links stay behind unless already imported.": {
+      "workshop.import.plan": "Počet vazeb míst světa na vynechané záznamy ({kind}): {count}. Vazby se nepřenesou, pokud příslušné záznamy nebyly importovány dříve."
+    },
+    "WorldForge's links, secrets and pins for {kind} stay behind.": {
+      "workshop.import.plan": "Vazby, tajemství a mapové značky WorldForge pro kategorii {kind} se nepřenesou."
+    },
+    "Leaving out {kind}: WorldForge drops these related records: {losses}.": {
+      "workshop.import.plan": "Vynechaná kategorie – {kind}. WorldForge vypustí související záznamy: {losses}."
+    },
+    "WorldForge also brings these related records: {kinds}.": {
+      "workshop.import.plan": "WorldForge přenese také související záznamy: {kinds}."
+    },
+    "This campaign already has a story arc. The board's places, quests, fights and notes still land; its beats do not overwrite the spine the table has been playing.": {
+      "workshop.import.plan": "Tato kampaň již má příběhový oblouk. Místa, úkoly, střetnutí a poznámky ze scénáře se importují, ale jeho dějové body nepřepíšou rozehraný příběh."
+    },
+    "This campaign already has house rules. Importing replaces them unless you choose to add.": {
+      "workshop.import.plan": "Tato kampaň již má domácí pravidla. Import je nahradí, pokud nezvolíte jejich doplnění."
+    },
+    "House rules and variant rules": {
+      "workshop.import.kind": "Domácí a variantní pravidla"
+    },
+    "WorldForge: links, timeline, secrets and atlas": {
+      "workshop.import.kind": "WorldForge: vazby, časová osa, tajemství a atlas"
+    },
+    "The storyboard": {
+      "workshop.import.kind": "Scénář"
+    },
+    "Battle maps": {
+      "workshop.import.kind": "Bojové mapy"
+    },
+    "Market": {
+      "workshop.import.kind": "Tržiště"
+    },
+    "Factions": {
+      "workshop.import.kind": "Frakce"
+    },
+    "NPCs": {
+      "workshop.import.kind": "Nehráčské postavy"
+    },
+    "Roll tables": {
+      "workshop.import.kind": "Tabulky hodů"
+    },
+    "Prepared encounters": {
+      "workshop.import.kind": "Připravená střetnutí"
+    },
+    "Region map": {
+      "workshop.import.kind": "Mapa regionu"
+    },
+    "Places": {
+      "workshop.import.kind": "Místa"
+    },
+    "World lore": {
+      "workshop.import.kind": "Historie světa"
+    },
     "Forge": {"ambience.cue":"Kovárna"},
     "The big one": {"ambience.cue":"Souboj s bossem"},
     "chaotic evil": {
