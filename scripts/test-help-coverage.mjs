@@ -271,6 +271,27 @@ test("a pack row's \"no\" is no: Light is neither concentration nor a ritual", (
 });
 
 await import("../src/lib/i18n/server-catalogs.ts");
+test("spell summary metadata follows locale and keeps conditional text intact", () => {
+  const data = { level_int: 3, school: { name: "Evocation" }, casting_time: "1 bonus action", range: "60 feet", concentration: "yes", ritual: true };
+  const original = JSON.stringify(data);
+  const expected = {
+    en: "level 3 evocation · 1 bonus action · 60 feet · concentration · ritual",
+    fr: "évocation, niveau 3 · 1 action bonus · 60 pieds · concentration · rituel",
+    cs: "zaklínání, úroveň 3 · 1 bonusová akce · 60 stop · soustředění · rituál",
+  };
+  for (const locale of ["en", "fr", "cs"]) {
+    assert.equal(spellSummary(data, locale), expected[locale]);
+    assert.equal(spellSummary(undefined, locale), "");
+    assert.equal(JSON.stringify(data), original);
+    const conditional = spellSummary({ level: 1, school: "Custom", casting_time: "1 reaction, when an ally falls", range: "Self (15-foot cone)" }, locale);
+    assert.ok(conditional.includes("1 reaction, when an ally falls · Self (15-foot cone)"));
+    assert.ok(conditional.includes("custom"));
+  }
+  assert.equal(spellSummary({ level: 0, school: "evocation", casting_time: "2 minutes", range: "Touch" }, "cs"), "trik (zaklínání) · 2 minuty · Dotek");
+  assert.equal(spellSummary({ level: 1, school: "divination", casting_time: "5 hours" }, "cs"), "věštění, úroveň 1 · 5 hodin");
+  assert.equal(spellSummary({ level: 0, school: "evocation", casting_time: "1 minute", range: "Self" }, "fr"), "sort mineur (évocation) · 1 minute · Sur soi");
+});
+
 const { speciesTraitName } = await import("../src/lib/content/names.ts");
 const { findOptionByFeatureName } = await import("../src/lib/srd/options.ts");
 
