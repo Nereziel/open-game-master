@@ -13068,7 +13068,21 @@
     "Level Up Advanced 5e's {needs} is a rule this game does not play.": "Pravidlo z Level Up Advanced 5e ({needs}) tato hra nepoužívá.",
     "Ley lines are from Deep Magic: the GM decides where they run.": "Magické linie pocházejí z Deep Magic: PJ určuje, kudy vedou.",
     "It is not offered for play here; the GM can still read it, or copy it into the workshop and change it.": "Zde není k dispozici pro hraní; PJ si jej přesto může přečíst nebo zkopírovat do dílny a upravit.",
-    "The GM plays that part.": "Tuto část řeší PJ."
+    "The GM plays that part.": "Tuto část řeší PJ.",
+    "needs it": "vyžaduje soustředění",
+    "not needed": "nevyžaduje soustředění",
+    "1 action": "1 akce",
+    "1 bonus action": "1 bonusová akce",
+    "1 reaction": "1 reakce",
+    "1 minute or longer": "1 minuta nebo déle",
+    "an action": "akce",
+    "a bonus action": "bonusová akce",
+    "a reaction": "reakce",
+    "a minute or longer": "minuta nebo déle",
+    "no concentration": "bez soustředění",
+    "{school} cantrip": "trik ({school})",
+    "level {level} {school}": "{school}, úroveň {level}",
+    "Unlimited": "Neomezený"
   },
   "contexts": {
     "{table}: its row for the table {name} now names this campaign's own {name}, since the source's stayed behind.": {
