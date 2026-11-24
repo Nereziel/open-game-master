@@ -1,4 +1,5 @@
 import { LIMITS, linkFingerprint, type WorldLink } from "@/lib/worldforge/model";
+import { makeImportResultNote, type ImportResultNote } from "@/lib/workshop/import-display";
 
 // Links brought in again by a second import of the same world (a WorldForge
 // file, or another workshop copied over), merged with the links already
@@ -19,7 +20,7 @@ import { LIMITS, linkFingerprint, type WorldLink } from "@/lib/worldforge/model"
 // and label, and the source's reading wins (nobody can tell it was edited).
 // Pure: the callers write the document.
 
-export type LinkMerge = { links: WorldLink[]; added: number; updated: number; removed: number; conflicts: string[] };
+export type LinkMerge = { links: WorldLink[]; added: number; updated: number; removed: number; conflicts: string[]; conflictDisplays: ImportResultNote[] };
 
 const keyOf = (link: Pick<WorldLink, "from" | "to" | "label">) => `${link.from}|${link.to}|${link.label.toLowerCase()}`;
 
@@ -34,6 +35,8 @@ export function mergeImportedLinks(
 ): LinkMerge {
   const links = own.map((link) => ({ ...link }));
   const conflicts: string[] = [];
+  const conflictDisplays: ImportResultNote[] = [];
+  const report = (note: ImportResultNote) => { conflicts.push(note.message); conflictDisplays.push(note); };
   let added = 0;
   let updated = 0;
   let removed = 0;
@@ -71,7 +74,13 @@ export function mergeImportedLinks(
       updated += 1;
     } else if (mine.importedAs !== print) {
       // Changed here and at the source: the local edit stands, said aloud.
-      conflicts.push(`${describe(mine)}: changed here and in the import (which says ${theirs.veracity}${theirs.rank ? `, ${theirs.rank}` : ""}${theirs.oneway ? ", one way" : ""}); yours was kept.`);
+      report(makeImportResultNote(
+        theirs.oneway
+          ? "{link}: changed here and in the import (which says {veracity}{rank}, one way); yours was kept."
+          : "{link}: changed here and in the import (which says {veracity}{rank}); yours was kept.",
+        { link: describe(mine), veracity: theirs.veracity, rank: theirs.rank ? `, ${theirs.rank}` : "" },
+        { veracity: { key: theirs.veracity } },
+      ));
       Object.assign(mine, { importedFrom: from });
     }
   }
@@ -83,9 +92,9 @@ export function mergeImportedLinks(
         removed += 1;
         continue;
       }
-      conflicts.push(`${describe(link)}: gone from the import, but changed here; yours was kept.`);
+      report(makeImportResultNote("{link}: gone from the import, but changed here; yours was kept.", { link: describe(link) }));
     }
     kept.push(link);
   }
-  return { links: kept, added, updated, removed, conflicts };
+  return { links: kept, added, updated, removed, conflicts, conflictDisplays };
 }
