@@ -50,7 +50,7 @@ Tuto hůl lze použít jako magickou hůl (zbraň), která poskytuje bonus +2 k 
 
 ***Blesk.*** Když holí zasáhneš útokem na blízko, můžeš cíli způsobit dodatečné bleskové zranění 2k6.
 
-***Hrom.*** Když holí zasáhneš útokem na blízko, můžeš způsobit, že hůl vydá hromovou ránu slyšitelnou až do vzdálenosti 300 stop. Zasažený cíl musí uspět v záchranném hodu na Odolnost se SO 17, jinak je omráčený až do konce tvého příštího tahu.
+***Hrom.*** Když holí zasáhneš útokem na blízko, můžeš způsobit, že hůl vydá hromovou ránu slyšitelnou až do vzdálenosti 300 stop. Zasažený cíl musí uspět v záchranném hodu na Odolnost se SO 17, jinak je ochromený až do konce tvého příštího tahu.
 
 ***Bleskový úder.*** Jako akci můžeš z hrotu hole vystřelit blesk v čáře široké 5 stop a dlouhé 120 stop. Každý tvor v této čáře musí provést záchranný hod na Obratnost se SO 17. Při neúspěchu utrpí bleskové zranění 9k6, při úspěchu poloviční.
 

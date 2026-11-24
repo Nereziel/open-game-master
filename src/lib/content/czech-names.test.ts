@@ -1,5 +1,9 @@
 import { describe, expect, it } from "vitest";
 import { CS_NAMES_BY_TABLE } from "./names-cs";
+import authoredFeats from "../srd/authored-feats.json";
+import classFeatures from "../srd/class-features.json";
+import { RESOURCE_CS_FEATURE_NAME_LOOKUP } from "../srd/resource-feature-names-cs";
+import { CZECH_SPELLS, CZECH_MONSTERS, CZECH_ITEMS } from "../rulebook/czech-terms";
 import { contentName, classFeatureName, subclassName, speciesTraitName, backgroundFeatureLabel } from "./names";
 import racesJson from "../srd/races.json";
 import backgroundsJson from "../srd/backgrounds.json";
@@ -29,6 +33,70 @@ describe("Czech content names through upstream helpers", () => {
   it("translates canonical rulebook names without changing the original data", () => {
     expect(contentName("classes", "Fighter", "cs")).toBe("Bojovník");
     expect(contentName("classes", "Fighter", "en")).toBe("Fighter");
+  });
+
+  it("keeps the 2014 Czech spell and monster labels consistent with the rulebook", () => {
+    for (const [slug, title, expected] of [
+      ["eldritch-blast", "Eldritch Blast", "Tajemný výšleh"],
+      ["hellish-rebuke", "Hellish Rebuke", "Pekelné pokárání"],
+      ["entangle", "Entangle", "Zapletení"],
+      ["true-seeing", "True Seeing", "Pravdivé vidění"],
+      ["arcanists-magic-aura", "Arcanist's Magic Aura", "Nystulova magická aura"],
+    ]) {
+      expect(CS_NAMES_BY_TABLE.spells[slug]).toBe(expected);
+      expect(CZECH_SPELLS[title]).toBe(expected);
+    }
+    expect(CS_NAMES_BY_TABLE.monsters["frost-giant"]).toBe("Mrazivý obr");
+    expect(CZECH_MONSTERS["Frost Giant"]).toBe("Mrazivý obr");
+    for (const [slug, title, expected] of [
+      ["drider", "Drider", "Dravouk"],
+      ["glabrezu", "Glabrezu", "Glabrez"],
+      ["grimlock", "Grimlock", "Divous"],
+      ["guardian-naga", "Guardian Naga", "Strážný nága"],
+      ["spirit-naga", "Spirit Naga", "Přízračný nága"],
+      ["lizard", "Lizard", "Ještěr"],
+    ]) {
+      expect(CS_NAMES_BY_TABLE.monsters[slug]).toBe(expected);
+      expect(CZECH_MONSTERS[title]).toBe(expected);
+    }
+    for (const [slug, title, expected] of [
+      ["sphere-of-annihilation", "Sphere of Annihilation", "Koule anihilace"],
+      ["talisman-of-the-sphere", "Talisman of the Sphere", "Talisman koule"],
+    ]) {
+      expect(CS_NAMES_BY_TABLE.magicitems[slug]).toBe(expected);
+      expect(CZECH_ITEMS[title]).toBe(expected);
+    }
+    expect(CS_NAMES_BY_TABLE.conditions.grappled).toBe("Uchvácený");
+    expect(CS_NAMES_BY_TABLE.conditions.restrained).toBe("Zadržený");
+    expect(CS_NAMES_BY_TABLE.conditions.stunned).toBe("Ochromený");
+    expect(CS_NAMES_BY_TABLE.conditions.incapacitated).toBe("Neschopný");
+  });
+
+  it("covers all authored feats without changing the English names", () => {
+    for (const feat of authoredFeats.feats) {
+      expect(contentName("feats", feat.name, "cs"), feat.name).toBeTruthy();
+      expect(contentName("feats", feat.name, "cs"), feat.name).not.toBe(feat.name);
+      expect(contentName("feats", feat.name, "en")).toBe(feat.name);
+    }
+  });
+
+  it("covers every bundled core class feature name", () => {
+    for (const [id, row] of Object.entries(classFeatures.classes)) {
+      const names = [...Object.values(row.levels).flat(), ...row.subclasses.flatMap(s => Object.values(s.levels).flat())];
+      for (const name of names) {
+        expect(classFeatureName(id, name, "cs"), id + ": " + name).toBeTruthy();
+        expect(classFeatureName(id, name, "cs"), id + ": " + name).not.toBe(name);
+        expect(classFeatureName(id, name, "en")).toBe(name);
+      }
+    }
+    expect(classFeatureName("rogue", "Fast Hands", "cs")).toBe("Rychlé ruce");
+  });
+
+  it("keeps shared resource and class feature labels consistent", () => {
+    expect(RESOURCE_CS_FEATURE_NAME_LOOKUP["grave-grip"]).toBe(classFeatureName("grave_knight", "Grave Grip", "cs"));
+    expect(RESOURCE_CS_FEATURE_NAME_LOOKUP["adrenal-override"]).toBe(classFeatureName("street_samurai", "Adrenal Override", "cs"));
+    expect(RESOURCE_CS_FEATURE_NAME_LOOKUP["root-access"]).toBe(classFeatureName("netrunner", "Root Access", "cs"));
+    expect(RESOURCE_CS_FEATURE_NAME_LOOKUP["difference-engine-mind"]).toBe(classFeatureName("machinist", "Difference Engine Mind", "cs"));
   });
 
   it("keeps homebrew names and unknown entries intact", () => {
