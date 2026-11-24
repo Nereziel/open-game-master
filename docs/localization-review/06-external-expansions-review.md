@@ -1,68 +1,85 @@
-## Etapa 6: Kontrola překladů externích rozšíření
-Navazuje na sloučený PR #113 a issue #112. Výchozí commit `099bbaccafeb1341369746b019e22fee3b38f0db`. Cíl: `rebuild/fresh-upstream-2026-11-23` (nikoli main).
+## Etapa 6 — externí rozšíření D&D (issue #112, PR #116)
 
-## Rozsah
-Inventura všech skutečně dostupných externích zdrojů (např. Tome of Heroes, pokud je přítomen). Oddělit zdroje od SRD a odlišit skutečnou dostupnost v čistém upstreamu od pouhé existence překladu v záloze.
+Cílová větev: `rebuild/fresh-upstream-2026-11-23`; pracovní větev: `review/cs-external-expansions-review`. Záloha: `backup/pre-upstream-restart-2026-11-23` (`fe02afefcc3055b4992bf1cc5144dafa58d8475e`). SRD a odm-expanded mimo rozsah. SQLite nebylo otevřeno ani dotazováno.
 
 ## Checklist
-- [ ] Zjistit katalogy a existující lokalizační cesty na aktuálním základu, přesné počty podle zdroje a typu; porovnat se zálohou `backup/pre-upstream-restart-2026-11-23`.
-- [ ] Zkontrolovat, zda aplikace opravdu načítá názvy, popisy a metadata rozšíření v češtině stejnou cestou jako francouzštinu; chybějící podporu zdokumentovat.
-- [ ] Pro dostupné zdrojové texty ověřit názvy i úplné věty, pravidlové podmínky, čísla, kostky a metadata předmětů, kouzel, odborností, schopností, ras/povolání, zázemí a nestvůr podle skutečného katalogu.
-- [ ] Použít d20 pro doložené termíny; jinak přirozená čeština v duchu D&D, bez domýšlení pravidel nebo záznamů.
-- [ ] Převzít existující hotové překlady ze zálohy, zachovat oddělení zdrojů, slugy a identity; nepřidávat nový registry či zásahy do herního enginu.
-- [x] SQLite v této etapě nepoužívat. Pokud bez něj nebo bez licencovaného zdrojového textu nelze něco ověřit, uvést konkrétní blokaci, počty a nepovažovat položku za dokončenou.
-- [ ] Doložit pokrytí po balíčcích a typech, případné neověřitelné položky, skutečné opravy a testy načítání.
 
-## Stav
-Dílčí audit; zbývající položky checklistu nejsou odškrtnuty, protože nebyly splněny v plném rozsahu.
+- [x] Najít veřejné originální zdroje nezávislé na SQLite a porovnat se zálohou.
+- [x] Obnovit všech 474 historických názvů a porovnat 87 historických plných návrhů s původním textem.
+- [x] Tome of Heroes v1: 303 názvů, 13 odborností, 40 ras/podras, 29 magických předmětů, 36 statických záznamů výzbroje (bez nedostupných speciálních pravidel).
+- [x] Zachovat zdrojové identity, anglická pravidlová pole, původní EN/FR cestu, bez nového registru.
+- [x] SQLite vynechat; oddělit nedostupný text od dostupného, dosud nepřeloženého.
+- [ ] Dokončit zbývající kouzla, archetypy, zázemí, předměty, nestvůry a ostatní knihy.
+- [ ] Doložit přesný katalog nainstalované verze bez SQLite (raw počty nejsou totéž co import po deduplikaci).
+- [ ] Úplná terminologická a metadata revize zbývajících položek, všechny UI cesty a úspěšné CI.
 
-## Audit 2026-11-24 — dílčí výsledek (bez SQLite)
+## Podklady a inventura
 
-Rozsah byl zjištěn ze stromů Git na `4534058b4cbf53cf56d233a7a3ac1eb598e23bb0` a záloze `fe02afefcc3055b4992bf1cc5144dafa58d8475e`. `docs/content.md`, `scripts/import-open5e.mjs` a `scripts/fetch-content-pack.mjs` potvrzují, že úplný importovaný katalog pochází z Open5e a distribuovaného SQLite; raw API cache není v Git stromu. Dokumentace uvádí historický import 31 dokumentů včetně SRD a authored zdrojů, nikoli aktuální počty po knize. Skutečný počet a všechny identity v instalovaném katalogu proto **neověřeny**; SQLite se nečetlo ani nespouštělo. Základní SRD a `odm-expanded` nejsou v tomto součtu.
+Originální veřejný katalog: [Open5e API, commit bdcddf2b](https://github.com/open5e/open5e-api/tree/bdcddf2b5f7995c42ac89722d8da563346b6744a/data). V1 a v2 jsou rozdílné zdrojové snapshoty; importer je normalizuje a deduplikuje. Čísla níže jsou počty raw řádků, nikoli tvrzení o skutečném počtu instalovaných položek. Knihy a licence zůstávají identifikovány původním dokumentem Open5e; původní licenční metadata se nemění. Některé velké bestiáře nástroj vrací zkrácené, takže přesný počet nebylo možné ověřit.
 
-### Doložený vzorek, nikoli kompletní katalog
+| Dokument v1 | Zdrojové položky |
+|---|---|
+| toh | 91 kouzel, 13 odborností, 18 zázemí, 76 archetypů, 11 ras + 29 podras, 31 zbraní + 5 zbrojí + 29 magických předmětů |
+| dmag | 514 kouzel včetně 38 triků |
+| vom | 805 magických předmětů |
+| a5e | 371 kouzel včetně 29 triků, 59 odborností, 16 zázemí, 546 předmětů |
+| blackflag | 360 nestvůr |
+| dmag-e | 64 kouzel včetně 1 triku |
+| kp | 31 kouzel |
+| o5e | 15 archetypů, 2 zázemí, 2 kouzla, 1 podrasa |
+| taldorei | 4 archetypy, 5 zázemí, 1 odbornost, 1 předmět, 4 nestvůry |
+| warlock | 43 kouzel včetně 2 triků |
+| cc, menagerie, tob, tob2, tob3, tob-2023 | bestiáře existují, úplný JSON výstup nedostupný (zkrácený), počet neověřen |
 
-Sjednocení podle přesné kombinace `documentSlug + druh + slug` ze souborů `scripts/fixtures/open5e-pack-rows.json`, `pack-species-rows.json` a sedmi `reader-golden/{archetype,background,class,feat,monster,race,spell}.json`. Při překryvu má přednost golden řádek. Čísla označují pouze fixture identity.
+| Dokument v2 | Zdrojové položky |
+|---|---|
+| a5e-ag | 371 kouzel včetně 29 triků, 59 odborností, 21 zázemí, 1 povolání + 3 archetypy, 6 stavů |
+| a5e-ddg | 4 zázemí |
+| a5e-gpg | 2 zázemí |
+| a5e-mm | bestiář, počet neověřen |
+| tdcs | 5 zázemí, 4 archetypy, 4 nestvůry, 1 odbornost |
+| bfrd | 16 povolání + 17 archetypů, 360 nestvůr |
+| ccdx | 356 nestvůr |
+| deepm | 515 kouzel včetně 38 triků |
+| deepmx | 64 kouzel včetně 1 triku |
+| kp | 31 kouzel |
+| toh | 91 kouzel, 13 odborností, 19 zázemí, 76 archetypů, 40 ras/podras |
+| wz | 43 kouzel včetně 2 triků |
+| open5e | 2 zázemí, 16 archetypů, 1 rasa, 2 kouzla |
+| spells-that-dont-suck | 180 kouzel včetně 17 triků |
+| tob, tob2, tob3, tob-2023, vom | bestiáře/předměty, úplný JSON výstup nedostupný, počet neověřen |
 
-| Dokument | Doložené kategorie a počty | Názvy | Přeložené dostupné texty | Zbývají texty |
-|---|---|---:|---:|---:|
-| toh | 40 ras/podras, 6 zázemí, 1 archetyp, 2 odbornosti | 49 | 3 | 46 |
-| dmag | 8 kouzel | 8 | 8 | 0 |
-| a5e | 2 zázemí, 3 odbornosti, 1 kouzlo | 6 | 5 | 1 |
-| a5e-ag | 1 povolání, 1 zázemí, 1 archetyp | 3 | 0 | 3 |
-| bfrd | 1 povolání | 1 | 0 | 1 |
-| o5e | 2 zázemí, 1 rasa, 1 archetyp | 4 | 1 | 3 |
-| taldorei | 2 zázemí | 2 | 0 | 2 |
-| a5e-ddg | 2 zázemí | 2 | 0 | 2 |
-| a5e-gpg | 1 zázemí | 1 | 0 | 1 |
-| open5e | 1 archetyp | 1 | 0 | 1 |
-| tob | 1 nestvůra | 1 | 0 | 1 |
-| blackflag | 1 nestvůra | 1 | 0 | 1 |
-| warlock | 1 kouzlo | 1 | 1 | 0 |
-| spells-that-dont-suck | 1 kouzlo | 1 | 1 | 0 |
-| **Celkem** | **41 ras, 16 zázemí, 2 povolání, 4 archetypy, 5 odborností, 11 kouzel, 2 nestvůry** | **81** | **19** | **62** |
+V1 ToH kouzla mají ve zdroji nulový počet level=0; neopravujeme zdrojová metadata podle domněnky. V2 soubory nelze automaticky počítat jako další unikátní řádky. Fixture `scripts/fixtures/open5e-pack-rows.json`, `pack-species-rows.json` a `reader-golden` doložily v první etapě 81 identit a 19 přeložených textů; ty jsou zahrnuty níže.
 
-81 zdrojově přesných názvů (68 odlišných českých znění, 13 ponechaných názvů). U 19 položek přeložen dostupný originální text po větách: 11 kouzel (desc, higher_level, duration), 5 odborností (desc, effects_desc, prerequisite), 3 zázemí (desc, zdatnosti, výbava, schopnost, charakteristiky). Con Artist má ve zdroji u charakteristik pouze „Coming soon!“; nic nebylo domýšleno. U kouzel nejsou ve fixture dostupné všechny údaje o škole, vyvolání, složkách, dosahu, úrovni a soustředění. Rozdělení na triky a kouzla proto není přesně doloženo; nejsou vydávána za úplný audit všech metadat. Samostatné schopnosti povolání, úplné statbloky a rasové vlastnosti dosud neprošly významovým auditem. V tomto vzorku není žádný doložený externí předmět s originálem.
+## Stav skutečných překladových dat
 
-### Záloha — co lze obnovit
+Počty přímo z `src/lib/content/expansion-descriptions-cs.json` na kódu `fad0f2e06b2046ecf1f77492732f71a2c5dad1d4`. Plný text znamená přeložený dostupný zdrojový popis, nikoli potvrzení všech UI cest nebo všech metadat.
 
-| Kniha | Historické mapy názvů | Neauditované úplné návrhy | Orientační poznámky |
-|---|---|---|---|
-| Tome of Heroes (`toh`) | 65 předmětů, 91 kouzel, 13 odborností | 14 kouzel, 13 odborností | 65 předmětů, 91 kouzel |
-| Deep Magic (`deepm`, `dmag`) | 56 kouzel | 12 kouzel | 56 kouzel |
-| Vault of Magic (`vom`) | 249 předmětů | 48 předmětů | 249 předmětů |
-| **Celkem** | **474** | **87** | **461** |
+| Kniha / kategorie | Názvy | Plné dostupné texty | Pouze statistiky |
+|---|---:|---:|---:|
+| Tome of Heroes – předměty | 65 | 29 | 36 |
+| Tome of Heroes – kouzla | 91 | 14 | 0 |
+| Tome of Heroes – odbornosti | 13 | 13 | 0 |
+| Tome of Heroes – rasy a podrasy | 40 | 40 | 0 |
+| Tome of Heroes – zázemí | 18 | 1 | 0 |
+| Tome of Heroes – archetypy | 76 | 0 | 0 |
+| Deep Magic | 62 | 19 | 0 |
+| Vault of Magic | 249 | 48 | 0 |
+| Ostatní fixture | 24 | 8 | 0 |
+| **Celkem** | **638** | **172** | **36** |
 
-Počty spočteny z jednotlivých map ve `src/lib/content/translations/{tome-of-heroes,deep-magic,vault-of-magic}/cs-data.ts` v záloze, nikoli odhadnuté z katalogu. `docs/supplement-translation-packs.md` v záloze návrhy výslovně označuje za neauditované. V novém základu není starý registry; nepřenášel se. Převzaty byly konkrétní doložené názvy Accelerate, Abhorrent Apparition, Floriographer, Rimecaster, jejich text znovu porovnán s golden originálem. Ostatní historické návrhy bez doložené shody původu, slugu a kompletního textu zůstávají v záloze; 474 historických klíčů není počet aktuálně nainstalovaných položek. Vault of Magic má v záloze překlady, ale v kontrolovaném vzorku nemá originální řádek. **Neověřitelné položky mimo fixture: počet neznámý.**
+Historických 474 názvů (ToH 169, DM 56, VoM 249) obnoveno po spárování s přesným originálním slugem a názvem. Všech 87 historických plných návrhů (ToH 27, DM 12, VoM 48) prošlo porovnáním; opraveny významové odchylky a nedostatečné podmínky, nikoli pouhý přenos. Orientační souhrny nepovažujeme za plná pravidla. Nově 40 ras/podras, 29 magických předmětů ToH, další dostupné texty a názvy. U 36 záznamů nemagické výzbroje přeloženy dostupné číselné a typové údaje, bez vymyšlených zvláštních vlastností, které veřejný záznam neobsahuje.
 
-### Načítání a kompatibilita
+Zbývající dostupné v1 texty: ToH 77 kouzel, 17 zázemí a 76 archetypů (170 popisů); Deep Magic 495 popisů (452 názvů chybí); Vault of Magic 757 popisů (556 názvů chybí). Ostatní knihy pouze dílčí pokrytí podle fixture. To jsou nezpracované dostupné originály, nikoli blokace SQLite. Úplná inventura instalovaných položek a počty velkých zkrácených bestiářů zůstávají neověřené.
 
-- Stávající `contentName` dostal zdrojově přesný český lookup; původní EN/FR tabulky a fallback zůstávají. Nová data jsou oddělená po skutečných dokumentových klíčích. Nový registry, DB schéma, mechaniky ani uložené identity nevznikly.
-- `localizeEntryCs` je již volána seznamovým i detailovým API pro cs; rozšířený adaptér doplňuje pouze `data.localized_desc`, které čte `describeContentEntry` a InfoDialog. Vyžaduje shodu source=open5e, documentSlug, slug, originálního názvu a všech doložených původních polí; při změně anglického textu, chybějícím poli, jiné knize nebo homebrew ponechá angličtinu.
-- ContentPicker/MultiContentPicker používají české názvy při zachování anglického výběru; usePickerGroups podporuje známé pack identity s documentSlug. Některé konzumenty předávají jen anglický název, ztrácejí ID (např. některé rasové kolize, archetypy), nebo zobrazují předem připravený inline popis (zázemí). Tam pokrytí není potvrzeno. Hledání podle českého názvu, metadata mimo dostupná pole, PDF, všechny obrazovky a živý SQLite katalog nebyly ověřeny.
-- Regresní test rozšířen v existujícím `entry-descriptions-cs.test.ts` o 19 skutečných fixture textů, 81 názvů, kontrolu zachování dat, ID, homebrew a fallback při změně originálu. Test není náhrada jazykového auditu. CI na posledním kódu `3f0299092782e1e7ec1f830a8a13395155c85a55` zatím čeká; lokální clone není v tomto prostředí dostupný, runtime/build nepotvrzen.
-- Terminologická kontrola proti české PH 2014: [vlastnosti a dovednosti](https://dnd5esrd.d20.cz/prirucka-hrace/7-kapitola.html), [boj a Sprint](https://dnd5esrd.d20.cz/prirucka-hrace/9-kapitola.html), [stavy](https://dnd5esrd.d20.cz/prirucka-hrace/dodatek-a.html). Nejde o doložení oficiálního českého překladu třetích stran. Ostatní názvy jsou vlastní návrhy dle originálních fixture názvů.
+## Načítání
 
-### Závěr
+`contentName` a `localizeEntryCs` využívají existující lokalizační cestu. Přesná kombinace source=open5e, documentSlug, druh, slug a anglický název, u popisu také shoda uložených původních polí; jinak anglický fallback. Pouze zobrazovací `localized_desc`; nemění pravidla, identity ani databázi. ContentPicker/MultiContentPicker čtou české názvy, ale některé výběry předávají jen anglický název, zejména archetypy, odvozené rasové názvy a inline zázemí. Úplná propagace do UI, české vyhledávání a PDF nejsou potvrzené.
 
-Etapa 6 **není kompletní**. Zbývá obsahová revize 62 dalších položek doloženého vzorku, zjištění originálů mimo vzorek (včetně předmětů a dalších rozšíření), audit metadat, úplné UI a CI ověření. PR ponechat otevřený jako draft. SQLite je záměrně mimo rozsah.
+Regresní testy v `entry-descriptions-cs.test.ts` pokrývají 638 názvů, původní fixture, 13 odborností, 29 předmětů, 36 stat záznamů, 14+19 kouzel, 48 předmětů VoM a 40 ras/podras; část testů používá uložená původní pole (nejde o nezávislý test živého importu). CI nebylo při zápisu výsledku potvrzené; lokální runtime bez clone nedostupný.
+
+Terminologie: [d20 PH 2014 vlastnosti](https://dnd5esrd.d20.cz/prirucka-hrace/7-kapitola.html), [boj](https://dnd5esrd.d20.cz/prirucka-hrace/9-kapitola.html), [stavy](https://dnd5esrd.d20.cz/prirucka-hrace/dodatek-a.html). Nedoložené názvy jsou vlastní překlady; nejsou vydávány za oficiální.
+
+## Závěr
+
+Výrazně rozšířený dílčí audit, nikoli kompletní překlad externího katalogu. PR neslučovat ani neoznačovat dokončený.
