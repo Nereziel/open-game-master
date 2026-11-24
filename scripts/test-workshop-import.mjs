@@ -413,4 +413,59 @@ test("post-import references preserve the old messages and localize all six outc
   assert.deepEqual(notes, snapshot);
 });
 
+
+const { worldEntryConflictNote, mergeSliceRows } = await import("../src/lib/worldforge/import-merge.ts");
+const { mergeImportedLinks } = await import("../src/lib/db/world-link-merge.ts");
+const { standingUnsaid } = await import("../src/lib/workshop/import.ts");
+
+test("WorldForge conflict presentation preserves local edits, authored fields and EN identity", () => {
+  const name = "An entry {value}";
+  const field = "Custom {name}";
+  const entry = worldEntryConflictNote(name, "fields.custom", () => field);
+  assert.equal(entry.message, `${name}: kept your “${field}” field over the import's.`);
+  const ordinary = worldEntryConflictNote(name, "article");
+  const unknown = worldEntryConflictNote(name, "unregistered_custom_key");
+  const unnamed = worldEntryConflictNote(undefined, "article");
+  const doc = { folders: [], origins: {} };
+  mergeSliceRows(doc, "folders", [{ id: "f", name: "Original folder" }], ["source-f"], "source");
+  doc.folders[0] = { ...doc.folders[0], name: "Local folder {value}" };
+  const rows = mergeSliceRows(doc, "folders", [{ id: "f", name: "Imported folder" }], ["source-f"], "source");
+  assert.deepEqual(rows.conflicts, ["Folder “Local folder {value}”: kept your name over the import's."]);
+  assert.equal(doc.folders[0].name, "Local folder {value}");
+  assert.equal(rows.updated, 0);
+
+  const link = { id: "link", from: "a", to: "b", label: "member of", veracity: "known", rank: "Captain", oneway: false };
+  const first = mergeImportedLinks([], [link], "source");
+  const local = [{ ...first.links[0], rank: "Local rank" }];
+  const changed = mergeImportedLinks(local, [{ ...link, veracity: "hidden", rank: "Imported {rank}", oneway: true }], "source", (ref) => ref === "a" ? name : "Guild");
+  assert.equal(changed.links[0].rank, "Local rank");
+  assert.equal(changed.updated, 0);
+  assert.deepEqual(changed.conflicts, [`${name} member of Guild: changed here and in the import (which says hidden, Imported {rank}, one way); yours was kept.`]);
+  const removed = mergeImportedLinks(local, [], "source");
+  assert.equal(removed.links.length, 1);
+  assert.equal(removed.removed, 0);
+  assert.deepEqual(removed.conflicts, ["a member of b: gone from the import, but changed here; yours was kept."]);
+  const notes = [entry, ordinary, unknown, unnamed, ...rows.conflictDisplays, ...changed.conflictDisplays, ...removed.conflictDisplays];
+  const messages = notes.map((note) => note.message);
+  const snapshot = structuredClone(notes);
+  for (const locale of ["en", "cs", "fr"]) {
+    const localized = importResultNotesText(messages, notes, (key, vars) => translate(locale, key, vars));
+    if (locale === "en") assert.deepEqual(localized, messages);
+    else {
+      for (const note of notes) {
+        assert.ok(importCatalogs[locale].contexts[note.key]?.["workshop.import.result"], note.key);
+        for (const part of Object.values(note.parts ?? {})) assert.ok(importCatalogs[locale].contexts[part.key]?.["workshop.import.result"], part.key);
+      }
+      for (let i = 0; i < notes.length; i++) assert.notEqual(localized[i], messages[i]);
+      assert.ok(localized[0].includes(name) && localized[0].includes(field));
+      assert.ok(localized[2].includes("unregistered_custom_key"));
+      assert.ok(localized[4].includes("Local folder {value}"));
+      assert.ok(localized[5].includes("Imported {rank}"));
+    }
+    assert.deepEqual(standingUnsaid([entry.message, ordinary.message], localized[0], [entry.message]), [ordinary.message]);
+    assert.deepEqual(standingUnsaid([entry.message, ordinary.message], localized.join(" "), []), [entry.message, ordinary.message]);
+  }
+  assert.deepEqual(notes, snapshot);
+});
+
 console.log(`workshop import: ${passed} assertions passed.`);
