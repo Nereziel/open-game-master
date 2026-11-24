@@ -236,7 +236,7 @@ describe("Tome of Heroes backgrounds", () => {
 describe("Tome of Heroes archetypes", () => {
   it("preserves the source prose of reviewed archetypes", () => {
     const rows = Object.entries(expansionTranslations.toh.subclasses).filter(([, hit]) => "description" in hit);
-    expect(rows).toHaveLength(6);
+    expect(rows).toHaveLength(9);
     for (const [slug, hit] of rows) {
       if (!("description" in hit) || !("original" in hit)) throw new Error(slug);
       const row = { slug, name: hit.englishName, documentSlug: "toh", source: "open5e", data: hit.original as Record<string, unknown> };
