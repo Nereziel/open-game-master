@@ -9,8 +9,7 @@ import { isHeldFocus } from "@/components/sheet/paperdoll-logic";
 import { armorChangeMinutes } from "@/lib/dm/don-doff";
 import { guessStands, matchArmor } from "@/lib/srd/armor";
 import { swapQuestion, wearConflict, type WearConflict } from "@/lib/srd/wear-slots";
-import { contentName } from "@/lib/content/names";
-import { magicItemBonus, rowName } from "@/lib/srd/item-row";
+import { itemDisplayName } from "@/lib/content/item-display";
 import { isTack } from "@/lib/srd/tack";
 import { useLocale } from "@/lib/locale";
 import type { CharacterSheet, EquipmentItem } from "@/lib/schemas/sheet";
@@ -64,11 +63,7 @@ export function SheetGearRow({
   // The row reads in the reader's language (gear, weapons, armor), the magic
   // bonus riding on the translated base; the row's own key, the icon and
   // every patch sent stay the stored English name.
-  const shownName = (() => {
-    const shown = contentName("items", { slug: item.slug, name: rowName(item) }, locale);
-    const bonus = magicItemBonus(item.name);
-    return bonus ? `${shown} +${bonus}` : shown;
-  })();
+  const shownName = itemDisplayName(item, locale);
   const isArmor = matchArmor(item) !== null;
   const isShield = matchArmor(item)?.category === "shield";
   // What the fight bars now (sheet-state.ts wearLock): the route refused an
