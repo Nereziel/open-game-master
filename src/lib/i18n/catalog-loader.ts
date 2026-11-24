@@ -23,9 +23,16 @@ const loaders: Record<Exclude<Locale, "en">, () => Promise<void>> = {
 };
 
 const loading = new Map<Locale, Promise<void>>();
+const failed = new Set<Locale>();
 
 export function catalogReady(locale: Locale): boolean {
   return locale === "en" || (catalogInstalled(locale) && localizedTables(locale) !== null);
+}
+
+// Retry only on an explicit language choice or a changed server preference.
+// Render snapshots must not restart a failed chunk in a tight loop.
+export function retryCatalog(locale: Locale): void {
+  if (failed.delete(locale)) loading.delete(locale);
 }
 
 export function loadCatalog(locale: Locale): Promise<void> {
@@ -35,8 +42,9 @@ export function loadCatalog(locale: Locale): Promise<void> {
     pending = Promise.resolve();
   } else {
     pending = loaders[locale]().catch((error) => {
-      // A failed fetch leaves English on screen and allows a later retry.
-      loading.delete(locale);
+      // Keep the settled promise stable for React Suspense and snapshots.
+      // A later explicit choice can reset this failed attempt.
+      failed.add(locale);
       console.error(`[i18n] the ${locale} catalog did not load`, error);
     });
   }
