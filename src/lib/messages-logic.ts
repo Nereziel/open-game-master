@@ -1,10 +1,18 @@
 // Pure translation helpers re-exported from the gettext-style runtime in
 // src/lib/i18n/translate.ts so existing callers and tests keep working.
 import { translate, translatePlural, type Locale, type TranslateVars } from "./i18n/translate.ts";
+import { localeOfServerLanguage } from "./i18n/locale.ts";
 
 export { translate, translatePlural, type Locale, type TranslateVars };
 export type MessageKey = string;
 export type MessageVars = TranslateVars;
+
+// Stored and shared table messages follow the campaign language, not the reader UI.
+// Unsupported table languages use the English source, just like an English table.
+export function tableTranslator(language: string | null | undefined): (key: string, vars?: TranslateVars) => string {
+  const locale = localeOfServerLanguage(language) ?? "en";
+  return (key, vars) => translate(locale, key, vars);
+}
 
 export function pluralCategory(locale: Locale, count: number): "one" | "other" {
   if (!Number.isFinite(count)) {
