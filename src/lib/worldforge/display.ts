@@ -1,6 +1,8 @@
 import { defaultTypes, LINK_LABELS, type FieldDef, type WorldType } from "./model.ts";
 import type { OutlineAsset, OutlineItemKind } from "./outline.ts";
-import type { TranslateVars } from "@/lib/i18n/translate";
+import { contentName } from "@/lib/content/names";
+import type { BoundRecord } from "@/lib/db/world-bindings";
+import type { Locale, TranslateVars } from "@/lib/i18n/translate";
 
 type T = (key: string, vars?: TranslateVars) => string;
 const defaults = new Map(defaultTypes().map((type) => [type.id, type]));
@@ -46,4 +48,21 @@ export function worldOutlineAssetLine(t: T, row: OutlineAsset): string {
       : t("Creature, CR {cr}, original · Bestiary", { cr });
   }
   return t("Item, {kind} · Homebrew", { kind: t(itemKindKeys[row.itemKind]) });
+}
+
+export function worldBoundName(record: BoundRecord, locale: Locale): string {
+  const row = record.catalog;
+  if (!record.found || record.ownId || !row?.slug || !row.documentSlug || !row.source || row.name !== record.name) return record.name;
+  if (record.kind === "monster") return contentName("monsters", row, locale);
+  if (record.kind === "item") return contentName("items", row, locale);
+  return record.name;
+}
+
+export function worldBoundDetail(t: T, record: BoundRecord): string {
+  if (record.kind === "monster" && /^CR .+$/.test(record.detail)) return t("CR {cr}", { cr: record.detail.slice(3) });
+  if (record.kind === "item") {
+    if (record.detail === "Your own item") return t("Your own item");
+    if (record.detail === "From the rulebook") return t("From the rulebook");
+  }
+  return record.detail;
 }
