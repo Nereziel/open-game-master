@@ -222,4 +222,29 @@ for (const [locale, expectedLabel] of [["en", "Server language"], ["fr", "Langue
   }
 }
 
+// Timeline UI words are independent of stored calendar and canon values.
+const { CANON_STATES } = await import("../src/lib/worldforge/model.ts");
+const timelineSource = fs.readFileSync(new URL("../src/app/workshop/world/TimelineView.tsx", import.meta.url), "utf8");
+const timelineKeys = [...new Set([...timelineSource.matchAll(/\bt\("([^"]+)"/g)].map((match) => match[1]))];
+for (const [locale, catalog] of [["fr", frCatalog], ["cs", csCatalog]]) {
+  for (const key of timelineKeys) assert.ok(catalog.messages[key], locale + ": missing timeline label " + key);
+  for (const state of CANON_STATES) {
+    assert.ok(catalog.contexts[state]?.["world.canon"], locale + ": missing canon label " + state);
+    assert.equal(translate(locale, state, { context: "world.canon" }), catalog.contexts[state]["world.canon"]);
+  }
+  const name = "Tide of Ash";
+  assert.ok(translate(locale, "Remove {name}?", { name }).includes(name));
+  assert.notEqual(translate(locale, "Remove {name}?", { name }), translate("en", "Remove {name}?", { name }));
+}
+
+const { agoLabel } = await import("../src/app/home/types.ts");
+const now = Date.parse("2026-01-01T12:00:00Z");
+const createdAt = "2026-01-01T11:55:00Z";
+assert.equal(agoLabel((key, vars) => translate("en", key, vars), createdAt, now), "5 minutes ago");
+for (const [locale, catalog] of [["fr", frCatalog], ["cs", csCatalog]]) {
+  const label = agoLabel((key, vars) => translate(locale, key, vars), createdAt, now);
+  assert.equal(label, catalog.messages["{count} minutes ago"].replace("{count}", "5"));
+  assert.notEqual(label, "5 minutes ago");
+}
+
 console.log("test-i18n-gettext: all assertions and catalog placeholder checks passed");
