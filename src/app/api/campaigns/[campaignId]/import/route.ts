@@ -3,7 +3,7 @@ import { isErrorResponse, requireMember, steersStory } from "@/lib/campaign-api"
 import { getImportSourceForUser } from "@/lib/db/import-sources";
 import { planContentImport, runContentImport } from "@/lib/db/content-import";
 import { openPreStoryTies } from "@/lib/dm/known-before";
-import { keptNoteDisplays } from "@/lib/db/world-forge-io";
+import { keptNotes } from "@/lib/db/world-forge-io";
 import { listOfferedPregens } from "@/lib/db/pregen-offers";
 import { IMPORT_KINDS } from "@/lib/workshop/import";
 import { publishEphemeral } from "@/lib/events";
@@ -65,7 +65,7 @@ export async function GET(
     if (!steersStory(context)) {
       return Response.json({ error: "Only the person steering the story reads this." }, { status: 403 });
     }
-    const keptDisplays = keptNoteDisplays(campaignId);
+    const keptDisplays = keptNotes(campaignId, true);
     return Response.json({ kept: keptDisplays.map((note) => note.message), keptDisplays });
   }
   const parsed = previewSchema.safeParse({
