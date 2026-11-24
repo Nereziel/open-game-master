@@ -8,6 +8,7 @@ import { describeContentEntry, spellSummary } from "@/lib/help";
 import { useContentSearch, type PickerEntry } from "./useContentSearch";
 import { useLocale, useT, useTp } from "@/lib/locale";
 import { contentName } from "@/lib/content/names";
+import { expansionNameCs } from "@/lib/content/expansion-descriptions-cs";
 
 export type { PickerEntry } from "./useContentSearch";
 
@@ -46,7 +47,9 @@ export default function ContentPicker({
   // A feat's row name reads in the reader's language (the official maps; a
   // homebrew row stays its author's words) while the pick itself stores the
   // row's own English name.
-  const rowName = (entry: PickerEntry) => (kind === "feats" ? contentName("feats", entry, locale) : entry.name);
+  const rowName = (entry: PickerEntry) => kind === "feats"
+    ? contentName("feats", entry, locale)
+    : (locale === "cs" ? expansionNameCs(kind, entry) : undefined) ?? entry.name;
   const { query, setQuery, results: found, setResults, open, setOpen, loading, unavailable, failed, unadmitted } =
     useContentSearch(kind, extraParams);
   const results = hide ? found.filter((entry) => !hide(entry)) : found;
