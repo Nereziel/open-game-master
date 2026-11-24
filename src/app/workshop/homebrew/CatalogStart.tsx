@@ -110,7 +110,7 @@ export function CatalogStart({
       {open && results.length ? (
         <ul className="reveal mt-1 max-h-64 w-full basis-full overflow-y-auto panel panel-smoke rounded-lg text-sm">
           {results.slice(0, 40).map((entry) => (
-            <li key={entry.slug} className="flex items-center gap-1 pr-2 hover:bg-stone-800">
+            <li key={`${entry.source}:${entry.documentSlug ?? ""}:${entry.slug}`} className="flex items-center gap-1 pr-2 hover:bg-stone-800">
               <button
                 type="button"
                 onClick={() => {
@@ -137,7 +137,7 @@ export function CatalogStart({
               </button>
               <InfoButton
                 label={pickerName(CONTENT_KIND[kind], entry, t.locale, classSlug)}
-                meta={kind === "spell" ? spellSummary(entry.data, t.locale) : undefined}
+                meta={kind === "spell" ? spellSummary(entry.data, t.locale) : pickerMeta(entry, t.locale, "level {level}") || undefined}
                 text={describeContentEntry(entry.data, undefined, t.locale)}
               />
             </li>
