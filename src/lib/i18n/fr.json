@@ -5,7 +5,7 @@
     "{line} (never fewer than 1)": "{line} (minimum 1)",
     "level ({level})": "niveau ({level})",
     "half your level, rounded down ({part})": "moitié du niveau, arrondie à l’inférieur ({part})",
-    "{ability} modifier ({mod})": "modificateur de {ability} ({mod})",
+    "{ability} modifier ({mod})": "modificateur de caractéristique {ability} ({mod})",
     "{line}, and never fewer than 1": "{line}, avec un minimum de 1",
     "{count}, from the {class} table at level {level}": "{count}, d’après la table de la classe {class} au niveau {level}",
     "6 at level 1 + 2 a level after = {count}": "6 au niveau 1 + 2 par niveau supplémentaire = {count}",
