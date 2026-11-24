@@ -119,6 +119,27 @@ await test("at a French table the card says what it does: a verb to get on, and 
   assert.equal(two.choice.label, "Monture", "the aim bar asks which creature");
 });
 
+await test("Mount cards in Czech preserve the English mount choice and mechanical intent", async () => {
+  await import("../src/lib/i18n/cs-catalog.ts");
+  const { translate } = await import("../src/lib/i18n/translate.ts");
+  const cs = (key, vars) => translate("cs", key, vars);
+  const { world, paladin } = await table();
+  const one = byId(deriveHand(world.sheet(paladin.id), FRESH_TURN, { gear: { steeds: [{ name: "Warhorse" }] } }, cs, "cs"), "basic:mount");
+  assert.equal(one.name, "Nasednout");
+  assert.equal(one.rules, "Nasednout na Warhorse: polovina tvé rychlosti.");
+  assert.equal(one.cost, "free");
+  assert.equal(intentBody(one, null).mount, "Warhorse");
+  const gear = { steeds: [{ name: "Warhorse" }, { name: "Elk" }] };
+  const en = byId(handOf(world, paladin.id, gear), "basic:mount");
+  const two = byId(deriveHand(world.sheet(paladin.id), FRESH_TURN, { gear }, cs, "cs"), "basic:mount");
+  assert.equal(two.rules, "Nasednout na tvora vedle tebe: polovina tvé rychlosti.");
+  assert.deepEqual(two.choice.options.map((option) => option.value), en.choice.options.map((option) => option.value));
+  assert.equal(two.choice.arg, en.choice.arg);
+  assert.equal(two.cost, en.cost);
+  assert.equal(two.disabled, en.disabled);
+  assert.deepEqual(intentBody(two, null, [], { choice: "Elk" }), intentBody(en, null, [], { choice: "Elk" }));
+});
+
 await test("no Mount card with nothing to mount, and none for a rider already up, who is dealt Dismount", async () => {
   const { world, paladin, steed } = await table();
   assert.equal(byId(handOf(world, paladin.id, { steeds: [] }), "basic:mount"), undefined);
