@@ -11,12 +11,12 @@ import { translate, type MessageVars } from "@/lib/messages-logic";
 import {
   IMPORT_KINDS,
   WORLD_RECORD_KINDS,
-  IMPORT_KIND_LABELS,
   SINGULAR_KINDS,
   standingUnsaid,
   type ImportKind,
   type ImportPlan,
 } from "@/lib/workshop/import";
+import { importKindLabel, importWarningText } from "@/lib/workshop/import-display";
 import type { ImportSourceSummary } from "@/app/workshop/types";
 import { pluralOf } from "@/lib/messages-logic";
 
@@ -359,8 +359,8 @@ export function ContentImportPicker({
             <div className="stagger space-y-1">
               {available.map((kind) => (
                 <div key={kind} className="flex min-h-9 items-center gap-2 text-sm text-stone-300">
-                  <Switch on={selection.select.includes(kind)} onChange={() => toggle(kind)} label={IMPORT_KIND_LABELS[kind]} />
-                  <span>{IMPORT_KIND_LABELS[kind]}</span>
+                  <Switch on={selection.select.includes(kind)} onChange={() => toggle(kind)} label={importKindLabel(kind, t)} />
+                  <span>{importKindLabel(kind, t)}</span>
                   {SINGULAR_KINDS.has(kind) ? null : (
                     <span className="text-xs text-stone-500">({chosen.contents[kind]})</span>
                   )}
@@ -438,7 +438,7 @@ export function ContentImportPicker({
                     className="flex items-start gap-1.5 text-xs text-amber-300/90"
                   >
                     <AlertTriangle className="mt-0.5 size-3.5 shrink-0" />
-                    <span>{warning.message}</span>
+                    <span>{importWarningText(warning, t, t.locale)}</span>
                   </li>
                 ))}
               </ul>
@@ -449,7 +449,7 @@ export function ContentImportPicker({
                 {plan.notes.map((note, index) => (
                   <li key={index} className="flex items-start gap-1.5 text-xs text-stone-400">
                     <Info className="mt-0.5 size-3.5 shrink-0 text-sky-300/70" />
-                    <span>{note.message}</span>
+                    <span>{importWarningText(note, t, t.locale)}</span>
                   </li>
                 ))}
               </ul>
