@@ -62,15 +62,15 @@ Počty přímo z `src/lib/content/expansion-descriptions-cs.json` v aktuální r
 | Tome of Heroes – odbornosti | 13 | 13 | 0 |
 | Tome of Heroes – rasy a podrasy | 40 | 40 | 0 |
 | Tome of Heroes – zázemí | 18 | 18 | 0 |
-| Tome of Heroes – archetypy | 76 | 30 | 0 |
+| Tome of Heroes – archetypy | 76 | 35 | 0 |
 | Deep Magic | 62 | 19 | 0 |
 | Vault of Magic | 249 | 48 | 0 |
 | Ostatní fixture | 24 | 8 | 0 |
-| **Celkem** | **638** | **296** | **36** |
+| **Celkem** | **638** | **301** | **36** |
 
 Historických 474 názvů (ToH 169, DM 56, VoM 249) obnoveno po spárování s přesným originálním slugem a názvem. Všech 87 historických plných návrhů (ToH 27, DM 12, VoM 48) prošlo porovnáním; opraveny významové odchylky a nedostatečné podmínky, nikoli pouhý přenos. Orientační souhrny nepovažujeme za plná pravidla. Nově 40 ras/podras, 29 magických předmětů ToH, další dostupné texty a názvy. U 36 záznamů nemagické výzbroje přeloženy dostupné číselné a typové údaje, bez vymyšlených zvláštních vlastností, které veřejný záznam neobsahuje.
 
-Zbývající dostupné v1 texty: ToH 46 archetypů (46 popisů); Deep Magic 495 popisů (452 názvů chybí); Vault of Magic 757 popisů (556 názvů chybí). Ostatní knihy pouze dílčí pokrytí podle fixture. To jsou nezpracované dostupné originály, nikoli blokace SQLite. Úplná inventura instalovaných položek a počty velkých zkrácených bestiářů zůstávají neověřené.
+Zbývající dostupné v1 texty: ToH 41 archetypů (41 popisů); Deep Magic 495 popisů (452 názvů chybí); Vault of Magic 757 popisů (556 názvů chybí). Ostatní knihy pouze dílčí pokrytí podle fixture. To jsou nezpracované dostupné originály, nikoli blokace SQLite. Úplná inventura instalovaných položek a počty velkých zkrácených bestiářů zůstávají neověřené.
 
 ### Dokončení kouzel Tome of Heroes
 
@@ -95,13 +95,15 @@ Doplněno dalších pět bardských kolejí: Investigation, Shadows, Sincerity, 
 
 Přeloženy Courser Mage, Dawn Blade, Familiar Master, Gravebinding a Grove Warden. Courser Mage přejmenován na Mága stopaře (zdroj neobsahuje jízdu na koni), Familiar Master na Mistra přítelíčků podle Najdi přítelíčka. Četnosti výrazů kostek shodné včetně samostatného d4/d8. U Gravebinding označeny pracovní překlady pěti odkazovaných kouzel a neuvedené SO Radiant Nimbus; originální úrovně zachovány. V této dílčí etapě 25/76 archetypů.
 
-Doplněny Haunted Warden, Hungering, Hunt Domain, Hunter in Darkness a Legionary; všechny dostupné schopnosti a tabulky, četnosti výrazů kostek shodné. Samostatný blok statistik Spirit Usher v popisu chybí; externí názvy kouzel bez doloženého překladu označeny anglickým ekvivalentem. Celkem 30/76 archetypů, zbývá 46.
+Doplněny Haunted Warden, Hungering, Hunt Domain, Hunter in Darkness a Legionary; všechny dostupné schopnosti a tabulky, četnosti výrazů kostek shodné. Samostatný blok statistik Spirit Usher v popisu chybí; externí názvy kouzel bez doloženého překladu označeny anglickým ekvivalentem. V této dílčí etapě 30/76 archetypů.
+
+Přeloženy Mercy Domain, Oath of Justice, Oath of Safeguarding, Oath of the Elements a Oath of the Guardian, včetně zásad, tabulek kouzel a všech schopností. Četnosti kostek shodné. Opakovaný guiding bolt v tabulce Justice zachován a označen. Celkem 35/76 archetypů, zbývá 41.
 
 ## Načítání
 
 `contentName` a `localizeEntryCs` využívají existující lokalizační cestu. Přesná kombinace source=open5e, documentSlug, druh, slug a anglický název, u popisu také shoda uložených původních polí; jinak anglický fallback. Pouze zobrazovací `localized_desc`; nemění pravidla, identity ani databázi. ContentPicker/MultiContentPicker čtou české názvy, ale některé výběry předávají jen anglický název, zejména archetypy, odvozené rasové názvy a inline zázemí. Úplná propagace do UI, české vyhledávání a PDF nejsou potvrzené.
 
-Regresní testy v `entry-descriptions-cs.test.ts` pokrývají 638 názvů, původní fixture, 13 odborností, 29 předmětů, 36 stat záznamů, 91+19 kouzel, 48 předmětů VoM, 40 ras/podras, 18 zázemí a 30 archetypů; část testů používá uložená původní pole (nejde o nezávislý test živého importu). CI nebylo při zápisu výsledku potvrzené; lokální runtime bez clone nedostupný.
+Regresní testy v `entry-descriptions-cs.test.ts` pokrývají 638 názvů, původní fixture, 13 odborností, 29 předmětů, 36 stat záznamů, 91+19 kouzel, 48 předmětů VoM, 40 ras/podras, 18 zázemí a 35 archetypů; část testů používá uložená původní pole (nejde o nezávislý test živého importu). CI nebylo při zápisu výsledku potvrzené; lokální runtime bez clone nedostupný.
 
 Terminologie: [d20 PH 2014 vlastnosti](https://dnd5esrd.d20.cz/prirucka-hrace/7-kapitola.html), [boj](https://dnd5esrd.d20.cz/prirucka-hrace/9-kapitola.html), [stavy](https://dnd5esrd.d20.cz/prirucka-hrace/dodatek-a.html). Nedoložené názvy jsou vlastní překlady; nejsou vydávány za oficiální.
 
