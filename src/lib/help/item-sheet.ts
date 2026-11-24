@@ -1,4 +1,5 @@
 import { describeContentEntry } from "@/lib/help";
+import { textKey } from "@/lib/language/text-logic";
 import { DAMAGE_TYPE_BLURBS, WEAPON_PROPERTY_BLURBS } from "@/lib/help/terms";
 import { translate } from "@/lib/messages-logic";
 import { armorNamed, type SrdArmor } from "@/lib/srd/armor";
@@ -234,6 +235,36 @@ const isHomebrew = (row: Row) => typeof row.itemKind === "string";
 // `rows` is every content-pack or homebrew row found for the name, the
 // direct slug hit first. Null when neither the rows nor the bundled tables
 // know anything about it.
+type ItemCardEntry = {
+  name: string;
+  slug?: string;
+  source?: string;
+  documentSlug?: string;
+  data?: Row;
+};
+
+// The v1 and v2 SRD tables complement one another, but an item from a
+// different book (or the table's homebrew) is not another edition of that
+// same record. Prefer the explicitly opened entry over a name search.
+function isCoreItem(entry: ItemCardEntry): boolean {
+  return ["srd", "open5e", "bundled"].includes(entry.source ?? "")
+    && ["wotc-srd", "srd-2014"].includes(entry.documentSlug ?? "");
+}
+
+export function itemCardRows(name: string, direct: ItemCardEntry | null | undefined, results: ItemCardEntry[]): Array<Row | undefined> {
+  const hits = results.filter((entry) => textKey(entry.name) === textKey(name));
+  const primary = direct ?? hits[0];
+  if (!primary) return [];
+  const compatible = hits.filter((entry) => {
+    if (isCoreItem(primary)) return isCoreItem(entry);
+    return Boolean(primary.slug && primary.source && primary.documentSlug)
+      && entry.slug === primary.slug
+      && entry.source === primary.source
+      && entry.documentSlug === primary.documentSlug;
+  });
+  return [primary.data, ...compatible.filter((entry) => entry !== primary).map((entry) => entry.data)];
+}
+
 export function buildItemSheet(
   name: string,
   rows: Array<Row | undefined | null>,
