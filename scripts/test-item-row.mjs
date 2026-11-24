@@ -375,6 +375,24 @@ test("localized SRD item names resolve without srdName and English names retain 
   assert.equal(built.status, 0, `build-names-fr --check: ${built.stderr}`);
 });
 
+test("SRD magic-item families resolve consistently without becoming concrete item grants", () => {
+  const families = [
+    ["Ammunition, +1, +2, or +3", "Munitions +1, +2 ou +3", "Střelivo +1, +2 nebo +3"],
+    ["Armor, +1, +2, or +3", "Armure +1, +2 ou +3", "Zbroj +1, +2 nebo +3"],
+    ["Shield, +1, +2, or +3", "Bouclier +1, +2 ou +3", "Štít +1, +2 nebo +3"],
+  ];
+  for (const [english, ...localized] of families) {
+    for (const name of [english, ...localized]) {
+      assert.equal(withoutBonus(name), name, "a family is not a single bonus");
+      assert.equal(rowName({ name }), english);
+      assert.ok(srdNameFor(name, "test").error, "a family cannot be granted as a concrete srdName");
+    }
+  }
+  assert.equal(matchArmor({ name: "Štít +2" })?.name, "Shield");
+  assert.equal(magicItemBonus("Štít +2"), 2);
+  assert.equal(rowName({ name: "Štít +2" }), "Shield");
+});
+
 test("shared alias generation rejects collisions across any number of locale sources", () => {
   const englishOf = { weapons: (key) => ({ a: "Spear", b: "Lance", c: "Longsword" })[key] };
   const englishByKey = new Map(["Spear", "Lance", "Longsword"].map((name) => [textKey(name), name]));
