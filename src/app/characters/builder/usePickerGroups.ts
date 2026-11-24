@@ -4,13 +4,14 @@ import { useMemo } from "react";
 import { classGenres } from "@/lib/classes";
 import { GENRE_PRESETS } from "@/lib/genres";
 import { describeRace } from "@/lib/help";
+import { translate } from "@/lib/i18n/translate";
 import type { Genre } from "@/lib/schemas/game-settings";
 import { SRD_SKILLS } from "@/lib/srd";
 import { subclassBlurb, subclassGate, subclassNamesFor } from "@/lib/srd/features";
 import { packRecommends, type Reskinned } from "@/lib/worlds/reskin-logic";
 import type { WorldPack } from "@/lib/worlds/types";
 import type { PickerGroup, PickerOption } from "./OptionPicker";
-import { contentName, subclassName } from "@/lib/content/names";
+import { backgroundFeatureLabel, contentName, subclassName } from "@/lib/content/names";
 import { expansionNameCs } from "@/lib/content/expansion-descriptions-cs";
 import { useLocale, useT } from "@/lib/locale";
 import type { Locale } from "@/lib/messages-logic";
@@ -186,11 +187,13 @@ export function backgroundInfoText(entry: {
   desc?: string;
   feature?: string;
   featureDesc?: string;
-}): string | undefined {
+  name?: string;
+}, locale: Locale = "en"): string | undefined {
+  const local = (value: string | undefined) => value && locale === "cs" ? translate(locale, value) : value;
   const feature = entry.feature
-    ? `**Feature: ${entry.feature}.**${entry.featureDesc ? ` ${entry.featureDesc}` : ""}`
+    ? `**${locale === "cs" ? "Schopnost" : "Feature"}: ${locale === "cs" && entry.name ? backgroundFeatureLabel(entry.name, entry.feature, locale) : entry.feature}.**${entry.featureDesc ? ` ${local(entry.featureDesc)}` : ""}`
     : "";
-  const parts = [entry.packBlurb || entry.blurb, feature, entry.desc].filter(Boolean);
+  const parts = [local(entry.packBlurb || entry.blurb), feature, local(entry.desc)].filter(Boolean);
   return parts.length ? parts.join("\n\n") : undefined;
 }
 
@@ -314,7 +317,7 @@ export function usePickerGroups({
       // A pack-only lineage has no bundled lines; leaving the text empty
       // lets the dialog fetch the row's full trait write-up instead of
       // showing the card's clipped summary.
-      infoText: entry.packBlurb || describeRace(entry.id) || undefined,
+      infoText: entry.packBlurb || describeRace(entry.id, locale) || undefined,
       // The pack row behind the option, which is not always the id
       // (src/lib/content/race-options.ts optionIdFor).
       reference: { kind: "races", slug: entry.slug ?? entry.id, name: entry.name },
@@ -472,7 +475,7 @@ export function usePickerGroups({
         .map((skillId) => SRD_SKILLS.find((skill) => skill.id === skillId)?.name ?? skillId)
         .join(", "),
       ...(showSource && entry.source && !isCoreDocument(entry.documentSlug) ? { source: entry.source } : {}),
-      infoText: backgroundInfoText(entry),
+      infoText: backgroundInfoText(entry, locale),
       reference: { kind: "backgrounds", slug: entry.id, name: entry.name },
     });
     if (backgroundTier.recommended.length) {
