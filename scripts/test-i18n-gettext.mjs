@@ -583,4 +583,51 @@ assert.ok(opportunityRoute.includes("parsed.data.target !== pair.walkerId && par
 const opportunityCard = fs.readFileSync(new URL("../src/app/campaigns/[campaignId]/OpportunityCard.tsx", import.meta.url), "utf8");
 assert.ok(opportunityCard.includes("JSON.stringify({ strike, ...(smite ? { smite } : {}), ...(target ? { target } : {}) })"));
 
+
+const worldTime = await import("../src/lib/worldforge/time.ts");
+const lifeCalendars = [
+  { id: "tide", name: "Tide {year}", abbrev: "TR", epochOffset: 1000, notes: "" },
+  { id: "ash", name: "Ash", abbrev: "AF", epochOffset: 900, notes: "" },
+];
+const lifeType = { fields: [{ id: "born", kind: "year", role: "birth" }, { id: "died", kind: "year", role: "death" }] };
+const lifeEntry = { fields: {
+  born: { calendarId: "tide", yearNum: 61, year: "" },
+  died: { calendarId: "ash", yearNum: 218, year: "" },
+} };
+const lifeSnapshot = structuredClone([lifeCalendars, lifeType, lifeEntry]);
+const lifeSpan = worldTime.lifespan(lifeType, lifeEntry, lifeCalendars);
+assert.deepEqual(lifeSpan, { birth: 1061, death: 1118 });
+assert.equal(worldTime.formatLifespan(lifeType, lifeEntry, lifeCalendars), "61 TR to 218 AF (57 years)");
+assert.deepEqual(worldTime.formatYear(lifeEntry.fields.born, lifeCalendars), { primary: "61 TR", conversions: "= 161 AF" });
+for (const locale of ["en", "cs", "fr"]) {
+  const t = (key, vars) => translate(locale, key, vars);
+  const tp = (one, many, vars) => translatePlural(locale, one, many, vars);
+  for (const count of [1, 2, 4, 5, 12, 1.5]) {
+    const before = worldTime.lifespanIssue(lifeSpan, lifeSpan.birth - count, locale);
+    const after = worldTime.lifespanIssue(lifeSpan, lifeSpan.death + count, locale);
+    assert.equal(before, tp("{count} year before their birth", "{count} years before their birth", { count }));
+    assert.equal(after, tp("{count} year after their death", "{count} years after their death", { count }));
+    if (locale !== "en") {
+      assert.notEqual(before, worldTime.lifespanIssue(lifeSpan, lifeSpan.birth - count));
+      assert.notEqual(after, worldTime.lifespanIssue(lifeSpan, lifeSpan.death + count));
+    }
+  }
+  for (const year of [1061, 1080, 1118, Infinity, NaN]) assert.equal(worldTime.lifespanIssue(lifeSpan, year, locale), "");
+  assert.equal(worldTime.lifespanIssue({ birth: null, death: null }, 1000, locale), "");
+  assert.equal(worldTime.formatLifespan(lifeType, lifeEntry, lifeCalendars, locale), tp("{birth} to {death} ({count} year)", "{birth} to {death} ({count} years)", { birth: "61 TR", death: "218 AF", count: 57 }));
+  assert.equal(worldTime.formatLifespan(lifeType, { fields: { born: lifeEntry.fields.born } }, lifeCalendars, locale), t("born {year}", { year: "61 TR" }));
+  assert.equal(worldTime.formatLifespan(lifeType, { fields: { died: lifeEntry.fields.died } }, lifeCalendars, locale), t("died {year}", { year: "218 AF" }));
+  assert.equal(worldTime.formatLifespan(lifeType, { fields: {} }, lifeCalendars, locale), "");
+  const reversed = { fields: { born: lifeEntry.fields.died, died: lifeEntry.fields.born } };
+  assert.equal(worldTime.formatLifespan(lifeType, reversed, lifeCalendars, locale), t("{birth} to {death} (dies before being born)", { birth: "218 AF", death: "61 TR" }));
+  const same = { fields: { born: lifeEntry.fields.born, died: lifeEntry.fields.born } };
+  assert.equal(worldTime.formatLifespan(lifeType, same, lifeCalendars, locale), tp("{birth} to {death} ({count} year)", "{birth} to {death} ({count} years)", { birth: "61 TR", death: "61 TR", count: 0 }));
+  assert.deepEqual(worldTime.lifespan(lifeType, lifeEntry, lifeCalendars), lifeSpan);
+}
+assert.equal(worldTime.lifespanIssue(lifeSpan, 1060, "cs"), "1 rok před narozením");
+assert.equal(worldTime.lifespanIssue(lifeSpan, 1059, "cs"), "2 roky před narozením");
+assert.equal(worldTime.lifespanIssue(lifeSpan, 1123, "cs"), "5 let po smrti");
+assert.equal(worldTime.lifespanIssue(lifeSpan, 1119, "fr"), "1 an après sa mort");
+assert.deepEqual([lifeCalendars, lifeType, lifeEntry], lifeSnapshot);
+
 console.log("test-i18n-gettext: all assertions and catalog placeholder checks passed");
