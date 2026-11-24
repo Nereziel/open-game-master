@@ -135,7 +135,7 @@ export function CatalogStart({
               </button>
               <InfoButton
                 label={entry.name}
-                meta={kind === "spell" ? spellSummary(entry.data) : undefined}
+                meta={kind === "spell" ? spellSummary(entry.data, t.locale) : undefined}
                 text={describeContentEntry(entry.data)}
               />
             </li>
