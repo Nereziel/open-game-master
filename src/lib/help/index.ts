@@ -25,7 +25,8 @@ import { textKey } from "@/lib/language/text-logic";
 import { matchResource } from "@/lib/srd/class-resources";
 import { resourceGuidance } from "@/lib/srd/class-resources-fr";
 import type { Locale } from "@/lib/messages-logic";
-import { translate } from "@/lib/i18n/translate";
+import { translate, translatePlural } from "@/lib/i18n/translate";
+import { gameTermWord } from "@/lib/i18n/game-term-labels";
 import { guidanceFor } from "@/lib/srd/feature-effects";
 import { subclassFeatureDescription } from "@/lib/srd/features";
 import { findOptionByFeatureName } from "@/lib/srd/options";
@@ -337,9 +338,37 @@ export function spellRowConcentrates(data: Record<string, unknown> | undefined):
   return Boolean(data && flagged(data.concentration));
 }
 
+// Translate only complete recognized metadata values, never parse a
+// conditional reaction or a custom range as if it were a simpler rule.
+function spellCastingTimeLabel(value: unknown, locale: Locale): string {
+  const raw = String(value ?? "");
+  if (locale === "en") return raw;
+  const clean = raw.trim().toLowerCase();
+  if (["1 action", "1 bonus action", "1 reaction"].includes(clean)) return translate(locale, clean);
+  const time = /^(\d+)\s+(minute|hour)s?$/.exec(clean);
+  if (time) {
+    const count = Number(time[1]);
+    return time[2] === "minute"
+      ? translatePlural(locale, "{count} minute", "{count} minutes", { count })
+      : translatePlural(locale, "{count} hour", "{count} hours", { count });
+  }
+  return raw;
+}
+
+function spellRangeLabel(value: unknown, locale: Locale): string {
+  const raw = String(value ?? "");
+  if (locale === "en") return raw;
+  const clean = raw.trim().toLowerCase();
+  const labels: Record<string, string> = { self: "Self", touch: "Touch", sight: "Sight", unlimited: "Unlimited", special: "Special" };
+  if (Object.hasOwn(labels, clean)) return translate(locale, labels[clean]);
+  const distance = /^(\d+)\s+(?:feet|ft\.?|foot)$/.exec(clean);
+  if (distance) return translate(locale, "{feet} ft", { feet: Number(distance[1]) });
+  return raw;
+}
+
 // The one-line summary shown under a spell's name in a picker: level, school
 // and the flags that change how it is cast.
-export function spellSummary(data: Record<string, unknown> | undefined): string {
+export function spellSummary(data: Record<string, unknown> | undefined, locale: Locale = "en"): string {
   if (!data) {
     return "";
   }
@@ -347,12 +376,15 @@ export function spellSummary(data: Record<string, unknown> | undefined): string 
   const school = String(
     (data.school as { name?: string })?.name ?? data.school ?? "",
   ).toLowerCase();
+  const schoolWord = gameTermWord("spellSchool", school, locale).toLowerCase();
   const parts = [
-    level === 0 ? `${school} cantrip` : `level ${level} ${school}`.trim(),
-    String(data.casting_time ?? ""),
-    String(data.range ?? ""),
-    flagged(data.concentration) ? "concentration" : "",
-    flagged(data.ritual) ? "ritual" : "",
+    level === 0
+      ? (schoolWord ? translate(locale, "{school} cantrip", { school: schoolWord }) : translate(locale, "cantrip"))
+      : (schoolWord ? translate(locale, "level {level} {school}", { level, school: schoolWord }) : translate(locale, "level {level}", { level })),
+    spellCastingTimeLabel(data.casting_time, locale),
+    spellRangeLabel(data.range, locale),
+    flagged(data.concentration) ? translate(locale, "concentration") : "",
+    flagged(data.ritual) ? translate(locale, "ritual") : "",
   ].filter(Boolean);
   return parts.join(" · ");
 }
