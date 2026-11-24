@@ -17,6 +17,11 @@ import { installCatalog } from "../i18n/translate";
 import { registerFeatureText } from "../classes/feature-text";
 import { describeFeature } from "../help";
 import darkFantasyFeatures from "../classes/dark-fantasy-features.json";
+import cyberpunkFeatures from "../classes/cyberpunk-features.json";
+import horrorFeatures from "../classes/horror-features.json";
+import mysteryFeatures from "../classes/mystery-features.json";
+import postApocalypticFeatures from "../classes/post-apocalyptic-features.json";
+import steampunkFeatures from "../classes/steampunk-features.json";
 
 installCsTables({ names: CS_NAMES_BY_TABLE, guidance: {} });
 
@@ -60,21 +65,30 @@ describe("Czech content names through upstream helpers", () => {
     }
   });
 
-  it("localizes all Dark Fantasy class rules and subclasses through the sheet help resolver", () => {
+  it("localizes every bundled genre class rule and subclass through the sheet help resolver", () => {
     installCatalog("cs", csCatalog);
-    registerFeatureText(darkFantasyFeatures);
+    const catalogs = [darkFantasyFeatures, cyberpunkFeatures, horrorFeatures, mysteryFeatures, postApocalypticFeatures, steampunkFeatures];
     const messages: Record<string, string> = csCatalog.messages;
     expect(subclassName("grave_knight", "Court of the Wilted Rose", "cs")).toBe("Dvůr zvadlé růže");
-    for (const [id, table] of Object.entries(darkFantasyFeatures.classes)) {
-      const subclass = table.subclass.name;
-      expect(subclassName(id, subclass, "cs"), id).not.toBe(subclass);
-      for (const row of [...Object.values(table.levels), ...Object.values(table.subclass.levels)].flat()) {
-        expect(classFeatureName(id, row.n, "cs"), row.n).not.toBe(row.n);
-        expect(messages[row.d], row.n).toBeTruthy();
-        expect(describeFeature(id, subclass, row.n, "cs"), row.n).toBe(messages[row.d]);
-        expect(describeFeature(id, subclass, row.n, "en"), row.n).toBe(row.d);
+    let classes = 0;
+    let features = 0;
+    for (const catalog of catalogs) {
+      registerFeatureText(catalog);
+      for (const [id, table] of Object.entries(catalog.classes)) {
+        classes += 1;
+        const subclass = table.subclass.name;
+        expect(subclassName(id, subclass, "cs"), id).not.toBe(subclass);
+        for (const row of [...Object.values(table.levels), ...Object.values(table.subclass.levels)].flat()) {
+          features += 1;
+          expect(classFeatureName(id, row.n, "cs"), row.n).not.toBe(row.n);
+          expect(messages[row.d], row.n).toBeTruthy();
+          expect(describeFeature(id, subclass, row.n, "cs"), row.n).toBe(messages[row.d]);
+          expect(describeFeature(id, subclass, row.n, "en"), row.n).toBe(row.d);
+        }
       }
     }
+    expect(classes).toBe(36);
+    expect(features).toBe(733);
   });
 
   it("covers every message key carried by the French catalog", () => {
