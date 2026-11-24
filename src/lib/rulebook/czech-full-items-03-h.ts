@@ -28,7 +28,7 @@ Hůlka si každý den za úsvitu obnoví 1k6+1 spotřebovaných nábojů. Pokud 
 |------|--------|
 | 01–05 | Sešleš kouzlo *zpomalení*. |
 | 06–10 | Sešleš kouzlo *vílí oheň*. |
-| 11–15 | Jsi omráčený až do začátku svého příštího tahu, protože věříš, že se právě stalo něco úžasného. |
+| 11–15 | Jsi ochromený až do začátku svého příštího tahu, protože věříš, že se právě stalo něco úžasného. |
 | 16–20 | Sešleš kouzlo *poryv větru*. |
 | 21–25 | Sešleš kouzlo *odhal myšlenky* na vybraný cíl. Pokud jsi jako cíl nevybral tvora, místo toho utrpíš psychické zranění 1k6. |
 | 26–30 | Sešleš kouzlo *páchnoucí oblak*. |

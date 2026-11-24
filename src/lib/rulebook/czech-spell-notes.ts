@@ -24,7 +24,7 @@ Všichni tvorové v kuželu si hodí záchranný hod na Obratnost. Neúspěch zn
 
   "Charm Person": `**Vyvolání:** 1 akce. **Dosah:** 30 stop. **Trvání:** 1 hodina.
 
-Humanoid, kterého vidíš, si hází záchranný hod na Moudrost; pokud s ním ty nebo tví spojenci bojujete, má k hodu výhodu. Při neúspěchu je tebou **okouzlený** až do konce kouzla, nebo dokud mu ty či tví spojenci neublížíte. Považuje tě za přátelského známého. Po skončení kouzla si uvědomí, že jsi ho očaroval. Pozice 2. a vyšší úrovně přidají po jednom cíli za každou úroveň navíc, pokud jsou cíle v dosahu 30 stop jeden od druhého.`,
+Humanoid, kterého vidíš, si hází záchranný hod na Moudrost; pokud s ním ty nebo tví spojenci bojujete, má k hodu výhodu. Při neúspěchu je tebou **zmámený** až do konce kouzla, nebo dokud mu ty či tví spojenci neublížíte. Považuje tě za přátelského známého. Po skončení kouzla si uvědomí, že jsi ho očaroval. Pozice 2. a vyšší úrovně přidají po jednom cíli za každou úroveň navíc, pokud jsou cíle v dosahu 30 stop jeden od druhého.`,
 
   "Counterspell": `**Vyvolání:** 1 reakce, když do 60 stop vidíš tvora sesílat kouzlo. **Trvání:** okamžité.
 
@@ -152,7 +152,7 @@ Vybraný tvor v dosahu získá po dobu trvání kouzla **bonus +2 k obrannému �
 
   Sleep: `**Vyvolání:** 1 akce. **Dosah:** 90 stop. **Oblast:** koule o poloměru 20 stop. **Trvání:** 1 minuta.
 
-Hoď **5k8**; součet je zásoba životů, kterou může kouzlo uspat. Tvorové v oblasti jsou zasaženi podle svých **aktuálních životů od nejnižších**. Jestliže má tvor životů nanejvýš tolik, kolik zbývá v zásobě, upadne do bezvědomí a jeho životy se od zásoby odečtou; jinak kouzlo pokračuje dalšími tvory. Spící se probudí při zranění nebo když ho někdo akcí probudí. **Nemrtví ani tvorové imunní vůči okouzlení nejsou ovlivněni.** Za každou úroveň pozice nad první hoď o **2k8** více.`,
+Hoď **5k8**; součet je zásoba životů, kterou může kouzlo uspat. Tvorové v oblasti jsou zasaženi podle svých **aktuálních životů od nejnižších**. Jestliže má tvor životů nanejvýš tolik, kolik zbývá v zásobě, upadne do bezvědomí a jeho životy se od zásoby odečtou; jinak kouzlo pokračuje dalšími tvory. Spící se probudí při zranění nebo když ho někdo akcí probudí. **Nemrtví ani tvorové imunní vůči zmámení nejsou ovlivněni.** Za každou úroveň pozice nad první hoď o **2k8** více.`,
 
   "Spare the Dying": `**Vyvolání:** 1 akce. **Dosah:** dotyk. **Trvání:** okamžité.
 

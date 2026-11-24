@@ -34,7 +34,7 @@ export const RESOURCE_CS_AUTHORED_GUIDANCE: Record<string, string> = {
   "sub_blazing_revival": "Pokud máš vyvolaného ducha divokého ohně a zranění by tě snížilo na 0 životů bez okamžité smrti, duch místo tebe zanikne a ty si automaticky obnovíš polovinu maximálních životů.",
   "sub_walker_in_dreams": "Po krátkém odpočinku můžeš bez slotu i materiálních složek použít kouzlo Sen (jako posel), Jasnozřivost nebo Teleportační kruh. Seslání kouzla spotřebuje použití schopnosti.",
   "sub_enthralling_performance": "Po 1 minutě vystoupení okouzlíš na 1 hodinu tolik humanoidů do 60 stop, kolik činí tvá oprava Charismatu (nejméně jednoho), pokud sledovali celé vystoupení a neuspějí v záchraně na Moudrost.",
-  "sub_mantle_of_majesty": "Bonusovou akcí na 1 minutu získáš majestátní vystupování vyžadující soustředění. Každý tah můžeš bonusovou akcí bez slotu seslat Rozkaz; tvor již okouzlený tebou v záchraně proti tomuto Rozkazu automaticky neuspěje.",
+  "sub_mantle_of_majesty": "Bonusovou akcí na 1 minutu získáš majestátní vystupování vyžadující soustředění. Každý tah můžeš bonusovou akcí bez slotu seslat Rozkaz; tvor, kterého jsi již zmámil, v záchraně proti tomuto Rozkazu automaticky neuspěje.",
   "sub_unbreakable_majesty": "Bonusovou akcí na 1 minutu získáš vznešenou auru: útočník musí uspět v záchraně na Charisma, jinak ztratí svůj útok a do konce tahu na tebe nemůže cílit.",
   "sub_words_of_terror": "Po minutě soukromého rozhovoru se tě humanoid při neúspěšné záchraně na Moudrost bojí po dobu 1 hodiny.",
   "sub_mantle_of_whispers": "Reakcí zachytíš stín humanoida, který zemřel do 30 stop, a na 1 hodinu na sebe můžeš vzít jeho identitu.",
