@@ -2,7 +2,7 @@ import { czechGearDescription } from "./entry-descriptions-cs";
 import { frenchItemDescription } from "./item-descriptions-fr";
 import { expansionDescriptionCs } from "./expansion-descriptions-cs";
 import { czechFullTranslation } from "@/lib/rulebook/czech-companion";
-import { rulebookPage } from "@/lib/rulebook/book";
+import { rulebookPage, rulebookPages } from "@/lib/rulebook/book";
 import { rulebookPageIdFor } from "@/lib/rulebook/catalog-rows";
 import type { RulebookKind } from "@/lib/rulebook/types";
 import { translate, type Locale } from "@/lib/i18n/translate";
@@ -68,9 +68,17 @@ const SRD_RACE_NAMES = new Set([
 ]);
 
 function corePageId(kind: RulebookKind, name: string): string | null {
-  if (kind === "race" && !SRD_RACE_NAMES.has(name.trim().toLowerCase())) return null;
-  const canonical = kind === "race" && name.trim().toLowerCase() === "lightfoot" ? "Lightfoot Halfling" : name;
-  return rulebookPageIdFor(kind, canonical);
+  if (kind !== "race") return rulebookPageIdFor(kind, name);
+  const wanted = name.trim().toLowerCase();
+  const exact = rulebookPages("en").find((page) => page.kind === "race" && page.title.toLowerCase() === wanted);
+  if (exact) return exact.id;
+  if (!SRD_RACE_NAMES.has(wanted)) return null;
+  const aliases: Record<string, string> = {
+    "dwarf, hill": "Dwarf (Hill)", "elf, high": "Elf (High)",
+    "halfling, lightfoot": "Halfling (Lightfoot)", "lightfoot": "Halfling (Lightfoot)",
+    "gnome, rock": "Gnome (Rock)", "half elf": "Half-Elf", "half orc": "Half-Orc",
+  };
+  return rulebookPageIdFor(kind, aliases[wanted] ?? name);
 }
 
 // Use exact English source text for background translations, not merely a
