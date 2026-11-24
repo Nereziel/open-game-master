@@ -122,7 +122,7 @@ function WeaponBlock({ weapon, onChange }: { weapon: Weapon; onChange: (next: We
         <SelectField
           label="Category"
           value={String(weapon.category ?? "simple")}
-          options={WEAPON_CATEGORIES.map((value) => ({ value, label: value }))}
+          options={WEAPON_CATEGORIES.map((value) => ({ value, label: t(value, { context: "item.weaponCategory" }) }))}
           onChange={(category) => set({ category })}
         />
         <SelectField
@@ -217,7 +217,7 @@ function ArmorBlock({ armor, onChange }: { armor: Armor; onChange: (next: Armor)
         <SelectField
           label="Category"
           value={category}
-          options={ARMOR_CATEGORIES.map((value) => ({ value, label: value }))}
+          options={ARMOR_CATEGORIES.map((value) => ({ value, label: t(value, { context: "item.armorCategory" }) }))}
           onChange={(next) => set({ category: next })}
         />
         <NumberField
@@ -379,7 +379,7 @@ export function ItemFields({ data, onChange }: { data: Data; onChange: (next: Da
         <SelectField
           label={t("Rarity")}
           value={String(data.rarity ?? "")}
-          options={[{ value: "", label: t("mundane") }, ...RARITIES.map((value) => ({ value, label: value }))]}
+          options={[{ value: "", label: t("mundane") }, ...RARITIES.map((value) => ({ value, label: t(value, { context: "content.rarity" }) }))]}
           onChange={(rarity) => set({ rarity })}
         />
         <TextField label={t("Cost", { context: "workshop.homebrew.item.cost" })} value={String(data.cost ?? "")} onChange={(cost) => set({ cost })} placeholder="15 gp" maxLength={40} />
