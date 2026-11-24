@@ -47,13 +47,19 @@ export default {
         const detail = await fetch("/api/content/" + kind + "/" + encodeURIComponent(row.slug), { headers, cache: "no-store" });
         return { kind, packInstalled: body.packInstalled, row, status: detail.status, entry: (await detail.json()).entry };
       }));
+      const archetypePicker = await Promise.all(["en", "fr", "cs"].map(async (locale) => {
+        const headers = { "x-odm-locale": locale };
+        const response = await fetch("/api/content/archetypes?class=fighter&limit=100&bundled=1", { headers, cache: "no-store" });
+        const body = await response.json();
+        return { locale, status: response.status, packInstalled: body.packInstalled, row: body.results?.find((row) => row.name === "Champion" && row.source === "bundled") };
+      }));
       const localizedSearch = await Promise.all([["cs", "ohniva koule"], ["fr", "boule de feu"]].map(async ([locale, q]) => {
         const params = new URLSearchParams({ q, mechanics: "1", book: "1", limit: "50", class: "wizard", level: "3", exact: "1" });
         const response = await fetch("/api/content/spells?" + params, { headers: { "x-odm-locale": locale }, cache: "no-store" });
         const body = await response.json();
         return { locale, status: response.status, found: body.results?.some((row) => row.name === "Fireball" && row.level === 3) ?? false };
       }));
-      return { lists, bundledDetails, localizedSearch, fr: await ask("fr-FR,fr;q=0.9"), en: await ask("en-US,en;q=0.9"), cs, forcedCs,
+      return { lists, bundledDetails, archetypePicker, localizedSearch, fr: await ask("fr-FR,fr;q=0.9"), en: await ask("en-US,en;q=0.9"), cs, forcedCs,
         search: { status: response.status, found: results.hits?.some((hit) => hit.page === "fireball") ?? false },
         csDetail: await details("cs"), enDetail: await details("en"),
         canonical: await Promise.all(["en", "fr", "cs"].map((locale) => details(locale, "fireball"))) };
@@ -85,6 +91,13 @@ export default {
       check(Boolean(result.row) && result.status === 200, result.kind + " bundled list entry has a detail");
       check(result.entry?.slug === result.row.slug && result.entry?.name === result.row.name, result.kind + " bundled detail preserves identity");
       check(result.entry?.data?.localized_desc === result.row.data?.localized_desc, result.kind + " bundled list and detail agree on display prose");
+    }
+    for (const result of asked.archetypePicker) {
+      if (result.packInstalled) continue;
+      check(result.status === 200 && Boolean(result.row), result.locale + " character picker receives bundled Champion without mechanics=1");
+      check(!("table" in result.row), "picker display rows do not expose workshop mechanics");
+      if (result.locale === "cs") check(result.row.data?.localized_desc?.includes("Šampion"), "Czech picker receives reviewed Champion prose");
+      if (result.locale === "en") check(!("localized_desc" in result.row.data), "English picker retains canonical prose");
     }
     const { csDetail, enDetail } = asked;
     check(csDetail.status === 200 && enDetail.status === 200, "the bundled spell detail works in both locales");
