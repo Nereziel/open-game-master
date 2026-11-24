@@ -15,7 +15,7 @@ Jsi-li klerik nebo paladin dobrého přesvědčení, můžeš talisman používa
 Talisman má 7 nábojů. Když ho nosíš nebo držíš, můžeš jako akci utratit 1 náboj a vybrat jednoho tvora, kterého vidíš stát na zemi do vzdálenosti 120 stop. Pokud má cíl zlé přesvědčení, otevře se pod ním plamenná trhlina. Cíl musí uspět v záchranném hodu na Obratnost se SO 20, jinak do trhliny spadne a je zničen beze zbytku. Trhlina se pak uzavře, aniž by po ní zůstala stopa. Když utratíš poslední náboj, talisman se rozplyne ve zlatých světelných jiskřičkách a je zničen.`,
   "talisman-of-the-sphere": `*Divotvorný předmět, legendární (vyžaduje sladění)*
 
-Když držíš tento talisman a provádíš ověření Inteligence (Mystiky) k ovládání *koule zničení*, zdvojnásobíš při tomto ověření svůj zdatnostní bonus. Pokud na začátku svého tahu ovládáš *kouli zničení*, můžeš jako akci pohnout koulí vznášením o 10 stop plus další počet stop rovný 10 × tvá oprava Inteligence.`,
+Když držíš tento talisman a provádíš ověření Inteligence (Mystiky) k ovládání *koule anihilace*, zdvojnásobíš při tomto ověření svůj zdatnostní bonus. Pokud na začátku svého tahu ovládáš *kouli anihilace*, můžeš jako akci pohnout koulí vznášením o 10 stop plus další počet stop rovný 10 × tvá oprava Inteligence.`,
   "talisman-of-ultimate-evil": `*Divotvorný předmět, legendární (vyžaduje sladění tvorem zlého přesvědčení)*
 
 Tento předmět symbolizuje nekajícné zlo. Tvor, jehož přesvědčení není ani dobré, ani zlé, utrpí při dotyku talismanu nekrotické zranění 6k6. Dobrý tvor při dotyku utrpí nekrotické zranění 8k6. Oba typy tvorů toto zranění utrpí znovu pokaždé, když skončí svůj tah a talisman stále drží nebo nesou.
