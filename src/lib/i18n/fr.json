@@ -1,5 +1,9 @@
 {
   "messages": {
+    "The board has nothing that happens on its main line, so there is no act to add.": "Rien ne se passe sur la trame principale du storyboard ; aucun acte ne peut être ajouté.",
+    "This campaign already has a story arc the table has been playing, so the board's beats are left here rather than written over it.": "Cette campagne possède déjà un arc narratif en cours. Les étapes du storyboard restent ici pour ne pas l’écraser.",
+    "The arc needs something that says what this world is. Add a place or a piece of history and it can be written.": "L’arc a besoin d’une description de ce monde. Ajoutez un lieu ou un élément d’histoire pour pouvoir le créer.",
+    "An arc needs at least {min} things that happen; the board has {count}.": "Un arc nécessite au moins {min} étapes ; le storyboard en contient {count}.",
     "Nothing more": "Rien de plus",
     "Timeline mentions: {count}": "Mentions dans la chronologie : {count}",
     "Secret subjects or knowers: {count}": "Sujets ou détenteurs de secrets : {count}",
