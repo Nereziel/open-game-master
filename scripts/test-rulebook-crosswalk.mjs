@@ -78,6 +78,27 @@ await test("The canonical crosswalk identity and engine support are independent 
   }
 });
 
+await test("Crosswalk guidance is localized for every French and Czech page without changing engine template IDs", () => {
+  for (const locale of ["fr", "cs"]) {
+    for (const page of rulebookPages(locale)) {
+      const actual = crosswalkFor(page, locale);
+      const expected = byPage.get(page.id);
+      assert.ok(actual.where.trim(), `${locale} ${page.id}: empty guidance`);
+      assert.notEqual(actual.where, expected.where, `${locale} ${page.id}: English guidance`);
+      if (expected.editor === "monster" && expected.template) {
+        assert.equal(actual.template, expected.template, `${locale} ${page.id}: template ID`);
+      }
+      if (expected.editor === "item" && expected.template) {
+        assert.ok(actual.template?.trim());
+        assert.notEqual(actual.template, expected.template, `${locale} ${page.id}: English family guidance`);
+      }
+      assert.ok(!actual.where.includes("{fields}"), `${locale} ${page.id}: unresolved field labels`);
+    }
+  }
+  assert.match(crosswalkFor(pages.find((page) => page.id === "combat"), "cs").where, /iniciativa/);
+  assert.match(crosswalkFor(pages.find((page) => page.id === "fireball"), "cs").where, /sesílání/);
+});
+
 await test("F19: every one of the 36 rules pages has a row written for it.", () => {
   const rows = new Set(ruleRowIds());
   const missing = pagesOf("rules").filter((page) => !rows.has(page.id)).map((page) => page.id);
