@@ -5,7 +5,7 @@ import { register } from "node:module";
 
 register("./lib/register-alias.mjs", import.meta.url);
 
-const { placeCard, resolveSteps, skipVanished } = await import("../src/lib/tours/logic.ts");
+const { placeCard, resolveSteps, skipVanished, localizedTourStep } = await import("../src/lib/tours/logic.ts");
 const { finished, legacyKey, mergeLedgers, parseLedger, readDevice, settle, takeLegacy, writeDevice, deviceKey } = await import(
   "../src/lib/tours/account-logic.ts"
 );
@@ -14,11 +14,14 @@ const { DM_TOUR, FIRST_TURN_TOUR, PLAYER_TOUR } = await import("../src/lib/tours
 const { HUB_TOUR, SHELF_TOUR, SYSTEM_TOURS, systemTourId, workshopTourAnchors } = await import(
   "../src/lib/tours/workshop.ts"
 );
-const { WORKSHOP_GUIDES, guideFor } = await import("../src/lib/tours/workshop-guide.ts");
+const { WORKSHOP_GUIDES, guideFor, localizedToolGuide } = await import("../src/lib/tours/workshop-guide.ts");
 const { appendTerm, appendLine, collectTags, insertAt } = await import("../src/lib/workshop/pickers.ts");
 const { readFileSync, readdirSync, statSync } = await import("node:fs");
 const { fileURLToPath } = await import("node:url");
 const { join } = await import("node:path");
+
+const csMessages = JSON.parse(readFileSync(new URL("../src/lib/i18n/cs.json", import.meta.url), "utf8")).messages;
+const csT = (key) => csMessages[key] ?? key;
 
 let passed = 0;
 function test(name, fn) {
@@ -379,6 +382,36 @@ test("a tour whose content changed has its version or its edition raised, and th
     assert.ok(edition(now) >= edition(then), `${id} went back from edition ${edition(then)} to ${edition(now)}`);
     assert.deepEqual(now, then, `${id} is not recorded as it stands: run node scripts/test-tours.mjs --record`);
   }
+});
+
+test("guided tours use the existing Czech catalog and preserve their original French copy", () => {
+  const steps = [...new Set([...PLAYER_TOUR, ...DM_TOUR, ...FIRST_TURN_TOUR, ...SHELF_TOUR, ...HUB_TOUR, ...Object.values(SYSTEM_TOURS).flat()])];
+  for (const step of steps) {
+    const en = localizedTourStep(step, "en", (key) => key);
+    assert.deepEqual(en, { title: step.title, body: step.body });
+    if (step.translations?.fr) {
+      assert.deepEqual(localizedTourStep(step, "fr", (key) => key), step.translations.fr);
+      assert.ok(Object.hasOwn(csMessages, step.title), step.title);
+      assert.ok(Object.hasOwn(csMessages, step.body), step.id);
+      assert.deepEqual(localizedTourStep(step, "cs", csT), { title: csMessages[step.title], body: csMessages[step.body] });
+    }
+  }
+  const missing = { id: "unknown", title: "__title__", body: "__body__", anchors: [] };
+  assert.deepEqual(localizedTourStep(missing, "cs", csT), { title: missing.title, body: missing.body });
+});
+
+test("written workshop guides preserve the English and French copy and read Czech WorldForge", () => {
+  for (const guide of WORKSHOP_GUIDES) {
+    assert.deepEqual(localizedToolGuide(guide, "en", (key) => key), {
+      title: guide.title, purpose: guide.purpose, steps: guide.steps, atTable: guide.atTable, tips: guide.tips,
+    });
+    assert.deepEqual(localizedToolGuide(guide, "fr", (key) => key), guide.translations.fr);
+  }
+  const world = guideFor("world");
+  const cs = localizedToolGuide(world, "cs", csT);
+  assert.deepEqual(cs, world.translations.cs);
+  assert.equal(cs.steps.length, world.steps.length);
+  assert.equal(cs.tips.length, world.tips.length);
 });
 
 console.log(`test-tours: ${passed} passed`);
