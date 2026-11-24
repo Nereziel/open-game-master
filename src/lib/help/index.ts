@@ -220,6 +220,9 @@ export function describeContentEntry(data: Record<string, unknown> | undefined, 
   if (!data) {
     return null;
   }
+  if (!focus && typeof data.localized_desc === "string" && data.localized_desc.trim()) {
+    return normalizeRulesText(data.localized_desc) || null;
+  }
   const focusFeature = typeof data.feature === "string" ? data.feature.trim() : "";
   const focusText = textOf(data.feature_desc).trim();
   if (focus && focusFeature && focusText && textKey(focus) === textKey(focusFeature)) {
