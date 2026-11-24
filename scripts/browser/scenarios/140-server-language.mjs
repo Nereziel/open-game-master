@@ -23,7 +23,11 @@ export default {
 
     await t.tap(trigger);
     const rows = page.getByRole("menuitemradio").locator("visible=true");
-    await eventually(async () => (await rows.count()) === 15, { label: "fifteen languages in the list" });
+    await eventually(async () => (await rows.count()) === 16, { label: "sixteen languages in the list" });
+    const czech = rows.filter({ hasText: "Čeština" });
+    check((await czech.count()) === 1, "Czech is available exactly once");
+    check(/Czech/.test(await czech.innerText()), "Czech is named in English too");
+    check((await czech.locator("svg").count()) === 1, "Czech carries its flag");
     const french = rows.filter({ hasText: "Français" }).first();
     check(/French/.test(await french.innerText()), "a row names the language in English too");
     check((await french.locator("svg").count()) === 1, "each row carries a flag");
