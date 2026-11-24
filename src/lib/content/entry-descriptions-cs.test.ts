@@ -11,8 +11,9 @@ import spellFixture from "../../../scripts/fixtures/reader-golden/spell.json";
 import featFixture from "../../../scripts/fixtures/reader-golden/feat.json";
 import backgroundFixture from "../../../scripts/fixtures/reader-golden/background.json";
 import expansionTranslations from "./expansion-descriptions-cs.json";
-import { contentName } from "./names";
-import { expansionNameCs } from "./expansion-descriptions-cs";
+import { contentName, localizedExpansionName } from "./names";
+import "../i18n/cs-catalog";
+import expansionNames from "./expansion-names-cs.json";
 
 
 const localizeEntryCs = <T,>(table: string, row: T): T => localizeEntry(table, row, "cs");
@@ -136,13 +137,17 @@ describe("Czech external display translations (without SQLite)", () => {
 
 
 describe("Source-specific Czech expansion names", () => {
+  it("keeps the compact name index in sync with the server-only descriptions", () => {
+    const expected = Object.fromEntries(Object.entries(expansionTranslations).map(([doc, tables]) => [doc, Object.fromEntries(Object.entries(tables).map(([table, rows]) => [table, Object.fromEntries(Object.entries(rows).map(([slug, row]) => [slug, { englishName: row.englishName, name: row.name }]))]))]));
+    expect(expansionNames).toEqual(expected);
+  });
   it("uses the same source identity for API and translation-table kind aliases", () => {
     for (const [apiKind, table] of [["races", "species"], ["archetypes", "subclasses"]] as const) {
       for (const [slug, hit] of Object.entries(expansionTranslations.toh[table])) {
         const row = { slug, name: hit.englishName, documentSlug: "toh", source: "open5e" };
-        expect(expansionNameCs(apiKind, row), slug).toBe(hit.name);
-        expect(expansionNameCs(table, row), slug).toBe(hit.name);
-        expect(expansionNameCs(apiKind, { ...row, source: "homebrew" })).toBeUndefined();
+        expect(localizedExpansionName(apiKind, row, "cs"), slug).toBe(hit.name);
+        expect(localizedExpansionName(table, row, "cs"), slug).toBe(hit.name);
+        expect(localizedExpansionName(apiKind, { ...row, source: "homebrew" }, "cs")).toBeUndefined();
       }
     }
   });
@@ -245,7 +250,7 @@ describe("Tome of Heroes mundane equipment", () => {
 describe("Tome of Heroes race descriptions", () => {
   it("serves all 40 race and subrace texts without changing canonical traits", () => {
     const rows = Object.entries(expansionTranslations.toh.species).filter(([, hit]) => "description" in hit);
-    expect(rows).toHaveLength(76);
+    expect(rows).toHaveLength(40);
     for (const [slug, hit] of rows) {
       if (!("description" in hit) || !("original" in hit)) throw new Error(slug);
       const row = { slug, name: hit.englishName, documentSlug: "toh", source: "open5e", data: hit.original as Record<string, unknown> };
@@ -300,7 +305,7 @@ describe("Tome of Heroes backgrounds", () => {
 describe("Tome of Heroes archetypes", () => {
   it("preserves the source prose of reviewed archetypes", () => {
     const rows = Object.entries(expansionTranslations.toh.subclasses).filter(([, hit]) => "description" in hit);
-    expect(rows).toHaveLength(40);
+    expect(rows).toHaveLength(76);
     for (const [slug, hit] of rows) {
       if (!("description" in hit) || !("original" in hit)) throw new Error(slug);
       const row = { slug, name: hit.englishName, documentSlug: "toh", source: "open5e", data: hit.original as Record<string, unknown> };
