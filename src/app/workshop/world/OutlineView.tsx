@@ -1,5 +1,7 @@
 "use client";
 
+import { worldLinkLabel } from "@/lib/worldforge/display";
+
 import { Check, CircleAlert, Loader2, RotateCcw, Wand2 } from "lucide-react";
 import { useState } from "react";
 import { cn } from "@/lib/cn";
@@ -249,9 +251,9 @@ export function OutlineView({ api, world, onOpen, onOpenSystem }: { api: WorldAp
                 {outline.links.map((link, index) => (
                   <li key={`${link.from}-${link.to}-${link.label}`} className="flex items-center gap-2 text-sm text-stone-300">
                     <label className={TICK}>
-                      <input type="checkbox" className="size-4 accent-amber-400" aria-label={t("Keep {from} {label} {to}", { from: nameOf(link.from), label: link.label, to: nameOf(link.to) })} checked={Boolean(linkPicked[index])} onChange={(event) => setLinkPicked((now) => now.map((value, at) => (at === index ? event.target.checked : value)))} />
+                      <input type="checkbox" className="size-4 accent-amber-400" aria-label={t("Keep {from} {label} {to}", { from: nameOf(link.from), label: worldLinkLabel(t, link.label), to: nameOf(link.to) })} checked={Boolean(linkPicked[index])} onChange={(event) => setLinkPicked((now) => now.map((value, at) => (at === index ? event.target.checked : value)))} />
                     </label>
-                    {nameOf(link.from)} <span className="text-stone-500">{link.label}</span> {nameOf(link.to)}
+                    {nameOf(link.from)} <span className="text-stone-500">{worldLinkLabel(t, link.label)}</span> {nameOf(link.to)}
                   </li>
                 ))}
               </ul>
@@ -321,12 +323,12 @@ export function OutlineView({ api, world, onOpen, onOpenSystem }: { api: WorldAp
           ))}
           {linksUnticked.length ? (
             <p className="text-xs text-amber-300">
-              {t("Links not made, because one end was not ticked: {list}.", { list: linksUnticked.map((link) => `${nameOf(link.from)} ${link.label} ${nameOf(link.to)}`).join("; ") })}
+              {t("Links not made, because one end was not ticked: {list}.", { list: linksUnticked.map((link) => `${nameOf(link.from)} ${worldLinkLabel(t, link.label)} ${nameOf(link.to)}`).join("; ") })}
             </p>
           ) : null}
           {waitingLinks.length ? (
             <p className="text-xs text-amber-300">
-              {t("Links waiting for an end that was not made: {list}. A retry that makes it writes them.", { list: waitingLinks.map((link) => `${nameOf(link.from)} ${link.label} ${nameOf(link.to)}`).join("; ") })}
+              {t("Links waiting for an end that was not made: {list}. A retry that makes it writes them.", { list: waitingLinks.map((link) => `${nameOf(link.from)} ${worldLinkLabel(t, link.label)} ${nameOf(link.to)}`).join("; ") })}
             </p>
           ) : null}
           {phase === "done" ? (
