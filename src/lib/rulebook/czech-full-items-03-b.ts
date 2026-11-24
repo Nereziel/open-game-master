@@ -73,11 +73,11 @@ Kromě toho má roucho dalších 4k4 záplat. PJ je vybere nebo určí náhodně
 | 97–100 | Přenosné beranidlo |`,
   "rod-of-absorption": `*Žezlo, velmi vzácné (vyžaduje sladění)*
 
-Když držíš toto žezlo, můžeš pomocí reakce pohltit kouzlo, které cílí pouze na tebe a nemá oblast účinku. Účinek pohlceného kouzla se zruší a v žezle se uchová jeho energie, nikoliv kouzlo samotné. Energie má stejný stupeň, jaký mělo kouzlo při seslání. Za dobu své existence může žezlo pohltit a uchovat energii v souhrnu až 50 stupňů kouzel. Jakmile pohltí 50 stupňů energie, další už pohltit nedokáže. Pokud se staneš cílem kouzla, jehož energii žezlo nedokáže uchovat, nemá žezlo na toto kouzlo žádný účinek.
+Když držíš toto žezlo, můžeš pomocí reakce pohltit kouzlo, které cílí pouze na tebe a nemá oblast účinku. Účinek pohlceného kouzla se zruší a v žezle se uchová jeho energie, nikoliv kouzlo samotné. Energie má stejnou úroveň, jakou mělo kouzlo při seslání. Za dobu své existence může žezlo pohltit a uchovat energii v souhrnu až 50 stupňů kouzel. Jakmile pohltí 50 stupňů energie, další už pohltit nedokáže. Pokud se staneš cílem kouzla, jehož energii žezlo nedokáže uchovat, nemá žezlo na toto kouzlo žádný účinek.
 
 Při sladění s žezlem poznáš, kolik stupňů energie za svou existenci celkem pohltilo a kolik stupňů energie kouzel v něm právě zůstává uložených.
 
-Jsi-li sesilatel kouzel a držíš toto žezlo, můžeš energii v něm uloženou proměnit na pozice kouzel pro seslání kouzel, která máš připravená nebo znáš. Můžeš vytvořit jen pozice stupně stejného nebo nižšího, než jsou tvé vlastní pozice, nejvýše však 5. stupně. Uložené stupně energie spotřebuješ místo svých pozic, ale jinak kouzlo sešleš běžným způsobem. Například 3 stupně energie uložené v žezle můžeš využít jako pozici kouzla 3. stupně.
+Jsi-li sesilatel kouzel a držíš toto žezlo, můžeš energii v něm uloženou proměnit na pozice kouzel pro seslání kouzel, která máš připravená nebo znáš. Můžeš vytvořit jen pozice stejné nebo nižší úrovně, než jsou tvé vlastní pozice, nejvýše však 5. stupně. Uložené stupně energie spotřebuješ místo svých pozic, ale jinak kouzlo sešleš běžným způsobem. Například 3 stupně energie uložené v žezle můžeš využít jako pozici kouzla 3. stupně.
 
 Nově nalezené žezlo už obsahuje energii kouzel v souhrnu 1k10 stupňů. Žezlo, které už nedokáže pohlcovat energii kouzel a žádnou v sobě nemá, přestane být magické.`,
   "rod-of-alertness": `*Žezlo, velmi vzácné (vyžaduje sladění)*
