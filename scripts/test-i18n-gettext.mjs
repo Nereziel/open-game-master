@@ -519,4 +519,68 @@ assert.equal(ambienceDisplay.cueLabel("boss", (key, vars) => translate("cs", key
 assert.equal(ambienceDisplay.cueLabel("forest", (key, vars) => translate("fr", key, vars)), "Forêt");
 assert.equal(ambienceDisplay.cueLabel("forest", (key, vars) => translate("cs", key, vars)), "Les");
 
+
+const { askLine, waitLine, smiteChoiceLine, chosenOfPair, smiteSlotOf } = await import("../src/lib/dm/opportunity-ask-logic.ts");
+const movementVerbs = { leaves: "is moving out of", enters: "is moving into", within: "is moving within", echo: "is moving away from" };
+for (const [trigger, verb] of Object.entries(movementVerbs)) {
+  const walker = "Wolf {weapon}";
+  const weapon = "Custom {walker}";
+  const name = "Hero {name}";
+  const rider = { id: "rider-1", name: "Goblin {movement}" };
+  const ask = { walkerId: "wolf-1", walker, weapon, trigger, smiteSlot: 2 };
+  const mounted = { ...ask, rider };
+  const snapshot = structuredClone(mounted);
+  const reach = trigger === "echo" ? "echo" : "reach";
+  const reason = `${walker} ${verb} your ${reach}. Take your opportunity attack with your ${weapon}? It uses your reaction.`;
+  const pairReason = `${walker} ${verb} your ${reach} with ${rider.name} on its back. Take your opportunity attack with your ${weapon}, and at which of them? It uses your reaction.`;
+  const waiting = `${walker} ${verb} ${name}'s ${reach}. ${name} is deciding whether to take an opportunity attack.`;
+  assert.equal(askLine(ask), reason);
+  assert.equal(askLine(mounted), pairReason);
+  assert.equal(waitLine(ask, name), waiting);
+  for (const locale of ["en", "fr", "cs"]) {
+    const t = (key, vars) => translate(locale, key, vars);
+    const plain = askLine(ask, t);
+    const pair = askLine(mounted, t);
+    const watch = waitLine(ask, name, t);
+    if (locale === "en") {
+      assert.equal(plain, reason);
+      assert.equal(pair, pairReason);
+      assert.equal(watch, waiting);
+    } else {
+      assert.notEqual(plain, reason);
+      assert.notEqual(pair, pairReason);
+      assert.notEqual(watch, waiting);
+    }
+    assert.ok(plain.includes(walker) && plain.includes(weapon));
+    assert.ok(pair.includes(walker) && pair.includes(weapon) && pair.includes(rider.name));
+    assert.ok(watch.includes(walker) && watch.includes(name));
+    for (let slot = 1; slot <= 9; slot++) {
+      for (const target of [undefined, walker, rider.name]) {
+        const text = smiteChoiceLine(slot, target, t);
+        if (locale === "en") assert.equal(text, smiteChoiceLine(slot, target));
+        else assert.notEqual(text, smiteChoiceLine(slot, target));
+        if (target) assert.ok(text.includes(target));
+        const ordinal = `${slot}${slot === 1 ? "st" : slot === 2 ? "nd" : slot === 3 ? "rd" : "th"}`;
+        assert.ok(text.includes(t(ordinal)));
+      }
+    }
+    assert.equal(chosenOfPair(mounted, rider.id), rider.id);
+    assert.equal(chosenOfPair(mounted, ask.walkerId), undefined);
+    assert.equal(chosenOfPair(mounted, "unknown"), undefined);
+    assert.equal(chosenOfPair(ask, rider.id), undefined);
+    assert.equal(smiteSlotOf({ slots: { 1: { max: 2, used: 2 }, 2: { max: 1, used: 0 } } }), 2);
+  }
+  assert.deepEqual(mounted, snapshot);
+  assert.equal(askLine(mounted), pairReason);
+}
+// Keep the stored reason independent of the UI translator and verify the
+// answer's validation, including the two target IDs, is not moved to the UI.
+const opportunityServer = fs.readFileSync(new URL("../src/lib/dm/opportunity-ask.ts", import.meta.url), "utf8");
+assert.match(opportunityServer, /const line = askLine\(ask\);/);
+assert.match(opportunityServer, /reason: line/);
+const opportunityRoute = fs.readFileSync(new URL("../src/app/api/campaigns/[campaignId]/pending-rolls/[pendingRollId]/opportunity/route.ts", import.meta.url), "utf8");
+assert.ok(opportunityRoute.includes("parsed.data.target !== pair.walkerId && parsed.data.target !== pair.rider.id"));
+const opportunityCard = fs.readFileSync(new URL("../src/app/campaigns/[campaignId]/OpportunityCard.tsx", import.meta.url), "utf8");
+assert.ok(opportunityCard.includes("JSON.stringify({ strike, ...(smite ? { smite } : {}), ...(target ? { target } : {}) })"));
+
 console.log("test-i18n-gettext: all assertions and catalog placeholder checks passed");
