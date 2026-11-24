@@ -1,7 +1,7 @@
 import { contentName, publishedSpeciesTraitName, type NamedRow } from "@/lib/content/names";
 import type { Locale } from "@/lib/i18n/translate";
 import { searchKey, textKey } from "@/lib/language/text-logic";
-import { publishedTraits, traitParagraphs, type PublishedTrait } from "./species-traits";
+import { publishedTraits, traitParagraphs, type PublishedTrait } from "@/lib/workshop/species-traits";
 
 export type PublishedSpeciesRow = NamedRow & { traits: string };
 export type PublishedTraitChoice = {
@@ -33,7 +33,7 @@ export function publishedTraitChoices(rows: PublishedSpeciesRow[], locale: Local
     const label = labels.length === 1 ? labels[0] : trait.name;
     const fromLabels = trait.from.map((name) => {
       const names = [...new Set(entries.filter((entry) => entry.row.name === name)
-        .map(({ row }) => contentName("species", row, locale)))];
+        .map(({ row }) => row.source && row.documentSlug ? contentName("species", row, locale) : row.name))];
       return names.length === 1 ? names[0] : name;
     });
     return { trait, label, fromLabels, searchNames: [trait.name, label, ...trait.from, ...fromLabels] };
