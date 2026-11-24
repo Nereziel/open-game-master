@@ -19,8 +19,9 @@ import frCatalog from "../i18n/fr.json";
 import { installCsTables } from "../i18n/cs-tables";
 import { installCatalog } from "../i18n/translate";
 import { registerFeatureText, type FeaturesFile } from "../classes/feature-text";
-import { describeFeature, describeSkill, glossaryTerms } from "../help";
+import { describeFeature, describeSkill, describeRace, describeRaceTrait, glossaryTerms } from "../help";
 import { translate } from "../i18n/translate";
+import { describeBackgroundFeature, localizeBackgroundFeatureText } from "../backgrounds";
 import { buildItemSheet } from "../help/item-sheet";
 import { damageTypeWord, damageWords, DAMAGE_TYPES } from "../dm/damage-logic";
 import { rollCardLabel } from "../roll-labels";
@@ -223,5 +224,21 @@ describe("Czech content names through upstream helpers", () => {
   it("covers every message key carried by the French catalog", () => {
     const messages: Record<string, string> = csCatalog.messages;
     expect(Object.keys(frCatalog.messages).filter((key) => !Object.hasOwn(messages, key))).toEqual([]);
+  });
+});
+
+describe("Czech sheet descriptions", () => {
+  it("localizes the 18 bundled backgrounds without changing their English text", () => {
+    for (const row of backgroundsJson.backgrounds) {
+      expect(localizeBackgroundFeatureText(row.featureDesc, "cs"), row.id).not.toBe(row.featureDesc);
+      expect(localizeBackgroundFeatureText(row.featureDesc, "en")).toBe(row.featureDesc);
+      expect(describeBackgroundFeature(row.feature, "cs")).toBe(localizeBackgroundFeatureText(row.featureDesc, "cs"));
+    }
+  });
+  it("uses existing Czech trait translations in the race picker and sheet", () => {
+    const race = racesJson.races.find((row) => row.id === "hill_dwarf")!;
+    expect(describeRace(race.id, "en")).toBe(race.traits.join(". ") + ".");
+    expect(describeRace(race.id, "cs")).not.toBe(describeRace(race.id, "en"));
+    expect(describeRaceTrait(race.id, race.traits[0], "cs")).toBe(speciesTraitName(race.id, race.traits[0], "cs"));
   });
 });

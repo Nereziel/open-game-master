@@ -5,6 +5,7 @@ import { GameTerm } from "@/components/ui/GameTerm";
 import { InfoButton } from "@/components/ui/InfoDialog";
 import { Select } from "@/components/ui/Select";
 import { describeSkill } from "@/lib/help";
+import { localizeBackgroundFeatureText } from "@/lib/backgrounds";
 import { backgroundFeatureLabel, contentName } from "@/lib/content/names";
 import { skillLabel } from "@/lib/srd";
 import { useLocale, useT, useTp } from "@/lib/locale";
@@ -96,7 +97,7 @@ export function BackgroundPanel({
                   {t("Feature: {feature}", { feature: backgroundFeatureLabel(background.name, background.feature, locale) })}
                   <InfoButton
                     label={backgroundFeatureLabel(background.name, background.feature, locale)}
-                    text={background.featureDesc ? (locale === "cs" ? t(background.featureDesc) : background.featureDesc) : undefined}
+                    text={background.featureDesc ? localizeBackgroundFeatureText(background.featureDesc, locale) : undefined}
                     reference={background.featureDesc ? undefined : { kind: "backgrounds", slug: background.id }}
                   />
                 </span>

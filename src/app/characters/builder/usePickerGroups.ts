@@ -4,6 +4,7 @@ import { useMemo } from "react";
 import { classGenres } from "@/lib/classes";
 import { GENRE_PRESETS } from "@/lib/genres";
 import { describeRace } from "@/lib/help";
+import { localizeBackgroundFeatureText } from "@/lib/backgrounds";
 import { translate } from "@/lib/i18n/translate";
 import type { Genre } from "@/lib/schemas/game-settings";
 import { SRD_SKILLS } from "@/lib/srd";
@@ -191,7 +192,7 @@ export function backgroundInfoText(entry: {
 }, locale: Locale = "en"): string | undefined {
   const local = (value: string | undefined) => value && locale === "cs" ? translate(locale, value) : value;
   const feature = entry.feature
-    ? `**${locale === "cs" ? "Schopnost" : "Feature"}: ${locale === "cs" && entry.name ? backgroundFeatureLabel(entry.name, entry.feature, locale) : entry.feature}.**${entry.featureDesc ? ` ${local(entry.featureDesc)}` : ""}`
+    ? `**${locale === "cs" ? "Schopnost" : "Feature"}: ${locale === "cs" && entry.name ? backgroundFeatureLabel(entry.name, entry.feature, locale) : entry.feature}.**${entry.featureDesc ? ` ${localizeBackgroundFeatureText(entry.featureDesc, locale)}` : ""}`
     : "";
   const parts = [local(entry.packBlurb || entry.blurb), feature, local(entry.desc)].filter(Boolean);
   return parts.length ? parts.join("\n\n") : undefined;
