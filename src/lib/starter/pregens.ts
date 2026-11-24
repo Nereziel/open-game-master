@@ -1,5 +1,5 @@
 import type { CreateSheetInput } from "@/lib/schemas/sheet";
-type Locale = "en" | "fr" | "cs";
+import type { Locale } from "@/lib/i18n/translate";
 
 // Four ready-made heroes for a table that wants to start in ten minutes.
 // Each is a complete level 1 sheet in the shape the character builder
@@ -248,8 +248,13 @@ const PREGEN_TEXT_CS: Record<string, { tagline: string; blurb: string; backstory
   },
 };
 
+const PREGEN_TEXT_BY_LOCALE: Partial<Record<Locale, typeof PREGEN_TEXT_FR>> = {
+  fr: PREGEN_TEXT_FR,
+  cs: PREGEN_TEXT_CS,
+};
+
 function pregenTextFor(id: string, locale: Locale) {
-  return locale === "fr" ? PREGEN_TEXT_FR[id] : locale === "cs" ? PREGEN_TEXT_CS[id] : undefined;
+  return PREGEN_TEXT_BY_LOCALE[locale]?.[id];
 }
 
 // What the picker shows: no sheet, nothing to tamper with.
