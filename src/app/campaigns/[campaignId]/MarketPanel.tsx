@@ -22,7 +22,7 @@ import type { StockLine } from "@/lib/dm/shop-logic";
 import type { MarketRequest } from "@/lib/dm/table-tabs";
 import { GameTerm } from "@/components/ui/GameTerm";
 import { useTourPrepare } from "@/lib/tours/prepare";
-import { useT } from "@/lib/locale";
+import { odmLocaleHeaders, useT } from "@/lib/locale";
 import { itemDisplayName } from "@/lib/content/item-display";
 import { localizeCoins } from "@/lib/srd/currency";
 
@@ -239,7 +239,7 @@ export function MarketPanel({
       try {
         response = await fetch(`/api/campaigns/${campaignId}/shops/${shop.id}/trade`, {
           method: "POST",
-          headers: { "Content-Type": "application/json" },
+          headers: { "Content-Type": "application/json", ...odmLocaleHeaders() },
           body: JSON.stringify({ action, item, qty: 1, characterId: mySheet?.id, ...(action === "haggle" ? { skill } : {}) }),
         });
       } catch {
@@ -258,6 +258,11 @@ export function MarketPanel({
           const vars = { ...notice.vars };
           for (const key of ["price", "purse"]) {
             if (typeof vars[key] === "string") vars[key] = localizeCoins(vars[key], t.locale);
+          }
+          if (typeof vars.item === "string") {
+            const stock = shop.stock.find((line) => line.itemName === vars.item);
+            const carried = mySheet?.equipment.find((line) => line.name === vars.item);
+            vars.item = itemDisplayName(stock ? { name: stock.itemName, srdName: stock.srdName } : carried ?? { name: vars.item }, t.locale, false);
           }
           setError(t(notice.key, vars));
         } else {
@@ -380,7 +385,7 @@ export function MarketPanel({
       {writeError ? <PanelError>{writeError}</PanelError> : null}
       {unpriced ? (
         <p role="status" className="live-in flex flex-wrap items-center gap-x-2 gap-y-1 text-xs text-amber-300/90">
-          <span className="min-w-0">{t("The shopkeeper will name a price for {item}.", { item: unpriced.item })}</span>
+          <span className="min-w-0">{t("The shopkeeper will name a price for {item}.", { item: itemDisplayName(mySheet?.equipment.find((item) => item.name === unpriced.item) ?? { name: unpriced.item }, t.locale) })}</span>
           {onAskKeeper ? (
             <KitButton onClick={() => onAskKeeper(t("I offer my {item} to the keeper of {shop} and ask what they would pay.", { item: unpriced.item, shop: unpriced.shop }))}>
               {t("Ask at the counter")}
@@ -602,7 +607,7 @@ export function MarketPanel({
                     <li key={item.name}>
                       <KitButton disabled={Boolean(busy)} onClick={() => void counter(shop, "sell", item.name)}>
                         <GameIcon icon={{ kind: "item", key: item.name, family: "item-gear" }} size="size-4" />
-                        {item.name}
+                        {itemDisplayName(item, t.locale)}
                         {item.qty > 1 ? ` x${item.qty}` : ""}
                       </KitButton>
                     </li>
