@@ -11,7 +11,8 @@ import spellFixture from "../../../scripts/fixtures/reader-golden/spell.json";
 import featFixture from "../../../scripts/fixtures/reader-golden/feat.json";
 import backgroundFixture from "../../../scripts/fixtures/reader-golden/background.json";
 import expansionTranslations from "./expansion-descriptions-cs.json";
-import { contentName, contentNameMatches, localizedExpansionName } from "./names";
+import { packFeatText } from "@/lib/srd/feat-text";
+import { contentName, contentNameMatches, localizedExpansionName, archetypeDisplayName } from "./names";
 import "../i18n/cs-catalog";
 import "../i18n/fr-catalog";
 import expansionNames from "./expansion-names-cs.json";
@@ -44,6 +45,27 @@ describe("Source-safe display names and search", () => {
     const row = { slug, name: hit.englishName, source: "open5e", documentSlug: "toh" };
     expect(contentNameMatches("spells", row, hit.name, "cs")).toBe(true);
     expect(contentName("spells", { ...row, documentSlug: "unrelated-book" }, "cs")).toBe(row.name);
+  });
+});
+
+describe("Archetype and feat display is separate from mechanics", () => {
+  it("resolves every reviewed Tome of Heroes archetype by its actual source", () => {
+    for (const [slug, hit] of Object.entries(expansionTranslations.toh.subclasses)) {
+      const row = { slug, name: hit.englishName, source: "open5e", documentSlug: "toh" };
+      expect(archetypeDisplayName("fighter", row.name, "cs", row)).toBe(hit.name);
+      expect(archetypeDisplayName("fighter", row.name, "cs", { ...row, documentSlug: "other" })).toBe(row.name);
+      expect(archetypeDisplayName("fighter", row.name, "cs", { ...row, source: "homebrew" })).toBe(row.name);
+    }
+  });
+  it("keeps every reviewed Tome of Heroes feat's mechanical rules unchanged", () => {
+    for (const [slug, hit] of Object.entries(expansionTranslations.toh.feats)) {
+      const row = { slug, name: hit.englishName, source: "open5e", documentSlug: "toh", data: hit.original as Record<string, unknown> };
+      const canonical = packFeatText(row.data);
+      for (const locale of ["en", "fr", "cs"] as const) {
+        expect(packFeatText(localizeEntry("feats", row, locale).data)).toEqual(canonical);
+      }
+      expect(localizeEntry("feats", row, "cs").data.localized_desc).toBe(hit.description);
+    }
   });
 });
 
