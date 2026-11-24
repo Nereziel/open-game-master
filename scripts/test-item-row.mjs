@@ -32,7 +32,7 @@ const { itemTags } = await import("../src/lib/srd/item-tags.ts");
 const { armorOfRow } = await import("../src/lib/srd/armor.ts");
 const { gearDefFor } = await import("../src/lib/srd/magic-gear.ts");
 const { magicItemBonus, withoutBonus } = await import("../src/lib/srd/item-row.ts");
-const { ITEM_EN_BY_FR } = await import("../src/lib/srd/item-names-fr.ts");
+const { ITEM_EN_BY_LOCALIZED_NAME } = await import("../src/lib/srd/item-names-localized.ts");
 const { textKey } = await import("../src/lib/language/text-logic.ts");
 const require = createRequire(import.meta.url);
 
@@ -319,10 +319,14 @@ test("an item whose own name and srdName both name rows reads the srdName row; E
   assert.equal(matchMagicItem({ name: "Grandmother's band", slug: "ring-of-protection" })?.name, "Ring of Protection");
 });
 
-// The official French SRD names (src/lib/srd/item-names-fr.ts) are rows by
+// The official French SRD names (src/lib/srd/item-names-localized.ts) are rows by
 // themselves: a French table's "Cotte de mailles" is worn as Chain Mail with
 // no srdName, a bonus in the name kept, and no English name changes meaning.
 test("an official French SRD item name is its row without srdName, and every English item name reads as before", () => {
+  assert.equal(matchWeapon({ name: "Dlouhý meč" })?.name, "Longsword");
+  assert.equal(matchWeapon({ name: "Dlouhý meč +1" })?.name, "Longsword");
+  assert.equal(matchArmor({ name: "Drátěná zbroj" })?.name, "Chain Mail");
+  assert.equal(matchMagicItem({ name: "Pytel beztíže" })?.name, "Bag of Holding");
   assert.equal(matchWeapon({ name: "Épée longue" })?.name, "Longsword");
   assert.equal(matchWeapon({ name: "Épée longue +1" })?.name, "Longsword");
   assert.equal(magicItemBonus("Épée longue +1"), 1);
@@ -337,7 +341,7 @@ test("an official French SRD item name is its row without srdName, and every Eng
   const table = JSON.parse(readFileSync(new URL("../src/lib/classes/item-tags.json", import.meta.url), "utf8"));
   for (const [name] of table.items) {
     const key = textKey(withoutBonus(name));
-    const french = ITEM_EN_BY_FR[key];
+    const french = ITEM_EN_BY_LOCALIZED_NAME[key];
     assert.ok(!french || textKey(french) === key, `the English "${name}" would read as "${french}"`);
   }
   const built = spawnSync(process.execPath, [fileURLToPath(new URL("./build-names-fr.mjs", import.meta.url)), "--check"], { encoding: "utf8" });
