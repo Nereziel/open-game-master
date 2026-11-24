@@ -12501,6 +12501,153 @@
     "builder.gear": {},
     "Add it anyway": {
       "admin.harness.addReduced": "L’ajouter quand même"
+    },
+    "{name}: kept your {value} over the import's.": {
+      "workshop.import.result": "{name} : votre valeur ({value}) a été conservée plutôt que celle de l’import."
+    },
+    "{slice} “{label}”: kept your {value} over the import's.": {
+      "workshop.import.result": "{slice} « {label} » : votre valeur ({value}) a été conservée plutôt que celle de l’import."
+    },
+    "{link}: changed here and in the import (which says {veracity}{rank}, one way); yours was kept.": {
+      "workshop.import.result": "{link} : modifié ici et dans l’import (qui indique {veracity}{rank}, à sens unique) ; votre version a été conservée."
+    },
+    "{link}: changed here and in the import (which says {veracity}{rank}); yours was kept.": {
+      "workshop.import.result": "{link} : modifié ici et dans l’import (qui indique {veracity}{rank}) ; votre version a été conservée."
+    },
+    "{link}: gone from the import, but changed here; yours was kept.": {
+      "workshop.import.result": "{link} : absent de l’import, mais modifié ici ; votre version a été conservée."
+    },
+    "“{field}” field": {
+      "workshop.import.result": "champ « {field} »"
+    },
+    "An entry": {
+      "workshop.import.result": "Une entrée"
+    },
+    "Folder": {
+      "workshop.import.result": "Dossier"
+    },
+    "Calendar": {
+      "workshop.import.result": "Calendrier"
+    },
+    "Event": {
+      "workshop.import.result": "Événement"
+    },
+    "Secret": {
+      "workshop.import.result": "Secret"
+    },
+    "Name to write": {
+      "workshop.import.result": "Nom à compléter"
+    },
+    "Map": {
+      "workshop.import.result": "Carte"
+    },
+    "Pin": {
+      "workshop.import.result": "Repère"
+    },
+    "known": {
+      "workshop.import.result": "connu"
+    },
+    "hidden": {
+      "workshop.import.result": "caché"
+    },
+    "believed": {
+      "workshop.import.result": "tenu pour vrai"
+    },
+    "name": {
+      "workshop.import.result": "nom"
+    },
+    "title": {
+      "workshop.import.result": "titre"
+    },
+    "text": {
+      "workshop.import.result": "texte"
+    },
+    "line": {
+      "workshop.import.result": "résumé"
+    },
+    "notes": {
+      "workshop.import.result": "notes"
+    },
+    "note": {
+      "workshop.import.result": "note"
+    },
+    "article": {
+      "workshop.import.result": "article"
+    },
+    "hidden truth": {
+      "workshop.import.result": "vérité cachée"
+    },
+    "canon setting": {
+      "workshop.import.result": "statut canonique"
+    },
+    "type": {
+      "workshop.import.result": "type"
+    },
+    "folder": {
+      "workshop.import.result": "dossier"
+    },
+    "parent folder": {
+      "workshop.import.result": "dossier parent"
+    },
+    "other names": {
+      "workshop.import.result": "autres noms"
+    },
+    "tags": {
+      "workshop.import.result": "étiquettes"
+    },
+    "picture": {
+      "workshop.import.result": "image"
+    },
+    "list of who knows it": {
+      "workshop.import.result": "liste des personnes au courant"
+    },
+    "setting for whether the party knows it": {
+      "workshop.import.result": "paramètre de connaissance par le groupe"
+    },
+    "subject": {
+      "workshop.import.result": "sujet"
+    },
+    "date": {
+      "workshop.import.result": "date"
+    },
+    "list of who and what it involves": {
+      "workshop.import.result": "liste des personnes et éléments concernés"
+    },
+    "era": {
+      "workshop.import.result": "ère"
+    },
+    "regions": {
+      "workshop.import.result": "régions"
+    },
+    "position": {
+      "workshop.import.result": "position"
+    },
+    "map": {
+      "workshop.import.result": "carte"
+    },
+    "linked map": {
+      "workshop.import.result": "carte liée"
+    },
+    "marked entry": {
+      "workshop.import.result": "entrée repérée"
+    },
+    "status": {
+      "workshop.import.result": "statut"
+    },
+    "abbreviation": {
+      "workshop.import.result": "abréviation"
+    },
+    "start year": {
+      "workshop.import.result": "année de départ"
+    },
+    "colour": {
+      "workshop.import.result": "couleur"
+    },
+    "origin": {
+      "workshop.import.result": "origine"
+    },
+    "setting for whether only the GM sees it": {
+      "workshop.import.result": "paramètre de visibilité réservée au MJ"
     }
   },
   "plurals": {
