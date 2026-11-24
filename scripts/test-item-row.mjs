@@ -31,7 +31,7 @@ const { wearSlotOf } = await import("../src/lib/srd/wear-slots.ts");
 const { itemTags } = await import("../src/lib/srd/item-tags.ts");
 const { armorOfRow } = await import("../src/lib/srd/armor.ts");
 const { gearDefFor } = await import("../src/lib/srd/magic-gear.ts");
-const { magicItemBonus, withoutBonus } = await import("../src/lib/srd/item-row.ts");
+const { magicItemBonus, rowName, withoutBonus } = await import("../src/lib/srd/item-row.ts");
 const { ITEM_EN_BY_LOCALIZED_NAME } = await import("../src/lib/srd/item-names-localized.ts");
 const { textKey } = await import("../src/lib/language/text-logic.ts");
 const require = createRequire(import.meta.url);
@@ -326,7 +326,9 @@ test("an official French SRD item name is its row without srdName, and every Eng
   assert.equal(matchWeapon({ name: "Dlouhý meč" })?.name, "Longsword");
   assert.equal(matchWeapon({ name: "Dlouhý meč +1" })?.name, "Longsword");
   assert.equal(matchArmor({ name: "Drátěná zbroj" })?.name, "Chain Mail");
-  assert.equal(matchMagicItem({ name: "Pytel beztíže" })?.name, "Bag of Holding");
+  // Bag of Holding has a canonical name but no bundled magic-item mechanics row.
+  assert.equal(rowName({ name: "Pytel beztíže" }), "Bag of Holding");
+  assert.equal(matchMagicItem({ name: "Ochranný plášť" })?.name, "Cloak of Protection");
   assert.equal(matchWeapon({ name: "Épée longue" })?.name, "Longsword");
   assert.equal(matchWeapon({ name: "Épée longue +1" })?.name, "Longsword");
   assert.equal(magicItemBonus("Épée longue +1"), 1);
