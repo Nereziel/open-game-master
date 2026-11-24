@@ -8,7 +8,7 @@ import { describeContentEntry, spellSummary } from "@/lib/help";
 import { useContentSearch, type PickerEntry } from "./useContentSearch";
 import { textKey } from "@/lib/language/text-logic";
 import { useLocale, useT, useTp } from "@/lib/locale";
-import { expansionNameCs } from "@/lib/content/expansion-descriptions-cs";
+import { contentName } from "@/lib/content/names";
 
 // `level` rides along for spells, so a cantrip picked here lands in the
 // cantrip list rather than among the levelled spells.
@@ -38,7 +38,7 @@ export default function MultiContentPicker({
 }) {
   const t = useT();
   const locale = useLocale();
-  const rowName = (entry: PickerEntry) => (locale === "cs" ? expansionNameCs(kind, entry) : undefined) ?? entry.name;
+  const rowName = (entry: PickerEntry) => contentName(kind, entry, locale);
   const tp = useTp();
   const { query, setQuery, results, setResults, open, setOpen, loading, unavailable, failed, unadmitted } =
     useContentSearch(kind, extraParams);
