@@ -41,3 +41,41 @@ export function importWarningText(warning: ImportWarning, t: T, locale: string):
   if (display.cards) vars.cards = cardLabels(display.cards, t);
   return t(display.key, { ...vars, context: "workshop.import.plan" });
 }
+
+type ReferenceKind = "tables" | "npcs" | "lore";
+
+const REFERENCE_KEYS: Record<ReferenceKind, readonly [string, string]> = {
+  tables: [
+    "{table}: its row for the table {name} now names this campaign's own {name}, since the source's stayed behind.",
+    "{table}: its row for the table {name} names nothing here, since that table stayed behind.",
+  ],
+  npcs: [
+    "{table}: its row for the NPC {name} now names this campaign's own {name}, since the source's stayed behind.",
+    "{table}: its row for the NPC {name} names nothing here, since that NPC stayed behind.",
+  ],
+  lore: [
+    "{table}: its row for the lore entry {name} now names this campaign's own {name}, since the source's stayed behind.",
+    "{table}: its row for the lore entry {name} names nothing here, since that lore entry stayed behind.",
+  ],
+};
+
+export type ImportResultNote = { message: string; key: string; vars: Record<string, string | number> };
+
+// Construct the same English message and its translation template at the
+// point where the reference's kind and outcome are known, not by parsing names.
+export function referenceImportNote(kind: ReferenceKind, table: string, name: string, matched: boolean): ImportResultNote {
+  const key = REFERENCE_KEYS[kind][matched ? 0 : 1];
+  const vars = { table, name };
+  const message = key.replace(/\{(table|name)\}/g, (_, slot: "table" | "name") => vars[slot]);
+  return { message, key, vars };
+}
+
+// Keep legacy messages and their order even when display data is missing.
+export function importResultNotesText(messages: readonly string[], displays: readonly ImportResultNote[], t: T): string[] {
+  const byMessage = new Map(displays.map((note) => [note.message, note]));
+  return messages.map((message) => {
+    const note = byMessage.get(message);
+    if (!note || t(note.key, { context: "workshop.import.result" }) === note.key) return message;
+    return t(note.key, { ...note.vars, context: "workshop.import.result" });
+  });
+}
