@@ -103,7 +103,7 @@ export const CZECH_ITEM_TITLES_6: Readonly<Record<string, string>> = {
   "Rod of Absorption": "Žezlo pohlcování",
   "Rod of Alertness": "Žezlo ostražitosti",
   "Rod of Lordly Might": "Žezlo panské moci",
-  "Rod of Rulership": "Žezlo vlády",
+  "Rod of Rulership": "Žezlo panování",
   "Rod of Security": "Žezlo bezpečí",
   "Rope of Climbing": "Šplhací lano",
   "Rope of Entanglement": "Spoutávací lano",
