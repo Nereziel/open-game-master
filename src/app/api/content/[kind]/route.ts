@@ -233,6 +233,13 @@ export async function GET(
       results = [...results, ...matchingBundled("classes", bundledClassRows(bundledQuery, results as Array<{ name: string }>))];
     }
   }
+  // The character picker already offers the built-in subclasses locally.
+  // Opt in to their display rows when the optional pack is absent, without
+  // requesting workshop mechanics or changing the published search results.
+  if (!mechanics && !packInstalled && kind === "archetypes" && url.searchParams.get("bundled") === "1") {
+    const bundled = matchingBundled("archetypes", bundledArchetypeRows(url.searchParams.get("class") ?? "", bundledQuery, results as Array<{ name: string }>));
+    results = [...results, ...bundled.map(({ table: _table, ...row }) => row)];
+  }
   // A row the engine plays from mechanics it read and nobody checked says
   // so (issue #570).
   const classSlug = url.searchParams.get("class") ?? undefined;
