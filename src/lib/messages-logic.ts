@@ -30,10 +30,8 @@ export function formatMessage(template: string, vars?: MessageVars): string {
   );
 }
 
-// The BCP 47 tag a locale resolves to, for toLocaleDateString and friends.
-export function localeTag(locale: Locale): string {
-  return locale === "fr" ? "fr-FR" : locale === "cs" ? "cs-CZ" : "en-US";
-}
+// Keep the existing public entry point for formatters.
+export { localeTag } from "./i18n/locale.ts";
 
 export type PluralTranslator = (
   englishOne: string,
