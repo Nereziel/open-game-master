@@ -89,7 +89,7 @@ export const CZECH_MONSTER_TITLES_7: Readonly<Record<string, string>> = {
   "Grimlock": "Grimlok",
   "Guardian Naga": "Strážný nága",
   "Gynosphinx": "Gynosfinga",
-  "Half-Dragon Template": "Šablona půldraka",
+  "Half-Dragon Template": "Šablona polodraka",
   "Hezrou": "Hezr",
   "Homunculus": "Homunkulus",
   "Horned Devil": "Rohatý ďábel",
