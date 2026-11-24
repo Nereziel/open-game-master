@@ -13057,7 +13057,10 @@
     "{title} (failed)": "{title} (nesplněno)",
     "{title} — Story": "{title} — Příběh",
     "Quest Log": "Deník úkolů",
-    "Exported from Open Game Master on {date}.": "Exportováno z Open Game Master dne {date}."
+    "Exported from Open Game Master on {date}.": "Exportováno z Open Game Master dne {date}.",
+    "{birth} to {death} (dies before being born)": "{birth} až {death} (úmrtí před narozením)",
+    "born {year}": "Narození: {year}",
+    "died {year}": "Úmrtí: {year}"
   },
   "contexts": {
     "{table}: its row for the table {name} now names this campaign's own {name}, since the source's stayed behind.": {
@@ -15829,6 +15832,21 @@
       "{count}krát",
       "{count}krát",
       "{count}krát"
+    ],
+    "{count} year before their birth\u0000{count} years before their birth": [
+      "{count} rok před narozením",
+      "{count} roky před narozením",
+      "{count} let před narozením"
+    ],
+    "{count} year after their death\u0000{count} years after their death": [
+      "{count} rok po smrti",
+      "{count} roky po smrti",
+      "{count} let po smrti"
+    ],
+    "{birth} to {death} ({count} year)\u0000{birth} to {death} ({count} years)": [
+      "{birth} až {death} ({count} rok)",
+      "{birth} až {death} ({count} roky)",
+      "{birth} až {death} ({count} let)"
     ]
   }
 }
