@@ -1,11 +1,11 @@
 import { describe, expect, it } from "vitest";
 import csCatalog from "./cs.json";
 import frCatalog from "./fr.json";
-import { catalogInstalled, installCatalog, translate, translatePlural } from "./translate";
+import { catalogInstalled, installCatalog, translate, translatePlural, type TranslateVars } from "./translate";
 import { localeFromAcceptLanguage, parseLocale, resolveLocale } from "./locale";
 import { localeTag } from "../messages-logic";
 import { GENRE_PRESETS, genrePresetFor } from "../genres";
-import { presetTheme, typeInPlan } from "../../app/create-campaign/portals";
+import { portalCards, presetTheme, settingList, typeInPlan } from "../../app/create-campaign/portals";
 
 installCatalog("cs", csCatalog);
 installCatalog("fr", frCatalog);
@@ -65,6 +65,22 @@ describe("Czech campaign theme presets", () => {
       expect(genrePresetFor(preset.id, "cs")).toEqual({ ...preset, defaultTheme: preset.defaultThemeByLocale?.cs });
       expect(genrePresetFor(preset.id, "fr")).toEqual({ ...preset, defaultTheme: preset.defaultThemeByLocale?.fr });
       expect(genrePresetFor(preset.id, "cs").defaultTheme).not.toBe(preset.defaultTheme);
+    }
+  });
+
+  it("uses the same catalog text for all eight genre cards and their help, without overwriting pack text", () => {
+    const packDraft = { genre: "high_fantasy" as const, theme: "A world pack's own text", themeTouched: false, worldPack: "custom-pack" };
+    for (const locale of ["en", "fr", "cs"] as const) {
+      const t = (key: string, vars?: TranslateVars) => translate(locale, key, vars);
+      const cards = portalCards("custom", t);
+      expect(cards).toHaveLength(8);
+      expect(settingList("custom", t)).toBe(cards.map((card) => `**${card.name}**: ${card.blurb}`).join("\n\n"));
+      for (const [index, card] of cards.entries()) {
+        const preset = GENRE_PRESETS[index];
+        expect(card.name).toBe(t(preset.name, preset.id === "custom" ? { context: "creator.genre.custom" } : undefined));
+        expect(card.blurb).toBe(t(preset.blurb));
+      }
+      expect(presetTheme(packDraft, locale)).toBe(packDraft);
     }
   });
 
