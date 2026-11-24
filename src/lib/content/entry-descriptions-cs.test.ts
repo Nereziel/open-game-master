@@ -644,6 +644,8 @@ describe("Reviewed authored archetypes", () => {
   it.each([
     { classId: "barbarian", subclasses: 8, featureCount: 36 },
     { classId: "bard", subclasses: 7, featureCount: 31 },
+    { classId: "cleric", subclasses: 13, featureCount: 76 },
+    { classId: "druid", subclasses: 6, featureCount: 28 },
   ])("localizes $classId archetypes and their features without changing canonical rules", ({ classId, subclasses, featureCount }) => {
     const entries = AUTHORED_SUBCLASS_ENTRIES[classId];
     expect(entries).toHaveLength(subclasses);
@@ -651,8 +653,10 @@ describe("Reviewed authored archetypes", () => {
     for (const entry of entries) {
       const slug = classId + "-" + entry.name.toLowerCase().replace(/[^a-z0-9]+/g, "-");
       const levels = Object.entries(entry.levels).sort(([a], [b]) => Number(a) - Number(b));
+      const spells = Object.entries(entry.spells ?? {}).sort(([a], [b]) => Number(a) - Number(b));
+      const spellText = entry.spells ? "\n\n**Always-prepared spells.** " + spells.map(([level, names]) => `Level ${level}: ${names.join(", ")}.`).join(" ") : "";
       const desc = entry.desc + "\n\n" + levels.map(([level, features]) =>
-        "**Level " + level + ".** " + features.map((feature) => "*" + feature.n + ".* " + feature.d).join(" ")).join("\n\n");
+        "**Level " + level + ".** " + features.map((feature) => "*" + feature.n + ".* " + feature.d).join(" ")).join("\n\n") + spellText;
       const published = { slug, name: entry.name, source: "open5e", documentSlug: "odm-expanded", data: { class: classId, desc } as Record<string, unknown> };
       const bundled = { ...published, source: "bundled", documentSlug: "wotc-srd", data: { desc: "" } as Record<string, unknown> };
       const localized = localizeEntry("archetypes", published, "cs");
@@ -666,6 +670,12 @@ describe("Reviewed authored archetypes", () => {
         const text = translate("cs", feature.d);
         expect(text, feature.n).not.toBe(feature.d);
         expect(String(localized_desc), feature.n).toContain(text);
+      }
+      if (spells.length) {
+        expect(String(localized_desc)).toContain("Stále připravená kouzla");
+        for (const [level, names] of spells) {
+          expect(String(localized_desc)).toContain(translate("cs", "Level {level}", { level }) + ": " + names.map((name) => contentName("spells", name, "cs")).join(", ") + ".");
+        }
       }
       expect(localizeEntry("archetypes", published, "en")).toBe(published);
       for (const foreign of [
