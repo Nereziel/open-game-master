@@ -3,7 +3,11 @@ import type { Locale } from "./translate";
 export const LOCALE_COOKIE = "odm_locale";
 
 // One registry for supported UI languages and their server-language names.
-const SERVER_LANGUAGE_BY_LOCALE: Record<Locale, string> = { en: "english", fr: "french", cs: "czech" };
+const SERVER_LANGUAGE_BY_LOCALE = { en: "english", fr: "french", cs: "czech" } as const;
+
+export function serverLanguageOfLocale(locale: Locale) {
+  return SERVER_LANGUAGE_BY_LOCALE[locale] ?? SERVER_LANGUAGE_BY_LOCALE.en;
+}
 
 export function parseLocale(raw: string | null | undefined): Locale | null {
   return raw && Object.hasOwn(SERVER_LANGUAGE_BY_LOCALE, raw) ? raw as Locale : null;
