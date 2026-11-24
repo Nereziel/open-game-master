@@ -46,6 +46,7 @@ describe("Shared reader-language display tables", () => {
     ] as const) {
       expect(chipName(spell.name, locale)).toBe(name);
       expect(cardDisplayName(spell, locale)).toBe(name);
+      expect(cardDisplayName({ ...spell, id: "attack:granted:fireball" }, locale)).toBe(name);
       expect(cardDisplayName(resource, locale)).toBe(resourceName);
       expect(cardDisplayName({ ...spell, name: "__unknown_spell__" }, locale)).toBe("__unknown_spell__");
     }
