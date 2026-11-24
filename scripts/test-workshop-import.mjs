@@ -445,7 +445,12 @@ test("WorldForge conflict presentation preserves local edits, authored fields an
   assert.equal(removed.links.length, 1);
   assert.equal(removed.removed, 0);
   assert.deepEqual(removed.conflicts, ["a member of b: gone from the import, but changed here; yours was kept."]);
-  const notes = [entry, ordinary, unknown, unnamed, ...rows.conflictDisplays, ...changed.conflictDisplays, ...removed.conflictDisplays];
+  const twoWay = mergeImportedLinks(local, [{ ...link, veracity: "believed", rank: "" }], "source");
+  assert.equal(twoWay.links[0].rank, "Local rank");
+  assert.deepEqual(twoWay.conflicts, ["a member of b: changed here and in the import (which says believed); yours was kept."]);
+  const bindings = worldEntryConflictNote(name, "bindings");
+  assert.equal(bindings.message, `${name}: kept your bindings over the import's.`);
+  const notes = [entry, ordinary, unknown, unnamed, ...rows.conflictDisplays, ...changed.conflictDisplays, ...removed.conflictDisplays, ...twoWay.conflictDisplays, bindings];
   const messages = notes.map((note) => note.message);
   const snapshot = structuredClone(notes);
   for (const locale of ["en", "cs", "fr"]) {
