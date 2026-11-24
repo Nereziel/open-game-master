@@ -614,14 +614,13 @@ function standingKept(doc: WorldDoc, names: Map<string, string>, source?: string
 
 // The same for the whole campaign, for Bring in prep to say after a reload.
 // The DM's: the import route answers it to story authority alone.
-export function keptNotes(campaignId: string): string[] {
-  return keptNoteDisplays(campaignId).map((note) => note.message);
-}
-
-export function keptNoteDisplays(campaignId: string): ImportResultNote[] {
+export function keptNotes(campaignId: string): string[];
+export function keptNotes(campaignId: string, structured: true): ImportResultNote[];
+export function keptNotes(campaignId: string, structured?: true): string[] | ImportResultNote[] {
   const doc = getWorldDoc(campaignId);
   if (!Object.values(doc.origins ?? {}).some((origin) => origin.kept)) return [];
-  return standingKept(doc, new Map(worldEntities(campaignId, doc).map((entity) => [entity.ref, entity.name])));
+  const notes = standingKept(doc, new Map(worldEntities(campaignId, doc).map((entity) => [entity.ref, entity.name])));
+  return structured ? notes : notes.map((note) => note.message);
 }
 
 // What the DM ticked in a forge preview (src/lib/worldforge/forge.ts),
