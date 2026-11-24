@@ -77,6 +77,8 @@ export type ItemEntry = ContentEntry & {
 
 type SearchOptions = {
   q?: string;
+  // Reader-facing matching, before pack pagination; engine callers omit it.
+  matchName?: (table: string, row: Pick<ContentEntry, "slug" | "name" | "source" | "documentSlug">) => boolean;
   limit?: number;
   offset?: number;
   // Whose homebrew a search reads: `userId` one author (their own shelf),
@@ -119,12 +121,12 @@ function foundSlugs(
   const clauses = table === "conditions" ? where.clauses : [PLAYED_DOCUMENTS_SQL, ...where.clauses];
   const filter = clauses.length ? ` WHERE ${clauses.join(" AND ")}` : "";
   const rows = db
-    .prepare(`SELECT slug, name FROM ${table}${filter} ORDER BY name, slug`)
-    .all(...where.params) as Array<{ slug: string; name: string }>;
+    .prepare(`SELECT slug, name, document_slug FROM ${table}${filter} ORDER BY name, slug`)
+    .all(...where.params) as Array<{ slug: string; name: string; document_slug: string }>;
   return rows
     // Level Up's version of an SRD entry never reaches a 5.1 table: the SRD
     // row answers the name (issue #570).
-    .filter((row) => textKey(row.name).includes(needle) && !isTwinSlug(table, row.slug) && (options.unoffered || offeredSlug(table, row.slug)))
+    .filter((row) => (textKey(row.name).includes(needle) || options.matchName?.(table, { slug: row.slug, name: row.name, source: "open5e", documentSlug: row.document_slug })) && !isTwinSlug(table, row.slug) && (options.unoffered || offeredSlug(table, row.slug)))
     .slice(offset, offset + clampLimit(options.limit))
     .map((row) => row.slug);
 }
@@ -283,6 +285,7 @@ export function searchSpells(
       (row) =>
         (!needle ||
           textKey(row.name).includes(needle) ||
+          options.matchName?.("spells", row) ||
           row.aliases.some((alias) => textKey(alias).includes(needle))) &&
         // The class as a whole entry of the row's lists, as the save's check
         // reads them (spellOnListKey): a substring match offered a paladin the
@@ -539,9 +542,9 @@ export function searchFeats(options: SearchOptions = {}): ContentEntry[] {
   const packRows = options.offset
     ? []
     : (getContentDb()
-        ?.prepare(`SELECT name FROM feats WHERE ${PLAYED_DOCUMENTS_SQL}`)
-        .all() as Array<{ name: string }> | undefined) ?? [];
-  const packNames = packRows.map((row) => row.name).filter((name) => textKey(name).includes(needle));
+        ?.prepare(`SELECT slug, name, document_slug FROM feats WHERE ${PLAYED_DOCUMENTS_SQL}`)
+        .all() as Array<{ slug: string; name: string; document_slug: string }> | undefined) ?? [];
+  const packNames = packRows.filter((row) => textKey(row.name).includes(needle) || options.matchName?.("feats", { slug: row.slug, name: row.name, source: "open5e", documentSlug: row.document_slug })).map((row) => row.name);
   return [
     ...homebrewEntries(options, "feat", options.q),
     ...withAuthoredFeats(served, { ...options, packNames }),
