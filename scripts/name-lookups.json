@@ -9,6 +9,9 @@
     "authoring": "the workshop's and WorldForge's authoring tools, which read what an author writes as they go"
   },
   "sites": {
+    "lib/rulebook/czech-terms.ts#partial": [["parse",7,"Parse fixed English SRD subtitle and spell metadata formats, never player names."]],
+    "lib/rulebook/czech-terms.ts#normalizer": [["parse",3,"Render translated SRD metadata labels from the bundled English text."]],
+    "lib/rulebook/czech-terms.ts#keyed": [["key",2,"Select a display-only title dictionary by kind and exact title."]],
     "lib/srd/barding.ts#whole": [["key",1,"the one word barding against each word of a carried row, both through textKey, to tell a suit made for a mount; the suit itself is then found by its whole name (armorNamed)"]],
     "lib/dm/party-npcs-fight.ts#whole": [["key",1,"an NPC's stored place against the party's current place, both written by the server, to field only who is where the fight is: no record a person named"]],
     "lib/dm/party-npcs-fight.ts#fallback": [["key",1,"an NPC's last fight row by id, else the row it was carried from: no record a person named"]],
