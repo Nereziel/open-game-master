@@ -4,7 +4,18 @@
 import type { Locale } from "./translate.ts";
 import type { ExpansionIndex } from "../content/expansion-identity.ts";
 
+// Small, locale-specific formatting rules for the English trait shorthand.
+export type TraitTextRules = {
+  poisonAdvantage: string;
+  feet: string;
+  lightMediumArmor: string;
+  hpPerLevel?: string;
+  weaponNames?: Readonly<Record<string, string>>;
+  localizeNotedHead?: boolean;
+};
+
 export type LocalizedTables = {
+  traitText?: TraitTextRules;
   names: Record<string, Record<string, string>>;
   translated?: Record<string, Record<string, string>>;
   resources?: Record<string, { name: string; guidance: string }>;
