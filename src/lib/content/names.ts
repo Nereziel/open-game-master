@@ -216,27 +216,15 @@ export function classFeatureName(classId: string, featureName: string, locale: L
 // name is translated. A trait the species's map does not carry (the French
 // SRD prints the subraces' own traits for some peoples only) stays English.
 function localizeTraitTail(tail: string, locale: Locale): string {
-  if (locale === "cs") {
-    return tail
-      .replace(/\badv\. vs poison\b/gi, "výhoda proti jedu")
-      .replace(/\b(\d+)\s*ft\b/gi, "$1 stop")
-      .replace(/\blight and medium armor\b/gi, "lehká a střední zbroj")
-      .replace(/\b(battleaxe|handaxe|light hammer|warhammer|longsword|shortsword|longbow|shortbow|rapier)\b/gi, (weapon) => contentName("weapons", weapon, locale))
-      .replace(/\bHP per level\b/gi, "život za úroveň");
-  }
-  return tail
-    .replace(/\badv\. vs poison\b/gi, "avant. c/ poison")
-    .replace(/\b(\d+)\s*ft\b/gi, "$1 pi")
-    .replace(/\blight and medium armor\b/gi, "armures légères et intermédiaires")
-    .replace(/\bbattleaxe\b/gi, "hache d’armes")
-    .replace(/\bhandaxe\b/gi, "hachette")
-    .replace(/\blight hammer\b/gi, "marteau léger")
-    .replace(/\bwarhammer\b/gi, "marteau de guerre")
-    .replace(/\blongsword\b/gi, "épée longue")
-    .replace(/\bshortsword\b/gi, "épée courte")
-    .replace(/\blongbow\b/gi, "arc long")
-    .replace(/\bshortbow\b/gi, "arc court")
-    .replace(/\brapier\b/gi, "rapière");
+  const rules = localizedTables(locale)?.traitText;
+  if (!rules) return tail;
+  const localized = tail
+    .replace(/\badv\. vs poison\b/gi, rules.poisonAdvantage)
+    .replace(/\b(\d+)\s*ft\b/gi, (_, distance: string) => `${distance} ${rules.feet}`)
+    .replace(/\blight and medium armor\b/gi, rules.lightMediumArmor)
+    .replace(/\b(battleaxe|handaxe|light hammer|warhammer|longsword|shortsword|longbow|shortbow|rapier)\b/gi,
+      (weapon) => rules.weaponNames?.[weapon.toLowerCase()] ?? contentName("weapons", weapon, locale));
+  return rules.hpPerLevel ? localized.replace(/\bHP per level\b/gi, rules.hpPerLevel) : localized;
 }
 
 export function speciesTraitName(raceId: string, traitLine: string, locale: Locale): string {
@@ -264,7 +252,7 @@ export function speciesTraitName(raceId: string, traitLine: string, locale: Loca
     }
     const noted = carries(bracketed[1]);
     if (noted) {
-      return `${locale === "cs" ? localizeTraitTail(head, locale) : head} (${noted})`;
+      return `${localizedTables(locale)?.traitText?.localizeNotedHead ? localizeTraitTail(head, locale) : head} (${noted})`;
     }
   }
   // A trailing measurement the trait's name does not carry
