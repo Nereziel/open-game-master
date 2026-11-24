@@ -312,4 +312,42 @@ for (const [locale, label, from, query] of [
   assert.deepEqual(collision.fromLabels, ["Dragonborn"]);
 }
 
+// WorldForge translates display words, never the stored link or field key.
+const { defaultTypes, LINK_LABELS } = await import("../src/lib/worldforge/model.ts");
+const { worldLinkLabel, worldTypeLabel, worldFieldLabel, worldFieldOption } = await import("../src/lib/worldforge/display.ts");
+const { playFieldOf } = await import("../src/lib/worldforge/play-fields.ts");
+const defaultWorldTypes = defaultTypes();
+const originalWorldTypes = structuredClone(defaultWorldTypes);
+for (const locale of ["en", "fr", "cs"]) {
+  const t = (key, vars) => translate(locale, key, vars);
+  const catalog = locale === "cs" ? csCatalog : frCatalog;
+  for (const link of LINK_LABELS) {
+    if (locale !== "en") assert.ok(catalog.contexts[link]?.["world.link"], locale + ": " + link);
+    assert.equal(worldLinkLabel(t, link), t(link, { context: "world.link" }));
+  }
+  assert.equal(worldLinkLabel(t, "sworn to the Ash Crown"), "sworn to the Ash Crown");
+  assert.equal(playFieldOf("member of", "faction"), "faction");
+  assert.equal(playFieldOf("lives in", "location"), "home");
+  assert.equal(playFieldOf("located in", "location"), "home");
+  for (const type of defaultWorldTypes) {
+    if (locale !== "en") assert.ok(catalog.messages[type.name]);
+    assert.equal(worldTypeLabel(t, type), t(type.name));
+    assert.equal(worldTypeLabel(t, { ...type, id: "t_custom" }), type.name);
+    assert.equal(worldTypeLabel(t, { ...type, name: "My Type" }), "My Type");
+    for (const field of type.fields) {
+      if (locale !== "en") assert.ok(catalog.messages[field.name]);
+      assert.equal(worldFieldLabel(t, type, field), t(field.name));
+      assert.equal(worldFieldLabel(t, { ...type, id: "t_custom" }, field), field.name);
+      assert.equal(worldFieldLabel(t, type, { ...field, id: "f_custom" }), field.name);
+      assert.equal(worldFieldLabel(t, type, { ...field, name: "My field" }), "My field");
+      for (const option of field.options) {
+        if (locale !== "en") assert.ok(catalog.contexts[option]?.["world.field.option"]);
+        assert.equal(worldFieldOption(t, type, field, option), t(option, { context: "world.field.option" }));
+        assert.equal(worldFieldOption(t, type, { ...field, id: "f_custom" }, option), option);
+      }
+    }
+  }
+}
+assert.deepEqual(defaultWorldTypes, originalWorldTypes);
+
 console.log("test-i18n-gettext: all assertions and catalog placeholder checks passed");
