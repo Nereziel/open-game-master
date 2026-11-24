@@ -51,7 +51,7 @@ describe("Czech content names through upstream helpers", () => {
       ["grimlock", "Grimlock", "Divous"],
       ["guardian-naga", "Guardian Naga", "Strážný nága"],
       ["spirit-naga", "Spirit Naga", "Přízračný nága"],
-      ["lizard", "Lizard", "Ještěrka"],
+      ["lizard", "Lizard", "Ještěr"],
     ]) {
       expect(CS_NAMES_BY_TABLE.monsters[slug]).toBe(expected);
       expect(CZECH_MONSTERS[title]).toBe(expected);
