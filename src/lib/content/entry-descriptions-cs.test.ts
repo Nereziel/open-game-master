@@ -470,3 +470,41 @@ describe("Core race and background presentation", () => {
     expect(localizeEntry("backgrounds", changed, "cs")).toBe(changed);
   });
 });
+
+describe("Core SRD archetype display", () => {
+  const examples = [
+    ["barbarian", "Path of the Berserker", "Cesta berserkra"],
+    ["bard", "College of Lore", "Kolej znalostí"],
+    ["cleric", "Life Domain", "Doména Život"],
+    ["druid", "Circle of the Land", "Kruh země"],
+    ["fighter", "Champion", "Šampion"],
+    ["monk", "Way of the Open Hand", "Cesta otevřené ruky"],
+    ["paladin", "Oath of Devotion", "Přísaha oddanosti"],
+    ["ranger", "Hunter", "Lovec"],
+    ["rogue", "Thief", "Zloděj"],
+    ["sorcerer", "Draconic Bloodline", "Dračí rodokmen"],
+    ["warlock", "The Fiend", "Běs"],
+    ["wizard", "School of Evocation", "Škola zaklínání"],
+  ];
+  it("reuses the existing twelve Czech book sections without changing source rules", () => {
+    for (const [classId, name, heading] of examples) {
+      for (const source of ["bundled", "open5e"]) {
+        const row = { name, slug: classId + "-" + name.toLowerCase().replace(/ /g, "-"), documentSlug: "wotc-srd", source, data: { desc: "Canonical rules", class: classId } as Record<string, unknown> };
+        const result = localizeEntry("archetypes", row, "cs");
+        const { localized_desc, ...original } = result.data;
+        expect(String(localized_desc), name).toMatch(new RegExp("^### " + heading));
+        expect(String(localized_desc).length).toBeGreaterThan(100);
+        expect(original).toEqual(row.data);
+        expect(localizeEntry("archetypes", row, "en")).toBe(row);
+        for (const foreign of [{ ...row, documentSlug: "other" }, { ...row, source: "homebrew" }, { ...row, data: { ...row.data, class: "unrelated-class" } }]) {
+          expect(localizeEntry("archetypes", foreign, "cs")).toBe(foreign);
+        }
+      }
+    }
+  });
+  it("does not substitute another subclass from the same class", () => {
+    const row = { name: "Battle Master", slug: "fighter-battle-master", source: "bundled", documentSlug: "wotc-srd", data: { desc: "Different rules" } };
+    expect(localizeEntry("archetypes", row, "cs")).toBe(row);
+    expect(localizeEntry("archetypes", row, "fr")).toBe(row);
+  });
+});
