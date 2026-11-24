@@ -1887,7 +1887,7 @@ export const CS_NAMES_BY_TABLE: Record<string, Record<string, string>> = {
     "fighter:ever-ready-shot": "Vždy připravená střela",
     "fighter:bonus-proficiency-cavalier": "Bonusová zdatnost (Kavalír)",
     "fighter:born-to-the-saddle": "Zrozený v sedle",
-    "fighter:unwavering-mark": "Neochvějné znamení",
+    "fighter:unwavering-mark": "Neoblomná kořist",
     "fighter:warding-maneuver": "Ochranný manévr",
     "fighter:hold-the-line": "Držení linie",
     "fighter:ferocious-charger": "Zuřivý nájezd",
