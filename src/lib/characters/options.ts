@@ -26,6 +26,7 @@ export type RaceOption = {
   id: string;
   name: string;
   note: string;
+  localizedDesc?: string;
   // The pack row behind a content-pack race, when its id is not the slug
   // (src/lib/content/race-options.ts optionIdFor).
   slug?: string;
@@ -43,6 +44,7 @@ export type ClassOption = { id: string; name: string } & ClassMechanics & {
     spellListFrom?: string | null;
     // The content pack's write-up, shown under the class select.
     desc?: string;
+    localizedDesc?: string;
     // Secret languages the class teaches (Druidic, Thieves' Cant).
     languages?: string[];
   };
@@ -70,6 +72,7 @@ export type BackgroundOption = {
   featureDesc?: string;
   // The content pack's write-up, shown under the background select.
   desc?: string;
+    localizedDesc?: string;
   // A pack background's own suggested trait, ideal, bond and flaw tables,
   // read from its text; the bundled ones' live in persona-data.ts.
   persona?: PersonaLists;
@@ -241,6 +244,7 @@ export function packClassOptions(rows: ContentRow[]): ClassOption[] {
         ? { armor: bundled.armor, weapons: bundled.weapons, tools: bundled.tools ?? [] }
         : {}),
       desc: String(row.data?.desc ?? ""),
+      ...(typeof row.data?.localized_desc === "string" ? { localizedDesc: row.data.localized_desc } : {}),
       blurb: bundled?.blurb,
       languages: bundled?.languages,
       documentSlug: row.documentSlug,
@@ -315,6 +319,7 @@ export function mergedBackgroundOptions(rows: ContentRow[]): BackgroundOption[] 
         ...kit,
         ...(persona ? { persona } : {}),
         desc: String(row.data?.desc ?? ""),
+      ...(typeof row.data?.localized_desc === "string" ? { localizedDesc: row.data.localized_desc } : {}),
         ...(feature ? { feature } : {}),
         ...(featureDesc ? { featureDesc } : {}),
         documentSlug: row.documentSlug,
