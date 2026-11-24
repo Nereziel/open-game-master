@@ -219,7 +219,7 @@ export function useArchetypeOptions(classId: string): { archetypes: ArchetypeOpt
     if (!classId) {
       return;
     }
-    fetch(`/api/content/archetypes?class=${encodeURIComponent(classId)}&limit=100${scopeQuery(campaignId, "&")}`, { headers: { "X-Odm-Locale": locale } })
+    fetch(`/api/content/archetypes?class=${encodeURIComponent(classId)}&limit=100&bundled=1${scopeQuery(campaignId, "&")}`, { headers: { "X-Odm-Locale": locale } })
       .then((response) => (response.ok ? response.json() : Promise.reject(new Error(String(response.status)))))
       .then((data) => {
         if (cancelled) {
@@ -233,6 +233,7 @@ export function useArchetypeOptions(classId: string): { archetypes: ArchetypeOpt
         registerBrowserSubclassExtras(
           classId,
           rows
+            .filter((row) => row.source !== "bundled")
             .map((row) =>
               extraSubclassOf(
                 { name: row.name, source: String((row as { source?: string }).source ?? "open5e"), data: (row.data ?? {}) as Record<string, unknown> },
