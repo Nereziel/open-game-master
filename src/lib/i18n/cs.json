@@ -1,5 +1,14 @@
 {
   "messages": {
+    "Not in the model catalog.": "Není v katalogu modelů.",
+    "{size} context": "kontext {size}",
+    "paints pictures": "generuje obrázky",
+    "tool calls": "volání nástrojů",
+    "reasoning": "uvažování",
+    "sees pictures": "rozpoznává obrázky",
+    "open weights": "otevřené váhy",
+    "{input} in / {output} out per M tokens": "{input} za vstup / {output} za výstup na milion tokenů",
+    "Name the model.": "Zadej název modelu.",
     "Server language": "Jazyk serveru",
     "{rider} or {mount}?": "{rider}, nebo {mount}?",
     "Dark walnut, polished brass, and green baize by gaslight.": "Tmavé ořechové dřevo, leštěná mosaz a zelené sukno ve světle plynových lamp.",
@@ -12947,6 +12956,15 @@
     "1/long rest, for 1 minute you and adjacent allies have resistance to all damage.": "Jednou za dlouhý odpočinek máte ty a sousedící spojenci po dobu 1 minuty odolnost vůči všemu zranění."
   },
   "contexts": {
+    "beta": {
+      "model.status": "beta"
+    },
+    "alpha": {
+      "model.status": "alfa"
+    },
+    "deprecated": {
+      "model.status": "zastaralý"
+    },
     "Gaslight": {
       "appearance.theme.gaslight": "Plynové lampy"
     },
@@ -13947,6 +13965,7 @@
       "faction.attitude.wary": "obezřetný"
     },
     "free": {
+      "model.price": "zdarma",
       "builder.gear.freeWord": "zdarma"
     },
     "poor": {
