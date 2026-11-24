@@ -293,7 +293,7 @@ export default function ReferencePage() {
     const text = describeContentEntry(row.data) ?? t("No description available for this entry.");
     setOpen({
       title: contentName(kindTable(kind), row, locale),
-      meta: kind === "spells" ? spellSummary(row.data) : undefined,
+      meta: kind === "spells" ? spellSummary(row.data, t.locale) : undefined,
       text: notes.length ? `${notes.join("\n\n")}\n\n${text}` : text,
     });
   }
