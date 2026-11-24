@@ -19,7 +19,7 @@ Toto roucho zdobí vzory připomínající oči. Když je nosíš, získáš ná
 
 Oči na rouchu nelze zavřít ani odvrátit. I když můžeš zavřít nebo odvrátit vlastní oči, při nošení roucha se nikdy nepovažuješ za tvora, který to udělal.
 
-Kouzlo *světlo* seslané na roucho nebo kouzlo *denní světlo* seslané do vzdálenosti 5 stop od roucha způsobí, že oslepneš na 1 minutu. Na konci každého svého tahu můžeš opakovat záchranný hod na Odolnost (SO 11 pro *světlo*, SO 15 pro *denní světlo*); při úspěchu oslepnutí skončí.`,
+Kouzlo *světlo* seslané na roucho nebo kouzlo *denní světlo* seslané do vzdálenosti 5 stop od roucha způsobí, že oslepneš na 1 minutu. Na konci každého svého tahu můžeš provést záchranný hod na Odolnost (SO 11 pro *světlo*, SO 15 pro *denní světlo*); při úspěchu oslepnutí skončí.`,
   "robe-of-scintillating-colors": `*Divotvorný předmět, velmi vzácný (vyžaduje sladění)*
 
 Toto roucho má 3 náboje a každý den za úsvitu si obnoví 1k3 spotřebovaných nábojů. Když je nosíš, můžeš jako akci utratit 1 náboj a nechat roucho až do konce svého příštího tahu zobrazovat proměnlivé obrazce oslnivých barev. Po tuto dobu vydává jasné světlo v okruhu 30 stop a šero dalších 30 stop. Tvorové, kteří tě vidí, mají nevýhodu k hodům na útok proti tobě. Navíc každý tvor v jasném světle, který tě vidí v okamžiku aktivace moci roucha, musí uspět v záchranném hodu na Moudrost se SO 15, jinak je omráčený až do konce účinku.`,
@@ -97,7 +97,7 @@ Toto žezlo má hlavici s výstupky a funguje jako magický palcát, který posk
 
 ***Šest tlačítek.*** Jako bonusovou akci můžeš stisknout jedno ze šesti tlačítek. Účinek trvá, dokud nestiskneš jiné tlačítko nebo znovu totéž, čímž se žezlo vrátí do běžné podoby.
 
-Po stisknutí **tlačítka 1** se žezlo promění v *plamenný jazyk*: z opačného konce, než je hlavice, vyšlehne ohnivá čepel (typ meče si vybereš).
+Po stisknutí **tlačítka 1** se žezlo promění v *plamenec*: z opačného konce, než je hlavice, vyšlehne ohnivá čepel (typ meče si vybereš).
 
 Po stisknutí **tlačítka 2** se hlavice složí a vysunou se dvě čepele ve tvaru půlměsíce. Žezlo se promění v magickou válečnou sekeru poskytující bonus +3 k hodům na útok a zranění při útocích touto zbraní.
 
