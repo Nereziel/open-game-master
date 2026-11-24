@@ -61,9 +61,9 @@ describe("Czech campaign theme presets", () => {
         expect(genrePresetFor(preset.id, "cs")).toBe(preset);
         continue;
       }
-      expect(preset.defaultThemeCs).toBeTruthy();
-      expect(genrePresetFor(preset.id, "cs")).toEqual({ ...preset, defaultTheme: preset.defaultThemeCs });
-      expect(genrePresetFor(preset.id, "fr")).toEqual({ ...preset, defaultTheme: preset.defaultThemeFr });
+      expect(preset.defaultThemeByLocale?.cs).toBeTruthy();
+      expect(genrePresetFor(preset.id, "cs")).toEqual({ ...preset, defaultTheme: preset.defaultThemeByLocale?.cs });
+      expect(genrePresetFor(preset.id, "fr")).toEqual({ ...preset, defaultTheme: preset.defaultThemeByLocale?.fr });
       expect(genrePresetFor(preset.id, "cs").defaultTheme).not.toBe(preset.defaultTheme);
     }
   });
