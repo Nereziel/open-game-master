@@ -1,5 +1,15 @@
 {
   "messages": {
+    "{class} level {level}": "{class}, niveau {level}",
+    "{class} level {level}, halved ({part})": "{class}, niveau {level}, divisé par deux ({part})",
+    "{line} (never fewer than 1)": "{line} (minimum 1)",
+    "level ({level})": "niveau ({level})",
+    "half your level, rounded down ({part})": "moitié du niveau, arrondie à l’inférieur ({part})",
+    "{ability} modifier ({mod})": "modificateur de {ability} ({mod})",
+    "{line}, and never fewer than 1": "{line}, avec un minimum de 1",
+    "{count}, from the {class} table at level {level}": "{count}, d’après la table de la classe {class} au niveau {level}",
+    "6 at level 1 + 2 a level after = {count}": "6 au niveau 1 + 2 par niveau supplémentaire = {count}",
+    "{count} at level 1": "{count} au niveau 1",
     "In its pocket dimension": "Dans sa dimension de poche",
     "Spells copied into this table's Homebrew: {list}.": "Sorts copiés dans le contenu maison de cette table : {list}.",
     "The board has nothing that happens on its main line, so there is no act to add.": "Rien ne se passe sur la trame principale du storyboard ; aucun acte ne peut être ajouté.",
