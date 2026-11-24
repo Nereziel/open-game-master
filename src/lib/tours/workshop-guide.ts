@@ -123,7 +123,22 @@ export const WORKSHOP_GUIDES: ToolGuide[] = [
       tips: [
       "Les liens sont des menus déroulants qui puisent dans les autres outils : construis d’abord le PNJ ou la carte de combat, et la carte du storyboard pourra pointer vers lui.",
       "La liste des manques est comptée, jamais devinée par un modèle.",
-    ] } },
+    ] }, cs: {
+      "title": "Storyboard",
+      "purpose": "Plán dobrodružství v podobě karet: scény, boje, místa, postavy a vyústění.",
+      "steps": [
+        "Vyber druh karty, zadej název a klikni na Přidat.",
+        "Otevři kartu, rozepiš ji a pomocí nabídek ji propoj s cizí postavou, mapou, připraveným bojem nebo místem.",
+        "Pomocí volby Vede k propoj kartu s kartami, které po ní následují.",
+        "Přečti si, co na storyboardu chybí, a přidej navržené karty.",
+        "Zkontroluj, na co se storyboard převede po importu do kampaně."
+      ],
+      "atTable": "Kampaň, do níž storyboard převezmeš, získá jeho historii světa, úkoly, připravené boje, poznámky PJ a dějovou linii. U karty ze souboru WorldForge je uveden její původ; opětovné otevření souboru kartu aktualizuje, místo aby ji přidalo podruhé.",
+      "tips": [
+        "Vazby vybíráš z ostatních nástrojů, takže nejprve vytvoř cizí postavu nebo mapu a potom na ni odkaž z karty.",
+        "Seznam chybějících položek se vypočítává, neodhaduje ho model."
+      ]
+    } },
   },
   {
     id: "party",
@@ -154,7 +169,22 @@ export const WORKSHOP_GUIDES: ToolGuide[] = [
       "Un pré-tiré dont le niveau diffère du groupe fictif est signalé sur sa carte.",
       "Les pré-tirés voyagent dans le paquet quand tu partages l’atelier.",
       "Un pré-tiré ébauché est marqué « Ébauché par le MJ IA » jusqu’à ce que tu l’édites. Sans modèle de texte, « Ébaucher des pré-tirés avec le MJ IA » est désactivé et dit pourquoi.",
-    ] } },
+    ] }, cs: {
+      "title": "Družina",
+      "purpose": "Modelová družina, podle níž se posuzuje příprava, a předpřipravené postavy, které ji doprovázejí.",
+      "steps": [
+        "V horní liště dílny nastav velikost a úroveň družiny a ulož je.",
+        "Vyber postavu ze své knihovny a přidej ji, nebo vytvoř novou.",
+        "Případně spusť návrh předpřipravených postav: AI PJ navrhne hrdinu pro každé místo v nastavené družině a pravidla tvorby postav sestaví jeho deník na odpovídající úrovni. Návrhy se hráčům nenabídnou, dokud je nezaškrtneš.",
+        "Křížkem postavu odeber; v knihovně zůstane."
+      ],
+      "atTable": "Předpřipravené postavy mají hotové deníky pro každého, kdo přijde hrát bez vlastní postavy.",
+      "tips": [
+        "Postava s jinou úrovní než modelová družina má na kartě upozornění.",
+        "Při sdílení dílny se předpřipravené postavy přenesou v balíčku.",
+        "Navržená postava je označena jako vytvořená AI PJ, dokud ji neupravíš. Bez textového modelu je návrh vypnutý a zobrazí důvod."
+      ]
+    } },
   },
   {
     id: "maps",
@@ -189,7 +219,24 @@ export const WORKSHOP_GUIDES: ToolGuide[] = [
       "Rien de ce qui est ici ne touche une table tant que tu ne l’y as pas mise.",
       "Une image de fond se suspend derrière la grille, pour qu’une carte dessinée à la main ait quand même l’éclairage et les portes du moteur.",
       "Les tags déjà utilisés sur d’autres cartes sont proposés en menu déroulant à côté du champ de tag.",
-    ] } },
+    ] }, cs: {
+      "title": "Bojové mapy",
+      "purpose": "Prostory pro boj, kreslené, generované nebo importované, se světly, dveřmi, popisky a rekvizitami.",
+      "steps": [
+        "Otevři Nová mapa, pojmenuj ji a vyber náhodné vytvoření, prázdnou skálu, prázdnou plochu nebo import .dd2vtt.",
+        "Kliknutím na mapu v seznamu otevři editor.",
+        "Kresli štětcem, čárou, obrysem, obdélníkem a výplní; chybný tah můžeš vrátit.",
+        "Příslušnými nástroji umísti světla, dveře, popisky a rekvizity; u rekvizity představující přihlížející postavu lze vybírat ze seznamu cizích postav.",
+        "Nastav vzhled, okolní osvětlení, štítky, poznámky a zvuk mapy.",
+        "V probíhající kampani mapu polož na herní stůl nebo ji otevři jako scénu."
+      ],
+      "atTable": "Boj nebo místo, které mapu používá, se na ní otevře se zdmi, dveřmi a osvětlením. V probíhající kampani ji můžeš kdykoli položit na stůl i ručně.",
+      "tips": [
+        "Nic z této dílny nezmění herní stůl, dokud to na něj nepřeneseš.",
+        "Podkladový obrázek leží pod mřížkou, takže i ručně kreslená mapa využívá osvětlení a dveře enginu.",
+        "Dříve použité štítky map se nabízejí vedle pole pro štítky."
+      ]
+    } },
   },
   {
     id: "region",
@@ -220,7 +267,22 @@ export const WORKSHOP_GUIDES: ToolGuide[] = [
       tips: [
       "Les joueurs ne voient un lieu qu’une fois que le groupe l’a découvert.",
       "« Régénérer » relance le terrain ; les lieux gardent leur emplacement là où le nouveau sol le permet.",
-    ] } },
+    ] }, cs: {
+      "title": "Oblast",
+      "purpose": "Mapa světa: krajina, cesty, řeky, hranice, popisky a místa.",
+      "steps": [
+        "Vyber režim (Přidat značku, Kreslit terén, Nakreslit čáru nebo Napsat popisek) a klikni na mapu.",
+        "V nastavení tvaru oblasti popiš krajinu jednou větou, aby se nastavily parametry, nebo nech svět náhodně vygenerovat.",
+        "Přidej pojmenovaná místa, na něž mohou odkazovat cizí postavy, karty a boje.",
+        "Použij obrázek místo dlaždic, importuj mapu Azgaar nebo ulož oblast jako PNG.",
+        "Případně použij jako podklad mapu z atlasu WorldForge a umísti sem její označená místa; každé se pak pohybuje spolu se svou značkou."
+      ],
+      "atTable": "Jde o svět, po němž družina cestuje. Hráči místo uvidí až poté, co ho družina objeví.",
+      "tips": [
+        "Hráči místo uvidí až po jeho objevení družinou.",
+        "Opětovné generování změní terén; místa zůstanou na svých pozicích, pokud to nová krajina dovolí."
+      ]
+    } },
   },
   {
     id: "encounters",
@@ -255,7 +317,24 @@ export const WORKSHOP_GUIDES: ToolGuide[] = [
       "La pastille de difficulté est le même calcul que celui que le moteur fait respecter ; chaque nombre dans l’établi montre ses composantes.",
       "Termine un test depuis sa table, ou depuis Rencontres ; commencer le suivant le termine aussi. Rien de ce que fait un test n’atteint tes personnages.",
       "Un monstre que le monde ne connaît pas est signalé sur la carte au lieu de faire échouer le combat à la table.",
-    ] } },
+    ] }, cs: {
+      "title": "Střety",
+      "purpose": "Předem připravené boje s rozpočtem obtížnosti podle modelové družiny.",
+      "steps": [
+        "Otevři výpočet obtížnosti, vyhledej nestvůry a nech vyhodnotit sestavu ještě před uložením.",
+        "Klikni na Nový střet, pojmenuj ho a vyber nestvůry do sestavy; jejich počty uprav v poli pod ní.",
+        "Vyber mapu, na níž se boj otevře, a umísti na ni jednotlivé tvory i vstup družiny.",
+        "Sepiš plán: jakou má boj odměnu a co se kdy stane.",
+        "Připrav střet. U herního stolu ho spustíš jediným kliknutím na Nasadit.",
+        "Pomocí zkušebního boje si ho zahraj na stole, který vidíš jen ty. Vyber modelovou družinu nebo vlastní postavy a urči, kdo ovládá protivníky, AI PJ nebo ty. Není-li AI PJ nastaven, ovládáš je ty."
+      ],
+      "atTable": "Nasazení rozloží boj na jeho mapě včetně plánu. Vlastní nestvůra ze sestavy se zkopíruje do kampaně, která střet převezme.",
+      "tips": [
+        "Ukazatel obtížnosti používá stejný výpočet jako engine; pracovní panel ukazuje rozklad každého čísla.",
+        "Zkušební boj ukonči u jeho stolu nebo v nástroji Střety; spuštění dalšího zkušebního boje ho také ukončí. Zkouška nijak nezmění tvé postavy.",
+        "Nestvůra, kterou svět nezná, je označena už na kartě, aby boj neselhal až u stolu."
+      ]
+    } },
   },
   {
     id: "cast",
@@ -284,7 +363,21 @@ export const WORKSHOP_GUIDES: ToolGuide[] = [
       tips: [
       "« Suggest » remplit un seul champ avec un modèle de texte, quand le serveur en a un ; un admin en ajoute un sous Admin > Valeurs du modèle de texte.",
       "La mise de côté cache quelqu’un sans le supprimer ; le Cast se remplit aussi tout seul au fil des rencontres du groupe.",
-    ] } },
+    ] }, cs: {
+      "title": "Postavy",
+      "purpose": "Obyvatelé světa, jejich osobnosti, cíle a vztahy.",
+      "steps": [
+        "Klikni na přidání nové postavy. Zadej jméno, roli a postoj k družině.",
+        "Vyber místo, kde se nachází, z existujících míst světa nebo napiš nové.",
+        "Doplň, kým je, čeho chce dosáhnout a jaký má vztah k ostatním.",
+        "Ulož ji a přidej portrét: nahraj obrázek nebo ho nech vytvořit."
+      ],
+      "atTable": "AI PJ hraje postavu podle její osobnosti a cílů. Lidský PJ ji najde v seznamu postav.",
+      "tips": [
+        "Návrh vyplní jednotlivé pole pomocí textového modelu, je-li na serveru dostupný; správce jej přidá v Administrace > Výchozí nastavení textového modelu.",
+        "Odložení postavu skryje, ale nesmaže. Seznam se také doplňuje, jak družina potkává nové osoby."
+      ]
+    } },
   },
   {
     id: "factions",
@@ -315,7 +408,22 @@ export const WORKSHOP_GUIDES: ToolGuide[] = [
       tips: [
       "Une faction est la même fiche que son entrée WorldForge : change-la depuis l’un ou l’autre endroit.",
       "Le « Tirer de cet atelier » d’un pack de monde prend ces factions, avec où chacune est établie et qui en fait partie.",
-    ] } },
+    ] }, cs: {
+      "title": "Frakce",
+      "purpose": "Mocenské skupiny světa: co o nich herní stůl ví, o co usilují a jaký k nim má družina vztah.",
+      "steps": [
+        "Klikni na Přidat a pojmenuj frakci.",
+        "Napiš, co o ní herní stůl ví, a jaké má skryté cíle, které hráči nečtou.",
+        "Vyber postoj a moc, přidej obrázek a štítky.",
+        "Pomocí ukazatelů na řádku nastav vztah družiny k frakci.",
+        "Uprav frakci a otevři její záznam ve Světě, kde ve WorldForge doplníš členy, sídlo a vazby."
+      ],
+      "atTable": "AI PJ zná každou frakci, vztah družiny k ní i její cíle. V kampani se cíle posouvají na pozadí při uzavírání kapitol.",
+      "tips": [
+        "Frakce je stejný záznam jako její položka ve WorldForge; upravit ji můžeš na obou místech.",
+        "Převzetí z této dílny při tvorbě balíčku světa přenese frakce včetně jejich sídel a členů."
+      ]
+    } },
   },
   {
     id: "bestiary",
@@ -348,7 +456,23 @@ export const WORKSHOP_GUIDES: ToolGuide[] = [
       tips: [
       "Les monstres appartiennent à ton compte, donc ils te suivent dans chaque atelier. La préparation qui en utilise un l’emporte : une campagne qui importe cette préparation en reçoit sa propre copie dans son Bestiaire, et le paquet de l’atelier l’emporte vers d’autres serveurs.",
       "Ajoute un tour d’incantation en dégâts supplémentaires, pour que le degré le compte.",
-    ] } },
+    ] }, cs: {
+      "title": "Bestiář",
+      "purpose": "Vlastní nestvůry s úplnými statbloky, které engine dokáže používat.",
+      "steps": [
+        "Otevři tvorbu nestvůry. Pojmenuj ji a vyber nebezpečnost, nebo jako základ vyhledej nestvůru z katalogu.",
+        "Otevři statblok, nastav vlastnosti, útoky a rysy. Volba záchran z hodnot vlastností doplní záchranné hody.",
+        "Pomocí tvorby z katalogu převezmi velikost, životy, zbroj a útoky z původu, povolání a vybavení.",
+        "Vyhledáváním v katalogu přidej známá kouzla, z nabídky jazyky a doplň výskyt.",
+        "Ulož statblok. Nebezpečnost se odvodí a zobrazí se její výpočet.",
+        "Z deníku vytvoř záznam ve Světě, který nestvůru propojí s prostředím; z tohoto záznamu ji volbou Přidat do boje vložíš do střetu."
+      ],
+      "atTable": "Nestvůra vytvořená zde je dostupná pod svým jménem všude, kde začíná boj, a engine používá právě její statblok.",
+      "tips": [
+        "Nestvůry patří k tvému účtu a jsou dostupné ve všech tvých dílnách. Příprava, která nestvůru používá, ji přenáší: kampaň získá vlastní kopii v Bestiáři a balíček dílny ji přenese na jiné servery.",
+        "Do dodatečného zranění započti jedno kolo sesílání kouzel, aby se promítlo do nebezpečnosti."
+      ]
+    } },
   },
   {
     id: "homebrew",
@@ -389,7 +513,27 @@ export const WORKSHOP_GUIDES: ToolGuide[] = [
       "Renomme librement : les personnages, entrées et tables qui portent l’ancien nom suivent le nouveau.",
       "Les dégâts, le jet de sauvegarde et le type de dégâts d’un sort sont lus dans sa description, comme ceux du SRD.",
       "Tout est vérifié contre le jeu de règles pendant que tu écris.",
-    ] } },
+    ] }, cs: {
+      "title": "Vlastní obsah",
+      "purpose": "Vlastní předměty, kouzla, odbornosti, zázemí, rasy, povolání, archetypy a nebezpečí.",
+      "steps": [
+        "Nahoře vyber druh obsahu a klikni na Nový.",
+        "Začni obsahem z příruček: vyhledej položku v obsahovém balíčku a zkopíruj ji.",
+        "Uprav, co potřebuješ. Dovednosti, jazyky, stavy a typy zranění vybíráš z nabídek, do nichž lze také psát.",
+        "Přečti si výsledky kontroly pod popisem; chyba znemožní uložení.",
+        "Ulož položku. Tvorba postavy a engine ji čtou stejně jako obsah příruček; editor pak ukáže, kde se nabízí.",
+        "Z editoru předmětu vytvoř záznam ve Světě a propoj ho se svým prostředím."
+      ],
+      "atTable": "Tvorba postav, obchody a inventáře obsah nabízejí vedle položek z příruček pro tvé vlastní postavy a u všech stolů, které vedeš jako vlastník, PJ nebo pomocný PJ. Engine jej čte stejně. U cizího stolu se uplatní, jakmile si jeho vlastník nebo PJ uloží kopii z balíčku Dílny obsahujícího tvůj vlastní obsah. Převzetí přípravy vlastní obsah nekopíruje: už ti patří.",
+      "tips": [
+        "Předmět propojený se záznamem Světa se zkopíruje do kampaně, která svět převezme. Balíček dílny může obsahovat celou knihovnu nebo jen položky používané v dílně.",
+        "Vlastní povolání je plnohodnotným povoláním pro všechny části enginu; tvorba postav jej nabízí v sekci vlastního obsahu a jeho archetypy se vytvářejí zde.",
+        "Archetyp se nabízí pod svým povoláním od úrovně, na níž si povolání archetyp vybírá (u bojovníka od 3. úrovně), včetně příslušného postupu na vyšší úroveň.",
+        "Přejmenovávat můžeš libovolně: postavy, záznamy i stoly používající starý název přejdou na nový.",
+        "Zranění, záchranný hod a typ zranění kouzla se čtou z jeho popisu stejně jako v SRD.",
+        "Vše se při zadávání kontroluje podle sady pravidel."
+      ]
+    } },
   },
   {
     id: "lore",
@@ -420,7 +564,22 @@ export const WORKSHOP_GUIDES: ToolGuide[] = [
       tips: [
       "Les entrées non épinglées sont retrouvées par pertinence, donc une longue bible ne coûte rien tant qu’elle n’est pas nécessaire.",
       "Les tags déjà utilisés sont proposés à côté du champ de tag.",
-    ] } },
+    ] }, cs: {
+      "title": "Historie světa",
+      "purpose": "Encyklopedie světa: místa, frakce, dějiny a tajemství známé vypravěči a materiály určené hráčům.",
+      "steps": [
+        "Klikni na Nový záznam. Vyber kategorii a název.",
+        "Napiš záznam v Markdownu. Z nabídky připoj odkaz na další záznam; vloží se na pozici kurzoru.",
+        "Urči, zda jej čte celý herní stůl, nebo pouze ty.",
+        "Připoj obrázek jako materiál pro hráče, přidej štítky a záznam ulož.",
+        "Připni záznamy, které má vypravěč vidět v každém tahu."
+      ],
+      "atTable": "Připnuté záznamy dostává vypravěč v každém tahu, ostatní se vyhledávají podle relevance. Hráči čtou jim určené záznamy na kartě Příběh; záznamy pouze pro PJ nebo dosud nekánonické záznamy WorldForge nevidí.",
+      "tips": [
+        "Nepřipnuté záznamy se vyhledávají podle relevance, takže rozsáhlá encyklopedie nezabírá kontext, dokud není potřeba.",
+        "Použité štítky se nabízejí vedle pole pro štítky."
+      ]
+    } },
   },
   {
     id: "tables",
@@ -451,7 +610,22 @@ export const WORKSHOP_GUIDES: ToolGuide[] = [
       tips: [
       "Le lancer écrit un lancer ordinaire que tout le monde peut voir, mais ce que dit la rangée ne revient qu’à toi.",
       "« Chercher un monstre » à côté des tables est un statblock du catalogue, pour référence.",
-    ] } },
+    ] }, cs: {
+      "title": "Tabulky",
+      "purpose": "Náhodné tabulky: zvěsti, poklady, počasí, střety a cokoli dalšího, o čem rozhoduje hod.",
+      "steps": [
+        "Klikni na Nová tabulka a pojmenuj ji.",
+        "Napiš jednu položku na řádek s rozsahem (1-3) nebo vahou (x3), případně vlož tabulku z příručky.",
+        "Pomocí výběru pod polem přidej řádek odkazující na další tabulku, nestvůru, předmět, postavu nebo záznam historie.",
+        "Sleduj ukazatel pokrytí, zda rozsahy nemají mezery nebo se nepřekrývají.",
+        "Ulož tabulku. Z její karty můžeš házet; losování bez vracení z ní udělá balíček."
+      ],
+      "atTable": "Během hry hoď z karty tabulky: hod vidí všichni, obsah vylosovaného řádku se zobrazí pouze tobě.",
+      "tips": [
+        "Hod se zaznamená jako běžný hod viditelný všem, výsledek řádku se ale vrátí pouze tobě.",
+        "Vyhledání nestvůry vedle tabulek ukáže statblok z katalogu pro orientaci."
+      ]
+    } },
   },
   {
     id: "rules",
@@ -482,7 +656,22 @@ export const WORKSHOP_GUIDES: ToolGuide[] = [
       tips: [
       "Appliquer un jeu de règles le copie ; l’éditer plus tard ne remonte jamais en arrière.",
       "Un jeu de règles porte des règles, pas du Homebrew : ton Homebrew compte déjà à chaque table que tu mènes.",
-    ] } },
+    ] }, cs: {
+      "title": "Pravidla",
+      "purpose": "Volitelná pravidla, která engine uplatňuje, a domácí pravidla, která vypravěč vyhledává.",
+      "steps": [
+        "Zapni volitelná pravidla a nastav délku odpočinku.",
+        "Sepiš domácí pravidla po oddílech s nadpisy a ulož je.",
+        "Oddíl vypni, pokud se nemá používat, nebo jej připni, aby byl součástí každého tahu.",
+        "Ulož pravidla jako sadu pro opakované použití v dalších kampaních a dílnách.",
+        "Použij zde uloženou sadu pravidel; náhled nejprve ukáže změny."
+      ],
+      "atTable": "Kampaň, která pravidla převezme, se jimi řídí: engine uplatňuje varianty a vypravěč čte příslušná domácí pravidla.",
+      "tips": [
+        "Použití sady pravidel vytvoří její kopii; pozdější úprava originálu kopii nezmění.",
+        "Sada obsahuje pravidla, nikoli vlastní obsah; vlastní obsah se už uplatňuje u všech stolů, které vedeš."
+      ]
+    } },
   },
   {
     id: "plugin",
@@ -517,7 +706,24 @@ export const WORKSHOP_GUIDES: ToolGuide[] = [
       "Un pack renomme ; il ne change jamais une règle. Tout ce qui est mécanique est une entrée de homebrew, pas un pack.",
       "Remplis le détenteur des droits pour tout ce qui est bâti sur l’univers de quelqu’un d’autre ; ça transforme la mention en vraie clause de non-affiliation.",
       "Le brouillon voyage dans le paquet de l’atelier, donc partager l’atelier partage aussi le pack à moitié fait.",
-    ] } },
+    ] }, cs: {
+      "title": "Plugin",
+      "purpose": "Vlastní balíček světa: názvosloví prostředí nad pravidly, historie a obrázky v jediném souboru, který lze nainstalovat na libovolný server.",
+      "steps": [
+        "Spusť průvodce nastavením: pojmenuj svět, uveď inspiraci a držitele práv, vyber základní žánr a napiš pokyny vypravěči.",
+        "Převezmi obsah z této dílny, tedy historii, místa, karty zápletek a postavy, které už máš vytvořené.",
+        "V sekcích lidu, magie a vybavení a bestiáře vyber položku z katalogu a pojmenuj ji podle svého světa.",
+        "V obrázcích nahraj obálku a obrázky ras, povolání, nestvůr, míst nebo frakcí; při nahrání se upraví jejich velikost.",
+        "Otevři publikování. Oprav uvedené nedostatky a stáhni balíček, nebo jej nainstaluj zde, pokud spravuješ tento server."
+      ],
+      "atTable": "Server, který balíček nainstaluje, jej nabídne jako svět při vytváření kampaně.",
+      "tips": [
+        "Publikování vypisuje po kategoriích, co balíček světa vynechá: tajemství a skryté pravdy, zadržené záznamy, vlastní nestvůry, vlastní obsah, střety, bojové mapy a další. Balíček dílny přenáší vše.",
+        "Balíček světa přejmenovává, ale nikdy nemění pravidlo. Mechanické změny patří do vlastního obsahu, nikoli balíčku světa.",
+        "U všeho založeného na cizím prostředí vyplň držitele práv, aby bylo upozornění na práva úplné.",
+        "Rozpracovaný návrh je součástí balíčku dílny, takže sdílením dílny sdílíš i nedokončený balíček světa."
+      ]
+    } },
   },
   {
     id: "share",
@@ -550,7 +756,23 @@ export const WORKSHOP_GUIDES: ToolGuide[] = [
       "Les monstres façonnés à la main et le homebrew voyagent dans le paquet. Quiconque l’importe garde sa propre entrée du même nom, et une autre arrive à côté de la sienne sous le nom du paquet, avec les pré-tirés, tables et étagères du paquet pointant vers elle.",
       "Seul ce que cet atelier utilise suit tout ce qu’il nomme : ses tables, étagères et pré-tirés, les sorts plus tardifs d’une sous-classe, les sous-classes d’une classe, les sorts d’un objet.",
       "« Compiler un pack de monde » liste ce qu’un pack laisse de côté alors que le paquet l’emporte.",
-    ] } },
+    ] }, cs: {
+      "title": "Sdílení",
+      "purpose": "Celá dílna v jednom souboru nebo sestavená jako návrh balíčku světa.",
+      "steps": [
+        "Pojmenuj balíček a jednou větou popiš, co obsahuje.",
+        "Vyplň autora a verzi; je-li založen na cizím prostředí, přidej držitele práv.",
+        "Vyber, zda balíček přenese celou knihovnu vlastního obsahu, nebo jen to, co dílna používá.",
+        "Stáhni balíček, nebo sestav balíček světa."
+      ],
+      "atTable": "Jiný server importuje balíček jako vlastní samostatnou dílnu, kterou pak mohou převzít jeho kampaně.",
+      "tips": [
+        "Obrázky se přenášejí v rámci limitů velikosti; nic z žádné kampaně se nepřenáší.",
+        "Vlastní nestvůry a vlastní obsah jsou součástí balíčku. Příjemci zůstane jeho vlastní stejnojmenná položka a odlišná položka se přidá vedle ní pod názvem balíčku; předpřipravené postavy, tabulky a knihovny z balíčku odkazují na ni.",
+        "Při volbě pouze používaného obsahu se přenášejí i všechny jeho závislosti: položky tabulek, knihoven a předpřipravených postav, kouzla archetypů na vyšších úrovních, archetypy povolání a kouzla předmětů.",
+        "Sestavení balíčku světa vypíše, co balíček světa vynechává, ale balíček dílny přenáší."
+      ]
+    } },
   },
 ];
 
