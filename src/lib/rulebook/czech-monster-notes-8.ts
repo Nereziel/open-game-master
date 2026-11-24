@@ -120,7 +120,7 @@ export const CZECH_MONSTER_TITLES_8: Readonly<Record<string, string>> = {
   "Hyena": "Hyena",
   "Jackal": "Šakal",
   "Killer Whale": "Kosatka",
-  "Lizard": "Ještěr",
+  "Lizard": "Ještěrka",
   "Mammoth": "Mamut",
   "Mastiff": "Mastif",
   "Mule": "Mula",
