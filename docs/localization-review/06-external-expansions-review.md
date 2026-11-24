@@ -6,7 +6,7 @@ Cílová větev: `rebuild/fresh-upstream-2026-11-23`; pracovní větev: `review/
 
 - [x] Najít veřejné originální zdroje nezávislé na SQLite a porovnat se zálohou.
 - [x] Obnovit všech 474 historických názvů a porovnat 87 historických plných návrhů s původním textem.
-- [x] Tome of Heroes v1: 303 názvů, 13 odborností, 40 ras/podras, 29 magických předmětů, 36 statických záznamů výzbroje (bez nedostupných speciálních pravidel).
+- [x] Tome of Heroes v1: 303 názvů, 91 kouzel, 13 odborností, 40 ras/podras, 29 magických předmětů, 36 statických záznamů výzbroje (bez nedostupných speciálních pravidel).
 - [x] Zachovat zdrojové identity, anglická pravidlová pole, původní EN/FR cestu, bez nového registru.
 - [x] SQLite vynechat; oddělit nedostupný text od dostupného, dosud nepřeloženého.
 - [ ] Dokončit zbývající kouzla, archetypy, zázemí, předměty, nestvůry a ostatní knihy.
@@ -53,12 +53,12 @@ V1 ToH kouzla mají ve zdroji nulový počet level=0; neopravujeme zdrojová met
 
 ## Stav skutečných překladových dat
 
-Počty přímo z `src/lib/content/expansion-descriptions-cs.json` na kódu `fad0f2e06b2046ecf1f77492732f71a2c5dad1d4`. Plný text znamená přeložený dostupný zdrojový popis, nikoli potvrzení všech UI cest nebo všech metadat.
+Počty přímo z `src/lib/content/expansion-descriptions-cs.json` na kódu `80a41c30a1b9591b411d8d6df482e7cf5831e2c9`. Plný text znamená přeložený dostupný zdrojový popis, nikoli potvrzení všech UI cest nebo všech metadat.
 
 | Kniha / kategorie | Názvy | Plné dostupné texty | Pouze statistiky |
 |---|---:|---:|---:|
 | Tome of Heroes – předměty | 65 | 29 | 36 |
-| Tome of Heroes – kouzla | 91 | 14 | 0 |
+| Tome of Heroes – kouzla | 91 | 91 | 0 |
 | Tome of Heroes – odbornosti | 13 | 13 | 0 |
 | Tome of Heroes – rasy a podrasy | 40 | 40 | 0 |
 | Tome of Heroes – zázemí | 18 | 1 | 0 |
@@ -66,17 +66,21 @@ Počty přímo z `src/lib/content/expansion-descriptions-cs.json` na kódu `fad0
 | Deep Magic | 62 | 19 | 0 |
 | Vault of Magic | 249 | 48 | 0 |
 | Ostatní fixture | 24 | 8 | 0 |
-| **Celkem** | **638** | **172** | **36** |
+| **Celkem** | **638** | **249** | **36** |
 
 Historických 474 názvů (ToH 169, DM 56, VoM 249) obnoveno po spárování s přesným originálním slugem a názvem. Všech 87 historických plných návrhů (ToH 27, DM 12, VoM 48) prošlo porovnáním; opraveny významové odchylky a nedostatečné podmínky, nikoli pouhý přenos. Orientační souhrny nepovažujeme za plná pravidla. Nově 40 ras/podras, 29 magických předmětů ToH, další dostupné texty a názvy. U 36 záznamů nemagické výzbroje přeloženy dostupné číselné a typové údaje, bez vymyšlených zvláštních vlastností, které veřejný záznam neobsahuje.
 
-Zbývající dostupné v1 texty: ToH 77 kouzel, 17 zázemí a 76 archetypů (170 popisů); Deep Magic 495 popisů (452 názvů chybí); Vault of Magic 757 popisů (556 názvů chybí). Ostatní knihy pouze dílčí pokrytí podle fixture. To jsou nezpracované dostupné originály, nikoli blokace SQLite. Úplná inventura instalovaných položek a počty velkých zkrácených bestiářů zůstávají neověřené.
+Zbývající dostupné v1 texty: ToH 17 zázemí a 76 archetypů (93 popisů); Deep Magic 495 popisů (452 názvů chybí); Vault of Magic 757 popisů (556 názvů chybí). Ostatní knihy pouze dílčí pokrytí podle fixture. To jsou nezpracované dostupné originály, nikoli blokace SQLite. Úplná inventura instalovaných položek a počty velkých zkrácených bestiářů zůstávají neověřené.
+
+### Dokončení kouzel Tome of Heroes
+
+Všech 91 záznamů v1 má český název, celý dostupný popis a pravidla vyšších úrovní, pokud jsou v originálu. Hlavičky obsahují školu, úroveň, vyvolání, dosah, složky, soustředění, trvání, rituál a povolání. Všech 91 originálních sad 14 kontrolních polí bylo porovnáno přímo s veřejným zdrojovým JSON; 0 neshod. Porovnání množin explicitních výrazů kostek (d/k) ve zdrojovém a českém textu: 0 rozdílů. Není to důkaz správnosti každé mechaniky. U 36 kouzel je příznak surovinové složky bez vyplněné suroviny; doplněna poznámka, nikoli vymyšlená složka. Immolating Gibbet má v originálu výšku 60 bez jednotky; výslovně označeno. Některé zdrojové doby trvání (Gale, Jagged Forcelance, Never Surrender) jsou v rozporu s popisem; původní metadata zachována, neopraveno domněnkou. Školy podle d20 PH 2014 (Vymítání, Transmutace atd.), vzdálenosti zachovány ve stopách jako v projektu. Nový test kontroluje 91 záznamů a fallback při změně zdrojové úrovně.
 
 ## Načítání
 
 `contentName` a `localizeEntryCs` využívají existující lokalizační cestu. Přesná kombinace source=open5e, documentSlug, druh, slug a anglický název, u popisu také shoda uložených původních polí; jinak anglický fallback. Pouze zobrazovací `localized_desc`; nemění pravidla, identity ani databázi. ContentPicker/MultiContentPicker čtou české názvy, ale některé výběry předávají jen anglický název, zejména archetypy, odvozené rasové názvy a inline zázemí. Úplná propagace do UI, české vyhledávání a PDF nejsou potvrzené.
 
-Regresní testy v `entry-descriptions-cs.test.ts` pokrývají 638 názvů, původní fixture, 13 odborností, 29 předmětů, 36 stat záznamů, 14+19 kouzel, 48 předmětů VoM a 40 ras/podras; část testů používá uložená původní pole (nejde o nezávislý test živého importu). CI nebylo při zápisu výsledku potvrzené; lokální runtime bez clone nedostupný.
+Regresní testy v `entry-descriptions-cs.test.ts` pokrývají 638 názvů, původní fixture, 13 odborností, 29 předmětů, 36 stat záznamů, 91+19 kouzel, 48 předmětů VoM a 40 ras/podras; část testů používá uložená původní pole (nejde o nezávislý test živého importu). CI nebylo při zápisu výsledku potvrzené; lokální runtime bez clone nedostupný.
 
 Terminologie: [d20 PH 2014 vlastnosti](https://dnd5esrd.d20.cz/prirucka-hrace/7-kapitola.html), [boj](https://dnd5esrd.d20.cz/prirucka-hrace/9-kapitola.html), [stavy](https://dnd5esrd.d20.cz/prirucka-hrace/dodatek-a.html). Nedoložené názvy jsou vlastní překlady; nejsou vydávány za oficiální.
 
