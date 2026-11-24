@@ -10,7 +10,7 @@
 // every other table. What reaches the engine and the protocol stays English.
 import type { HandCard } from "@/lib/battlemap/hand-core";
 import { contentName } from "@/lib/content/names";
-import { frTables } from "@/lib/i18n/fr-tables";
+import { localizedTables } from "@/lib/i18n/localized-tables";
 import { resourceDisplayName } from "@/lib/srd/class-resources-fr";
 import { textKey } from "@/lib/language/text-logic";
 import { translate, type Locale } from "@/lib/messages-logic";
@@ -137,13 +137,13 @@ const CHIP_FEATURE_ROW: Record<string, string> = {
 
 // A feature, maneuver, spell or feat chip name as the reader reads it.
 export function chipName(name: string, locale: Locale): string {
-  if (locale !== "fr" || !name) return name;
+  if (locale === "en" || !name) return name;
   const key = textKey(name);
   const coined = CHIP_COINED_KEY[key];
-  if (coined) return translate("fr", coined);
+  if (coined) return translate(locale, coined);
   const row = CHIP_FEATURE_ROW[key];
   if (row) {
-    const print = frTables()?.names.classFeatures?.[row];
+    const print = localizedTables(locale)?.names.classFeatures?.[row];
     if (print) {
       const bare = name.includes(":") ? print : print.includes(": ") ? print.split(": ").slice(1).join(": ") : print;
       return bare || print;
@@ -166,7 +166,7 @@ export function chipName(name: string, locale: Locale): string {
 // healing the gear row; a name no table carries (a magic item's engraving,
 // a natural weapon, "Unarmed strike") stays as it was spelled.
 export function cardDisplayName(card: HandCard, locale: Locale): string {
-  if (locale !== "fr" || !card.name) {
+  if (locale === "en" || !card.name) {
     return card.name;
   }
   const id = card.id;
