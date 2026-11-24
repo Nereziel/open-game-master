@@ -5,9 +5,8 @@
 import { getGlobalConfig } from "@/lib/db/app-settings";
 import { localeOfServerLanguage, parseLocale, resolveRequestLocale } from "@/lib/i18n/locale";
 import { translate, type Locale, type TranslateVars } from "@/lib/i18n/translate";
-// Routes answer in French with the catalog installed (translate.ts).
-import "@/lib/i18n/fr-catalog";
-import "@/lib/i18n/cs-catalog";
+// Route messages and display tables must be available synchronously.
+import "@/lib/i18n/server-catalogs";
 
 export type BookLocale = Locale;
 
