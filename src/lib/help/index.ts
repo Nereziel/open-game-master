@@ -66,6 +66,16 @@ export function glossaryTerm(id: string): GlossaryTerm | null {
   return TERMS_BY_ID.get(id) ?? null;
 }
 
+// Adapt the existing data fields once; consumers do not branch on language.
+export function localizedGlossaryTerm(entry: GlossaryTerm, locale: Locale) {
+  const translations: Partial<Record<Locale, { term?: string; short?: string; long?: string }>> = {
+    fr: { term: entry.fr, short: entry.shortFr, long: entry.longFr },
+    cs: { term: entry.cs, short: entry.shortCs, long: entry.longCs },
+  };
+  const localized = translations[locale];
+  return { label: localized?.term, term: localized?.term ?? entry.term, short: localized?.short ?? entry.short, long: localized?.long ?? entry.long };
+}
+
 // Numbered SRD variants ("Indomitable (2 uses)", "Extra Attack (2)") are
 // listed in full where the count changes the meaning, and fall back to the
 // bare name where it does not.
@@ -202,10 +212,10 @@ export function describeSkill(
   }
   const ability = glossaryTerm(skill.ability);
   const skillName = skillLabel(skill.id, locale);
-  const abilityName =
-    (locale === "cs" ? ability?.cs : locale === "fr" ? ability?.fr : undefined) ?? ability?.term ?? skill.ability.toUpperCase();
+  const localized = ability ? localizedGlossaryTerm(ability, locale) : undefined;
+  const abilityName = localized?.term ?? skill.ability.toUpperCase();
   return `${t("{skill} uses {ability}.", { skill: skillName, ability: abilityName })} ${
-    (locale === "cs" ? ability?.shortCs : locale === "fr" ? ability?.shortFr : undefined) ?? ability?.short ?? ""
+    localized?.short ?? ""
   }`.trim();
 }
 
