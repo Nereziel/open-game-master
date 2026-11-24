@@ -14,12 +14,7 @@ export function tableTranslator(language: string | null | undefined): (key: stri
   return (key, vars) => translate(locale, key, vars);
 }
 
-export function pluralCategory(locale: Locale, count: number): "one" | "other" {
-  if (!Number.isFinite(count)) {
-    return "other";
-  }
-  return locale === "fr" ? (count <= 1 ? "one" : "other") : count === 1 ? "one" : "other";
-}
+export { pluralCategory } from "./i18n/translate.ts";
 
 export function formatMessage(template: string, vars?: MessageVars): string {
   if (!vars) {
