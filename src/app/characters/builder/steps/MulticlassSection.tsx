@@ -9,6 +9,7 @@ import { describeSkill } from "@/lib/help";
 import { SRD_SKILLS } from "@/lib/srd";
 import { subclassBlurb, subclassLevelFor, subclassNamesFor } from "@/lib/srd/features";
 import { MULTICLASS_CAP, describeGrant, multiclassGrantsFor } from "@/lib/srd/multiclass";
+import { archetypeDisplayName } from "@/lib/content/names";
 import { textKey } from "@/lib/language/text-logic";
 import { useLocale, useT, useTp } from "@/lib/locale";
 import { skillLabel } from "@/lib/srd";
@@ -326,6 +327,7 @@ function ExtraClassCard({
 // offers them (usePickerGroups.ts).
 function ExtraSubclassField({ state, entry, index }: { state: BuilderState; entry: ExtraClassRow; index: number }) {
   const t = useT();
+  const locale = useLocale();
   const { archetypes } = useArchetypeOptions(entry.klass.id);
   const groups = useMemo<PickerGroup[]>(() => {
     const builtIn = subclassNamesFor(entry.klass.id);
@@ -339,18 +341,19 @@ function ExtraSubclassField({ state, entry, index }: { state: BuilderState; entr
               label: t("Full features"),
               options: builtIn.map((subclassName) => ({
                 id: subclassName,
-                name: subclassName,
-                infoText: subclassBlurb(entry.klass.id, subclassName) || undefined,
+                name: archetypeDisplayName(entry.klass.id, subclassName, locale),
+                infoText: archetypes.find((row) => textKey(row.name) === textKey(subclassName))?.localizedDesc || subclassBlurb(entry.klass.id, subclassName) || undefined,
               })),
             },
           ]
         : []),
       ...(others.length
-        ? [{ label: t("More subclasses"), options: others.map((archetype) => ({ id: archetype.name, name: archetype.name, infoText: archetype.desc })) }]
+        ? [{ label: t("More subclasses"), options: others.map((archetype) => ({ id: archetype.name, name: archetypeDisplayName(entry.klass.id, archetype.name, locale, { ...archetype, slug: archetype.id }), infoText: archetype.localizedDesc || archetype.desc })) }]
         : []),
     ];
-  }, [entry.klass.id, archetypes, t]);
-  const blurb = entry.subclass ? subclassBlurb(entry.klass.id, entry.subclass) : "";
+  }, [entry.klass.id, archetypes, t, locale]);
+  const chosen = archetypes.find((row) => textKey(row.name) === textKey(entry.subclass));
+  const blurb = entry.subclass ? chosen?.localizedDesc || chosen?.desc || subclassBlurb(entry.klass.id, entry.subclass) : "";
   return (
     <Field label={t("{class} subclass", { class: entry.klass.name })} className="mt-3">
       <OptionPicker
