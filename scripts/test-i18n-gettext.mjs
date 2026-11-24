@@ -4,7 +4,7 @@ import { register } from "node:module";
 
 register("./lib/register-routes.mjs", import.meta.url);
 
-const { translate, translatePlural, catalogInstalled } = await import("../src/lib/i18n/translate.ts");
+const { translate, translatePlural, catalogInstalled, installCatalog } = await import("../src/lib/i18n/translate.ts");
 
 // 0. The catalog is installed, never imported by the translator: imported, its
 // 1 MB rode in every page's first load (scripts/bundle-budget.json). Until it
@@ -20,8 +20,15 @@ assert.match(fs.readFileSync(new URL("../src/lib/i18n/catalog-loader.ts", import
 for (const file of ["../src/lib/request-locale.ts", "../src/app/layout.tsx", "../src/instrumentation.ts"]) {
   assert.match(fs.readFileSync(new URL(file, import.meta.url), "utf8"), /i18n\/fr-catalog/, `${file} installs the catalog on the server`);
 }
-await import("../src/lib/i18n/fr-catalog.ts");
+const { catalogReady } = await import("../src/lib/i18n/catalog-loader.ts");
+assert.equal(catalogReady("en"), true);
+assert.equal(catalogReady("fr"), false);
+assert.equal(translatePlural("fr", "{count} unknown widget", "{count} unknown widgets", { count: 0 }), "0 unknown widgets", "unloaded catalog uses English grammar");
+installCatalog("fr", JSON.parse(fs.readFileSync(new URL("../src/lib/i18n/fr.json", import.meta.url), "utf8")));
 assert.equal(catalogInstalled("fr"), true);
+assert.equal(catalogReady("fr"), false, "messages alone are not the complete display catalog");
+await import("../src/lib/i18n/fr-catalog.ts");
+assert.equal(catalogReady("fr"), true);
 
 // The generated official-name inventory must describe its actual tables.
 const { FR_NAMES_BY_TABLE, FR_NAME_COUNTS } = await import("../src/lib/content/names-fr.ts");
@@ -67,6 +74,11 @@ assert.equal(translatePlural("en", "{count} round", "{count} rounds", { count: 0
 assert.equal(translatePlural("en", "{count} round", "{count} rounds", { count: 1 }), "1 round");
 assert.equal(translatePlural("fr", "{count} day", "{count} days", { count: 0 }), "0 jour");
 assert.equal(translatePlural("fr", "{count} day", "{count} days", { count: 2 }), "2 jours");
+for (const locale of ["en", "fr", "cs"]) {
+  for (const count of [0, 1, 2, 4, 5]) {
+    assert.equal(translatePlural(locale, "{count} unknown widget", "{count} unknown widgets", { count }), count === 1 ? "1 unknown widget" : `${count} unknown widgets`);
+  }
+}
 
 // 5. Server-side locale resolution priority: saved > cookie > Accept-Language > en
 assert.equal(resolveLocale({ savedLocale: "fr", cookieHeader: "odm_locale=en", acceptLanguage: "en-US" }), "fr");
