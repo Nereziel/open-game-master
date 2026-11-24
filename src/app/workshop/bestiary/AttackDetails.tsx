@@ -11,6 +11,7 @@ import { BLOCK_LIMITS, SAVE_ABILITY_IDS } from "@/lib/bestiary/block-check";
 import { SIZES } from "@/lib/bestiary/monster-draft";
 import type { EnemyAttack } from "@/lib/bestiary/statblock";
 import type { OnHitRider } from "@/lib/bestiary/attack-text";
+import { gameTermWord } from "@/lib/i18n/game-term-labels";
 import { useT } from "@/lib/locale";
 import { Field, FieldLabel, OptionalStepper, addChip, rowIcon } from "@/app/workshop/kit";
 
@@ -58,23 +59,23 @@ export function AttackDetails({ attack, onChange }: { attack: EnemyAttack; onCha
   ];
   const saveOptions = [
     { value: "", label: t("No save") },
-    ...SAVE_ABILITY_IDS.map((ability) => ({ value: ability as string, label: t("{ability} save", { ability: ability.toUpperCase(), context: "workshop.bestiary.attack.abilitySave" }) })),
+    ...SAVE_ABILITY_IDS.map((ability) => ({ value: ability as string, label: t("{ability} save", { ability: t(ability.toUpperCase()), context: "workshop.bestiary.attack.abilitySave" }) })),
   ];
   const sizeOptions = [
     { value: "", label: t("Any size") },
-    ...SIZES.map((size) => ({ value: size as string, label: t("{size} or smaller", { size }) })),
+    ...SIZES.map((size) => ({ value: size as string, label: t("{size} or smaller", { size: gameTermWord("size", size, t.locale) }) })),
   ];
 
   return (
     <div className="reveal grid gap-3 rounded-lg border border-stone-800 bg-stone-950/50 p-3">
       <datalist id={conditionList}>
         {CONDITIONS.map((condition) => (
-          <option key={condition} value={condition} />
+          <option key={condition} value={condition} label={t(condition, { context: "glossary.option" })} />
         ))}
       </datalist>
       <datalist id={typeList}>
         {DAMAGE_TYPES.map((type) => (
-          <option key={type} value={type} />
+          <option key={type} value={type} label={t(type, { context: "glossary.option" })} />
         ))}
       </datalist>
 
