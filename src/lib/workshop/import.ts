@@ -393,7 +393,11 @@ export function keepsOverworldAnchors(selection: readonly ImportKind[]): boolean
 // (src/lib/worldforge/import-kept.ts), less what the import's note on
 // screen already says: a note says only its own source's, and only when
 // the World came with it, so the rest is still said beside it.
-export function standingUnsaid(standing: readonly string[], note: string | undefined): string[] {
+export function standingUnsaid(standing: readonly string[], note: string | undefined, reported?: readonly string[]): string[] {
+  if (reported !== undefined) {
+    const seen = new Set(reported);
+    return standing.filter((line) => !seen.has(line));
+  }
   return note ? standing.filter((line) => !note.includes(line)) : [...standing];
 }
 
