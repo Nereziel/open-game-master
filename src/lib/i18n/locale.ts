@@ -3,22 +3,29 @@ import type { Locale } from "./translate";
 export const LOCALE_COOKIE = "odm_locale";
 
 // One registry for supported UI languages and their server-language names.
-const SERVER_LANGUAGE_BY_LOCALE = { en: "english", fr: "french", cs: "czech" } as const;
+export const LOCALE_METADATA = {
+  en: { serverLanguage: "english", tag: "en-US", nativeName: "English" },
+  fr: { serverLanguage: "french", tag: "fr-FR", nativeName: "Français" },
+  cs: { serverLanguage: "czech", tag: "cs-CZ", nativeName: "Čeština" },
+} as const satisfies Record<Locale, { serverLanguage: string; tag: string; nativeName: string }>;
+
+export function localeTag(locale: Locale): string {
+  return (LOCALE_METADATA[locale] ?? LOCALE_METADATA.en).tag;
+}
 
 export function serverLanguageOfLocale(locale: Locale) {
-  return SERVER_LANGUAGE_BY_LOCALE[locale] ?? SERVER_LANGUAGE_BY_LOCALE.en;
+  return (LOCALE_METADATA[locale] ?? LOCALE_METADATA.en).serverLanguage;
 }
 
 export function parseLocale(raw: string | null | undefined): Locale | null {
-  return raw && Object.hasOwn(SERVER_LANGUAGE_BY_LOCALE, raw) ? raw as Locale : null;
+  return raw && Object.hasOwn(LOCALE_METADATA, raw) ? raw as Locale : null;
 }
 
 // The menus' language a server's own language asks for (global config
-// serverLanguage, set by its admin): French, the one translation the menus
-// have besides English. English is every server's default and says nothing
+// serverLanguage, set by its admin): a supported non-English UI language. English is every server's default and says nothing
 // about its readers, so it leaves the choice to them and their browser.
 export function localeOfServerLanguage(language: string | null | undefined): Locale | null {
-  return (Object.keys(SERVER_LANGUAGE_BY_LOCALE) as Locale[]).find((locale) => locale !== "en" && SERVER_LANGUAGE_BY_LOCALE[locale] === language) ?? null;
+  return (Object.keys(LOCALE_METADATA) as Locale[]).find((locale) => locale !== "en" && LOCALE_METADATA[locale].serverLanguage === language) ?? null;
 }
 
 export function localeFromAcceptLanguage(header: string | null | undefined): Locale {
