@@ -1,6 +1,6 @@
 import { openDatabase, type SqliteDatabase } from "./driver.ts";
 import { fileSubAreasByName } from "./place-parents-backfill.ts";
-import { fileAnsweredRollCards } from "./answered-cards-backfill.ts";
+import { fileAnsweredHeldCards, fileAnsweredRollCards } from "./answered-cards-backfill.ts";
 import { backfillNpcHeard } from "./npc-heard-backfill.ts";
 import { repairSkewedPersonalities } from "./npc-personality-repair.ts";
 import { repairFeatSpellMisreadings } from "./feat-spell-repair.ts";
@@ -1850,6 +1850,15 @@ function ensureSchema(db: SqliteDatabase) {
     // openStandInTurn): its rolls are that turn's, and that turn's revert
     // marks it too. Null on every other turn.
     ["owner_turn_id", `TEXT`],
+    // The rolls an AI GM asked for with request_roll on this turn, and the
+    // ones among them that have paid for something it sent (JSON lists of
+    // roll ids; dm-turns.ts askedRollIds, paidRollIds). The gate that holds
+    // the model's numbers reads these two and nothing else
+    // (src/lib/dm/ai-gate.ts). Nothing is filed for the turns already open:
+    // a turn with no marks is refused a bare number, and the model sends
+    // dice or rolls again.
+    ["asked_roll_ids_json", `TEXT NOT NULL DEFAULT '[]'`],
+    ["paid_roll_ids_json", `TEXT NOT NULL DEFAULT '[]'`],
   ]);
   // The roll cards whose roll the turn's conversation has been handed (a
   // JSON list of pending_rolls ids; dm-turns.ts answeredPendingIds), so a
@@ -2671,6 +2680,21 @@ function ensureSchema(db: SqliteDatabase) {
     db.transaction(() => {
       backfillLegacyItemRows(db);
       db.prepare(`INSERT INTO app_settings (key, value_json, updated_at) VALUES (?, ?, ?)`).run("item_row_backfill_done", "true", new Date().toISOString());
+    })();
+  }
+
+  // A turn lists the held roll cards it has answered with the plain ones
+  // (dm-turns.ts answeredPendingIds, issue #1073), where it used to find a
+  // held card's answer by reading its conversation. The turns open across
+  // the upgrade are read that way one last time
+  // (src/lib/db/answered-cards-backfill.ts). One pass, guarded by an
+  // app_settings marker: read again later, a held card that has landed and
+  // not been answered could be marked, and its call left unanswered.
+  const heldCardMarker = db.prepare(`SELECT key FROM app_settings WHERE key = 'held_cards_answered_backfill_done'`).get();
+  if (!heldCardMarker) {
+    db.transaction(() => {
+      fileAnsweredHeldCards(db);
+      db.prepare(`INSERT INTO app_settings (key, value_json, updated_at) VALUES (?, ?, ?)`).run("held_cards_answered_backfill_done", "true", new Date().toISOString());
     })();
   }
 
