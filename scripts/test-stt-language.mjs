@@ -125,9 +125,9 @@ await test("the phone's own recognizer is asked for every table language as Andr
 process.env.STT_URL = "http://stt.test:8870";
 process.env.STT_MODEL = "large-v3";
 
-await test("the Whisper service hears a member's clip in the table's language, in five languages", async () => {
+await test("the Whisper service hears a member's clip in the table's language, including Czech", async () => {
   as(lead);
-  for (const [language, code] of [["english", "en"], ["italian", "it"], ["french", "fr"], ["spanish", "es"], ["german", "de"]]) {
+  for (const [language, code] of [["english", "en"], ["italian", "it"], ["french", "fr"], ["czech", "cs"], ["spanish", "es"], ["german", "de"]]) {
     assert.equal(await dictate(tableIn(language)), code, language);
     assert.equal(sent.at(-1).url, "http://stt.test:8870/v1/audio/transcriptions");
   }
@@ -145,13 +145,15 @@ await test("a clip with no campaign, or one naming a campaign its sender is not 
 
 await test("the voice-chat transcript sends its ring in the table's language", async () => {
   as(lead);
-  const german = tableIn("german");
-  const form = new FormData();
-  form.set("audio", new Blob(["ring"], { type: "audio/webm" }));
-  form.set("seconds", "30");
-  const response = await transcriptRoute.POST(new Request("http://test/", { method: "POST", body: form }), { params: Promise.resolve({ campaignId: german }) });
-  assert.equal(response.status, 200, JSON.stringify(await response.json()));
-  assert.equal(sent.at(-1).language, "de");
+  for (const [language, code] of [["german", "de"], ["czech", "cs"]]) {
+    const campaignId = tableIn(language);
+    const form = new FormData();
+    form.set("audio", new Blob(["ring"], { type: "audio/webm" }));
+    form.set("seconds", "30");
+    const response = await transcriptRoute.POST(new Request("http://test/", { method: "POST", body: form }), { params: Promise.resolve({ campaignId }) });
+    assert.equal(response.status, 200, JSON.stringify(await response.json()));
+    assert.equal(sent.at(-1).language, code, language);
+  }
 });
 
 await test("OpenAI hears a member's clip in the table's language too", async () => {
@@ -163,7 +165,11 @@ await test("OpenAI hears a member's clip in the table's language too", async () 
   as(lead);
   assert.equal(await dictate(tableIn("spanish")), "es");
   assert.equal(sent.at(-1).url, "http://127.0.0.1:9/v1/audio/transcriptions");
+  const czech = tableIn("czech");
+  assert.equal(await dictate(czech), "cs");
+  assert.equal(sent.at(-1).url, "http://127.0.0.1:9/v1/audio/transcriptions");
   as(stranger);
+  assert.equal(await dictate(czech), null);
   assert.equal(await dictate(tableIn("spanish")), null);
 });
 
