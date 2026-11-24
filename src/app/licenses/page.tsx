@@ -52,7 +52,7 @@ export default function LicensesPage() {
           https://creativecommons.org/licenses/by/4.0/legalcode.
         </p>
         <p>
-          A reader whose browser asks for French reads the rulebook in Wizards of the Coast&rsquo;s official
+          When French is the effective interface language, the rulebook uses Wizards of the Coast&rsquo;s official
           French translation, the <span lang="fr">Document de Référence du Système 5.1</span>, under the same
           license.{" "}
           <span lang="fr">
@@ -62,6 +62,21 @@ export default function LicensesPage() {
             de la licence Creative Commons Attribution 4.0 International disponible à l&rsquo;adresse
             https://creativecommons.org/licenses/by/4.0/legalcode.fr.
           </span>
+        </p>
+        <p>
+          This fork also provides an unofficial Czech adaptation of the English SRD 5.1:
+          translated rules, names, summaries and other presentation changes. The underlying SRD
+          material remains attributed to Wizards of the Coast LLC under CC-BY-4.0 as stated above.
+          The Czech adaptation is not an official Wizards of the Coast translation.{" "}
+          <span lang="cs">
+            Česká příručka je neoficiální překlad a úprava anglického SRD 5.1 v tomto forku.
+            Původní materiál pochází od Wizards of the Coast LLC a je dostupný pod licencí CC BY 4.0.
+          </span>
+        </p>
+        <p>
+          The rulebook follows the selected interface language (English, French or Czech).
+          In automatic mode, the application resolves the language from the server preference
+          or browser; untranslated passages fall back to the English original.
         </p>
         <p>
           Expanded character options, spells, items, and monsters are imported from the{" "}
