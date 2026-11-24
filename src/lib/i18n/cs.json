@@ -1,5 +1,6 @@
 {
   "messages": {
+    "The Game Master writes the story in this language, and the server reads the story and your messages in it. The interface and rulebook follow your separate interface language setting, with English as the fallback for untranslated text.": "Pán jeskyně vypráví příběh v tomto jazyce a server v něm čte příběh i tvé zprávy. Rozhraní a příručka pravidel se řídí samostatným nastavením jazyka rozhraní. Nepřeložené texty se zobrazují anglicky.",
     "The element of the {label} chosen: {type}. Elemental Affinity, where the subclass has it, adds to spells of this damage type and resists it.": "Zvolený živel ({label}): {type} zranění. Živlová afinita, pokud ji archetyp má, posiluje kouzla tohoto typu zranění a poskytuje vůči němu odolání.",
     "Cannot see. Fails any check that needs sight; attacks against it have advantage, its own attacks have disadvantage.": "Tvor nevidí a automaticky neuspěje v ověření, které vyžaduje zrak. Útoky proti němu mají výhodu, jeho vlastní útoky nevýhodu.",
     "Cannot attack the charmer or target them with harmful effects; the charmer has advantage on social checks against it.": "Nemůže zaútočit na toho, kdo ho zmámil, ani ho zacílit škodlivým účinkem. Ten má výhodu při společenských ověřeních vůči zmámenému tvorovi.",
@@ -14484,8 +14485,8 @@
     ],
     "another skill\u0000{count} other skills": [
       "další dovednost",
-      "další dovednosti",
-      "dalších dovedností"
+      "{count} další dovednosti",
+      "{count} dalších dovedností"
     ],
     "{count} {noun} matches.\u0000{count} {noun} match.": [
       "Odpovídá {count} {noun}.",
