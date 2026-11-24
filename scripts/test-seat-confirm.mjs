@@ -70,6 +70,41 @@ await test("a hero going down names the improvements, feats and spells it gives 
   assert.ok(changes.includes("Spell slots: 2 × 1st."), changes.join(" | "));
 });
 
+await test("join confirmation uses EN/FR/CS plural forms and preserves custom names", async () => {
+  const { installCatalog, translate } = await import("../src/lib/i18n/translate.ts");
+  const spellWords = {
+    en: ["Gives back 1 spell this level cannot hold", "Gives back 2 spells this level cannot hold", "Gives back 5 spells this level cannot hold"],
+    fr: ["Rend 1 sort que ce niveau ne permet pas de conserver ", "Rend 2 sorts que ce niveau ne permet pas de conserver ", "Rend 5 sorts que ce niveau ne permet pas de conserver "],
+    cs: ["Vrací 1 kouzlo, které tato úroveň nemůže mít", "Vrací 2 kouzla, která tato úroveň nemůže mít", "Vrací 5 kouzel, která tato úroveň nemůže mít"],
+  };
+  const asiWords = {
+    en: ["Ability Score Improvement this", "Ability Score Improvements this", "Ability Score Improvements this"],
+    fr: ["amélioration de caractéristique", "améliorations de caractéristique", "améliorations de caractéristique"],
+    cs: ["zvýšení vlastností, které", "zvýšení vlastností, která", "zvýšení vlastností, která"],
+  };
+  for (const locale of ["en", "fr", "cs"]) {
+    if (locale !== "en") installCatalog(locale, JSON.parse(read(`src/lib/i18n/${locale}.json`)));
+    const t = (key, vars) => translate(locale, key, vars);
+    for (const [i, count] of [1, 2, 5].entries()) {
+      const names = Array.from({ length: count }, (_, n) => `Custom spell ${n + 1}`);
+      const feats = [`Custom feat ${count}`];
+      const stored = {
+        ...LEGAL_FIGHTER, class: "wizard", feats,
+        asiChoices: Array.from({ length: count }, () => ({ mode: "feat", feat: feats[0] })),
+        spellcasting: { ability: "int", slots: {}, known: names, prepared: [], cantrips: [] },
+      };
+      const seated = { ...stored, feats: [], asiChoices: [], spellcasting: { ...stored.spellcasting, known: [] } };
+      const before = JSON.stringify([stored, seated]);
+      const { changes } = joinChanges(stored, 20, seated, 1, t, locale);
+      assert.ok(changes.includes(`${spellWords[locale][i]}: ${names.join(", ")}.`), changes.join(" | "));
+      assert.ok(changes.some((line) => line.includes(asiWords[locale][i]) && line.includes(feats[0])), changes.join(" | "));
+      const noFeats = joinChanges({ ...stored, feats: [] }, 20, seated, 1, t, locale).changes;
+      assert.ok(noFeats.some((line) => line.includes(asiWords[locale][i]) && !line.includes(feats[0])), noFeats.join(" | "));
+      assert.equal(JSON.stringify([stored, seated]), before);
+    }
+  }
+});
+
 // ---- the chooser's order ----
 
 await test("the chooser lists the player's own heroes, then an adventure's pregens, never an ally", () => {
