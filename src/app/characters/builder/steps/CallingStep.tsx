@@ -5,7 +5,7 @@ import { GameTerm } from "@/components/ui/GameTerm";
 import { textKey } from "@/lib/language/text-logic";
 import { InfoButton, InfoDialog } from "@/components/ui/InfoDialog";
 import { describeFeature, describeSkill } from "@/lib/help";
-import { contentName } from "@/lib/content/names";
+import { contentName, archetypeDisplayName } from "@/lib/content/names";
 import { useClassFeatureText } from "@/lib/classes/use-feature-text";
 import { firstSentence } from "@/lib/help/rules-text";
 import { CLASS_ROLES, classRoles, type ClassRole } from "@/lib/srd/class-roles";
@@ -320,12 +320,12 @@ export function CallingStep({
               {subclass ? (
                 <>
                   <span className="grow">
-                    {firstSentence(chosenArchetype?.desc || subclassBlurb(klass?.id ?? "", subclass)) ??
+                    {firstSentence(chosenArchetype?.localizedDesc || chosenArchetype?.desc || subclassBlurb(klass?.id ?? "", subclass)) ??
                       t("A specialization within your class.")}
                   </span>
                   <InfoButton
-                    label={subclass}
-                    text={chosenArchetype?.desc || subclassBlurb(klass?.id ?? "", subclass) || undefined}
+                    label={archetypeDisplayName(klass?.id ?? "", subclass, locale, chosenArchetype ? { ...chosenArchetype, slug: chosenArchetype.id } : undefined)}
+                    text={chosenArchetype?.localizedDesc || chosenArchetype?.desc || subclassBlurb(klass?.id ?? "", subclass) || undefined}
                     reference={
                       chosenArchetype ? { kind: "archetypes", slug: chosenArchetype.id } : undefined
                     }
