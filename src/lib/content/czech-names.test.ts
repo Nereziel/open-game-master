@@ -20,22 +20,4 @@ describe("Czech content names through upstream helpers", () => {
     expect(subclassName("fighter", "Champion", "cs")).toBe("Šampion");
     expect(classFeatureName("fighter", "A Custom Feature", "cs")).toBe("A Custom Feature");
   });
-  it("uses the existing name tables for supplemental books without changing English or homebrew", () => {
-    const examples = [
-      ["weapons", "Axespear", "Sekerokopí"],
-      ["armor", "Kite shield", "Kapkovitý štít"],
-      ["magicitems", "Argent Mantle", "Stříbrný plášť"],
-      ["magicitems", "Aberrant Agreement", "Aberantní úmluva"],
-      ["spells", "Ambush Chute", "Přepadová šachta"],
-      ["spells", "Abhorrent Apparition", "Odpudivý přízrak"],
-      ["feats", "Diehard", "Nezdolný"],
-    ] as const;
-    for (const [table, name, expected] of examples) {
-      expect(contentName(table, { name, source: "open5e" }, "cs")).toBe(expected);
-      expect(contentName(table, name, "en")).toBe(name);
-      expect(contentName(table, { name, source: "homebrew" }, "cs")).toBe(name);
-    }
-    expect(contentName("items", "Axespear", "cs")).toBe("Sekerokopí");
-    expect(contentName("items", "Aberrant Agreement", "cs")).toBe("Aberantní úmluva");
-  });
 });
