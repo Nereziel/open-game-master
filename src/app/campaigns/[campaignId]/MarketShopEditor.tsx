@@ -242,8 +242,8 @@ export function MarketShopEditor({
             <KitButton tone="iconDanger" always aria-label={line.itemName ? t("Take {name} off the shelf", { name: line.itemName }) : t("Take this line off the shelf")} onClick={() => setLines((current) => current.filter((_, at) => at !== index))}>
               <X className="size-3.5" />
             </KitButton>
-            {itemDisplayName({ name: line.itemName, srdName: line.srdName }, t.locale, false) !== line.itemName ? (
-              <span className="basis-full text-[11px] text-stone-400">{itemDisplayName({ name: line.itemName, srdName: line.srdName }, t.locale, false)}</span>
+            {itemDisplayName({ name: line.itemName, srdName: line.srdName }, t.locale) !== line.itemName ? (
+              <span className="basis-full text-[11px] text-stone-400">{itemDisplayName({ name: line.itemName, srdName: line.srdName }, t.locale)}</span>
             ) : null}
             {line.srdName && textKey(line.srdName) !== textKey(withoutBonus(line.itemName)) ? (
               <span className="flex basis-full items-center gap-1 text-[11px] text-stone-400">
