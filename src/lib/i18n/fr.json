@@ -1,5 +1,6 @@
 {
   "messages": {
+    "Spells copied into this table's Homebrew: {list}.": "Sorts copiés dans le contenu maison de cette table : {list}.",
     "The board has nothing that happens on its main line, so there is no act to add.": "Rien ne se passe sur la trame principale du storyboard ; aucun acte ne peut être ajouté.",
     "This campaign already has a story arc the table has been playing, so the board's beats are left here rather than written over it.": "Cette campagne possède déjà un arc narratif en cours. Les étapes du storyboard restent ici pour ne pas l’écraser.",
     "The arc needs something that says what this world is. Add a place or a piece of history and it can be written.": "L’arc a besoin d’une description de ce monde. Ajoutez un lieu ou un élément d’histoire pour pouvoir le créer.",
@@ -11158,6 +11159,24 @@
     "Concussive sound: thunderwave, shatter, a giant's shout.": "Onde sonore : vague tonnante, fracassement, cri de géant."
   },
   "contexts": {
+    "{table}: its row for the table {name} now names this campaign's own {name}, since the source's stayed behind.": {
+      "workshop.import.result": "{table} : sa ligne pour la table {name} désigne désormais la table {name} de cette campagne, car celle de la source n’a pas été importée."
+    },
+    "{table}: its row for the table {name} names nothing here, since that table stayed behind.": {
+      "workshop.import.result": "{table} : sa ligne pour la table {name} ne désigne rien ici, car cette table n’a pas été importée."
+    },
+    "{table}: its row for the NPC {name} now names this campaign's own {name}, since the source's stayed behind.": {
+      "workshop.import.result": "{table} : sa ligne pour le PNJ {name} désigne désormais le PNJ {name} de cette campagne, car celui de la source n’a pas été importé."
+    },
+    "{table}: its row for the NPC {name} names nothing here, since that NPC stayed behind.": {
+      "workshop.import.result": "{table} : sa ligne pour le PNJ {name} ne désigne rien ici, car ce PNJ n’a pas été importé."
+    },
+    "{table}: its row for the lore entry {name} now names this campaign's own {name}, since the source's stayed behind.": {
+      "workshop.import.result": "{table} : sa ligne pour l’entrée de lore {name} désigne désormais l’entrée {name} de cette campagne, car celle de la source n’a pas été importée."
+    },
+    "{table}: its row for the lore entry {name} names nothing here, since that lore entry stayed behind.": {
+      "workshop.import.result": "{table} : sa ligne pour l’entrée de lore {name} ne désigne rien ici, car cette entrée n’a pas été importée."
+    },
     "New beats: {count}, added as act {act} after {previous} existing beats. Played and skipped beats and recapped acts remain untouched.": {
       "workshop.import.plan": "Nouvelles étapes : {count}, ajoutées comme acte {act} après {previous} étapes existantes. Les étapes jouées ou ignorées et les actes déjà résumés restent intacts."
     },
