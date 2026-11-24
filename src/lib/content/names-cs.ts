@@ -18,7 +18,7 @@ export const CS_NAMES_BY_TABLE: Record<string, Record<string, string>> = {
     "sorcerer": "Čaroděj",
     "warlock": "Černokněžník",
     "wizard": "Kouzelník",
-    "artificer": "Artificér"
+    "artificer": "Divotvůrce"
   },
 
   "species": {
@@ -1303,8 +1303,8 @@ export const CS_NAMES_BY_TABLE: Record<string, Record<string, string>> = {
     "barbarian:fast-movement": "Rychlý pohyb",
     "barbarian:feral-instinct": "Zvířecí instinkt",
     "barbarian:frenzy": "Bojové šílenství",
-    "barbarian:indomitable-might": "Nezlomná síla",
-    "barbarian:intimidating-presence": "Zastrašující přítomnost",
+    "barbarian:indomitable-might": "Nezkrotná síla",
+    "barbarian:intimidating-presence": "Zastrašující vzhled",
     "barbarian:mindless-rage": "Bezduchá zuřivost",
     "barbarian:persistent-rage": "Vytrvalá zuřivost",
     "barbarian:primal-champion": "Prvotní šampion",
@@ -1324,7 +1324,7 @@ export const CS_NAMES_BY_TABLE: Record<string, Record<string, string>> = {
     "bard:cutting-words": "Slovní výpad",
     "bard:expertise": "Kvalifikace",
     "bard:font-of-inspiration": "Pramen inspirace",
-    "bard:jack-of-all-trades": "Všestrannost",
+    "bard:jack-of-all-trades": "Všeuměl",
     "bard:magical-secrets": "Magická tajemství",
     "bard:peerless-skill": "Nedostižná dovednost",
     "bard:song-of-rest-d10": "Odpočinková píseň",
