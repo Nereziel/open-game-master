@@ -1,6 +1,7 @@
 import { currentUser, unauthorized } from "@/lib/auth";
 import { getEntryDetail } from "@/lib/content";
 import { withBestEffort } from "@/lib/content/entry-labels";
+import "@/lib/i18n/server-catalogs";
 import { localizeEntry } from "@/lib/content/entry-descriptions";
 import { bookLocaleOf, BOOK_LOCALE_VARY } from "@/lib/rulebook/book";
 import { bundledItemRows, bundledSpellRows } from "@/lib/rulebook/catalog-rows";
