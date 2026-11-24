@@ -1,3 +1,4 @@
+import type { MonsterSpellReference } from "@/lib/bestiary/spell-display";
 import type { SaveAbility } from "@/lib/bestiary/statblock";
 import { splitWords, textKey } from "@/lib/language/text-logic";
 import { ABILITY_WORDS } from "@/lib/dm/save-effect";
@@ -10,6 +11,8 @@ import { ABILITY_WORDS } from "@/lib/dm/save-effect";
 
 export type MonsterSpell = {
   name: string;
+  // Optional catalogue identity for display only; the engine still reads name.
+  reference?: MonsterSpellReference;
   // 0 for a cantrip; null for an innate spell whose level the block does not
   // print (the spell's own level applies).
   level: number | null;
