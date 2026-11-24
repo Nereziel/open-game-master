@@ -248,7 +248,7 @@ function textOf(value: unknown): string {
 // `focus` names the part asked about: a background's feature chip on a sheet
 // opens the feature alone, not three paragraphs of the background's story
 // with the feature at their foot.
-export function describeContentEntry(data: Record<string, unknown> | undefined, focus?: string): string | null {
+export function describeContentEntry(data: Record<string, unknown> | undefined, focus?: string, locale: Locale = "en"): string | null {
   if (!data) {
     return null;
   }
@@ -264,7 +264,7 @@ export function describeContentEntry(data: Record<string, unknown> | undefined, 
     return normalizeRulesText(data.localized_desc) || null;
   }
   if (focus && focusFeature && focusText && textKey(focus) === textKey(focusFeature)) {
-    return normalizeRulesText(`**Feature: ${focusFeature}.** ${focusText}`) || null;
+    return normalizeRulesText(`**${translate(locale, "Feature")}: ${focusFeature}.** ${focusText}`) || null;
   }
   const parts: string[] = [];
   for (const key of ["desc", "description", "traits", "benefits"]) {
@@ -292,9 +292,9 @@ export function describeContentEntry(data: Record<string, unknown> | undefined, 
   const feature = typeof data.feature === "string" ? data.feature.trim() : "";
   const featureText = textOf(data.feature_desc).trim();
   if (feature && featureText) {
-    parts.push(`**Feature: ${feature}.** ${featureText}`);
+    parts.push(`**${translate(locale, "Feature")}: ${feature}.** ${featureText}`);
   } else if (feature) {
-    parts.push(`**Feature: ${feature}.**`);
+    parts.push(`**${translate(locale, "Feature")}: ${feature}.**`);
   }
   const joined = normalizeRulesText(parts.join("\n\n"));
   return joined ? joined : null;
