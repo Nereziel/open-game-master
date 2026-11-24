@@ -12648,6 +12648,21 @@
     },
     "setting for whether only the GM sees it": {
       "workshop.import.result": "paramètre de visibilité réservée au MJ"
+    },
+    "bindings": {
+      "workshop.import.result": "liens vers les éléments jouables"
+    },
+    "revealedAt": {
+      "workshop.import.result": "date de révélation"
+    },
+    "revealedAs": {
+      "workshop.import.result": "entrée ayant servi à la révélation"
+    },
+    "parentPinId": {
+      "workshop.import.result": "repère parent"
+    },
+    "party": {
+      "workshop.import.result": "visibilité pour le groupe"
     }
   },
   "plurals": {
