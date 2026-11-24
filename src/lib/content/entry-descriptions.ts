@@ -7,7 +7,8 @@ import { rulebookPageIdFor } from "@/lib/rulebook/catalog-rows";
 import type { RulebookKind } from "@/lib/rulebook/types";
 import { translate, type Locale } from "@/lib/i18n/translate";
 import { localizeBackgroundFeatureText } from "@/lib/backgrounds";
-import { backgroundFeatureLabel, speciesTraitName, subclassName } from "./names";
+import { backgroundFeatureLabel, classFeatureName, contentName, speciesTraitName, subclassName } from "./names";
+import { AUTHORED_SUBCLASS_ENTRIES } from "@/lib/srd/features";
 import { SRD_RACES } from "@/lib/srd";
 import { subclassNamed } from "@/lib/srd/subclass-name";
 import { textKey } from "@/lib/language/text-logic";
@@ -127,6 +128,37 @@ function archetypeDescription(row: Row & { name: string; data: Record<string, un
   return lines.slice(start, next < 0 ? undefined : next).join("\n").trim() || undefined;
 }
 
+// The importer publishes these same authored rows as odm-expanded.
+// Match the complete English text before using the bundled source, and
+// require every paragraph to have a translation before replacing the detail.
+function authoredArchetypeDescription(row: Row, locale: Locale): string | undefined {
+  const bundled = row.source === "bundled" && row.documentSlug === "wotc-srd" && row.data?.desc === "";
+  const published = row.source === "open5e" && row.documentSlug === "odm-expanded";
+  if (!bundled && !published) return undefined;
+  for (const [classId, entries] of Object.entries(AUTHORED_SUBCLASS_ENTRIES)) {
+    for (const entry of entries) {
+      const slug = classId + "-" + entry.name.toLowerCase().replace(/[^a-z0-9]+/g, "-").replace(/^-+|-+$/g, "");
+      if (row.slug !== slug || row.name !== entry.name) continue;
+      const levels = Object.entries(entry.levels).sort(([a], [b]) => Number(a) - Number(b));
+      const spells = Object.entries(entry.spells ?? {}).sort(([a], [b]) => Number(a) - Number(b));
+      if (published) {
+        const levelText = levels.map(([level, features]) => `**Level ${level}.** ` + features.map((feature) => `*${feature.n}.* ${feature.d}`).join(" ")).join("\n\n");
+        const spellText = entry.spells ? "\n\n**Always-prepared spells.** " + spells.map(([level, names]) => `Level ${level}: ${names.join(", ")}.`).join(" ") : "";
+        if (row.data?.class !== classId || row.data?.desc !== `${entry.desc}\n\n${levelText}${spellText}`) return undefined;
+      }
+      const intro = translate(locale, entry.desc);
+      if (intro === entry.desc || levels.some(([, features]) => features.some((feature) => translate(locale, feature.d) === feature.d))) return undefined;
+      const label = (level: string) => translate(locale, "Level {level}", { level });
+      const sections = levels.map(([level, features]) => `**${label(level)}.** ` + features.map((feature) =>
+        `*${classFeatureName(classId, feature.n, locale)}.* ${translate(locale, feature.d)}`).join(" "));
+      if (spells.length) sections.push(`**${translate(locale, "Always-prepared spells")}.** ` + spells.map(([level, names]) =>
+        `${label(level)}: ${names.map((name) => contentName("spells", name, locale)).join(", ")}.`).join(" "));
+      return [intro, ...sections].join("\n\n");
+    }
+  }
+  return undefined;
+}
+
 // For an exact bundled race outside the printed SRD, reuse its own
 // localized trait summaries. Never substitute the parent race's full rules
 // or copy these summaries onto a third-party row with the same name.
@@ -173,6 +205,9 @@ export function localizeEntry<T>(table: string, entry: T, locale: Locale): T {
   }
   if (!desc && table === "races" && core) {
     desc = bundledRaceDescription(row, locale);
+  }
+  if (!desc && table === "archetypes") {
+    desc = authoredArchetypeDescription(row, locale);
   }
   if (!desc && table === "archetypes" && core) {
     desc = archetypeDescription({ ...row, name: row.name, data: row.data }, locale, provider);
