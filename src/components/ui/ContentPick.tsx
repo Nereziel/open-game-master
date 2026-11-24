@@ -3,6 +3,8 @@
 import { useEffect, useRef } from "react";
 import { Loader2, Search } from "lucide-react";
 import { InfoButton } from "@/components/ui/InfoDialog";
+import { useT } from "@/lib/locale";
+import { contentName } from "@/lib/content/names";
 import { cn } from "@/lib/cn";
 import { describeContentEntry, spellSummary } from "@/lib/help";
 import { useContentSearch, type PickerEntry } from "@/app/characters/builder/useContentSearch";
@@ -38,6 +40,7 @@ export function ContentPick({
   className?: string;
   extraParams?: Record<string, string>;
 }) {
+  const t = useT();
   const { query, setQuery, results, open, setOpen, loading, unavailable, failed } = useContentSearch(
     kind,
     extraParams ?? {},
@@ -97,13 +100,13 @@ export function ContentPick({
                 }}
                 className="flex grow items-center justify-between gap-2 px-3 py-1.5 text-left text-sm"
               >
-                <span className={cn(entry.source === "homebrew" && "text-amber-300")}>{entry.name}</span>
+                <span className={cn(entry.source === "homebrew" && "text-amber-300")}>{contentName(kind, entry, t.locale)}</span>
                 <span className="text-[11px] text-stone-500">
-                  {entry.level !== undefined ? `level ${entry.level}` : entry.rarity || entry.kind || ""}
+                  {entry.level !== undefined ? t("Level {level}", { level: entry.level }) : entry.rarity || entry.kind || ""}
                 </span>
               </button>
               <InfoButton
-                label={entry.name}
+                label={contentName(kind, entry, t.locale)}
                 meta={kind === "spells" ? spellSummary(entry.data) : undefined}
                 text={describeContentEntry(entry.data)}
                 reference={
