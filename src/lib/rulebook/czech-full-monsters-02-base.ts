@@ -20,7 +20,7 @@ const labels: Record<string, string> = {
 
 const localizedValues: ReadonlyArray<readonly [string, string]> = [
   ["Giant Eagle, understands Common and Auran but can't speak them", "řeč obřích orlů; rozumí obecné řeči a auranštině, ale nemluví jimi"],
-  ["Giant Elk, understands Common, Elvish, and Sylvan but can't speak them", "řeč obřích jelenů; rozumí obecné řeči, elfštině a sylvánštině, ale nemluví jimi"],
+  ["Giant Elk, understands Common, Elvish, and Sylvan but can't speak them", "řeč obřích losů; rozumí obecné řeči, elfštině a sylvánštině, ale nemluví jimi"],
   ["Giant Owl, understands Common, Elvish, and Sylvan but can't speak them", "řeč obřích sov; rozumí obecné řeči, elfštině a sylvánštině, ale nemluví jimi"],
   ["understands the languages of its creator but can't speak", "rozumí jazykům svého stvořitele, ale neumí mluvit"],
   ["any languages it knew in life", "všechny jazyky, které znal za života"],
@@ -40,7 +40,7 @@ const localizedValues: ReadonlyArray<readonly [string, string]> = [
   ["Terran", "terranština"], ["Ignan", "ignanština"], ["Orc", "orčtina"],
   ["Gnoll", "gnolština"], ["Goblin", "goblinština"], ["Sphinx", "sfingština"],
   ["Gnomish", "gnómština"],
-  ["unconscious", "bezvědomí"], ["grappled", "chycení"],
+  ["unconscious", "bezvědomí"], ["grappled", "uchvácení"],
   ["natural armor", "přirozená zbroj"], ["scale mail", "šupinová zbroj"],
   ["chain mail", "drátěná zbroj"], ["plate", "plátová zbroj"], ["shield", "štít"],
   ["with *barkskin*", "s *kůrokůží*"], ["darkvision", "vidění ve tmě"],
@@ -63,7 +63,7 @@ const localizedValues: ReadonlyArray<readonly [string, string]> = [
   ["acid", "kyselinové"], ["necrotic", "nekrotické"], ["radiant", "zářivé"],
   ["psychic", "psychické"], ["force", "silové"],
   ["charmed", "zmámení"], ["frightened", "vystrašení"],
-  ["paralyzed", "ochromení"], ["petrified", "zkamenění"],
+  ["paralyzed", "paralýza"], ["petrified", "zkamenění"],
   ["prone", "sražení"], ["restrained", "zadržení"],
   ["exhaustion", "vyčerpání"], ["blinded", "oslepnutí"],
   ["deafened", "ohluchnutí"], ["Abyssal", "jazyk Propasti"],
