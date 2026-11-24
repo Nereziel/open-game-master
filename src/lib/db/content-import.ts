@@ -16,7 +16,7 @@ import {
 import { getHouseRulesText, setHouseRules } from "@/lib/db/rules";
 import { mergeHouseRules } from "@/lib/rulesets/logic";
 import { arcRoom } from "@/lib/dm/arc-logic";
-import { checkProse, proseWarningLine } from "@/lib/workshop/prose-check";
+import { checkProse, proseWarningLine, proseWarningParts } from "@/lib/workshop/prose-check";
 import { copiesFrom, recordOrigin, type OriginKind } from "@/lib/db/content-origins";
 import { linkWorkshop } from "@/lib/db/campaign-workshops";
 import {
@@ -227,6 +227,7 @@ function usedLinks(compiled: CompiledBoard): Record<LinkKind, string[]> {
 
 function boardFactsFor(source: Campaign, compiled: CompiledBoard, common: Campaign | null): BoardFacts {
   const links = usedLinks(compiled);
+  const summary = summarizeCompile(compiled, false);
   const inCommon = (kind: LinkKind) =>
     common
       ? [...new Set(links[kind])].filter((id) =>
@@ -247,11 +248,15 @@ function boardFactsFor(source: Campaign, compiled: CompiledBoard, common: Campai
       : null,
     beats: compiled.arcBeats,
     moments: compiled.moments.length,
-    arcProblem: summarizeCompile(compiled, false).arcRefusal,
+    arcProblem: summary.arcRefusal,
+    ...(summary.arcRefusalDisplay ? { arcProblemDisplay: summary.arcRefusalDisplay } : {}),
     beatTitles: compiled.arcPlan.map((beat) => getBeat(beat.cardId)?.title ?? beat.cardId),
     momentTitles: compiled.moments.map((moment) => moment.name),
     proseNotes: listBeats(source.id)
-      .map((card) => ({ title: card.title, message: proseWarningLine(checkProse(card.body)) }))
+      .map((card) => {
+        const warnings = checkProse(card.body);
+        return { title: card.title, message: proseWarningLine(warnings), parts: proseWarningParts(warnings, card.body) };
+      })
       .filter((note) => note.message),
   };
 }
