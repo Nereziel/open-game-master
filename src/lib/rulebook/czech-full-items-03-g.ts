@@ -27,12 +27,12 @@ Tato hůlka má 7 nábojů pro následující vlastnosti. Každý den za úsvitu
 ***Kužel strachu.*** Když držíš hůlku, můžeš jako akci utratit 2 náboje a nechat z jejího hrotu vyzářit kužel jantarového světla dlouhý 60 stop. Každý tvor v kuželu musí uspět v záchranném hodu na Moudrost se SO 15, jinak je na 1 minutu z tebe vystrašený. Dokud je takto vystrašený, musí své tahy trávit snahou vzdálit se od tebe co nejdále a nesmí se dobrovolně přesunout na místo do vzdálenosti 30 stop od tebe. Nemůže také provádět reakce. Jako svou akci může použít pouze Akci Úprk nebo se pokusit uniknout z účinku, který mu brání v pohybu. Nemá-li kam jít, může použít Akci Úhyb. Na konci každého svého tahu může tvor záchranný hod zopakovat; při úspěchu účinek na něj skončí.`,
   "wand-of-fireballs": `*Hůlka, vzácná (vyžaduje sladění sesilatelem kouzel)*
 
-Tato hůlka má 7 nábojů. Když ji držíš, můžeš jako akci utratit 1 nebo více jejích nábojů a seslat z ní kouzlo *ohnivá koule* (SO záchrany 15). Za 1 náboj sešleš verzi kouzla 3. stupně. Za každý další utracený náboj můžeš zvýšit stupeň pozice kouzla o jednu.
+Tato hůlka má 7 nábojů. Když ji držíš, můžeš jako akci utratit 1 nebo více jejích nábojů a seslat z ní kouzlo *ohnivá koule* (SO záchrany 15). Za 1 náboj sešleš verzi kouzla 3. úrovně. Za každý další utracený náboj můžeš zvýšit úroveň pozice kouzla o jednu.
 
 Hůlka si každý den za úsvitu obnoví 1k6+1 spotřebovaných nábojů. Pokud utratíš poslední náboj, hoď k20. Při výsledku 1 se hůlka rozpadne na popel a je zničena.`,
   "wand-of-lightning-bolts": `*Hůlka, vzácná (vyžaduje sladění sesilatelem kouzel)*
 
-Tato hůlka má 7 nábojů. Když ji držíš, můžeš jako akci utratit 1 nebo více jejích nábojů a seslat z ní kouzlo *blesk* (SO záchrany 15). Za 1 náboj sešleš verzi kouzla 3. stupně. Za každý další utracený náboj můžeš zvýšit stupeň pozice kouzla o jednu.
+Tato hůlka má 7 nábojů. Když ji držíš, můžeš jako akci utratit 1 nebo více jejích nábojů a seslat z ní kouzlo *blesk* (SO záchrany 15). Za 1 náboj sešleš verzi kouzla 3. úrovně. Za každý další utracený náboj můžeš zvýšit úroveň pozice kouzla o jednu.
 
 Hůlka si každý den za úsvitu obnoví 1k6+1 spotřebovaných nábojů. Pokud utratíš poslední náboj, hoď k20. Při výsledku 1 se hůlka rozpadne na popel a je zničena.`,
   "wand-of-magic-detection": `*Hůlka, neobvyklá*
@@ -40,7 +40,7 @@ Hůlka si každý den za úsvitu obnoví 1k6+1 spotřebovaných nábojů. Pokud 
 Tato hůlka má 3 náboje. Když ji držíš, můžeš jako akci utratit 1 náboj a seslat z ní kouzlo *najdi magii*. Hůlka si každý den za úsvitu obnoví 1k3 spotřebovaných nábojů.`,
   "wand-of-magic-missiles": `*Hůlka, neobvyklá*
 
-Tato hůlka má 7 nábojů. Když ji držíš, můžeš jako akci utratit 1 nebo více jejích nábojů a seslat z ní kouzlo *magická střela*. Za 1 náboj sešleš verzi kouzla 1. stupně. Za každý další utracený náboj můžeš zvýšit stupeň pozice kouzla o jednu.
+Tato hůlka má 7 nábojů. Když ji držíš, můžeš jako akci utratit 1 nebo více jejích nábojů a seslat z ní kouzlo *magická střela*. Za 1 náboj sešleš verzi kouzla 1. úrovně. Za každý další utracený náboj můžeš zvýšit úroveň pozice kouzla o jednu.
 
 Hůlka si každý den za úsvitu obnoví 1k6+1 spotřebovaných nábojů. Pokud utratíš poslední náboj, hoď k20. Při výsledku 1 se hůlka rozpadne na popel a je zničena.`,
   "wand-of-paralysis": `*Hůlka, vzácná (vyžaduje sladění sesilatelem kouzel)*
