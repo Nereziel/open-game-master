@@ -391,7 +391,7 @@ export const RESOURCE_CS_FEATURE_NAME_LOOKUP: Record<string, string> = {
   "universal-speech": "Univerzální řeč",
   "unleash-incarnation": "Uvolnění vtělení",
   "unquiet-testimony": "Neklidné svědectví",
-  "unwavering-mark": "Neochvějné znamení",
+  "unwavering-mark": "Neoblomná kořist",
   "vanish": "Zmizení",
   "vanish-below": "Zmizení do podzemí",
   "violent-attraction": "Prudká přitažlivost",
