@@ -18,6 +18,7 @@ const { createElement } = await import("react");
 const { renderToStaticMarkup } = await import("react-dom/server");
 const { SpellBook } = await import("../src/components/sheet/SpellBook.tsx");
 const filters = await import("../src/components/sheet/spellFilters.ts");
+const { installCatalog } = await import("../src/lib/i18n/translate.ts");
 const desk = await import("../src/app/characters/builder/spellDesk.ts");
 const { preparedCapLine, builderSpellAdvice, builderCasting } = await import("../src/app/characters/builder/casting.ts");
 const { thirdCasterSchoolProblem } = await import("../src/lib/srd/third-caster.ts");
@@ -91,6 +92,28 @@ test("a school is written capitalised in code, not left to CSS a native list nev
   assert.deepEqual(lone.map((picker) => picker.key), []);
   assert.deepEqual(filters.withSpellFilterPick(filters.NO_SPELL_FILTER, "castingTime", "reaction").castingTime, "reaction");
   assert.deepEqual(filters.withSpellFilterPick({ ...filters.NO_SPELL_FILTER, school: "evocation" }, "school", "any"), filters.NO_SPELL_FILTER);
+});
+
+test("spell filter labels follow EN/FR/CS without changing choices or matches", () => {
+  const options = { schools: ["abjuration", "evocation"], castingTimes: ["action", "bonus", "reaction", "longer"], anyRitual: true, anyConcentration: true };
+  const original = JSON.stringify(options);
+  const choice = { school: "evocation", ritual: true, concentration: "no", castingTime: "bonus" };
+  const expected = {
+    en: ["School: Evocation", "Evocation, ritual, no concentration, a bonus action"],
+    fr: ["École : Évocation", "Évocation, rituel, sans concentration, une action bonus"],
+    cs: ["Škola: Zaklínání", "Zaklínání, rituál, bez soustředění, bonusová akce"],
+  };
+  const canonical = filters.spellFilterPickers(options).map((picker) => [picker.key, picker.options.map((entry) => entry.value)]);
+  for (const locale of ["en", "fr", "cs"]) {
+    if (locale !== "en") installCatalog(locale, JSON.parse(read(`src/lib/i18n/${locale}.json`)));
+    const pickers = filters.spellFilterPickers(options, locale);
+    assert.deepEqual(pickers.map((picker) => [picker.key, picker.options.map((entry) => entry.value)]), canonical);
+    assert.equal(pickers[0].options.find((entry) => entry.value === "evocation").label, expected[locale][0]);
+    assert.equal(filters.spellFilterWords(choice, locale), expected[locale][1]);
+    assert.deepEqual(filters.liveSpellFilter(choice, options), choice);
+    assert.equal(filters.matchesSpellFilter({ school: "evocation", ritual: true, concentration: false, castingTime: "bonus" }, choice), true);
+    assert.equal(JSON.stringify(options), original);
+  }
 });
 
 test("a filter value the page no longer offers is dropped, never on behind an 'any' or a missing picker", () => {
