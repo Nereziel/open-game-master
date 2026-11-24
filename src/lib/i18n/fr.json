@@ -1,5 +1,11 @@
 {
   "messages": {
+    "Nothing more": "Rien de plus",
+    "Timeline mentions: {count}": "Mentions dans la chronologie : {count}",
+    "Secret subjects or knowers: {count}": "Sujets ou détenteurs de secrets : {count}",
+    "Map pins: {count}": "Repères cartographiques : {count}",
+    "Links: {count}": "Liens : {count}",
+    "World entries: {count}": "Entrées du monde : {count}",
     "Translated published reference": "Référence publiée traduite",
     "Reference text from the source book, not the edited monster's rules.": "Texte de référence du livre source, et non les règles du monstre modifié.",
     "Unaligned": "Sans alignement",
@@ -11148,6 +11154,147 @@
     "Concussive sound: thunderwave, shatter, a giant's shout.": "Onde sonore : vague tonnante, fracassement, cri de géant."
   },
   "contexts": {
+    "New beats: {count}, added as act {act} after {previous} existing beats. Played and skipped beats and recapped acts remain untouched.": {
+      "workshop.import.plan": "Nouvelles étapes : {count}, ajoutées comme acte {act} après {previous} étapes existantes. Les étapes jouées ou ignorées et les actes déjà résumés restent intacts."
+    },
+    "Beat capacity: {room} remaining of {limit}. Omitted final beats: {count}{cards}. Their full text remains on prep cards, but the party will not be steered to them.": {
+      "workshop.import.plan": "Capacité des étapes : {room} places restantes sur {limit}. Étapes finales exclues : {count}{cards}. Leur texte intégral reste sur les cartes de préparation, mais le groupe n’y sera pas guidé."
+    },
+    "Board beats already present in the arc and not added again: {count}.": {
+      "workshop.import.plan": "Étapes du storyboard déjà présentes dans l’arc et non ajoutées de nouveau : {count}."
+    },
+    "This arc is already as long as an arc gets, so the board's beats cannot join it.": {
+      "workshop.import.plan": "Cet arc a atteint sa longueur maximale : les étapes du storyboard ne peuvent pas le rejoindre."
+    },
+    "This campaign already has a story arc. The board's places, quests, fights and notes still land; its beats do not overwrite the spine the table has been playing. Add them as the next act to keep them.": {
+      "workshop.import.plan": "Cette campagne possède déjà un arc narratif. Les lieux, quêtes, combats et notes du storyboard sont importés, mais ses étapes ne remplacent pas la trame déjà jouée. Ajoutez-les comme acte suivant pour les conserver."
+    },
+    "An arc holds {limit} beats. Omitted final beats: {count}{cards}. Their full text remains on prep cards, but the party will not be steered to them.": {
+      "workshop.import.plan": "Un arc peut contenir {limit} étapes. Étapes finales exclues : {count}{cards}. Leur texte intégral reste sur les cartes de préparation, mais le groupe n’y sera pas guidé."
+    },
+    "{detail} Until then the board's beats are left out.": {
+      "workshop.import.plan": "{detail} En attendant, les étapes du storyboard sont exclues."
+    },
+    "{title} may read oddly: {detail}": {
+      "workshop.import.plan": "La carte {title} peut sembler étrange : {detail}"
+    },
+    "Every card is kept whole as a prep card the storyteller can open with read_card and find with search_lore; the arc's own lines are each card's first line.": {
+      "workshop.import.plan": "Chaque carte est conservée intégralement comme carte de préparation, accessible au narrateur via read_card et search_lore. L’arc reprend la première ligne de chaque carte."
+    },
+    "Planned event capacity: {room} remaining of {limit}. Omitted route scenes: {count} of {total}{cards}. Their full text remains on prep cards, but they are not offered as planned events.": {
+      "workshop.import.plan": "Capacité des événements planifiés : {room} places restantes sur {limit}. Scènes de parcours exclues : {count} sur {total}{cards}. Leur texte intégral reste sur les cartes de préparation, sans être proposé comme événement planifié."
+    },
+    "Alternative or optional scenes: {count}. They arrive as planned moments the storyteller may trigger or drop, not required beats.": {
+      "workshop.import.plan": "Scènes alternatives ou facultatives : {count}. Elles deviennent des moments planifiés que le narrateur peut déclencher ou ignorer, et non des étapes obligatoires."
+    },
+    "Shared workshop {name}: copied records: {copied}; reused records already here: {reused}.": {
+      "workshop.import.plan": "Atelier partagé {name} : éléments copiés : {copied} ; éléments déjà présents et réutilisés : {reused}."
+    },
+    "Fight cards bringing their prepared encounters even without that selection: {count}. Rosters, map settings and rewards come with them.": {
+      "workshop.import.plan": "Cartes de combat important leurs rencontres préparées même sans cette sélection : {count}. Les adversaires, paramètres de carte et récompenses les accompagnent."
+    },
+    "Card links to records no longer in the workshop will be dropped: {count}.": {
+      "workshop.import.plan": "Nombre de liens de cartes supprimés vers des éléments qui ne sont plus dans l’atelier : {count}."
+    },
+    "Board links to omitted records ({kind}): {count}. The cards arrive without these links. Select the relevant kind to keep them.": {
+      "workshop.import.plan": "Liens du storyboard vers des éléments exclus ({kind}) : {count}. Les cartes arrivent sans ces liens. Sélectionnez la catégorie concernée pour les conserver."
+    },
+    "Shops imported as authored: {count}; stock lines: {lines}. Existing purchases, sales and haggles are not reset.": {
+      "workshop.import.plan": "Boutiques importées telles que conçues : {count} ; lignes de stock : {lines}. Les achats, ventes et marchandages existants ne sont pas réinitialisés."
+    },
+    "Shops without their keeper: {count}. They arrive without a keeper. Select NPCs to bring the keepers.": {
+      "workshop.import.plan": "Boutiques sans leur marchand : {count}. Elles arrivent sans marchand. Sélectionnez PNJ pour importer les marchands."
+    },
+    "Shops without their place: {count}. They arrive unplaced and open wherever a place of that name exists. Select Places to keep their location.": {
+      "workshop.import.plan": "Boutiques sans leur lieu : {count}. Elles arrivent sans emplacement et ouvrent là où existe un lieu de ce nom. Sélectionnez Lieux pour conserver leur emplacement."
+    },
+    "Hand-built monsters copied into this table's bestiary: {count} ({names}). NPCs, fights and roll tables keep their original combat behavior.": {
+      "workshop.import.plan": "Monstres personnalisés copiés dans le bestiaire de cette table : {count} ({names}). Les PNJ, combats et tables de jets conservent leur comportement de combat d’origine."
+    },
+    "Roll-table rows referencing omitted NPCs, lore or tables: {count}. They refer to a matching record here, or nothing. Select the relevant kinds to bring the records.": {
+      "workshop.import.plan": "Lignes de tables de jets faisant référence à des PNJ, éléments de lore ou tables exclus : {count}. Elles désignent un élément correspondant ici, ou aucun. Sélectionnez les catégories concernées pour les importer."
+    },
+    "Hand-built items copied into this table's Homebrew: {count} ({names}). World entries, shops and roll tables keep their references.": {
+      "workshop.import.plan": "Objets personnalisés copiés dans le contenu maison de cette table : {count} ({names}). Les entrées du monde, boutiques et tables de jets conservent leurs références."
+    },
+    "Places are not included, so the region map arrives without its markers. It will place them again as the party travels.": {
+      "workshop.import.plan": "Les lieux ne sont pas inclus : la carte régionale arrive sans ses repères. Ils seront replacés au fil des déplacements du groupe."
+    },
+    "Prepared encounters referencing hand-built monsters: {count}. The monsters stay in their creator's bestiary; the roster resolves only if the campaign owner is that creator.": {
+      "workshop.import.plan": "Rencontres préparées faisant référence à des monstres personnalisés : {count}. Ces monstres restent dans le bestiaire de leur créateur ; la liste des adversaires ne fonctionne que si celui-ci possède la campagne."
+    },
+    "Places without their battle map: {count}. Select Battle maps to keep the links.": {
+      "workshop.import.plan": "Lieux sans leur carte de combat : {count}. Sélectionnez Cartes de combat pour conserver les liens."
+    },
+    "Prepared encounters without their battle map: {count}. They deploy on generated maps using their own settings. Select Battle maps to keep the links.": {
+      "workshop.import.plan": "Rencontres préparées sans leur carte de combat : {count}. Elles utilisent des cartes générées selon leurs paramètres. Sélectionnez Cartes de combat pour conserver les liens."
+    },
+    "{kind}: previously imported entries arrive again as second copies.": {
+      "workshop.import.plan": "{kind} : les entrées déjà importées arrivent de nouveau sous forme de copies supplémentaires."
+    },
+    "{kind}: {count} previously imported entries are kept with this campaign's edits.": {
+      "workshop.import.plan": "{kind} : {count} entrées déjà importées sont conservées avec les modifications de cette campagne."
+    },
+    "{kind}: {count} entries conflict by name and will be numbered.": {
+      "workshop.import.plan": "{kind} : {count} conflits de noms. Les entrées importées seront numérotées."
+    },
+    "This campaign already has a region map. Importing replaces it.": {
+      "workshop.import.plan": "Cette campagne possède déjà une carte régionale. L’import la remplace."
+    },
+    "World places have links to omitted records ({kind}): {count}. These links stay behind unless already imported.": {
+      "workshop.import.plan": "Nombre de liens des lieux du monde vers des éléments exclus ({kind}) : {count}. Ces liens sont abandonnés sauf si les éléments ont déjà été importés."
+    },
+    "WorldForge's links, secrets and pins for {kind} stay behind.": {
+      "workshop.import.plan": "Les liens, secrets et repères de WorldForge pour la catégorie {kind} ne sont pas importés."
+    },
+    "Leaving out {kind}: WorldForge drops these related records: {losses}.": {
+      "workshop.import.plan": "Catégorie exclue : {kind}. WorldForge abandonne les éléments liés suivants : {losses}."
+    },
+    "WorldForge also brings these related records: {kinds}.": {
+      "workshop.import.plan": "WorldForge importe aussi les enregistrements liés : {kinds}."
+    },
+    "This campaign already has a story arc. The board's places, quests, fights and notes still land; its beats do not overwrite the spine the table has been playing.": {
+      "workshop.import.plan": "Cette campagne possède déjà un arc narratif. Les lieux, quêtes, combats et notes du storyboard sont importés, mais ses étapes ne remplacent pas la trame déjà jouée."
+    },
+    "This campaign already has house rules. Importing replaces them unless you choose to add.": {
+      "workshop.import.plan": "Cette campagne possède déjà des règles maison. L’import les remplace, sauf si vous choisissez de les compléter."
+    },
+    "House rules and variant rules": {
+      "workshop.import.kind": "Règles maison et variantes"
+    },
+    "WorldForge: links, timeline, secrets and atlas": {
+      "workshop.import.kind": "WorldForge : liens, chronologie, secrets et atlas"
+    },
+    "The storyboard": {
+      "workshop.import.kind": "Le storyboard"
+    },
+    "Battle maps": {
+      "workshop.import.kind": "Cartes de combat"
+    },
+    "Market": {
+      "workshop.import.kind": "Marché"
+    },
+    "Factions": {
+      "workshop.import.kind": "Factions"
+    },
+    "NPCs": {
+      "workshop.import.kind": "PNJ"
+    },
+    "Roll tables": {
+      "workshop.import.kind": "Tables de jets"
+    },
+    "Prepared encounters": {
+      "workshop.import.kind": "Rencontres préparées"
+    },
+    "Region map": {
+      "workshop.import.kind": "Carte régionale"
+    },
+    "Places": {
+      "workshop.import.kind": "Lieux"
+    },
+    "World lore": {
+      "workshop.import.kind": "Lore du monde"
+    },
     "chaotic evil": {
       "world.field.option": "chaotique mauvais"
     },
