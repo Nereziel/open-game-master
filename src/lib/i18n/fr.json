@@ -1,5 +1,8 @@
 {
   "messages": {
+    "{name}, year": "{name}, année",
+    "{name}, calendar": "{name}, calendrier",
+    "Find {label}": "Trouver {label}",
     "Custom voice…": "Voix personnalisée…",
     "Type any voice this server understands": "Saisissez toute voix prise en charge par ce serveur",
     "{label}: custom voice": "{label} : voix personnalisée",
@@ -11120,6 +11123,111 @@
     "Concussive sound: thunderwave, shatter, a giant's shout.": "Onde sonore : vague tonnante, fracassement, cri de géant."
   },
   "contexts": {
+    "chaotic evil": {
+      "world.field.option": "chaotique mauvais"
+    },
+    "neutral evil": {
+      "world.field.option": "neutre mauvais"
+    },
+    "lawful evil": {
+      "world.field.option": "loyal mauvais"
+    },
+    "chaotic neutral": {
+      "world.field.option": "chaotique neutre"
+    },
+    "neutral": {
+      "world.field.option": "neutre"
+    },
+    "lawful neutral": {
+      "world.field.option": "loyal neutre"
+    },
+    "chaotic good": {
+      "world.field.option": "chaotique bon"
+    },
+    "neutral good": {
+      "world.field.option": "neutre bon"
+    },
+    "lawful good": {
+      "world.field.option": "loyal bon"
+    },
+    "vassal of": {
+      "world.link": "vassal de"
+    },
+    "liege of": {
+      "world.link": "suzerain de"
+    },
+    "reports to": {
+      "world.link": "rend compte à"
+    },
+    "superior of": {
+      "world.link": "supérieur de"
+    },
+    "descended from": {
+      "world.link": "descend de"
+    },
+    "sibling of": {
+      "world.link": "frère ou sœur de"
+    },
+    "spouse of": {
+      "world.link": "conjoint de"
+    },
+    "child of": {
+      "world.link": "enfant de"
+    },
+    "parent of": {
+      "world.link": "parent de"
+    },
+    "destroyed": {
+      "world.link": "a détruit"
+    },
+    "created": {
+      "world.link": "a créé"
+    },
+    "seeks": {
+      "world.link": "cherche"
+    },
+    "guards": {
+      "world.link": "garde"
+    },
+    "worships": {
+      "world.link": "vénère"
+    },
+    "located in": {
+      "world.link": "se trouve à"
+    },
+    "lives in": {
+      "world.link": "vit à"
+    },
+    "rules": {
+      "world.link": "gouverne"
+    },
+    "member of": {
+      "world.link": "membre de"
+    },
+    "mentor of": {
+      "world.link": "mentor de"
+    },
+    "serves": {
+      "world.link": "sert"
+    },
+    "fears": {
+      "world.link": "craint"
+    },
+    "loves": {
+      "world.link": "aime"
+    },
+    "rival of": {
+      "world.link": "rival de"
+    },
+    "friend of": {
+      "world.link": "ami de"
+    },
+    "enemy of": {
+      "world.link": "ennemi de"
+    },
+    "allied with": {
+      "world.link": "allié de"
+    },
     "Swedish": {
       "table.language": "suédois"
     },
