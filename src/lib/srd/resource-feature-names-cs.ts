@@ -323,7 +323,7 @@ export const RESOURCE_CS_FEATURE_NAME_LOOKUP: Record<string, string> = {
   "stim-injector": "Injekce stimulantu",
   "stitch-the-tear": "Sešití trhliny",
   "stone-rune": "Runa kamene",
-  "stones-endurance": "Odolnost kamene",
+  "stones-endurance": "Kamenná výdrž",
   "storm-of-blades": "Bouře čepelí",
   "storm-rune": "Runa bouře",
   "storm-step": "Bouřný krok",
