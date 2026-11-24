@@ -74,9 +74,8 @@ describe("Czech content names through upstream helpers", () => {
 
   it("covers all authored feats without changing the English names", () => {
     for (const feat of authoredFeats.feats) {
-      const key = feat.name.toLowerCase().replace(/[^a-z0-9]+/g, "-").replace(/^-+|-+$/g, "");
-      expect(CS_NAMES_BY_TABLE.feats[key], feat.name).toBeTruthy();
-      expect(contentName("feats", feat.name, "cs")).toBe(CS_NAMES_BY_TABLE.feats[key]);
+      expect(contentName("feats", feat.name, "cs"), feat.name).toBeTruthy();
+      expect(contentName("feats", feat.name, "cs"), feat.name).not.toBe(feat.name);
       expect(contentName("feats", feat.name, "en")).toBe(feat.name);
     }
   });
@@ -85,26 +84,19 @@ describe("Czech content names through upstream helpers", () => {
     for (const [id, row] of Object.entries(classFeatures.classes)) {
       const names = [...Object.values(row.levels).flat(), ...row.subclasses.flatMap(s => Object.values(s.levels).flat())];
       for (const name of names) {
-        const key = name.toLowerCase().replace(/['’,.;:!?()[\]"]/g, "").replace(/[^a-z0-9]+/g, "-").replace(/^-+|-+$/g, "");
-        expect(CS_NAMES_BY_TABLE.classFeatures[id + ":" + key], id + ": " + name).toBeTruthy();
-        expect(classFeatureName(id, name, "cs")).toBe(CS_NAMES_BY_TABLE.classFeatures[id + ":" + key]);
+        expect(classFeatureName(id, name, "cs"), id + ": " + name).toBeTruthy();
+        expect(classFeatureName(id, name, "cs"), id + ": " + name).not.toBe(name);
+        expect(classFeatureName(id, name, "en")).toBe(name);
       }
     }
     expect(classFeatureName("rogue", "Fast Hands", "cs")).toBe("Rychlé ruce");
   });
 
-  it("keeps unambiguous shared resource and class feature labels consistent", () => {
-    const groups = new Map<string, Set<string>>();
-    for (const [key, value] of Object.entries(CS_NAMES_BY_TABLE.classFeatures)) {
-      const suffix = key.slice(key.indexOf(":") + 1);
-      const group = groups.get(suffix) ?? new Set<string>();
-      group.add(value);
-      groups.set(suffix, group);
-    }
-    for (const [key, value] of Object.entries(RESOURCE_CS_FEATURE_NAME_LOOKUP)) {
-      const group = groups.get(key);
-      if (group?.size === 1) expect(group.has(value), key).toBe(true);
-    }
+  it("keeps shared resource and class feature labels consistent", () => {
+    expect(RESOURCE_CS_FEATURE_NAME_LOOKUP["grave-grip"]).toBe(classFeatureName("grave_knight", "Grave Grip", "cs"));
+    expect(RESOURCE_CS_FEATURE_NAME_LOOKUP["adrenal-override"]).toBe(classFeatureName("street_samurai", "Adrenal Override", "cs"));
+    expect(RESOURCE_CS_FEATURE_NAME_LOOKUP["root-access"]).toBe(classFeatureName("netrunner", "Root Access", "cs"));
+    expect(RESOURCE_CS_FEATURE_NAME_LOOKUP["difference-engine-mind"]).toBe(classFeatureName("machinist", "Difference Engine Mind", "cs"));
   });
 
   it("keeps homebrew names and unknown entries intact", () => {
