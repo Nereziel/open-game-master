@@ -198,7 +198,7 @@ export function SpellBook({
   // A search or a filter shows every level at once.
   const narrowed = Boolean(needle) || filtering;
   const passes = (tile: SpellTile) =>
-    (!needle || textKey(tile.label ?? tile.name).includes(needle)) &&
+    (!needle || textKey(tile.name).includes(needle) || textKey(shownName(tile)).includes(needle)) &&
     (!filtering || matchesSpellFilter(factsByName?.get(tile.name) ?? spellDeskFacts(tile), live));
   // The level row says which level is chosen only once mounted. The travelling
   // pill (src/lib/motion/pill.ts) decorates every pill group that has a chosen
