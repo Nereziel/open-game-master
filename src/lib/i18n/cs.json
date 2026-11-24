@@ -14548,6 +14548,21 @@
     },
     "setting for whether only the GM sees it": {
       "workshop.import.result": "nastavení viditelnosti pouze pro PJ"
+    },
+    "bindings": {
+      "workshop.import.result": "vazby na herní záznamy"
+    },
+    "revealedAt": {
+      "workshop.import.result": "čas odhalení"
+    },
+    "revealedAs": {
+      "workshop.import.result": "záznam, ve kterém došlo k odhalení"
+    },
+    "parentPinId": {
+      "workshop.import.result": "nadřazená značka"
+    },
+    "party": {
+      "workshop.import.result": "viditelnost pro družinu"
     }
   },
   "plurals": {
