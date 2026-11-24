@@ -31,6 +31,7 @@ import { useRovingGroup } from "../roving";
 import type { BuilderState } from "../useBuilderState";
 import { fillSpells } from "../quickBuild";
 import { spellOnSavedList, spellShortageLines, spellSupplyOf } from "../spellSupply";
+import { preparedFormulaLine } from "../casting";
 import { capLines, castingNumbers, swapChoices, swapInList, swapQuestion, type PendingSwap } from "../spellDesk";
 import { StepPanel, inputClass } from "./shared";
 import { textKey } from "@/lib/language/text-logic";
@@ -234,6 +235,7 @@ export function SpellsSection({
   pack: WorldPack | null;
 }) {
   const t = useT();
+  const locale = useLocale();
   const tp = useTp();
   const { spells, setSpells, cantrips, setCantrips, bookPrepared, setBookPrepared } = state;
   const {
@@ -262,7 +264,8 @@ export function SpellsSection({
   const spellCap = spellAdvice?.count ?? null;
   const bookCap = spellbookAdvice;
   // The working behind a prepared caster's count, said with the limit.
-  const limitWhy = spellAdvice?.formula ? `: ${spellAdvice.formula}` : "";
+  const formula = spellAdvice?.sum ? preparedFormulaLine(spellAdvice.sum, locale) : spellAdvice?.formula;
+  const limitWhy = formula ? `: ${formula}` : "";
   const wizard = spellStyle === "spellbook";
   // A wizard fills the book first, then prepares from it.
   const [phase, setPhase] = useState<"book" | "prepare">("book");
@@ -472,7 +475,7 @@ export function SpellsSection({
       setLimitNote(
         wizard
           ? t("Your spellbook starts with {count} spells. Remove one to write in {name}.", { count: cap, name })
-          : t("You already have {count} {label}{why}. Remove one to choose {name}.", { count: cap, label: spellAdvice?.label ?? t("spells"), why: limitWhy, name }),
+          : t("You already have {count} {label}{why}. Remove one to choose {name}.", { count: cap, label: t(spellAdvice?.label ?? "spells"), why: limitWhy, name }),
       );
       return;
     }
@@ -708,13 +711,13 @@ export function SpellsSection({
     spellSlots: derived.spellSlots,
   }, t);
   const caps = capLines({
-    className: klass.name,
+    className: contentName("classes", { name: klass.name, slug: klass.id, documentSlug: klass.documentSlug, source: klass.documentSlug && klass.source !== "Homebrew" ? undefined : klass.source }, locale),
     level: derived.casterLevel ?? derived.effectiveLevel,
     cantripCap,
     spellbookCap: wizard ? bookCap : null,
     spellCap: spellAdvice,
     known: spellStyle === "known",
-  });
+  }, locale);
   const listTitle = spellStyle === "known" ? t("Known spells") : t("Prepared");
   const named = (list: string[]) => list.map((name) => displayName(pack, "spells", name));
   const chosenLists = [
