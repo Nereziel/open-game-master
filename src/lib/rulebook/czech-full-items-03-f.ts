@@ -12,7 +12,7 @@ Tento talisman je mocným symbolem dobra. Tvor, jehož přesvědčení není ani
 
 Jsi-li klerik nebo paladin dobrého přesvědčení, můžeš talisman používat jako svatý symbol a když jej nosíš nebo držíš, získáváš bonus +2 k hodům na útok kouzlem.
 
-Talisman má 7 dávek. Když ho nosíš nebo držíš, můžeš jako akci utratit 1 dávku a vybrat jednoho tvora, kterého vidíš stát na zemi do vzdálenosti 120 stop. Pokud má cíl zlé přesvědčení, otevře se pod ním plamenná trhlina. Cíl musí uspět v záchranném hodu na Obratnost se SO 20, jinak do trhliny spadne a je zničen beze zbytku. Trhlina se pak uzavře, aniž by po ní zůstala stopa. Když utratíš poslední dávku, talisman se rozplyne ve zlatých světelných jiskřičkách a je zničen.`,
+Talisman má 7 nábojů. Když ho nosíš nebo držíš, můžeš jako akci utratit 1 náboj a vybrat jednoho tvora, kterého vidíš stát na zemi do vzdálenosti 120 stop. Pokud má cíl zlé přesvědčení, otevře se pod ním plamenná trhlina. Cíl musí uspět v záchranném hodu na Obratnost se SO 20, jinak do trhliny spadne a je zničen beze zbytku. Trhlina se pak uzavře, aniž by po ní zůstala stopa. Když utratíš poslední náboj, talisman se rozplyne ve zlatých světelných jiskřičkách a je zničen.`,
   "talisman-of-the-sphere": `*Divotvorný předmět, legendární (vyžaduje sladění)*
 
 Když držíš tento talisman a provádíš ověření Inteligence (Mystiky) k ovládání *sféry zničení*, zdvojnásobíš při tomto ověření svůj zdatnostní bonus. Pokud na začátku svého tahu ovládáš *sféru zničení*, můžeš jako akci pohnout sférou vznášením o 10 stop plus další počet stop rovný 10 × tvá oprava Inteligence.`,
@@ -22,7 +22,7 @@ Tento předmět symbolizuje nekajícné zlo. Tvor, jehož přesvědčení není 
 
 Jsi-li klerik nebo paladin zlého přesvědčení, můžeš talisman používat jako svatý symbol a když jej nosíš nebo držíš, získáváš bonus +2 k hodům na útok kouzlem.
 
-Talisman má 6 dávek. Když ho nosíš nebo držíš, můžeš jako akci utratit 1 dávku a vybrat jednoho tvora, kterého vidíš stát na zemi do vzdálenosti 120 stop. Pokud má cíl dobré přesvědčení, otevře se pod ním plamenná trhlina. Cíl musí uspět v záchranném hodu na Obratnost se SO 20, jinak do trhliny spadne a je zničen beze zbytku. Trhlina se pak uzavře, aniž by po ní zůstala stopa. Když utratíš poslední dávku, talisman se rozpustí v páchnoucím slizu a je zničen.`,
+Talisman má 6 nábojů. Když ho nosíš nebo držíš, můžeš jako akci utratit 1 náboj a vybrat jednoho tvora, kterého vidíš stát na zemi do vzdálenosti 120 stop. Pokud má cíl dobré přesvědčení, otevře se pod ním plamenná trhlina. Cíl musí uspět v záchranném hodu na Obratnost se SO 20, jinak do trhliny spadne a je zničen beze zbytku. Trhlina se pak uzavře, aniž by po ní zůstala stopa. Když utratíš poslední náboj, talisman se rozpustí v páchnoucím slizu a je zničen.`,
   "tome-of-clear-thought": `*Divotvorný předmět, velmi vzácný*
 
 Tato kniha obsahuje cvičení paměti a logiky a její slova jsou prodchnuta magií. Pokud během 6 nebo méně dní strávíš 48 hodin studiem jejího obsahu a procvičováním jejích pokynů, hodnota tvé Inteligence se zvýší o 2, stejně jako její maximum. Příručka poté ztratí magii, ale po jednom století ji znovu získá.`,
@@ -34,7 +34,7 @@ Tato kniha obsahuje rady, jak působit na ostatní a okouzlovat je, a její slov
 Tato kniha obsahuje cvičení intuice a vhledu a její slova jsou prodchnuta magií. Pokud během 6 nebo méně dní strávíš 48 hodin studiem jejího obsahu a procvičováním jejích pokynů, hodnota tvé Moudrosti se zvýší o 2, stejně jako její maximum. Příručka poté ztratí magii, ale po jednom století ji znovu získá.`,
   "trident-of-fish-command": `*Zbraň (trojzubec), neobvyklá (vyžaduje sladění)*
 
-Tento trojzubec je magickou zbraní. Má 3 dávky. Když jej neseš, můžeš jako akci utratit 1 dávku a seslat z něj *podrob zvíře* (SO záchrany 15) na zvíře s vrozenou rychlostí plavání. Trojzubec si každý den za úsvitu obnoví 1k3 spotřebovaných dávek.`,
+Tento trojzubec je magickou zbraní. Má 3 náboje. Když jej neseš, můžeš jako akci utratit 1 náboj a seslat z něj *podrob zvíře* (SO záchrany 15) na zvíře s vrozenou rychlostí plavání. Trojzubec si každý den za úsvitu obnoví 1k3 spotřebovaných nábojů.`,
   "universal-solvent": `*Divotvorný předmět, legendární*
 
 Tato tuba obsahuje mléčně zbarvenou kapalinu se silným alkoholovým zápachem. Jako akci můžeš obsah tuby vylít na povrch v dosahu ruky. Kapalina okamžitě rozpustí až 1 čtvereční stopu lepidla, kterého se dotkne, včetně *svrchovaného lepidla*.`,
