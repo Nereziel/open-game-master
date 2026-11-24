@@ -107,7 +107,7 @@ export function ContentPick({
               </button>
               <InfoButton
                 label={contentName(kind, entry, t.locale)}
-                meta={kind === "spells" ? spellSummary(entry.data) : undefined}
+                meta={kind === "spells" ? spellSummary(entry.data, t.locale) : undefined}
                 text={describeContentEntry(entry.data)}
                 reference={
                   entry.source === "homebrew" ? undefined : { kind, slug: entry.slug, name: entry.name }
