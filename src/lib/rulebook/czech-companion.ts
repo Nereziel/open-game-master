@@ -215,15 +215,15 @@ const NOTES: Record<string, string> = {
 
   armor: `**Obranné číslo (OČ, anglicky AC)** určuje, jak náročné je postavu zasáhnout útokem. Lehká zbroj započítává opravu Obratnosti; střední zbroj zpravidla nejvýše +2 a těžká zbroj bonus Obratnosti nezapočítává. Štít běžně zvyšuje OČ o 2.
 
-Zbroj, se kterou postava není zdatná, omezuje hody založené na Síle a Obratnosti a znemožňuje sesílání kouzel. Některá těžká zbroj při nedostatečné Síle snižuje rychlost. Konkrétní hodnoty najdete v původní tabulce.`,
+Zbroj, se kterou postava není zdatná, omezuje hody založené na Síle a Obratnosti a znemožňuje sesílání kouzel. Některá těžká zbroj při nedostatečné Síle snižuje rychlost. Konkrétní hodnoty najdeš v české tabulce níže.`,
 
-  weapons: `Zbraně jsou jednoduché nebo válečné a slouží k boji na blízko nebo na dálku. Zdatná postava přičítá k hodu na útok svůj zdatnostní bonus.
+  weapons: `Zbraně jsou jednoduché nebo vojenské a slouží k boji na blízko nebo na dálku. Zdatná postava přičítá k hodu na útok svůj zdatnostní bonus.
 
-Útok zbraní na blízko obvykle používá Sílu, útok zbraní na dálku Obratnost. Vytříbená zbraň dovoluje použít Sílu nebo Obratnost. Kostky zranění a vlastnosti jako dosah, těžká, dvouruční či vrhací určuje konkrétní zbraň.`,
+Útok zbraní na blízko obvykle používá Sílu, útok zbraní na dálku Obratnost. Vytříbená zbraň dovoluje použít Sílu nebo Obratnost. Kostky zranění a vlastnosti jako dlouhá, těžká, dvouruční či vrhací určuje konkrétní zbraň.`,
 
   feats: `Odbornosti jsou volitelnou alternativou k některým zvýšením hodnot vlastností. Postava musí splnit předpoklady dané odbornosti. Účinky se řídí textem konkrétní odbornosti; odbornosti zpravidla nelze získávat opakovaně, pokud to výslovně neumožňují.`,
 
-  "using-ability-scores": `Pro **ověření vlastnosti** hoďte k20 a přičtěte opravu příslušné vlastnosti. Pokud má postava odpovídající zdatnost, přičte také zdatnostní bonus. Pán jeskyně stanovuje obtížnost (DC); hod musí dosáhnout této hodnoty nebo ji překročit.
+  "using-ability-scores": `Pro **ověření vlastnosti** hoďte k20 a přičtěte opravu příslušné vlastnosti. Pokud má postava odpovídající zdatnost, přičte také zdatnostní bonus. Pán jeskyně stanovuje stupeň obtížnosti (SO); hod musí dosáhnout této hodnoty nebo ji překročit.
 
 **Výhoda** znamená hodit dvěma k20 a použít vyšší výsledek; **nevýhoda** znamená použít nižší. Více výhod se nesčítá a výhoda s nevýhodou se navzájem ruší.
 
@@ -241,7 +241,7 @@ V každém tahu se můžete **pohnout** až do své rychlosti a obvykle provést
 
 ## Útoky a zranění
 
-Útok zpravidla znamená hod k20 s opravou vlastnosti a případným bonusem zdatnosti proti **obrannému číslu (AC)** cíle. Při úspěchu se hodí zranění. Přirozená 20 zasáhne kriticky: házejí se dvakrát kostky zranění útoku. Přirozená 1 při útoku vždy mine.
+Útok zpravidla znamená hod k20 s opravou vlastnosti a případným bonusem zdatnosti proti **obrannému číslu (OČ, AC)** cíle. Při úspěchu se hodí zranění. Přirozená 20 zasáhne kriticky: házejí se dvakrát kostky zranění útoku. Přirozená 1 při útoku vždy mine.
 
 ## Ztráta vědomí a smrt
 
@@ -257,9 +257,9 @@ Kouzla s označením **rituál** lze za příslušných podmínek seslat o deset
 
   conditions: `## Přehled stavů
 
-Stavy mění, co může tvor dělat a jaké hody provádí. Patří mezi ně například **oslepený, okouzlený, ohlušený, vystrašený, uchvácený, neschopný, neviditelný, ochromený, zkamenělý, otrávený, sražený, zadržený, omráčený a v bezvědomí**.
+Stavy mění, co může tvor dělat a jaké hody provádí. Patří mezi ně například **slepý, zmámený, hluchý, únava (vyčerpání), vystrašený, uchvácený, neschopný, neviditelný, paralyzovaný, zkamenělý, otrávený, ležící, zadržený, ochromený a v bezvědomí**.
 
-Jednotlivé stavy mají různé mechanické účinky. Například tvor **sražený na zem** se pohybuje plazením, jeho vlastní útoky mají nevýhodu a útoky vedené proti němu z bezprostřední blízkosti mají výhodu. Přesné účinky a výjimky jsou v anglických pravidlech níže.`,
+Jednotlivé stavy mají různé mechanické účinky. Například **ležící** tvor se pohybuje plazením, jeho vlastní útoky mají nevýhodu a útoky proti němu ze vzdálenosti nejvýše 5 stop mají výhodu, ostatní nevýhodu. Přesné účinky a výjimky jsou v úplném českém znění níže.`,
 };
 
 // Short terminology index; no copied third-party descriptions.
