@@ -12,8 +12,7 @@ import { subclassBlurb, subclassGate, subclassNamesFor } from "@/lib/srd/feature
 import { packRecommends, type Reskinned } from "@/lib/worlds/reskin-logic";
 import type { WorldPack } from "@/lib/worlds/types";
 import type { PickerGroup, PickerOption } from "./OptionPicker";
-import { backgroundFeatureLabel, contentName, subclassName } from "@/lib/content/names";
-import { expansionNameCs } from "@/lib/content/expansion-descriptions-cs";
+import { backgroundFeatureLabel, contentName, archetypeDisplayName } from "@/lib/content/names";
 import { useLocale, useT } from "@/lib/locale";
 import type { Locale } from "@/lib/messages-logic";
 import type {
@@ -201,18 +200,13 @@ export function backgroundInfoText(entry: {
 // An option's own name reads in the reader's language when the official
 // maps carry it; a pack's reskin (packName) is its author's words and
 // stays. The id picked stays whatever it always was.
-function shownOption<T extends { id: string; name: string; packName?: string; documentSlug?: string }>(
+function shownOption<T extends { id: string; name: string; packName?: string; documentSlug?: string; slug?: string }>(
   entry: T,
   table: "species" | "classes" | "backgrounds",
   locale: Locale,
 ): string {
   if (entry.packName) return entry.name;
-  if (locale === "cs" && entry.documentSlug && entry.documentSlug !== "homebrew") {
-    const row = { name: entry.name, slug: entry.id, documentSlug: entry.documentSlug, source: "open5e" };
-    const translated = expansionNameCs(table, row);
-    if (translated) return translated;
-  }
-  return contentName(table, entry.name, locale);
+  return contentName(table, { name: entry.name, slug: entry.slug ?? entry.id, documentSlug: entry.documentSlug, source: entry.documentSlug === "homebrew" ? "homebrew" : "open5e" }, locale);
 }
 
 export function usePickerGroups({
@@ -431,10 +425,10 @@ export function usePickerGroups({
             // by; the label reads in the reader's language where the maps
             // carry it (the identity line reads the same way).
             id: name,
-            name: subclassName(klass?.id ?? "", name, locale),
+            name: archetypeDisplayName(klass?.id ?? "", name, locale, match ? { ...match, slug: match.id } : undefined),
             // The pack's full write-up when it has the row, else the
             // bundled line, so no subclass is a bare name.
-            infoText: match?.desc || subclassBlurb(klass?.id ?? "", name) || undefined,
+            infoText: match?.localizedDesc || match?.desc || subclassBlurb(klass?.id ?? "", name) || undefined,
             reference: match
               ? { kind: "archetypes", slug: match.id, name }
               : undefined,
@@ -459,8 +453,8 @@ export function usePickerGroups({
         label: t("From the content pack"),
         options: packArchetypes.map((entry) => ({
           id: entry.name,
-          name: entry.name,
-          infoText: entry.desc,
+          name: archetypeDisplayName(klass?.id ?? "", entry.name, locale, { ...entry, slug: entry.id }),
+          infoText: entry.localizedDesc || entry.desc,
           reference: { kind: "archetypes", slug: entry.id, name: entry.name },
         })),
       });
