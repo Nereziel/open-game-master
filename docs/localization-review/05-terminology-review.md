@@ -120,7 +120,7 @@ Commity nového průchodu: `43a37e6`, `2301222`, `1d0051a`, `2a48418`, `94e44cd`
 
 ## Přímá kontrola názvů z Xanatharova průvodce
 
-Porovnání tabulky oborů a tabulek schopností všech 27 oborů v [kapitole 1](https://dnd5esrd.d20.cz/xanathar/1-kapitola.html) s vestavěným subclasses.json. Při rozporu v samotném překladu d20 preferován nadpis konkrétní schopnosti (např. Cesta fanatika, Zuřící bouře). Opraveno 105 názvů v tabulce povolání/schopností a 3 přímo párovatelných UI hodnot; jednoznačné názvy zdrojů schopností synchronizovány. Rozdílné mechaniky se stejným anglickým názvem nejsou slepě spojovány. Záznamy: 
+Cílené porovnání tabulky oborů a dostupných tabulek schopností 27 oborů v [kapitole 1](https://dnd5esrd.d20.cz/xanathar/1-kapitola.html) s vestavěným subclasses.json. Při rozporu v samotném překladu d20 zachován doložený název (nadpis Cesta fanatika, tabulka Zuřící bouře; nadpis uvádí i Zuřivá bouře). Opraveno 105 názvů v tabulce povolání/schopností a 3 přímo párovatelných UI hodnot; jednoznačné názvy zdrojů schopností synchronizovány. Rozdílné mechaniky se stejným anglickým názvem nejsou slepě spojovány. Záznamy: 
 - `barbarian:ancestral-protectors`: Ochránci předků → Rodoví ochránci
 - `barbarian:consult-the-spirits`: Rozmluva s duchy → Porada s duchy
 - `barbarian:divine-fury`: Božská zuřivost → Božský hněv
@@ -228,3 +228,26 @@ Porovnání tabulky oborů a tabulek schopností všech 27 oborů v [kapitole 1]
 - `warlock:the-hexblade`: Prokletá čepel → Čepel uřknutí
 
 Nedostupné nebo nejednoznačné klíče k dalšímu ověření: žádné v této sadě. Nejde o úplnou revizi všech popisů či nedoložených knih. CI nového commitu dosud neověřeno.
+
+### Aliasové názvy a Průvodce Pána jeskyně
+- Opraveny aliasy oborů, které by jinak ještě zobrazovaly staré české názvy; Dráha kenseie je schopnost, Cesta kenseie je obor — nejde o neshodu.
+- Doloženy názvy možností Doména Smrt a Křivopřísežník a upraveny jejich odlišné názvy schopností podle [DMG, kapitola 4](https://dnd5esrd.d20.cz/pruvodce-pana-jeskyne/4-kapitola.html). Změněné položky: 
+  - `cleric:reaper`: Žnec → Smrtka
+  - `cleric:inescapable-destruction`: Nevyhnutelná zkáza → Nevyhnutelné zničení
+  - `cleric:improved-reaper`: Vylepšený žnec → Zlepšená smrtka
+  - `paladin:channel-divinity-control-undead`: Božská přízeň: Ovládání nemrtvých → Božská přízeň: Ovládni nemrtvé
+  - `paladin:channel-divinity-dreadful-aspect`: Božská přízeň: Děsivý aspekt → Božská přízeň: Strašlivý aspekt
+  - `paladin:dread-lord`: Pán hrůzy → Pán děsu
+  - `barbarian:ancestral-guardian`: Cesta strážce předků → Cesta rodových strážců
+  - `barbarian:storm-herald`: Cesta zvěstovatele bouře → Cesta bouřného posla
+  - `bard:whispers`: Kolej šepotů → Kolej klepů
+  - `cleric:forge`: Doména výhně → Doména Kovárna
+  - `cleric:grave`: Doména hrobu → Doména Hrob
+  - `fighter:cavalier-fighter`: Kavalír → Bohatýr
+  - `paladin:redemption`: Přísaha vykoupení → Přísaha spasení
+  - `rogue:inquisitive-rogue`: Vyšetřovatel → Slídil
+  - `rogue:detective`: Vyšetřovatel → Slídil
+  - `warlock:celestial`: Nebeský patron → Nebešťan
+  - `warlock:hexblade`: Prokletá čepel → Čepel uřknutí
+- [Dobrodruhův průvodce Mečovým pobřežím](https://www.d20.cz/clanky/pravidla/5170.html) má české PDF, ale nástroj přístup k odkazu /private/dnd5e/DPMC_5e_CZ.pdf odmítl. [Tašin kotlík všeho](https://www.cph.d20.cz/diskuze/53088.html) je ve fázi komunitní sazby; samotný zdroj textu se nepodařilo načíst. U nedoložených názvů nejsou tvrzeny přímé shody s d20. 
+- Lokální checkout opět ověřen: git ls-remote selhal na DNS (Could not resolve host: github.com). Předchozí běh CI na 6ed4902 měl lint Linux/Windows úspěšný, známý Knip selhal; testy zrušeny novým commitem. 

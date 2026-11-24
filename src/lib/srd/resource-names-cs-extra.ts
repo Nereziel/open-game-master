@@ -151,7 +151,7 @@ export const RESOURCE_CS_EXTRA_NAMES: Record<string, string> = {
   "sub_living_legend": "Živoucí legenda",
   "sub_mortal_bulwark": "Hradba smrtelníků",
   "sub_exalted_champion": "Ušlechtilý šampion",
-  "sub_dread_lord": "Pán hrůzy",
+  "sub_dread_lord": "Pán děsu",
   "sub_wind_soul": "Duše větru",
   "sub_elemental_gift": "Živelný dar",
   "sub_defensive_field": "Ochranné pole",

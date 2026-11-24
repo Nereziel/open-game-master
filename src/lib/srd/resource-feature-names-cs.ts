@@ -86,7 +86,7 @@ export const RESOURCE_CS_FEATURE_NAME_LOOKUP: Record<string, string> = {
   "dragon-fear": "Dračí strach",
   "drake-companion": "Dračí společník",
   "drakes-breath": "Dračí dech",
-  "dread-lord": "Pán hrůzy",
+  "dread-lord": "Pán děsu",
   "dream-logic": "Logika snů",
   "duck-the-consequences": "Úhyb před následky",
   "ear-trumpet": "Naslouchátko",
