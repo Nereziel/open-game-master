@@ -1,5 +1,27 @@
 {
   "messages": {
+    "Cannot see. Fails any check that needs sight; attacks against it have advantage, its own attacks have disadvantage.": "Tvor nevidí a automaticky neuspěje v ověření, které vyžaduje zrak. Útoky proti němu mají výhodu, jeho vlastní útoky nevýhodu.",
+    "Cannot attack the charmer or target them with harmful effects; the charmer has advantage on social checks against it.": "Nemůže zaútočit na toho, kdo ho zmámil, ani ho zacílit škodlivým účinkem. Ten má výhodu při společenských ověřeních vůči zmámenému tvorovi.",
+    "Cannot hear. Fails any check that needs hearing.": "Tvor neslyší a automaticky neuspěje v ověření, které vyžaduje sluch.",
+    "Six worsening levels, from disadvantage on checks to death. Usually one level clears per long rest.": "Šest stupňů se zhoršujícími se následky, od nevýhody k ověřením až po smrt. Důkladný odpočinek obvykle odstraní jeden stupeň.",
+    "Disadvantage on checks and attacks while the source of fear is in sight, and cannot willingly move closer to it.": "Dokud vidí zdroj strachu, má nevýhodu k ověřením a útokům a nemůže se k němu dobrovolně přiblížit.",
+    "Speed becomes 0. Ends if the grappler is incapacitated or the two are forced apart.": "Rychlost klesne na 0. Stav skončí, pokud se uchvatitel stane neschopným nebo jsou oba tvorové od sebe nuceně odděleni.",
+    "Cannot take actions or reactions.": "Nemůže provádět akce ani reakce.",
+    "Cannot be seen without magic or a special sense. Attacks against it have disadvantage, its attacks have advantage.": "Bez magie či zvláštního smyslu není vidět. Útoky proti němu mají nevýhodu a jeho útoky mají výhodu.",
+    "Incapacitated and cannot move or speak. Auto-fails Strength and Dexterity saves; attacks against it have advantage and hit within 5 feet are critical.": "Je neschopný a nemůže se hýbat ani mluvit. Automaticky neuspěje v záchranných hodech na Sílu a Obratnost. Útoky proti němu mají výhodu a zásahy do 5 stop jsou kritické.",
+    "Turned to stone: incapacitated, unaware, weighs ten times as much, resists all damage, immune to poison and disease.": "Proměněný v kámen: je neschopný, nevnímá okolí, váží desetkrát více, má odolání vůči všem zraněním a imunitu vůči jedu a nemocem.",
+    "Must crawl or spend half its movement to stand. Disadvantage on attacks; melee attacks against it have advantage, ranged ones disadvantage.": "Musí lézt, nebo vynaložit polovinu pohybu na vstání. Má nevýhodu k útokům; útoky na blízko proti němu mají výhodu, útoky na dálku nevýhodu.",
+    "Speed 0. Attacks against it have advantage, its attacks have disadvantage, and it has disadvantage on Dexterity saves.": "Rychlost je 0. Útoky proti němu mají výhodu, jeho útoky nevýhodu a má nevýhodu k záchranným hodům na Obratnost.",
+    "Incapacitated, cannot move, speaks falteringly. Auto-fails Strength and Dexterity saves; attacks against it have advantage.": "Je neschopný, nemůže se hýbat a mluví zajíkavě. Automaticky neuspěje v záchranných hodech na Sílu a Obratnost; útoky proti němu mají výhodu.",
+    "Incapacitated, unaware, drops what it holds and falls prone. Auto-fails Strength and Dexterity saves; attacks have advantage and hit within 5 feet are critical.": "Je neschopný, nevnímá okolí, upustí držené věci a padne na zem. Automaticky neuspěje v záchranných hodech na Sílu a Obratnost. Útoky proti němu mají výhodu a zásahy do 5 stop jsou kritické.",
+    "Protection and banishment: wards, shields, dispelling, and sending things back where they came from.": "Ochrana a zapuzování: ochranné bariéry, štíty, rušení magie a vracení věcí tam, odkud přišly.",
+    "Bringing things into being or across distance: summoned creatures, conjured objects, teleportation.": "Přivádění věcí na svět nebo přes vzdálenost: přivolaní tvorové, vyvolané předměty a teleportace.",
+    "Knowing: seeing far, reading thoughts, finding what is hidden, glimpsing what is to come.": "Získávání vědomostí: vidění na dálku, čtení myšlenek, odhalování skrytého a nahlížení do budoucnosti.",
+    "Influencing minds: charm, fear, sleep, suggestion, and commands the target cannot refuse.": "Ovlivňování mysli: zmámení, strach, spánek, sugesce a příkazy, které cíl nemůže odmítnout.",
+    "Raw energy: fire, lightning, cold and force, most of the blasting spells and the healing ones.": "Rýzí energie: oheň, blesky, chlad a síla, většina ničivých i léčivých kouzel.",
+    "Deceiving the senses: images, sounds, disguises and phantasms that are not really there.": "Klame smysly obrazy, zvuky, převleky a přeludy, které ve skutečnosti neexistují.",
+    "Life and death: draining vitality, raising the dead, speaking with them, and undoing death.": "Život a smrt: vysávání životní síly, oživování mrtvých, rozhovory s nimi a navracení života.",
+    "Changing what is: shape, size, substance or speed of creatures and things.": "Proměňuje existující tvory či věci: jejich tvar, velikost, látku nebo rychlost.",
     "Unknown class \"{name}\".": "Neznámé povolání „{name}“.",
     "This character already has levels in {class}.": "Postava už má úrovně v povolání {class}.",
     "To take {class}, prerequisites: {prereq}.": "Pro povolání {class} musí postava splňovat: {prereq}.",
@@ -12917,6 +12939,150 @@
     "1/long rest, for 1 minute you and adjacent allies have resistance to all damage.": "Jednou za dlouhý odpočinek máte ty a sousedící spojenci po dobu 1 minuty odolnost vůči všemu zranění."
   },
   "contexts": {
+    "blinded": {
+      "glossary.option": "Oslepený"
+    },
+    "charmed": {
+      "glossary.option": "Zmámený"
+    },
+    "deafened": {
+      "glossary.option": "Ohlušený"
+    },
+    "exhaustion": {
+      "glossary.option": "Únava"
+    },
+    "frightened": {
+      "glossary.option": "Vystrašený"
+    },
+    "grappled": {
+      "glossary.option": "Uchvácený"
+    },
+    "incapacitated": {
+      "glossary.option": "Neschopný"
+    },
+    "invisible": {
+      "glossary.option": "Neviditelný"
+    },
+    "paralyzed": {
+      "glossary.option": "Paralyzovaný"
+    },
+    "petrified": {
+      "glossary.option": "Zkamenělý"
+    },
+    "poisoned": {
+      "glossary.option": "Otrávený"
+    },
+    "prone": {
+      "glossary.option": "Ležící"
+    },
+    "restrained": {
+      "glossary.option": "Zadržený"
+    },
+    "stunned": {
+      "glossary.option": "Ochromený"
+    },
+    "unconscious": {
+      "glossary.option": "V bezvědomí"
+    },
+    "abjuration": {
+      "glossary.option": "Vymítání"
+    },
+    "conjuration": {
+      "glossary.option": "Vyvolávání"
+    },
+    "divination": {
+      "glossary.option": "Věštění"
+    },
+    "enchantment": {
+      "glossary.option": "Očarování"
+    },
+    "evocation": {
+      "glossary.option": "Zaklínání"
+    },
+    "illusion": {
+      "glossary.option": "Iluze"
+    },
+    "necromancy": {
+      "glossary.option": "Nekromancie"
+    },
+    "transmutation": {
+      "glossary.option": "Transmutace"
+    },
+    "ammunition": {
+      "glossary.option": "Střelná"
+    },
+    "double-headed": {
+      "glossary.option": "Dvouhlavá"
+    },
+    "finesse": {
+      "glossary.option": "Vytříbená"
+    },
+    "gunpowder": {
+      "glossary.option": "Střelný prach"
+    },
+    "heavy": {
+      "glossary.option": "Těžká"
+    },
+    "light": {
+      "glossary.option": "Lehká"
+    },
+    "loading": {
+      "glossary.option": "Nabíjecí"
+    },
+    "magazine": {
+      "glossary.option": "Zásobník"
+    },
+    "reach": {
+      "glossary.option": "S dosahem"
+    },
+    "special": {
+      "glossary.option": "Speciální"
+    },
+    "thrown": {
+      "glossary.option": "Vrhací"
+    },
+    "two-handed": {
+      "glossary.option": "Obouruční"
+    },
+    "versatile": {
+      "glossary.option": "Univerzální"
+    },
+    "acid": {
+      "glossary.option": "Kyselinové"
+    },
+    "bludgeoning": {
+      "glossary.option": "Drtivé"
+    },
+    "cold": {
+      "glossary.option": "Chladné"
+    },
+    "fire": {
+      "glossary.option": "Ohnivé"
+    },
+    "force": {
+      "glossary.option": "Silové"
+    },
+    "lightning": {
+      "glossary.option": "Bleskové"
+    },
+    "necrotic": {
+      "glossary.option": "Nekrotické"
+    },
+    "piercing": {
+      "glossary.option": "Bodné"
+    },
+    "poison": {
+      "glossary.option": "Jedové"
+    },
+    "psychic": {
+      "glossary.option": "Psychické"
+    },
+    "radiant": {
+      "glossary.option": "Zářivé"
+    },
+    "thunder": {
+      "glossary.option": "Hromové"
+    },
     "Paint one": {
       "campaign.cover.paint": "Vytvořit obrázek"
     },
@@ -13491,6 +13657,7 @@
       "builder.math.saveOf": "Záchrana na {ability}"
     },
     "slashing": {
+      "glossary.option": "Sečné",
       "workshop.bestiary.attack.typePlaceholder": "sečné"
     },
     " and ": {

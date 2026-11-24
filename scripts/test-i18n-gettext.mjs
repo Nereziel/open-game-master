@@ -37,7 +37,7 @@ assert.equal(catalogReady("fr"), true);
 // The generated official-name inventory must describe its actual tables.
 const { FR_NAMES_BY_TABLE, FR_NAME_COUNTS } = await import("../src/lib/content/names-fr.ts");
 assert.deepEqual(FR_NAME_COUNTS, Object.fromEntries(Object.entries(FR_NAMES_BY_TABLE).map(([table, entries]) => [table, Object.keys(entries).length])));
-const { localeFromAcceptLanguage, localeOfServerLanguage, resolveLocale, resolveRequestLocale } = await import("../src/lib/i18n/locale.ts");
+const { localeFromAcceptLanguage, localeOfServerLanguage, resolveLocale, resolveRequestLocale, resolveApiLocale } = await import("../src/lib/i18n/locale.ts");
 const frCatalog = JSON.parse(fs.readFileSync(new URL("../src/lib/i18n/fr.json", import.meta.url), "utf8"));
 
 // JSON.parse keeps the last of two equal keys without a word, so a key that
@@ -127,6 +127,30 @@ for (const [language, locale, catalog] of [["french", "fr", frCatalog], ["czech"
 for (const language of ["english", "italian", "german", undefined, null]) {
   assert.equal(tableTranslator(language)("Session {n} begins.", { n: 7 }), "Session 7 begins.");
 }
+
+// API requests follow explicit header > cookie > server default > browser.
+const apiRequest = (headers) => new Request("http://localhost/", { headers });
+assert.equal(resolveApiLocale(apiRequest({ "accept-language": "en" }), "cs"), "cs");
+assert.equal(resolveApiLocale(apiRequest({ cookie: "odm_locale=fr", "accept-language": "en" }), "cs"), "fr");
+assert.equal(resolveApiLocale(apiRequest({ "x-odm-locale": "en", cookie: "odm_locale=fr" }), "cs"), "en");
+assert.equal(resolveApiLocale(apiRequest({ "x-odm-locale": "unknown", cookie: "odm_locale=%zz" }), "cs"), "cs");
+
+const { glossaryFor, glossaryText, CONDITION_BLURBS, SPELL_SCHOOL_BLURBS, WEAPON_PROPERTY_BLURBS, DAMAGE_TYPE_BLURBS } = await import("../src/lib/help/terms.ts");
+for (const table of [CONDITION_BLURBS, SPELL_SCHOOL_BLURBS, WEAPON_PROPERTY_BLURBS, DAMAGE_TYPE_BLURBS]) {
+  const entries = glossaryFor(Object.keys(table), table);
+  const original = structuredClone(entries);
+  for (const [locale, catalog] of [["fr", frCatalog], ["cs", csCatalog]]) {
+    for (const entry of entries) {
+      const label = catalog.contexts[entry.optionKey]?.["glossary.option"];
+      assert.ok(label && catalog.messages[entry.blurb], `${locale}: ${entry.name}`);
+      assert.equal(glossaryText([entry], locale), `${label}: ${catalog.messages[entry.blurb]}`);
+    }
+  }
+  assert.deepEqual(entries, original);
+}
+assert.equal(glossaryText([{ name: "light", blurb: "Custom text" }], "cs"), "light: Custom text");
+assert.equal(glossaryText(glossaryFor(["Light"], WEAPON_PROPERTY_BLURBS), "cs").split(":")[0], "Lehká");
+assert.equal(glossaryText(glossaryFor(["loading"], WEAPON_PROPERTY_BLURBS), "cs").split(":")[0], "Nabíjecí");
 
 // 6. Catalog integrity: every French entry preserves the English {placeholders}
 // (omitting English-only {article} where French uses no indefinite article).

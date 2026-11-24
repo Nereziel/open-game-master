@@ -1,5 +1,27 @@
 {
   "messages": {
+    "Cannot see. Fails any check that needs sight; attacks against it have advantage, its own attacks have disadvantage.": "Ne voit pas et échoue automatiquement à tout test nécessitant la vue. Les attaques contre lui ont l’avantage, ses propres attaques ont le désavantage.",
+    "Cannot attack the charmer or target them with harmful effects; the charmer has advantage on social checks against it.": "Ne peut pas attaquer celui qui l’a charmé ni le viser par un effet nuisible. Celui-ci a l’avantage aux tests sociaux contre la créature charmée.",
+    "Cannot hear. Fails any check that needs hearing.": "N’entend pas et échoue automatiquement à tout test nécessitant l’ouïe.",
+    "Six worsening levels, from disadvantage on checks to death. Usually one level clears per long rest.": "Six niveaux aux effets croissants, du désavantage aux tests jusqu’à la mort. Un repos long retire généralement un niveau.",
+    "Disadvantage on checks and attacks while the source of fear is in sight, and cannot willingly move closer to it.": "A le désavantage aux tests et aux attaques tant que la source de sa peur est en vue, et ne peut pas s’en approcher volontairement.",
+    "Speed becomes 0. Ends if the grappler is incapacitated or the two are forced apart.": "Sa vitesse tombe à 0. L’état cesse si celui qui l’empoigne est neutralisé ou si les deux sont séparés de force.",
+    "Cannot take actions or reactions.": "Ne peut effectuer ni action ni réaction.",
+    "Cannot be seen without magic or a special sense. Attacks against it have disadvantage, its attacks have advantage.": "Ne peut être vu sans magie ni sens spécial. Les attaques contre lui ont le désavantage, ses attaques ont l’avantage.",
+    "Incapacitated and cannot move or speak. Auto-fails Strength and Dexterity saves; attacks against it have advantage and hit within 5 feet are critical.": "Neutralisé, incapable de bouger ou de parler. Échoue automatiquement aux jets de sauvegarde de Force et de Dextérité ; les attaques contre lui ont l’avantage et les coups à 1,50 mètre sont critiques.",
+    "Turned to stone: incapacitated, unaware, weighs ten times as much, resists all damage, immune to poison and disease.": "Transformé en pierre : neutralisé, inconscient de son environnement, pèse dix fois plus, résiste à tous les dégâts et est immunisé au poison et aux maladies.",
+    "Must crawl or spend half its movement to stand. Disadvantage on attacks; melee attacks against it have advantage, ranged ones disadvantage.": "Doit ramper ou dépenser la moitié de son déplacement pour se relever. Ses attaques ont le désavantage ; les attaques de mêlée contre lui ont l’avantage, celles à distance le désavantage.",
+    "Speed 0. Attacks against it have advantage, its attacks have disadvantage, and it has disadvantage on Dexterity saves.": "Vitesse 0. Les attaques contre lui ont l’avantage, les siennes le désavantage, ainsi que ses jets de sauvegarde de Dextérité.",
+    "Incapacitated, cannot move, speaks falteringly. Auto-fails Strength and Dexterity saves; attacks against it have advantage.": "Neutralisé, ne peut pas bouger et parle avec difficulté. Échoue automatiquement aux jets de sauvegarde de Force et de Dextérité ; les attaques contre lui ont l’avantage.",
+    "Incapacitated, unaware, drops what it holds and falls prone. Auto-fails Strength and Dexterity saves; attacks have advantage and hit within 5 feet are critical.": "Neutralisé, ne perçoit pas son environnement, lâche ce qu’il tient et tombe à terre. Échoue automatiquement aux jets de sauvegarde de Force et de Dextérité ; les attaques contre lui ont l’avantage et les coups à 1,50 mètre sont critiques.",
+    "Protection and banishment: wards, shields, dispelling, and sending things back where they came from.": "Protection et bannissement : barrières, boucliers, dissipation et renvoi des choses d’où elles viennent.",
+    "Bringing things into being or across distance: summoned creatures, conjured objects, teleportation.": "Fait apparaître ou transporte à distance : créatures invoquées, objets créés et téléportation.",
+    "Knowing: seeing far, reading thoughts, finding what is hidden, glimpsing what is to come.": "Connaissance : voir au loin, lire les pensées, découvrir ce qui est caché et entrevoir l’avenir.",
+    "Influencing minds: charm, fear, sleep, suggestion, and commands the target cannot refuse.": "Influence l’esprit : charme, peur, sommeil, suggestion et ordres auxquels la cible ne peut se soustraire.",
+    "Raw energy: fire, lightning, cold and force, most of the blasting spells and the healing ones.": "Énergie brute : feu, foudre, froid et force, la plupart des sorts destructeurs et des sorts de soins.",
+    "Deceiving the senses: images, sounds, disguises and phantasms that are not really there.": "Trompe les sens par des images, des sons, des déguisements et des visions qui ne sont pas réels.",
+    "Life and death: draining vitality, raising the dead, speaking with them, and undoing death.": "Vie et mort : absorber la vitalité, relever les morts, leur parler et revenir sur la mort.",
+    "Changing what is: shape, size, substance or speed of creatures and things.": "Transforme ce qui existe : forme, taille, substance ou vitesse des créatures et des objets.",
     "Unlink it": "Délier",
     "Made {made} of {total}. One was not made: each can be retried on its own below.": "{made} créés sur {total}. Un n’a pas été créé : chacun peut être relancé seul ci-dessous.",
     ". Nothing is made yet.": ". Rien n’est fait encore.",
@@ -11039,6 +11061,150 @@
     "Concussive sound: thunderwave, shatter, a giant's shout.": "Onde sonore : vague tonnante, fracassement, cri de géant."
   },
   "contexts": {
+    "blinded": {
+      "glossary.option": "Aveuglé"
+    },
+    "charmed": {
+      "glossary.option": "Charmé"
+    },
+    "deafened": {
+      "glossary.option": "Assourdi"
+    },
+    "exhaustion": {
+      "glossary.option": "Épuisement"
+    },
+    "frightened": {
+      "glossary.option": "Effrayé"
+    },
+    "grappled": {
+      "glossary.option": "Empoigné"
+    },
+    "incapacitated": {
+      "glossary.option": "Neutralisé"
+    },
+    "invisible": {
+      "glossary.option": "Invisible"
+    },
+    "paralyzed": {
+      "glossary.option": "Paralysé"
+    },
+    "petrified": {
+      "glossary.option": "Pétrifié"
+    },
+    "poisoned": {
+      "glossary.option": "Empoisonné"
+    },
+    "prone": {
+      "glossary.option": "À terre"
+    },
+    "restrained": {
+      "glossary.option": "Entravé"
+    },
+    "stunned": {
+      "glossary.option": "Étourdi"
+    },
+    "unconscious": {
+      "glossary.option": "Inconscient"
+    },
+    "abjuration": {
+      "glossary.option": "Abjuration"
+    },
+    "conjuration": {
+      "glossary.option": "Invocation"
+    },
+    "divination": {
+      "glossary.option": "Divination"
+    },
+    "enchantment": {
+      "glossary.option": "Enchantement"
+    },
+    "evocation": {
+      "glossary.option": "Évocation"
+    },
+    "illusion": {
+      "glossary.option": "Illusion"
+    },
+    "necromancy": {
+      "glossary.option": "Nécromancie"
+    },
+    "transmutation": {
+      "glossary.option": "Transmutation"
+    },
+    "ammunition": {
+      "glossary.option": "Munitions"
+    },
+    "double-headed": {
+      "glossary.option": "Double lame"
+    },
+    "finesse": {
+      "glossary.option": "Finesse"
+    },
+    "gunpowder": {
+      "glossary.option": "Poudre noire"
+    },
+    "heavy": {
+      "glossary.option": "Lourde"
+    },
+    "light": {
+      "glossary.option": "Légère"
+    },
+    "loading": {
+      "glossary.option": "Chargement"
+    },
+    "magazine": {
+      "glossary.option": "Chargeur"
+    },
+    "reach": {
+      "glossary.option": "Allonge"
+    },
+    "special": {
+      "glossary.option": "Spéciale"
+    },
+    "thrown": {
+      "glossary.option": "Lancer"
+    },
+    "two-handed": {
+      "glossary.option": "Deux mains"
+    },
+    "versatile": {
+      "glossary.option": "Polyvalente"
+    },
+    "acid": {
+      "glossary.option": "Acide"
+    },
+    "bludgeoning": {
+      "glossary.option": "Contondants"
+    },
+    "cold": {
+      "glossary.option": "Froid"
+    },
+    "fire": {
+      "glossary.option": "Feu"
+    },
+    "force": {
+      "glossary.option": "Force"
+    },
+    "lightning": {
+      "glossary.option": "Foudre"
+    },
+    "necrotic": {
+      "glossary.option": "Nécrotiques"
+    },
+    "piercing": {
+      "glossary.option": "Perforants"
+    },
+    "poison": {
+      "glossary.option": "Poison"
+    },
+    "psychic": {
+      "glossary.option": "Psychiques"
+    },
+    "radiant": {
+      "glossary.option": "Radiants"
+    },
+    "thunder": {
+      "glossary.option": "Tonnerre"
+    },
     "Arcane": {
       "appearance.theme.arcane": "Arcanes"
     },
@@ -11646,6 +11812,7 @@
       "builder.math.saveOf": "jet de {ability}"
     },
     "slashing": {
+      "glossary.option": "Tranchants",
       "workshop.bestiary.attack.typePlaceholder": "tranchants"
     },
     " and ": {
