@@ -117,3 +117,114 @@ Commity: `c7b2a9a`, `33d924b`, `01c8a6e`, `b275f8e`, `a373d27`, `603d895`, `5f26
 - Lokální npm příkazy nebyly provedeny: checkout přes GitHub v sandboxu selhal na DNS. #117 již řeší zděděná selhání; nepřenášet sem jeho opravy. Finální CI musí odpovídat finálnímu SHA; neoznačovat zrušené či nedokončené kontroly za úspěšné.
 
 Commity nového průchodu: `43a37e6`, `2301222`, `1d0051a`, `2a48418`, `94e44cd`, `027ff47`, `7273d61`, `c69794f`, `e223d3b`, `7de6e1b`, `b7bf2ec`. Žádná změna produkční aplikační logiky. Před případným merge znovu ověřit CI, head/base a splnění podmínky bez nových regresí.
+
+## Přímá kontrola názvů z Xanatharova průvodce
+
+Porovnání tabulky oborů a tabulek schopností všech 27 oborů v [kapitole 1](https://dnd5esrd.d20.cz/xanathar/1-kapitola.html) s vestavěným subclasses.json. Při rozporu v samotném překladu d20 preferován nadpis konkrétní schopnosti (např. Cesta fanatika, Zuřící bouře). Opraveno 105 názvů v tabulce povolání/schopností a 3 přímo párovatelných UI hodnot; jednoznačné názvy zdrojů schopností synchronizovány. Rozdílné mechaniky se stejným anglickým názvem nejsou slepě spojovány. Záznamy: 
+- `barbarian:ancestral-protectors`: Ochránci předků → Rodoví ochránci
+- `barbarian:consult-the-spirits`: Rozmluva s duchy → Porada s duchy
+- `barbarian:divine-fury`: Božská zuřivost → Božský hněv
+- `barbarian:warrior-of-the-gods`: Bojovník bohů → Válečník bohů
+- `barbarian:fanatical-focus`: Fanatické soustředění → Fanatické zaměření
+- `barbarian:zealous-presence`: Horlivá přítomnost → Horlivé vystupování
+- `barbarian:rage-beyond-death`: Zuřivost za hranicí smrti → Zuřivost až za hrob
+- `bard:mantle-of-inspiration`: Plášť inspirace → Pelerína inspirace
+- `bard:enthralling-performance`: Podmanivé vystoupení → Ohromující umění
+- `bard:mantle-of-majesty`: Plášť majestátu → Pelerína majestátu
+- `bard:unbreakable-majesty`: Nezlomný majestát → Neporušitelný majestát
+- `bard:blade-flourish`: Efektní výpad čepelí → Máchnutí
+- `bard:masters-flourish`: Mistrovský výpad → Mistrovské máchnutí
+- `bard:words-of-terror`: Slova hrůzy → Děsivá slova
+- `bard:mantle-of-whispers`: Plášť šepotů → Pelerína klepů
+- `bard:shadow-lore`: Tajemství stínů → Znalost stínu
+- `cleric:channel-divinity-guided-strike`: Božská přízeň: Řízený úder → Božská přízeň: Naváděný úder
+- `cleric:bonus-proficiencies-forge`: Bonusové zdatnosti (Výheň) → Bonusové zdatnosti (Kovárna)
+- `cleric:blessing-of-the-forge`: Požehnání výhně → Požehnání kovárny
+- `cleric:channel-divinity-artisans-blessing`: Božská přízeň: Požehnání řemeslníka → Božská přízeň: Řemeslnické požehnání
+- `cleric:soul-of-the-forge`: Duše výhně → Duše kovárny
+- `cleric:saint-of-forge-and-fire`: Světec výhně a ohně → Svatost kovárny a ohně
+- `cleric:circle-of-mortality`: Kruh smrtelnosti → Kruh úmrtnosti
+- `cleric:channel-divinity-path-to-the-grave`: Božská přízeň: Cesta do hrobu → Božská přízeň: Cesta k hrobu
+- `cleric:sentinel-at-deaths-door`: Strážce na prahu smrti → Strážce u prahu smrti
+- `cleric:keeper-of-souls`: Strážce duší → Správce duší
+- `druid:balm-of-the-summer-court`: Balzám letního dvora → Balzám Letního dvora
+- `druid:hearth-of-moonlight-and-shadow`: Krb měsíčního svitu a stínu → Výheň měsíčního světla a stínu
+- `druid:walker-in-dreams`: Poutník ve snech → Snový poutník
+- `druid:mighty-summoner`: Mocný vyvolávač → Mocný přivolávač
+- `druid:guardian-spirit`: Ochranný duch → Strážný duch
+- `druid:faithful-summons`: Věrné přivolání → Věrná zvířata
+- `fighter:arcane-archer-lore`: Znalosti mystického lučištníka → Nauka Mystického lučištníka
+- `fighter:arcane-shot`: Mystická střela → Mystický výstřel
+- `fighter:curving-shot`: Střela za roh → Zakřivený výstřel
+- `fighter:ever-ready-shot`: Vždy připravená střela → Pohotový výstřel
+- `fighter:bonus-proficiency-cavalier`: Bonusová zdatnost (Kavalír) → Bonusová zdatnost (Bohatýr)
+- `fighter:born-to-the-saddle`: Zrozený v sedle → Zrozen pro sedlo
+- `fighter:ferocious-charger`: Zuřivý nájezd → Zběsilá zteč
+- `fighter:vigilant-defender`: Bdělý obránce → Bdělý ochránce
+- `fighter:fighting-spirit`: Bojový duch → Bojovný duch
+- `fighter:elegant-courtier`: Vznešený dvořan → Elegantní dvořan
+- `fighter:strength-before-death`: Síla před smrtí → Posila před smrtí
+- `monk:drunken-technique`: Opilecká technika → Opilé techniky
+- `monk:tipsy-sway`: Opilecké kolébání → Opilecké kymácení
+- `monk:drunkards-luck`: Opilecké štěstí → Opilcovo štěstí
+- `monk:intoxicated-frenzy`: Opilecké běsnění → Ožralé šílenství
+- `monk:path-of-the-kensei`: Cesta kenseie → Dráha kenseie
+- `monk:kenseis-shot`: Kenseiova střela → Kenseiský výstřel
+- `monk:one-with-the-blade`: Jednota s čepelí → Splynutí s ostřím
+- `monk:sharpen-the-blade`: Naostření čepele → Zostřený ostřím
+- `monk:searing-arc-strike`: Úder spalujícím obloukem → Spalující obloukový úder
+- `monk:searing-sunburst`: Spalující sluneční erupce → Spalující sluneční výbuch
+- `paladin:channel-divinity-conquering-presence`: Božská přízeň: Dobyvatelská přítomnost → Božská přízeň: Přemožitelské vzezření
+- `paladin:channel-divinity-guided-strike`: Božská přízeň: Řízený úder → Božská přízeň: Naváděný úder
+- `paladin:scornful-rebuke`: Pohrdavá výtka → Pohrdavé odvrácení
+- `paladin:channel-divinity-rebuke-the-violent`: Božská přízeň: Pokárání násilníků → Božská přízeň: Pokárání násilníka
+- `paladin:emissary-of-redemption`: Vyslanec vykoupení → Vyslanec spasení
+- `ranger:dread-ambusher`: Děsivé přepadení → Hrůzný útočník ze zálohy
+- `ranger:stalkers-flurry`: Série lovcových útoků → Stopařova smršť
+- `ranger:detect-portal`: Odhalení portálu → Najdi portál
+- `ranger:hunters-sense`: Lovcův smysl → Lovecké smysly
+- `ranger:magic-users-nemesis`: Zhoubce sesilatelů → Ztrestání mága
+- `ranger:slayers-counter`: Zabijákův protiútok → Zabijákova odveta
+- `rogue:ear-for-deceit`: Sluch pro lži → Ucho pro podvod
+- `rogue:insightful-fighting`: Vnímavý boj → Zasvěcený boj
+- `rogue:steady-eye`: Bdělý zrak → Stabilní oko
+- `rogue:unerring-eye`: Neomylný zrak → Neklamné oko
+- `rogue:eye-for-weakness`: Oko pro slabiny → Oko pro slabost
+- `rogue:skirmisher`: Potyčkář → Rváč
+- `rogue:survivalist`: Znalec přežití → Zálesák
+- `rogue:superior-mobility`: Výjimečná pohyblivost → Kvalitní pohyblivost
+- `rogue:ambush-master`: Mistr přepadení → Mistr útoku ze zálohy
+- `sorcerer:unearthly-recovery`: Nadpozemské zotavení → Nadpřirozené zotavení
+- `sorcerer:eyes-of-the-dark`: Oči temnoty → Oči tmy
+- `sorcerer:hound-of-ill-omen`: Ohař zlého znamení → Ohař špatného znamení
+- `sorcerer:shadow-walk`: Stínová chůze → Chůze stínem
+- `sorcerer:umbral-form`: Stínová podoba → Zastřená podoba
+- `sorcerer:wind-speaker`: Mluvčí větru → Větrný mluvčí
+- `sorcerer:storms-fury`: Bouřící zuřivost → Zuřivost bouře
+- `warlock:bonus-cantrips-celestial`: Bonusové triky (Nebeský patron) → Bonusové triky (Nebešťan)
+- `warlock:radiant-soul`: Zářivá duše → Zářící duše
+- `warlock:celestial-resilience`: Nebeská odolnost → Nebeské odolání
+- `warlock:hexblades-curse`: Kletba prokleté čepele → Zbraňové uřknutí
+- `warlock:hex-warrior`: Prokletý válečník → Žoldnéř uřknutí
+- `warlock:accursed-specter`: Prokletý přízrak → Povolej spektru
+- `warlock:armor-of-hexes`: Zbroj kleteb → Zbroj uřknutí
+- `warlock:master-of-hexes`: Mistr kleteb → Mistr uřknutí
+- `wizard:arcane-deflection`: Mystický odklon → Mystické odražení
+- `wizard:power-surge`: Výboj moci → Energetická vzpruha
+- `wizard:durable-magic`: Trvalá magie → Bytelná magie
+- `wizard:deflecting-shroud`: Odklánějící závoj → Odrazný rubáš
+- `barbarian:path-of-the-ancestral-guardian`: Cesta strážce předků → Cesta rodových strážců
+- `barbarian:path-of-the-storm-herald`: Cesta zvěstovatele bouře → Cesta bouřného posla
+- `bard:college-of-whispers`: Kolej šepotů → Kolej klepů
+- `cleric:forge-domain`: Doména výhně → Doména Kovárna
+- `cleric:grave-domain`: Doména hrobu → Doména Hrob
+- `fighter:cavalier`: Kavalír → Bohatýr
+- `paladin:oath-of-redemption`: Přísaha vykoupení → Přísaha spasení
+- `ranger:gloom-stalker`: Lovec v šeru → Stínový stopař
+- `ranger:horizon-walker`: Poutník horizontu → Světoběžník
+- `ranger:monster-slayer`: Zabiják nestvůr → Zabiják netvorů
+- `rogue:inquisitive`: Vyšetřovatel → Slídil
+- `warlock:the-celestial`: Nebeský patron → Nebešťan
+- `warlock:the-hexblade`: Prokletá čepel → Čepel uřknutí
+
+Nedostupné nebo nejednoznačné klíče k dalšímu ověření: žádné v této sadě. Nejde o úplnou revizi všech popisů či nedoložených knih. CI nového commitu dosud neověřeno.
