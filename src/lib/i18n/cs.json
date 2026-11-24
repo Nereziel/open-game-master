@@ -1,5 +1,10 @@
 {
   "messages": {
+    "{rider} or {mount}?": "{rider}, nebo {mount}?",
+    "Dark walnut, polished brass, and green baize by gaslight.": "Tmavé ořechové dřevo, leštěná mosaz a zelené sukno ve světle plynových lamp.",
+    "Roll-cage tube, tyre tread and chain: the desert road by day, the convoy's fires by night.": "Trubky ochranného rámu, vzorky pneumatik a řetězy: ve dne pouštní silnice, v noci ohně konvoje.",
+    "Black glass, magenta and cyan tube signs, and brushed steel.": "Černé sklo, purpurové a azurové neonové nápisy a kartáčovaná ocel.",
+    "Brass pipework and meshed gears, oxblood leather, and green gauge glass.": "Mosazné potrubí, ozubená kola, temně rudá kůže a zelené sklo měřidel.",
     "The Game Master writes the story in this language, and the server reads the story and your messages in it. The interface and rulebook follow your separate interface language setting, with English as the fallback for untranslated text.": "Pán jeskyně vypráví příběh v tomto jazyce a server v něm čte příběh i tvé zprávy. Rozhraní a příručka pravidel se řídí samostatným nastavením jazyka rozhraní. Nepřeložené texty se zobrazují anglicky.",
     "The element of the {label} chosen: {type}. Elemental Affinity, where the subclass has it, adds to spells of this damage type and resists it.": "Zvolený živel ({label}): {type} zranění. Živlová afinita, pokud ji archetyp má, posiluje kouzla tohoto typu zranění a poskytuje vůči němu odolání.",
     "Cannot see. Fails any check that needs sight; attacks against it have advantage, its own attacks have disadvantage.": "Tvor nevidí a automaticky neuspěje v ověření, které vyžaduje zrak. Útoky proti němu mají výhodu, jeho vlastní útoky nevýhodu.",
@@ -12941,6 +12946,18 @@
     "1/long rest, for 1 minute you and adjacent allies have resistance to all damage.": "Jednou za dlouhý odpočinek máte ty a sousedící spojenci po dobu 1 minuty odolnost vůči všemu zranění."
   },
   "contexts": {
+    "Gaslight": {
+      "appearance.theme.gaslight": "Plynové lampy"
+    },
+    "Wasteland": {
+      "appearance.theme.wasteland": "Pustina"
+    },
+    "Neon District": {
+      "appearance.theme.neon": "Neonová čtvrť"
+    },
+    "Brassworks": {
+      "appearance.theme.brassworks": "Mosazné dílny"
+    },
     "Giant": {
       "character.language": "Gigantština"
     },
