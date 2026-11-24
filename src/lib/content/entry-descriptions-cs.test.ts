@@ -88,7 +88,7 @@ describe("Czech external display translations (without SQLite)", () => {
 describe("Source-specific Czech expansion names", () => {
   it("keeps all verified source names scoped to their source and slug", () => {
     let count = 0;
-    for (const [documentSlug, tables] of Object.entries(expansionTranslations)) {
+    for (const [documentSlug, tables] of Object.entries(expansionTranslations as Record<string, Record<string, Record<string, { englishName: string; name: string }>>>)) {
       for (const [table, entries] of Object.entries(tables)) {
         for (const [slug, hit] of Object.entries(entries)) {
           const kind = table as Parameters<typeof contentName>[0];
