@@ -1,5 +1,36 @@
 {
   "messages": {
+    "Could not reach the server to search. Type again to retry.": "Nepodařilo se spojit se serverem a vyhledat položky. Zkus znovu psát.",
+    "Nothing matched \"{query}\". Try fewer letters.": "Dotazu „{query}“ nic neodpovídá. Zkus méně písmen.",
+    "fully restored": "plně zotaveno",
+    "{hp}/{max} hit points": "{hp}/{max} životů",
+    "rested": "po odpočinku",
+    "A long rest": "Důkladný odpočinek",
+    "A short rest": "Krátký odpočinek",
+    "Select anywhere, or press Esc, to return to the table": "Klikni kamkoli nebo stiskni Esc pro návrat ke stolu",
+    "The shop is not where the party is now.": "Obchod není na místě, kde se právě nachází družina.",
+    "{name} cannot trade right now.": "{name} právě nemůže obchodovat.",
+    "{shop} does not stock {item}.": "{shop} nemá v nabídce: {item}.",
+    "{shop} has only {qty} of {item}.": "{shop} má na skladě jen {qty} ks: {item}.",
+    "Not enough money: {item} x{qty} costs {price}; {name} has {purse}.": "Nedostatek peněz: {item} ×{qty} stojí {price}; {name} má {purse}.",
+    "{name} cannot carry the purchase.": "{name} neunese nákup.",
+    "{shop} does not buy items.": "{shop} nevykupuje předměty.",
+    "{name} does not carry {item}.": "{name} nemá u sebe: {item}.",
+    "This cursed item cannot be sold.": "Tento prokletý předmět nelze prodat.",
+    "{shop} does not buy this kind of magic item. Only potions and scrolls can be sold in shops.": "{shop} tento druh magických předmětů nevykupuje. V obchodech lze prodat jen lektvary a svitky.",
+    "{name} cannot haggle right now.": "{name} právě nemůže smlouvat.",
+    "{name} has already haggled at {shop}.": "{name} už v obchodě {shop} smlouval(a).",
+    "The keeper will not accept another deception attempt. Try persuasion or intimidation.": "Obchodník se nenechá znovu obelstít. Zkus přesvědčování nebo zastrašování.",
+    "{name} cannot make that check.": "{name} nemůže provést toto ověření vlastnosti.",
+    "No such shop.": "Takový obchod neexistuje.",
+    "Say what you are doing at the counter.": "Zvol, co chceš u obchodníka udělat.",
+    "You have no character to trade with.": "Nemáš postavu, se kterou bys mohl obchodovat.",
+    "already at their lowest": "už na minimu",
+    "already at their highest": "už na maximu",
+    "a step higher, as high as they go": "o stupeň výš, na maximu",
+    "a step lower": "o stupeň nižší",
+    "a step higher": "o stupeň vyšší",
+    "two steps higher": "o dva stupně vyšší",
     "{class} level {level}": "{class}, {level}. úroveň",
     "{class} level {level}, halved ({part})": "{class}, {level}. úroveň, polovina ({part})",
     "{line} (never fewer than 1)": "{line} (nejméně 1)",
@@ -13095,6 +13126,30 @@
     "Unlimited": "Neomezený"
   },
   "contexts": {
+    "magic_item": {
+      "content.itemKind": "magický předmět"
+    },
+    "gear": {
+      "content.itemKind": "výbava"
+    },
+    "armor": {
+      "content.itemKind": "zbroj"
+    },
+    "shield": {
+      "item.armorCategory": "štít"
+    },
+    "exotic": {
+      "item.weaponCategory": "exotická"
+    },
+    "firearm": {
+      "item.weaponCategory": "palná"
+    },
+    "martial": {
+      "item.weaponCategory": "vojenská"
+    },
+    "simple": {
+      "item.weaponCategory": "jednoduchá"
+    },
     "{table}: its row for the table {name} now names this campaign's own {name}, since the source's stayed behind.": {
       "workshop.import.result": "{table}: řádek odkazující na tabulku {name} nyní odkazuje na vlastní tabulku této kampaně {name}, protože zdrojová tabulka nebyla přenesena."
     },
@@ -13552,9 +13607,11 @@
       "glossary.option": "Střelný prach"
     },
     "heavy": {
+      "item.armorCategory": "těžká",
       "glossary.option": "Těžká"
     },
     "light": {
+      "item.armorCategory": "lehká",
       "glossary.option": "Lehká"
     },
     "loading": {
@@ -13792,6 +13849,7 @@
       "builder.undo.noun.level": "úroveň"
     },
     "weapon": {
+      "content.itemKind": "zbraň",
       "table.hand.attack.offhand.word.weapon": "zbraň"
     },
     "class": {
@@ -14419,6 +14477,7 @@
       "pdf.stop": "Zastavit"
     },
     "medium": {
+      "item.armorCategory": "střední",
       "workbench.band.medium": "střední"
     },
     "Could not save that.": {
