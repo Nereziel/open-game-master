@@ -287,4 +287,94 @@ test("an empty plan says nothing rather than rendering blank", () => {
   assert.equal(planSummary(scenario({ selection: [] })), "nothing");
 });
 
+
+const { importKindLabel, importWarningText } = await import("../src/lib/workshop/import-display.ts");
+const { translate, installCatalog } = await import("../src/lib/i18n/translate.ts");
+const fs = await import("node:fs");
+const { checkProse, proseWarningParts, proseWarningLine } = await import("../src/lib/workshop/prose-check.ts");
+const { summarizeCompile } = await import("../src/lib/workshop/board-compile.ts");
+const importCatalogs = Object.fromEntries(["cs", "fr"].map((locale) => {
+  const catalog = JSON.parse(fs.readFileSync(new URL(`../src/lib/i18n/${locale}.json`, import.meta.url), "utf8"));
+  installCatalog(locale, catalog);
+  return [locale, catalog];
+}));
+
+test("localized import previews preserve plan data and authored names", () => {
+  const input = {
+    selection: ["world", "shops", "tables", "houseRules", "overworld"],
+    exclude: ["locations"],
+    source: {
+      ...emptySource(),
+      world: named("WorldForge"), locations: named("Rusted Anchor Inn"),
+      lore: named("Old legend"), npcs: named("Captain"), factions: named("Guild"),
+      maps: named("Map"), encounters: named("Fight"),
+      shops: [{ id: "shop", name: "Shop", placeId: "id-0", keeperId: "missing", lines: 3 }],
+      tables: named("Table"), houseRules: named("House rules"), overworld: named("Region map"),
+    },
+    existing: { ...emptyExisting(), shops: ["Shop"], overworld: ["Region map"] },
+    targetHasHouseRules: true,
+    worldFacts: { locations: { entries: 1, links: 2, pins: 3, secrets: 4, events: 5 } },
+    worldBound: { maps: 2, encounters: 3 },
+    foreignItems: ["Rusted Anchor", "Rusted Anchor"],
+    foreignMonsters: ["Frost Wyrm"],
+    tableRowsLeft: 2,
+  };
+  const prose = "The door opens.The captain waits.The room is dark.";
+  const warnings = checkProse(prose);
+  const board = {
+    links: { npcs: ["missing"], maps: ["id-0"], encounters: ["id-0"], locations: ["id-0"] },
+    common: null, beats: ["A", "B"], moments: 3,
+    arcProblem: "",
+    beatTitles: ["A", "B"], momentTitles: ["Custom scene A", "Custom scene B", "Custom scene C"],
+    proseNotes: [{ title: "Original title", message: proseWarningLine(warnings), parts: proseWarningParts(warnings, prose) }],
+  };
+  const plans = [
+    planImport(input),
+    planImport({ ...input, selection: ["storyboard"], source: { ...input.source, storyboard: named("Board") }, board,
+      targetArc: { beats: ["A"], acts: 1, room: 1, actRoom: true, eventRoom: 0 }, arcMode: "append" }),
+    planImport({ ...input, selection: ["storyboard"], source: { ...input.source, storyboard: named("Board") },
+      board: { ...board, arcProblem: "Original refusal", arcProblemDisplay: { key: "An arc needs at least {min} things that happen; the board has {count}.", vars: { min: 2, count: 1 } } } }),
+    planImport({ ...input, selection: ["shops"], alreadyHere: { shops: ["shop"] }, again: "skip" }),
+    planImport({ ...input, selection: ["shops"], alreadyHere: { shops: ["shop"] }, again: "copy" }),
+  ];
+  for (const plan of plans) {
+    const snapshot = structuredClone(plan);
+    for (const warning of [...plan.warnings, ...plan.notes]) {
+      assert.ok(warning.display, warning.message);
+      assert.equal(importWarningText(warning, (key, vars) => translate("en", key, vars), "en"), warning.message);
+      for (const locale of ["cs", "fr"]) {
+        assert.ok(importCatalogs[locale].contexts[warning.display.key]?.["workshop.import.plan"], warning.display.key);
+        const t = (key, vars) => translate(locale, key, vars);
+        const text = importWarningText(warning, t, locale);
+        assert.notEqual(text, warning.message, warning.display.key);
+        assert.doesNotMatch(text, /\{(?:count|kind|kinds|losses|cards|detail|names|room|limit|total|act|previous|lines|title|copied|reused)\}/);
+      }
+    }
+    assert.deepEqual(plan, snapshot);
+  }
+  const cs = (key, vars) => translate("cs", key, vars);
+  const messages = plans.flatMap((plan) => [...plan.warnings, ...plan.notes]).map((warning) => importWarningText(warning, cs, "cs"));
+  assert.ok(messages.some((line) => line.includes("Rusted Anchor")));
+  assert.ok(messages.some((line) => line.includes("Frost Wyrm")));
+  assert.ok(messages.some((line) => line.includes("Original title") && line.includes("mezera po větě")));
+  assert.ok(messages.some((line) => line.includes("Custom scene A")));
+  assert.ok(messages.some((line) => line.includes("scénář jich má 1")));
+  assert.ok(messages.some((line) => line.includes("Mapové značky: 3")));
+  for (const kind of IMPORT_KINDS) {
+    assert.ok(importCatalogs.cs.contexts[IMPORT_KIND_LABELS[kind]]?.["workshop.import.kind"]);
+    assert.ok(importCatalogs.fr.contexts[IMPORT_KIND_LABELS[kind]]?.["workshop.import.kind"]);
+    assert.equal(importKindLabel(kind, cs), importCatalogs.cs.contexts[IMPORT_KIND_LABELS[kind]]["workshop.import.kind"]);
+  }
+  const legacy = { kind: "world", message: "Unknown original message" };
+  assert.equal(importWarningText(legacy, cs, "cs"), legacy.message);
+  assert.equal(importWarningText({ ...legacy, display: { key: "Unregistered message" } }, cs, "cs"), legacy.message);
+});
+
+test("storyboard refusal retains the original English and supplies structured detail", () => {
+  const compiled = { lore: [], quests: [], encounters: [], notes: [], moments: [], arcBeats: ["One"], premise: "World" };
+  const summary = summarizeCompile(compiled, false);
+  assert.equal(summary.arcRefusal, "An arc needs at least 2 things that happen; the board has 1.");
+  assert.deepEqual(summary.arcRefusalDisplay, { key: "An arc needs at least {min} things that happen; the board has {count}.", vars: { min: 2, count: 1 } });
+});
+
 console.log(`workshop import: ${passed} assertions passed.`);
