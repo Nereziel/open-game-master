@@ -27,6 +27,13 @@ describe("Czech locale following the upstream French catalog", () => {
     expect(localeOfServerLanguage("italian")).toBeNull();
   });
 
+  it("explains automatic language selection in both translated interfaces", () => {
+    const help = "The language of the menus and screens. Automatic uses the server language when a matching non-English interface is available, otherwise the browser language. The Game Master narrates in the table's own language.";
+    expect(translate("en", help)).toBe(help);
+    expect(translate("cs", help)).toContain("jazyk serveru");
+    expect(translate("fr", help)).toContain("langue du serveur");
+  });
+
   it("installs the original Czech gettext catalog", () => {
     expect(catalogInstalled("cs")).toBe(true);
     expect(translate("cs", "Language")).toBe("Jazyk");
