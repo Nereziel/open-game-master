@@ -10,6 +10,7 @@ import { createRequire } from "node:module";
 import { join } from "node:path";
 import { fileURLToPath } from "node:url";
 import { register } from "node:module";
+import { collectItemAliases, sortedItemAliases } from "./lib/localized-item-index.mjs";
 
 register("./lib/register-alias.mjs", import.meta.url);
 
@@ -372,6 +373,25 @@ test("localized SRD item names resolve without srdName and English names retain 
   assert.match(refused.stderr, /--check is read-only/);
   const built = spawnSync(process.execPath, [fileURLToPath(new URL("./build-names-fr.mjs", import.meta.url)), "--check"], { encoding: "utf8" });
   assert.equal(built.status, 0, `build-names-fr --check: ${built.stderr}`);
+});
+
+test("shared alias generation rejects collisions across any number of locale sources", () => {
+  const englishOf = { weapons: (key) => ({ a: "Spear", b: "Lance", c: "Longsword" })[key] };
+  const englishByKey = new Map(["Spear", "Lance", "Longsword"].map((name) => [textKey(name), name]));
+  const sources = [
+    { weapons: { a: "Alias", c: "Alias" } },
+    { weapons: { a: "Alias", b: "Bident" } },
+    { weapons: { b: "Bident", a: "Lance" } },
+  ];
+  for (const order of [sources, [...sources].reverse(), [sources[1], sources[0], sources[2]]]) {
+    const aliases = new Map();
+    for (const tables of order) {
+      collectItemAliases({ tables, englishOf, englishByKey, textKey, aliases });
+    }
+    assert.equal(aliases.get(textKey("Alias")), null);
+    assert.deepEqual(sortedItemAliases(aliases), { [textKey("Bident")]: "Lance" });
+    assert.ok(!aliases.has(textKey("Lance")), "canonical English names are protected");
+  }
 });
 
 test("rowName is the one place an item's srdName is read before its own name", () => {
