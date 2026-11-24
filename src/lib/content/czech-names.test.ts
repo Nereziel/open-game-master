@@ -14,7 +14,7 @@ import csCatalog from "../i18n/cs.json";
 import frCatalog from "../i18n/fr.json";
 import { installCsTables } from "../i18n/cs-tables";
 import { installCatalog } from "../i18n/translate";
-import { registerFeatureText } from "../classes/feature-text";
+import { registerFeatureText, type FeaturesFile } from "../classes/feature-text";
 import { describeFeature } from "../help";
 import darkFantasyFeatures from "../classes/dark-fantasy-features.json";
 import cyberpunkFeatures from "../classes/cyberpunk-features.json";
@@ -67,7 +67,7 @@ describe("Czech content names through upstream helpers", () => {
 
   it("localizes every bundled genre class rule and subclass through the sheet help resolver", () => {
     installCatalog("cs", csCatalog);
-    const catalogs = [darkFantasyFeatures, cyberpunkFeatures, horrorFeatures, mysteryFeatures, postApocalypticFeatures, steampunkFeatures];
+    const catalogs: FeaturesFile[] = [darkFantasyFeatures, cyberpunkFeatures, horrorFeatures, mysteryFeatures, postApocalypticFeatures, steampunkFeatures];
     const messages: Record<string, string> = csCatalog.messages;
     expect(subclassName("grave_knight", "Court of the Wilted Rose", "cs")).toBe("Dvůr zvadlé růže");
     let classes = 0;
