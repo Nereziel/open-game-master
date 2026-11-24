@@ -1,4 +1,5 @@
 // Load only the selected locale's catalog and name tables in the browser.
+import { localizedTables } from "./localized-tables.ts";
 import { installFrTables } from "./fr-tables.ts";
 import { installCsTables } from "./cs-tables.ts";
 import { catalogInstalled, installCatalog, type Locale } from "./translate.ts";
@@ -23,10 +24,14 @@ const loaders: Record<Exclude<Locale, "en">, () => Promise<void>> = {
 
 const loading = new Map<Locale, Promise<void>>();
 
+export function catalogReady(locale: Locale): boolean {
+  return locale === "en" || (catalogInstalled(locale) && localizedTables(locale) !== null);
+}
+
 export function loadCatalog(locale: Locale): Promise<void> {
   let pending = loading.get(locale);
   if (pending) return pending;
-  if (locale === "en" || catalogInstalled(locale)) {
+  if (locale === "en" || catalogReady(locale)) {
     pending = Promise.resolve();
   } else {
     pending = loaders[locale]().catch((error) => {
