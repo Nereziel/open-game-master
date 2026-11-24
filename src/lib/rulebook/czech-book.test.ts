@@ -16,6 +16,7 @@ describe("Czech SRD companion in the upstream book reader", () => {
     const fr = rulebookPages("fr");
     const cs = rulebookPages("cs");
     expect(en).toHaveLength(933);
+    expect(new Set(en.map(page => page.id)).size).toBe(933);
     expect(cs.map(page => page.id)).toEqual(en.map(page => page.id));
     expect(fr.map(page => page.id)).toEqual(en.map(page => page.id));
     expect(rulebookContents("cs").pageCount).toBe(en.length);

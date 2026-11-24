@@ -80,7 +80,14 @@ describe("Czech content names through upstream helpers", () => {
         expect(subclassName(id, subclass, "cs"), id).not.toBe(subclass);
         for (const row of [...Object.values(table.levels), ...Object.values(table.subclass.levels)].flat()) {
           features += 1;
-          expect(classFeatureName(id, row.n, "cs"), row.n).not.toBe(row.n);
+          // Alkahest has an explicit Czech entry with the same spelling. A
+          // missing entry must still fail; all other names must be localized.
+          if (id === "alchemist" && row.n === "Alkahest") {
+            expect(CS_NAMES_BY_TABLE.classFeatures["alchemist:alkahest"]).toBe("Alkahest");
+            expect(classFeatureName(id, row.n, "cs")).toBe("Alkahest");
+          } else {
+            expect(classFeatureName(id, row.n, "cs"), row.n).not.toBe(row.n);
+          }
           expect(messages[row.d], row.n).toBeTruthy();
           expect(describeFeature(id, subclass, row.n, "cs"), row.n).toBe(messages[row.d]);
           expect(describeFeature(id, subclass, row.n, "en"), row.n).toBe(row.d);

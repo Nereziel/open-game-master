@@ -2019,6 +2019,11 @@
         "key",
         3,
         "UI: ids, fixed choices, DOM and keyboard names, stored values"
+      ],
+      [
+        "key",
+        2,
+        "Fixed route kind and locale choices for the Czech display adapter and canonical ID fallback."
       ]
     ],
     "app/api/content/[kind]/[slug]/route.ts#str-key": [
@@ -25824,6 +25829,34 @@
         "key",
         1,
         "Static bundled Czech SRD translation dictionary keyed by canonical page ID or original title."
+      ]
+    ],
+    "lib/content/entry-descriptions-cs.ts#str-eq": [
+      [
+        "key",
+        2,
+        "Check the published SRD source and document identifiers; never infer source from prose."
+      ]
+    ],
+    "lib/content/entry-descriptions-cs.ts#str-key": [
+      [
+        "key",
+        1,
+        "Map fixed API content table keys to canonical rulebook kinds."
+      ]
+    ],
+    "lib/content/entry-descriptions-cs.test.ts#str-eq": [
+      [
+        "key",
+        1,
+        "Select the exact canonical fireball rulebook ID in the regression fixture."
+      ]
+    ],
+    "lib/content/czech-names.test.ts#str-eq": [
+      [
+        "english-source",
+        2,
+        "Explicit bundled alchemist ID and source feature spelling for the same-spelling Czech Alkahest regression."
       ]
     ]
   }
