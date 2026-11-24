@@ -52,9 +52,27 @@ export const STARTER_ONE_SHOT_FR = {
   ].join("\n\n"),
 };
 
+// The Czech table uses the same adventure and canonical identity.
+const STARTER_ONE_SHOT_CS = {
+  title: "Umlklý zvon v Marrowově Brodě",
+  tagline: "Dobrodružství na jeden večer pro začátečníky s připravenými hrdiny.",
+  description:
+    "Marrowův Brod je vesnice na břehu řeky se čtyřiceti obyvateli. Zvon v její kapli odbíjel hodiny už dvě stě let. Před třemi nocemi umlkl. Kostelníka od té doby nikdo neviděl, přívoz po setmění nejezdí a vesnická rada vyplatí dvacet zlaťáků na osobu tomu, kdo zjistí proč. Přicházíte za soumraku, když se nad řekou zvedá mlha.",
+  theme: "Vesnice u řeky zahalená mlhou, kaple na kopci a krypta pod ní",
+  outline: [
+    "JEDNORÁZOVÉ DOBRODRUŽSTVÍ: tři části, jeden večer. Udržuj scény krátké, každých několik pasáží dej družině možnost rozhodnout se a uzavři příběh ve třetí části. Po celou dobu 1. úroveň; žádný postup na vyšší úroveň.",
+    "Pravda: kostelník Aldo Merrin sám ukradl zvon z kaple, aby splatil dluh u pašeráka. Jeho švagr Tam (převozník) mu pomohl spustit zvon do zatopené krypty pod kaplí. Chtěli ho prodat po proudu řeky. Aldo se následující noc vrátil sám, aby zvon přemístil, vyrušil dávné mrtvé a byl zabit. Nyní se kryptou potuluje jako ghúl. Tam je vyděšený, lže a nese vinu.",
+    "Část 1, vesnice za soumraku: nabídka rady (matka Hesk, rázná a unavená), opuštěná kostelníkova chalupa (účetní kniha s přeškrtnutými dluhy a pašeráckou značkou v podobě rybářského háčku), Tam u přívozu, který se nikomu nedokáže podívat do očí. Úspěšné ověření Přesvědčování nebo Vhledu při jednání s Tamem odhalí dluh; při neúspěchu se družina vydá ke kapli pouze s účetní knihou. Odměňuj zvídavost a nikdy nezablokuj další postup.",
+    "Část 2, kaple a krypta: lano ve zvonici je čistě přeříznuté, stopy po vlečení vedou ke schodům do krypty a v dolní kryptě sahá černá voda po kolena. Hrozby v pořadí: hejno obřích krys v kostnici, smyčková past na schodech (SO 12 při ověření Vnímání k jejímu odhalení, 1k6 zranění při spuštění), nakonec ghúl, jímž se stal Aldo, v místnosti se zvonem vedle samotného zvonu. Čtyři hrdinové na 1. úrovni mohou ghúla porazit; dva nebo tři by měli dostat možnost vlákat ho do vody nebo zatarasit dveře. Aldo stále nosí kostelníkův klíč na šňůrce; předem naznač nebezpečí ghúlovy paralýzy.",
+    "Část 3, zúčtování: zvon je nalezen a hrdinové se rozhodnou, co řeknou. Pokud Tama odhalí, rada ho vyžene a přívoz bude potřebovat nového převozníka. Pokud ho budou krýt, zvon se znovu rozezní a dluh je bude pronásledovat po proudu řeky jako námět na další večer. V obou případech se za úsvitu rozezní zvon. Uzavři příběh zvukem nesoucím se nad vodou a zeptej se každého hráče, co jeho hrdina udělá s dvaceti zlaťáky.",
+    "Atmosféra: mírný gotický horor u řeky, mlha a světlo lamp, bez krvavých detailů. CP: matka Hesk (rada), Tam Rill (převozník), Aldo Merrin (kostelník), vdova Pell (vede hostinec, ví o každém všechno a vyměňuje klepy za pomoc u kamen).",
+  ].join("\n\n"),
+};
+
 // The seed the creator reads: the request’s language, English by default,
 // so an English table’s stored premise and spine stay English.
 export function starterSeedFor(locale: Locale) {
+  if (locale === "cs") return { ...STARTER_ONE_SHOT, ...STARTER_ONE_SHOT_CS };
   return locale === "fr" ? { ...STARTER_ONE_SHOT, ...STARTER_ONE_SHOT_FR } : STARTER_ONE_SHOT;
 }
 
