@@ -27,7 +27,7 @@ Toto roucho má 3 náboje a každý den za úsvitu si obnoví 1k3 spotřebovaný
 
 Toto černé nebo tmavomodré roucho je vyšité drobnými bílými či stříbrnými hvězdami. Když je nosíš, získáváš bonus +1 k záchranným hodům.
 
-Šest hvězd na horní přední části roucha je obzvlášť velkých. Když roucho nosíš, můžeš jako akci jednu z těchto hvězd utrhnout a použít ji k seslání kouzla *magická střela* jako kouzla 5. stupně. Denně za soumraku se na rouchu znovu objeví 1k6 odstraněných hvězd.
+Šest hvězd na horní přední části roucha je obzvlášť velkých. Když roucho nosíš, můžeš jako akci jednu z těchto hvězd utrhnout a použít ji k seslání kouzla *magická střela* jako kouzla 5. úrovně. Denně za soumraku se na rouchu znovu objeví 1k6 odstraněných hvězd.
 
 Když máš roucho na sobě, můžeš jako akci vstoupit do Astrální sféry společně se vším, co máš na sobě a neseš. Zůstáváš tam, dokud pomocí akce neprovedeš návrat do sféry, ve které jsi byl předtím. Objevíš se na posledním místě, které jsi v ní zaujímal, nebo na nejbližším neobsazeném místě, pokud už je původní místo obsazené.`,
   "robe-of-the-archmagi": `*Divotvorný předmět, legendární (vyžaduje sladění čarodějem, černokněžníkem nebo kouzelníkem)*
@@ -67,19 +67,19 @@ Kromě toho má roucho dalších 4k4 záplat. PJ je vybere nebo určí náhodně
 | 52–59 | Jáma (krychle o hraně 10 stop), kterou můžeš umístit na zem do vzdálenosti 10 stop od sebe |
 | 60–68 | 4 lektvary léčení |
 | 69–75 | Veslice (12 stop dlouhá) |
-| 76–83 | Kouzelný svitek obsahující jedno kouzlo 1. až 3. stupně |
+| 76–83 | Kouzelný svitek obsahující jedno kouzlo 1. až 3. úrovně |
 | 84–90 | 2 mastifové |
 | 91–96 | Okno (2 stopy krát 4 stopy, až 2 stopy hluboké), které můžeš umístit na svislou plochu, na niž dosáhneš |
 | 97–100 | Přenosné beranidlo |`,
   "rod-of-absorption": `*Žezlo, velmi vzácné (vyžaduje sladění)*
 
-Když držíš toto žezlo, můžeš pomocí reakce pohltit kouzlo, které cílí pouze na tebe a nemá oblast účinku. Účinek pohlceného kouzla se zruší a v žezle se uchová jeho energie, nikoliv kouzlo samotné. Energie má stejnou úroveň, jakou mělo kouzlo při seslání. Za dobu své existence může žezlo pohltit a uchovat energii v souhrnu až 50 stupňů kouzel. Jakmile pohltí 50 stupňů energie, další už pohltit nedokáže. Pokud se staneš cílem kouzla, jehož energii žezlo nedokáže uchovat, nemá žezlo na toto kouzlo žádný účinek.
+Když držíš toto žezlo, můžeš pomocí reakce pohltit kouzlo, které cílí pouze na tebe a nemá oblast účinku. Účinek pohlceného kouzla se zruší a v žezle se uchová jeho energie, nikoliv kouzlo samotné. Energie má stejnou úroveň, jakou mělo kouzlo při seslání. Za dobu své existence může žezlo pohltit a uchovat energii v souhrnu až 50 úrovní kouzel. Jakmile pohltí 50 úrovní energie, další už pohltit nedokáže. Pokud se staneš cílem kouzla, jehož energii žezlo nedokáže uchovat, nemá žezlo na toto kouzlo žádný účinek.
 
-Při sladění s žezlem poznáš, kolik stupňů energie za svou existenci celkem pohltilo a kolik stupňů energie kouzel v něm právě zůstává uložených.
+Při sladění s žezlem poznáš, kolik úrovní energie za svou existenci celkem pohltilo a kolik úrovní energie kouzel v něm právě zůstává uložených.
 
-Jsi-li sesilatel kouzel a držíš toto žezlo, můžeš energii v něm uloženou proměnit na pozice kouzel pro seslání kouzel, která máš připravená nebo znáš. Můžeš vytvořit jen pozice stejné nebo nižší úrovně, než jsou tvé vlastní pozice, nejvýše však 5. stupně. Uložené stupně energie spotřebuješ místo svých pozic, ale jinak kouzlo sešleš běžným způsobem. Například 3 stupně energie uložené v žezle můžeš využít jako pozici kouzla 3. stupně.
+Jsi-li sesilatel kouzel a držíš toto žezlo, můžeš energii v něm uloženou proměnit na pozice kouzel pro seslání kouzel, která máš připravená nebo znáš. Můžeš vytvořit jen pozice stejné nebo nižší úrovně, než jsou tvé vlastní pozice, nejvýše však 5. úrovně. Uložené úrovně energie spotřebuješ místo svých pozic, ale jinak kouzlo sešleš běžným způsobem. Například 3 úrovně energie uložené v žezle můžeš využít jako pozici kouzla 3. úrovně.
 
-Nově nalezené žezlo už obsahuje energii kouzel v souhrnu 1k10 stupňů. Žezlo, které už nedokáže pohlcovat energii kouzel a žádnou v sobě nemá, přestane být magické.`,
+Nově nalezené žezlo už obsahuje energii kouzel v souhrnu 1k10 úrovní. Žezlo, které už nedokáže pohlcovat energii kouzel a žádnou v sobě nemá, přestane být magické.`,
   "rod-of-alertness": `*Žezlo, velmi vzácné (vyžaduje sladění)*
 
 Toto žezlo má hlavici s výstupky a následující vlastnosti.
