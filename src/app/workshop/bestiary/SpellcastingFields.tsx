@@ -35,7 +35,7 @@ export function SpellcastingEditor({ draft, onChange }: Props) {
   const t = useT();
   const abilityOptions = [
     { value: "", label: t("Unstated") },
-    ...SAVE_ABILITY_IDS.map((ability) => ({ value: ability as string, label: ability.toUpperCase() })),
+    ...SAVE_ABILITY_IDS.map((ability) => ({ value: ability as string, label: t(ability.toUpperCase()) })),
   ];
   const useOptions = [
     { value: "slot", label: t("From a slot") },
