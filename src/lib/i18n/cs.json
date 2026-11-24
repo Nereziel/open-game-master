@@ -13010,6 +13010,8 @@
     "1/long rest, for 1 minute you and adjacent allies have resistance to all damage.": "Jednou za dlouhý odpočinek máte ty a sousedící spojenci po dobu 1 minuty odolnost vůči všemu zranění."
   },
   "contexts": {
+    "Forge": {"ambience.cue":"Kovárna"},
+    "The big one": {"ambience.cue":"Souboj s bossem"},
     "chaotic evil": {
       "world.field.option": "chaotické zlo"
     },
