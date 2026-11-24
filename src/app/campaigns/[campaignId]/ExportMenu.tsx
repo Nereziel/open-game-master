@@ -3,6 +3,7 @@
 import * as DropdownMenu from "@radix-ui/react-dropdown-menu";
 import { ChevronDown, FileCode, FileDown, FileText, FileType, type LucideIcon } from "lucide-react";
 import { useT } from "@/lib/locale";
+import type { Locale } from "@/lib/i18n/translate";
 import { GameIcon } from "@/components/ui/GameIcon";
 import { cn } from "@/lib/cn";
 import { ui } from "@/lib/ui";
@@ -19,9 +20,9 @@ const OPTIONS: { format: ExportFormat; labelKey: string; hintKey: string; icon: 
   { format: "docx", labelKey: "Word (.docx)", hintKey: "Microsoft Word", icon: FileText },
 ];
 
-function triggerDownload(campaignId: string, format: ExportFormat) {
+export function downloadStory(campaignId: string, format: ExportFormat, locale: Locale) {
   const anchor = document.createElement("a");
-  anchor.href = `/api/campaigns/${campaignId}/export?format=${format}`;
+  anchor.href = `/api/campaigns/${campaignId}/export?${new URLSearchParams({ format, locale })}`;
   anchor.download = "";
   document.body.appendChild(anchor);
   anchor.click();
@@ -70,7 +71,7 @@ export function ExportMenu({
           {OPTIONS.map((option) => (
             <DropdownMenu.Item
               key={option.format}
-              onSelect={() => triggerDownload(campaignId, option.format)}
+              onSelect={() => downloadStory(campaignId, option.format, t.locale)}
               className="session-menu-row"
             >
               <option.icon className="size-4 shrink-0 text-amber-300/80" />
