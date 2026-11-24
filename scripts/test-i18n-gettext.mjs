@@ -6,33 +6,42 @@ register("./lib/register-routes.mjs", import.meta.url);
 
 const { translate, translatePlural, catalogInstalled, installCatalog } = await import("../src/lib/i18n/translate.ts");
 
-// 0. The catalog is installed, never imported by the translator: imported, its
-// 1 MB rode in every page's first load (scripts/bundle-budget.json). Until it
-// is in, French reads English; the server's modules install it, a browser
-// fetches it as its own chunk.
-assert.equal(catalogInstalled("fr"), false);
-assert.equal(translate("fr", "Loading…"), "Loading…", "no catalog yet: the English source");
+// 0. Catalogs are installed, never eagerly imported by shared UI modules.
+// The browser loads only the reader's selected catalog and name tables.
+const translatedLocales = ["fr", "cs"];
+for (const locale of translatedLocales) {
+  assert.equal(catalogInstalled(locale), false);
+  assert.equal(translate(locale, "Loading…"), "Loading…", "no catalog yet: English source");
+}
 for (const file of ["../src/lib/i18n/translate.ts", "../src/lib/messages-logic.ts", "../src/lib/locale.tsx"]) {
   const source = fs.readFileSync(new URL(file, import.meta.url), "utf8");
-  assert.doesNotMatch(source, /^import[^;]*fr\.json/m, `${file} imports the catalog into every page`);
+  assert.doesNotMatch(source, /^import[^;]*(?:fr\.json|cs\.json|cs-catalog-data\.ts)/m, `${file} imports a catalog into every page`);
 }
-assert.match(fs.readFileSync(new URL("../src/lib/i18n/catalog-loader.ts", import.meta.url), "utf8"), /import\("\.\/fr\.json"\)/, "the browser fetches the catalog on demand");
+const browserLoader = fs.readFileSync(new URL("../src/lib/i18n/catalog-loader.ts", import.meta.url), "utf8");
+for (const entry of ["fr.json", "cs-catalog-data.ts"]) {
+  assert.ok(browserLoader.includes(`import("./${entry}")`), `${entry} loads on demand`);
+}
 for (const file of ["../src/lib/request-locale.ts", "../src/app/layout.tsx", "../src/instrumentation.ts"]) {
   assert.match(fs.readFileSync(new URL(file, import.meta.url), "utf8"), /i18n\/server-catalogs/, `${file} installs the catalogs on the server`);
 }
 const serverCatalogs = fs.readFileSync(new URL("../src/lib/i18n/server-catalogs.ts", import.meta.url), "utf8");
-for (const locale of ["fr", "cs"]) {
+for (const locale of translatedLocales) {
   assert.ok(serverCatalogs.includes(`import "./${locale}-catalog.ts"`), `server loads ${locale} catalog`);
 }
 const { catalogReady } = await import("../src/lib/i18n/catalog-loader.ts");
 assert.equal(catalogReady("en"), true);
-assert.equal(catalogReady("fr"), false);
-assert.equal(translatePlural("fr", "{count} unknown widget", "{count} unknown widgets", { count: 0 }), "0 unknown widgets", "unloaded catalog uses English grammar");
-installCatalog("fr", JSON.parse(fs.readFileSync(new URL("../src/lib/i18n/fr.json", import.meta.url), "utf8")));
-assert.equal(catalogInstalled("fr"), true);
-assert.equal(catalogReady("fr"), false, "messages alone are not the complete display catalog");
-await import("../src/lib/i18n/fr-catalog.ts");
-assert.equal(catalogReady("fr"), true);
+for (const locale of translatedLocales) {
+  assert.equal(catalogReady(locale), false);
+  assert.equal(translatePlural(locale, "{count} unknown widget", "{count} unknown widgets", { count: 0 }), "0 unknown widgets", "unloaded catalog uses English grammar");
+  installCatalog(locale, JSON.parse(fs.readFileSync(new URL(`../src/lib/i18n/${locale}.json`, import.meta.url), "utf8")));
+  assert.equal(catalogInstalled(locale), true);
+  assert.equal(catalogReady(locale), false, "messages alone are not the complete display catalog");
+}
+await import("../src/lib/i18n/server-catalogs.ts");
+for (const locale of translatedLocales) assert.equal(catalogReady(locale), true);
+
+// Check the shared UI does not need to import the extra authored text catalog.
+assert.equal(translate("cs", "Language"), "Jazyk");
 
 // The generated official-name inventory must describe its actual tables.
 const { FR_NAMES_BY_TABLE, FR_NAME_COUNTS } = await import("../src/lib/content/names-fr.ts");
@@ -112,7 +121,6 @@ assert.equal(translate("fr", "On", { context: "unknown.context" }), "Activé");
 
 // The table translator shares the server language registry, independently of UI preferences.
 const { tableTranslator } = await import("../src/lib/messages-logic.ts");
-await import("../src/lib/i18n/cs-catalog.ts");
 const csCatalog = JSON.parse(fs.readFileSync(new URL("../src/lib/i18n/cs.json", import.meta.url), "utf8"));
 for (const [language, locale, catalog] of [["french", "fr", frCatalog], ["czech", "cs", csCatalog]]) {
   const t = tableTranslator(language);
@@ -179,6 +187,13 @@ for (const locale of Object.keys(LOCALE_METADATA).filter((id) => id !== "en")) {
     assert.equal(parts.length, 2, `${locale}: invalid plural key`);
     forms.forEach((value, index) => check(parts[index === 0 ? 0 : 1], value, `plural[${index}]`));
   }
+}
+
+// Czech authored subclass prose is an additional exact-key catalog.
+const authoredText = JSON.parse(fs.readFileSync(new URL("../src/lib/i18n/authored-subclass-text-cs.json", import.meta.url), "utf8"));
+for (const [key, value] of Object.entries(authoredText)) {
+  assert.ok(typeof value === "string" && value.trim(), `Empty authored translation: ${key}`);
+  assert.deepEqual(varsOf(value), varsOf(key), `Authored placeholder mismatch: ${key}`);
 }
 
 const { TABLE_LANGUAGE_HELP } = await import("../src/lib/schemas/game-settings-options.ts");
