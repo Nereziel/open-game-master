@@ -10,6 +10,7 @@ import { startWebLayout } from "@/lib/worldforge/force-layout";
 import type { XY } from "@/lib/worldforge/model";
 import type { WorldState } from "./useWorld";
 import { EntityAvatar, TypeChip, tint, typeOf } from "./world-ui";
+import { worldLinkLabel } from "@/lib/worldforge/display";
 import { useT } from "@/lib/locale";
 
 // The world's web, after WorldForge's graph tab: the web of every link (or
@@ -127,9 +128,9 @@ export function WebView({ world, focus, onOpen }: { world: WorldState; focus: st
     const set = new Set(nodes);
     const edges = links
       .filter((link) => set.has(link.from) && set.has(link.to))
-      .map((link) => ({ from: link.from, to: link.to, veracity: link.veracity, kind: link.oneway ? "oneway" : "link", label: link.rank ? `${link.label} (${link.rank})` : link.label }));
+      .map((link) => ({ from: link.from, to: link.to, veracity: link.veracity, kind: link.oneway ? "oneway" : "link", label: link.rank ? `${worldLinkLabel(t, link.label)} (${link.rank})` : worldLinkLabel(t, link.label) }));
     return { nodes, edges, at: nodes.length <= SYNC_LIMIT ? webLayout(nodes, edges) : null, of: reached.length };
-  }, [center, doc.links, hops, live, mode, view]);
+  }, [center, doc.links, hops, live, mode, view, t]);
   const { graph: settled, settling } = useSettledGraph(target);
   const graph: Graph = settled ?? { nodes: [], edges: [], at: new Map() };
   const arranging = settling && !settled;
