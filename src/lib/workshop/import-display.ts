@@ -29,10 +29,13 @@ function cardLabels(cards: readonly string[], t: T): string {
 // Only the display layer interpolates local labels, counts and source names.
 export function importWarningText(warning: ImportWarning, t: T, locale: string): string {
   const display = warning.display;
-  if (!display || locale === "en") return warning.message;
+  if (!display || locale === "en" || t(display.key, { context: "workshop.import.plan" }) === display.key) return warning.message;
   const vars: Record<string, string | number> = { ...display.vars };
   for (const [key, kinds] of Object.entries(display.kinds ?? {})) {
     vars[key] = kinds.map((kind) => importKindLabel(kind, t)).join(", ");
+  }
+  for (const [key, parts] of Object.entries(display.details ?? {})) {
+    vars[key] = parts.map((part) => t(part.key, part.vars)).join(" ");
   }
   if (display.facts) vars.losses = lossLabels(display.facts, t);
   if (display.cards) vars.cards = cardLabels(display.cards, t);
