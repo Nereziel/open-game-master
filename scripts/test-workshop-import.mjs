@@ -288,7 +288,7 @@ test("an empty plan says nothing rather than rendering blank", () => {
 });
 
 
-const { importKindLabel, importWarningText } = await import("../src/lib/workshop/import-display.ts");
+const { importKindLabel, importWarningText, referenceImportNote, importResultNotesText } = await import("../src/lib/workshop/import-display.ts");
 const { translate, installCatalog } = await import("../src/lib/i18n/translate.ts");
 const fs = await import("node:fs");
 const { checkProse, proseWarningParts, proseWarningLine } = await import("../src/lib/workshop/prose-check.ts");
@@ -375,6 +375,42 @@ test("storyboard refusal retains the original English and supplies structured de
   const summary = summarizeCompile(compiled, false);
   assert.equal(summary.arcRefusal, "An arc needs at least 2 things that happen; the board has 1.");
   assert.deepEqual(summary.arcRefusalDisplay, { key: "An arc needs at least {min} things that happen; the board has {count}.", vars: { min: 2, count: 1 } });
+});
+
+
+test("post-import references preserve the old messages and localize all six outcomes", () => {
+  const table = "Table {name} (2)";
+  const name = "Original {table} – Dům";
+  const notes = [];
+  for (const [kind, noun] of [["tables", "table"], ["npcs", "NPC"], ["lore", "lore entry"]]) {
+    for (const matched of [true, false]) {
+      const note = referenceImportNote(kind, table, name, matched);
+      assert.equal(note.message, matched
+        ? `${table}: its row for the ${noun} ${name} now names this campaign's own ${name}, since the source's stayed behind.`
+        : `${table}: its row for the ${noun} ${name} names nothing here, since that ${noun} stayed behind.`);
+      notes.push(note);
+      for (const locale of ["cs", "fr"]) {
+        assert.ok(importCatalogs[locale].contexts[note.key]?.["workshop.import.result"]);
+        const [localized] = importResultNotesText([note.message], [note], (key, vars) => translate(locale, key, vars));
+        assert.notEqual(localized, note.message);
+        assert.ok(localized.includes(table));
+        assert.equal(localized.split(name).length - 1, matched ? 2 : 1);
+      }
+    }
+  }
+  const messages = [...notes.map((note) => note.message), "Legacy message"];
+  const snapshot = structuredClone(notes);
+  assert.deepEqual(importResultNotesText(messages, notes, (key, vars) => translate("en", key, vars)), messages);
+  for (const locale of ["cs", "fr"]) {
+    const t = (key, vars) => translate(locale, key, vars);
+    assert.deepEqual(importResultNotesText(messages, [], t), messages);
+    assert.equal(importResultNotesText(messages, notes, t).at(-1), "Legacy message");
+    const spellKey = "Spells copied into this table's Homebrew: {list}.";
+    assert.ok(importCatalogs[locale].messages[spellKey]);
+    assert.ok(t(spellKey, { list: name }).includes(name));
+    assert.notEqual(t(spellKey, { list: name }), translate("en", spellKey, { list: name }));
+  }
+  assert.deepEqual(notes, snapshot);
 });
 
 console.log(`workshop import: ${passed} assertions passed.`);
