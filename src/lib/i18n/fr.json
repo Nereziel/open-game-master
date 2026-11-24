@@ -1,5 +1,13 @@
 {
   "messages": {
+    "Creature, CR {cr}, built on the {basis} · Bestiary": "Créature, FP {cr}, basée sur : {basis} · Bestiaire",
+    "Creature, CR {cr}, original · Bestiary": "Créature, FP {cr}, originale · Bestiaire",
+    "Item, {kind} · Homebrew": "Objet, {kind} · Homebrew",
+    "Your stat blocks": "Vos blocs de statistiques",
+    "Your items": "Vos objets",
+    "Lantern, Rope...": "Lanterne, corde…",
+    "Your own item": "Votre propre objet",
+    "From the rulebook": "Du livre de règles",
     "{name}, year": "{name}, année",
     "{name}, calendar": "{name}, calendrier",
     "Find {label}": "Trouver {label}",
