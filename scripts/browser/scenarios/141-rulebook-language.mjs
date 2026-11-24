@@ -37,6 +37,15 @@ export default {
       const lists = await Promise.all([["spells", "Fireball"], ["items", "Cloak of Protection"]].map(async ([kind, name]) => ({
         kind, rows: await Promise.all(["en", "fr", "cs"].map((locale) => compareList(kind, name, locale))),
       })));
+      const authoredFeats = await Promise.all(["en", "fr", "cs"].map(async (locale) => {
+        const headers = { "x-odm-locale": locale };
+        const response = await fetch("/api/content/feats?q=Alert&limit=100", { headers, cache: "no-store" });
+        const body = await response.json();
+        const row = body.results?.find((entry) => entry.name === "Alert" && entry.documentSlug === "odm-expanded");
+        if (!row) return { locale, packInstalled: body.packInstalled, status: response.status, row: null };
+        const detail = await fetch("/api/content/feats/" + encodeURIComponent(row.slug), { headers, cache: "no-store" });
+        return { locale, packInstalled: body.packInstalled, status: response.status, row, detailStatus: detail.status, entry: (await detail.json()).entry };
+      }));
       const bundledDetails = await Promise.all(["races", "backgrounds", "classes", "archetypes"].map(async (kind) => {
         const params = new URLSearchParams({ mechanics: "1", limit: "100", ...(kind === "archetypes" ? { class: "fighter" } : {}) });
         const headers = { "x-odm-locale": "cs" };
@@ -59,7 +68,7 @@ export default {
         const body = await response.json();
         return { locale, status: response.status, found: body.results?.some((row) => row.name === "Fireball" && row.level === 3) ?? false };
       }));
-      return { lists, bundledDetails, archetypePicker, localizedSearch, fr: await ask("fr-FR,fr;q=0.9"), en: await ask("en-US,en;q=0.9"), cs, forcedCs,
+      return { lists, authoredFeats, bundledDetails, archetypePicker, localizedSearch, fr: await ask("fr-FR,fr;q=0.9"), en: await ask("en-US,en;q=0.9"), cs, forcedCs,
         search: { status: response.status, found: results.hits?.some((hit) => hit.page === "fireball") ?? false },
         csDetail: await details("cs"), enDetail: await details("en"),
         canonical: await Promise.all(["en", "fr", "cs"].map((locale) => details(locale, "fireball"))) };
@@ -98,6 +107,15 @@ export default {
       check(!("table" in result.row), "picker display rows do not expose workshop mechanics");
       if (result.locale === "cs") check(result.row.data?.localized_desc?.includes("Šampion"), "Czech picker receives reviewed Champion prose");
       if (result.locale === "en") check(!("localized_desc" in result.row.data), "English picker retains canonical prose");
+    }
+    for (const result of asked.authoredFeats) {
+      if (result.packInstalled && !result.row) continue; // another published feat may own the name
+      check(result.status === 200 && result.detailStatus === 200 && Boolean(result.row), result.locale + " authored feat list and detail");
+      check(result.entry?.slug === result.row.slug && result.entry?.data?.desc === result.row.data?.desc, "authored feat preserves identity and rules");
+      if (result.locale === "cs") {
+        check(result.row.data?.localized_desc?.includes("iniciativu"), "Czech authored Alert has localized rules");
+        check(result.entry?.data?.localized_desc === result.row.data?.localized_desc, "Czech authored feat list and detail agree");
+      } else check(!("localized_desc" in result.row.data), result.locale + " authored feat retains original rules");
     }
     const { csDetail, enDetail } = asked;
     check(csDetail.status === 200 && enDetail.status === 200, "the bundled spell detail works in both locales");
