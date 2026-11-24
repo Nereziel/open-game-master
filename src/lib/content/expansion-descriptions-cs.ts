@@ -15,7 +15,8 @@ const books: Record<string, Record<string, Record<string, Translation>>> = data;
 function translation(table: string, row: Row): Translation | undefined {
   if (!row || row.source !== "open5e" || !row.documentSlug || !row.slug) return undefined;
   const book = Object.hasOwn(books, row.documentSlug) ? books[row.documentSlug] : undefined;
-  const entries = book && Object.hasOwn(book, table) ? book[table] : undefined;
+  const kind = table === "races" ? "species" : table === "archetypes" ? "subclasses" : table;
+  const entries = book && Object.hasOwn(book, kind) ? book[kind] : undefined;
   const hit = entries && Object.hasOwn(entries, row.slug) ? entries[row.slug] : undefined;
   return hit?.englishName === row.name ? hit : undefined;
 }
@@ -25,7 +26,7 @@ export function expansionNameCs(table: string, row: Row): string | undefined {
 }
 
 export function expansionDescriptionCs(table: string, row: Row & { data?: Record<string, unknown> }): string | undefined {
-  const hit = translation(table === "races" ? "species" : table === "archetypes" ? "subclasses" : table, row);
+  const hit = translation(table, row);
   if (!hit || !(hit.description || hit.metadataDescription) || !hit.original || !row.data) return undefined;
   const source = row.data;
   // Exact text and metadata from the checked-in golden row, not an inferred
