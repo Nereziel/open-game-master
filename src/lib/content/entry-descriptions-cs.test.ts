@@ -212,3 +212,22 @@ describe("Tome of Heroes spell metadata", () => {
     }
   });
 });
+
+
+describe("Tome of Heroes backgrounds", () => {
+  it("serves all 18 available backgrounds with all 26 personality table entries", () => {
+    const rows = Object.entries(expansionTranslations.toh.backgrounds);
+    expect(rows).toHaveLength(18);
+    for (const [slug, hit] of rows) {
+      const data = hit.original as Record<string, unknown>;
+      const row = { slug, name: hit.englishName, documentSlug: "toh", source: "open5e", data };
+      expect(localizeEntryCs("backgrounds", row).data.localized_desc).toBe(hit.description);
+      for (const [heading, size] of [["Osobnostní rys", 8], ["Ideál", 6], ["Pouto", 6], ["Slabina", 6]] as const) {
+        const section = hit.description.split("| k" + size + " | " + heading + " |")[1]?.split("\n\n")[0];
+        expect(section?.match(/^\| \d+ \|/gm)?.length, slug + ": " + heading).toBe(size);
+      }
+      const changed = { ...row, data: { ...data, feature_desc: "Changed original" } };
+      expect(localizeEntryCs("backgrounds", changed)).toBe(changed);
+    }
+  });
+});
