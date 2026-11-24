@@ -383,8 +383,10 @@ export function SoundDialog({
 // table menu: "Sound: Rain, Tavern music", or why there is none.
 export function soundSummary(t: T, ambience: AmbienceAudio): { quiet: boolean; playing: string; tip: string } {
   const quiet = ambience.muted || !ambience.unlocked;
-  const bed = ambience.state.bed ? cueLabel(ambience.state.bed, t) : null;
-  const music = ambience.state.music ? cueLabel(ambience.state.music, t) : null;
+  const bedCue = ambience.state.bed ? cueById(ambience.state.bed) : null;
+  const bed = bedCue ? cueLabel(bedCue.id, t) : null;
+  const musicCue = ambience.state.music ? cueById(ambience.state.music) : null;
+  const music = musicCue ? cueLabel(musicCue.id, t) : null;
   const playing = [bed, music ? t("{name} music", { name: music }) : null].filter(Boolean).join(", ");
   const tip = !ambience.installed
     ? t("Sound: no library on this server yet")
