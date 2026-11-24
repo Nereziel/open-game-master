@@ -1,0 +1,204 @@
+{
+  "dmag": {
+    "spells": {
+      "accelerate": {
+        "englishName": "Accelerate",
+        "name": "Zrychlení",
+        "original": {
+          "desc": "Choose up to three willing creatures within range, which can include you. For the duration of the spell, each target’s walking speed is doubled. Each target can also use a bonus action on each of its turns to take the Dash action, and it has advantage on Dexterity saving throws.\n",
+          "higher_level": "When you cast this spell using a spell slot of 4th level or higher, you can affect one additional creature for each slot level above 3rd.",
+          "duration": "Up to 1 minute"
+        },
+        "description": "Vyber až tři ochotné tvory v dosahu, včetně sebe. Po dobu trvání kouzla se rychlost chůze každého cíle zdvojnásobí. Každý cíl také může v každém svém tahu použít bonusovou akci k provedení akce Sprint a má výhodu k záchranným hodům na Obratnost.\n\n**Na vyšších úrovních.** Když sešleš toto kouzlo použitím pozice kouzla 4. či vyšší úrovně, můžeš ovlivnit jednoho dalšího tvora za každou úroveň pozice nad 3."
+      },
+      "blood-armor": {
+        "englishName": "Blood Armor",
+        "name": "Krvavá zbroj",
+        "original": {
+          "desc": "When you strike a foe with a melee weapon attack, you can immediately cast **blood armor** as a bonus action. The foe you struck must contain blood; if the target doesn’t bleed, the spell ends without effect. The blood flowing from your foe magically increases in volume and forms a suit of armor around you, granting you an Armor Class of 18 + your Dexterity modifier for the spell’s duration. This armor has no Strength requirement, doesn’t hinder spellcasting, and doesn’t incur disadvantage on Dexterity (Stealth) checks.\n\nIf the creature you struck was a celestial, **blood armor** also grants you advantage on Charisma saving throws for the duration of the spell.",
+          "higher_level": "",
+          "duration": "1 hour"
+        },
+        "description": "Když zasáhneš protivníka útokem na blízko zbraní, můžeš okamžitě seslat **Krvavou zbroj** jako bonusovou akci. Zasažený protivník musí mít krev; pokud cíl nekrvácí, kouzlo skončí bez účinku. Krev vytékající z protivníka magicky nabude na objemu a vytvoří kolem tebe zbroj, která ti po dobu trvání kouzla poskytuje OČ 18 + oprava Obratnosti. Tato zbroj nemá požadavek na Sílu, nebrání sesílání kouzel a nezpůsobuje nevýhodu k ověřením Obratnosti (Nenápadnosti).\n\nPokud byl zasažený tvor nebešťan, **Krvavá zbroj** ti po dobu trvání kouzla také poskytuje výhodu k záchranným hodům na Charisma."
+      },
+      "black-sunshine": {
+        "englishName": "Black Sunshine",
+        "name": "Černá sluneční záře",
+        "original": {
+          "desc": "You hold up a flawed pearl and it disappears, leaving behind a magic orb in your hand that pulses with dim purple light. Allies that you designate become invisible if they're within 60 feet of you and if light from the orb can reach the space they occupy. An invisible creature still casts a faint, purple shadow.\n\nThe orb can be used as a thrown weapon to attack an enemy. On a hit, the orb explodes in a flash of light and the spell ends. The targeted enemy and each creature within 10 feet of it must make a successful Dexterity saving throw or be blinded for 1 minute. A creature blinded in this way repeats the saving throw at the end of each of its turns, ending the effect on itself on a success.",
+          "higher_level": "",
+          "duration": "Up to 1 minute"
+        },
+        "description": "Pozvedneš vadnou perlu a ta zmizí. V ruce ti zůstane magická koule, která pulzuje slabým purpurovým světlem. Spojenci, které určíš, se stanou neviditelnými, pokud jsou do 60 stop od tebe a světlo z koule může dosáhnout prostoru, který zaujímají. Neviditelný tvor stále vrhá slabý purpurový stín.\n\nKouli lze použít jako vrhací zbraň k útoku na nepřítele. Při zásahu koule exploduje v záblesku světla a kouzlo skončí. Zacílený nepřítel a každý tvor do 10 stop od něj musí uspět v záchranném hodu na Obratnost, jinak oslepne na 1 minutu. Takto oslepený tvor opakuje záchranný hod na konci každého svého tahu a při úspěchu pro něj účinek skončí."
+      },
+      "steal-warmth": {
+        "englishName": "Steal Warmth",
+        "name": "Krádež tepla",
+        "original": {
+          "desc": "When you cast **steal warmth** after taking cold damage, you select a living creature within 5 feet of you. That creature takes the cold damage instead, or half the damage with a successful Constitution saving throw. You regain hit points equal to the amount of cold damage taken by the target.\n",
+          "higher_level": "When you cast this spell using a spell slot of 4th level or higher, the distance to the target you can affect with this spell increases by 5 feet for each slot level above 3rd.",
+          "duration": "Instantaneous"
+        },
+        "description": "Když sešleš **Krádež tepla** po utrpění chladného zranění, vyber živého tvora do 5 stop od sebe. Tento tvor utrpí chladné zranění místo tebe, nebo polovinu tohoto zranění při úspěšném záchranném hodu na Odolnost. Obnovíš si tolik životů, kolik chladného zranění cíl utrpěl.\n\n**Na vyšších úrovních.** Když sešleš toto kouzlo použitím pozice kouzla 4. či vyšší úrovně, vzdálenost, na kterou můžeš cílového tvora kouzlem ovlivnit, se zvětší o 5 stop za každou úroveň pozice nad 3."
+      },
+      "tree-heal": {
+        "englishName": "Tree Heal",
+        "name": "Léčení stromů",
+        "original": {
+          "desc": "You touch a plant and it regains 1d4 hit points. Alternatively, you can cure it of one disease or remove pests from it. Once you cast this spell on a plant or plant creature, you can't cast it on that target again for 24 hours. This spell can be used only on plants and plant creatures.",
+          "higher_level": "",
+          "duration": "Instantaneous"
+        },
+        "description": "Dotkneš se rostliny a ta si obnoví 1k4 životů. Místo toho ji můžeš vyléčit z jedné nemoci nebo ji zbavit škůdců. Jakmile sešleš toto kouzlo na rostlinu nebo rostlinného tvora, nemůžeš je na stejný cíl znovu seslat po dobu 24 hodin. Toto kouzlo lze použít pouze na rostliny a rostlinné tvory."
+      },
+      "clash-of-glaciers": {
+        "englishName": "Clash of Glaciers",
+        "name": "Střet ledovců",
+        "original": {
+          "desc": "You conjure up icy boulders that crush creatures in a line 100 feet long. Each creature in the area takes 5d6 bludgeoning damage plus 5d6 cold damage, or half the damage with a successful Dexterity saving throw.\n",
+          "higher_level": "When you cast this spell using a spell slot of 6th level or higher, the damage increases by 1d6 for each slot level above 5th. You decide whether each extra die deals bludgeoning or cold damage.",
+          "duration": "Instantaneous"
+        },
+        "description": "Vyčaruješ ledové balvany, které drtí tvory v linii dlouhé 100 stop. Každý tvor v oblasti utrpí drtivé zranění 5k6 a chladné zranění 5k6, nebo poloviční zranění při úspěšném záchranném hodu na Obratnost.\n\n**Na vyšších úrovních.** Když sešleš toto kouzlo použitím pozice kouzla 6. či vyšší úrovně, zranění se zvýší o 1k6 za každou úroveň pozice nad 5. U každé dodatečné kostky rozhodneš, zda způsobí drtivé, nebo chladné zranění."
+      },
+      "biting-arrow": {
+        "englishName": "Biting Arrow",
+        "name": "Mrazivý šíp",
+        "original": {
+          "desc": "As part of the action used to cast this spell, you make a ranged weapon attack with a bow, a crossbow, or a thrown weapon. The effect is limited to a range of 120 feet despite the weapon’s range, and the attack is made with disadvantage if the target is in the weapon’s long range.\n\nIf the weapon attack hits, it deals damage as usual. In addition, the target becomes coated in thin frost until the start of your next turn. If the target uses its reaction before the start of your next turn, it immediately takes 1d6 cold damage and the spell ends.",
+          "higher_level": "The spell’s damage, for both the ranged attack and the cold damage, increases by 1d6 when you reach 5th level (+1d6 and 2d6), 11th level (+2d6 and 3d6), and 17th level (+3d6 and 4d6).",
+          "duration": "1 round"
+        },
+        "description": "V rámci akce použité k seslání tohoto kouzla provedeš útok na dálku zbraní – lukem, kuší nebo vrhací zbraní. Bez ohledu na dostřel zbraně je účinek omezen na 120 stop. Je-li cíl v dlouhém dostřelu zbraně, provedeš útok s nevýhodou.\n\nPokud útok zbraní zasáhne, způsobí zranění jako obvykle. Navíc se cíl až do začátku tvého příštího tahu pokryje tenkou vrstvou jinovatky. Pokud cíl použije svou reakci před začátkem tvého příštího tahu, okamžitě utrpí chladné zranění 1k6 a kouzlo skončí.\n\n**Na vyšších úrovních.** Zranění kouzla při útoku na dálku i následné chladné zranění se zvýší o 1k6, když dosáhneš 5. úrovně (+1k6 a 2k6), 11. úrovně (+2k6 a 3k6) a 17. úrovně (+3k6 a 4k6)."
+      },
+      "abhorrent-apparition": {
+        "englishName": "Abhorrent Apparition",
+        "name": "Odpudivý přízrak",
+        "original": {
+          "desc": "You imbue a terrifying visage onto a gourd and toss it ahead of you to a spot of your choosing within range. Each creature within 15 feet of that spot takes 6d8 psychic damage and becomes frightened of you for 1 minute; a successful Wisdom saving throw halves the damage and negates the fright. A creature frightened in this way repeats the saving throw at the end of each of its turns, ending the effect on itself on a success.\n",
+          "higher_level": "If you cast this spell using a spell slot of 5th level or higher, the damage increases by 1d8 for each slot level above 4th.",
+          "duration": "Instantaneous"
+        },
+        "description": "Vdechneš děsivou tvář tykvi a hodíš ji před sebe na místo v dosahu, které určíš. Každý tvor do 15 stop od tohoto místa utrpí psychické zranění 6k8 a je tebou vystrašený po dobu 1 minuty. Úspěšný záchranný hod na Moudrost zranění sníží na polovinu a zabrání vystrašení. Takto vystrašený tvor opakuje záchranný hod na konci každého svého tahu a při úspěchu pro něj účinek skončí.\n\n**Na vyšších úrovních.** Když sešleš toto kouzlo použitím pozice kouzla 5. či vyšší úrovně, zranění se zvýší o 1k8 za každou úroveň pozice nad 4."
+      }
+    }
+  },
+  "warlock": {
+    "spells": {
+      "rive": {
+        "englishName": "Rive",
+        "name": "Rozervání",
+        "original": {
+          "desc": "You pull on the filaments of transition and possibility to tear at your enemies. Choose a creature you can see within range and make a ranged spell attack. On a hit, the target takes 5d8 cold damage as strands of icy nothingness whip from your outstretched hand to envelop it. If the target isn't native to the plane you're on, it takes an extra 3d6 psychic damage and must succeed on a Constitution saving throw or be stunned until the end of its next turn.",
+          "higher_level": "",
+          "duration": "Instantaneous"
+        },
+        "description": "Zatažením za vlákna přechodu a možností rozerváváš své nepřátele. Vyber tvora v dosahu, kterého vidíš, a zaútoč na něj kouzlem na dálku. Při zásahu cíl utrpí chladné zranění 5k8, když z tvé natažené ruky vyšlehnou prameny ledové nicoty a zahalí jej. Není-li cíl původem ze sféry, ve které se nacházíš, utrpí navíc psychické zranění 3k6 a musí uspět v záchranném hodu na Odolnost, jinak je ochromený do konce svého příštího tahu."
+      }
+    }
+  },
+  "a5e": {
+    "spells": {
+      "air-wave-a5e": {
+        "englishName": "Air Wave",
+        "name": "Vzdušná vlna",
+        "original": {
+          "desc": "Your deft weapon swing sends a wave of cutting air to assault a creature within range. Make a melee weapon attack against the target. If you are wielding one weapon in each hand, your attack deals an additional 1d6 damage. Regardless of the weapon you are wielding, your attack deals slashing damage.",
+          "higher_level": "The spell's range increases by 30 feet for each slot level above 1st.",
+          "duration": "Instantaneous"
+        },
+        "description": "Obratným máchnutím zbraní vyšleš vlnu ostrého vzduchu proti tvorovi v dosahu. Proveď proti cíli útok na blízko zbraní. Pokud držíš v každé ruce jednu zbraň, tvůj útok způsobí dodatečné zranění 1k6. Bez ohledu na zbraň, kterou držíš, způsobí tvůj útok sečné zranění.\n\n**Na vyšších úrovních.** Dosah kouzla se zvětší o 30 stop za každou úroveň pozice kouzla nad 1."
+      }
+    },
+    "feats": {
+      "attentive": {
+        "englishName": "Attentive",
+        "name": "Pozorný",
+        "original": {
+          "desc": "Always aware of your surroundings, you gain the following benefits:",
+          "effects_desc": [
+            "When rolling initiative you gain a +5 bonus.",
+            "You can only be surprised if you are unconscious. A creature attacking you does not gain advantage from being hidden from you or unseen by you."
+          ],
+          "prerequisite": null
+        },
+        "description": "Neustále si uvědomuješ, co se děje kolem tebe, a získáš následující výhody:\n\n- K hodu na iniciativu získáš bonus +5.\n- Můžeš být překvapen pouze tehdy, jsi-li v bezvědomí. Tvor, který na tebe útočí, nezíská výhodu díky tomu, že se před tebou skrývá nebo že ho nevidíš."
+      },
+      "covert-training": {
+        "englishName": "Covert Training",
+        "name": "Výcvik ve skrytu",
+        "original": {
+          "desc": "You have absorbed some of the lessons of the world of spies, criminals, and others who operate in the shadows. You gain the following benefits:",
+          "effects_desc": [
+            "You gain proficiency with thieves' tools, the poisoner's kit, or a rare weapon with the stealthy property.",
+            "You gain two skill tricks of your choice from the rogue class."
+          ],
+          "prerequisite": null
+        },
+        "description": "Osvojil sis některé zkušenosti ze světa špionů, zločinců a dalších lidí působících ve stínech. Získáš následující výhody:\n\n- Získáš zdatnost se zlodějským náčiním, travičskou soupravou nebo vzácnou zbraní s vlastností nenápadná (stealthy).\n- Získáš dva dovednostní triky dle svého výběru z povolání tuláka."
+      },
+      "ace-driver": {
+        "englishName": "Ace Driver",
+        "name": "Mistr řízení",
+        "original": {
+          "desc": "You are a virtuoso of driving and piloting vehicles, able to push them beyond their normal limits and maneuver them with fluid grace through hazardous situations. You gain the following benefits:",
+          "effects_desc": [
+            "You gain an expertise die on ability checks made to drive or pilot a vehicle.",
+            "While piloting a vehicle, you can use your reaction to take the Brake or Maneuver vehicle actions.",
+            "A vehicle you load can carry 25% more cargo than normal.",
+            "Vehicles you are piloting only suffer a malfunction when reduced to 25% of their hit points, not 50%. In addition, when the vehicle does suffer a malfunction, you roll twice on the maneuver table and choose which die to use for the result.",
+            "Vehicles you are piloting gain a bonus to their Armor Class equal to half your proficiency bonus.",
+            "When you Brake, you can choose to immediately stop the vehicle without traveling half of its movement speed directly forward."
+          ],
+          "prerequisite": "Prerequisite: Proficiency with a type of vehicle"
+        },
+        "description": "*Předpoklad: Zdatnost s určitým typem dopravního prostředku.*\n\nJsi virtuózem v řízení a pilotování dopravních prostředků. Dokážeš překročit jejich běžné limity a s plynulou ladností s nimi manévrovat v nebezpečných situacích. Získáš následující výhody:\n\n- K ověřením vlastností při řízení či pilotování dopravního prostředku získáš kostku odbornosti (expertise die).\n- Při pilotování můžeš použít svou reakci k provedení akce vozidla Brzdění nebo Manévr.\n- Dopravní prostředek, který naložíš, uveze o 25 % více nákladu než obvykle.\n- Dopravní prostředky, které pilotuješ, utrpí poruchu až při poklesu na 25 % svých životů, nikoli na 50 %. Pokud k poruše dojde, hodíš dvakrát na tabulku manévrů a vybereš, který výsledek použiješ.\n- Dopravní prostředky, které pilotuješ, získají bonus k OČ rovný polovině tvého zdatnostního bonusu.\n- Při Brzdění se můžeš rozhodnout okamžitě zastavit dopravní prostředek, aniž by ujel přímo vpřed vzdálenost rovnou polovině své rychlosti pohybu."
+      }
+    }
+  },
+  "spells-that-dont-suck": {
+    "spells": {
+      "cone-of-flame": {
+        "englishName": "Cone of Flame",
+        "name": "Kužel plamenů",
+        "original": {
+          "desc": "Flames shoot forth from your fingertips. Each creature in a 15-foot cone must make a Dexterity saving throw. A creature takes 3d6 fire damage on a failure, or half as much damage on a success.\n\nThe flames ignite any flammable objects in the area that aren’t being worn or carried.",
+          "higher_level": "When you cast this spell using a spell slot of 2nd level or higher, the damage increases by 1d6 and the range of the cone increases by 5 feet for each slot level above 1st.",
+          "duration": "instantaneous"
+        },
+        "description": "Z konečků tvých prstů vyšlehnou plameny. Každý tvor v kuželu dlouhém 15 stop si musí hodit záchranný hod na Obratnost. Při neúspěchu utrpí ohnivé zranění 3k6, při úspěchu poloviční zranění.\n\nPlameny zapálí všechny hořlavé předměty v oblasti, které nikdo nenosí ani nedrží.\n\n**Na vyšších úrovních.** Když sešleš toto kouzlo použitím pozice kouzla 2. či vyšší úrovně, zranění se zvýší o 1k6 a dosah kuželu se zvětší o 5 stop za každou úroveň pozice nad 1."
+      }
+    }
+  },
+  "toh": {
+    "feats": {
+      "floriographer": {
+        "englishName": "Floriographer",
+        "name": "Znalec květomluvy",
+        "original": {
+          "desc": "You have studied the secret language of Floriography. You gain the following benefits:",
+          "effects_desc": [
+            "* Increase your Intelligence or Wisdom score by 1, to a maximum of 20.",
+            "* You learn Floriography, the language of flowers. Similar to Druidic and Thieves' Cant, Floriography is a secret language often used to communicate subtle ideas, symbolic meaning, and even basic messages. Floriography is conveyed through the combinations of colors, styles, and even types of flowers in bouquets, floral arrangements, and floral illustrations, often with a gift-giving component.",
+            "* Your fluency with the subtle messages in floral displays gives you a keen eye for discerning subtle or hidden messages elsewhere. You have advantage on Intelligence (Investigation) and Wisdom (Insight) checks to notice and discern hidden messages of a visual nature, such as the runes of a magic trap or the subtle hand signals passing between two individuals."
+          ],
+          "prerequisite": "*Proficiency in one of the following skills: Arcana, History, or Nature*"
+        },
+        "description": "*Předpoklad: Zdatnost alespoň v jedné z následujících dovedností: Mystika, Historie nebo Příroda.*\n\nStudoval jsi tajný jazyk květomluvy. Získáš následující výhody:\n\n- Zvyš si hodnotu Inteligence nebo Moudrosti o 1, nejvýše však na 20.\n- Naučíš se květomluvu, jazyk květin. Podobně jako druidština a zlodějská hantýrka je květomluva tajný jazyk, často používaný ke sdělování jemných myšlenek, symbolických významů i prostých zpráv. Sdělení se předávají kombinacemi barev, stylů a dokonce druhů květin v kyticích, květinových aranžmá a ilustracích květin; často je součástí i darování.\n- Díky znalosti jemných sdělení v květinových kompozicích máš bystré oko pro rozpoznávání nenápadných či skrytých zpráv i jinde. Máš výhodu k ověřením Inteligence (Pátrání) a Moudrosti (Vhledu), když si chceš všimnout a rozluštit skryté vizuální zprávy, například runy magické pasti nebo nenápadná znamení rukou mezi dvěma osobami."
+      },
+      "rimecaster": {
+        "englishName": "Rimecaster",
+        "name": "Mrazivý sesilatel",
+        "original": {
+          "desc": "You are from an area with a cold climate and have learned to adapt your magic to reflect your heritage. You gain the following benefits:",
+          "effects_desc": [
+            "* When you cast a spell that deals damage, you can use a reaction to change the type of damage the spell deals to cold damage.",
+            "* When you cast a spell that deals cold damage, you gain resistance to cold damage until the start of your next turn. If you already have resistance to cold damage, you are immune to cold damage until the start of your next turn instead."
+          ],
+          "prerequisite": "*A race or background from a cold climate and the ability to cast at least one spell*"
+        },
+        "description": "*Předpoklad: Rasa nebo zázemí z oblasti s chladným podnebím a schopnost seslat alespoň jedno kouzlo.*\n\nPocházíš z oblasti s chladným podnebím a naučil ses přizpůsobit svou magii tak, aby odrážela tvůj původ. Získáš následující výhody:\n\n- Když sešleš kouzlo, které způsobuje zranění, můžeš použít reakci a změnit typ zranění způsobeného kouzlem na chladné zranění.\n- Když sešleš kouzlo, které způsobuje chladné zranění, získáš odolnost vůči chladnému zranění do začátku svého příštího tahu. Pokud už tuto odolnost máš, získáš místo ní imunitu vůči chladnému zranění do začátku svého příštího tahu."
+      }
+    }
+  }
+}
