@@ -90,7 +90,7 @@ export function ContentPick({
       {open && results.length ? (
         <ul className="reveal panel panel-smoke mt-1 max-h-56 w-full overflow-y-auto rounded-lg">
           {results.slice(0, 40).map((entry) => (
-            <li key={entry.slug} className="flex items-center gap-1 pr-2 hover:bg-stone-800">
+            <li key={`${entry.source}:${entry.documentSlug ?? ""}:${entry.slug}`} className="flex items-center gap-1 pr-2 hover:bg-stone-800">
               <button
                 type="button"
                 onClick={() => {
@@ -107,7 +107,7 @@ export function ContentPick({
               </button>
               <InfoButton
                 label={pickerName(kind, entry, t.locale)}
-                meta={kind === "spells" ? spellSummary(entry.data, t.locale) : undefined}
+                meta={kind === "spells" ? spellSummary(entry.data, t.locale) : pickerMeta(entry, t.locale) || undefined}
                 text={describeContentEntry(entry.data, undefined, t.locale)}
                 reference={
                   entry.source === "homebrew" ? undefined : { kind, slug: entry.slug, name: entry.name }
