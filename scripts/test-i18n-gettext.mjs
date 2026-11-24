@@ -314,7 +314,7 @@ for (const [locale, label, from, query] of [
 
 // WorldForge translates display words, never the stored link or field key.
 const { defaultTypes, LINK_LABELS } = await import("../src/lib/worldforge/model.ts");
-const { worldLinkLabel, worldTypeLabel, worldFieldLabel, worldFieldOption } = await import("../src/lib/worldforge/display.ts");
+const { worldLinkLabel, worldTypeLabel, worldFieldLabel, worldFieldOption, worldOutlineAssetLine, worldBoundName, worldBoundDetail } = await import("../src/lib/worldforge/display.ts");
 const { playFieldOf } = await import("../src/lib/worldforge/play-fields.ts");
 const defaultWorldTypes = defaultTypes();
 const originalWorldTypes = structuredClone(defaultWorldTypes);
@@ -349,5 +349,37 @@ for (const locale of ["en", "fr", "cs"]) {
   }
 }
 assert.deepEqual(defaultWorldTypes, originalWorldTypes);
+
+// Asset summaries and bound records are presentation only, including CR 0.
+const outlineAsset = { key: "o:a0", kind: "creature", name: "Ash Warden", summary: "Original lore", cr: 0, basis: "", itemKind: "gear" };
+const boundItem = { kind: "item", ref: "longsword", name: "Longsword", detail: "From the rulebook", ownId: "", found: true, catalog: { slug: "longsword", name: "Longsword", source: "open5e", documentSlug: "wotc-srd" } };
+const boundBefore = structuredClone(boundItem);
+const outlineBefore = structuredClone(outlineAsset);
+for (const locale of ["en", "fr", "cs"]) {
+  const t = (key, vars) => translate(locale, key, vars);
+  const catalog = locale === "cs" ? csCatalog : frCatalog;
+  for (const key of ["Creature, CR {cr}, built on the {basis} · Bestiary", "Creature, CR {cr}, original · Bestiary", "Item, {kind} · Homebrew", "Your stat blocks", "Your items", "Lantern, Rope...", "Your own item", "From the rulebook"]) {
+    if (locale !== "en") assert.ok(catalog.messages[key], locale + ": " + key);
+  }
+  assert.equal(worldOutlineAssetLine(t, outlineAsset), t("Creature, CR {cr}, original · Bestiary", { cr: "0" }));
+  assert.equal(worldOutlineAssetLine(t, { ...outlineAsset, cr: 0.25, basis: "Ash Warden" }), t("Creature, CR {cr}, built on the {basis} · Bestiary", { cr: "1/4", basis: "Ash Warden" }));
+  for (const [itemKind, key] of [["weapon", "Weapon"], ["armor", "Armor"], ["gear", "Gear"], ["magic_item", "Magic item"]]) {
+    assert.equal(worldOutlineAssetLine(t, { ...outlineAsset, kind: "item", itemKind }), t("Item, {kind} · Homebrew", { kind: t(key) }));
+  }
+  const label = worldBoundName(boundItem, locale);
+  if (locale === "en") assert.equal(label, "Longsword");
+  else assert.notEqual(label, "Longsword", locale);
+  assert.equal(worldBoundDetail(t, boundItem), t("From the rulebook"));
+  const monster = { ...boundItem, kind: "monster", ref: "owlbear", name: "Owlbear", detail: "CR 3", catalog: { slug: "owlbear", name: "Owlbear", source: "bundled", documentSlug: "wotc-srd" } };
+  assert.equal(worldBoundDetail(t, monster), t("CR {cr}", { cr: "3" }));
+  if (locale !== "en") assert.notEqual(worldBoundName(monster, locale), "Owlbear", locale);
+  assert.equal(worldBoundName({ ...boundItem, ownId: "custom", ref: "homebrew:custom" }, locale), "Longsword");
+  assert.equal(worldBoundName({ ...boundItem, catalog: undefined }, locale), "Longsword");
+  assert.equal(worldBoundName({ ...boundItem, catalog: { ...boundItem.catalog, documentSlug: "unknown-book" } }, locale), "Longsword");
+  assert.equal(worldBoundName({ ...monster, name: "Ash Warden" }, locale), "Ash Warden");
+  assert.equal(worldBoundDetail(t, { ...boundItem, ownId: "custom", detail: "Your own item" }), t("Your own item"));
+}
+assert.deepEqual(boundItem, boundBefore);
+assert.deepEqual(outlineAsset, outlineBefore);
 
 console.log("test-i18n-gettext: all assertions and catalog placeholder checks passed");
