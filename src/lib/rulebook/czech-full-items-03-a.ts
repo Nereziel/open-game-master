@@ -28,7 +28,7 @@ Když nosíš tento prsten v šeru nebo ve tmě, můžeš z něj libovolně ses�
 
 Prsten má 6 nábojů pro následující další vlastnosti. Denně za úsvitu si obnoví 1k6 spotřebovaných nábojů.
 
-***Vílový oheň.*** Jako akci můžeš utratit 1 náboj a seslat z prstenu *vílí oheň*.
+***Vílí oheň.*** Jako akci můžeš utratit 1 náboj a seslat z prstenu *vílí oheň*.
 
 ***Kulový blesk.*** Jako akci můžeš utratit 2 náboje a vytvořit jednu až čtyři koule blesků o průměru 3 stopy. Čím více koulí vytvoříš, tím slabší je každá z nich.
 
@@ -64,7 +64,7 @@ Když nosíš tento prsten, máš rychlost plavání 40 stop.`,
 Když nosíš tento prsten, můžeš libovolně sesílat kouzlo *telekineze*, ale jako cíl můžeš zvolit pouze předměty, které nikdo nemá na sobě ani je nedrží či nenese.`,
   "ring-of-the-ram": `*Prsten, vzácný (vyžaduje sladění)*
 
-Prsten má 3 náboje a každý den za úsvitu si obnoví 1k3 spotřebovaných nábojů. Když jej nosíš, můžeš jako akci utratit 1 až 3 jeho náboje a zaútočit na jednoho tvora, kterého vidíš do vzdálenosti 60 stop. Prsten vytvoří přízračnou beraní hlavu, která provede hod na útok s bonusem +7. Při zásahu utrpí cíl za každý utracený náboj silové zranění 2k10 a je odtlačen o 5 stop od tebe.
+Prsten má 3 náboje a každý den za úsvitu si obnoví 1k3 spotřebovaných nábojů. Když jej nosíš, můžeš jako akci utratit 1 až 3 jeho náboje a zaútočit na jednoho tvora, kterého vidíš do vzdálenosti 60 stop. Prsten vytvoří přízračnou beraní hlavu, která provede hod na útok s bonusem +7. Při zásahu utrpí cíl za každý utracený náboj silové zranění 2k10 a je za každý utracený náboj odtlačen o 5 stop od tebe.
 
 Případně můžeš jako akci utratit 1 až 3 náboje prstenu a pokusit se rozbít předmět, který vidíš do vzdálenosti 60 stop a který nikdo nemá na sobě ani jej nedrží či nenese. Prsten provede ověření Síly s bonusem +5 za každý utracený náboj.`,
   "ring-of-three-wishes": `*Prsten, legendární*
