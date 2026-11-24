@@ -41,3 +41,41 @@ describe("Czech SRD display descriptions", () => {
     }
   });
 });
+
+import spellFixture from "../../../scripts/fixtures/reader-golden/spell.json";
+import featFixture from "../../../scripts/fixtures/reader-golden/feat.json";
+import expansionTranslations from "./expansion-descriptions-cs.json";
+import { contentName } from "./names";
+
+describe("Czech external display translations (without SQLite)", () => {
+  it("localizes every reviewed fixture and preserves identity and mechanics", () => {
+    let count = 0;
+    for (const [table, fixture] of [["spells", spellFixture], ["feats", featFixture]] as const) {
+      for (const { row } of fixture.cases) {
+        const books = expansionTranslations as Record<string, Record<string, Record<string, { name: string; description: string }>>>;
+        const hit = books[row.documentSlug]?.[table]?.[row.slug];
+        if (!hit) continue;
+        const entry = { ...row, source: "open5e" as const, data: { ...row.data } as Record<string, unknown> };
+        const translated = localizeEntryCs(table, entry);
+        const { localized_desc, ...original } = translated.data;
+        expect(localized_desc, row.slug).toBe(hit.description);
+        expect(describeContentEntry(translated.data), row.slug).toBeTruthy();
+        expect(original).toEqual(entry.data);
+        expect(translated.slug).toBe(entry.slug);
+        expect(translated.name).toBe(entry.name);
+        expect(translated.documentSlug).toBe(entry.documentSlug);
+        expect(contentName(table, entry, "cs")).toBe(hit.name);
+        expect(contentName(table, entry, "en")).toBe(entry.name);
+        expect(localizeEntryCs(table, { ...entry, source: "homebrew" })).toEqual({ ...entry, source: "homebrew" });
+        const foreign = { ...entry, documentSlug: "unrelated-book" };
+        expect(localizeEntryCs(table, foreign)).toBe(foreign);
+        const changed = { ...entry, data: { ...entry.data, desc: "Changed upstream text" } };
+        expect(localizeEntryCs(table, changed)).toBe(changed);
+        const wrongSlug = { ...entry, slug: "unrelated-id" };
+        expect(localizeEntryCs(table, wrongSlug)).toBe(wrongSlug);
+        count++;
+      }
+    }
+    expect(count).toBe(16);
+  });
+});

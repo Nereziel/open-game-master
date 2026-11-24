@@ -9,7 +9,7 @@
           "higher_level": "When you cast this spell using a spell slot of 4th level or higher, you can affect one additional creature for each slot level above 3rd.",
           "duration": "Up to 1 minute"
         },
-        "description": "Vyber až tři ochotné tvory v dosahu, včetně sebe. Po dobu trvání kouzla se rychlost chůze každého cíle zdvojnásobí. Každý cíl také může v každém svém tahu použít bonusovou akci k provedení akce Sprint a má výhodu k záchranným hodům na Obratnost.\n\n**Na vyšších úrovních.** Když sešleš toto kouzlo použitím pozice kouzla 4. či vyšší úrovně, můžeš ovlivnit jednoho dalšího tvora za každou úroveň pozice nad 3."
+        "description": "**Trvání:** Až 1 minuta\n\nVyber až tři ochotné tvory v dosahu, včetně sebe. Po dobu trvání kouzla se rychlost chůze každého cíle zdvojnásobí. Každý cíl také může v každém svém tahu použít bonusovou akci k provedení akce Sprint a má výhodu k záchranným hodům na Obratnost.\n\n**Na vyšších úrovních.** Když sešleš toto kouzlo použitím pozice kouzla 4. či vyšší úrovně, můžeš ovlivnit jednoho dalšího tvora za každou úroveň pozice nad 3."
       },
       "blood-armor": {
         "englishName": "Blood Armor",
@@ -19,7 +19,7 @@
           "higher_level": "",
           "duration": "1 hour"
         },
-        "description": "Když zasáhneš protivníka útokem na blízko zbraní, můžeš okamžitě seslat **Krvavou zbroj** jako bonusovou akci. Zasažený protivník musí mít krev; pokud cíl nekrvácí, kouzlo skončí bez účinku. Krev vytékající z protivníka magicky nabude na objemu a vytvoří kolem tebe zbroj, která ti po dobu trvání kouzla poskytuje OČ 18 + oprava Obratnosti. Tato zbroj nemá požadavek na Sílu, nebrání sesílání kouzel a nezpůsobuje nevýhodu k ověřením Obratnosti (Nenápadnosti).\n\nPokud byl zasažený tvor nebešťan, **Krvavá zbroj** ti po dobu trvání kouzla také poskytuje výhodu k záchranným hodům na Charisma."
+        "description": "**Trvání:** 1 hodina\n\nKdyž zasáhneš protivníka útokem na blízko zbraní, můžeš okamžitě seslat **Krvavou zbroj** jako bonusovou akci. Zasažený protivník musí mít krev; pokud cíl nekrvácí, kouzlo skončí bez účinku. Krev vytékající z protivníka magicky nabude na objemu a vytvoří kolem tebe zbroj, která ti po dobu trvání kouzla poskytuje OČ 18 + oprava Obratnosti. Tato zbroj nemá požadavek na Sílu, nebrání sesílání kouzel a nezpůsobuje nevýhodu k ověřením Obratnosti (Nenápadnosti).\n\nPokud byl zasažený tvor nebešťan, **Krvavá zbroj** ti po dobu trvání kouzla také poskytuje výhodu k záchranným hodům na Charisma."
       },
       "black-sunshine": {
         "englishName": "Black Sunshine",
@@ -29,7 +29,7 @@
           "higher_level": "",
           "duration": "Up to 1 minute"
         },
-        "description": "Pozvedneš vadnou perlu a ta zmizí. V ruce ti zůstane magická koule, která pulzuje slabým purpurovým světlem. Spojenci, které určíš, se stanou neviditelnými, pokud jsou do 60 stop od tebe a světlo z koule může dosáhnout prostoru, který zaujímají. Neviditelný tvor stále vrhá slabý purpurový stín.\n\nKouli lze použít jako vrhací zbraň k útoku na nepřítele. Při zásahu koule exploduje v záblesku světla a kouzlo skončí. Zacílený nepřítel a každý tvor do 10 stop od něj musí uspět v záchranném hodu na Obratnost, jinak oslepne na 1 minutu. Takto oslepený tvor opakuje záchranný hod na konci každého svého tahu a při úspěchu pro něj účinek skončí."
+        "description": "**Trvání:** Až 1 minuta\n\nPozvedneš vadnou perlu a ta zmizí. V ruce ti zůstane magická koule, která pulzuje slabým purpurovým světlem. Spojenci, které určíš, se stanou neviditelnými, pokud jsou do 60 stop od tebe a světlo z koule může dosáhnout prostoru, který zaujímají. Neviditelný tvor stále vrhá slabý purpurový stín.\n\nKouli lze použít jako vrhací zbraň k útoku na nepřítele. Při zásahu koule exploduje v záblesku světla a kouzlo skončí. Zacílený nepřítel a každý tvor do 10 stop od něj musí uspět v záchranném hodu na Obratnost, jinak oslepne na 1 minutu. Takto oslepený tvor opakuje záchranný hod na konci každého svého tahu a při úspěchu pro něj účinek skončí."
       },
       "steal-warmth": {
         "englishName": "Steal Warmth",
@@ -39,7 +39,7 @@
           "higher_level": "When you cast this spell using a spell slot of 4th level or higher, the distance to the target you can affect with this spell increases by 5 feet for each slot level above 3rd.",
           "duration": "Instantaneous"
         },
-        "description": "Když sešleš **Krádež tepla** po utrpění chladného zranění, vyber živého tvora do 5 stop od sebe. Tento tvor utrpí chladné zranění místo tebe, nebo polovinu tohoto zranění při úspěšném záchranném hodu na Odolnost. Obnovíš si tolik životů, kolik chladného zranění cíl utrpěl.\n\n**Na vyšších úrovních.** Když sešleš toto kouzlo použitím pozice kouzla 4. či vyšší úrovně, vzdálenost, na kterou můžeš cílového tvora kouzlem ovlivnit, se zvětší o 5 stop za každou úroveň pozice nad 3."
+        "description": "**Trvání:** Ihned\n\nKdyž sešleš **Krádež tepla** po utrpění chladného zranění, vyber živého tvora do 5 stop od sebe. Tento tvor utrpí chladné zranění místo tebe, nebo polovinu tohoto zranění při úspěšném záchranném hodu na Odolnost. Obnovíš si tolik životů, kolik chladného zranění cíl utrpěl.\n\n**Na vyšších úrovních.** Když sešleš toto kouzlo použitím pozice kouzla 4. či vyšší úrovně, vzdálenost, na kterou můžeš cílového tvora kouzlem ovlivnit, se zvětší o 5 stop za každou úroveň pozice nad 3."
       },
       "tree-heal": {
         "englishName": "Tree Heal",
@@ -49,7 +49,7 @@
           "higher_level": "",
           "duration": "Instantaneous"
         },
-        "description": "Dotkneš se rostliny a ta si obnoví 1k4 životů. Místo toho ji můžeš vyléčit z jedné nemoci nebo ji zbavit škůdců. Jakmile sešleš toto kouzlo na rostlinu nebo rostlinného tvora, nemůžeš je na stejný cíl znovu seslat po dobu 24 hodin. Toto kouzlo lze použít pouze na rostliny a rostlinné tvory."
+        "description": "**Trvání:** Ihned\n\nDotkneš se rostliny a ta si obnoví 1k4 životů. Místo toho ji můžeš vyléčit z jedné nemoci nebo ji zbavit škůdců. Jakmile sešleš toto kouzlo na rostlinu nebo rostlinného tvora, nemůžeš je na stejný cíl znovu seslat po dobu 24 hodin. Toto kouzlo lze použít pouze na rostliny a rostlinné tvory."
       },
       "clash-of-glaciers": {
         "englishName": "Clash of Glaciers",
@@ -59,7 +59,7 @@
           "higher_level": "When you cast this spell using a spell slot of 6th level or higher, the damage increases by 1d6 for each slot level above 5th. You decide whether each extra die deals bludgeoning or cold damage.",
           "duration": "Instantaneous"
         },
-        "description": "Vyčaruješ ledové balvany, které drtí tvory v linii dlouhé 100 stop. Každý tvor v oblasti utrpí drtivé zranění 5k6 a chladné zranění 5k6, nebo poloviční zranění při úspěšném záchranném hodu na Obratnost.\n\n**Na vyšších úrovních.** Když sešleš toto kouzlo použitím pozice kouzla 6. či vyšší úrovně, zranění se zvýší o 1k6 za každou úroveň pozice nad 5. U každé dodatečné kostky rozhodneš, zda způsobí drtivé, nebo chladné zranění."
+        "description": "**Trvání:** Ihned\n\nVyčaruješ ledové balvany, které drtí tvory v linii dlouhé 100 stop. Každý tvor v oblasti utrpí drtivé zranění 5k6 a chladné zranění 5k6, nebo poloviční zranění při úspěšném záchranném hodu na Obratnost.\n\n**Na vyšších úrovních.** Když sešleš toto kouzlo použitím pozice kouzla 6. či vyšší úrovně, zranění se zvýší o 1k6 za každou úroveň pozice nad 5. U každé dodatečné kostky rozhodneš, zda způsobí drtivé, nebo chladné zranění."
       },
       "biting-arrow": {
         "englishName": "Biting Arrow",
@@ -69,7 +69,7 @@
           "higher_level": "The spell’s damage, for both the ranged attack and the cold damage, increases by 1d6 when you reach 5th level (+1d6 and 2d6), 11th level (+2d6 and 3d6), and 17th level (+3d6 and 4d6).",
           "duration": "1 round"
         },
-        "description": "V rámci akce použité k seslání tohoto kouzla provedeš útok na dálku zbraní – lukem, kuší nebo vrhací zbraní. Bez ohledu na dostřel zbraně je účinek omezen na 120 stop. Je-li cíl v dlouhém dostřelu zbraně, provedeš útok s nevýhodou.\n\nPokud útok zbraní zasáhne, způsobí zranění jako obvykle. Navíc se cíl až do začátku tvého příštího tahu pokryje tenkou vrstvou jinovatky. Pokud cíl použije svou reakci před začátkem tvého příštího tahu, okamžitě utrpí chladné zranění 1k6 a kouzlo skončí.\n\n**Na vyšších úrovních.** Zranění kouzla při útoku na dálku i následné chladné zranění se zvýší o 1k6, když dosáhneš 5. úrovně (+1k6 a 2k6), 11. úrovně (+2k6 a 3k6) a 17. úrovně (+3k6 a 4k6)."
+        "description": "**Trvání:** 1 kolo\n\nV rámci akce použité k seslání tohoto kouzla provedeš útok na dálku zbraní – lukem, kuší nebo vrhací zbraní. Bez ohledu na dostřel zbraně je účinek omezen na 120 stop. Je-li cíl v dlouhém dostřelu zbraně, provedeš útok s nevýhodou.\n\nPokud útok zbraní zasáhne, způsobí zranění jako obvykle. Navíc se cíl až do začátku tvého příštího tahu pokryje tenkou vrstvou jinovatky. Pokud cíl použije svou reakci před začátkem tvého příštího tahu, okamžitě utrpí chladné zranění 1k6 a kouzlo skončí.\n\n**Na vyšších úrovních.** Zranění kouzla při útoku na dálku i následné chladné zranění se zvýší o 1k6, když dosáhneš 5. úrovně (+1k6 a 2k6), 11. úrovně (+2k6 a 3k6) a 17. úrovně (+3k6 a 4k6)."
       },
       "abhorrent-apparition": {
         "englishName": "Abhorrent Apparition",
@@ -79,7 +79,7 @@
           "higher_level": "If you cast this spell using a spell slot of 5th level or higher, the damage increases by 1d8 for each slot level above 4th.",
           "duration": "Instantaneous"
         },
-        "description": "Vdechneš děsivou tvář tykvi a hodíš ji před sebe na místo v dosahu, které určíš. Každý tvor do 15 stop od tohoto místa utrpí psychické zranění 6k8 a je tebou vystrašený po dobu 1 minuty. Úspěšný záchranný hod na Moudrost zranění sníží na polovinu a zabrání vystrašení. Takto vystrašený tvor opakuje záchranný hod na konci každého svého tahu a při úspěchu pro něj účinek skončí.\n\n**Na vyšších úrovních.** Když sešleš toto kouzlo použitím pozice kouzla 5. či vyšší úrovně, zranění se zvýší o 1k8 za každou úroveň pozice nad 4."
+        "description": "**Trvání:** Ihned\n\nVdechneš děsivou tvář tykvi a hodíš ji před sebe na místo v dosahu, které určíš. Každý tvor do 15 stop od tohoto místa utrpí psychické zranění 6k8 a je tebou vystrašený po dobu 1 minuty. Úspěšný záchranný hod na Moudrost zranění sníží na polovinu a zabrání vystrašení. Takto vystrašený tvor opakuje záchranný hod na konci každého svého tahu a při úspěchu pro něj účinek skončí.\n\n**Na vyšších úrovních.** Když sešleš toto kouzlo použitím pozice kouzla 5. či vyšší úrovně, zranění se zvýší o 1k8 za každou úroveň pozice nad 4."
       }
     }
   },
@@ -93,7 +93,7 @@
           "higher_level": "",
           "duration": "Instantaneous"
         },
-        "description": "Zatažením za vlákna přechodu a možností rozerváváš své nepřátele. Vyber tvora v dosahu, kterého vidíš, a zaútoč na něj kouzlem na dálku. Při zásahu cíl utrpí chladné zranění 5k8, když z tvé natažené ruky vyšlehnou prameny ledové nicoty a zahalí jej. Není-li cíl původem ze sféry, ve které se nacházíš, utrpí navíc psychické zranění 3k6 a musí uspět v záchranném hodu na Odolnost, jinak je ochromený do konce svého příštího tahu."
+        "description": "**Trvání:** Ihned\n\nZatažením za vlákna přechodu a možností rozerváváš své nepřátele. Vyber tvora v dosahu, kterého vidíš, a zaútoč na něj kouzlem na dálku. Při zásahu cíl utrpí chladné zranění 5k8, když z tvé natažené ruky vyšlehnou prameny ledové nicoty a zahalí jej. Není-li cíl původem ze sféry, ve které se nacházíš, utrpí navíc psychické zranění 3k6 a musí uspět v záchranném hodu na Odolnost, jinak je ochromený do konce svého příštího tahu."
       }
     }
   },
@@ -107,7 +107,7 @@
           "higher_level": "The spell's range increases by 30 feet for each slot level above 1st.",
           "duration": "Instantaneous"
         },
-        "description": "Obratným máchnutím zbraní vyšleš vlnu ostrého vzduchu proti tvorovi v dosahu. Proveď proti cíli útok na blízko zbraní. Pokud držíš v každé ruce jednu zbraň, tvůj útok způsobí dodatečné zranění 1k6. Bez ohledu na zbraň, kterou držíš, způsobí tvůj útok sečné zranění.\n\n**Na vyšších úrovních.** Dosah kouzla se zvětší o 30 stop za každou úroveň pozice kouzla nad 1."
+        "description": "**Trvání:** Ihned\n\nObratným máchnutím zbraní vyšleš vlnu ostrého vzduchu proti tvorovi v dosahu. Proveď proti cíli útok na blízko zbraní. Pokud držíš v každé ruce jednu zbraň, tvůj útok způsobí dodatečné zranění 1k6. Bez ohledu na zbraň, kterou držíš, způsobí tvůj útok sečné zranění.\n\n**Na vyšších úrovních.** Dosah kouzla se zvětší o 30 stop za každou úroveň pozice kouzla nad 1."
       }
     },
     "feats": {
@@ -166,7 +166,7 @@
           "higher_level": "When you cast this spell using a spell slot of 2nd level or higher, the damage increases by 1d6 and the range of the cone increases by 5 feet for each slot level above 1st.",
           "duration": "instantaneous"
         },
-        "description": "Z konečků tvých prstů vyšlehnou plameny. Každý tvor v kuželu dlouhém 15 stop si musí hodit záchranný hod na Obratnost. Při neúspěchu utrpí ohnivé zranění 3k6, při úspěchu poloviční zranění.\n\nPlameny zapálí všechny hořlavé předměty v oblasti, které nikdo nenosí ani nedrží.\n\n**Na vyšších úrovních.** Když sešleš toto kouzlo použitím pozice kouzla 2. či vyšší úrovně, zranění se zvýší o 1k6 a dosah kuželu se zvětší o 5 stop za každou úroveň pozice nad 1."
+        "description": "**Trvání:** Ihned\n\nZ konečků tvých prstů vyšlehnou plameny. Každý tvor v kuželu dlouhém 15 stop si musí hodit záchranný hod na Obratnost. Při neúspěchu utrpí ohnivé zranění 3k6, při úspěchu poloviční zranění.\n\nPlameny zapálí všechny hořlavé předměty v oblasti, které nikdo nenosí ani nedrží.\n\n**Na vyšších úrovních.** Když sešleš toto kouzlo použitím pozice kouzla 2. či vyšší úrovně, zranění se zvýší o 1k6 a dosah kuželu se zvětší o 5 stop za každou úroveň pozice nad 1."
       }
     }
   },

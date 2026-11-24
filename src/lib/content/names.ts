@@ -14,6 +14,7 @@ import { textKey } from "@/lib/language/text-logic";
 type Locale = "en" | "fr" | "cs";
 import { srdRaceId } from "@/lib/srd/race-id";
 import { frTables } from "@/lib/i18n/fr-tables";
+import { expansionNameCs } from "./expansion-descriptions-cs";
 import { csTables } from "@/lib/i18n/cs-tables";
 
 // The tables the maps carry, as the helper's callers name them.
@@ -40,6 +41,7 @@ export type NamedRow = {
   slug?: string;
   name: string;
   source?: string;
+  documentSlug?: string;
 };
 
 // The gear table is keyed by the SRD gear's gearKey (adventuring-gear.ts):
@@ -153,6 +155,10 @@ export function contentName(
   const row: NamedRow = typeof ref === "string" ? { name: ref } : ref;
   if ((locale !== "fr" && locale !== "cs") || !row.name || (row.source && row.source !== "open5e")) {
     return row.name;
+  }
+  if (locale === "cs") {
+    const translated = expansionNameCs(table, row);
+    if (translated) return translated;
   }
   const tables: readonly FrNamesTable[] = table === "items" ? ITEM_TABLES : [table];
   for (const each of tables) {
