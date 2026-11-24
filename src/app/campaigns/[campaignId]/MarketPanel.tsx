@@ -253,7 +253,16 @@ export function MarketPanel({
       if (!response.ok && data.unpriced === true) {
         setUnpriced({ shop: shop.name, item });
       } else if (!response.ok) {
-        setError(String(data.error ?? t("The keeper shakes their head.")));
+        const notice = data.notice;
+        if (notice && typeof notice.key === "string") {
+          const vars = { ...notice.vars };
+          for (const key of ["price", "purse"]) {
+            if (typeof vars[key] === "string") vars[key] = localizeCoins(vars[key], t.locale);
+          }
+          setError(t(notice.key, vars));
+        } else {
+          setError(t(String(data.error ?? "The keeper shakes their head.")));
+        }
       } else if (action === "haggle") {
         // The haggler's new markup against the shop's own: equal when the
         // step met an end of the ladder.
