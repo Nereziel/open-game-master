@@ -119,7 +119,7 @@ export function planBoard(
     });
   }
   for (const note of board.proseNotes ?? []) {
-    notes.push({ kind: "storyboard", display: { key: "{title} may read oddly: {detail}", vars: { title: note.title, detail: note.message } }, message: `"${note.title}" may read oddly: ${note.message}` });
+    notes.push({ kind: "storyboard", display: { key: "{title} may read oddly: {detail}", vars: { title: note.title, detail: note.message }, ...(note.parts?.length ? { details: { detail: note.parts } } : {}) }, message: `"${note.title}" may read oddly: ${note.message}` });
   }
 
   const arc = input.targetArc ?? (input.targetHasArc ? { beats: [], acts: 1, room: 0, actRoom: false } : null);
@@ -135,7 +135,7 @@ export function planBoard(
   };
   if (!arc) {
     if (board.arcProblem && board.beats.length) {
-      warnings.push({ kind: "storyboard", display: { key: "{detail} Until then the board's beats are left out.", vars: { detail: board.arcProblem } }, message: `${board.arcProblem} Until then the board's beats are left out.` });
+      warnings.push({ kind: "storyboard", display: { key: "{detail} Until then the board's beats are left out.", vars: { detail: board.arcProblem }, ...(board.arcProblemDisplay ? { details: { detail: [board.arcProblemDisplay] } } : {}) }, message: `${board.arcProblem} Until then the board's beats are left out.` });
     } else if (board.beats.length > ARC_LIMITS.beats) {
       const over = board.beats.length - ARC_LIMITS.beats;
       plan.newBeats = ARC_LIMITS.beats;
