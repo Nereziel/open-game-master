@@ -11,7 +11,7 @@ import { uniqueByName } from "./pickerRows";
 import type { PickerEntry } from "./useContentSearch";
 import { textKey } from "@/lib/language/text-logic";
 import { useLocale, useT } from "@/lib/locale";
-import { contentName } from "@/lib/content/names";
+import { contentName, contentNameMatches } from "@/lib/content/names";
 
 // The whole catalog, not just what you can name.
 //
@@ -98,7 +98,7 @@ export default function CatalogBrowser({
   // A feat's row name reads in the reader's language (the official maps; a
   // homebrew row stays its author's words) while the pick itself stores the
   // row's own English name.
-  const rowName = (entry: PickerEntry) => (kind === "feats" ? contentName("feats", entry, locale) : entry.name);
+  const rowName = (entry: PickerEntry) => contentName(kind, entry, locale);
   const [open, setOpen] = useState(defaultOpen);
   const [expanded, setExpanded] = useState<string[]>(openSections);
   const [loaded, setLoaded] = useState<Record<string, Loaded>>({});
@@ -109,6 +109,7 @@ export default function CatalogBrowser({
   const [filter, setFilter] = useState("");
   // The table the browse is for (src/lib/content-scope.tsx).
   const campaignId = useContentCampaign();
+  const cachePrefix = JSON.stringify([kind, campaignId, locale]);
   // Sections already fetched must not refetch when the component re-renders
   // with new props (a spell level change rewrites `sections` every keystroke
   // elsewhere in the step).
@@ -122,12 +123,13 @@ export default function CatalogBrowser({
 
   const load = useCallback(
     async (section: CatalogSection) => {
-      if (fetched.current.has(section.key)) {
+      const cacheKey = `${cachePrefix}:${section.key}`;
+      if (fetched.current.has(cacheKey)) {
         return;
       }
-      fetched.current.add(section.key);
-      setLoading((current) => [...current, section.key]);
-      setFailedKeys((current) => current.filter((key) => key !== section.key));
+      fetched.current.add(cacheKey);
+      setLoading((current) => [...current, cacheKey]);
+      setFailedKeys((current) => current.filter((key) => key !== cacheKey));
       const rows: PickerEntry[] = [];
       let truncated = false;
       try {
@@ -135,7 +137,7 @@ export default function CatalogBrowser({
           const params = new URLSearchParams(
             scopedParams({ limit: String(PAGE), offset: String(offset), ...(section.params ?? {}) }, campaignId),
           );
-          const response = await fetch(`/api/content/${kind}?${params}`);
+          const response = await fetch(`/api/content/${kind}?${params}`, { headers: { "X-Odm-Locale": locale } });
           if (!response.ok) {
             // Refused, which is not a missing pack: said so, and asked again
             // the next time the section opens.
@@ -161,18 +163,18 @@ export default function CatalogBrowser({
         }
         setLoaded((current) => ({
           ...current,
-          [section.key]: { rows: uniqueByName(rows), truncated },
+          [cacheKey]: { rows: uniqueByName(rows), truncated },
         }));
       } catch {
         // A failed browse leaves the search box, which is the same catalog by
         // another door; forgetting the attempt lets a retry through.
-        fetched.current.delete(section.key);
-        setFailedKeys((current) => [...new Set([...current, section.key])]);
+        fetched.current.delete(cacheKey);
+        setFailedKeys((current) => [...new Set([...current, cacheKey])]);
       } finally {
-        setLoading((current) => current.filter((key) => key !== section.key));
+        setLoading((current) => current.filter((key) => key !== cacheKey));
       }
     },
-    [kind, campaignId],
+    [kind, campaignId, locale, cachePrefix],
   );
 
   // Sections open from the start fetch from the start. `load` remembers what
@@ -247,7 +249,7 @@ export default function CatalogBrowser({
               ) : null}
               <ul>
                 {recommended.entries
-                  .filter((entry) => !needle || textKey(entry.name).includes(needle))
+                  .filter((entry) => !needle || contentNameMatches(kind, entry, filter, locale))
                   .map((entry) => {
                     const on = selected.has(textKey(entry.name));
                     return (
@@ -274,14 +276,14 @@ export default function CatalogBrowser({
                             ) : (
                               <Plus className="size-3.5 shrink-0 text-stone-600" />
                             )}
-                            <span className={cn(on && "text-amber-200")}>{entry.name}</span>
+                            <span className={cn(on && "text-amber-200")}>{contentName(kind, entry.name, locale)}</span>
                           </span>
                           <span className="shrink-0 text-[0.875rem] text-stone-500">
                             {entry.note ?? ""}
                           </span>
                         </button>
                         <InfoButton
-                          label={entry.name}
+                          label={contentName(kind, entry.name, locale)}
                           reference={{ kind, slug: contentSlug(entry.name), name: entry.name }}
                         />
                       </li>
@@ -293,10 +295,11 @@ export default function CatalogBrowser({
 
           {sections.map((section) => {
             const isOpen = expanded.includes(section.key);
-            const isLoading = loading.includes(section.key);
-            const rows = loaded[section.key]?.rows ?? [];
+            const cacheKey = `${cachePrefix}:${section.key}`;
+            const isLoading = loading.includes(cacheKey);
+            const rows = loaded[cacheKey]?.rows ?? [];
             const visible = needle
-              ? rows.filter((entry) => textKey(entry.name).includes(needle))
+              ? rows.filter((entry) => contentNameMatches(kind, entry, filter, locale))
               : rows;
             return (
               <div key={section.key} className="border-t border-stone-800/80 first:border-t-0">
@@ -313,7 +316,7 @@ export default function CatalogBrowser({
                   )}
                   <span className="grow">{section.label}</span>
                   {isLoading ? <Loader2 className="size-3.5 animate-spin text-stone-500" /> : null}
-                  {!isLoading && loaded[section.key] ? (
+                  {!isLoading && loaded[cacheKey] ? (
                     <span className="text-[0.875rem] text-stone-500">{rows.length}</span>
                   ) : null}
                 </button>
@@ -323,8 +326,8 @@ export default function CatalogBrowser({
                       <p className="px-1 pb-1 text-sm text-stone-500">{section.note}</p>
                     ) : null}
                     {!isLoading && !rows.length ? (
-                      <p className="px-1 py-1 text-sm text-stone-500" role={failedKeys.includes(section.key) ? "alert" : undefined}>
-                        {failedKeys.includes(section.key)
+                      <p className="px-1 py-1 text-sm text-stone-500" role={failedKeys.includes(cacheKey) ? "alert" : undefined}>
+                        {failedKeys.includes(cacheKey)
                           ? t("Could not reach the server to list these. Close and open this section to try again.")
                           : unavailable
                             ? t("The content pack is not installed on this server, so there is nothing to list. Whoever runs it can install it with: node scripts/import-open5e.mjs")
@@ -404,7 +407,7 @@ export default function CatalogBrowser({
                         </li>
                       ))}
                     </ul>
-                    {loaded[section.key]?.truncated ? (
+                    {loaded[cacheKey]?.truncated ? (
                       <p className="px-1 pt-1 text-sm text-stone-500">
                         Showing the first {rows.length}. Search by name above for the rest.
                       </p>
