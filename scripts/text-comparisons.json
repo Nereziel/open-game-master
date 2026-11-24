@@ -14,6 +14,13 @@
     "lib/db/core.ts"
   ],
   "sites": {
+    "lib/rulebook/czech-terms.ts#\\w": [["english-source", 3, "Read the bundled English SRD metadata and translate its display labels; no gameplay identity lookup or player prose."]],
+    "lib/rulebook/czech-terms.ts#\\b": [["english-source", 2, "Read the bundled English SRD metadata and translate its display labels; no gameplay identity lookup or player prose."]],
+    "lib/rulebook/czech-terms.ts#[a-z]": [["english-source", 1, "Read the bundled English SRD metadata and translate its display labels; no gameplay identity lookup or player prose."]],
+    "lib/rulebook/czech-terms.ts#toLowerCase": [["english-source", 9, "Read the bundled English SRD metadata and translate its display labels; no gameplay identity lookup or player prose."]],
+    "lib/rulebook/czech-terms.ts#re-word": [["english-source", 7, "Read the bundled English SRD metadata and translate its display labels; no gameplay identity lookup or player prose."]],
+    "lib/rulebook/czech-terms.ts#str-eq": [["english-source", 1, "Read the bundled English SRD metadata and translate its display labels; no gameplay identity lookup or player prose."]],
+    "lib/rulebook/czech-terms.ts#str-key": [["english-source", 7, "Read the bundled English SRD metadata and translate its display labels; no gameplay identity lookup or player prose."]],
     "lib/dm/npc-state-guard-logic.ts#str-list": [["table-language",1,"Italian and English words for a body's change in the narrator's prose, only deciding whether a utility read of the narration is worth its call: a miss is caught on the next turn's read of a named person"]],
     "lib/dm/party-npcs-fight-logic.ts#str-list": [["key",1,"an NPC's custody, restraint and condition values (engine vocabulary)"]],
     "lib/dm/party-npcs-fight-logic.ts#str-eq": [["key",2,"an NPC's custody, restraint and condition values and an enemy row's status (engine vocabulary)"]],
@@ -3561,7 +3568,7 @@
     "lib/i18n/locale.ts#str-startsWith": [
       [
         "key",
-        2,
+        3,
         "locale tag prefix checks"
       ]
     ],
