@@ -7,7 +7,7 @@
     // Every top-level script is a program (`node scripts/<name>.mjs`, npm scripts, the docs).
     "scripts/*.{mjs,js,ts}",
     // Czech-only Vitest test files invoked by vitest.config.mts.
-    "src/lib/{content/czech-names,content/entry-descriptions-cs,i18n/czech-locale,rulebook/czech-book,srd/class-resources-cs}.test.ts",
+    "src/lib/{content/czech-names,content/entry-descriptions-cs,i18n/czech-locale,i18n/localized-tables,rulebook/czech-book,srd/class-resources-cs}.test.ts",
     // Spawned by path, not imported: scripts/browser/run.mjs, test-boot-resync.mjs, lib/enforce-spell-kit.mjs.
     "scripts/browser/seed.mjs",
     "scripts/lib/boot-db.mjs",
