@@ -37,7 +37,13 @@ export default {
       const lists = await Promise.all([["spells", "Fireball"], ["items", "Cloak of Protection"]].map(async ([kind, name]) => ({
         kind, rows: await Promise.all(["en", "fr", "cs"].map((locale) => compareList(kind, name, locale))),
       })));
-      return { lists, fr: await ask("fr-FR,fr;q=0.9"), en: await ask("en-US,en;q=0.9"), cs, forcedCs,
+      const localizedSearch = await Promise.all([["cs", "ohniva koule"], ["fr", "boule de feu"]].map(async ([locale, q]) => {
+        const params = new URLSearchParams({ q, mechanics: "1", book: "1", limit: "50", class: "wizard", level: "3", exact: "1" });
+        const response = await fetch("/api/content/spells?" + params, { headers: { "x-odm-locale": locale }, cache: "no-store" });
+        const body = await response.json();
+        return { locale, status: response.status, found: body.results?.some((row) => row.name === "Fireball" && row.level === 3) ?? false };
+      }));
+      return { lists, localizedSearch, fr: await ask("fr-FR,fr;q=0.9"), en: await ask("en-US,en;q=0.9"), cs, forcedCs,
         search: { status: response.status, found: results.hits?.some((hit) => hit.page === "fireball") ?? false },
         csDetail: await details("cs"), enDetail: await details("en"),
         canonical: await Promise.all(["en", "fr", "cs"].map((locale) => details(locale, "fireball"))) };
@@ -50,6 +56,7 @@ export default {
     check(/accept-language/i.test(asked.cs.vary ?? "") && /x-odm-locale/i.test(asked.cs.vary ?? ""), "the localized page varies by both language headers");
     check(asked.search.status === 200 && asked.search.found, "Czech text search finds the canonical fireball page");
     check(asked.canonical.every((detail) => detail.status === 200 && detail.entry?.slug === asked.canonical[0].entry?.slug), "canonical spell detail resolves the same identity for EN, FR and CS");
+    for (const result of asked.localizedSearch) check(result.status === 200 && result.found, result.locale + " localized search finds canonical Fireball");
     for (const { kind, rows } of asked.lists) {
       const [en, ...localized] = rows;
       check(en.status === 200 && en.detailStatus === 200 && Boolean(en.row), kind + " has a canonical list and detail");
