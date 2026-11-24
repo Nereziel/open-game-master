@@ -11,6 +11,7 @@ import featFixture from "../../../scripts/fixtures/reader-golden/feat.json";
 import backgroundFixture from "../../../scripts/fixtures/reader-golden/background.json";
 import expansionTranslations from "./expansion-descriptions-cs.json";
 import { contentName } from "./names";
+import { expansionNameCs } from "./expansion-descriptions-cs";
 
 
 describe("Czech SRD display descriptions", () => {
@@ -86,6 +87,17 @@ describe("Czech external display translations (without SQLite)", () => {
 
 
 describe("Source-specific Czech expansion names", () => {
+  it("uses the same source identity for API and translation-table kind aliases", () => {
+    for (const [apiKind, table] of [["races", "species"], ["archetypes", "subclasses"]] as const) {
+      for (const [slug, hit] of Object.entries(expansionTranslations.toh[table])) {
+        const row = { slug, name: hit.englishName, documentSlug: "toh", source: "open5e" };
+        expect(expansionNameCs(apiKind, row), slug).toBe(hit.name);
+        expect(expansionNameCs(table, row), slug).toBe(hit.name);
+        expect(expansionNameCs(apiKind, { ...row, source: "homebrew" })).toBeUndefined();
+      }
+    }
+  });
+
   it("keeps all verified source names scoped to their source and slug", () => {
     let count = 0;
     for (const [documentSlug, tables] of Object.entries(expansionTranslations as Record<string, Record<string, Record<string, { englishName: string; name: string }>>>)) {
