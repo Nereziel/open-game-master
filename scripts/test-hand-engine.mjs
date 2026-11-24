@@ -27,7 +27,7 @@ const { messageIntentSchema, describeIntent, intentAnswered, intentCorrection, i
 const { translate, tableTranslator } = await import("../src/lib/messages-logic.ts");
 const { installCatalog } = await import("../src/lib/i18n/translate.ts");
 const t = (key, vars) => translate("en", key, vars);
-const { maxHpView, speedView, hitDiceRows, hitDiceLine, itemStatus, stateTags } = await import(
+const { maxHpView, speedView, hitDiceRows, hitDiceLine, itemStatus, stateTags, petAwayNote, petConditionDetail } = await import(
   "../src/components/sheet/sheet-state.ts"
 );
 
@@ -474,6 +474,33 @@ test("a condition's note says until whose turn, the save that ends it, and who l
   assert.equal(conditionNoteLine(conditionNote("paralyzed", { rounds: 3 }, nameOf), { skipCounted: true }), "");
   assert.equal(conditionNoteLine(conditionNote("readied", { untilTurnOf: "s1", source: "the ogre moves" }, nameOf, "s1")), "until their next turn, trigger: the ogre moves");
   assert.equal(conditionNoteLine(conditionNote("unconscious", { source: "knocked out" }, nameOf)), "knocked out");
+});
+
+test("familiar condition notes and pocket dimension follow the reader's locale without changing stored metadata", () => {
+  const owner = sheet();
+  const pet = { pocketed: true, conditionMeta: { paralyzed: {
+    untilTurnOf: owner.id, saveEnds: { ability: "wis", or: "str", dc: 13 },
+    source: "e1", spell: "Custom Spell",
+  } } };
+  const before = JSON.stringify(pet);
+  const nameOf = namesLookup([{ id: "e1", name: "Kael {name}" }]);
+  const expected = {
+    en: ["In its pocket dimension", "until their next turn", "save ends (WIS or STR 13)", "from Kael {name} (Custom Spell)"],
+    fr: ["Dans sa dimension de poche", "jusqu’à son prochain tour", "fin sur sauvegarde (SAG ou FOR 13)", "de Kael {name} (Custom Spell)"],
+    cs: ["Ve své kapesní dimenzi", "do jejich dalšího tahu", "záchranný hod ukončí (MDR nebo SÍL 13)", "od Kael {name} (Custom Spell)"],
+  };
+  for (const locale of ["en", "fr", "cs"]) {
+    if (locale !== "en") installCatalog(locale, JSON.parse(fs.readFileSync(new URL(`../src/lib/i18n/${locale}.json`, import.meta.url), "utf8")));
+    const tr = (key, vars) => translate(locale, key, vars);
+    const [away, ...detail] = expected[locale];
+    assert.equal(petAwayNote(pet, tr), away);
+    assert.equal(petAwayNote({ pocketed: false }, tr), null);
+    assert.equal(petConditionDetail(owner, pet, "paralyzed", nameOf, tr), detail.join(", "));
+    assert.equal(petConditionDetail(owner, pet, "blinded", nameOf, tr), "");
+    assert.equal(JSON.stringify(pet), before);
+  }
+  assert.equal(petAwayNote(pet), expected.en[0]);
+  assert.equal(petConditionDetail(owner, pet, "paralyzed", nameOf), expected.en.slice(1).join(", "));
 });
 
 test("a character's token rows carry concentration, exhaustion and the death track; a knocked-out enemy says so", () => {
