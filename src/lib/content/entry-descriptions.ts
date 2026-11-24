@@ -142,7 +142,7 @@ function backgroundDescription(row: Row & { name: string; data: Record<string, u
   }
   if (!changed) return undefined;
   if (typeof data.feature === "string") data.feature = backgroundFeatureLabel(row.name, data.feature, locale);
-  return describeContentEntry(data) ?? undefined;
+  return describeContentEntry(data, undefined, locale) ?? undefined;
 }
 
 // Apply only after the canonical row, mechanics and labels have been assembled.
