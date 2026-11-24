@@ -31,7 +31,7 @@ const AT_COUNTER: TradeAt = { atCounter: true };
 
 export async function POST(request: Request, { params }: { params: Promise<{ campaignId: string; shopId: string }> }) {
   const { campaignId, shopId } = await params;
-  const context = await requireMember(campaignId);
+  const context = await requireMember(campaignId, request);
   if (isErrorResponse(context)) {
     return context;
   }
@@ -45,7 +45,7 @@ export async function POST(request: Request, { params }: { params: Promise<{ cam
   }
   // A trade is play, and play waits out a table break (table audit
   // 2026-10-26, T05).
-  const paused = refuseDuringBreak(campaignId);
+  const paused = refuseDuringBreak(campaignId, undefined, request);
   if (paused) {
     return paused;
   }
