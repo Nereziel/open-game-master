@@ -361,15 +361,16 @@ test("every classified entry names a known class, a count and its reason", () =>
 });
 
 test("every place src/ could decide which record a text names is classified, file by file and mechanism by mechanism", () => {
+  const mismatches = [];
   for (const [key, count] of scanned) {
     const entries = classified.sites[key];
-    assert.ok(
-      entries,
-      `${key.replace("#", ": ")} is new. A record a text names is found by its whole name: textKey on both sides, findNamed for a list, lineNamed for a carried line, isNamed for a feature name, isConditionNamed for a condition, or a field naming the row (srdName, slug, id); a miss is refused with the options (namedOption, namesHolding), never the first record or one holding a word of it. Anything else gets an entry in scripts/name-lookups.json with its class and reason`,
-    );
-    const total = entries.reduce((sum, [, n]) => sum + n, 0);
-    assert.equal(total, count, `${key.replace("#", ": ")} has ${count} sites, ${total} classified; classify the new one or strike the removed one`);
+    const total = entries?.reduce((sum, [, n]) => sum + n, 0) ?? 0;
+    if (total !== count) mismatches.push(`${key}: ${count} sites, ${total} classified`);
   }
+  for (const key of Object.keys(classified.sites)) {
+    if (!scanned.has(key)) mismatches.push(`${key}: no sites remain, remove the classification`);
+  }
+  assert.deepEqual(mismatches, [], `Review every changed site and classify it with its actual purpose, or use the shared text helpers.\n${mismatches.join("\n")}`);
 });
 
 test("a classified site that is gone is struck off", () => {
