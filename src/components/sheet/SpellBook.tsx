@@ -340,7 +340,7 @@ export function SpellBook({
         // use (OptionCardGrid.tsx), each named by what it shows, and a
         // checkbox whose whole label is a finger-sized target on a phone.
         <div role="group" aria-label={t("Filter spells")} data-spell-filters="" className="mt-2 flex flex-wrap items-center gap-2 text-xs text-stone-400">
-          {spellFilterPickers(options).map((picker) => {
+          {spellFilterPickers(options, locale).map((picker) => {
             const value = live[picker.key] || ANY_SPELL_FILTER;
             return (
               // Two to a line on a phone, side by side on a wider screen.
@@ -379,10 +379,10 @@ export function SpellBook({
         <span className="eyebrow shrink-0 text-[10px] leading-4 text-stone-500">
           {needle
             ? (filtering
-                ? t("Matching \"{query}\", {words}", { query: filter.trim(), words: spellFilterWords(live) })
+                ? t("Matching \"{query}\", {words}", { query: filter.trim(), words: spellFilterWords(live, locale) })
                 : t("Matching \"{query}\"", { query: filter.trim() }))
             : filtering
-              ? t("Matching {words}", { words: spellFilterWords(live) })
+              ? t("Matching {words}", { words: spellFilterWords(live, locale) })
               : levelLabel(active)}
         </span>
         {notice || heldNotice ? (
@@ -404,7 +404,7 @@ export function SpellBook({
         <ul className="grid grid-cols-2 gap-1.5 @lg:grid-cols-3 @3xl:grid-cols-4">
           {ordered.map((tile) => {
             const clickable = toggles(tile) && !busy;
-            const facts = tile.data ? spellSummary(tile.data) : undefined;
+            const facts = tile.data ? spellSummary(tile.data, t.locale) : undefined;
             const summary = tile.source ? [facts, tile.source].filter(Boolean).join(" · ") : facts;
             // What the server leaves to the DM, said before the spell is picked.
             const support = spellSupportFor(tile.name);
