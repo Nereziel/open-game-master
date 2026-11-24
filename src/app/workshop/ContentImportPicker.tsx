@@ -104,19 +104,19 @@ export function ContentImportPicker({
   // importing blind past collisions and overwrites it would have named.
   const [planFailed, setPlanFailed] = useState(false);
   const [busy, setBusy] = useState(false);
-  const [note, setNote] = useState<{ tone: "ok" | "error"; text: string } | null>(null);
+  const [note, setNote] = useState<{ tone: "ok" | "error"; text: string; result?: Record<string, unknown> } | null>(null);
   // The list of sources could not be read, which is not "nothing to copy".
   const [sourcesFailed, setSourcesFailed] = useState(false);
   // What earlier imports kept as this campaign has it and the author has
   // not settled yet (src/lib/worldforge/import-kept.ts), read from the
   // entries themselves, so it is said again after a reload. The entry's
   // page in the World tab is where the author chooses.
-  const [standing, setStanding] = useState<string[]>([]);
+  const [standing, setStanding] = useState<{ messages: string[]; displays: ImportResultNote[] }>({ messages: [], displays: [] });
   const readStanding = useCallback(() => {
     if (!campaignId) return Promise.resolve();
     return fetch(`/api/campaigns/${campaignId}/import?kept=1`)
       .then((response) => (response.ok ? response.json() : null))
-      .then((data) => setStanding(Array.isArray(data?.kept) ? data.kept : []))
+      .then((data) => setStanding({ messages: importNames(data?.kept), displays: importDisplays(data?.keptDisplays) }))
       .catch(() => {
         // transient; the next import reads it again
       });
@@ -249,7 +249,7 @@ export function ContentImportPicker({
         setNote({ tone: "error", text: outcome.error });
         return;
       }
-      setNote({ tone: "ok", text: outcome.note });
+      setNote({ tone: "ok", text: outcome.note, result: outcome.result });
       // Clearing the ticks re-runs the plan effect, which clears the plan.
       // Refetching here as well raced it with the old ticks and left the
       // last import's warnings and notes on screen. The table now starts
@@ -282,12 +282,15 @@ export function ContentImportPicker({
   }
 
   // Said beside an import's note too, less what the note already says.
-  const unsaid = standingUnsaid(standing, note?.text);
+  const unsaid = note?.result
+    ? standing.messages.filter((message) => !importNames(note.result?.worldConflicts).includes(message))
+    : standingUnsaid(standing.messages, note?.text);
+  const unsaidText = importResultNotesText(unsaid, standing.displays, t);
   const unsaidLine = unsaid.length ? (
     <p className="flex items-start gap-1.5 text-xs text-amber-300/90" data-testid="import-kept-standing">
       <AlertTriangle className="mt-0.5 size-3.5 shrink-0" />
       <span>
-        {t("Kept from an earlier import, until you choose on the entry in the World tab: {list}", { list: unsaid.join(" ") })}
+        {t("Kept from an earlier import, until you choose on the entry in the World tab: {list}", { list: unsaidText.join(" ") })}
       </span>
     </p>
   ) : null;
@@ -318,7 +321,7 @@ export function ContentImportPicker({
           role={note.tone === "error" ? "alert" : "status"}
           className={note.tone === "error" ? "motion-shake text-xs text-red-400" : "live-in text-xs text-emerald-400"}
         >
-          {note.text}
+          {note.result ? importNote(note.result, t) : note.text}
         </span>
       ) : null}
     </div>
@@ -490,17 +493,20 @@ export function ContentImportPicker({
   );
 }
 
-export type ImportOutcome = { ok: true; copied: number; note: string } | { ok: false; error: string };
+export type ImportOutcome = { ok: true; copied: number; note: string; result: Record<string, unknown> } | { ok: false; error: string };
 
 // The words the import's own note is built from; English when no t() is
 // handed in (a caller without a locale to spare).
 type ImportT = (key: string, vars?: MessageVars) => string;
 
+const importNames = (value: unknown): string[] => Array.isArray(value) ? value.map(String) : [];
+const importDisplays = (value: unknown): ImportResultNote[] => Array.isArray(value) ? value : [];
+
 // What an import brought, in one line for the person who asked for it.
 function importNote(data: Record<string, unknown>, t: ImportT): string {
   const tp = pluralOf(t);
   const copied = Number(data.copied) || 0;
-  const names = (value: unknown) => (Array.isArray(value) ? value.map(String) : []);
+  const names = importNames;
   const unresolved = names(data.unresolved);
   // The workshop's pregens its players can take here now; a choice that
   // brought only those is not "0 items".
@@ -515,10 +521,10 @@ function importNote(data: Record<string, unknown>, t: ImportT): string {
     unresolved.length
       ? t("No monster here answers to {names}: add them to your bestiary, or point those NPCs and fights at another.", { names: unresolved.join(", ") })
       : "",
-    names(data.worldConflicts).join(" "),
+    importResultNotesText(names(data.worldConflicts), importDisplays(data.worldConflictDisplays), t).join(" "),
     // Roll-table rows whose table, NPC or lore entry stayed behind and that
     // now name this campaign's own of that name, or nothing.
-    importResultNotesText(names(data.referenceNotes), Array.isArray(data.referenceNoteDisplays) ? data.referenceNoteDisplays as ImportResultNote[] : [], t).join(" "),
+    importResultNotesText(names(data.referenceNotes), importDisplays(data.referenceNoteDisplays), t).join(" "),
     // Hand-built monsters and items this table's authors did not have,
     // copied in so what names them still works (WF-07, WF-17).
     names(data.monstersBrought).length ? t("Copied into this table's bestiary: {list}.", { list: names(data.monstersBrought).join(", ") }) : "",
@@ -545,7 +551,7 @@ export async function postContentImport(campaignId: string, selection: ImportSel
     if (!response.ok) {
       return { ok: false, error: typeof data.error === "string" && data.error ? data.error : say("The import was refused.") };
     }
-    return { ok: true, copied: Number(data.copied) || 0, note: importNote(data, say) };
+    return { ok: true, copied: Number(data.copied) || 0, note: importNote(data, say), result: data };
   } catch {
     return { ok: false, error: say("Could not reach the server.") };
   }
