@@ -2,6 +2,10 @@
 // These are concise summaries, never verbatim copies of external Czech PDFs.
 // The complete CC BY 4.0 English SRD text is shown below each summary.
 export const CZECH_RULE_NOTES: Readonly<Record<string, string>> = {
+  "legal-information": `---
+
+Toto dílo obsahuje materiál převzatý ze System Reference Document 5.1 („SRD 5.1“) společnosti Wizards of the Coast LLC, dostupného na https://dnd.wizards.com/resources/systems-reference-document. SRD 5.1 je licencován podle licence Creative Commons Attribution 4.0 International, dostupné na https://creativecommons.org/licenses/by/4.0/legalcode.`,
+
   alignment: `Přesvědčení popisuje obecné morální postoje postavy. V pravidlech se pracuje se dvěma osami: **dobro – neutralita – zlo** a **zákonnost – neutralita – chaos**. Dohromady tvoří devět běžných přesvědčení. Není to náhrada za povahu, motivace ani rozhodnutí konkrétní postavy.`,
 
   languages: `Postava na začátku zná jazyky podle rasy a zázemí; další může získat prostřednictvím povolání nebo jiných schopností. Znalost jazyka zahrnuje obvykle mluvení, čtení i psaní. Některé jazyky sdílejí písmo. Běžné a exotické jazyky jsou uvedené v anglické tabulce níže.`,
