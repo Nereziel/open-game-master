@@ -479,4 +479,44 @@ assert.equal(bestiaryPrinted.samePrintedEntries(checkedPrinted, { ...printedSnap
 assert.equal(bestiaryPrinted.samePrintedEntries(checkedPrinted, { ...printedSnapshot, actions: [] }), false);
 assert.equal(bestiaryPrinted.samePrintedEntries(checkedPrinted, { ...printedSnapshot, actions: [{ ...printedSnapshot.actions[0], engine: "text" }] }), false);
 
+// Ambience localization changes labels only: scene ids, catalog metadata,
+// map generation and encounter map normalization are locale-independent.
+const ambienceDisplay = await import("../src/lib/ambience/catalog.ts");
+const ambienceForge = await import("../src/app/workshop/maps/forge.ts");
+const encounterMapLogic = await import("../src/lib/dm/encounter-template-logic.ts");
+const originalAmbience = structuredClone(ambienceDisplay.AMBIENCE_CUES);
+const originalSceneIds = ambienceDisplay.sceneIds();
+const testSceneRoll = { ...ambienceForge.FORGE_START, scene: "forest", seed: 12345 };
+const originalSceneMap = ambienceForge.forgeGenerate(testSceneRoll);
+const originalSceneBody = ambienceForge.createBodyFor(testSceneRoll);
+const sceneConstraints = { scenes: originalSceneIds, themes: [], ambients: [] };
+const originalEncounterMap = encounterMapLogic.normalizeTemplateMap(originalSceneBody, sceneConstraints);
+for (const locale of ["en", "fr", "cs"]) {
+  const t = (key, vars) => translate(locale, key, vars);
+  const catalog = locale === "cs" ? csCatalog : frCatalog;
+  for (const layer of ["bed", "music", "sting"]) {
+    const localized = ambienceDisplay.cueOptions(layer, t);
+    assert.deepEqual(localized.map((row) => row.value), ambienceDisplay.cueIds(layer));
+    for (const row of localized) {
+      const original = ambienceDisplay.cueById(row.value);
+      if (locale !== "en") assert.ok(catalog.contexts[original.label]?.["ambience.cue"] || catalog.messages[original.label]);
+      assert.equal(row.label, t(original.label, { context: "ambience.cue" }));
+    }
+  }
+  const scenes = ambienceDisplay.sceneOptions(t);
+  assert.deepEqual(scenes.map((row) => row.value), originalSceneIds);
+  for (const excluded of ["wind", "rain", "storm", "night"]) assert.ok(!scenes.some((row) => row.value === excluded));
+  assert.equal(ambienceDisplay.cueLabel("custom-scene", t), "custom-scene");
+  const selected = scenes.find((row) => row.value === testSceneRoll.scene);
+  const roll = { ...testSceneRoll, scene: selected.value };
+  assert.deepEqual(ambienceForge.forgeGenerate(roll), originalSceneMap);
+  assert.deepEqual(ambienceForge.createBodyFor(roll), originalSceneBody);
+  assert.deepEqual(encounterMapLogic.normalizeTemplateMap(ambienceForge.createBodyFor(roll), sceneConstraints), originalEncounterMap);
+}
+assert.deepEqual(ambienceDisplay.AMBIENCE_CUES, originalAmbience);
+assert.equal(ambienceDisplay.cueLabel("forge", (key, vars) => translate("cs", key, vars)), "Kovárna");
+assert.equal(ambienceDisplay.cueLabel("boss", (key, vars) => translate("cs", key, vars)), "Souboj s bossem");
+assert.equal(ambienceDisplay.cueLabel("forest", (key, vars) => translate("fr", key, vars)), "Forêt");
+assert.equal(ambienceDisplay.cueLabel("forest", (key, vars) => translate("cs", key, vars)), "Les");
+
 console.log("test-i18n-gettext: all assertions and catalog placeholder checks passed");
