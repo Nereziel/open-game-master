@@ -86,7 +86,7 @@ export function readLocaleChoice(): LocaleChoice {
     return "auto";
   }
   const stored = window.localStorage.getItem(LOCALE_KEY);
-  return stored === "en" || stored === "fr" ? stored : "auto";
+  return stored === "en" || stored === "fr" || stored === "cs" ? stored : "auto";
 }
 
 // Headers that tell the server which language the reader chose, for the
@@ -114,6 +114,9 @@ export function resolveLocale(choice: LocaleChoice): Locale {
   }
   for (const tag of navigator.languages ?? [navigator.language]) {
     const language = tag.toLowerCase().split("-")[0];
+    if (language === "cs") {
+      return "cs";
+    }
     if (language === "fr") {
       return "fr";
     }

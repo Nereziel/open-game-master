@@ -378,15 +378,16 @@ test("every classified entry names a known class, a count and its reason", () =>
 });
 
 test("every comparison site and word list in src/ is classified, file by file and pattern by pattern", () => {
+  const mismatches = [];
   for (const [key, count] of scanned) {
     const entries = classified.sites[key];
-    assert.ok(
-      entries,
-      `${key.replace("#", ": ")} is new. Text a person writes goes through src/lib/language/text-logic.ts (textKey, words, containsPhrase, namesPattern, compareNames, slugOf, and stemmerWords in language.ts), and what a thing is comes from a field, never from English words in its name; anything else gets an entry in scripts/text-comparisons.json with its class and reason`,
-    );
-    const total = entries.reduce((sum, [, n]) => sum + n, 0);
-    assert.equal(total, count, `${key.replace("#", ": ")} has ${count} sites, ${total} classified; classify the new one or strike the removed one`);
+    const total = entries?.reduce((sum, [, n]) => sum + n, 0) ?? 0;
+    if (total !== count) mismatches.push(`${key}: ${count} sites, ${total} classified`);
   }
+  for (const key of Object.keys(classified.sites)) {
+    if (!scanned.has(key)) mismatches.push(`${key}: no sites remain, remove the classification`);
+  }
+  assert.deepEqual(mismatches, [], `Review every changed site and classify it with its actual purpose, or use the shared text helpers.\n${mismatches.join("\n")}`);
 });
 
 test("a classified site that is gone is struck off", () => {

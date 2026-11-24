@@ -14,6 +14,8 @@ export type RulebookPage = {
   // The entry's first italic line: "3rd-level evocation", "Huge dragon,
   // chaotic evil", "Wondrous item, uncommon".
   meta?: string;
+  // English print subtitle, used to avoid rendering it twice after localization.
+  originalMeta?: string;
   // How the contents groups a long chapter: a spell's level, else a letter.
   group?: string;
   // A monster's family in the SRD ("Demon", "Chromatic").

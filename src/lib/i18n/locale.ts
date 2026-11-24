@@ -3,7 +3,7 @@ import type { Locale } from "./translate";
 export const LOCALE_COOKIE = "odm_locale";
 
 export function parseLocale(raw: string | null | undefined): Locale | null {
-  if (raw === "fr" || raw === "en") return raw;
+  if (raw === "fr" || raw === "en" || raw === "cs") return raw;
   return null;
 }
 
@@ -12,7 +12,7 @@ export function parseLocale(raw: string | null | undefined): Locale | null {
 // have besides English. English is every server's default and says nothing
 // about its readers, so it leaves the choice to them and their browser.
 export function localeOfServerLanguage(language: string | null | undefined): Locale | null {
-  return language === "french" ? "fr" : null;
+  return language === "french" ? "fr" : language === "czech" ? "cs" : null;
 }
 
 export function localeFromAcceptLanguage(header: string | null | undefined): Locale {
@@ -29,6 +29,7 @@ export function localeFromAcceptLanguage(header: string | null | undefined): Loc
     .sort((a, b) => b.weight - a.weight || a.at - b.at);
   for (const { tag } of tags) {
     if (tag === "fr" || tag.startsWith("fr-")) return "fr";
+    if (tag === "cs" || tag.startsWith("cs-")) return "cs";
     if (tag === "en" || tag.startsWith("en-")) return "en";
   }
   return "en";

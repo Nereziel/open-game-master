@@ -1,5 +1,6 @@
 import { currentUser, unauthorized } from "@/lib/auth";
 import { withBestEffort } from "@/lib/content/entry-labels";
+import { localizeEntryCs } from "@/lib/content/entry-descriptions-cs";
 import { localizeItemEntryFr } from "@/lib/content/item-descriptions-fr";
 import { catalogPrices } from "@/lib/characters/catalog";
 import { contentPackInstalled } from "@/lib/content/db";
@@ -239,5 +240,8 @@ export async function GET(
   // so (issue #570).
   const classSlug = url.searchParams.get("class") ?? undefined;
   results = results.map((row) => withBestEffort(kind, row, { classSlug }));
+  if (bookLocaleOf(request) === "cs") {
+    results = results.map((row) => localizeEntryCs(kind, row));
+  }
   return Response.json({ results, packInstalled, unadmitted: unadmittedNames(scope, user.id, kind, q, url.searchParams.get("class") ?? "") });
 }

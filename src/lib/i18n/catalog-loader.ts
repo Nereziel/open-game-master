@@ -3,6 +3,7 @@
 // (translate.ts), nor its name tables (fr-tables.ts). One fetch per locale
 // however many components ask.
 import { installFrTables } from "./fr-tables.ts";
+import { installCsTables } from "./cs-tables.ts";
 import { catalogInstalled, installCatalog, type Locale } from "./translate.ts";
 
 const loading = new Map<Locale, Promise<void>>();
@@ -14,6 +15,19 @@ export function loadCatalog(locale: Locale): Promise<void> {
   }
   if (catalogInstalled(locale)) {
     pending = Promise.resolve();
+    loading.set(locale, pending);
+    return pending;
+  }
+  if (locale === "cs") {
+    pending = Promise.all([import("./cs.json"), import("../content/names-cs.ts"), import("../srd/class-resources-cs-data.ts")])
+      .then(([catalog, names, resources]) => {
+        installCsTables({ names: names.CS_NAMES_BY_TABLE, guidance: resources.RESOURCE_CS_GUIDANCE });
+        installCatalog("cs", catalog.default ?? catalog);
+      })
+      .catch((error) => {
+        loading.delete(locale);
+        console.error("[i18n] the Czech catalog did not load", error);
+      });
     loading.set(locale, pending);
     return pending;
   }

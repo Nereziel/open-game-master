@@ -30,6 +30,7 @@ export type SttBackend = "whisper" | "builtin" | "openai" | "none";
 // clip from a table is heard in that table's language. Irish is not one of
 // Whisper's languages: its clips go with no hint, as every clip did before.
 const WHISPER_CODES: Record<TableLanguage, string | null> = {
+  czech: "cs",
   danish: "da",
   dutch: "nl",
   english: "en",
@@ -56,6 +57,7 @@ export function whisperLanguageCode(language: TableLanguage): string | null {
 // Android's RecognizerIntent takes it. Unlike Whisper the phone may know
 // Irish, and Android names Norwegian by its written standard, Bokmal.
 const DEVICE_SPEECH_TAGS: Record<TableLanguage, string> = {
+  czech: "cs",
   danish: "da",
   dutch: "nl",
   english: "en",

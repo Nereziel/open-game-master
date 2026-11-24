@@ -22,6 +22,7 @@ import { textKey } from "@/lib/language/text-logic";
 import { matchResource } from "@/lib/srd/class-resources";
 import { resourceGuidance } from "@/lib/srd/class-resources-fr";
 import type { Locale } from "@/lib/messages-logic";
+import { translate } from "@/lib/i18n/translate";
 import { guidanceFor } from "@/lib/srd/feature-effects";
 import { subclassFeatureDescription } from "@/lib/srd/features";
 import { findOptionByFeatureName } from "@/lib/srd/options";
@@ -120,9 +121,10 @@ export function describeFeature(classId: string, subclass: string, name: string,
     return `The element of the ${element.label} chosen: ${element.type}. Elemental Affinity, where the subclass has it, adds to spells of this damage type and resists it.`;
   }
   const resource = matchResource(name);
+  const classText = classFeatureDescription(classId, name);
   const found =
     subclassFeatureDescription(classId, subclass, name) ??
-    classFeatureDescription(classId, name) ??
+    (classText && locale === "cs" ? translate(locale, classText) : classText) ??
     exactSrdText(classId, name) ??
     // The background's feature sits on the sheet as "Shelter of the
     // Faithful (Acolyte)"; the bare name finds its text.
@@ -170,7 +172,7 @@ const SKILLS = (skillsJson as { skills: Array<{ id: string; name: string; fr?: s
 export function describeSkill(
   t: (key: string, vars?: Record<string, string | number>) => string,
   skillId: string,
-  locale: "en" | "fr" = "en",
+  locale: "en" | "fr" | "cs" = "en",
 ): string | null {
   const skill = SKILLS.find((entry) => entry.id === skillId.trim().toLowerCase());
   if (!skill) {
@@ -217,6 +219,9 @@ function textOf(value: unknown): string {
 export function describeContentEntry(data: Record<string, unknown> | undefined, focus?: string): string | null {
   if (!data) {
     return null;
+  }
+  if (!focus && typeof data.localized_desc === "string" && data.localized_desc.trim()) {
+    return normalizeRulesText(data.localized_desc) || null;
   }
   const focusFeature = typeof data.feature === "string" ? data.feature.trim() : "";
   const focusText = textOf(data.feature_desc).trim();

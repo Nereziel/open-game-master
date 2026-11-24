@@ -1,6 +1,7 @@
 import { currentUser, unauthorized } from "@/lib/auth";
 import { getEntryDetail } from "@/lib/content";
 import { withBestEffort } from "@/lib/content/entry-labels";
+import { localizeEntryCs } from "@/lib/content/entry-descriptions-cs";
 import { localizeItemEntryFr } from "@/lib/content/item-descriptions-fr";
 import { bookLocaleOf } from "@/lib/rulebook/book";
 import { bundledItemRows, bundledSpellRows } from "@/lib/rulebook/catalog-rows";
@@ -61,11 +62,13 @@ export async function GET(
     return asEntry(entry);
   }
 
-  const french = bookLocaleOf(request) === "fr";
+  const locale = bookLocaleOf(request);
+  const localize = <T extends { name: string; source?: "open5e" | "srd" | "homebrew"; data?: unknown }>(row: T): T =>
+    locale === "cs" ? localizeEntryCs(kind, row) : homebrewKind === "item" && locale === "fr" ? localizeItemEntryFr(row) : row;
   const entry = getEntryDetail(kind as Parameters<typeof getEntryDetail>[0], decoded);
   if (entry) {
     const withLabel = withBestEffort(kind, entry, { classSlug: String(entry.data.class_slug ?? "") || undefined });
-    return Response.json({ entry: homebrewKind === "item" && french ? localizeItemEntryFr(withLabel) : withLabel });
+    return Response.json({ entry: localize(withLabel) });
   }
   // The bundled book's rows the search serves with no pack ("srd:web",
   // "srd-gear:longsword"), so their info reads with no pack too.
@@ -78,8 +81,15 @@ export async function GET(
           ? bundledGearRow(decoded)
           : null;
   if (bundled) {
-    return Response.json({ entry: homebrewKind === "item" && french ? localizeItemEntryFr(bundled) : bundled });
+    return Response.json({ entry: localize(bundled) });
   }
   const brewed = homebrewKind ? findHomebrewBySlug(scope.userIds, homebrewKind, decoded) : null;
-  return brewed ? asEntry(brewed) : Response.json({ error: "Not found." }, { status: 404 });
+  if (brewed) return asEntry(brewed);
+  // The info button may know the canonical ID without the bundled srd: prefix.
+  if (locale === "cs" && !decoded.includes(":")) {
+    const row = kind === "spells" ? bundledSpellRows().find((r) => r.slug === `srd:${decoded}`)
+      : kind === "items" ? bundledItemRows().find((r) => r.slug === `srd:${decoded}`) : undefined;
+    if (row) return Response.json({ entry: localize(row) });
+  }
+  return Response.json({ error: "Not found." }, { status: 404 });
 }

@@ -72,9 +72,10 @@ const dictate = async (campaignId) => {
   return sent.at(-1).language;
 };
 
-await test("each of the 15 table languages has Whisper's code; Irish, which Whisper does not know, has none", () => {
+await test("each table language has Whisper's code; Irish, which Whisper does not know, has none", () => {
   const codes = Object.fromEntries(TABLE_LANGUAGES.map((language) => [language, whisperLanguageCode(language)]));
   assert.deepEqual(codes, {
+    czech: "cs",
     danish: "da",
     dutch: "nl",
     english: "en",
