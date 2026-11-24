@@ -7,7 +7,9 @@ import { rulebookPageIdFor } from "@/lib/rulebook/catalog-rows";
 import type { RulebookKind } from "@/lib/rulebook/types";
 import { translate, type Locale } from "@/lib/i18n/translate";
 import { localizeBackgroundFeatureText } from "@/lib/backgrounds";
-import { backgroundFeatureLabel } from "./names";
+import { backgroundFeatureLabel, subclassName } from "./names";
+import { subclassNamed } from "@/lib/srd/subclass-name";
+import { textKey } from "@/lib/language/text-logic";
 import { describeContentEntry } from "@/lib/help";
 
 type Row = {
@@ -81,6 +83,49 @@ function corePageId(kind: RulebookKind, name: string): string | null {
   return rulebookPageIdFor(kind, aliases[wanted] ?? name);
 }
 
+// The twelve SRD 5.1 subclasses, identified by their class and whole
+// canonical name. Czech headings follow the existing reviewed book, not
+// necessarily the shorter picker labels. Other subclasses keep their text.
+const SRD_ARCHETYPES: Record<string, { name: string; headings: Partial<Record<Locale, string>> }> = {
+  barbarian: { name: "Path of the Berserker", headings: { cs: "Cesta berserkra" } },
+  bard: { name: "College of Lore", headings: { cs: "Kolej znalostí" } },
+  cleric: { name: "Life Domain", headings: { cs: "Doména Život" } },
+  druid: { name: "Circle of the Land", headings: { cs: "Kruh země" } },
+  fighter: { name: "Champion", headings: { cs: "Šampion" } },
+  monk: { name: "Way of the Open Hand", headings: { cs: "Cesta otevřené ruky" } },
+  paladin: { name: "Oath of Devotion", headings: { cs: "Přísaha oddanosti" } },
+  ranger: { name: "Hunter", headings: { cs: "Lovec" } },
+  rogue: { name: "Thief", headings: { cs: "Zloděj" } },
+  sorcerer: { name: "Draconic Bloodline", headings: { cs: "Dračí rodokmen" } },
+  warlock: { name: "The Fiend", headings: { cs: "Běs" } },
+  wizard: { name: "School of Evocation", headings: { cs: "Škola zaklínání" } },
+};
+
+function archetypeDescription(row: Row & { name: string; data: Record<string, unknown> }, locale: Locale, provider: DescriptionProvider): string | undefined {
+  const declaredClass = row.data.class_slug ?? row.data.classSlug ?? row.data.class;
+  const classId = typeof declaredClass === "string" && declaredClass.trim()
+    ? declaredClass.trim().toLowerCase()
+    : Object.keys(SRD_ARCHETYPES).find((id) => row.slug?.startsWith(id + "-"));
+  // Some published SRD rows use a bare slug and no class field. The exact
+  // name must then identify one and only one of the twelve printed entries.
+  const candidates = Object.entries(SRD_ARCHETYPES).filter(([id, entry]) =>
+    (!classId || classId === id) && subclassNamed(row.name, entry.name));
+  if (candidates.length !== 1) return undefined;
+  const [id, entry] = candidates[0];
+  const md = provider.srd("class", id, id);
+  if (!md) return undefined;
+  const heading = entry.headings[locale] ?? subclassName(id, entry.name, locale);
+  const lines = md.split("\n");
+  const start = lines.findIndex((line) => {
+    const match = /^(#{2,6})\s+(.+?)\s*#*\s*$/.exec(line);
+    return match && textKey(match[2]) === textKey(heading);
+  });
+  if (start < 0) return undefined;
+  const depth = /^#+/.exec(lines[start])![0].length;
+  const next = lines.findIndex((line, index) => index > start && new RegExp(`^#{1,${depth}}\\s+`).test(line));
+  return lines.slice(start, next < 0 ? undefined : next).join("\n").trim() || undefined;
+}
+
 // Use exact English source text for background translations, not merely a
 // matching feature title. Keep any untranslated prose in the display copy.
 function backgroundDescription(row: Row & { name: string; data: Record<string, unknown> }, locale: Locale): string | undefined {
@@ -113,6 +158,9 @@ export function localizeEntry<T>(table: string, entry: T, locale: Locale): T {
   const core = CORE_DOCUMENTS.has(row.documentSlug ?? "") && CORE_SOURCES.has(row.source ?? "");
   if (!desc && kind && core) {
     desc = provider.srd(kind, row.name, corePageId(kind, row.name)) ?? undefined;
+  }
+  if (!desc && table === "archetypes" && core) {
+    desc = archetypeDescription({ ...row, name: row.name, data: row.data }, locale, provider);
   }
   if (!desc && table === "backgrounds" && (core || (row.source === "bundled" && row.documentSlug === "odm"))) {
     desc = backgroundDescription({ ...row, name: row.name, data: row.data }, locale);
