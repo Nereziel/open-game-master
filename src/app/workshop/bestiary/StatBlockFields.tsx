@@ -30,7 +30,8 @@ import { Select } from "@/components/ui/Select";
 import { Field, FieldLabel, OptionalStepper, addChip, chip, chipOn, chipRow, rowIcon } from "@/app/workshop/kit";
 import { textKey } from "@/lib/language/text-logic";
 import { translate } from "@/lib/messages-logic";
-import { useT } from "@/lib/locale";
+import { useLocale, useT } from "@/lib/locale";
+import { gameTermWord } from "@/lib/i18n/game-term-labels";
 
 // The printed half of a stat block (docs/workshop-parity-audit.md phase
 // 12): ability scores, skills, senses, languages and alignment, the spells
@@ -155,6 +156,7 @@ export function AbilityScores({ draft, onChange }: { draft: MonsterDraft; onChan
 
 export function SkillsAndSenses({ draft, onChange }: { draft: MonsterDraft; onChange: (draft: MonsterDraft) => void }) {
   const t = useT();
+  const locale = useLocale();
   const stats = draft.stats;
   const set: Setter = (patch) => onChange({ ...draft, stats: { ...stats, ...patch } });
   const skills = stats.skills ?? {};
@@ -220,10 +222,10 @@ export function SkillsAndSenses({ draft, onChange }: { draft: MonsterDraft; onCh
           <div key={name} className="flex flex-col gap-1">
             <span className="flex items-center gap-1">
               {SENSE_GLYPHS[name] ? <GameIcon icon={{ kind: "glyph", key: SENSE_GLYPHS[name] }} size="size-5" /> : null}
-              <FieldLabel className="capitalize">{name}</FieldLabel>
+              <FieldLabel className="capitalize">{gameTermWord("sense", name, locale)}</FieldLabel>
             </span>
             <OptionalStepper
-              label={t("{name} in feet", { name })}
+              label={t("{name} in feet", { name: gameTermWord("sense", name, locale) })}
               min={0}
               max={600}
               step={5}
