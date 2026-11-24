@@ -101,7 +101,7 @@ Tuto hůl lze používat jako magickou hůl (zbraň), která poskytuje bonus +3 
 Hůl má 10 nábojů. Když s ní zasáhneš útokem na blízko, můžeš utratit až 3 její náboje. Za každý utracený náboj utrpí cíl dodatečné silové zranění 1k6. Hůl si každý den za úsvitu obnoví 1k6+4 spotřebovaných nábojů. Pokud utratíš poslední náboj, hoď k20. Při výsledku 1 se hůl změní na nemagickou hůl (zbraň).`,
   "staff-of-swarming-insects": `*Berla, vzácná (vyžaduje sladění bardem, klerikem, druidem, čarodějem, černokněžníkem nebo kouzelníkem)*
 
-Tato hůl má 10 nábojů a každý den za úsvitu si obnoví 1k6+4 spotřebovaných nábojů. Pokud utratíš poslední náboj, hoď k20. Při výsledku 1 hůl pohltí a zničí roj hmyzu, který se poté rozptýlí.
+Tato hůl má 10 nábojů a každý den za úsvitu si obnoví 1k6+4 spotřebovaných nábojů. Pokud utratíš poslední náboj, hoď k20. Při výsledku 1 roj hmyzu pohltí a zničí berlu a poté se rozptýlí.
 
 ***Kouzla.*** Když držíš hůl, můžeš jako akci utratit některé z jejích nábojů a seslat s použitím svého SO záchrany proti kouzlům jedno z následujících kouzel: *obří hmyz* (4 náboje) nebo *hmyzí zhouba* (5 nábojů).
 
