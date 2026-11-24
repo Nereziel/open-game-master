@@ -16,6 +16,7 @@ export type TraitTextRules = {
 
 export type LocalizedTables = {
   traitText?: TraitTextRules;
+  workshopGuides?: Record<string, Partial<{ title: string; purpose: string; steps: string[]; atTable: string; tips: string[] }>>;
   names: Record<string, Record<string, string>>;
   translated?: Record<string, Record<string, string>>;
   resources?: Record<string, { name: string; guidance: string }>;
