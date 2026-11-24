@@ -27,7 +27,7 @@ const { createSheet, listSheets } = await import("../src/lib/db/sheets.ts");
 const { createCharacter, listCharactersForUser } = await import("../src/lib/db/characters.ts");
 const { PREGENS, pregenById, pregenSummaries } = await import("../src/lib/starter/pregens.ts");
 const { findBackground, findClass, findRace } = await import("../src/lib/srd/index.ts");
-const { STARTER_ONE_SHOT, createStarterCampaign } = await import("../src/lib/starter/one-shot.ts");
+const { STARTER_ONE_SHOT, STARTER_ONE_SHOT_FR, starterSeedFor, createStarterCampaign } = await import("../src/lib/starter/one-shot.ts");
 const { CALENDAR_PRESETS, MINUTES_PER_DAY, breakDown, dayPart, defaultClock, describeInstant, toInstant } = await import("../src/lib/dm/calendar.ts");
 
 let failed = 0;
@@ -186,6 +186,47 @@ test("the picker's summaries carry no sheet, and ids resolve", () => {
   }
   assert.equal(pregenById("vex")?.sheet.class, "rogue");
   assert.equal(pregenById("nobody"), null);
+});
+
+test("the Czech starter seed and stored campaign use the localized premise and secret outline", () => {
+  const cs = starterSeedFor("cs");
+  assert.equal(cs.id, STARTER_ONE_SHOT.id);
+  assert.equal(cs.title, "Umlklý zvon v Marrowově Brodě");
+  assert.match(cs.description, /Marrowův Brod/);
+  assert.match(cs.outline, /Aldo Merrin/);
+  assert.match(cs.outline, /SO 12/);
+  assert.match(cs.outline, /1k6/);
+  assert.doesNotMatch(cs.description, /ghúl/);
+  assert.deepEqual(starterSeedFor("en"), STARTER_ONE_SHOT);
+  assert.deepEqual(starterSeedFor("fr"), { ...STARTER_ONE_SHOT, ...STARTER_ONE_SHOT_FR });
+  const created = createStarterCampaign(host.id, { solo: true, locale: "cs" });
+  const stored = getCampaignById(created.id);
+  assert.equal(stored.title, cs.title);
+  assert.equal(stored.description, cs.description);
+  assert.equal(stored.theme, cs.theme);
+  assert.equal(stored.dmOutline, cs.outline);
+  assert.equal(created.maxPlayers, 1);
+  assert.equal(created.startingLevel, 1);
+  assert.equal(created.gameSettings.campaignLength, "short");
+});
+
+test("Czech ready-made heroes localize narrative text without changing canonical sheets", () => {
+  const summaries = pregenSummaries("cs");
+  assert.equal(summaries.length, 4);
+  for (const original of PREGENS) {
+    const hero = pregenById(original.id, "cs");
+    const summary = summaries.find((row) => row.id === original.id);
+    assert.ok(hero && summary, original.id);
+    assert.notEqual(hero.tagline, original.tagline);
+    assert.notEqual(hero.blurb, original.blurb);
+    assert.notEqual(hero.sheet.backstory, original.sheet.backstory);
+    assert.equal(summary.tagline, hero.tagline);
+    assert.equal(summary.blurb, hero.blurb);
+    assert.deepEqual({ ...hero.sheet, backstory: original.sheet.backstory }, original.sheet);
+    assert.deepEqual(pregenById(original.id, "en"), original);
+    assert.equal(pregenSummaries("fr").find((row) => row.id === original.id).tagline, pregenById(original.id, "fr").tagline);
+  }
+  assert.equal(pregenById("nobody", "cs"), null);
 });
 
 removeTempDir(dir);

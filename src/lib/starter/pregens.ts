@@ -191,11 +191,9 @@ export const PREGENS: Pregen[] = [
 
 export function pregenById(id: string, locale: Locale = "en"): Pregen | null {
   const pregen = PREGENS.find((pregen) => pregen.id === id) ?? null;
-  if (!pregen || locale !== "fr") {
-    return pregen;
-  }
-  const fr = PREGEN_TEXT_FR[id];
-  return fr ? { ...pregen, tagline: fr.tagline, blurb: fr.blurb, sheet: { ...pregen.sheet, backstory: fr.backstory } } : pregen;
+  if (!pregen) return null;
+  const localized = pregenTextFor(id, locale);
+  return localized ? { ...pregen, tagline: localized.tagline, blurb: localized.blurb, sheet: { ...pregen.sheet, backstory: localized.backstory } } : pregen;
 }
 
 // The heroes' own words in French: the picker's line, the card's pitch and
@@ -226,15 +224,43 @@ const PREGEN_TEXT_FR: Record<string, { tagline: string; blurb: string; backstory
   },
 };
 
+// Czech narrative text only; the character sheets retain their canonical data.
+const PREGEN_TEXT_CS: Record<string, { tagline: string; blurb: string; backstory: string }> = {
+  brakk: {
+    tagline: "Brakk, lidský barbar",
+    blurb: "Nejdřív udeří, potom se ptá. Rozmáchni se obouruční sekerou, snášej rány a chraň ostatní vlastním tělem.",
+    backstory: "Brakk vyrůstal ve vysokohorských průsmycích. Když stáda uhynula, sestoupil do nížin a od té doby nenašel důvod k návratu.",
+  },
+  kara: {
+    tagline: "Kara, lidská bojovnice",
+    blurb: "Štít, meč a drátěná zbroj. Nejspolehlivější členka družiny: je těžké ji zasáhnout, ještě těžší ji odsunout a před každými dveřmi má plán.",
+    backstory: "Deset let sloužila ve stráži barona z kraje u řeky. Když baronovi došly peníze, byla propuštěna. Ze zvyku stále salutuje.",
+  },
+  vex: {
+    tagline: "Vex, lidský tulák",
+    blurb: "Zámky, stíny a rapír. Prozkoumej cestu před družinou, najdi past dřív, než tě najde ona, a udeř tam, kde to bolí.",
+    backstory: "Vex opustil městskou gildu těsně předtím, než ho dostihl dluh. Vede si seznam těch, kterým někdo něco dluží, a kratší seznam těch, kterým dluží sám.",
+  },
+  sera: {
+    tagline: "Sera, lidská klerička domény Život",
+    blurb: "Palcát, štít a ruce léčitelky. Pomocí kouzel Zhoj zranění a Požehnání drží družinu na nohou a sama dokáže udržet bojovou linii.",
+    backstory: "Sera vyrůstala jako sirotek při kapli. Naučila se, že klidný hlas a ještě jistější ruka pomohou víc než kázání.",
+  },
+};
+
+function pregenTextFor(id: string, locale: Locale) {
+  return locale === "fr" ? PREGEN_TEXT_FR[id] : locale === "cs" ? PREGEN_TEXT_CS[id] : undefined;
+}
+
 // What the picker shows: no sheet, nothing to tamper with.
 export function pregenSummaries(locale: Locale = "en") {
   return PREGENS.map((pregen) => {
-    const fr = locale === "fr" ? PREGEN_TEXT_FR[pregen.id] : undefined;
+    const localized = pregenTextFor(pregen.id, locale);
     return {
       id: pregen.id,
       name: pregen.sheet.name,
-      tagline: fr ? fr.tagline : pregen.tagline,
-      blurb: fr ? fr.blurb : pregen.blurb,
+      tagline: localized ? localized.tagline : pregen.tagline,
+      blurb: localized ? localized.blurb : pregen.blurb,
       race: pregen.sheet.race,
       class: pregen.sheet.class,
     };
