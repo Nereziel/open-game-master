@@ -36,7 +36,7 @@ const localizedValues: ReadonlyArray<readonly [string, string]> = [
   ["chain shirt", "drátěná košile"], ["patchwork armor", "zbroj ze sešitých kusů"],
   ["studded leather", "okovaná kožená zbroj"], ["hide armor", "usňová zbroj"],
   ["leather armor", "kožená zbroj"],
-  ["Darkvision", "vidění ve tmě"], ["Fire", "oheň"], ["Poisoned", "otrávení"], ["Poison", "jed"],
+  ["Darkvision", "vidění ve tmě"], ["Fire", "ohnivé"], ["Poisoned", "otrávení"], ["Poison", "jedové"],
   ["Terran", "terranština"], ["Ignan", "ignanština"], ["Orc", "orčtina"],
   ["Gnoll", "gnolština"], ["Goblin", "goblinština"], ["Sphinx", "sfingština"],
   ["Gnomish", "gnómština"],
