@@ -1,5 +1,7 @@
 "use client";
 
+import { worldTypeLabel, worldFieldLabel } from "@/lib/worldforge/display";
+
 import { Check, Lock, Plus, Trash2, X } from "lucide-react";
 import { useState } from "react";
 import { cn } from "@/lib/cn";
@@ -55,14 +57,14 @@ export function TypesView({ api, world }: { api: WorldApi; world: WorldState }) 
             <li key={type.id} className="panel wf-rise flex flex-col gap-1.5 rounded-lg p-3" style={{ "--i": index, borderColor: tint(type.color, 0.35) } as React.CSSProperties}>
               <div className="flex items-center gap-2">
                 <span className="size-3 rounded-full" style={{ background: type.color }} />
-                <span className="font-display text-sm" style={{ color: type.color }}>{t(type.name)}</span>
+                <span className="font-display text-sm" style={{ color: type.color }}>{worldTypeLabel(t, type)}</span>
                 <span className="text-[11px] text-stone-500">{t(SHELF_LABELS[type.shelf])}{type.shelf === "lore" ? `, ${t(type.loreCategory)}` : ""}, {tp("{count} entry", "{count} entries", { count: used(type) })}</span>
                 <span className="ml-auto flex gap-1">
                   <KitButton tone="small" onClick={() => setEditing(type)}>{t("Edit")}</KitButton>
                   <KitButton
                     tone="iconDanger"
                     always
-                    aria-label={t("Remove the type {name}", { name: type.name })}
+                    aria-label={t("Remove the type {name}", { name: worldTypeLabel(t, type) })}
                     title={used(type) ? t("Entries still use it") : doc.types.filter((other) => other.shelf === type.shelf).length < 2 ? t("Each shelf keeps one type") : t("Remove", { context: "workshop.world.types.removeTitle" })}
                     disabled={used(type) > 0 || doc.types.filter((other) => other.shelf === type.shelf).length < 2}
                     onClick={() => api.patch({ types: doc.types.filter((other) => other.id !== type.id) })}
@@ -75,7 +77,7 @@ export function TypesView({ api, world }: { api: WorldApi; world: WorldState }) 
                 <p className="text-xs text-stone-400">
                   {type.fields.map((field) => (
                     <span key={field.id} className={cn("mr-2 inline-flex items-center gap-0.5", field.authorOnly && "text-red-300")}>
-                      {t(field.name)}
+                      {worldFieldLabel(t, type, field)}
                       <span className="text-stone-600">({t(FIELD_KIND_LABELS[field.kind]).toLowerCase()}{field.role ? `, ${t(field.role)}` : ""})</span>
                       {field.authorOnly ? <Lock className="size-3" /> : null}
                     </span>
