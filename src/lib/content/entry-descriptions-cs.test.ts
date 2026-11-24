@@ -614,3 +614,27 @@ describe("Reviewed ODM authored feat rules", () => {
     expect(prerequisites).toBe(30);
   });
 });
+
+describe("Locale-registered trait shorthand", () => {
+  it("leaves English untouched and retains the existing French and Czech shorthand", () => {
+    const text = "adv. vs poison, 45 ft, light and medium armor, battleaxe, +2 HP per level";
+    expect(speciesTraitName("unlisted-race", text, "en")).toBe(text);
+    expect(speciesTraitName("unlisted-race", text, "fr")).toBe("avant. c/ poison, 45 pi, armures légères et intermédiaires, hache d’armes, +2 HP per level");
+    expect(speciesTraitName("unlisted-race", text, "cs")).toBe(
+      "výhoda proti jedu, 45 stop, lehká a střední zbroj, " + contentName("weapons", "battleaxe", "cs") + ", +2 život za úroveň",
+    );
+  });
+  it("preserves the different noted-head policies without branching in the name resolver", () => {
+    const text = "+2 HP per level (Dwarven Toughness)";
+    expect(speciesTraitName("hill_dwarf", text, "fr")).toBe("+2 HP per level (Ténacité naine)");
+    expect(speciesTraitName("hill_dwarf", text, "cs")).toBe("+2 život za úroveň (Trpasličí nezdolnost)");
+    expect(speciesTraitName("hill_dwarf", text, "en")).toBe(text);
+  });
+  it("keeps whole-line translations ahead of shorthand replacement", () => {
+    const trait = "Darkvision 60 ft";
+    const translated = speciesTraitName("shifter", trait, "cs");
+    expect(translated).toContain("Vidění ve tmě");
+    expect(translated).toContain("60 stop");
+    expect(translated).not.toContain("60 ft");
+  });
+});
