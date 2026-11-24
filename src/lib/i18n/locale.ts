@@ -2,9 +2,11 @@ import type { Locale } from "./translate";
 
 export const LOCALE_COOKIE = "odm_locale";
 
+// One registry for supported UI languages and their server-language names.
+const SERVER_LANGUAGE_BY_LOCALE: Record<Locale, string> = { en: "english", fr: "french", cs: "czech" };
+
 export function parseLocale(raw: string | null | undefined): Locale | null {
-  if (raw === "fr" || raw === "en" || raw === "cs") return raw;
-  return null;
+  return raw && Object.hasOwn(SERVER_LANGUAGE_BY_LOCALE, raw) ? raw as Locale : null;
 }
 
 // The menus' language a server's own language asks for (global config
@@ -12,7 +14,7 @@ export function parseLocale(raw: string | null | undefined): Locale | null {
 // have besides English. English is every server's default and says nothing
 // about its readers, so it leaves the choice to them and their browser.
 export function localeOfServerLanguage(language: string | null | undefined): Locale | null {
-  return language === "french" ? "fr" : language === "czech" ? "cs" : null;
+  return (Object.keys(SERVER_LANGUAGE_BY_LOCALE) as Locale[]).find((locale) => locale !== "en" && SERVER_LANGUAGE_BY_LOCALE[locale] === language) ?? null;
 }
 
 export function localeFromAcceptLanguage(header: string | null | undefined): Locale {
@@ -28,9 +30,8 @@ export function localeFromAcceptLanguage(header: string | null | undefined): Loc
     .filter(({ weight }) => weight > 0)
     .sort((a, b) => b.weight - a.weight || a.at - b.at);
   for (const { tag } of tags) {
-    if (tag === "fr" || tag.startsWith("fr-")) return "fr";
-    if (tag === "cs" || tag.startsWith("cs-")) return "cs";
-    if (tag === "en" || tag.startsWith("en-")) return "en";
+    const locale = parseLocale(tag.split("-")[0]);
+    if (locale) return locale;
   }
   return "en";
 }
