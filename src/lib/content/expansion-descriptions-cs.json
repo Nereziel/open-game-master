@@ -943,119 +943,322 @@
       },
       "argent-mantle": {
         "englishName": "Argent Mantle",
-        "name": "Stříbrný plášť"
+        "name": "Stříbrný plášť",
+        "original": {
+          "desc": "Often reserved for ranking knights of more dogmatic or monastic military orders, these finely made, hood-and-shoulder pieces endow the wearer with exceptional battlefield, statecraft, and leadership skills. You can use a bonus action to speak a command word, causing a nimbus of golden light to surround your head. This nimbus sheds bright light in a 20-foot radius and dim light for an additional 20 feet. Friendly creatures in the bright light shed by this nimbus have advantage on initiative checks and can't be surprised except when incapacitated. The nimbus lasts until you use a bonus action to speak the command word again or you remove the mantle.\n  ***Endearing Leader.*** While wearing this mantle, you can use an action to increase your Charisma score to 20 for 10 minutes. This has no effect on you if your Charisma is already 20 or higher. This property of the mantle can't be used again until the next dawn.",
+          "type": "Wondrous item",
+          "rarity": "rare",
+          "requires_attunement": ""
+        },
+        "description": "*Divotvorný předmět, vzácný*\n\nTyto jemně zpracované kápě s pokrývkou ramen bývají vyhrazeny výše postaveným rytířům dogmatických či mnišských vojenských řádů a propůjčují nositeli výjimečné schopnosti na bojišti, ve státnictví i při vedení lidí. Bonusovou akcí můžeš pronést povelové slovo, čímž se kolem tvé hlavy objeví zlatá svatozář. Vydává jasné světlo v okruhu 20 stop a slabé světlo dalších 20 stop. Přátelští tvorové v jejím jasném světle mají výhodu k ověřením iniciativy a nemohou být překvapeni, ledaže jsou neschopní. Svatozář trvá, dokud bonusovou akcí znovu neproneseš povelové slovo nebo plášť nesundáš.\n\n**Oblíbený vůdce.** Když máš plášť na sobě, můžeš akcí zvýšit své Charisma na 20 na 10 minut. Pokud je tvé Charisma již 20 nebo vyšší, nemá to na tebe žádný účinek. Tuto vlastnost pláště nelze znovu použít až do příštího úsvitu."
       },
       "axe-of-many-strikes": {
         "englishName": "Axe of Many Strikes",
-        "name": "Sekera mnoha úderů"
+        "name": "Sekera mnoha úderů",
+        "original": {
+          "desc": "You gain a +1 bonus to attack and damage rolls made with this magic weapon.\nWhen you hit a creature with it, you can choose to deal no damage to the target and instead store the energy of the attack within the blade for 1 minute. You can store up to three attacks in this way. When you hit a creature with this axe while you have at least one attack stored, you can release one or more stored attacks, adding the damage of those stored attacks to the damage of the current attack.\nEach time you release one or more stored attacks from the axe, you have a 10 percent chance of causing the axe to explode. The explosion deals 2d6 force damage to you for each attack you released from the axe, and it destroys the axe.",
+          "type": "Weapon (any axe)",
+          "rarity": "uncommon",
+          "requires_attunement": "requires attunement"
+        },
+        "description": "*Zbraň (libovolná sekera), neobvyklý, vyžaduje sladění*\n\nS touto magickou zbraní získáš bonus +1 k hodům na útok a na zranění.\n\nKdyž jí zasáhneš tvora, můžeš se rozhodnout nezpůsobit cíli žádné zranění a místo toho uložit energii útoku do čepele na 1 minutu. Takto můžeš uložit až tři útoky. Když zasáhneš tvora touto sekerou a máš uložen alespoň jeden útok, můžeš uvolnit jeden či více uložených útoků a přičíst jejich zranění ke zranění právě provedeného útoku.\n\nPokaždé, když ze sekery uvolníš jeden či více uložených útoků, existuje 10% šance, že sekera vybuchne. Výbuch ti způsobí silové zranění 2k6 za každý útok, který jsi ze sekery uvolnil, a sekeru zničí."
       },
       "beads-of-contemplation": {
         "englishName": "Beads of Contemplation",
-        "name": "Korálky rozjímání"
+        "name": "Korálky rozjímání",
+        "original": {
+          "desc": "This strand of eight wooden beads, each cleverly carved with geometric patterns, hangs from a stout length of cording. The beads store ki energy placed into them, holding the ki until you use it. The beads can store up to 8 ki points. At the end of a short or long rest, you can place ki energy into the beads by touching them and expending a number of ki points equal to half your proficiency bonus.\nWhile wearing or carrying the beads, you can use a bonus action to remove any number of ki points from the beads, regaining that amount of ki points and freeing up space in the beads.",
+          "type": "Wondrous item",
+          "rarity": "uncommon",
+          "requires_attunement": "requires attunement by a monk"
+        },
+        "description": "*Divotvorný předmět, neobvyklý, vyžaduje sladění s mnichem*\n\nTuto šňůru z pevného provazu zdobí osm dřevěných korálků, z nichž každý je důmyslně vyřezán do geometrických vzorů. Korálky uchovávají vloženou energii čchi, dokud ji nepoužiješ. Mohou pojmout až 8 bodů čchi. Na konci krátkého nebo důkladného odpočinku do nich můžeš dotykem vložit energii čchi a utratit počet bodů čchi rovný polovině svého zdatnostního bonusu.\n\nKdyž korálky nosíš na sobě nebo u sebe, můžeš bonusovou akcí vyjmout libovolný počet bodů čchi, obnovit si tolik bodů čchi a uvolnit v korálcích místo."
       },
       "bloodspeed-elixir": {
         "englishName": "Bloodspeed Elixir",
-        "name": "Elixír krvavé rychlosti"
+        "name": "Elixír krvavé rychlosti",
+        "original": {
+          "desc": "When you drink this potion, your speed triples for 1 minute, but if you take the Dash action, you take 2d6 poison damage as your body is pushed beyond its normal limits. The murky, crimson liquid smells of ozone and has a thick, sludge-like consistency.",
+          "type": "Potion",
+          "rarity": "rare",
+          "requires_attunement": ""
+        },
+        "description": "*Lektvar, vzácný*\n\nPo vypití tohoto lektvaru se tvá rychlost na 1 minutu ztrojnásobí. Pokud však provedeš akci Sprint, utrpíš jedové zranění 2k6, protože je tvé tělo hnáno za hranice svých běžných možností. Kalná karmínová tekutina páchne po ozonu a má hustou konzistenci připomínající kal."
       },
       "campaign-field-tent": {
         "englishName": "Campaign Field Tent",
-        "name": "Polní táborový stan"
+        "name": "Polní táborový stan",
+        "original": {
+          "desc": "You can use an action to place this 1-inch cloth cube on the ground and speak its command word. The cube rapidly grows into a field tent with open or closed sides (your choice) that remains until you use an action to speak the command word that dismisses it, which works only if the tent is empty.\n  The field tent is a canvas tent, 15 feet on a side and 10 feet high. It remains firmly fixed to the ground, even when standing on bare stone, a ship's deck, or loose sand, and its magic prevents it from being tipped over.\n  Each creature in the area where the tent appears must make a DC 15 Dexterity saving throw, taking 5d10 bludgeoning damage on a failed save, or half as much damage on a successful one. In either case, the creature is pushed to an unoccupied space outside but next to the tent. Objects in the area that aren't being worn or carried take this damage and are pushed automatically.\n  The tent has 50 hit points, immunity to nonmagical attacks, excluding siege weapons, and resistance to all other damage. The tent contains a small table with a chair and five simple beds made of cloth and foldable wooden frames.\n  The field tent can hold up to six Medium or smaller creatures. When a creature finishes a short rest in the tent, it regains double the hit points from any Hit Dice it spends. When a creature finishes a long rest in the tent, it reduces its exhaustion level by 2 instead of 1. In addition, a creature has advantage on saving throws it makes against disease and poison while it rests in the tent.",
+          "type": "Wondrous item",
+          "rarity": "uncommon",
+          "requires_attunement": ""
+        },
+        "description": "*Divotvorný předmět, neobvyklý*\n\nAkcí můžeš položit tuto látkovou krychličku o hraně 1 palce na zem a pronést její povelové slovo. Krychle rychle vyroste v polní stan s otevřenými či zavřenými boky (dle tvé volby), který zůstane, dokud akcí neproneseš povelové slovo, které jej odvolá; to funguje pouze tehdy, je-li stan prázdný.\n\nPolní plátěný stan má stranu dlouhou 15 stop a je vysoký 10 stop. Zůstává pevně přichycen k zemi, i když stojí na holém kameni, palubě lodi či sypkém písku, a jeho magie brání převrácení.\n\nKaždý tvor v oblasti, kde se stan objeví, si musí hodit záchranný hod na Obratnost se SO 15. Při neúspěchu utrpí drtivé zranění 5k10, při úspěchu poloviční. V obou případech je tvor odstrčen do volného prostoru venku vedle stanu. Předměty v oblasti, které nikdo nenosí ani nedrží, automaticky utrpí toto zranění a jsou odstrčeny.\n\nStan má 50 životů, imunitu vůči nemagickým útokům s výjimkou obléhacích zbraní a odolnost vůči veškerému ostatnímu zranění. Obsahuje malý stůl se židlí a pět jednoduchých lůžek z látky a skládacích dřevěných rámů.\n\nDo stanu se vejde až šest Středních nebo menších tvorů. Když si v něm tvor krátce odpočine, obnoví si dvojnásobek životů z každé utracené Kostky životů. Když si tvor ve stanu důkladně odpočine, sníží se jeho stupeň únavy o 2 místo o 1. Navíc má tvor během odpočinku ve stanu výhodu k záchranným hodům proti nemocem a jedům."
       },
       "cestus": {
         "englishName": "Cestus",
-        "name": "Cestus"
+        "name": "Cestus",
+        "original": {
+          "desc": "These leather hand wraps are padded across the knuckles. You have a bonus to attack and damage rolls made with unarmed strikes while wearing these hand wraps. The bonus is determined by the item's rarity.",
+          "type": "Wondrous item",
+          "rarity": "uncommon (+1), rare (+2), or very rare (+3)",
+          "requires_attunement": ""
+        },
+        "description": "*Divotvorný předmět, neobvyklý (+1), vzácný (+2) nebo velmi vzácný (+3)*\n\nTyto kožené bandáže rukou jsou přes klouby prstů vypolstrované. Když je máš na rukou, získáš bonus k hodům na útok a na zranění údery beze zbraně. Výše bonusu závisí na vzácnosti předmětu."
       },
       "chain-cilice": {
         "englishName": "Chain Cilice",
-        "name": "Řetězová žíněná košile"
+        "name": "Řetězová žíněná košile",
+        "original": {
+          "desc": "This bracelet made of spiked chain is designed to fit around the ankle, wrist, or thigh. While wearing the cilice, you can use an action to speak its command word, causing it to tighten on your skin and dealing 1d6 piercing damage to you at the start of each of your turns until you use a bonus action to end it. If you have the Ki class feature or ki points from another source, such as the Inner Resilience feat (see the Backgrounds and Feats chapter), you regain 1 ki point for every 5 damage caused by the cilice. If the cilice would reduce you to 0 hit points, it reduces you to 1 hit point instead and the effect ends.\n  If the cilice's effect was ended in this way, it can't be used again until the next dawn.",
+          "type": "Wondrous item",
+          "rarity": "uncommon",
+          "requires_attunement": ""
+        },
+        "description": "*Divotvorný předmět, neobvyklý*\n\nTento náramek z ostnatého řetězu je určen k nošení na kotníku, zápěstí či stehně. Když máš cilicium na sobě, můžeš akcí pronést jeho povelové slovo. Cilicium se ti sevře kolem kůže a na začátku každého tvého tahu ti způsobí bodné zranění 1k6, dokud účinek bonusovou akcí neukončíš. Máš-li schopnost povolání Čchi nebo body čchi z jiného zdroje, například z odbornosti Vnitřní odolnost (viz kapitola Zázemí a odbornosti), obnovíš si 1 bod čchi za každých 5 bodů zranění způsobeného ciliciem. Pokud by ti cilicium snížilo životy na 0, sníží je místo toho na 1 a účinek skončí.\n\nByl-li účinek cilicia ukončen tímto způsobem, nelze ho znovu použít až do příštího úsvitu."
       },
       "cloak-of-tentacles": {
         "englishName": "Cloak of Tentacles",
-        "name": "Plášť chapadel"
+        "name": "Plášť chapadel",
+        "original": {
+          "desc": "This cloak settles around your shoulders like a writhing creature, somehow simultaneously warm to the touch and icy cold against your skin.\n  ***Shimmering Skin.*** While wearing this cloak, you can use an action to expose its shimmering inner lining. Each creature within 10 feet of you and that can see you must make a DC 15 Wisdom saving throw. On a failed save, a creature is incapacitated until the end of its next turn. Once used, this property of the cloak can't be used again until the next dawn.\n  ***Writhing Tentacles.*** While wearing this cloak, you can use a bonus action to command the cloak to sprout four writhing tentacles for 1 minute. When a creature hits you with a melee attack while within 10 feet of you, one of the tentacles lashes out and makes an attack roll at your attacker with a +7 bonus. On a hit, the tentacle deals 2d10 bludgeoning damage then falls still, becoming inert. When the duration ends or once all four tentacles become inert, this property of the cloak can't be used again until the next dawn",
+          "type": "Wondrous item",
+          "rarity": "rare",
+          "requires_attunement": "requires attunement"
+        },
+        "description": "*Divotvorný předmět, vzácný, vyžaduje sladění*\n\nTento plášť ti spočine na ramenou jako svíjející se tvor, na dotek podivně teplý a zároveň ledově chladný na kůži.\n\n**Třpytivá kůže.** Když máš plášť na sobě, můžeš akcí odhalit jeho třpytivou podšívku. Každý tvor do 10 stop od tebe, který tě vidí, si musí hodit záchranný hod na Moudrost se SO 15. Při neúspěchu je tvor neschopný do konce svého příštího tahu. Po použití nelze tuto vlastnost pláště znovu použít až do příštího úsvitu.\n\n**Svíjející se chapadla.** Když máš plášť na sobě, můžeš mu bonusovou akcí přikázat, aby mu na 1 minutu vyrostla čtyři svíjející se chapadla. Když tě zasáhne útokem na blízko tvor do 10 stop od tebe, jedno z chapadel po něm švihne a provede proti útočníkovi hod na útok s bonusem +7. Při zásahu chapadlo způsobí drtivé zranění 2k10 a poté znehybní a zůstane nečinné. Po uplynutí doby trvání nebo jakmile všechna čtyři chapadla zůstanou nečinná, nelze tuto vlastnost pláště znovu použít až do příštího úsvitu."
       },
       "deepstone-cestus": {
         "englishName": "Deepstone Cestus",
-        "name": "Cestus z hlubinného kamene"
+        "name": "Cestus z hlubinného kamene",
+        "original": {
+          "desc": "These leather hand wraps are fitted with round, flat stones engraved with runes. While wearing these wraps, your ki save DC increases by 2.",
+          "type": "Wondrous item",
+          "rarity": "very rare",
+          "requires_attunement": "requires attunement by a monk"
+        },
+        "description": "*Divotvorný předmět, velmi vzácný, vyžaduje sladění s mnichem*\n\nTyto kožené bandáže rukou jsou opatřeny kulatými plochými kameny s vyrytými runami. Když je máš na rukou, tvé SO záchrany proti čchi se zvýší o 2."
       },
       "esquires-rowels": {
         "englishName": "Esquire's Rowels",
-        "name": "Panošské ostruhy"
+        "name": "Panošské ostruhy",
+        "original": {
+          "desc": "While riding a mount and wearing these silver-chased spurs, you have a +1 bonus to initiative rolls, and your mount1s Armor Class increases by 2. In addition, while riding a mount and wearing these spurs, you and your mount have advantage on Constitution saving throws against exhaustion caused by traveling more than 8 hours in a day.",
+          "type": "Wondrous item",
+          "rarity": "rare",
+          "requires_attunement": "requires attunement"
+        },
+        "description": "*Divotvorný předmět, vzácný, vyžaduje sladění*\n\nKdyž máš na sobě tyto stříbrem zdobené ostruhy a jedeš na jezdeckém zvířeti, máš bonus +1 k hodům na iniciativu a OČ tvého jezdeckého zvířete se zvýší o 2. Navíc máte ty i tvé jezdecké zvíře při jízdě s těmito ostruhami výhodu k záchranným hodům na Odolnost proti únavě způsobené cestováním déle než 8 hodin za den."
       },
       "fletchers-retort-gloves": {
         "englishName": "Fletcher's Retort Gloves",
-        "name": "Rukavice lučištníkovy odplaty"
+        "name": "Rukavice lučištníkovy odplaty",
+        "original": {
+          "desc": "When you use the Deflect Missiles reaction while wearing these gloves, you can spend 1 ki point to reduce the damage you take from the attack by 1d10 + your Dexterity modifier + twice your monk level instead. If you reduce the damage to 0 in this way and spend 1 ki point to throw the missile, the attack has a normal range of 30 feet and a long range of 120 feet.\n  In addition, when a friendly creature within 5 feet of you is hit with a ranged weapon attack while you are wearing these gloves, you can use Deflect Missiles to deflect or catch the missile.",
+          "type": "Wondrous item",
+          "rarity": "rare",
+          "requires_attunement": "requires attunement by a monk"
+        },
+        "description": "*Divotvorný předmět, vzácný, vyžaduje sladění s mnichem*\n\nKdyž s těmito rukavicemi použiješ reakci Odražení střel, můžeš utratit 1 bod čchi a místo obvyklého snížení snížit zranění z útoku o 1k10 + svou opravu Obratnosti + dvojnásobek své úrovně mnicha. Pokud takto snížíš zranění na 0 a utratíš 1 bod čchi za vržení střely, má útok normální dostřel 30 stop a dlouhý dostřel 120 stop.\n\nNavíc když je přátelský tvor do 5 stop od tebe zasažen útokem na dálku zbraní a máš tyto rukavice na sobě, můžeš použít Odražení střel k odražení či zachycení střely."
       },
       "giantstrike-cestus": {
         "englishName": "Giantstrike Cestus",
-        "name": "Cestus obřího úderu"
+        "name": "Cestus obřího úderu",
+        "original": {
+          "desc": "These leather hand wraps are fitted with iron plates engraved with runes. When you make unarmed strikes while wearing these wraps, your Martial Arts die is one die higher.",
+          "type": "Wondrous item",
+          "rarity": "very rare",
+          "requires_attunement": "requires attunement by a monk"
+        },
+        "description": "*Divotvorný předmět, velmi vzácný, vyžaduje sladění s mnichem*\n\nTyto kožené bandáže rukou jsou opatřeny železnými destičkami s vyrytými runami. Když s nimi provádíš údery beze zbraně, tvá kostka bojových umění je o jeden stupeň větší."
       },
       "heartglow-lantern": {
         "englishName": "Heartglow Lantern",
-        "name": "Lucerna srdeční záře"
+        "name": "Lucerna srdeční záře",
+        "original": {
+          "desc": "Fashioned from a single piece of specially grown, hexagonal crystal fitted within a metal frame, a heartglow lantern doesn1t use burning fuel or ignited material to generate light, making it ideal in caverns where air supplies can be precious. You can use an action while holding one of these lanterns to cause it to shed bright light in a 20-foot radius and dim light for an additional 20 feet. The light lasts until you use a bonus action to repeat the command word or until the lantern is no longer being held or carried by a living creature.\n  Each lantern can create an additional effect when it is infused with vitality. Any creature touching a lantern can use an action to infuse it with some of the creature1s vitality. The creature1s hit-point maximum is reduced by an amount equal to the creature1s proficiency bonus, and the lantern gains charges equal to that amount. This reduction lasts until the creature finishes a long rest. Each lantern can hold any number of charges from any number of creatures, but each creature can infuse a lantern with vitality only once between long rests.\n  ***Deadbane (Uncommon).*** While holding this lantern, you can use an action and expend 1 or more of its charges to cause the lantern to detect undead for 1 hour. When an undead is within 20 feet of the lantern, the light it sheds changes to blue, growing brighter the closer the undead is to the lantern. For each charge you spend beyond the first, the duration increases by 30 minutes, and the distance the lantern can detect undead increases by 5 feet. Increasing this distance doesn't increase the radius of the light shed by the lantern.\n  ***Floodmote (Very Rare).*** If you are submerged while holding or carrying this lantern, you can use a reaction and expend 1 or more of its charges to create a small bubble of air for yourself for 1 hour. For each charge you spend beyond the first, the duration increases by 1 hour, and you can choose one additional creature within 30 feet of you to also be protected with a bubble of air. The bubble of air surrounds only a creature's head or other airbreathing organ and provides breathable air to the creature for the duration.\n  ***Tumblesafe (Rare).*** If you or a friendly creature you can see within 40 feet of you falls while you are holding or carrying this lantern, you can use a reaction and expend 1 or more of its charges to slow the fall. For each charge you spend beyond the first, you can extend the light shed by the lantern by 5 feet. Each falling creature and object in the lantern's light descends at a rate of 60 feet per round and takes no damage from falling. It continues to descend at this rate until it lands, even if it exits the lantern's light before it lands.",
+          "type": "Wondrous item",
+          "rarity": "rarity varies",
+          "requires_attunement": ""
+        },
+        "description": "*Divotvorný předmět, proměnlivá vzácnost*\n\nLucerna srdeční záře je vyrobena z jediného kusu speciálně vypěstovaného šestibokého krystalu zasazeného do kovového rámu. Ke svícení nepotřebuje hořící palivo ani zapálený materiál, což je ideální v jeskyních, kde může být zásoba vzduchu vzácná. Když jednu z těchto luceren držíš, můžeš akcí způsobit, že začne vydávat jasné světlo v okruhu 20 stop a slabé světlo dalších 20 stop. Světlo trvá, dokud bonusovou akcí nezopakuješ povelové slovo nebo lucernu již nedrží či nenese žádný živý tvor.\n\nKaždá lucerna dokáže vytvořit dodatečný účinek, když je naplněna životní silou. Každý tvor, který se lucerny dotýká, může akcí vložit část své životní síly do lucerny. Maximum životů tvora se sníží o jeho zdatnostní bonus a lucerna získá stejný počet nábojů. Snížení trvá, dokud si tvor důkladně neodpočine. Každá lucerna může obsahovat libovolný počet nábojů od libovolného počtu tvorů, ale každý tvor může lucernu naplnit životní silou jen jednou mezi důkladnými odpočinky.\n\n**Záhuba nemrtvých (neobvyklá).** Když tuto lucernu držíš, můžeš akcí utratit 1 nebo více nábojů, aby lucerna po dobu 1 hodiny odhalovala nemrtvé. Je-li nemrtvý do 20 stop od lucerny, změní se její světlo na modré a jeho jas roste s tím, jak blízko je nemrtvý k lucerně. Za každý náboj utracený nad první se trvání prodlužuje o 30 minut a vzdálenost, na kterou lucerna odhaluje nemrtvé, se zvětšuje o 5 stop. Zvětšení této vzdálenosti nezvětšuje poloměr světla lucerny.\n\n**Ochrana před vodou (velmi vzácná).** Jsi-li ponořený a držíš či neseš tuto lucernu, můžeš reakcí utratit 1 nebo více jejích nábojů a vytvořit si malou vzduchovou bublinu na 1 hodinu. Za každý náboj utracený nad první se trvání prodlouží o 1 hodinu a můžeš vybrat dalšího tvora do 30 stop od tebe, kterého bude také chránit vzduchová bublina. Bublina obklopuje jen hlavu nebo jiný orgán dýchající vzduch a poskytuje tvorovi po dobu trvání dýchatelný vzduch.\n\n**Bezpečný pád (vzácná).** Když držíš nebo neseš tuto lucernu a padáš ty nebo přátelský tvor, kterého vidíš do 40 stop od sebe, můžeš reakcí utratit 1 nebo více jejích nábojů a pád zpomalit. Za každý náboj utracený nad první můžeš rozšířit dosah světla lucerny o 5 stop. Každý padající tvor a předmět ve světle lucerny klesá rychlostí 60 stop za kolo a neutrpí zranění z pádu. Touto rychlostí klesá až do přistání, i když před přistáním opustí světlo lucerny."
       },
       "javelin-of-teleportation": {
         "englishName": "Javelin of Teleportation",
-        "name": "Oštěp teleportace"
+        "name": "Oštěp teleportace",
+        "original": {
+          "desc": "This short-hafted javelin bears a long, metal head. You gain a +1 bonus to attack and damage rolls made with this magic weapon. When you hit a creature with this weapon, you can speak its command word and force the target to make a DC 13 Wisdom saving throw. On a failed save, the target is teleported to an unoccupied space you can see within 60 feet of you. That space must be on the ground or on a floor.\n  The javelin’s property can’t be used again until the next dawn. In the meantime, the javelin can still be used as a magic weapon.",
+          "type": "Weapon (javelin)",
+          "rarity": "uncommon",
+          "requires_attunement": ""
+        },
+        "description": "*Zbraň (oštěp), neobvyklý*\n\nTento oštěp s krátkým ratištěm má dlouhý kovový hrot. S touto magickou zbraní získáš bonus +1 k hodům na útok a na zranění. Když touto zbraní zasáhneš tvora, můžeš pronést její povelové slovo a přinutit cíl k záchrannému hodu na Moudrost se SO 13. Při neúspěchu se cíl teleportuje do volného prostoru, který vidíš do 60 stop od sebe. Tento prostor musí být na zemi či na podlaze.\n\nTuto vlastnost oštěpu nelze znovu použít až do příštího úsvitu. Mezitím lze oštěp nadále používat jako magickou zbraň."
       },
       "knight-sergeants-surcoat": {
         "englishName": "Knight-Sergeant's Surcoat",
-        "name": "Varkoč rytířského seržanta"
+        "name": "Varkoč rytířského seržanta",
+        "original": {
+          "desc": "Fashioned from durable canvas and fine silk, this long, padded knight’s tabard bears the colors and heraldry of a long-forgotten order of knights. While wearing this surcoat, you have advantage on Wisdom (Animal Handling) checks when interacting with horses, and you have advantage on Charisma (Persuasion) checks made to interact with humanoids of a higher social rank than you, such as an army’s general or a region’s monarch.\n  ***Knight’s Livery.*** While attuned to and wearing both the *knightsergeant’s surcoat* and the *argent mantle*, your Charisma score is 20. This has no effect on you if your Charisma is already 20 or higher.",
+          "type": "Wondrous item",
+          "rarity": "uncommon",
+          "requires_attunement": "requires attunement"
+        },
+        "description": "*Divotvorný předmět, neobvyklý, vyžaduje sladění*\n\nTento dlouhý vycpávaný rytířský varkoč z odolného plátna a jemného hedvábí nese barvy a heraldiku dávno zapomenutého rytířského řádu. Když máš varkoč na sobě, máš výhodu k ověřením Moudrosti (Zacházení se zvířaty) při jednání s koňmi a k ověřením Charismatu (Přesvědčování) při jednání s humanoidy vyššího společenského postavení, než je tvé, například s generálem armády či panovníkem kraje.\n\n**Rytířská livrej.** Pokud jsi sladěný s Varkočem rytířského seržanta i Stříbrným pláštěm a oba máš na sobě, tvé Charisma je 20. Pokud již máš Charisma 20 či vyšší, nemá to na tebe žádný účinek."
       },
       "medics-sash": {
         "englishName": "Medic's Sash",
-        "name": "Medikova šerpa"
+        "name": "Medikova šerpa",
+        "original": {
+          "desc": "While wearing this sash, your carrying capacity doubles. In addition, your movement doesn’t provoke opportunity attacks if you are carrying a friendly creature that has 0 hit points or is dying.\n  ***First Aid.*** The sash has 3 charges. While wearing the sash, you can expend 1 charge as an action to cast the spare the dying spell, and you can expend 2 charges as an action to cast the cure wounds spell, using your Charisma modifier as your spellcasting ability modifier (minimum of +1). The sash recovers all expended charges daily at dawn.",
+          "type": "Wondrous item",
+          "rarity": "uncommon",
+          "requires_attunement": "requires attunement"
+        },
+        "description": "*Divotvorný předmět, neobvyklý, vyžaduje sladění*\n\nKdyž máš tuto šerpu na sobě, tvá nosnost se zdvojnásobí. Navíc tvůj pohyb nevyvolává příležitostné útoky, pokud neseš přátelského tvora, který má 0 životů nebo umírá.\n\n**První pomoc.** Šerpa má 3 náboje. Když ji máš na sobě, můžeš akcí utratit 1 náboj za seslání kouzla Ušetři umírajícího nebo 2 náboje za seslání kouzla Zhoj zranění, přičemž jako opravu sesílací vlastnosti použiješ svou opravu Charismatu (nejméně +1). Šerpa obnovuje všechny utracené náboje každý den za úsvitu."
       },
       "momentblade": {
         "englishName": "Momentblade",
-        "name": "Čepel okamžiku"
+        "name": "Čepel okamžiku",
+        "original": {
+          "desc": "You gain a +1 bonus to attack and damage rolls made with this magic weapon.\n  When you roll a 20 on an attack roll made with this weapon, the target disappears and shuffles forward in time. At the end of your next turn, the target returns to the space it previously occupied, or the nearest unoccupied space. When the target returns, it is unaware that any time has passed. If the target is concentrating on a spell and succeeds on the check to maintain concentration after taking damage from your attack with this weapon, the round it disappeared doesn’t count against the spell’s remaining duration.",
+          "type": "Weapon (any axe or sword)",
+          "rarity": "rare",
+          "requires_attunement": "requires attunement"
+        },
+        "description": "*Zbraň (libovolná sekera či meč), vzácný, vyžaduje sladění*\n\nS touto magickou zbraní získáš bonus +1 k hodům na útok a na zranění.\n\nKdyž při hodu na útok touto zbraní hodíš 20, cíl zmizí a posune se v čase vpřed. Na konci tvého příštího tahu se cíl vrátí do prostoru, který předtím zaujímal, nebo do nejbližšího volného prostoru. Po návratu si cíl neuvědomuje, že uplynul nějaký čas. Pokud se cíl soustředí na kouzlo a po zranění tvým útokem touto zbraní uspěje v ověření k udržení soustředění, kolo, po které byl pryč, se nezapočítá do zbývajícího trvání kouzla."
       },
       "ninefold-swarmdagger": {
         "englishName": "Ninefold Swarmdagger",
-        "name": "Devaterá rojová dýka"
+        "name": "Devaterá rojová dýka",
+        "original": {
+          "desc": "You gain a +1 bonus to attack and damage rolls made with this magic weapon.\n  When you hit a creature with this weapon, you can use a bonus action to launch ghostly duplicates of the dagger at nearby creatures. Ghostly duplicates of the dagger fly at up to three creatures you can see within 30 feet of the creature you hit. Make a ranged attack with this dagger at each target. On a hit, a target takes 1d4 force damage. Once you hit six creatures with these ghostly daggers, you can’t launch ghostly daggers from this weapon again until the next dawn.",
+          "type": "Weapon (dagger)",
+          "rarity": "rare",
+          "requires_attunement": ""
+        },
+        "description": "*Zbraň (dýka), vzácný*\n\nS touto magickou zbraní získáš bonus +1 k hodům na útok a na zranění.\n\nKdyž touto zbraní zasáhneš tvora, můžeš bonusovou akcí vrhnout přízračné kopie dýky proti blízkým tvorům. Kopie vyletí proti až třem tvorům, které vidíš do 30 stop od zasaženého tvora. Touto dýkou proveď útok na dálku proti každému cíli. Při zásahu cíl utrpí silové zranění 1k4. Jakmile těmito přízračnými dýkami zasáhneš šest tvorů, nemůžeš ze zbraně vrhnout další přízračné dýky až do příštího úsvitu."
       },
       "paired-gauntlets-of-striking": {
         "englishName": "Paired Gauntlets of Striking",
-        "name": "Párové úderné rukavice"
+        "name": "Párové úderné rukavice",
+        "original": {
+          "desc": "These leather gloves are reinforced with steel plates and decorated with images of two humanoids fighting side-by-side. While you and another creature are each wearing one of the gauntlets and are each within 5 feet of the same creature, you both have advantage on the first attack roll you make against that creature on each of your turns.",
+          "type": "Wondrous item",
+          "rarity": "uncommon",
+          "requires_attunement": "requires attunement"
+        },
+        "description": "*Divotvorný předmět, neobvyklý, vyžaduje sladění*\n\nTyto kožené rukavice jsou vyztuženy ocelovými pláty a ozdobeny vyobrazením dvou humanoidů bojujících bok po boku. Dokud ty a jiný tvor máte každý na sobě jednu z rukavic a oba jste do 5 stop od stejného tvora, máte oba výhodu k prvnímu hodu na útok proti tomuto tvorovi, který provedete v každém ze svých tahů."
       },
       "phase-arrow": {
         "englishName": "Phase Arrow",
-        "name": "Fázový šíp"
+        "name": "Fázový šíp",
+        "original": {
+          "desc": "When you make a ranged attack with this arrow, the attack ignores half and three-quarters cover as the arrow dips briefly into the Plane of Shadow on its way to the target. If the target has full cover and you are aware the target is in a particular space, you can fire this arrow at the target with disadvantage on the attack roll.",
+          "type": "Weapon (arrow)",
+          "rarity": "uncommon",
+          "requires_attunement": ""
+        },
+        "description": "*Zbraň (šíp), neobvyklý*\n\nKdyž tímto šípem provedeš útok na dálku, útok ignoruje poloviční a tříčtvrteční kryt, protože šíp na cestě k cíli na okamžik pronikne do Sféry stínu. Pokud má cíl úplný kryt a víš, že se nachází v určitém prostoru, můžeš na něj tímto šípem vystřelit s nevýhodou k hodu na útok."
       },
       "potion-belt": {
         "englishName": "Potion Belt",
-        "name": "Opasek na lektvary"
+        "name": "Opasek na lektvary",
+        "original": {
+          "desc": "One or more thin bands of flexible, pale blue crystal run along this plain, brown leather belt. As an action, you can pour a potion onto a band of crystal, which absorbs the potion and turns a deep blue. Each band of crystal can store only one potion at a time.\n  ***Potion Belt (Common).*** This belt contains only one band of crystal. While wearing the belt, you can use an action to speak the belt’s command word and gain the benefits of the potion as if you drank it.\n  ***Greater Potion Belt (Rare).*** This belt contains three bands of crystal. While wearing the belt, you can use a bonus action to speak the belt’s command word and the name of one of the potions and gain the benefits of the named potion as if you drank it.",
+          "type": "Wondrous item",
+          "rarity": "rarity varies",
+          "requires_attunement": ""
+        },
+        "description": "*Divotvorný předmět, proměnlivá vzácnost*\n\nPo tomto prostém hnědém koženém opasku se táhne jeden nebo více tenkých proužků ohebného světle modrého krystalu. Akcí můžeš na proužek krystalu nalít lektvar; krystal jej pohltí a zbarví se sytě modře. Každý proužek krystalu může současně uchovávat jen jeden lektvar.\n\n**Opasek na lektvary (běžný).** Tento opasek obsahuje jen jeden proužek krystalu. Když máš opasek na sobě, můžeš akcí pronést jeho povelové slovo a získat účinky lektvaru, jako bys ho vypil.\n\n**Mocnější opasek na lektvary (vzácný).** Tento opasek obsahuje tři proužky krystalu. Když ho máš na sobě, můžeš bonusovou akcí pronést jeho povelové slovo a název jednoho z lektvarů a získat účinky jmenovaného lektvaru, jako bys ho vypil."
       },
       "potion-of-infinite-possibilities": {
         "englishName": "Potion of Infinite Possibilities",
-        "name": "Lektvar nekonečných možností"
+        "name": "Lektvar nekonečných možností",
+        "original": {
+          "desc": "This deep purple potion swirls with glittering flashes of red, green, and blue and smells faintly of ozone. For 1 hour after drinking this potion, you gain the following benefits:\n* You have blindsight out to a range of 60 feet.\n* When you roll a 1 on an ability check, saving throw, or attack roll, you can reroll the die and must use the new roll.\n *You can see into the Ethereal Plane. Ethereal creatures and objects appear ghostly and translucent.\nWhen the duration ends, you are stunned until the end of your next turn as your mind reels from the loss of the mind-altering effects.",
+          "type": "Potion",
+          "rarity": "very rare",
+          "requires_attunement": ""
+        },
+        "description": "*Lektvar, velmi vzácný*\n\nTento sytě fialový lektvar víří třpytivými červenými, zelenými a modrými záblesky a slabě voní po ozonu. Po dobu 1 hodiny po jeho vypití získáš následující výhody:\n\n- Máš slepozrak do 60 stop.\n- Když při ověření vlastnosti, záchranném hodu nebo hodu na útok hodíš 1, můžeš kostkou hodit znovu a musíš použít nový výsledek.\n- Vidíš do Éterické sféry. Éteričtí tvorové a předměty vypadají přízračně a průsvitně.\n\nPo uplynutí doby trvání jsi ochromený do konce svého příštího tahu, protože se tvá mysl vzpamatovává ze ztráty účinků měnících vnímání."
       },
       "pouch-of-runestones": {
         "englishName": "Pouch of Runestones",
-        "name": "Váček runových kamenů"
+        "name": "Váček runových kamenů",
+        "original": {
+          "desc": "This ordinary bag, made from cured animal hide, appears empty. Reaching inside the bag, however, reveals the presence of a number of flat, bone tiles. The bag weighs 1/2 pound.\n  You can use an action to pull one of the tiles from the bag and throw it into the air in front of you. The tile floats 5 feet off the ground and displays a runic symbol. Make a DC 12 Wisdom check. The symbol on the tile is upright on a successful save, and it is reversed on a failed save. Roll a d12 and consult the appropriate table to determine the rune’s effect. If a result requires a saving throw, the DC is 15. The tile vanishes after it displays a rune, but the bag never runs out of tiles.\n  Once used, the bag shouldn’t be used again until the next dawn. Each time it is used again before then, the DC of the Wisdom check increases by 5 for each tile drawn after the first. You can be affected by more than one rune’s effect at a time.\n  Unless otherwise noted, each rune’s effect lasts until you finish a long rest.\n\n ***Upright Runestone*** \n\n| d12  | Rune     | Meaning       | Effect |\n|------|----------|---------------|--------|\n| 1    | Ansuz    | Truth         | When this rune appears, a zone of truth spell is triggered, centered on you, and it moves with you for 1 hour. |\n| 2    | Naudiz   | Necessity     | You have advantage on the next saving throw you make before this effect ends. |\n| 3    | Hagalaz  | Winter        | You can cast the ice storm spell once before this effect ends. |\n| 4    | Laukaz   | Sea           | You can breathe air and water for 5 hours. |\n| 5    | Algiz    | Protection    | You gain a +2 bonus to AC. |\n| 6    | Mannaz   | Teamwork      | You and up to five creatures of your choice that you can see gain 10 temporary hit points. |\n| 7    | Isaz     | Ice           | When you hit with an attack, the attack deals an extra 1d6 cold damage. |\n| 8    | Berkanan | Bear Maiden   | You can use an action to cast polymorph on yourself, transforming into a brown bear. While you are in the form of the brown bear, you retain your Intelligence, Wisdom, and Charisma scores. You can end this effect early as a bonus action. |\n| 9    | Perto    | Mystery       | You can cast disguise self at will. |\n| 10   | Ehwaz    | Freedom       | Until this effect ends, you can spend 5 feet of movement to automatically escape from nonmagical restraints, such as manacles or a creature that has you grappled. |\n| 11   | Raido    | Easy Travel   | Your walking speed increases by 10 feet. |\n| 12   | Kaunen   | Enlightenment | You can cast the lesser restoration spell as a bonus action once before this effect ends. |\n\n ***Reversed Runestone*** \n\n| d12  | Rune     | Meaning             | Effect |\n|------|----------|---------------------|--------|\n| 1    | Ansuz    | Falsehood           | You believe everything you hear to be a lie. |\n| 2    | Naudiz   | Consequence         | You have disadvantage on the next saving throw you make before this effect ends. |\n| 3    | Hagalaz  | Blizzard            | When this rune appears, a freezing sphere spell is triggered, centered on you. |\n| 4    | Laukaz   | Sky                 | When this rune appears, a reverse gravity spell is triggered, centered on you. The effect ends at the start of your next turn. |\n| 5    | Algiz    | Vulnerability       | Your Armor Class is reduced by 2. |\n| 6    | Mannaz   | Dissension          | You and friendly creatures within 30 feet of you have disadvantage on attack rolls while within 10 feet of each other. |\n| 7    | Isaz     | Ice                 | You have vulnerability to cold damage. |\n| 8    | Berkanan | Bear Matron         | When this rune appears, a brown bear also appears an unoccupied space nearest to you, and it attacks you. |\n| 9    | Perto    | Unwanted Revelation | You have disadvantage on Charisma checks. |\n| 10   | Ehwaz    | Shackles            | When this rune appears, a maze spell is triggered, targeting you. The effect lasts for 10 minutes or until you escape the maze. |\n| 11   | Raido    | Hard Travel         | Your walking speed is reduced by 10 feet. |\n| 12   | Kaunen   | Insanity            | You suffer a long-term madness. |\n\n",
+          "type": "Wondrous item",
+          "rarity": "rare",
+          "requires_attunement": ""
+        },
+        "description": "*Divotvorný předmět, vzácný*\n\nTento obyčejný váček z vydělané zvířecí kůže se zdá být prázdný. Když však sáhneš dovnitř, najdeš několik plochých kostěných destiček. Váček váží 1/2 libry.\n\nAkcí můžeš vytáhnout jednu destičku z váčku a vyhodit ji do vzduchu před sebou. Destička se vznáší 5 stop nad zemí a ukazuje runový symbol. Proveď ověření Moudrosti se SO 12. Při úspěchu je symbol na destičce vzpřímený, při neúspěchu obrácený (originál při vyhodnocení používá výraz „záchranný hod“). Hoď k12 a podle příslušné tabulky urči účinek runy. Pokud výsledek vyžaduje záchranný hod, SO je 15. Destička po zobrazení runy zmizí, ale destičky ve váčku nikdy nedojdou.\n\nPo použití by se váček neměl znovu používat až do příštího úsvitu. Při každém dalším použití před úsvitem se SO ověření Moudrosti zvýší o 5 za každou destičku vytaženou po první. Může tě současně ovlivňovat více runových účinků.\n\nNení-li uvedeno jinak, účinek každé runy trvá, dokud si důkladně neodpočineš.\n\n**Vzpřímená runa**\n\n| k12 | Runa | Význam | Účinek |\n|---|---|---|---|\n| 1 | Ansuz | Pravda | Když se runa objeví, spustí se kouzlo Zóna pravdy se středem na tobě, které se s tebou pohybuje po dobu 1 hodiny. |\n| 2 | Naudiz | Nutnost | Máš výhodu k příštímu záchrannému hodu před koncem tohoto účinku. |\n| 3 | Hagalaz | Zima | Před koncem účinku můžeš jednou seslat Ledovou bouři. |\n| 4 | Laukaz | Moře | Po dobu 5 hodin můžeš dýchat vzduch i vodu. |\n| 5 | Algiz | Ochrana | Získáš bonus +2 k OČ. |\n| 6 | Mannaz | Spolupráce | Ty a až pět tvorů dle tvé volby, které vidíš, získáte 10 dočasných životů. |\n| 7 | Isaz | Led | Když zasáhneš útokem, způsobí útok dodatečné chladné zranění 1k6. |\n| 8 | Berkanan | Medvědí panna | Akcí můžeš na sebe seslat Proměň a přeměnit se v medvěda hnědého. V této podobě si ponecháš hodnoty Inteligence, Moudrosti a Charismatu. Účinek můžeš předčasně ukončit bonusovou akcí. |\n| 9 | Perto | Tajemství | Můžeš libovolně sesílat Přestrojení. |\n| 10 | Ehwaz | Svoboda | Do konce účinku můžeš utratit 5 stop pohybu, abys automaticky unikl z nemagických pout, například okovů nebo uchvácení tvorem. |\n| 11 | Raido | Snadné cestování | Tvá rychlost chůze se zvýší o 10 stop. |\n| 12 | Kaunen | Osvícení | Před koncem účinku můžeš jednou seslat Nižší navrácení jako bonusovou akci. |\n\n**Obrácená runa**\n\n| k12 | Runa | Význam | Účinek |\n|---|---|---|---|\n| 1 | Ansuz | Lež | Věříš, že všechno, co slyšíš, je lež. |\n| 2 | Naudiz | Následek | Máš nevýhodu k příštímu záchrannému hodu před koncem účinku. |\n| 3 | Hagalaz | Sněhová bouře | Když se runa objeví, spustí se kouzlo Mrazivá koule se středem na tobě. |\n| 4 | Laukaz | Nebe | Když se runa objeví, spustí se kouzlo Obrať gravitaci se středem na tobě. Účinek skončí na začátku tvého příštího tahu. |\n| 5 | Algiz | Zranitelnost | Tvé OČ se sníží o 2. |\n| 6 | Mannaz | Neshody | Ty a přátelští tvorové do 30 stop od tebe máte nevýhodu k hodům na útok, pokud jste do 10 stop od sebe navzájem. |\n| 7 | Isaz | Led | Máš zranitelnost vůči chladnému zranění. |\n| 8 | Berkanan | Medvědí matka | Když se runa objeví, v nejbližším volném prostoru se také objeví medvěd hnědý, který na tebe zaútočí. |\n| 9 | Perto | Nechtěné odhalení | Máš nevýhodu k ověřením Charismatu. |\n| 10 | Ehwaz | Okovy | Když se runa objeví, spustí se kouzlo Bludiště, jehož jsi cílem. Účinek trvá 10 minut nebo dokud z bludiště neunikneš. |\n| 11 | Raido | Obtížné cestování | Tvá rychlost chůze se sníží o 10 stop. |\n| 12 | Kaunen | Šílenství | Postihne tě dlouhodobé šílenství. |"
       },
       "serpentine-sandals": {
         "englishName": "Serpentine Sandals",
-        "name": "Hadí sandály"
+        "name": "Hadí sandály",
+        "original": {
+          "desc": "While wearing these glistening, snake-skin sandals, you ignore difficult terrain created by marsh, swamps, or other shallow water, such as a rain-soaked rooftop. In addition, you have advantage on ability checks and saving throws made to escape a grapple or the restrained condition while wearing these sandals.",
+          "type": "Wondrous item",
+          "rarity": "rare",
+          "requires_attunement": "requires attunement"
+        },
+        "description": "*Divotvorný předmět, vzácný, vyžaduje sladění*\n\nKdyž máš na sobě tyto lesklé sandály z hadí kůže, ignoruješ obtížný terén tvořený mokřinami, bažinami či jinou mělkou vodou, například deštěm promočenou střechou. Navíc máš při nošení sandálů výhodu k ověřením vlastností a záchranným hodům při snaze uniknout uchvácení či stavu zadržený."
       },
       "shattershot-arrow": {
         "englishName": "Shattershot Arrow",
-        "name": "Tříštivý šíp"
+        "name": "Tříštivý šíp",
+        "original": {
+          "desc": "When you hit a creature with this weapon, the target takes an extra 3d6 thunder damage as the arrow releases a sudden, loud ringing. Each creature made of inorganic material such as stone, crystal, or metal that is within 10 feet of the target must make a DC 13 Constitution saving throw, taking 3d6 thunder damage on a failed save, or half as much damage on a successful one. A nonmagical object that isn’t being worn or carried also takes the damage if it’s within 10 feet of the target.",
+          "type": "Weapon (arrow)",
+          "rarity": "uncommon",
+          "requires_attunement": ""
+        },
+        "description": "*Zbraň (šíp), neobvyklý*\n\nKdyž touto zbraní zasáhneš tvora, cíl utrpí dodatečné hromové zranění 3k6, protože šíp vydá náhlé hlasité zvonění. Každý tvor z anorganického materiálu, například kamene, krystalu či kovu, do 10 stop od cíle si musí hodit záchranný hod na Odolnost se SO 13. Při neúspěchu utrpí hromové zranění 3k6, při úspěchu poloviční. Nemagický předmět, který nikdo nenosí ani nedrží, také utrpí zranění, pokud je do 10 stop od cíle."
       },
       "soulbound-wraps": {
         "englishName": "Soulbound Wraps",
-        "name": "Bandáže spoutané duší"
+        "name": "Bandáže spoutané duší",
+        "original": {
+          "desc": "These cloth hand wraps are embroidered with symbols of balance and meditation. When you hit a creature with an unarmed strike while wearing these wraps, you can choose to reduce the damage you deal by up to 10, pulling some of the energy of the hit back into you through the wraps. You regain 1 ki point for every 10 damage you choose not to deal to a creature you hit. Once you regain a number of ki points equal to half your proficiency bonus, the wraps unravel and can’t be worn again until the next dawn.",
+          "type": "Wondrous item",
+          "rarity": "rare",
+          "requires_attunement": "requires attunement by a monk"
+        },
+        "description": "*Divotvorný předmět, vzácný, vyžaduje sladění s mnichem*\n\nTyto látkové bandáže rukou jsou vyšívané symboly rovnováhy a meditace. Když s nimi zasáhneš tvora úderem beze zbraně, můžeš snížit způsobené zranění až o 10 a část energie zásahu vtáhnout bandážemi zpět do sebe. Obnovíš si 1 bod čchi za každých 10 bodů zranění, které se rozhodneš zasaženému tvorovi nezpůsobit. Jakmile obnovíš počet bodů čchi rovný polovině svého zdatnostního bonusu, bandáže se rozvinou a nelze je znovu nosit až do příštího úsvitu."
       },
       "stasis-stone": {
         "englishName": "Stasis Stone",
-        "name": "Kámen stáze"
+        "name": "Kámen stáze",
+        "original": {
+          "desc": "This small, crystalline, purple stone measures 3/4 of an inch in diameter and weighs an ounce. Typically, 1d4 + 2 *stasis stones* can be found together.\n  You can use an action to throw the stone up to 30 feet. The stone explodes on impact and is destroyed. Each creature within a 10-foot radius of where the stone landed must succeed on a DC 15 Constitution saving throw or be petrified until the end of its next turn as the stone releases temporal magic and freezes it in time.",
+          "type": "Wondrous item",
+          "rarity": "very rare",
+          "requires_attunement": "requires attunement"
+        },
+        "description": "*Divotvorný předmět, velmi vzácný, vyžaduje sladění*\n\nTento malý fialový krystalický kámen má průměr 3/4 palce a váží jednu unci. Obvykle lze najít 1k4 + 2 Kamenů stáze pohromadě.\n\nAkcí můžeš kámen hodit až 30 stop daleko. Při dopadu vybuchne a je zničen. Každý tvor v okruhu 10 stop od místa dopadu musí uspět v záchranném hodu na Odolnost se SO 15, jinak je zkamenělý do konce svého příštího tahu, neboť kámen uvolní časovou magii a zmrazí jej v čase."
       },
       "stormheart-bow": {
         "englishName": "Stormheart Bow",
-        "name": "Luk bouřného srdce"
+        "name": "Luk bouřného srdce",
+        "original": {
+          "desc": "This bow is made from dragon bone and fey heartstring. When you hit with an attack using this magic bow, the target takes an extra 1d6 lightning damage. The bow has 5 charges for the following other properties. It regains 1d4 + 1 expended charges daily at dawn.\n  ***Iceshard Arrow.*** You can expend 3 charges when you hit with an attack using this magic bow to cause the arrow to turn to ice and shatter in mid-air. Choose up to three targets within 30 feet of your original target. Your original target takes damage as normal, and each chosen target takes 1d6 cold damage.\n  ***Thunder Arrow.*** You can expend 2 charges when you hit with an attack using this magic bow to cause the attack to release a peal of thunder. The target takes damage as normal, and each creature within 15 feet of the target must make a DC 15 Constitution saving throw, taking 2d6 thunder damage on a failed save, or half as much damage on a successful one.",
+          "type": "Weapon (shortbow or longbow)",
+          "rarity": "rare",
+          "requires_attunement": "requires attunement"
+        },
+        "description": "*Zbraň (krátký či dlouhý luk), vzácný, vyžaduje sladění*\n\nTento luk je vyroben z dračí kosti a srdeční struny víly. Když zasáhneš útokem tímto magickým lukem, cíl utrpí dodatečné bleskové zranění 1k6. Luk má 5 nábojů pro následující další vlastnosti. Každý den za úsvitu obnovuje 1k4 + 1 utracených nábojů.\n\n**Šíp ledových střepů.** Když zasáhneš útokem tímto magickým lukem, můžeš utratit 3 náboje, aby se šíp proměnil v led a roztříštil se ve vzduchu. Vyber až tři cíle do 30 stop od původního cíle. Původní cíl utrpí zranění jako obvykle a každý vybraný cíl utrpí chladné zranění 1k6.\n\n**Hromový šíp.** Když zasáhneš útokem tímto magickým lukem, můžeš utratit 2 náboje, aby útok uvolnil zahřmění. Cíl utrpí zranění jako obvykle a každý tvor do 15 stop od cíle si musí hodit záchranný hod na Odolnost se SO 15. Při neúspěchu utrpí hromové zranění 2k6, při úspěchu poloviční."
       },
       "victory-banner": {
         "englishName": "Victory Banner",
-        "name": "Prapor vítězství"
+        "name": "Prapor vítězství",
+        "original": {
+          "desc": "This small banner is mounted on a short haft and can be attached to a backpack, saddle, or similar equipment. The banner has 3 charges. It regains all expended charges daily at dawn. You can expend 1 of its charges to give yourself advantage on weapon attacks for 1 minute. When you roll a 20 on an attack roll made with a weapon, you can expend 1 charge to move up to your speed without provoking opportunity attacks.\n  You must be within 5 feet of the banner to expend any of its charges.",
+          "type": "Wondrous item",
+          "rarity": "very rare",
+          "requires_attunement": "requires attunement"
+        },
+        "description": "*Divotvorný předmět, velmi vzácný, vyžaduje sladění*\n\nTento malý prapor je upevněný na krátké žerdi a lze ho připevnit k batohu, sedlu či podobnému vybavení. Prapor má 3 náboje. Každý den za úsvitu obnovuje všechny utracené náboje. Můžeš utratit 1 náboj, abys získal výhodu k útokům zbraní po dobu 1 minuty. Když při hodu na útok zbraní hodíš 20, můžeš utratit 1 náboj, abys se pohnul až o svou rychlost bez vyvolání příležitostných útoků.\n\nAbys mohl utratit kterýkoli z nábojů, musíš být do 5 stop od praporu."
       }
     },
     "spells": {

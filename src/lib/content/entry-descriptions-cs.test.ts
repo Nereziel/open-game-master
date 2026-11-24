@@ -116,3 +116,19 @@ describe("Recovered Tome of Heroes feats", () => {
     }
   });
 });
+
+
+describe("Tome of Heroes magic items", () => {
+  it("serves all 29 reviewed descriptions and keeps original metadata", () => {
+    const items = Object.entries(expansionTranslations.toh.items).filter(([, hit]) => "description" in hit);
+    expect(items).toHaveLength(29);
+    for (const [slug, hit] of items) {
+      if (!("description" in hit) || !("original" in hit)) throw new Error(slug);
+      const row = { slug, name: hit.englishName, documentSlug: "toh", source: "open5e", data: hit.original as Record<string, unknown> };
+      const localized = localizeEntryCs("items", row);
+      expect(localized.data.localized_desc).toBe(hit.description);
+      const { localized_desc, ...original } = localized.data;
+      expect(original).toEqual(row.data);
+    }
+  });
+});
