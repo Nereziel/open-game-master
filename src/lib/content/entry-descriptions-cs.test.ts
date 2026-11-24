@@ -83,7 +83,7 @@ describe("Czech external display translations (without SQLite)", () => {
 
 
 describe("Source-specific Czech expansion names", () => {
-  it("keeps all 81 known fixture names scoped to their source and slug", () => {
+  it("keeps all verified source names scoped to their source and slug", () => {
     let count = 0;
     for (const [documentSlug, tables] of Object.entries(expansionTranslations)) {
       for (const [table, entries] of Object.entries(tables)) {
@@ -98,6 +98,21 @@ describe("Source-specific Czech expansion names", () => {
         }
       }
     }
-    expect(count).toBe(81);
+    expect(count).toBe(551);
+  });
+});
+
+
+describe("Recovered Tome of Heroes feats", () => {
+  it("contains all 13 source-backed feats with complete rules and unchanged English mechanics", () => {
+    const feats = expansionTranslations.toh.feats;
+    expect(Object.keys(feats)).toHaveLength(13);
+    for (const [slug, hit] of Object.entries(feats)) {
+      const row = { slug, name: hit.englishName, documentSlug: "toh", source: "open5e", data: hit.original as Record<string, unknown> };
+      const localized = localizeEntryCs("feats", row);
+      expect(localized.data.localized_desc).toBe(hit.description);
+      const { localized_desc, ...original } = localized.data;
+      expect(original).toEqual(row.data);
+    }
   });
 });
