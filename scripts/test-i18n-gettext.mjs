@@ -18,7 +18,11 @@ for (const file of ["../src/lib/i18n/translate.ts", "../src/lib/messages-logic.t
 }
 assert.match(fs.readFileSync(new URL("../src/lib/i18n/catalog-loader.ts", import.meta.url), "utf8"), /import\("\.\/fr\.json"\)/, "the browser fetches the catalog on demand");
 for (const file of ["../src/lib/request-locale.ts", "../src/app/layout.tsx", "../src/instrumentation.ts"]) {
-  assert.match(fs.readFileSync(new URL(file, import.meta.url), "utf8"), /i18n\/fr-catalog/, `${file} installs the catalog on the server`);
+  assert.match(fs.readFileSync(new URL(file, import.meta.url), "utf8"), /i18n\/server-catalogs/, `${file} installs the catalogs on the server`);
+}
+const serverCatalogs = fs.readFileSync(new URL("../src/lib/i18n/server-catalogs.ts", import.meta.url), "utf8");
+for (const locale of ["fr", "cs"]) {
+  assert.ok(serverCatalogs.includes(`import "./${locale}-catalog.ts"`), `server loads ${locale} catalog`);
 }
 const { catalogReady } = await import("../src/lib/i18n/catalog-loader.ts");
 assert.equal(catalogReady("en"), true);
@@ -105,6 +109,24 @@ assert.equal(
   "fr",
 );
 assert.equal(translate("fr", "On", { context: "unknown.context" }), "Activé");
+
+// The table translator shares the server language registry, independently of UI preferences.
+const { tableTranslator } = await import("../src/lib/messages-logic.ts");
+await import("../src/lib/i18n/cs-catalog.ts");
+const csCatalog = JSON.parse(fs.readFileSync(new URL("../src/lib/i18n/cs.json", import.meta.url), "utf8"));
+for (const [language, locale, catalog] of [["french", "fr", frCatalog], ["czech", "cs", csCatalog]]) {
+  const t = tableTranslator(language);
+  assert.equal(localeOfServerLanguage(language), locale);
+  for (const [key, vars] of [["Session {n} begins.", { n: 7 }], ["Session {n} ends.", { n: 7 }], ["Raw XP", undefined], ["until {who}'s turn", { who: "Kael" }]]) {
+    assert.ok(catalog.messages[key], `${locale} has the table message: ${key}`);
+    assert.equal(t(key, vars), translate(locale, key, vars));
+    assert.notEqual(t(key, vars), translate("en", key, vars));
+  }
+  assert.equal(t("Unknown table message {n}", { n: 7 }), "Unknown table message 7");
+}
+for (const language of ["english", "italian", "german", undefined, null]) {
+  assert.equal(tableTranslator(language)("Session {n} begins.", { n: 7 }), "Session 7 begins.");
+}
 
 // 6. Catalog integrity: every French entry preserves the English {placeholders}
 // (omitting English-only {article} where French uses no indefinite article).
