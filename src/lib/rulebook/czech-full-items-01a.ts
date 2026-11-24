@@ -1,6 +1,6 @@
 // Úplné vlastní české překlady SRD 5.1 (CC BY 4.0), magické předměty 0–10.
 export const CZECH_FULL_ITEMS_01A: Readonly<Record<string, string>> = {
-  "adamantine-armor": "*Zbroj (střední nebo těžká, nikoli kožešinová), neobvyklá*\n\nTato zbroj je vyztužena adamantinem, jednou z nejtvrdších známých látek. Dokud ji máš na sobě, každý kritický zásah, který proti tobě někdo způsobí, se změní na obyčejný zásah.",
+  "adamantine-armor": "*Zbroj (střední nebo těžká, nikoli usňová), neobvyklá*\n\nTato zbroj je vyztužena adamantinem, jednou z nejtvrdších známých látek. Dokud ji máš na sobě, každý kritický zásah, který proti tobě někdo způsobí, se změní na obyčejný zásah.",
   "ammunition-1-2-or-3": "*Zbraň (jakákoli munice), neobvyklá (+1), vzácná (+2) nebo velmi vzácná (+3)*\n\nK hodům na útok a na zranění provedeným tímto kusem magické munice získáváš bonus. Jeho výše závisí na vzácnosti munice. Jakmile munice zasáhne cíl, přestane být magická.",
   "amulet-of-health": "*Divotvorný předmět, vzácný (vyžaduje sladění)*\n\nDokud tento amulet nosíš, je hodnota tvé Odolnosti **19**. Jestliže už máš Odolnost **19 nebo vyšší**, amulet na tebe nemá žádný účinek.",
   "amulet-of-proof-against-detection-and-location": "*Divotvorný předmět, neobvyklý (vyžaduje sladění)*\n\nDokud tento amulet nosíš, jsi skrytý před věšteckou magií. Taková magie tě nemůže zacílit ani tě nelze vnímat pomocí magických čidel sloužících ke sledování.",
