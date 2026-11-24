@@ -1,5 +1,22 @@
 {
   "messages": {
+    "Years written in it keep their numbers and read on the shared line.": "Les années qui y sont inscrites conservent leurs nombres et se lisent sur la chronologie commune.",
+    "Remove {name}?": "Retirer {name} ?",
+    "Reckoning of Tides": "Compte des marées",
+    "RT": "CM",
+    "Calendar name": "Nom du calendrier",
+    "Abbreviation": "Abréviation",
+    "Where its year 0 falls": "Position de son année 0",
+    "The last box places this calendar's year 0 on the shared line: give the first calendar 0, and a later reckoning that began 1240 years after it 1240.": "Le dernier champ situe l’année 0 de ce calendrier sur la chronologie commune : indiquez 0 pour le premier calendrier et 1240 pour un calendrier qui a commencé 1240 ans plus tard.",
+    "The Wall Breaks": "La chute du mur",
+    "What happened": "Que s’est-il passé ?",
+    "No calendar: the year stands alone.": "Sans calendrier : l’année est indiquée seule.",
+    "Era (Second Tide)": "Ère (Deuxième marée)",
+    "Era": "Ère",
+    "What happened, in a few lines": "L’événement en quelques lignes",
+    "What happened, in full": "Description complète de l’événement",
+    "who or where": "qui ou où",
+    "Save event": "Enregistrer l’événement",
     "Not in the model catalog.": "Absent du catalogue de modèles.",
     "{size} context": "contexte de {size}",
     "paints pictures": "génère des images",
@@ -11080,6 +11097,18 @@
     "Concussive sound: thunderwave, shatter, a giant's shout.": "Onde sonore : vague tonnante, fracassement, cri de géant."
   },
   "contexts": {
+    "retired": {
+      "world.canon": "Retiré"
+    },
+    "alternate": {
+      "world.canon": "Alternatif"
+    },
+    "draft": {
+      "world.canon": "Brouillon"
+    },
+    "canon": {
+      "world.canon": "Canonique"
+    },
     "beta": {
       "model.status": "bêta"
     },
