@@ -28,12 +28,14 @@ import {
   rowValue,
   settle,
   valueWords,
+  worldEntryConflictNote,
   type ImportSlice,
 } from "@/lib/worldforge/import-merge";
 import { keptAfter } from "@/lib/worldforge/import-kept";
 import { mergeImportedLinks } from "@/lib/db/world-link-merge";
 import { recordMediaFile } from "@/lib/media-access";
 import { textKey } from "@/lib/language/text-logic";
+import type { ImportResultNote } from "@/lib/workshop/import-display";
 
 // A WorldForge file into a workshop, and a workshop out as one. Importing
 // into a workshop that already has a world adds to it: a type or a field of
@@ -192,16 +194,18 @@ function mergeSlices(
   source: string,
   slices: readonly ImportSlice[],
   mapRow: (atlas: WorldDoc["maps"][number]) => WorldDoc["maps"][number] = (atlas) => atlas,
-): { conflicts: string[]; pending: Pending[] } {
+): { conflicts: string[]; conflictDisplays: ImportResultNote[]; pending: Pending[] } {
   const conflicts: string[] = [];
+  const conflictDisplays: ImportResultNote[] = [];
   const pending: Pending[] = [];
   for (const slice of slices) {
     const rows = (slice === "maps" ? moved.maps.map(mapRow) : moved[slice]) as unknown as Array<{ id: string } & Values>;
     const result = mergeSliceRows(doc, slice, rows, (mapped[slice] as Array<{ id: string }>).map((row) => row.id), source);
     conflicts.push(...result.conflicts);
+    conflictDisplays.push(...result.conflictDisplays);
     pending.push(...result.pending);
   }
-  return { conflicts, pending };
+  return { conflicts, conflictDisplays, pending };
 }
 
 export function importWorldForge(campaignId: string, account: UploadAccount, raw: unknown): WorldImportResult {
@@ -492,7 +496,7 @@ export function copyWorldDoc(
   targetId: string,
   resolve: (shelf: "npc" | "location" | "faction" | "lore", id: string) => string | null,
   resolveRecord: (kind: PlaceBindingKind, id: string) => string | null = () => null,
-): { count: number; conflicts: string[]; unbound: number } {
+): { count: number; conflicts: string[]; conflictDisplays: ImportResultNote[]; unbound: number } {
   const source = `campaign:${sourceId}`;
   const sourceDoc = getWorldDoc(sourceId);
   const toCopy = (ref: string) => {
@@ -508,7 +512,7 @@ export function copyWorldDoc(
   const moved = remapIds(mapped, plan);
   const firstRows = mergeSlices(target, moved, mapped, source, FIRST_SLICES);
   const names = new Map(worldEntities(targetId, target).map((entity) => [entity.ref, entity.name]));
-  const conflicts: string[] = [];
+  const conflicts: ImportResultNote[] = [];
   const pending: Pending[] = [];
   let entries = 0;
   let unbound = 0;
@@ -548,7 +552,7 @@ export function copyWorldDoc(
     // import's version beside it for the author (import-kept.ts).
     origins[key] = { from, at: merged.at, ...keptAfter(prior, merged, theirs) };
     merged.pending.forEach((item) => pending.push({ origin: key, ...item }));
-    for (const words of new Set(merged.clashes.map((key) => valueWords(key, fieldName(target))))) conflicts.push(`${names.get(ref) ?? "An entry"}: kept your ${words} over the import's.`);
+    for (const key of merged.clashes) conflicts.push(worldEntryConflictNote(names.get(ref), key, fieldName(target)));
   }
   settle(target, pending, (origin, value) => {
     const own = target.entries[origin.slice("entries/".length)];
@@ -572,9 +576,11 @@ export function copyWorldDoc(
   // yet is said again beside this import's own clashes, in the same words,
   // so a note missed once is not lost (import-kept.ts).
   const standing = standingKept(target, names, source);
+  const entryConflicts = uniqueNotes([...conflicts, ...standing]);
   return {
     count: entries + merged.added + merged.updated + mapped.events.length + mapped.secrets.length,
-    conflicts: [...new Set([...conflicts, ...standing]), ...merged.conflicts, ...firstRows.conflicts, ...rows.conflicts],
+    conflicts: [...entryConflicts.map((note) => note.message), ...merged.conflicts, ...firstRows.conflicts, ...rows.conflicts],
+    conflictDisplays: [...entryConflicts, ...merged.conflictDisplays, ...firstRows.conflictDisplays, ...rows.conflictDisplays],
     unbound,
   };
 }
@@ -584,22 +590,35 @@ export function copyWorldDoc(
 // clash: "Ferryman Osk: kept your article over the import's." Only those an
 // import of `source` kept, when it is given. Gone once the author takes the
 // import's version or keeps theirs.
-function standingKept(doc: WorldDoc, names: Map<string, string>, source?: string): string[] {
-  const lines: string[] = [];
+function uniqueNotes(notes: ImportResultNote[]): ImportResultNote[] {
+  const seen = new Set<string>();
+  return notes.filter((note) => {
+    if (seen.has(note.message)) return false;
+    seen.add(note.message);
+    return true;
+  });
+}
+
+function standingKept(doc: WorldDoc, names: Map<string, string>, source?: string): ImportResultNote[] {
+  const lines: ImportResultNote[] = [];
   for (const [key, origin] of Object.entries(doc.origins ?? {})) {
     if (!origin.kept || !key.startsWith("entries/") || (source !== undefined && !origin.from.startsWith(`${source}|`))) continue;
     const name = names.get(key.slice("entries/".length));
     if (!name) continue;
     for (const [value, kept] of Object.entries(origin.kept)) {
-      if (!kept.taken) lines.push(`${name}: kept your ${valueWords(value, fieldName(doc))} over the import's.`);
+      if (!kept.taken) lines.push(worldEntryConflictNote(name, value, fieldName(doc)));
     }
   }
-  return [...new Set(lines)];
+  return uniqueNotes(lines);
 }
 
 // The same for the whole campaign, for Bring in prep to say after a reload.
 // The DM's: the import route answers it to story authority alone.
 export function keptNotes(campaignId: string): string[] {
+  return keptNoteDisplays(campaignId).map((note) => note.message);
+}
+
+export function keptNoteDisplays(campaignId: string): ImportResultNote[] {
   const doc = getWorldDoc(campaignId);
   if (!Object.values(doc.origins ?? {}).some((origin) => origin.kept)) return [];
   return standingKept(doc, new Map(worldEntities(campaignId, doc).map((entity) => [entity.ref, entity.name])));
