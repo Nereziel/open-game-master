@@ -8,6 +8,7 @@ import { bundledItemRows, bundledSpellRows } from "@/lib/rulebook/catalog-rows";
 import { czechFullTranslation } from "@/lib/rulebook/czech-companion";
 import { rulebookPages } from "@/lib/rulebook/book";
 import { SRD_BACKGROUNDS, SRD_RACES } from "@/lib/srd";
+import { AUTHORED_SUBCLASS_ENTRIES } from "@/lib/srd/features";
 import { CUSTOM_BACKGROUNDS, describeBackgroundFeature } from "@/lib/backgrounds";
 import { translate } from "@/lib/i18n/translate";
 import { describeContentEntry } from "@/lib/help";
@@ -636,5 +637,41 @@ describe("Locale-registered trait shorthand", () => {
     expect(translated).toContain("Vidění ve tmě");
     expect(translated).toContain("60 stop");
     expect(translated).not.toContain("60 ft");
+  });
+});
+
+describe("Authored barbarian archetypes", () => {
+  it("localizes all eight paths and all 36 feature descriptions without changing canonical rules", () => {
+    const entries = AUTHORED_SUBCLASS_ENTRIES.barbarian;
+    expect(entries).toHaveLength(8);
+    let count = 0;
+    for (const entry of entries) {
+      const slug = "barbarian-" + entry.name.toLowerCase().replace(/[^a-z0-9]+/g, "-");
+      const levels = Object.entries(entry.levels).sort(([a], [b]) => Number(a) - Number(b));
+      const desc = entry.desc + "\n\n" + levels.map(([level, features]) =>
+        "**Level " + level + ".** " + features.map((feature) => "*" + feature.n + ".* " + feature.d).join(" ")).join("\n\n");
+      const published = { slug, name: entry.name, source: "open5e", documentSlug: "odm-expanded", data: { class: "barbarian", desc } as Record<string, unknown> };
+      const bundled = { ...published, source: "bundled", documentSlug: "wotc-srd", data: { desc: "" } as Record<string, unknown> };
+      const localized = localizeEntry("archetypes", published, "cs");
+      const { localized_desc, ...original } = localized.data;
+      expect(typeof localized_desc, entry.name).toBe("string");
+      expect(String(localized_desc)).toContain(translate("cs", entry.desc));
+      expect(original).toEqual(published.data);
+      expect(localizeEntry("archetypes", bundled, "cs").data.localized_desc).toBe(localized_desc);
+      for (const [, features] of levels) for (const feature of features) {
+        count++;
+        const text = translate("cs", feature.d);
+        expect(text, feature.n).not.toBe(feature.d);
+        expect(String(localized_desc), feature.n).toContain(text);
+      }
+      expect(localizeEntry("archetypes", published, "en")).toBe(published);
+      for (const foreign of [
+        { ...published, source: "homebrew" },
+        { ...published, documentSlug: "other" },
+        { ...published, data: { ...published.data, desc: desc + " Changed." } },
+        { ...published, slug: "another-path" },
+      ]) expect(localizeEntry("archetypes", foreign, "cs")).toBe(foreign);
+    }
+    expect(count).toBe(36);
   });
 });
