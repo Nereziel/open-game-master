@@ -1,6 +1,6 @@
 import { describe, expect, it } from "vitest";
 import { CS_NAMES_BY_TABLE } from "./names-cs";
-import { CZECH_SPELLS, CZECH_MONSTERS } from "../rulebook/czech-terms";
+import { CZECH_SPELLS, CZECH_MONSTERS, CZECH_ITEMS } from "../rulebook/czech-terms";
 import { contentName, classFeatureName, subclassName, speciesTraitName, backgroundFeatureLabel } from "./names";
 import racesJson from "../srd/races.json";
 import backgroundsJson from "../srd/backgrounds.json";
@@ -45,6 +45,24 @@ describe("Czech content names through upstream helpers", () => {
     }
     expect(CS_NAMES_BY_TABLE.monsters["frost-giant"]).toBe("Mrazivý obr");
     expect(CZECH_MONSTERS["Frost Giant"]).toBe("Mrazivý obr");
+    for (const [slug, title, expected] of [
+      ["drider", "Drider", "Dravouk"],
+      ["glabrezu", "Glabrezu", "Glabrez"],
+      ["grimlock", "Grimlock", "Divous"],
+      ["guardian-naga", "Guardian Naga", "Strážný nága"],
+      ["spirit-naga", "Spirit Naga", "Přízračný nága"],
+      ["lizard", "Lizard", "Ještěrka"],
+    ]) {
+      expect(CS_NAMES_BY_TABLE.monsters[slug]).toBe(expected);
+      expect(CZECH_MONSTERS[title]).toBe(expected);
+    }
+    for (const [slug, title, expected] of [
+      ["sphere-of-annihilation", "Sphere of Annihilation", "Koule anihilace"],
+      ["talisman-of-the-sphere", "Talisman of the Sphere", "Talisman koule"],
+    ]) {
+      expect(CS_NAMES_BY_TABLE.magicitems[slug]).toBe(expected);
+      expect(CZECH_ITEMS[title]).toBe(expected);
+    }
     expect(CS_NAMES_BY_TABLE.conditions.grappled).toBe("Uchvácený");
     expect(CS_NAMES_BY_TABLE.conditions.restrained).toBe("Zadržený");
     expect(CS_NAMES_BY_TABLE.conditions.stunned).toBe("Ochromený");
