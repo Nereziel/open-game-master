@@ -4,6 +4,8 @@ import frCatalog from "./fr.json";
 import { catalogInstalled, installCatalog, translate, translatePlural } from "./translate";
 import { localeFromAcceptLanguage, parseLocale, resolveLocale } from "./locale";
 import { localeTag } from "../messages-logic";
+import { GENRE_PRESETS, genrePresetFor } from "../genres";
+import { presetTheme, typeInPlan } from "../../app/create-campaign/portals";
 
 installCatalog("cs", csCatalog);
 installCatalog("fr", frCatalog);
@@ -47,5 +49,31 @@ describe("Czech locale following the upstream French catalog", () => {
     expect(translatePlural("cs", one, many, { count: 5 })).toBe("5 předmětů");
     expect(translatePlural("cs", one, many, { count: 0 })).toBe("0 předmětů");
     expect(translatePlural("en", one, many, { count: 5 })).toBe("5 items");
+  });
+});
+
+
+describe("Czech campaign theme presets", () => {
+  it("localizes every built-in genre without changing prompt fields or French and English", () => {
+    for (const preset of GENRE_PRESETS) {
+      expect(genrePresetFor(preset.id, "en")).toBe(preset);
+      if (preset.id === "custom") {
+        expect(genrePresetFor(preset.id, "cs")).toBe(preset);
+        continue;
+      }
+      expect(preset.defaultThemeCs).toBeTruthy();
+      expect(genrePresetFor(preset.id, "cs")).toEqual({ ...preset, defaultTheme: preset.defaultThemeCs });
+      expect(genrePresetFor(preset.id, "fr")).toEqual({ ...preset, defaultTheme: preset.defaultThemeFr });
+      expect(genrePresetFor(preset.id, "cs").defaultTheme).not.toBe(preset.defaultTheme);
+    }
+  });
+
+  it("uses Czech on arrival and genre selection but preserves manually edited themes", () => {
+    const draft = { genre: "high_fantasy" as const, theme: "", themeTouched: false, worldPack: "" };
+    expect(presetTheme(draft, "cs").theme).toBe("Říše s bohatou historií, plná království, divokého pohraničí a pohřbených ruin");
+    expect(typeInPlan(draft, "horror", "cs")?.text).toBe("Odloučené místo, kde se probudilo cosi prastarého a hladového");
+    const typed = { ...draft, theme: "Můj svět", themeTouched: true };
+    expect(presetTheme(typed, "cs")).toBe(typed);
+    expect(typeInPlan(typed, "horror", "cs")).toBeNull();
   });
 });
