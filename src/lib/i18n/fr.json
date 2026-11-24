@@ -11195,7 +11195,10 @@
     "{title} (failed)": "{title} (échouée)",
     "{title} — Story": "{title} — Récit",
     "Quest Log": "Journal de quêtes",
-    "Exported from Open Game Master on {date}.": "Exporté depuis Open Game Master le {date}."
+    "Exported from Open Game Master on {date}.": "Exporté depuis Open Game Master le {date}.",
+    "{birth} to {death} (dies before being born)": "{birth} à {death} (mort avant la naissance)",
+    "born {year}": "Naissance : {year}",
+    "died {year}": "Décès : {year}"
   },
   "contexts": {
     "{table}: its row for the table {name} now names this campaign's own {name}, since the source's stayed behind.": {
@@ -13676,6 +13679,18 @@
     "{count} time\u0000{count} times": [
       "{count} fois",
       "{count} fois"
+    ],
+    "{count} year before their birth\u0000{count} years before their birth": [
+      "{count} an avant sa naissance",
+      "{count} ans avant sa naissance"
+    ],
+    "{count} year after their death\u0000{count} years after their death": [
+      "{count} an après sa mort",
+      "{count} ans après sa mort"
+    ],
+    "{birth} to {death} ({count} year)\u0000{birth} to {death} ({count} years)": [
+      "{birth} à {death} ({count} an)",
+      "{birth} à {death} ({count} ans)"
     ]
   }
 }
