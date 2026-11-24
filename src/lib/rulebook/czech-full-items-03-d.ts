@@ -5,13 +5,13 @@ export const CZECH_FULL_ITEMS_03_D: Readonly<Record<string, string>> = {
 
 *Kouzelný svitek* obsahuje slova jediného kouzla zapsaná tajemnou šifrou. Pokud je kouzlo na seznamu kouzel tvého povolání, můžeš jako akci svitek přečíst a seslat jeho kouzlo, aniž bys musel zajistit jakékoli složky kouzla. Jinak je pro tebe svitek nesrozumitelný.
 
-Pokud je kouzlo na seznamu tvého povolání, ale má vyšší úroveň, než jakou běžně dokážeš seslat, musíš provést ověření své sesílací vlastnosti, abys zjistil, zda kouzlo úspěšně sešleš. SO je rovno 10 + stupeň kouzla. Při neúspěchu kouzlo ze svitku zmizí bez dalšího účinku. Jakmile kouzlo sešleš, slova na svitku vyblednou a svitek se rozpadne na prach.
+Pokud je kouzlo na seznamu tvého povolání, ale má vyšší úroveň, než jakou běžně dokážeš seslat, musíš provést ověření své sesílací vlastnosti, abys zjistil, zda kouzlo úspěšně sešleš. SO je rovno 10 + úroveň kouzla. Při neúspěchu kouzlo ze svitku zmizí bez dalšího účinku. Jakmile kouzlo sešleš, slova na svitku vyblednou a svitek se rozpadne na prach.
 
-Stupeň kouzla na svitku určuje SO záchranného hodu proti kouzlu, bonus k útoku kouzlem i vzácnost svitku, jak ukazuje následující tabulka.
+Úroveň kouzla na svitku určuje SO záchranného hodu proti kouzlu, bonus k útoku kouzlem i vzácnost svitku, jak ukazuje následující tabulka.
 
 **Tabulka – Kouzelný svitek**
 
-| Stupeň kouzla | Vzácnost | SO záchrany | Bonus k útoku |
+| Úroveň kouzla | Vzácnost | SO záchrany | Bonus k útoku |
 |---------------|----------|-------------|---------------|
 | Trik | Běžný | 13 | +5 |
 | 1. | Běžný | 13 | +5 |
@@ -24,7 +24,7 @@ Stupeň kouzla na svitku určuje SO záchranného hodu proti kouzlu, bonus k út
 | 8. | Velmi vzácný | 18 | +10 |
 | 9. | Legendární | 19 | +11 |
 
-Kouzelníkovo kouzlo z *kouzelného svitku* lze opsat stejně jako kouzla z knih kouzel. Při opisování kouzla ze svitku musí opisující uspět v ověření Inteligence (Mystiky) se SO rovným 10 + stupeň kouzla. Při úspěchu se kouzlo podaří opsat. Bez ohledu na úspěch nebo neúspěch ověření je *kouzelný svitek* zničen.`,
+Kouzelníkovo kouzlo z *kouzelného svitku* lze opsat stejně jako kouzla z knih kouzel. Při opisování kouzla ze svitku musí opisující uspět v ověření Inteligence (Mystiky) se SO rovným 10 + úroveň kouzla. Při úspěchu se kouzlo podaří opsat. Bez ohledu na úspěch nebo neúspěch ověření je *kouzelný svitek* zničen.`,
   "spellguard-shield": `*Zbroj (štít), velmi vzácný (vyžaduje sladění)*
 
 Když držíš tento štít, máš výhodu k záchranným hodům proti kouzlům a jiným magickým účinkům a útoky kouzly proti tobě mají nevýhodu.`,
@@ -70,7 +70,7 @@ Hůl má 10 nábojů. Když ji držíš, můžeš jako akci utratit 1 nebo více
 Hůl si každý den za úsvitu obnoví 1k6+4 spotřebovaných nábojů. Pokud utratíš poslední náboj, hoď k20. Při výsledku 1 se hůl promění ve vodu a je zničena.`,
   "staff-of-healing": `*Berla, vzácná (vyžaduje sladění bardem, klerikem nebo druidem)*
 
-Tato hůl má 10 nábojů. Když ji držíš, můžeš jako akci utratit 1 nebo více nábojů a seslat jedno z následujících kouzel se svým SO záchrany proti kouzlům a opravou sesílací vlastnosti: *zhoj zranění* (1 náboj za každou úroveň kouzla, nejvýše 4. stupeň), *nižší navrácení* (2 náboje) nebo *hromadné zhojení zranění* (5 nábojů).
+Tato hůl má 10 nábojů. Když ji držíš, můžeš jako akci utratit 1 nebo více nábojů a seslat jedno z následujících kouzel se svým SO záchrany proti kouzlům a opravou sesílací vlastnosti: *zhoj zranění* (1 náboj za každou úroveň kouzla, nejvýše 4. úroveň), *nižší navrácení* (2 náboje) nebo *hromadné zhojení zranění* (5 nábojů).
 
 Hůl si každý den za úsvitu obnoví 1k6+4 spotřebovaných nábojů. Pokud utratíš poslední náboj, hoď k20. Při výsledku 1 hůl navždy zmizí v záblesku světla.`,
   "staff-of-power": `*Berla, velmi vzácná (vyžaduje sladění čarodějem, černokněžníkem nebo kouzelníkem)*
@@ -81,7 +81,7 @@ Hůl má 20 nábojů pro následující vlastnosti. Každý den za úsvitu si ob
 
 ***Mocný úder.*** Když holí zasáhneš útokem na blízko, můžeš utratit 1 náboj a způsobit cíli dodatečné silové zranění 1k6.
 
-***Kouzla.*** Když držíš tuto hůl, můžeš jako akci utratit 1 nebo více jejích nábojů a seslat jedno z následujících kouzel se svým SO záchrany proti kouzlům a bonusem k útoku kouzlem: *kužel chladu* (5 nábojů), *ohnivá koule* (ve verzi 5. stupně, 5 nábojů), *koule nezranitelnosti* (6 nábojů), *znehybni nestvůru* (5 nábojů), *levitace* (2 náboje), *blesk* (ve verzi 5. stupně, 5 nábojů), *magická střela* (1 náboj), *paprsek slabosti* (1 náboj) nebo *zeď síly* (5 nábojů).
+***Kouzla.*** Když držíš tuto hůl, můžeš jako akci utratit 1 nebo více jejích nábojů a seslat jedno z následujících kouzel se svým SO záchrany proti kouzlům a bonusem k útoku kouzlem: *kužel chladu* (5 nábojů), *ohnivá koule* (ve verzi 5. úrovně, 5 nábojů), *koule nezranitelnosti* (6 nábojů), *znehybni nestvůru* (5 nábojů), *levitace* (2 náboje), *blesk* (ve verzi 5. úrovně, 5 nábojů), *magická střela* (1 náboj), *paprsek slabosti* (1 náboj) nebo *zeď síly* (5 nábojů).
 
 ***Odvetný úder.*** Jako akci můžeš hůl zlomit přes koleno nebo o pevný povrch, čímž provedeš odvetný úder. Hůl se zničí a zbývající magie se uvolní ve výbuchu, který vyplní kouli o poloměru 30 stop se středem v holi.
 
