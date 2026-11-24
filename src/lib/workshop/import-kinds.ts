@@ -108,6 +108,7 @@ export type BoardFacts = {
   moments: number;
   // Why the board cannot make an arc of its own, or "" when it can.
   arcProblem: string;
+  arcProblemDisplay?: ImportMessagePart;
   // The cards behind `beats` and the moments, by title and in the same
   // order, so a preflight can NAME what the arc's caps would leave out
   // (issue #301). Older callers leave them off.
@@ -115,7 +116,7 @@ export type BoardFacts = {
   momentTitles?: string[];
   // Cards whose prose reads as compressed (src/lib/workshop/prose-check.ts),
   // said as a note the author can review (issue #302).
-  proseNotes?: Array<{ title: string; message: string }>;
+  proseNotes?: Array<{ title: string; message: string; parts?: ImportMessagePart[] }>;
 };
 
 // The arc a campaign already has, for a board joining it as a new act.
@@ -162,12 +163,12 @@ export type ImportPlanItem = {
 
 // Optional display data for the reader's locale. Keep message as the
 // original English fallback for older clients and non-UI consumers.
-export type ImportWarningDisplay = {
-  key: string;
-  vars?: Record<string, string | number>;
+export type ImportMessagePart = { key: string; vars?: Record<string, string | number> };
+export type ImportWarningDisplay = ImportMessagePart & {
   kinds?: Record<string, readonly ImportKind[]>;
   facts?: WorldRecordFacts;
   cards?: readonly string[];
+  details?: Record<string, readonly ImportMessagePart[]>;
 };
 export type ImportWarning = { kind: ImportKind; message: string; display?: ImportWarningDisplay };
 
