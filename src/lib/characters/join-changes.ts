@@ -117,10 +117,10 @@ export function joinChanges(
   localeOrOwed?: Locale | OwedContext,
   owedArg?: OwedContext,
 ): JoinChanges {
-  const tp = pluralOf(enT);
   const withT = typeof tOrOwed === "function";
   const t = (withT ? tOrOwed : enT) as T;
   const locale = (withT ? (localeOrOwed ?? "en") : "en") as Locale;
+  const tp = pluralOf({ locale });
   const owedContext = (withT ? owedArg : localeOrOwed ?? tOrOwed ?? {}) as OwedContext;
   const changes: string[] = [];
   if (storedLevel === tableLevel) {
