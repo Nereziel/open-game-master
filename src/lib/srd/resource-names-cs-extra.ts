@@ -141,7 +141,7 @@ export const RESOURCE_CS_EXTRA_NAMES: Record<string, string> = {
   "art_chemical_mastery_heal": "Chemické mistrovství: Léčení",
   "sub_embodiment_of_the_law": "Ztělesnění zákona",
   "sub_cauterizing_flames": "Sežehující plameny",
-  "sub_unwavering_mark": "Neochvějné znamení",
+  "sub_unwavering_mark": "Neoblomná kořist",
   "sub_telekinetic_movement": "Telekinetický pohyb",
   "sub_bulwark_of_force": "Silová hradba",
   "sub_telekinetic_master": "Mistr telekineze",
