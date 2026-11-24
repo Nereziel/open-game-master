@@ -692,6 +692,54 @@
           "document__slug": "toh"
         },
         "description": "Ačkoli jsi nyní nezávislý, kdysi jsi sloužil kupci, šlechtici, regentovi či jiné vysoce postavené osobě. Vyznáš se ve složitých společenských vztazích a znáš historii a zvyklosti dvorského života. Spolu s PJ urči, komu jsi sloužil a proč už nejsi sluhou. Odešel tvůj pán či páni na odpočinek a už služebnictvo nepotřebují? Opustil jsi služby krutého pána? Padl dvůr, jemuž jsi sloužil, do rukou sousední říše? Nebo se stalo něco jiného?\n\n**Zdatnosti v dovednostech:** Historie, Vhled.\n**Zdatnosti s náčiním:** Jedna sada řemeslnického náčiní dle tvého výběru.\n**Jazyky:** Jeden dle tvého výběru.\n**Vybavení:** Sada řemeslnického náčiní dle tvého výběru, jedinečný šperk, sada kvalitního oděvu, ručně vyrobená dýmka a měšec u opasku s 20 zl.\n\n**Schopnost: Neviditelnost služebníka.** Umění dokonalé služby vyžaduje rovnováhu mezi stálou dostupností a nenápadností; ty jsi je ovládl. Pokud alespoň 1 minutu neprovedeš žádnou viditelnou akci, nepromluvíš, nikdo tě neosloví ani na tebe jinak neupoutá pozornost, tvorové poblíž si jen těžko vybavují, že vůbec jsi v místnosti. Dokud nepromluvíš, neprovedeš viditelnou akci nebo na tebe někdo neupoutá pozornost, musí tvorové uspět v ověření Moudrosti (Vnímání) se SO 8 + tvá oprava Charismatu + tvůj zdatnostní bonus, aby si tě všimli. Jinak se chovají, jako bys nebyl přítomen, dokud na tebe někdo neupoutá pozornost nebo by je některá jejich akce zavedla do prostoru, který zaujímáš, či do vzdálenosti 5 stop od něj.\n\nDvorní sluhové bývají navenek tiší a mluví mírně, ale jejich porozumění nuancím rozhovorů a společenskému dění je nepřekonatelné. V davu nebo mezi cizími lidmi se většinou drží stranou, tiše pozorují okolí a později se o své postřehy dělí s těmi, jimž důvěřují.\n\n| k8 | Osobnostní rys |\n|---|---|\n| 1 | Když sloužím ostatním, zadržuji dech, pokud nemusím mluvit. |\n| 2 | Stojí mě veškeré úsilí nedat najevo bouřlivé emoce, které cítím, když druhým pomáhám. Nejlepší je tiše sloužit. |\n| 3 | Je čím dál těžší snášet předsudky těch, kterým denně sloužím. |\n| 4 | Starých způsobů se těžko zbavuje, ale chci být sám sobě pánem. O své cestě rozhodnu já. |\n| 5 | Služba rodině a přátelům je to jediné, na čem mi opravdu záleží. |\n| 6 | Městský život mi ubíjí duši. Toužím po starých dvorských zvycích. |\n| 7 | Je načase, aby se mí druhové probrali a už se nenechávali využívat. |\n| 8 | Právě drobnosti dávají všemu smysl. Snažím se být přítomen v každém okamžiku. |\n\n| k6 | Ideál |\n|---|---|\n| 1 | **Rodina.** Rodina, ať ta, z níž pocházím, nebo ta, kterou si vytvořím, je tím, co stojí za ochranu nejvíc na světě. (Libovolné) |\n| 2 | **Služba.** Největší odměnou je vědomí, že jsem druhému prokázal cennou službu. (Dobré) |\n| 3 | **Lenost.** Proč bych měl někomu pomáhat, když mě odhodili? (Chaotické) |\n| 4 | **Soucit.** Nedokážu nepomoci nikomu v nouzi. (Dobré) |\n| 5 | **Tradice.** Život pod vládou mého pána byl nejlepší a vše by se mělo držet jejich ideálů co nejvíc. (Zákonné) |\n| 6 | **Radost.** Jediné, čemu ještě stojí za to sloužit, je hledání štěstí. (Neutrální) |\n\n| k6 | Pouto |\n|---|---|\n| 1 | Má rodina potřebuje, abych ji živil. Znamená pro mě všechno, proto udělám cokoli bude třeba. |\n| 2 | Můj rod sloužil tomuto panství i jeho pánům a paním po generace. Věrně jim sloužím, aby na mě byl můj rod hrdý. |\n| 3 | Neumím přečíst nápisy na tomto zvláštním prstenu, ale je to vše, co mi zbylo po rodině a její dlouhé věrné službě. |\n| 4 | Mám ty nejlepší přátele, jaké si člověk může přát. Proč se tedy cítím tak osaměle a stýská se mi po domově? |\n| 5 | Našel jsem povolání, v němž své schopnosti dobře využiji, a nikomu nedovolím, aby mě srazil. |\n| 6 | Našel jsem klid ve zvláštní zahradě plné krásného života, ale připomíná mi ji jen tato květina. Jednou si vzpomenu, kde zahradu najít. |\n\n| k6 | Slabina |\n|---|---|\n| 1 | Raději bych sloužil temnotě, než nesloužil nikomu. |\n| 2 | Bojím se podstoupit rizika, která by mi mohla prospět. |\n| 3 | Věřím, že lidé mého pána jsou nadřazeni všem ostatním, a nebojím se tuto pravdu šířit. |\n| 4 | Vždy dělám, co mi kdo přikáže, i když si někdy myslím, že bych neměl. |\n| 5 | Vím, co je pro všechny nejlepší, a všem by bylo lépe, kdyby se řídili mými radami. |\n| 6 | Nesnesu pohled na ošklivé nebo skličující věci. Mnohem raději myslím na něco veselého. |"
+      },
+      "desert-runner": {
+        "englishName": "Desert Runner",
+        "name": "Běžec pouští"
+      },
+      "former-adventurer": {
+        "englishName": "Former Adventurer",
+        "name": "Bývalý dobrodruh"
+      },
+      "gamekeeper": {
+        "englishName": "Gamekeeper",
+        "name": "Hajný"
+      },
+      "innkeeper": {
+        "englishName": "Innkeeper",
+        "name": "Hostinský"
+      },
+      "mercenary-company-scion": {
+        "englishName": "Mercenary Company Scion",
+        "name": "Potomek žoldnéřské družiny"
+      },
+      "mercenary-recruit": {
+        "englishName": "Mercenary Recruit",
+        "name": "Žoldnéřský nováček"
+      },
+      "monstrous-adoptee": {
+        "englishName": "Monstrous Adoptee",
+        "name": "Vychovanec nestvůr"
+      },
+      "mysterious-origins": {
+        "englishName": "Mysterious Origins",
+        "name": "Tajemný původ"
+      },
+      "northern-minstrel": {
+        "englishName": "Northern Minstrel",
+        "name": "Severský pěvec"
+      },
+      "parfumier": {
+        "englishName": "Parfumier",
+        "name": "Výrobce parfémů"
+      },
+      "sentry": {
+        "englishName": "Sentry",
+        "name": "Strážný"
+      },
+      "trophy-hunter": {
+        "englishName": "Trophy Hunter",
+        "name": "Lovec trofejí"
       }
     },
     "species": {
@@ -860,152 +908,906 @@
       "soulspy": {
         "englishName": "Soulspy",
         "name": "Špeh duší"
+      },
+      "ancient-dragons": {
+        "englishName": "Ancient Dragons",
+        "name": "Prastaří draci"
+      },
+      "animal-lords": {
+        "englishName": "Animal Lords",
+        "name": "Vládci zvířat"
+      },
+      "beast-trainer": {
+        "englishName": "Beast Trainer",
+        "name": "Cvičitel šelem"
+      },
+      "cantrip-adept": {
+        "englishName": "Cantrip Adept",
+        "name": "Znalec triků"
+      },
+      "cat-burglar": {
+        "englishName": "Cat Burglar",
+        "name": "Akrobatický zloděj"
+      },
+      "chaplain": {
+        "englishName": "Chaplain",
+        "name": "Kaplan"
+      },
+      "circle-of-ash": {
+        "englishName": "Circle of Ash",
+        "name": "Kruh popela"
+      },
+      "circle-of-bees": {
+        "englishName": "Circle of Bees",
+        "name": "Kruh včel"
+      },
+      "circle-of-crystals": {
+        "englishName": "Circle of Crystals",
+        "name": "Kruh krystalů"
+      },
+      "circle-of-sand": {
+        "englishName": "Circle of Sand",
+        "name": "Kruh písku"
+      },
+      "circle-of-the-green": {
+        "englishName": "Circle of the Green",
+        "name": "Kruh zeleně"
+      },
+      "circle-of-the-shapeless": {
+        "englishName": "Circle of the Shapeless",
+        "name": "Kruh beztvarých"
+      },
+      "circle-of-wind": {
+        "englishName": "Circle of Wind",
+        "name": "Kruh větru"
+      },
+      "cold-blooded": {
+        "englishName": "Cold-Blooded",
+        "name": "Chladnokrevný"
+      },
+      "college-of-echoes": {
+        "englishName": "College of Echoes",
+        "name": "Kolej ozvěn"
+      },
+      "college-of-investigation": {
+        "englishName": "College of Investigation",
+        "name": "Kolej vyšetřování"
+      },
+      "college-of-shadows": {
+        "englishName": "College of Shadows",
+        "name": "Kolej stínů"
+      },
+      "college-of-sincerity": {
+        "englishName": "College of Sincerity",
+        "name": "Kolej upřímnosti"
+      },
+      "college-of-tactics": {
+        "englishName": "College of Tactics",
+        "name": "Kolej taktiky"
+      },
+      "college-of-the-cat": {
+        "englishName": "College of the Cat",
+        "name": "Kolej kočky"
+      },
+      "courser-mage": {
+        "englishName": "Courser Mage",
+        "name": "Jízdní mág"
+      },
+      "dawn-blade": {
+        "englishName": "Dawn Blade",
+        "name": "Čepel úsvitu"
+      },
+      "familiar-master": {
+        "englishName": "Familiar Master",
+        "name": "Mistr familiárů"
+      },
+      "gravebinding": {
+        "englishName": "Gravebinding",
+        "name": "Hrobní pouta"
+      },
+      "grove-warden": {
+        "englishName": "Grove Warden",
+        "name": "Strážce háje"
+      },
+      "haunted-warden": {
+        "englishName": "Haunted Warden",
+        "name": "Strážce pronásledovaný přízraky"
+      },
+      "hungering": {
+        "englishName": "Hungering",
+        "name": "Hladovění"
+      },
+      "hunt-domain": {
+        "englishName": "Hunt Domain",
+        "name": "Doména lovu"
+      },
+      "hunter-in-darkness": {
+        "englishName": "Hunter in Darkness",
+        "name": "Lovec v temnotě"
+      },
+      "legionary": {
+        "englishName": "Legionary",
+        "name": "Legionář"
+      },
+      "mercy-domain": {
+        "englishName": "Mercy Domain",
+        "name": "Doména milosrdenství"
+      },
+      "oath-of-justice": {
+        "englishName": "Oath of Justice",
+        "name": "Přísaha spravedlnosti"
+      },
+      "oath-of-safeguarding": {
+        "englishName": "Oath of Safeguarding",
+        "name": "Přísaha ochrany"
+      },
+      "oath-of-the-elements": {
+        "englishName": "Oath of the Elements",
+        "name": "Přísaha živlů"
+      },
+      "oath-of-the-guardian": {
+        "englishName": "Oath of the Guardian",
+        "name": "Přísaha strážce"
+      },
+      "oath-of-the-hearth": {
+        "englishName": "Oath of the Hearth",
+        "name": "Přísaha krbu"
+      },
+      "oath-of-the-plaguetouched": {
+        "englishName": "Oath of the Plaguetouched",
+        "name": "Přísaha morem dotčených"
+      },
+      "old-wood": {
+        "englishName": "Old Wood",
+        "name": "Prastarý hvozd"
+      },
+      "path-of-booming-magnificence": {
+        "englishName": "Path of Booming Magnificence",
+        "name": "Cesta hřmotné velkoleposti"
+      },
+      "path-of-hellfire": {
+        "englishName": "Path of Hellfire",
+        "name": "Cesta pekelného ohně"
+      },
+      "path-of-mistwood": {
+        "englishName": "Path of Mistwood",
+        "name": "Cesta mlžného lesa"
+      },
+      "path-of-the-dragon": {
+        "englishName": "Path of the Dragon",
+        "name": "Cesta draka"
+      },
+      "path-of-the-herald": {
+        "englishName": "Path of the Herald",
+        "name": "Cesta herolda"
+      },
+      "path-of-the-inner-eye": {
+        "englishName": "Path of the Inner Eye",
+        "name": "Cesta vnitřního oka"
+      },
+      "path-of-thorns": {
+        "englishName": "Path of Thorns",
+        "name": "Cesta trnů"
+      },
+      "portal-domain": {
+        "englishName": "Portal Domain",
+        "name": "Doména portálů"
+      },
+      "primordial": {
+        "englishName": "Primordial",
+        "name": "Prvotní"
+      },
+      "pugilist": {
+        "englishName": "Pugilist",
+        "name": "Pěstní bojovník"
+      },
+      "radiant-pikeman": {
+        "englishName": "Radiant Pikeman",
+        "name": "Zářivý pikenýr"
+      },
+      "resonant-body": {
+        "englishName": "Resonant Body",
+        "name": "Rezonující tělo"
+      },
+      "rifthopper": {
+        "englishName": "Rifthopper",
+        "name": "Skokan trhlinami"
+      },
+      "sapper": {
+        "englishName": "Sapper",
+        "name": "Sapér"
+      },
+      "school-of-liminality": {
+        "englishName": "School of Liminality",
+        "name": "Škola prahů"
+      },
+      "serpent-domain": {
+        "englishName": "Serpent Domain",
+        "name": "Doména hadů"
+      },
+      "shadow-domain": {
+        "englishName": "Shadow Domain",
+        "name": "Doména stínů"
+      },
+      "smuggler": {
+        "englishName": "Smuggler",
+        "name": "Pašerák"
+      },
+      "snake-speaker": {
+        "englishName": "Snake Speaker",
+        "name": "Hadí mluvčí"
+      },
+      "spear-of-the-weald": {
+        "englishName": "Spear of the Weald",
+        "name": "Kopí hvozdu"
+      },
+      "spellsmith": {
+        "englishName": "Spellsmith",
+        "name": "Kovář kouzel"
+      },
+      "spore-sorcery": {
+        "englishName": "Spore Sorcery",
+        "name": "Spórová magie"
+      },
+      "timeblade": {
+        "englishName": "Timeblade",
+        "name": "Čepel času"
+      },
+      "tunnel-watcher": {
+        "englishName": "Tunnel Watcher",
+        "name": "Strážce tunelů"
+      },
+      "underfoot": {
+        "englishName": "Underfoot",
+        "name": "Pod nohama"
+      },
+      "vermin-domain": {
+        "englishName": "Vermin Domain",
+        "name": "Doména havěti"
+      },
+      "wasteland-strider": {
+        "englishName": "Wasteland Strider",
+        "name": "Poutník pustinou"
+      },
+      "wastelander": {
+        "englishName": "Wastelander",
+        "name": "Obyvatel pustiny"
+      },
+      "way-of-concordant-motion": {
+        "englishName": "Way of Concordant Motion",
+        "name": "Cesta souladného pohybu"
+      },
+      "way-of-the-dragon": {
+        "englishName": "Way of the Dragon",
+        "name": "Cesta draka"
+      },
+      "way-of-the-humble-elephant": {
+        "englishName": "Way of the Humble Elephant",
+        "name": "Cesta pokorného slona"
+      },
+      "way-of-the-still-waters": {
+        "englishName": "Way of the Still Waters",
+        "name": "Cesta tichých vod"
+      },
+      "way-of-the-tipsy-monkey": {
+        "englishName": "Way of the Tipsy Monkey",
+        "name": "Cesta podnapilé opice"
+      },
+      "way-of-the-unerring-arrow": {
+        "englishName": "Way of the Unerring Arrow",
+        "name": "Cesta neomylného šípu"
+      },
+      "way-of-the-wildcat": {
+        "englishName": "Way of the Wildcat",
+        "name": "Cesta divoké kočky"
+      },
+      "wind-domain": {
+        "englishName": "Wind Domain",
+        "name": "Doména větru"
+      },
+      "wyrdweaver": {
+        "englishName": "Wyrdweaver",
+        "name": "Tkadlec osudu"
       }
     },
     "items": {
       "brigandine": {
         "englishName": "Brigandine",
-        "name": "Brigantina"
+        "name": "Brigantina",
+        "original": {
+          "category": "Light Armor",
+          "cost": "50 gp",
+          "base_ac": 13,
+          "plus_dex_mod": true,
+          "plus_con_mod": false,
+          "plus_wis_mod": false,
+          "plus_flat_mod": 0,
+          "plus_max": 0,
+          "strength_requirement": 0,
+          "stealth_disadvantage": true,
+          "weight": ""
+        },
+        "metadataDescription": "**Druh:** Lehká zbroj\n**Cena:** 50 zl\n**Základní OČ (údaj zdroje):** 13\n**Přičítá opravu Obratnosti:** Ano\n**Přičítá opravu Odolnosti:** Ne\n**Přičítá opravu Moudrosti:** Ne\n**Pevná oprava:** 0\n**Limit opravy:** Neuveden\n**Požadavek na Sílu:** Žádný uvedený\n**Nevýhoda k Nenápadnosti:** Ano\n**Hmotnost:** Ve zdroji neuvedena\n\n*Open5e u tohoto předmětu neposkytuje souvislý pravidlový popis.*"
       },
       "kite-shield": {
         "englishName": "Kite shield",
-        "name": "Kapkovitý štít"
+        "name": "Kapkovitý štít",
+        "original": {
+          "category": "Shield",
+          "cost": "15 gp",
+          "base_ac": 11,
+          "plus_dex_mod": true,
+          "plus_con_mod": false,
+          "plus_wis_mod": false,
+          "plus_flat_mod": 2,
+          "plus_max": 0,
+          "strength_requirement": 0,
+          "stealth_disadvantage": false,
+          "weight": ""
+        },
+        "metadataDescription": "**Druh:** Štít\n**Cena:** 15 zl\n**Základní OČ (údaj zdroje):** 11\n**Přičítá opravu Obratnosti:** Ano\n**Přičítá opravu Odolnosti:** Ne\n**Přičítá opravu Moudrosti:** Ne\n**Pevná oprava:** 2\n**Limit opravy:** Neuveden\n**Požadavek na Sílu:** Žádný uvedený\n**Nevýhoda k Nenápadnosti:** Ne\n**Hmotnost:** Ve zdroji neuvedena\n\n*Open5e u tohoto předmětu neposkytuje souvislý pravidlový popis.*"
       },
       "manica": {
         "englishName": "Manica",
-        "name": "Manika"
+        "name": "Manika",
+        "original": {
+          "category": "Shield",
+          "cost": "6 gp",
+          "base_ac": 11,
+          "plus_dex_mod": true,
+          "plus_con_mod": false,
+          "plus_wis_mod": false,
+          "plus_flat_mod": 1,
+          "plus_max": 0,
+          "strength_requirement": 0,
+          "stealth_disadvantage": false,
+          "weight": ""
+        },
+        "metadataDescription": "**Druh:** Štít\n**Cena:** 6 zl\n**Základní OČ (údaj zdroje):** 11\n**Přičítá opravu Obratnosti:** Ano\n**Přičítá opravu Odolnosti:** Ne\n**Přičítá opravu Moudrosti:** Ne\n**Pevná oprava:** 1\n**Limit opravy:** Neuveden\n**Požadavek na Sílu:** Žádný uvedený\n**Nevýhoda k Nenápadnosti:** Ne\n**Hmotnost:** Ve zdroji neuvedena\n\n*Open5e u tohoto předmětu neposkytuje souvislý pravidlový popis.*"
       },
       "silk-backed-coin-mail": {
         "englishName": "Silk-Backed Coin Mail",
-        "name": "Mincová zbroj na hedvábí"
+        "name": "Mincová zbroj na hedvábí",
+        "original": {
+          "category": "Medium Armor",
+          "cost": "2,000 gp",
+          "base_ac": 14,
+          "plus_dex_mod": true,
+          "plus_con_mod": false,
+          "plus_wis_mod": false,
+          "plus_flat_mod": 0,
+          "plus_max": 2,
+          "strength_requirement": 0,
+          "stealth_disadvantage": true,
+          "weight": ""
+        },
+        "metadataDescription": "**Druh:** Střední zbroj\n**Cena:** 2,000 zl\n**Základní OČ (údaj zdroje):** 14\n**Přičítá opravu Obratnosti:** Ano\n**Přičítá opravu Odolnosti:** Ne\n**Přičítá opravu Moudrosti:** Ne\n**Pevná oprava:** 0\n**Limit opravy:** 2\n**Požadavek na Sílu:** Žádný uvedený\n**Nevýhoda k Nenápadnosti:** Ano\n**Hmotnost:** Ve zdroji neuvedena\n\n*Open5e u tohoto předmětu neposkytuje souvislý pravidlový popis.*"
       },
       "stonesteel": {
         "englishName": "Stonesteel",
-        "name": "Kamenoocelová zbroj"
+        "name": "Kamenoocelová zbroj",
+        "original": {
+          "category": "Heavy Armor",
+          "cost": "3,000 gp",
+          "base_ac": 19,
+          "plus_dex_mod": true,
+          "plus_con_mod": false,
+          "plus_wis_mod": false,
+          "plus_flat_mod": 0,
+          "plus_max": 0,
+          "strength_requirement": 16,
+          "stealth_disadvantage": true,
+          "weight": ""
+        },
+        "metadataDescription": "**Druh:** Těžká zbroj\n**Cena:** 3,000 zl\n**Základní OČ (údaj zdroje):** 19\n**Přičítá opravu Obratnosti:** Ano\n**Přičítá opravu Odolnosti:** Ne\n**Přičítá opravu Moudrosti:** Ne\n**Pevná oprava:** 0\n**Limit opravy:** Neuveden\n**Požadavek na Sílu:** 16\n**Nevýhoda k Nenápadnosti:** Ano\n**Hmotnost:** Ve zdroji neuvedena\n\n*Open5e u tohoto předmětu neposkytuje souvislý pravidlový popis.*"
       },
       "axespear": {
         "englishName": "Axespear",
-        "name": "Sekerokopí"
+        "name": "Sekerokopí",
+        "original": {
+          "category": "Martial Melee Weapons",
+          "cost": "25 gp",
+          "weight": "8 lb.",
+          "damage_dice": "1d8",
+          "damage_type": "slashing",
+          "properties": [
+            "double-headed (1d4)",
+            "two-handed"
+          ]
+        },
+        "metadataDescription": "**Druh:** Vojenská zbraň na blízko\n**Cena:** 25 zl\n**Hmotnost:** 8 lb.\n**Zranění:** 1k8 sečné\n**Vlastnosti:** dvouhlavá (1k4), obouruční\n\n*Open5e u tohoto předmětu neposkytuje souvislý pravidlový popis.*"
       },
       "barge-pole": {
         "englishName": "Barge Pole",
-        "name": "Lodní bidlo"
+        "name": "Lodní bidlo",
+        "original": {
+          "category": "Simple Melee Weapons",
+          "cost": "1 sp",
+          "weight": "5 lb.",
+          "damage_dice": "1d6",
+          "damage_type": "bludgeoning",
+          "properties": [
+            "reach",
+            "special",
+            "two-handed"
+          ]
+        },
+        "metadataDescription": "**Druh:** Jednoduchá zbraň na blízko\n**Cena:** 1 st\n**Hmotnost:** 5 lb.\n**Zranění:** 1k6 drtivé\n**Vlastnosti:** dosah, speciální, obouruční\n\nZvláštní pravidlo zbraně není ve zdrojovém záznamu uvedeno.\n\n*Open5e u tohoto předmětu neposkytuje souvislý pravidlový popis.*"
       },
       "bladed-scarf": {
         "englishName": "Bladed Scarf",
-        "name": "Čepelová šála"
+        "name": "Čepelová šála",
+        "original": {
+          "category": "Martial Melee Weapons",
+          "cost": "100 gp",
+          "weight": "3 lb.",
+          "damage_dice": "1d4",
+          "damage_type": "slashing",
+          "properties": [
+            "finesse",
+            "reach",
+            "special"
+          ]
+        },
+        "metadataDescription": "**Druh:** Vojenská zbraň na blízko\n**Cena:** 100 zl\n**Hmotnost:** 3 lb.\n**Zranění:** 1k4 sečné\n**Vlastnosti:** vytříbená, dosah, speciální\n\nZvláštní pravidlo zbraně není ve zdrojovém záznamu uvedeno.\n\n*Open5e u tohoto předmětu neposkytuje souvislý pravidlový popis.*"
       },
       "blunderbuss": {
         "englishName": "Blunderbuss",
-        "name": "Trombónová puška"
+        "name": "Trombónová puška",
+        "original": {
+          "category": "Martial Ranged Weapons",
+          "cost": "75 gp",
+          "weight": "12 lb.",
+          "damage_dice": "2d4",
+          "damage_type": "piercing",
+          "properties": [
+            "ammunition",
+            "gunpowder",
+            "loading",
+            "special",
+            "two-handed"
+          ]
+        },
+        "metadataDescription": "**Druh:** Vojenská zbraň na dálku\n**Cena:** 75 zl\n**Hmotnost:** 12 lb.\n**Zranění:** 2k4 bodné\n**Vlastnosti:** munice, střelný prach, nabíjecí, speciální, obouruční\n\nZvláštní pravidlo zbraně není ve zdrojovém záznamu uvedeno.\n\n*Open5e u tohoto předmětu neposkytuje souvislý pravidlový popis.*"
       },
       "bolas": {
         "englishName": "Bolas",
-        "name": "Bola"
+        "name": "Bola",
+        "original": {
+          "category": "Martial Ranged Weapons",
+          "cost": "5 gp",
+          "weight": "2 lb.",
+          "damage_dice": "",
+          "damage_type": "",
+          "properties": [
+            "special",
+            "thrown (range 5/15)"
+          ]
+        },
+        "metadataDescription": "**Druh:** Vojenská zbraň na dálku\n**Cena:** 5 zl\n**Hmotnost:** 2 lb.\n**Zranění:** Ve zdroji neuvedeno\n**Vlastnosti:** speciální, vrhací (dostřel 5/15)\n\nZvláštní pravidlo zbraně není ve zdrojovém záznamu uvedeno.\n\n*Open5e u tohoto předmětu neposkytuje souvislý pravidlový popis.*"
       },
       "chain-hook": {
         "englishName": "Chain Hook",
-        "name": "Řetězový hák"
+        "name": "Řetězový hák",
+        "original": {
+          "category": "Martial Melee Weapons",
+          "cost": "15 gp",
+          "weight": "3 lb.",
+          "damage_dice": "1d6",
+          "damage_type": "slashing",
+          "properties": [
+            "reach",
+            "special",
+            "thrown (range 10/20)"
+          ]
+        },
+        "metadataDescription": "**Druh:** Vojenská zbraň na blízko\n**Cena:** 15 zl\n**Hmotnost:** 3 lb.\n**Zranění:** 1k6 sečné\n**Vlastnosti:** dosah, speciální, vrhací (dostřel 10/20)\n\nZvláštní pravidlo zbraně není ve zdrojovém záznamu uvedeno.\n\n*Open5e u tohoto předmětu neposkytuje souvislý pravidlový popis.*"
       },
       "chakram": {
         "englishName": "Chakram",
-        "name": "Čakram"
+        "name": "Čakram",
+        "original": {
+          "category": "Martial Melee Weapons",
+          "cost": "15 gp",
+          "weight": "1 lb.",
+          "damage_dice": "1d6",
+          "damage_type": "slashing",
+          "properties": [
+            "thrown (range 20/60)"
+          ]
+        },
+        "metadataDescription": "**Druh:** Vojenská zbraň na blízko\n**Cena:** 15 zl\n**Hmotnost:** 1 lb.\n**Zranění:** 1k6 sečné\n**Vlastnosti:** vrhací (dostřel 20/60)\n\n*Open5e u tohoto předmětu neposkytuje souvislý pravidlový popis.*"
       },
       "climbing-adze": {
         "englishName": "Climbing Adze",
-        "name": "Horolezecká teslice"
+        "name": "Horolezecká teslice",
+        "original": {
+          "category": "Martial Melee Weapons",
+          "cost": "6 gp",
+          "weight": "3 lb.",
+          "damage_dice": "1d4",
+          "damage_type": "slashing",
+          "properties": [
+            "light"
+          ]
+        },
+        "metadataDescription": "**Druh:** Vojenská zbraň na blízko\n**Cena:** 6 zl\n**Hmotnost:** 3 lb.\n**Zranění:** 1k4 sečné\n**Vlastnosti:** lehká\n\n*Open5e u tohoto předmětu neposkytuje souvislý pravidlový popis.*"
       },
       "clockwork-crossbow": {
         "englishName": "Clockwork Crossbow",
-        "name": "Mechanická kuše"
+        "name": "Mechanická kuše",
+        "original": {
+          "category": "Simple Ranged Weapons",
+          "cost": "100 gp",
+          "weight": "8 lb.",
+          "damage_dice": "1d8",
+          "damage_type": "piercing",
+          "properties": [
+            "ammunition (60/240)",
+            "magazine (6)",
+            "two-handed"
+          ]
+        },
+        "metadataDescription": "**Druh:** Jednoduchá zbraň na dálku\n**Cena:** 100 zl\n**Hmotnost:** 8 lb.\n**Zranění:** 1k8 bodné\n**Vlastnosti:** munice (60/240), zásobník (6), obouruční\n\n*Open5e u tohoto předmětu neposkytuje souvislý pravidlový popis.*"
       },
       "club-shield": {
         "englishName": "Club Shield",
-        "name": "Kyjový štít"
+        "name": "Kyjový štít",
+        "original": {
+          "category": "Martial Melee Weapons",
+          "cost": "25 gp",
+          "weight": "2 lb.",
+          "damage_dice": "1d4",
+          "damage_type": "bludgeoning",
+          "properties": [
+            "light",
+            "special"
+          ]
+        },
+        "metadataDescription": "**Druh:** Vojenská zbraň na blízko\n**Cena:** 25 zl\n**Hmotnost:** 2 lb.\n**Zranění:** 1k4 drtivé\n**Vlastnosti:** lehká, speciální\n\nZvláštní pravidlo zbraně není ve zdrojovém záznamu uvedeno.\n\n*Open5e u tohoto předmětu neposkytuje souvislý pravidlový popis.*"
       },
       "double-axe": {
         "englishName": "Double Axe",
-        "name": "Dvojitá sekera"
+        "name": "Dvojitá sekera",
+        "original": {
+          "category": "Martial Melee Weapons",
+          "cost": "50 gp",
+          "weight": "10 lb.",
+          "damage_dice": "1d8",
+          "damage_type": "slashing",
+          "properties": [
+            "double-headed (1d6)",
+            "heavy",
+            "two-handed"
+          ]
+        },
+        "metadataDescription": "**Druh:** Vojenská zbraň na blízko\n**Cena:** 50 zl\n**Hmotnost:** 10 lb.\n**Zranění:** 1k8 sečné\n**Vlastnosti:** dvouhlavá (1k6), těžká, obouruční\n\n*Open5e u tohoto předmětu neposkytuje souvislý pravidlový popis.*"
       },
       "dwarven-arquebus": {
         "englishName": "Dwarven Arquebus",
-        "name": "Trpasličí arkebuza"
+        "name": "Trpasličí arkebuza",
+        "original": {
+          "category": "Martial Ranged Weapons",
+          "cost": "100 gp",
+          "weight": "20 lb.",
+          "damage_dice": "2d6",
+          "damage_type": "piercing",
+          "properties": [
+            "ammunition (range 25/100)",
+            "gunpowder",
+            "heavy",
+            "loading",
+            "two-handed"
+          ]
+        },
+        "metadataDescription": "**Druh:** Vojenská zbraň na dálku\n**Cena:** 100 zl\n**Hmotnost:** 20 lb.\n**Zranění:** 2k6 bodné\n**Vlastnosti:** munice (dostřel 25/100), střelný prach, těžká, nabíjecí, obouruční\n\n*Open5e u tohoto předmětu neposkytuje souvislý pravidlový popis.*"
       },
       "dwarven-axe": {
         "englishName": "Dwarven Axe",
-        "name": "Trpasličí sekera"
+        "name": "Trpasličí sekera",
+        "original": {
+          "category": "Martial Melee Weapons",
+          "cost": "15 gp",
+          "weight": "6 lb.",
+          "damage_dice": "1d4",
+          "damage_type": "slashing",
+          "properties": [
+            "special",
+            "versatile (1d10)"
+          ]
+        },
+        "metadataDescription": "**Druh:** Vojenská zbraň na blízko\n**Cena:** 15 zl\n**Hmotnost:** 6 lb.\n**Zranění:** 1k4 sečné\n**Vlastnosti:** speciální, jedenapůlruční (1k10)\n\nZvláštní pravidlo zbraně není ve zdrojovém záznamu uvedeno.\n\n*Open5e u tohoto předmětu neposkytuje souvislý pravidlový popis.*"
       },
       "dwarven-revolving-musket": {
         "englishName": "Dwarven Revolving Musket",
-        "name": "Trpasličí otočná mušketa"
+        "name": "Trpasličí otočná mušketa",
+        "original": {
+          "category": "Martial Ranged Weapons",
+          "cost": "200 gp",
+          "weight": "12 lb.",
+          "damage_dice": "1d8",
+          "damage_type": "piercing",
+          "properties": [
+            "ammunition (range 80/320)",
+            "gunpowder",
+            "magazine (8)",
+            "two-handed"
+          ]
+        },
+        "metadataDescription": "**Druh:** Vojenská zbraň na dálku\n**Cena:** 200 zl\n**Hmotnost:** 12 lb.\n**Zranění:** 1k8 bodné\n**Vlastnosti:** munice (dostřel 80/320), střelný prach, zásobník (8), obouruční\n\n*Open5e u tohoto předmětu neposkytuje souvislý pravidlový popis.*"
       },
       "elven-dueling-blade": {
         "englishName": "Elven Dueling Blade",
-        "name": "Elfská soubojová čepel"
+        "name": "Elfská soubojová čepel",
+        "original": {
+          "category": "Martial Melee Weapons",
+          "cost": "50 gp",
+          "weight": "4 lb.",
+          "damage_dice": "1d4",
+          "damage_type": "slashing",
+          "properties": [
+            "finesse",
+            "two-handed"
+          ]
+        },
+        "metadataDescription": "**Druh:** Vojenská zbraň na blízko\n**Cena:** 50 zl\n**Hmotnost:** 4 lb.\n**Zranění:** 1k4 sečné\n**Vlastnosti:** vytříbená, obouruční\n\n*Open5e u tohoto předmětu neposkytuje souvislý pravidlový popis.*"
       },
       "granite-fist": {
         "englishName": "Granite Fist",
-        "name": "Žulová pěst"
+        "name": "Žulová pěst",
+        "original": {
+          "category": "Simple Melee Weapons",
+          "cost": "25 gp",
+          "weight": "5 lb.",
+          "damage_dice": "1d4",
+          "damage_type": "bludgeoning",
+          "properties": [
+            ""
+          ]
+        },
+        "metadataDescription": "**Druh:** Jednoduchá zbraň na blízko\n**Cena:** 25 zl\n**Hmotnost:** 5 lb.\n**Zranění:** 1k4 drtivé\n**Vlastnosti:** Ve zdroji neuvedeny\n\n*Open5e u tohoto předmětu neposkytuje souvislý pravidlový popis.*"
       },
       "hand-trebuchet": {
         "englishName": "Hand Trebuchet",
-        "name": "Ruční trebuchet"
+        "name": "Ruční trebuchet",
+        "original": {
+          "category": "Martial Ranged Weapons",
+          "cost": "4 gp",
+          "weight": "3 lb.",
+          "damage_dice": "",
+          "damage_type": "",
+          "properties": [
+            "ammunition (range 60/240)",
+            "special"
+          ]
+        },
+        "metadataDescription": "**Druh:** Vojenská zbraň na dálku\n**Cena:** 4 zl\n**Hmotnost:** 3 lb.\n**Zranění:** Ve zdroji neuvedeno\n**Vlastnosti:** munice (dostřel 60/240), speciální\n\nZvláštní pravidlo zbraně není ve zdrojovém záznamu uvedeno.\n\n*Open5e u tohoto předmětu neposkytuje souvislý pravidlový popis.*"
       },
       "joining-dirks": {
         "englishName": "Joining Dirks",
-        "name": "Spojitelné dýky"
+        "name": "Spojitelné dýky",
+        "original": {
+          "category": "Martial Melee Weapons",
+          "cost": "50 gp",
+          "weight": "2 lb.",
+          "damage_dice": "1d4",
+          "damage_type": "slashing",
+          "properties": [
+            "finesse",
+            "light",
+            "special"
+          ]
+        },
+        "metadataDescription": "**Druh:** Vojenská zbraň na blízko\n**Cena:** 50 zl\n**Hmotnost:** 2 lb.\n**Zranění:** 1k4 sečné\n**Vlastnosti:** vytříbená, lehká, speciální\n\nZvláštní pravidlo zbraně není ve zdrojovém záznamu uvedeno.\n\n*Open5e u tohoto předmětu neposkytuje souvislý pravidlový popis.*"
       },
       "khopesh": {
         "englishName": "Khopesh",
-        "name": "Chopéš"
+        "name": "Chopéš",
+        "original": {
+          "category": "Martial Melee Weapons",
+          "cost": "25 gp",
+          "weight": "4 lb.",
+          "damage_dice": "1d4",
+          "damage_type": "slashing",
+          "properties": [
+            "versatile (1d8)"
+          ]
+        },
+        "metadataDescription": "**Druh:** Vojenská zbraň na blízko\n**Cena:** 25 zl\n**Hmotnost:** 4 lb.\n**Zranění:** 1k4 sečné\n**Vlastnosti:** jedenapůlruční (1k8)\n\n*Open5e u tohoto předmětu neposkytuje souvislý pravidlový popis.*"
       },
       "light-pick": {
         "englishName": "Light Pick",
-        "name": "Lehký krumpáč"
+        "name": "Lehký krumpáč",
+        "original": {
+          "category": "Simple Melee Weapons",
+          "cost": "3 gp",
+          "weight": "2 lb.",
+          "damage_dice": "1d4",
+          "damage_type": "piercing",
+          "properties": [
+            "light",
+            "thrown (20/60)",
+            ""
+          ]
+        },
+        "metadataDescription": "**Druh:** Jednoduchá zbraň na blízko\n**Cena:** 3 zl\n**Hmotnost:** 2 lb.\n**Zranění:** 1k4 bodné\n**Vlastnosti:** lehká, vrhací (20/60)\n\n*Open5e u tohoto předmětu neposkytuje souvislý pravidlový popis.*"
       },
       "musket": {
         "englishName": "Musket",
-        "name": "Mušketa"
+        "name": "Mušketa",
+        "original": {
+          "category": "Martial Ranged Weapons",
+          "cost": "50 gp",
+          "weight": "10 lb.",
+          "damage_dice": "1d10",
+          "damage_type": "piercing",
+          "properties": [
+            "ammunition (range 80/320)",
+            "gunpowder",
+            "loading",
+            "two-handed"
+          ]
+        },
+        "metadataDescription": "**Druh:** Vojenská zbraň na dálku\n**Cena:** 50 zl\n**Hmotnost:** 10 lb.\n**Zranění:** 1k10 bodné\n**Vlastnosti:** munice (dostřel 80/320), střelný prach, nabíjecí, obouruční\n\n*Open5e u tohoto předmětu neposkytuje souvislý pravidlový popis.*"
       },
       "pistol": {
         "englishName": "Pistol",
-        "name": "Pistole"
+        "name": "Pistole",
+        "original": {
+          "category": "Simple Ranged Weapons",
+          "cost": "25 gp",
+          "weight": "5 lb.",
+          "damage_dice": "1d6",
+          "damage_type": "piercing",
+          "properties": [
+            "ammunition (range 30/120)",
+            "gunpowder",
+            "light",
+            "loading"
+          ]
+        },
+        "metadataDescription": "**Druh:** Jednoduchá zbraň na dálku\n**Cena:** 25 zl\n**Hmotnost:** 5 lb.\n**Zranění:** 1k6 bodné\n**Vlastnosti:** munice (dostřel 30/120), střelný prach, lehká, nabíjecí\n\n*Open5e u tohoto předmětu neposkytuje souvislý pravidlový popis.*"
       },
       "pneumatic-war-pick": {
         "englishName": "Pneumatic War Pick",
-        "name": "Pneumatický válečný krumpáč"
+        "name": "Pneumatický válečný krumpáč",
+        "original": {
+          "category": "Martial Melee Weapons",
+          "cost": "50 gp",
+          "weight": "4 lb.",
+          "damage_dice": "1d4",
+          "damage_type": "piercing",
+          "properties": [
+            "special"
+          ]
+        },
+        "metadataDescription": "**Druh:** Vojenská zbraň na blízko\n**Cena:** 50 zl\n**Hmotnost:** 4 lb.\n**Zranění:** 1k4 bodné\n**Vlastnosti:** speciální\n\nZvláštní pravidlo zbraně není ve zdrojovém záznamu uvedeno.\n\n*Open5e u tohoto předmětu neposkytuje souvislý pravidlový popis.*"
       },
       "shashka": {
         "englishName": "Shashka",
-        "name": "Šaška"
+        "name": "Šaška",
+        "original": {
+          "category": "Martial Melee Weapons",
+          "cost": "20 gp",
+          "weight": "4 lb.",
+          "damage_dice": "1d4",
+          "damage_type": "slashing",
+          "properties": [
+            "special",
+            "versatile (1d10)"
+          ]
+        },
+        "metadataDescription": "**Druh:** Vojenská zbraň na blízko\n**Cena:** 20 zl\n**Hmotnost:** 4 lb.\n**Zranění:** 1k4 sečné\n**Vlastnosti:** speciální, jedenapůlruční (1k10)\n\nZvláštní pravidlo zbraně není ve zdrojovém záznamu uvedeno.\n\n*Open5e u tohoto předmětu neposkytuje souvislý pravidlový popis.*"
       },
       "shotel": {
         "englishName": "Shotel",
-        "name": "Šotel"
+        "name": "Šotel",
+        "original": {
+          "category": "Martial Melee Weapons",
+          "cost": "50 gp",
+          "weight": "3 lb.",
+          "damage_dice": "1d4",
+          "damage_type": "slashing",
+          "properties": [
+            "finesse",
+            "special"
+          ]
+        },
+        "metadataDescription": "**Druh:** Vojenská zbraň na blízko\n**Cena:** 50 zl\n**Hmotnost:** 3 lb.\n**Zranění:** 1k4 sečné\n**Vlastnosti:** vytříbená, speciální\n\nZvláštní pravidlo zbraně není ve zdrojovém záznamu uvedeno.\n\n*Open5e u tohoto předmětu neposkytuje souvislý pravidlový popis.*"
       },
       "stone-rake": {
         "englishName": "Stone Rake",
-        "name": "Kamenné hrábě"
+        "name": "Kamenné hrábě",
+        "original": {
+          "category": "Simple Melee Weapons",
+          "cost": "5 gp",
+          "weight": "5 lb.",
+          "damage_dice": "1d8",
+          "damage_type": "piercing",
+          "properties": [
+            "two-handed"
+          ]
+        },
+        "metadataDescription": "**Druh:** Jednoduchá zbraň na blízko\n**Cena:** 5 zl\n**Hmotnost:** 5 lb.\n**Zranění:** 1k8 bodné\n**Vlastnosti:** obouruční\n\n*Open5e u tohoto předmětu neposkytuje souvislý pravidlový popis.*"
       },
       "temple-sword": {
         "englishName": "Temple Sword",
-        "name": "Chrámový meč"
+        "name": "Chrámový meč",
+        "original": {
+          "category": "Martial Melee Weapons",
+          "cost": "35 gp",
+          "weight": "3 lb.",
+          "damage_dice": "1d4",
+          "damage_type": "slashing",
+          "properties": [
+            "finesse",
+            "light"
+          ]
+        },
+        "metadataDescription": "**Druh:** Vojenská zbraň na blízko\n**Cena:** 35 zl\n**Hmotnost:** 3 lb.\n**Zranění:** 1k4 sečné\n**Vlastnosti:** vytříbená, lehká\n\n*Open5e u tohoto předmětu neposkytuje souvislý pravidlový popis.*"
       },
       "whipsaw": {
         "englishName": "Whipsaw",
-        "name": "Bičová pila"
+        "name": "Bičová pila",
+        "original": {
+          "category": "Martial Melee Weapons",
+          "cost": "15 gp",
+          "weight": "2 lb.",
+          "damage_dice": "1d4",
+          "damage_type": "slashing",
+          "properties": [
+            "finesse"
+          ]
+        },
+        "metadataDescription": "**Druh:** Vojenská zbraň na blízko\n**Cena:** 15 zl\n**Hmotnost:** 2 lb.\n**Zranění:** 1k4 sečné\n**Vlastnosti:** vytříbená\n\n*Open5e u tohoto předmětu neposkytuje souvislý pravidlový popis.*"
       },
       "wormsilk-net": {
         "englishName": "Wormsilk Net",
-        "name": "Síť z červího hedvábí"
+        "name": "Síť z červího hedvábí",
+        "original": {
+          "category": "Martial Ranged Weapons",
+          "cost": "60 gp",
+          "weight": "2 lb.",
+          "damage_dice": "",
+          "damage_type": "",
+          "properties": [
+            "special",
+            "thrown (range 10/20)"
+          ]
+        },
+        "metadataDescription": "**Druh:** Vojenská zbraň na dálku\n**Cena:** 60 zl\n**Hmotnost:** 2 lb.\n**Zranění:** Ve zdroji neuvedeno\n**Vlastnosti:** speciální, vrhací (dostřel 10/20)\n\nZvláštní pravidlo zbraně není ve zdrojovém záznamu uvedeno.\n\n*Open5e u tohoto předmětu neposkytuje souvislý pravidlový popis.*"
       },
       "wormsilk-whip": {
         "englishName": "Wormsilk Whip",
-        "name": "Bič z červího hedvábí"
+        "name": "Bič z červího hedvábí",
+        "original": {
+          "category": "Martial Melee Weapons",
+          "cost": "50 gp",
+          "weight": "3 lb.",
+          "damage_dice": "1d4",
+          "damage_type": "slashing",
+          "properties": [
+            "finesse",
+            "reach"
+          ]
+        },
+        "metadataDescription": "**Druh:** Vojenská zbraň na blízko\n**Cena:** 50 zl\n**Hmotnost:** 3 lb.\n**Zranění:** 1k4 sečné\n**Vlastnosti:** vytříbená, dosah\n\n*Open5e u tohoto předmětu neposkytuje souvislý pravidlový popis.*"
       },
       "wrist-knife": {
         "englishName": "Wrist Knife",
-        "name": "Zápěstní nůž"
+        "name": "Zápěstní nůž",
+        "original": {
+          "category": "Martial Melee Weapons",
+          "cost": "4 gp",
+          "weight": "1 lb.",
+          "damage_dice": "1d4",
+          "damage_type": "slashing",
+          "properties": [
+            "finesse",
+            "light"
+          ]
+        },
+        "metadataDescription": "**Druh:** Vojenská zbraň na blízko\n**Cena:** 4 zl\n**Hmotnost:** 1 lb.\n**Zranění:** 1k4 sečné\n**Vlastnosti:** vytříbená, lehká\n\n*Open5e u tohoto předmětu neposkytuje souvislý pravidlový popis.*"
       },
       "argent-mantle": {
         "englishName": "Argent Mantle",

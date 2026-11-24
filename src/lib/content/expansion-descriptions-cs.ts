@@ -8,6 +8,7 @@ type Translation = {
   name: string;
   original?: Record<string, unknown>;
   description?: string;
+  metadataDescription?: string;
 };
 const books: Record<string, Record<string, Record<string, Translation>>> = data;
 
@@ -25,12 +26,12 @@ export function expansionNameCs(table: string, row: Row): string | undefined {
 
 export function expansionDescriptionCs(table: string, row: Row & { data?: Record<string, unknown> }): string | undefined {
   const hit = translation(table === "races" ? "species" : table === "archetypes" ? "subclasses" : table, row);
-  if (!hit?.description || !hit.original || !row.data) return undefined;
+  if (!hit || !(hit.description || hit.metadataDescription) || !hit.original || !row.data) return undefined;
   const source = row.data;
   // Exact text and metadata from the checked-in golden row, not an inferred
   // slug or a guessed rule. Other fields remain unmodified.
   if (!Object.entries(hit.original).every(([key, value]) =>
     JSON.stringify(source[key]) === JSON.stringify(value)
   )) return undefined;
-  return hit.description;
+  return hit.description ?? hit.metadataDescription;
 }

@@ -98,7 +98,7 @@ describe("Source-specific Czech expansion names", () => {
         }
       }
     }
-    expect(count).toBe(551);
+    expect(count).toBe(638);
   });
 });
 
@@ -160,6 +160,19 @@ describe("Vault of Magic reviewed backup descriptions", () => {
       if (!("description" in hit) || !("original" in hit)) throw new Error(slug);
       const row = { slug, name: hit.englishName, documentSlug: "vom", source: "open5e", data: hit.original as Record<string, unknown> };
       expect(localizeEntryCs("items", row).data.localized_desc).toBe(hit.description);
+    }
+  });
+});
+
+
+describe("Tome of Heroes mundane equipment", () => {
+  it("localizes 36 source stat records without inventing absent rules", () => {
+    const records = Object.entries(expansionTranslations.toh.items).filter(([, hit]) => "metadataDescription" in hit);
+    expect(records).toHaveLength(36);
+    for (const [slug, hit] of records) {
+      if (!("metadataDescription" in hit) || !("original" in hit)) throw new Error(slug);
+      const row = { slug, name: hit.englishName, documentSlug: "toh", source: "open5e", data: hit.original as Record<string, unknown> };
+      expect(localizeEntryCs("items", row).data.localized_desc).toBe(hit.metadataDescription);
     }
   });
 });
