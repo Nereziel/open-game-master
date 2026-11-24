@@ -447,7 +447,7 @@ export function FeatureChips({
   );
 }
 
-export function FeatChips({ feats, classId, subclass }: { feats: string[]; classId: string; subclass?: string | null }) {
+export function FeatChips({ feats }: { feats: string[]; classId: string; subclass?: string | null }) {
   const locale = useLocale();
   return (
     <InfoChipList
@@ -456,7 +456,8 @@ export function FeatChips({ feats, classId, subclass }: { feats: string[]; class
         // official maps); the reference lookup stays the stored name.
         name: contentName("feats", feat, locale),
         icon: { kind: "feat" as const, key: feat },
-        text: describeFeature(classId, subclass ?? "", feat, locale) ?? undefined,
+        // A feat is a catalog entry, not a same-named class feature.
+        // Let the localized content detail resolve its rules.
         reference: { kind: "feats", slug: contentSlug(feat), name: feat },
       }))}
     />
