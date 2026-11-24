@@ -65,7 +65,7 @@ Hůl si každý den za úsvitu obnoví 1k6+4 spotřebovaných nábojů. Pokud ut
 
 Když držíš tuto hůl, máš odolnost vůči chladnému zranění.
 
-Hůl má 10 nábojů. Když ji držíš, můžeš jako akci utratit 1 nebo více nábojů a seslat jedno z následujících kouzel se svým SO záchrany proti kouzlům: *kužel chladu* (5 nábojů), *oblak mlhy* (1 náboj), *ledová bouře* (4 náboje) nebo *ledová zeď* (4 náboje).
+Hůl má 10 nábojů. Když ji držíš, můžeš jako akci utratit 1 nebo více nábojů a seslat jedno z následujících kouzel se svým SO záchrany proti kouzlům: *kužel mrazu* (5 nábojů), *oblak mlhy* (1 náboj), *ledová bouře* (4 náboje) nebo *ledová zeď* (4 náboje).
 
 Hůl si každý den za úsvitu obnoví 1k6+4 spotřebovaných nábojů. Pokud utratíš poslední náboj, hoď k20. Při výsledku 1 se hůl promění ve vodu a je zničena.`,
   "staff-of-healing": `*Berla, vzácná (vyžaduje sladění bardem, klerikem nebo druidem)*
@@ -81,7 +81,7 @@ Hůl má 20 nábojů pro následující vlastnosti. Každý den za úsvitu si ob
 
 ***Mocný úder.*** Když holí zasáhneš útokem na blízko, můžeš utratit 1 náboj a způsobit cíli dodatečné silové zranění 1k6.
 
-***Kouzla.*** Když držíš tuto hůl, můžeš jako akci utratit 1 nebo více jejích nábojů a seslat jedno z následujících kouzel se svým SO záchrany proti kouzlům a bonusem k útoku kouzlem: *kužel chladu* (5 nábojů), *ohnivá koule* (ve verzi 5. úrovně, 5 nábojů), *koule nezranitelnosti* (6 nábojů), *znehybni nestvůru* (5 nábojů), *levitace* (2 náboje), *blesk* (ve verzi 5. úrovně, 5 nábojů), *magická střela* (1 náboj), *paprsek slabosti* (1 náboj) nebo *zeď síly* (5 nábojů).
+***Kouzla.*** Když držíš tuto hůl, můžeš jako akci utratit 1 nebo více jejích nábojů a seslat jedno z následujících kouzel se svým SO záchrany proti kouzlům a bonusem k útoku kouzlem: *kužel mrazu* (5 nábojů), *ohnivá koule* (ve verzi 5. úrovně, 5 nábojů), *koule nezranitelnosti* (6 nábojů), *znehybni nestvůru* (5 nábojů), *levitace* (2 náboje), *blesk* (ve verzi 5. úrovně, 5 nábojů), *magická střela* (1 náboj), *paprsek slabosti* (1 náboj) nebo *zeď síly* (5 nábojů).
 
 ***Odvetný úder.*** Jako akci můžeš hůl zlomit přes koleno nebo o pevný povrch, čímž provedeš odvetný úder. Hůl se zničí a zbývající magie se uvolní ve výbuchu, který vyplní kouli o poloměru 30 stop se středem v holi.
 
