@@ -188,6 +188,21 @@ test("the picker's summaries carry no sheet, and ids resolve", () => {
   assert.equal(pregenById("nobody"), null);
 });
 
+const { languageDirective } = await import("../src/lib/dm/table-language-logic.ts");
+for (const [locale, language, englishName] of [["en", "english", "English"], ["fr", "french", "French"], ["cs", "czech", "Czech"]]) {
+  test("starter stores " + locale + " premise, outline and table language together", () => {
+    const seed = starterSeedFor(locale);
+    const created = createStarterCampaign(host.id, { solo: true, locale });
+    const stored = getCampaignById(created.id);
+    assert.equal(stored.gameSettings.tableLanguage, language);
+    assert.equal(stored.description, seed.description);
+    assert.equal(stored.dmOutline, seed.outline);
+    const directive = languageDirective(stored.gameSettings.tableLanguage);
+    if (locale === "en") assert.equal(directive, "");
+    else assert.ok(directive.includes("The players read " + englishName));
+  });
+}
+
 test("the Czech starter seed and stored campaign use the localized premise and secret outline", () => {
   const cs = starterSeedFor("cs");
   assert.equal(cs.id, STARTER_ONE_SHOT.id);
