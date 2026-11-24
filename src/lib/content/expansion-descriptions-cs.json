@@ -1912,7 +1912,14 @@
       },
       "agile-armor": {
         "englishName": "Agile Armor",
-        "name": "Hbitá zbroj"
+        "name": "Hbitá zbroj",
+        "original": {
+          "desc": "This magically enhanced armor is less bulky than its nonmagical version. While wearing a suit of medium agile armor, the maximum Dexterity modifier you can add to determine your Armor Class is 3, instead of 2. While wearing a suit of heavy agile armor, the maximum Dexterity modifier you can add to determine your Armor Class is 1, instead of 0.",
+          "type": "Armor",
+          "rarity": "common",
+          "requires_attunement": ""
+        },
+        "description": "*Zbroj, běžný*\n\nTato magicky vylepšená zbroj je méně těžkopádná než její nemagická obdoba. Pokud nosíš hbitou střední zbroj, nejvyšší oprava Obratnosti, kterou můžeš započítat do třídy zbroje, je +3 namísto +2. Pokud nosíš hbitou těžkou zbroj, můžeš započítat opravu Obratnosti nejvýše +1 namísto +0."
       },
       "air-seed": {
         "englishName": "Air Seed",
@@ -1920,15 +1927,36 @@
       },
       "akaasit-blade": {
         "englishName": "Akaasit Blade",
-        "name": "Akaasitská čepel"
+        "name": "Akaasitská čepel",
+        "original": {
+          "desc": "You gain a +1 bonus to attack and damage rolls made with this magic weapon. This dagger is crafted from the arm blade of a defeated Akaasit (see Tome of Beasts 2). You can use an action to activate a small measure of prescience within the dagger for 1 minute. If you are attacked by a creature you can see within 5 feet of you while this effect is active, you can use your reaction to make one attack with this dagger against the attacker. If your attack hits, the dagger loses its prescience, and its prescience can't be activated again until the next dawn.",
+          "type": "Weapon",
+          "rarity": "rare",
+          "requires_attunement": ""
+        },
+        "description": "*Zbraň, vzácný*\n\nK hodům na útok a zranění touto magickou zbraní získáváš bonus +1. Dýka je vyrobena z čepele paže poraženého akaasita (viz Tome of Beasts 2). Akcí můžeš na 1 minutu aktivovat její schopnost předvídat budoucnost. Když tě během této doby napadne tvor, kterého vidíš do 5 stop od sebe, můžeš reakcí provést jeden útok touto dýkou proti útočníkovi. Pokud zasáhneš, předvídavost dýky se vyčerpá a nelze ji znovu aktivovat do příštího úsvitu."
       },
       "alabaster-salt-shaker": {
         "englishName": "Alabaster Salt Shaker",
-        "name": "Alabastrová solnička"
+        "name": "Alabastrová solnička",
+        "original": {
+          "desc": "This shaker is carved from purest alabaster in the shape of an owl. It is 7 inches tall and contains enough salt to flavor 25 meals. When the shaker is empty, it can't be refilled, and it becomes nonmagical. When you or another creature eat a meal salted by this shaker, you don't need to eat again for 48 hours, at which point the magic wears off. If you don't eat within 1 hour of the magic wearing off, you gain one level of exhaustion. You continue gaining one level of exhaustion for each additional hour you don't eat.",
+          "type": "Wondrous item",
+          "rarity": "rare",
+          "requires_attunement": ""
+        },
+        "description": "*Divotvorný předmět, vzácný*\n\nTato sedm palců vysoká solnička je vyřezaná z čistého alabastru ve tvaru sovy. Obsahuje sůl k ochucení 25 jídel. Po vyprázdnění ji nelze doplnit a stane se nemagickou. Když ty nebo jiný tvor sníte jídlo osolené touto solí, nemusíte dalších 48 hodin jíst. Poté magie vyprchá. Pokud do 1 hodiny po skončení účinku nejíte, získáte jeden stupeň únavy. Za každou další hodinu bez jídla získáte další stupeň únavy."
       },
       "alchemical-lantern": {
         "englishName": "Alchemical Lantern",
-        "name": "Alchymistická lucerna"
+        "name": "Alchymistická lucerna",
+        "original": {
+          "desc": "This hooded lantern has 3 charges and regains all expended charges daily at dusk. While the lantern is lit, you can use an action to expend 1 charge to cause the lantern to spit gooey alchemical fire at a creature you can see in the lantern's bright light. The lantern makes its attack roll with a +5 bonus. On a hit, the target takes 2d6 fire damage, and it ignites. Until a creature takes an action to douse the fire, the target takes 1d6 fire damage at the start of each of its turns.",
+          "type": "Wondrous item",
+          "rarity": "uncommon",
+          "requires_attunement": ""
+        },
+        "description": "*Divotvorný předmět, neobvyklý*\n\nTato cloněná lucerna má 3 náboje a všechny utracené obnovuje každý den za soumraku. Dokud lucerna svítí, můžeš akcí utratit 1 náboj a vystříknout lepkavý alchymistický oheň na tvora, kterého vidíš v jejím jasném světle. Lucerna provede hod na útok s bonusem +5. Při zásahu utrpí cíl 2k6 ohnivého zranění a vzplane. Na začátku každého svého tahu pak utrpí 1k6 ohnivého zranění, dokud některý tvor nepoužije akci k uhašení ohně."
       },
       "alembic-of-unmaking": {
         "englishName": "Alembic of Unmaking",
@@ -1944,11 +1972,25 @@
       },
       "amulet-of-sustaining-health": {
         "englishName": "Amulet of Sustaining Health",
-        "name": "Amulet zachování zdraví"
+        "name": "Amulet zachování zdraví",
+        "original": {
+          "desc": "While wearing this amulet, you need to eat and drink only once every 7 days. In addition, you have advantage on saving throws against effects that would cause you to suffer a level of exhaustion.",
+          "type": "Wondrous item",
+          "rarity": "uncommon",
+          "requires_attunement": "requires attunement"
+        },
+        "description": "*Divotvorný předmět, neobvyklý, vyžaduje sladění*\n\nDokud nosíš tento amulet, stačí ti jíst a pít jednou za 7 dní. Navíc máš výhodu k záchranným hodům proti účinkům, které by ti způsobily stupeň únavy."
       },
       "amulet-of-the-oracle": {
         "englishName": "Amulet of the Oracle",
-        "name": "Amulet věštce"
+        "name": "Amulet věštce",
+        "original": {
+          "desc": "When you finish a long rest while wearing this amulet, you can choose one cantrip from the cleric spell list. You can cast that cantrip from the amulet at will, using Wisdom as your spellcasting ability for it.",
+          "type": "Wondrous item",
+          "rarity": "rare",
+          "requires_attunement": "requires attunement"
+        },
+        "description": "*Divotvorný předmět, vzácný, vyžaduje sladění*\n\nKdyž dokončíš důkladný odpočinek s tímto amuletem na krku, můžeš si vybrat jeden trik ze seznamu kouzel klerika. Tento trik můžeš z amuletu libovolně sesílat. Tvou sesílací vlastností pro něj je Moudrost."
       },
       "amulet-of-whirlwinds": {
         "englishName": "Amulet of Whirlwinds",
@@ -1960,23 +2002,58 @@
       },
       "angelic-earrings": {
         "englishName": "Angelic Earrings",
-        "name": "Andělské náušnice"
+        "name": "Andělské náušnice",
+        "original": {
+          "desc": "These earrings feature platinum loops from which hang bronzed claws from a Chamrosh (see Tome of Beasts 2), freely given by the angelic hound. While wearing these earrings, you have advantage on Wisdom (Insight) checks to determine if a creature is lying or if it has an evil alignment. If you cast detect evil and good while wearing these earrings, the range increases to 60 feet, and the spell lasts 10 minutes without requiring concentration.",
+          "type": "Wondrous item",
+          "rarity": "uncommon",
+          "requires_attunement": "requires attunement"
+        },
+        "description": "*Divotvorný předmět, neobvyklý, vyžaduje sladění*\n\nTyto náušnice tvoří platinové kroužky, z nichž visí bronzově zbarvené drápy čamroše (viz Tome of Beasts 2), které andělský pes dobrovolně věnoval. Dokud je nosíš, máš výhodu k ověřením Moudrosti (Vhledu), jimiž zjišťuješ, zda tvor lže nebo má zlé přesvědčení. Pokud s náušnicemi sesíláš Najdi zlo a dobro, jeho dosah se zvýší na 60 stop a trvá 10 minut bez nutnosti soustředění."
       },
       "angry-hornet": {
         "englishName": "Angry Hornet",
-        "name": "Rozzuřený sršeň"
+        "name": "Rozzuřený sršeň",
+        "original": {
+          "desc": "This black ammunition has yellow fletching or yellow paint. When you fire this magic ammunition, it makes an angry buzzing sound, and it multiplies in flight. As it flies, 2d4 identical pieces of ammunition magically appear around it, all speeding toward your target. Roll separate attack rolls for each additional arrow or bullet. Duplicate ammunition disappears after missing or after dealing its damage. If the angry hornet and all its duplicates miss, the angry hornet remains magical and can be fired again, otherwise it is destroyed.",
+          "type": "Weapon (any ammunition)",
+          "rarity": "uncommon",
+          "requires_attunement": ""
+        },
+        "description": "*Zbraň (libovolná munice), neobvyklý*\n\nTato černá munice má žlutá pera nebo žluté zbarvení. Při vystřelení vztekle bzučí a během letu se rozmnoží: vznikne 2k4 stejných magických střel, které letí na tentýž cíl. Za každý další šíp či projektil proveď samostatný hod na útok. Kopie zmizí po minutí nebo po způsobení zranění. Pokud mine původní střela i všechny kopie, původní střela zůstane magická a lze ji znovu vystřelit. Jinak je zničena."
       },
       "animated-abacus": {
         "englishName": "Animated Abacus",
-        "name": "Oživené počitadlo"
+        "name": "Oživené počitadlo",
+        "original": {
+          "desc": "If you speak a mathematical equation within 5 feet of this abacus, it calculates the equation and displays the solution. If you are touching the abacus, it calculates only the equations you speak, ignoring all other spoken equations.",
+          "type": "Wondrous item",
+          "rarity": "common",
+          "requires_attunement": ""
+        },
+        "description": "*Divotvorný předmět, běžný*\n\nPokud do vzdálenosti 5 stop od tohoto počitadla vyslovíš matematickou rovnici, počitadlo ji vypočte a ukáže výsledek. Pokud se počitadla dotýkáš, vypočítává pouze rovnice, které vyslovíš ty, a ostatní ignoruje."
       },
       "animated-chain-mail": {
         "englishName": "Animated Chain Mail",
-        "name": "Oživená kroužková zbroj"
+        "name": "Oživená kroužková zbroj",
+        "original": {
+          "desc": "While wearing this armor, you gain a +1 bonus to AC, and you can use an action to cause parts of the armor to unravel into long, animated chains. While the chains are active, you have a climbing speed equal to your walking speed, and your AC is reduced by 2. You can use a bonus action to deactivate the chains, returning the armor to normal.",
+          "type": "Armor",
+          "rarity": "rare",
+          "requires_attunement": ""
+        },
+        "description": "*Zbroj, vzácný*\n\nDokud tuto zbroj nosíš, získáváš bonus +1 ke třídě zbroje. Akcí můžeš nechat části zbroje rozplést do dlouhých oživených řetězů. Dokud jsou řetězy aktivní, máš rychlost šplhání rovnou své rychlosti chůze, ale tvá třída zbroje se sníží o 2. Bonusovou akcí můžeš řetězy deaktivovat a vrátit zbroj do původního stavu."
       },
       "ankh-of-aten": {
         "englishName": "Ankh of Aten",
-        "name": "Atenův anch"
+        "name": "Atenův anch",
+        "original": {
+          "desc": "This golden ankh is about 12 inches long and has 5 charges. While holding the ankh by the loop, you can expend 1 charge as an action to fire a beam of brilliant sunlight in a 5-foot-wide, 60-foot-line from the end. Each creature caught in the line must make a DC 15 Constitution saving throw. On a failed save, a creature takes a5d8 radiant damage and is blinded until the end of your next turn. On a successful save, it takes half damage and isn't blinded. Undead have disadvantage on this saving throw. The ankh regains 1d4 + 1 expended charges daily at dawn.",
+          "type": "Wondrous item",
+          "rarity": "rare",
+          "requires_attunement": ""
+        },
+        "description": "*Divotvorný předmět, vzácný*\n\nTento zlatý anch je dlouhý přibližně 12 palců a má 5 nábojů. Dokud jej držíš za smyčku, můžeš akcí utratit 1 náboj a vyslat z jeho konce paprsek jasného slunečního světla v čáře dlouhé 60 stop a široké 5 stop. Každý tvor v čáře musí provést záchranný hod na Odolnost se SO 15. Při neúspěchu utrpí 5k8 zářivého zranění a je oslepen do konce tvého příštího tahu. Při úspěchu utrpí polovinu zranění a není oslepen. Nemrtví mají k této záchraně nevýhodu. Anch každý den za úsvitu obnoví 1k4 + 1 utracených nábojů."
       },
       "anointing-mace": {
         "englishName": "Anointing Mace",
@@ -1984,19 +2061,47 @@
       },
       "apron-of-the-eager-artisan": {
         "englishName": "Apron of the Eager Artisan",
-        "name": "Zástěra horlivého řemeslníka"
+        "name": "Zástěra horlivého řemeslníka",
+        "original": {
+          "desc": "Created by dwarven artisans, this leather apron has narrow pockets, which hold one type of artisan's tools. If you are wearing the apron and you spend 10 minutes contemplating your next crafting project, the tools in the apron magically change to match those best suited to the task. Once you have changed the tools available, you can't change them again until the next dawn.",
+          "type": "Wondrous item",
+          "rarity": "common",
+          "requires_attunement": ""
+        },
+        "description": "*Divotvorný předmět, běžný*\n\nTato kožená zástěra vytvořená trpasličími řemeslníky má úzké kapsy s jedním druhem řemeslnického náčiní. Pokud zástěru nosíš a strávíš 10 minut přemýšlením nad dalším výrobkem, nástroje v kapsách se magicky změní na takové, které jsou pro daný úkol nejvhodnější. Po změně nástrojů je nemůžeš změnit znovu až do příštího úsvitu."
       },
       "arcanaphage-stone": {
         "englishName": "Arcanaphage Stone",
-        "name": "Kámen požírače magie"
+        "name": "Kámen požírače magie",
+        "original": {
+          "desc": "Similar to the rocks found in a bird's gizzard, this smooth stone helps an Arcanaphage (see Creature Codex) digest magic. While you hold or wear the stone, you have advantage on saving throws against spells.",
+          "type": "Wondrous item",
+          "rarity": "rare",
+          "requires_attunement": "requires attunement"
+        },
+        "description": "*Divotvorný předmět, vzácný, vyžaduje sladění*\n\nTento hladký kámen podobný kamínkům z ptačího žaludku pomáhá arkanofágovi (viz Creature Codex) trávit magii. Dokud kámen držíš nebo nosíš, máš výhodu k záchranným hodům proti kouzlům."
       },
       "armor-of-cushioning": {
         "englishName": "Armor of Cushioning",
-        "name": "Tlumená zbroj"
+        "name": "Tlumená zbroj",
+        "original": {
+          "desc": "While wearing this armor, you have resistance to bludgeoning damage. In addition, you can use a reaction when you fall to reduce any falling damage you take by an amount equal to twice your level.",
+          "type": "Armor",
+          "rarity": "uncommon",
+          "requires_attunement": ""
+        },
+        "description": "*Zbroj, neobvyklý*\n\nDokud tuto zbroj nosíš, máš odolnost proti drtivému zranění. Když padáš, můžeš reakcí snížit zranění pádem o hodnotu rovnající se dvojnásobku své úrovně."
       },
       "armor-of-spite": {
         "englishName": "Armor of Spite",
-        "name": "Zbroj zášti"
+        "name": "Zbroj zášti",
+        "original": {
+          "desc": "Unholy glyphs engraved on this black iron magic armor burn with a faint, orange light. While wearing the armor, you gain a +1 bonus to your AC. At the start of your turn, you can choose to allow attack rolls against you to have advantage. If you do, the glyphs shed dim light in a 5-foot radius, and you can use a reaction when a creature hits you with an attack to force the attacker to take necrotic damage equal to twice your proficiency bonus.",
+          "type": "Armor",
+          "rarity": "rare",
+          "requires_attunement": ""
+        },
+        "description": "*Zbroj, vzácný*\n\nBezbožné glyfy na této černé železné magické zbroji slabě oranžově žhnou. Dokud zbroj nosíš, získáváš bonus +1 ke třídě zbroje. Na začátku svého tahu můžeš zvolit, že proti tobě budou mít útočníci výhodu k hodům na útok. Pokud tak učiníš, glyfy vyzařují slabé světlo do poloměru 5 stop a při zásahu útokem můžeš reakcí způsobit útočníkovi nekrotické zranění rovné dvojnásobku svého zdatnostního bonusu."
       },
       "armor-of-the-leaf": {
         "englishName": "Armor of the Leaf",
@@ -2004,7 +2109,14 @@
       },
       "armor-of-the-ngobou": {
         "englishName": "Armor of the Ngobou",
-        "name": "Zbroj z ngobou"
+        "name": "Zbroj z ngobou",
+        "original": {
+          "desc": "This thick and rough armor is made from the hide of a Ngobou (see Tome of Beasts), an aggressive, ox-sized dinosaur known to threaten elephants of the plains. The horns and tusks of the dinosaur are worked into the armor as spiked shoulder pads. While wearing this armor, you gain a +1 bonus to AC, and you have a magical sense for elephants. You automatically detect if an elephant has passed within 90 feet of your location within the last 24 hours, and you have advantage on any Wisdom (Perception) or Wisdom (Survival) checks you make to find elephants.",
+          "type": "Armor",
+          "rarity": "rare",
+          "requires_attunement": "requires attunement"
+        },
+        "description": "*Zbroj, vzácný, vyžaduje sladění*\n\nTato silná a hrubá zbroj je vyrobená z kůže ngobou (viz Tome of Beasts), agresivního dinosaura velikosti vola, který ohrožuje slony žijící na pláních. Jeho rohy a kly tvoří ostnaté nárameníky. Dokud zbroj nosíš, získáváš bonus +1 ke třídě zbroje a magický cit pro slony. Automaticky poznáš, jestli během posledních 24 hodin prošel slon do 90 stop od tvého současného místa, a máš výhodu k ověřením Moudrosti (Vnímání) či Moudrosti (Přežití), kterými slony hledáš."
       },
       "armor-of-warding": {
         "englishName": "Armor of Warding",
@@ -2016,7 +2128,14 @@
       },
       "arrow-of-unpleasant-herbs": {
         "englishName": "Arrow of Unpleasant Herbs",
-        "name": "Šíp nepříjemných bylin"
+        "name": "Šíp nepříjemných bylin",
+        "original": {
+          "desc": "This arrow's tip is filled with magically preserved, poisonous herbs. When a creature takes damage from the arrow, the arrowhead breaks, releasing the herbs. The creature must succeed on a DC 15 Constitution saving throw or be incapacitated until the end of its next turn as it retches and reels from the poison.",
+          "type": "Ammunition",
+          "rarity": "uncommon",
+          "requires_attunement": ""
+        },
+        "description": "*Munice, neobvyklý*\n\nHrot tohoto šípu je naplněn magicky konzervovanými jedovatými bylinami. Když šíp způsobí tvorovi zranění, hrot se rozbije a byliny se uvolní. Tvor musí uspět v záchranném hodu na Odolnost se SO 15, jinak je do konce svého příštího tahu neschopný, neboť se dávivě svíjí a potácí působením jedu."
       },
       "ash-of-the-ebon-birch": {
         "englishName": "Ash of the Ebon Birch",
@@ -2028,7 +2147,14 @@
       },
       "ashwood-wand": {
         "englishName": "Ashwood Wand",
-        "name": "Hůlka z jasanového dřeva"
+        "name": "Hůlka z jasanového dřeva",
+        "original": {
+          "desc": "You can use this wand as a spellcasting focus. The wand has 3 charges and regains all expended charges daily at dawn. When you cast a spell that deals fire damage while using this wand as your spellcasting focus, the spell deals 1 extra fire damage. If you expend 1 of the wand's charges during the casting, the spell deals 1d4 + 1 extra fire damage instead.",
+          "type": "Wand",
+          "rarity": "common",
+          "requires_attunement": "requires attunement"
+        },
+        "description": "*Hůlka, běžný, vyžaduje sladění*\n\nTuto hůlku můžeš používat jako sesílací ohnisko. Má 3 náboje a všechny utracené obnovuje každý den za úsvitu. Když ji používáš jako ohnisko při sesílání kouzla, které způsobuje ohnivé zranění, kouzlo způsobí o 1 bod ohnivého zranění více. Pokud při seslání utratíš 1 náboj, zvýší se ohnivé zranění namísto toho o 1k4 + 1."
       },
       "asps-kiss": {
         "englishName": "Asp's Kiss",
@@ -2036,19 +2162,47 @@
       },
       "aurochs-bracers": {
         "englishName": "Aurochs Bracers",
-        "name": "Nátepníky pratura"
+        "name": "Nátepníky pratura",
+        "original": {
+          "desc": "These bracers have the graven image of a bull's head on them. Your Strength score is 19 while you wear these bracers. It has no effect on you if your Strength is already 19 or higher. In addition, when you use the Attack action to shove a creature, you have advantage on the Strength (Athletics) check.",
+          "type": "Wondrous item",
+          "rarity": "uncommon",
+          "requires_attunement": "requires attunement"
+        },
+        "description": "*Divotvorný předmět, neobvyklý, vyžaduje sladění*\n\nTyto nátepníky nesou vyrytý obraz býčí hlavy. Dokud je nosíš, tvá Síla je 19; pokud již máš Sílu 19 nebo vyšší, nemají na ni vliv. Když navíc akcí Útok odstrkuješ tvora, máš výhodu k ověření Síly (Atletiky)."
       },
       "axe-of-the-ancients": {
         "englishName": "Axe of the Ancients",
-        "name": "Sekera pradávných"
+        "name": "Sekera pradávných",
+        "original": {
+          "desc": "You gain a +1 bonus to attack and damage rolls made with this magic weapon. When you draw this weapon, you can use a bonus action to cast the thaumaturgy spell from it. You can have only one of the spell's effects active at a time when you cast it in this way.",
+          "type": "Weapon",
+          "rarity": "uncommon",
+          "requires_attunement": "requires attunement"
+        },
+        "description": "*Zbraň, neobvyklý, vyžaduje sladění*\n\nK hodům na útok a zranění touto magickou zbraní získáváš bonus +1. Když ji tasíš, můžeš bonusovou akcí seslat z ní trik Divotvůrství. Takto můžeš mít současně aktivní vždy pouze jeden účinek tohoto triku."
       },
       "baba-yagas-cinderskull": {
         "englishName": "Baba Yaga's Cinderskull",
-        "name": "Popelavá lebka Baby Jagy"
+        "name": "Popelavá lebka Baby Jagy",
+        "original": {
+          "desc": "Warm to the touch, this white, dry skull radiates dim, orange light from its eye sockets in a 30-foot radius. While attuned to the skull, you only require half of the daily food and water a creature of your size and type normally requires. In addition, you can withstand extreme temperatures indefinitely, and you automatically succeed on saving throws against extreme temperatures.",
+          "type": "Wondrous item",
+          "rarity": "rare",
+          "requires_attunement": "requires attunement"
+        },
+        "description": "*Divotvorný předmět, vzácný, vyžaduje sladění*\n\nTato suchá bílá lebka je teplá na dotek a z očních důlků vyzařuje slabé oranžové světlo do poloměru 30 stop. Dokud jsi s ní sladěný, potřebuješ jen polovinu obvyklého denního množství jídla a vody pro tvou velikost a druh. Navíc dokážeš neomezeně dlouho snášet extrémní teploty a automaticky uspěješ v záchranných hodech proti jejich účinkům."
       },
       "badger-hide": {
         "englishName": "Badger Hide",
-        "name": "Jezevčí kůže"
+        "name": "Jezevčí kůže",
+        "original": {
+          "desc": "While wearing this hairy, black and white armor, you have a burrowing speed of 20 feet, and you have advantage on Wisdom (Perception) checks that rely on smell.",
+          "type": "Armor",
+          "rarity": "uncommon",
+          "requires_attunement": ""
+        },
+        "description": "*Zbroj, neobvyklý*\n\nDokud nosíš tuto chlupatou černobílou zbroj, získáváš rychlost hrabání 20 stop a máš výhodu k ověřením Moudrosti (Vnímání), která závisí na čichu."
       },
       "bag-of-bramble-beasts": {
         "englishName": "Bag of Bramble Beasts",
@@ -2056,7 +2210,14 @@
       },
       "bag-of-traps": {
         "englishName": "Bag of Traps",
-        "name": "Vak pastí"
+        "name": "Vak pastí",
+        "original": {
+          "desc": "Anyone reaching into this apparently empty bag feels a small coin, which resembles no known currency. Removing the coin and placing or tossing it up to 20 feet creates a random mechanical trap that remains for 10 minutes or until discharged or disarmed, whereupon it disappears. The coin returns to the bag only after the trap disappears. You may draw up to 10 traps from the bag each week. The GM has the statistics for mechanical traps.",
+          "type": "Wondrous item",
+          "rarity": "rare",
+          "requires_attunement": ""
+        },
+        "description": "*Divotvorný předmět, vzácný*\n\nKaždý, kdo sáhne do této zdánlivě prázdné brašny, nahmatá malou minci nepřipomínající žádnou známou měnu. Když minci vytáhneš a položíš nebo hodíš do vzdálenosti až 20 stop, vytvoří se náhodná mechanická past. Ta zůstane 10 minut nebo dokud se nespustí či není zneškodněna; pak zmizí. Mince se do brašny vrátí teprve po zmizení pasti. Každý týden můžeš z brašny vyjmout nejvýše 10 pastí. Statistiky mechanických pastí má PJ."
       },
       "bagpipes-of-battle": {
         "englishName": "Bagpipes of Battle",
@@ -2064,27 +2225,69 @@
       },
       "baleful-wardrums": {
         "englishName": "Baleful Wardrums",
-        "name": "Zlověstné válečné bubny"
+        "name": "Zlověstné válečné bubny",
+        "original": {
+          "desc": "You must be proficient with percussion instruments to use these drums. The drums have 3 charges. You can use an action to play them and expend 1 charge to create a baleful rumble. Each creature of your choice within 60 feet of you that hears you play must succeed on a DC 13 Wisdom saving throw or have disadvantage on its next weapon or spell attack roll. A creature that succeeds on its saving throw is immune to the effect of these drums for 24 hours. The drum regains 1d3 expended charges daily at dawn.",
+          "type": "Wondrous item",
+          "rarity": "uncommon",
+          "requires_attunement": "requires attunement"
+        },
+        "description": "*Divotvorný předmět, neobvyklý, vyžaduje sladění*\n\nPro použití těchto bubnů musíš být zdatný s bicími hudebními nástroji. Bubny mají 3 náboje. Akcí na ně můžeš zahrát a utratit 1 náboj, čímž vytvoříš zlověstné dunění. Každý tebou zvolený tvor do 60 stop, který hru slyší, musí uspět v záchranném hodu na Moudrost se SO 13, jinak má nevýhodu ke svému příštímu hodu na útok zbraní či kouzlem. Tvor, který uspěje, je proti účinku bubnů imunní 24 hodin. Bubny každý den za úsvitu obnoví 1k3 utracených nábojů."
       },
       "band-of-iron-thorns": {
         "englishName": "Band of Iron Thorns",
-        "name": "Obruč železných trnů"
+        "name": "Obruč železných trnů",
+        "original": {
+          "desc": "This black iron armband bristles with long, needle-sharp iron thorns. When you attune to the armband, the thorns bite into your flesh. The armband doesn't function unless the thorns pierce your skin and are able to reach your blood. While wearing the band, after you roll a saving throw but before the GM reveals if the roll is a success or failure, you can use your reaction to expend one Hit Die. Roll the die, and add the number rolled to your saving throw.",
+          "type": "Wondrous item",
+          "rarity": "rare",
+          "requires_attunement": "requires attunement"
+        },
+        "description": "*Divotvorný předmět, vzácný, vyžaduje sladění*\n\nTento černý železný náramek je posetý dlouhými, ostrými železnými trny. Když se s ním sladíš, trny se ti zaryjí do těla. Nefunguje, pokud trny nepronikají kůží až ke krvi. Dokud náramek nosíš, můžeš po provedení záchranného hodu, ale dříve než PJ oznámí jeho úspěch či neúspěch, reakcí utratit jednu kostku životů. Hoď jí a výsledek přičti ke svému záchrannému hodu."
       },
       "band-of-restraint": {
         "englishName": "Band of Restraint",
-        "name": "Poutací obruč"
+        "name": "Poutací obruč",
+        "original": {
+          "desc": "These simple leather straps are nearly unbreakable when used as restraints. If you spend 1 minute tying a Small or Medium creature's limbs with these straps, the creature is restrained (escape DC 17) until it escapes or until you speak a command word to release the straps. While restrained by these straps, the target has disadvantage on Strength checks.",
+          "type": "Wondrous item",
+          "rarity": "uncommon",
+          "requires_attunement": ""
+        },
+        "description": "*Divotvorný předmět, neobvyklý*\n\nTyto obyčejně vypadající kožené řemínky jsou při použití ke spoutání téměř nezničitelné. Pokud strávíš 1 minutu svazováním končetin Malého nebo Středního tvora, bude zadržený (SO úniku 17), dokud neunikne nebo nevyslovíš povelové slovo, které řemínky uvolní. Takto spoutaný tvor má nevýhodu k ověřením Síly."
       },
       "bandana-of-brachiation": {
         "englishName": "Bandana of Brachiation",
-        "name": "Šátek šplhání"
+        "name": "Šátek šplhání",
+        "original": {
+          "desc": "While wearing this bright yellow bandana, you have a climbing speed of 30 feet, and you gain a +5 bonus to Strength (Athletics) and Dexterity (Acrobatics) checks to jump over obstacles, to land on your feet, and to land safely on a breakable or unstable surface, such as a tree branch or rotting wooden rafters.",
+          "type": "Wondrous item",
+          "rarity": "uncommon",
+          "requires_attunement": "requires attunement"
+        },
+        "description": "*Divotvorný předmět, neobvyklý, vyžaduje sladění*\n\nDokud nosíš tento jasně žlutý šátek, máš rychlost šplhání 30 stop a bonus +5 k ověřením Síly (Atletiky) a Obratnosti (Akrobacie), když přeskakuješ překážky, dopadáš na nohy nebo bezpečně dosedáš na křehký či nestabilní povrch, například větev nebo zpráchnivělý krov."
       },
       "bandana-of-bravado": {
         "englishName": "Bandana of Bravado",
-        "name": "Šátek chvástavosti"
+        "name": "Šátek chvástavosti",
+        "original": {
+          "desc": "While wearing this bright red bandana, you have advantage on Charisma (Intimidation) checks and on saving throws against being frightened.",
+          "type": "Wondrous item",
+          "rarity": "uncommon",
+          "requires_attunement": "requires attunement"
+        },
+        "description": "*Divotvorný předmět, neobvyklý, vyžaduje sladění*\n\nDokud nosíš tento jasně červený šátek, máš výhodu k ověřením Charismatu (Zastrašování) a k záchranným hodům proti vystrašení."
       },
       "banner-of-the-fortunate": {
         "englishName": "Banner of the Fortunate",
-        "name": "Prapor šťastlivců"
+        "name": "Prapor šťastlivců",
+        "original": {
+          "desc": "While holding this banner aloft with one hand, you can use an action to inspire creatures nearby. Each creature of your choice within 60 feet of you that can see the banner has advantage on its next attack roll. The banner can't be used this way again until the next dawn.",
+          "type": "Wondrous item",
+          "rarity": "uncommon",
+          "requires_attunement": "requires attunement"
+        },
+        "description": "*Divotvorný předmět, neobvyklý, vyžaduje sladění*\n\nDokud jednou rukou držíš tuto korouhev vztyčenou, můžeš akcí povzbudit blízké tvory. Každý tebou zvolený tvor do 60 stop, který korouhev vidí, získá výhodu ke svému příštímu hodu na útok. Tuto schopnost korouhve lze znovu použít až po příštím úsvitu."
       },
       "battle-standard-of-passage": {
         "englishName": "Battle Standard of Passage",
@@ -2096,15 +2299,36 @@
       },
       "bear-paws": {
         "englishName": "Bear Paws",
-        "name": "Medvědí tlapy"
+        "name": "Medvědí tlapy",
+        "original": {
+          "desc": "These hand wraps are made of flexible beeswax that ooze sticky honey. While wearing these gloves, you have advantage on grapple checks. In addition, creatures grappled by you have disadvantage on any checks made to escape your grapple.",
+          "type": "Wondrous item",
+          "rarity": "uncommon",
+          "requires_attunement": "requires attunement"
+        },
+        "description": "*Divotvorný předmět, neobvyklý, vyžaduje sladění*\n\nTyto návleky na ruce jsou vyrobeny z poddajného včelího vosku, z něhož prosakuje lepkavý med. Dokud je nosíš, máš výhodu k ověřením při uchvacování. Tvorové, které jsi uchvátil, mají navíc nevýhodu k ověřením při pokusu o únik z tvého uchvácení."
       },
       "bed-of-spikes": {
         "englishName": "Bed of Spikes",
-        "name": "Lože hrotů"
+        "name": "Lože hrotů",
+        "original": {
+          "desc": "This wide, wooden plank holds hundreds of two-inch long needle-like spikes. When you finish a long rest on the bed, you have resistance to piercing damage and advantage on Constitution saving throws to maintain your concentration on spells you cast for 8 hours or until you finish a short or long rest. Once used, the bed can't be used again until the next dusk.",
+          "type": "Wondrous item",
+          "rarity": "rare",
+          "requires_attunement": ""
+        },
+        "description": "*Divotvorný předmět, vzácný*\n\nTato široká dřevěná deska je osázena stovkami jehlovitých ostnů dlouhých dva palce. Když na ní dokončíš důkladný odpočinek, máš po dobu 8 hodin nebo do dokončení dalšího krátkého či důkladného odpočinku odolnost proti bodnému zranění a výhodu k záchranným hodům na Odolnost pro udržení soustředění na kouzla, která sesíláš. Po použití lze účinek znovu využít až za příštího soumraku."
       },
       "belt-of-the-wilds": {
         "englishName": "Belt of the Wilds",
-        "name": "Opasek divočiny"
+        "name": "Opasek divočiny",
+        "original": {
+          "desc": "This thin cord is made from animal sinew. While wearing the cord, you have advantage on Wisdom (Survival) checks to follow tracks left by beasts, giants, and humanoids. While wearing the belt, you can use a bonus action to speak the belt's command word. If you do, you leave tracks of the animal of your choice instead of your regular tracks. These tracks can be those of a Large or smaller beast with a CR of 1 or lower, such as a pony, rabbit, or lion. If you repeat the command word, you end the effect.",
+          "type": "Wondrous item",
+          "rarity": "uncommon",
+          "requires_attunement": "requires attunement"
+        },
+        "description": "*Divotvorný předmět, neobvyklý, vyžaduje sladění*\n\nTento tenký opasek je spleten ze zvířecích šlach. Dokud ho nosíš, máš výhodu k ověřením Moudrosti (Přežití) při sledování stop zvířat, obrů a humanoidů. Bonusovou akcí můžeš vyslovit povelové slovo opasku a zanechávat místo svých stop stopy vybraného zvířete. Může jít o zvíře nejvýše Velké velikosti s nebezpečností nejvýše 1, například poníka, králíka nebo lva. Opětovným vyslovením povelového slova účinek ukončíš."
       },
       "berserkers-kilt": {
         "englishName": "Berserker's Kilt",
@@ -2124,7 +2348,14 @@
       },
       "black-and-white-daggers": {
         "englishName": "Black and White Daggers",
-        "name": "Černá a bílá dýka"
+        "name": "Černá a bílá dýka",
+        "original": {
+          "desc": "These matched daggers are identical except for the stones set in their pommels. One pommel is chalcedony (opaque white), the other is obsidian (opaque black). You gain a +1 bonus to attack and damage rolls with both magic weapons. The bonus increases to +3 when you use the white dagger to attack a monstrosity, and it increases to +3 when you use the black dagger to attack an undead. When you hit a monstrosity or undead with both daggers in the same turn, that creature takes an extra 1d6 piercing damage from the second attack.",
+          "type": "Weapon",
+          "rarity": "rare",
+          "requires_attunement": "requires attunement"
+        },
+        "description": "*Zbraň, vzácný, vyžaduje sladění*\n\nTyto dvě dýky vypadají stejně až na kameny v hlavicích rukojetí. Jedna hlavice je z neprůsvitného bílého chalcedonu, druhá z neprůsvitného černého obsidiánu. K hodům na útok a zranění oběma magickými zbraněmi získáváš bonus +1. Při útoku bílou dýkou na zrůdu se bonus zvýší na +3; při útoku černou dýkou na nemrtvého se zvýší na +3. Pokud v témže tahu zasáhneš zrůdu nebo nemrtvého oběma dýkami, cíl utrpí z druhého útoku navíc 1k6 bodného zranění."
       },
       "black-dragon-oil": {
         "englishName": "Black Dragon Oil",
@@ -2132,15 +2363,36 @@
       },
       "black-phial": {
         "englishName": "Black Phial",
-        "name": "Černá lahvička"
+        "name": "Černá lahvička",
+        "original": {
+          "desc": "This black stone phial has a tightly fitting stopper and 3 charges. As an action, you can fill the phial with blood taken from a living, or recently deceased (dead no longer than 1 minute), humanoid and expend 1 charge. When you do so, the black phial transforms the blood into a potion of greater healing. A creature who drinks this potion must succeed on a DC 12 Constitution saving throw or be poisoned for 1 hour. The phial regains 1d3 expended charges daily at midnight. If you expend the phial's last charge, roll a d20: 1d20. On a 1, the phial crumbles into dust and is destroyed.",
+          "type": "Wondrous item",
+          "rarity": "uncommon",
+          "requires_attunement": ""
+        },
+        "description": "*Divotvorný předmět, neobvyklý*\n\nTato černá kamenná lahvička má těsnicí zátku a 3 náboje. Akcí ji můžeš naplnit krví živého humanoida nebo humanoida mrtvého nejdéle 1 minutu a utratit 1 náboj. Krev se promění v lektvar většího léčení. Tvor, který lektvar vypije, musí uspět v záchranném hodu na Odolnost se SO 12, jinak je na 1 hodinu otrávený. Lahvička každý den o půlnoci obnoví 1k3 utracených nábojů. Když utratíš poslední náboj, hoď k20. Padne-li 1, lahvička se rozpadne na prach a je zničena."
       },
       "blackguards-blade": {
         "englishName": "Blackguard's Blade",
-        "name": "Čepel černého rytíře"
+        "name": "Čepel černého rytíře",
+        "original": {
+          "desc": "You have advantage on attack rolls made with this weapon against a target if another enemy of the target is within 5 feet of it, and it has no allies within 5 feet of it.",
+          "type": "Weapon",
+          "rarity": "common",
+          "requires_attunement": ""
+        },
+        "description": "*Zbraň, běžný*\n\nS touto zbraní máš výhodu k hodům na útok proti cíli, pokud se do 5 stop od něj nachází další nepřítel tohoto cíle a zároveň do 5 stop od něj není žádný jeho spojenec."
       },
       "blacktooth": {
         "englishName": "Blacktooth",
-        "name": "Černozub"
+        "name": "Černozub",
+        "original": {
+          "desc": "This black ivory, rune-carved wand has 7 charges. It regains 1d6 + 1 expended charges daily at dawn. While holding it, you can use an action to expend 1 or more of its charges to cast the guiding bolt spell from it, using an attack bonus of +7. For 1 charge, you cast the 1st-level version of the spell. You can increase the spell slot level by one for each additional charge you expend.",
+          "type": "Wand",
+          "rarity": "legendary",
+          "requires_attunement": ""
+        },
+        "description": "*Hůlka, legendární*\n\nTato černá hůlka ze slonoviny, zdobená runami, má 7 nábojů. Každý den za úsvitu obnoví 1k6 + 1 utracených nábojů. Dokud ji držíš, můžeš akcí utratit jeden nebo více nábojů a seslat z ní kouzlo Naváděcí střela s bonusem +7 k hodu na útok. Za 1 náboj sešleš verzi kouzla 1. úrovně; za každý další utracený náboj se úroveň seslání zvýší o jednu."
       },
       "blade-of-petals": {
         "englishName": "Blade of Petals",
@@ -2268,7 +2520,14 @@
       },
       "boots-of-the-swift-striker": {
         "englishName": "Boots of the Swift Striker",
-        "name": "Boty rychlého útočníka"
+        "name": "Boty rychlého útočníka",
+        "original": {
+          "desc": "While you wear these boots, your walking speed increases by 10 feet. In addition, when you take the Dash action while wearing these boots, you can make a single weapon attack at the end of your movement. You can't continue moving after making this attack.",
+          "type": "Wondrous item",
+          "rarity": "rare",
+          "requires_attunement": "requires attunement"
+        },
+        "description": "*Divotvorný předmět, vzácný, vyžaduje sladění*\n\nDokud tyto boty nosíš, zvyšuje se tvá rychlost chůze o 10 stop. Navíc můžeš při provedení akce Sprint na konci svého pohybu provést jeden útok zbraní. Po tomto útoku již nesmíš pokračovat v pohybu."
       },
       "bottled-boat": {
         "englishName": "Bottled Boat",
@@ -2280,7 +2539,14 @@
       },
       "bow-of-accuracy": {
         "englishName": "Bow of Accuracy",
-        "name": "Luk přesnosti"
+        "name": "Luk přesnosti",
+        "original": {
+          "desc": "The normal range of this bow is doubled, but its long range remains the same.",
+          "type": "Weapon",
+          "rarity": "common",
+          "requires_attunement": ""
+        },
+        "description": "*Zbraň, běžný*\n\nBěžný dostřel tohoto luku je dvojnásobný, jeho dlouhý dostřel však zůstává beze změny."
       },
       "box-of-secrets": {
         "englishName": "Box of Secrets",
@@ -2320,7 +2586,14 @@
       },
       "brazen-bulwark": {
         "englishName": "Brazen Bulwark",
-        "name": "Mosazný val"
+        "name": "Mosazný val",
+        "original": {
+          "desc": "This rectangular shield is plated with polished brass and resembles a crenelated tower. While wielding this shield, you gain a +1 bonus to AC. This bonus is in addition to the shield's normal bonus to AC.",
+          "type": "Armor",
+          "rarity": "rare",
+          "requires_attunement": ""
+        },
+        "description": "*Zbroj, vzácný*\n\nTento obdélníkový štít je pokryt leštěnou mosazí a připomíná věž s cimbuřím. Dokud jej používáš, získáváš bonus +1 ke třídě zbroje. Tento bonus se přičítá navíc k obvyklému bonusu štítu."
       },
       "breaker-lance": {
         "englishName": "Breaker Lance",
@@ -2328,7 +2601,14 @@
       },
       "breathing-reed": {
         "englishName": "Breathing Reed",
-        "name": "Dýchací rákos"
+        "name": "Dýchací rákos",
+        "original": {
+          "desc": "This tiny river reed segment is cool to the touch. If you chew the reed while underwater, it provides you with enough air to breathe for up to 10 minutes. At the end of the duration, the reed loses its magic and can be harmlessly swallowed or spit out.",
+          "type": "Wondrous item",
+          "rarity": "common",
+          "requires_attunement": ""
+        },
+        "description": "*Divotvorný předmět, běžný*\n\nTento drobný kousek říčního rákosu je na dotek chladný. Pokud jej žvýkáš pod vodou, poskytuje ti dostatek vzduchu k dýchání až na 10 minut. Po uplynutí této doby ztratí magii a můžeš jej bezpečně spolknout nebo vyplivnout."
       },
       "briarthorn-bracers": {
         "englishName": "Briarthorn Bracers",
@@ -2340,7 +2620,14 @@
       },
       "broom-of-sweeping": {
         "englishName": "Broom of Sweeping",
-        "name": "Smetací koště"
+        "name": "Smetací koště",
+        "original": {
+          "desc": "You can use an action to speak the broom's command word and give it short instructions consisting of a few words, such as “sweep the floor” or “dust the cabinets.” The broom can clean up to 5 cubic feet each minute and continues cleaning until you use another action to deactivate it. The broom can't climb barriers higher than 5 feet and can't open doors.",
+          "type": "Wondrous item",
+          "rarity": "common",
+          "requires_attunement": ""
+        },
+        "description": "*Divotvorný předmět, běžný*\n\nAkcí můžeš vyslovit povelové slovo koštěte a dát mu krátký pokyn o několika slovech, například „zameť podlahu“ nebo „opraš skříně“. Koště vyčistí až 5 krychlových stop prostoru za minutu a pokračuje v úklidu, dokud ho další akcí nevypneš. Nedokáže překonat překážku vyšší než 5 stop ani otevřít dveře."
       },
       "brotherhood-of-fezzes": {
         "englishName": "Brotherhood of Fezzes",
@@ -2376,7 +2663,14 @@
       },
       "candied-axe": {
         "englishName": "Candied Axe",
-        "name": "Medová sekera"
+        "name": "Medová sekera",
+        "original": {
+          "desc": "This battleaxe bears a golden head spun from crystalized honey. Its wooden handle is carved with reliefs of bees. You gain a +2 bonus to attack and damage rolls made with this magic weapon.",
+          "type": "Weapon",
+          "rarity": "very rare",
+          "requires_attunement": "requires attunement"
+        },
+        "description": "*Zbraň, velmi vzácný, vyžaduje sladění*\n\nTato válečná sekera má zlatavou hlavici z krystalizovaného medu a dřevěnou násadu zdobenou řezbami včel. K hodům na útok a na zranění touto magickou zbraní získáváš bonus +2."
       },
       "candle-of-communion": {
         "englishName": "Candle of Communion",
@@ -2408,7 +2702,14 @@
       },
       "case-of-preservation": {
         "englishName": "Case of Preservation",
-        "name": "Schránka uchování"
+        "name": "Schránka uchování",
+        "original": {
+          "desc": "This item appears to be a standard map or scroll case fashioned of well-oiled leather. You can store up to ten rolled-up sheets of paper or five rolled-up sheets of parchment in this container. While ensconced in the case, the contents are protected from damage caused by fire, exposure to water, age, or vermin.",
+          "type": "Wondrous item",
+          "rarity": "common",
+          "requires_attunement": ""
+        },
+        "description": "*Divotvorný předmět, běžný*\n\nTento předmět vypadá jako obyčejné pouzdro na mapy či svitky z dobře promazané kůže. Můžeš do něj uložit až 10 svinutých listů papíru nebo 5 svinutých listů pergamenu. Dokud jsou uvnitř, jsou chráněny před poškozením ohněm, vodou, stářím a škůdci."
       },
       "cataloguing-book": {
         "englishName": "Cataloguing Book",
@@ -2612,7 +2913,14 @@
       },
       "companions-broth": {
         "englishName": "Companion's Broth",
-        "name": "Vývar pro společníka"
+        "name": "Vývar pro společníka",
+        "original": {
+          "desc": "Developed by wizards with an interest in the culinary arts, this simple broth mends the wounds of companion animals and familiars. When a beast or familiar consumes this broth, it regains 2d4 + 2 hit points. Alternatively, you can mix a flower petal into the broth, and the beast or familiar gains 2d4 temporary hit points for 8 hours instead.",
+          "type": "Potion",
+          "rarity": "common",
+          "requires_attunement": ""
+        },
+        "description": "*Lektvar, běžný*\n\nTento jednoduchý vývar, vytvořený kouzelníky se zálibou ve vaření, hojí rány zvířecích společníků a familiárů. Když ho vypije zvíře nebo familiár, obnoví si 2k4 + 2 životů. Místo toho můžeš do vývaru přimíchat okvětní lístek; v tom případě zvíře nebo familiár získá 2k4 dočasných životů na 8 hodin."
       },
       "constant-dagger": {
         "englishName": "Constant Dagger",
@@ -2632,7 +2940,14 @@
       },
       "corpsehunters-medallion": {
         "englishName": "Corpsehunter's Medallion",
-        "name": "Medailon lovce mrtvol"
+        "name": "Medailon lovce mrtvol",
+        "original": {
+          "desc": "This amulet is made from the skulls of grave rats or from scrimshawed bones of the ignoble dead. While wearing it, you have resistance to necrotic damage.",
+          "type": "Wondrous item",
+          "rarity": "rare",
+          "requires_attunement": ""
+        },
+        "description": "*Divotvorný předmět, vzácný*\n\nTento amulet je vyroben z lebek hřbitovních krys nebo z vyřezávaných kostí mrtvých nevalného původu. Dokud ho nosíš, máš odolnost proti nekrotickému zranění."
       },
       "countermelody-crystals": {
         "englishName": "Countermelody Crystals",
@@ -2664,11 +2979,25 @@
       },
       "crocodile-armor": {
         "englishName": "Crocodile Armor",
-        "name": "Krokodýlí zbroj"
+        "name": "Krokodýlí zbroj",
+        "original": {
+          "desc": "While wearing this armor fashioned from crocodile skin, you gain a +1 bonus to AC. In addition, you can hold your breath for 15 minutes, and you have a swimming speed equal to your walking speed.",
+          "type": "Armor",
+          "rarity": "rare",
+          "requires_attunement": ""
+        },
+        "description": "*Zbroj, vzácný*\n\nDokud nosíš tuto zbroj z krokodýlí kůže, získáváš bonus +1 ke třídě zbroje. Navíc dokážeš zadržet dech na 15 minut a tvá rychlost plavání se rovná rychlosti chůze."
       },
       "crook-of-the-flock": {
         "englishName": "Crook of the Flock",
-        "name": "Pastýřská berla"
+        "name": "Pastýřská berla",
+        "original": {
+          "desc": "This plain crook is made of smooth, worn lotus wood and is warm to the touch.",
+          "type": "Rod",
+          "rarity": "very rare",
+          "requires_attunement": "requires attunement"
+        },
+        "description": "*Žezlo, velmi vzácný, vyžaduje sladění*\n\nTato jednoduchá pastýřská berla je z hladkého, opotřebeného lotosového dřeva a na dotek hřeje."
       },
       "crown-of-the-pharaoh": {
         "englishName": "Crown of the Pharaoh",
@@ -2724,7 +3053,14 @@
       },
       "deserters-boots": {
         "englishName": "Deserter's Boots",
-        "name": "Boty zběha"
+        "name": "Boty zběha",
+        "original": {
+          "desc": "While you wear these boots, your walking speed increases by 10 feet, and you gain a +1 bonus to Dexterity saving throws.",
+          "type": "Wondrous item",
+          "rarity": "rare",
+          "requires_attunement": "requires attunement"
+        },
+        "description": "*Divotvorný předmět, vzácný, vyžaduje sladění*\n\nDokud tyto boty nosíš, zvyšuje se tvá rychlost chůze o 10 stop a získáváš bonus +1 k záchranným hodům na Obratnost."
       },
       "devil-shark-mask": {
         "englishName": "Devil Shark Mask",

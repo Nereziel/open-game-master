@@ -150,3 +150,16 @@ describe("Reviewed external spell texts from Open5e", () => {
     }
   });
 });
+
+
+describe("Vault of Magic reviewed backup descriptions", () => {
+  it("serves 48 source-matched descriptions", () => {
+    const items = Object.entries(expansionTranslations.vom.items).filter(([, hit]) => "description" in hit);
+    expect(items).toHaveLength(48);
+    for (const [slug, hit] of items) {
+      if (!("description" in hit) || !("original" in hit)) throw new Error(slug);
+      const row = { slug, name: hit.englishName, documentSlug: "vom", source: "open5e", data: hit.original as Record<string, unknown> };
+      expect(localizeEntryCs("items", row).data.localized_desc).toBe(hit.description);
+    }
+  });
+});
