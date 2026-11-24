@@ -266,7 +266,7 @@ export function AmbienceControls({
         label={t("Ambient bed")}
         size="sm"
         onChange={(bed) => onChange({ ...value, bed })}
-        options={[{ value: "", label: t("Leave the place sound alone") }, ...cueOptions("bed").map((option) => ({ value: option.value as string, label: option.label }))]}
+        options={[{ value: "", label: t("Leave the place sound alone") }, ...cueOptions("bed", t)]}
         className="w-full"
       />
       <Select
@@ -274,7 +274,7 @@ export function AmbienceControls({
         label={t("Music", { context: "scene.ambience.music" })}
         size="sm"
         onChange={(music) => onChange({ ...value, music })}
-        options={[{ value: "", label: t("Leave the music alone") }, ...cueOptions("music").map((option) => ({ value: option.value as string, label: option.label }))]}
+        options={[{ value: "", label: t("Leave the music alone") }, ...cueOptions("music", t)]}
         className="w-full"
       />
       <FinePrint>{t("Played when this map goes on the table.")}</FinePrint>
