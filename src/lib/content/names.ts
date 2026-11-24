@@ -331,6 +331,13 @@ export function backgroundFeatureLabel(backgroundName: string, feature: string, 
 // in the reader's language: the maps key a subclass by its class and its
 // name, whole or bare ("cleric:life-domain", "cleric:life"). A subclass the
 // map does not carry (a workshop or pack archetype) stays as it was stored.
+// A catalog subclass uses its full source identity, unlike a stored name.
+export function archetypeDisplayName(classId: string, name: string, locale: Locale, row?: NamedRow): string {
+  if (!row) return subclassName(classId, name, locale);
+  return localizedExpansionName("subclasses", row, locale) ??
+    (canUseCommonNames(row) ? subclassName(classId, name, locale) : name);
+}
+
 export function subclassName(classId: string, subclass: string, locale: Locale): string {
   if (!NAME_TABLES[locale] || !subclass) {
     return subclass;
