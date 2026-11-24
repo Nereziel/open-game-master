@@ -12,7 +12,7 @@ import { SegmentedControl } from "@/components/ui/SegmentedControl";
 import { Slider } from "@/components/ui/Slider";
 import { Switch } from "@/components/ui/Switch";
 import { Tooltip } from "@/components/ui/Tooltip";
-import { cueById, cuesForLayer, type AmbienceLayer } from "@/lib/ambience/catalog";
+import { cueById, cueLabel, cuesForLayer, type AmbienceLayer } from "@/lib/ambience/catalog";
 import type { AmbienceLayerName } from "@/lib/ambience/player";
 import { cn } from "@/lib/cn";
 import { useT, useTp } from "@/lib/locale";
@@ -94,7 +94,7 @@ function LayerRow({ layer, ambience }: { layer: AmbienceLayerName; ambience: Amb
               </Tooltip>
             ) : null}
           </div>
-          <div className="truncate font-display text-base text-amber-100">{cue ? t(cue.label) : t("Silence")}</div>
+          <div className="truncate font-display text-base text-amber-100">{cue ? cueLabel(cue.id, t) : t("Silence")}</div>
           <div className="sound-take truncate">
             {noFile
               ? t("No audio for this cue on this server")
@@ -246,7 +246,7 @@ function Pickers({ ambience, steering }: { ambience: AmbienceAudio; steering: So
           <CueTile
             key={cue.id}
             glyph={`cue-${cue.id}`}
-            label={t(cue.label)}
+            label={cueLabel(cue.id, t)}
             on={tab !== "sting" && current === cue.id}
             available={Boolean(ambience.tracks[cue.id]?.length)}
             busy={busy}
@@ -383,8 +383,8 @@ export function SoundDialog({
 // table menu: "Sound: Rain, Tavern music", or why there is none.
 export function soundSummary(t: T, ambience: AmbienceAudio): { quiet: boolean; playing: string; tip: string } {
   const quiet = ambience.muted || !ambience.unlocked;
-  const bed = ambience.state.bed ? cueById(ambience.state.bed)?.label : null;
-  const music = ambience.state.music ? cueById(ambience.state.music)?.label : null;
+  const bed = ambience.state.bed ? cueLabel(ambience.state.bed, t) : null;
+  const music = ambience.state.music ? cueLabel(ambience.state.music, t) : null;
   const playing = [bed, music ? t("{name} music", { name: music }) : null].filter(Boolean).join(", ");
   const tip = !ambience.installed
     ? t("Sound: no library on this server yet")
