@@ -11199,7 +11199,14 @@
     "Exported from Open Game Master on {date}.": "Exporté depuis Open Game Master le {date}.",
     "{birth} to {death} (dies before being born)": "{birth} à {death} (mort avant la naissance)",
     "born {year}": "Naissance : {year}",
-    "died {year}": "Décès : {year}"
+    "died {year}": "Décès : {year}",
+    "Uses {needs}": "Utilise : {needs}",
+    "{first} and {last}": "{first} et {last}",
+    "Level Up Advanced 5e's {needs} are rules this game does not play.": "Les règles de Level Up Advanced 5e ({needs}) ne sont pas utilisées dans ce jeu.",
+    "Level Up Advanced 5e's {needs} is a rule this game does not play.": "La règle de Level Up Advanced 5e ({needs}) n'est pas utilisée dans ce jeu.",
+    "Ley lines are from Deep Magic: the GM decides where they run.": "Les lignes telluriques viennent de Deep Magic : le MJ décide de leur tracé.",
+    "It is not offered for play here; the GM can still read it, or copy it into the workshop and change it.": "Cette entrée n'est pas proposée pour jouer ici ; le MJ peut néanmoins la lire ou la copier dans l'atelier et la modifier.",
+    "The GM plays that part.": "Le MJ gère cette partie."
   },
   "contexts": {
     "{table}: its row for the table {name} now names this campaign's own {name}, since the source's stayed behind.": {
@@ -12706,6 +12713,51 @@
     },
     "party": {
       "workshop.import.result": "visibilité pour le groupe"
+    },
+    "strife": {
+      "content.need": "conflit"
+    },
+    "fatigue": {
+      "content.need": "fatigue"
+    },
+    "rattled": {
+      "content.need": "ébranlement"
+    },
+    "expertise dice": {
+      "content.need": "dés d'expertise"
+    },
+    "exertion": {
+      "content.need": "effort"
+    },
+    "maneuvers": {
+      "content.need": "manœuvres"
+    },
+    "a bloodied trigger": {
+      "content.need": "un déclencheur lié à l'état ensanglanté"
+    },
+    "ley lines": {
+      "content.need": "lignes telluriques"
+    },
+    "mundane": {
+      "content.rarity": "ordinaire"
+    },
+    "common": {
+      "content.rarity": "courant"
+    },
+    "uncommon": {
+      "content.rarity": "peu courant"
+    },
+    "rare": {
+      "content.rarity": "rare"
+    },
+    "very rare": {
+      "content.rarity": "très rare"
+    },
+    "legendary": {
+      "content.rarity": "légendaire"
+    },
+    "artifact": {
+      "content.rarity": "artéfact"
     }
   },
   "plurals": {
