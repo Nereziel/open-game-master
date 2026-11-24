@@ -304,7 +304,7 @@ export function buildItemSheet(
   const weight =
     found.map((row) => weightOf(row, t)).find(Boolean) ?? (srdArmor ? formatPounds(srdArmor.weightLb, t) : null);
   const cost = found.map((row) => costOf(row, t, locale)).find(Boolean) ?? null;
-  const description = (locale === "cs" ? found.map((row) => str(row, "localized_desc")).find(Boolean) : undefined)
+  const description = found.map((row) => str(row, "localized_desc")).find(Boolean)
     ?? found.map((row) => describeContentEntry(row)).find(Boolean) ?? null;
   const rawRarity = magic ? capitalize(str(magic, "rarity").toLowerCase()) : null;
   const rarity = rawRarity ? t(rawRarity) : null;
