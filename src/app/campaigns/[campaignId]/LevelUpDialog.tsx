@@ -102,6 +102,7 @@ import { bundledSwapSpells, originSwapOffer, originSwapRequest } from "@/lib/dm/
 import { hostOffers, useCapabilities } from "@/lib/use-capabilities";
 import { featChoice, withFeatChoice } from "@/lib/schemas/sheet";
 import { workshopClassList } from "@/lib/classes/workshop-registry";
+import { archetypeDisplayName } from "@/lib/content/names";
 import { useLocale, useT, useTp } from "@/lib/locale";
 
 
@@ -1650,7 +1651,7 @@ export function LevelUpDialog({
                             onClick={() => chooseSubclass(name)}
                             className="flex grow items-center justify-between gap-2 py-2 text-left"
                           >
-                            <span>{name}</span>
+                            <span>{archetypeDisplayName(classChoice, name, locale, archetype ? { ...archetype, slug: archetype.id } : undefined)}</span>
                             {builtInSubclasses.some(
                               (entry) => textKey(entry) === textKey(name),
                             ) ? (
@@ -1664,8 +1665,8 @@ export function LevelUpDialog({
                             )}
                           </button>
                           <InfoButton
-                            label={name}
-                            text={archetype?.desc || subclassBlurb(classChoice, name) || undefined}
+                            label={archetypeDisplayName(classChoice, name, locale, archetype ? { ...archetype, slug: archetype.id } : undefined)}
+                            text={archetype?.localizedDesc || archetype?.desc || subclassBlurb(classChoice, name) || undefined}
                             reference={
                               archetype ? { kind: "archetypes", slug: archetype.id, name } : undefined
                             }
