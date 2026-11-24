@@ -22,6 +22,9 @@ const { join } = await import("node:path");
 
 const csMessages = JSON.parse(readFileSync(new URL("../src/lib/i18n/cs.json", import.meta.url), "utf8")).messages;
 const csT = (key) => csMessages[key] ?? key;
+const workshopGuides = JSON.parse(readFileSync(new URL("../src/lib/i18n/workshop-guides-cs.json", import.meta.url), "utf8"));
+const { installCsTables } = await import("../src/lib/i18n/cs-tables.ts");
+installCsTables({ names: {}, guidance: {}, workshopGuides });
 
 let passed = 0;
 function test(name, fn) {
@@ -407,15 +410,15 @@ test("all written workshop guides have complete Czech copy and preserve English 
     });
     assert.deepEqual(localizedToolGuide(guide, "fr", (key) => key), guide.translations.fr);
     const cs = localizedToolGuide(guide, "cs", csT);
-    assert.ok(guide.translations.cs, guide.id);
-    assert.deepEqual(cs, guide.translations.cs);
+    assert.ok(workshopGuides[guide.id], guide.id);
+    assert.deepEqual(cs, workshopGuides[guide.id]);
     assert.equal(cs.steps.length, guide.steps.length, guide.id);
     assert.equal(cs.tips.length, guide.tips.length, guide.id);
     assert.ok([cs.title, cs.purpose, cs.atTable, ...cs.steps, ...cs.tips].every((value) => typeof value === "string" && value.trim()), guide.id);
   }
   const world = guideFor("world");
   const cs = localizedToolGuide(world, "cs", csT);
-  assert.deepEqual(cs, world.translations.cs);
+  assert.deepEqual(cs, workshopGuides[world.id]);
   assert.equal(cs.steps.length, world.steps.length);
   assert.equal(cs.tips.length, world.tips.length);
 });
