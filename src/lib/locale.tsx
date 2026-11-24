@@ -1,7 +1,7 @@
 "use client";
 
 import { Suspense, createContext, use, useCallback, useContext, useEffect, useMemo, useSyncExternalStore, type ReactNode } from "react";
-import { loadCatalog, catalogReady } from "./i18n/catalog-loader";
+import { loadCatalog, catalogReady, retryCatalog } from "./i18n/catalog-loader";
 import { LOCALE_COOKIE, parseLocale } from "./i18n/locale";
 import { localeTag, translate, translatePlural, type Locale, type MessageKey, type MessageVars } from "./messages-logic";
 
@@ -64,6 +64,7 @@ export function setServerLocale(locale: Locale | null) {
   }
   serverDefault = locale;
   if (typeof window !== "undefined") {
+    retryCatalog(resolveLocale(readLocaleChoice()));
     applyLocale();
     emit();
   }
@@ -125,9 +126,12 @@ export function writeLocaleChoice(choice: LocaleChoice) {
     window.localStorage.setItem(LOCALE_KEY, choice);
     document.cookie = `${LOCALE_COOKIE}=${choice}; path=/; max-age=31536000; SameSite=Lax`;
   }
+  retryCatalog(resolveLocale(choice));
   applyLocale();
   emit();
 }
+
+const observedCatalogLoads = new WeakSet<Promise<void>>();
 
 // The locale the screen shows: the reader's, once its catalog is in. Asked
 // for French before the chunk has arrived it starts the fetch and reads
@@ -137,10 +141,18 @@ function shownLocale(): Locale {
   if (catalogReady(wanted)) {
     return wanted;
   }
-  void loadCatalog(wanted).then(() => {
-    applyLocale();
-    emit();
-  });
+  const pending = loadCatalog(wanted);
+  if (!observedCatalogLoads.has(pending)) {
+    observedCatalogLoads.add(pending);
+    void pending.then(() => {
+      // A failure already leaves English on screen. Do not emit again or
+      // attach another callback on each snapshot read.
+      if (catalogReady(wanted) && resolveLocale(readLocaleChoice()) === wanted) {
+        applyLocale();
+        emit();
+      }
+    });
+  }
   return "en";
 }
 
