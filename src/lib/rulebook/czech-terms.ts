@@ -604,7 +604,7 @@ export const CZECH_ITEMS: Readonly<Record<string, string>> = {
   "Cloak of Elvenkind": "Elfí plášť",
   "Cloak of Protection": "Ochranný plášť",
   "Cloak of Displacement": "Plášť posuvu",
-  "Decanter of Endless Water": "Bezedná karafa",
+  "Decanter of Endless Water": "Vždyplná karafa",
   "Eversmoking Bottle": "Vždydýmající láhev",
   "Eyes of Charming": "Okouzlující oči",
   "Eyes of the Eagle": "Orlí oči",
