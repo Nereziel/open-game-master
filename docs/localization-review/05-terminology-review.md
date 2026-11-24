@@ -13,7 +13,7 @@ Křížová kontrola existujících českých překladů, nikoli opakování kom
 - [ ] Doložit auditovaná místa, rozhodnutí, výjimky a regresní testy pro sjednocené termíny.
 
 ## Stav
-Provedena další rozsáhlá revize překladových dat. Aktuální revize #114 byla začleněna; úplná individuální kontrola všech názvů a finální CI zatím nejsou potvrzeny. Nepřidávat další lokalizační architekturu; zachovat stávající vzor francouzštiny. Před dokončením aktualizovat větev o předchozí sloučené etapy; doporučené pořadí 4 → 5 → 6 → 7.
+Provedena další rozsáhlá revize překladových dat. PR #114 byl sloučen a jeho integrační merge commit začleněn; úplné individuální doložení všech rozšířených názvů a finální CI zůstávají otevřené. Nepřidávat další lokalizační architekturu; zachovat stávající vzor francouzštiny. Před dokončením aktualizovat větev o předchozí sloučené etapy; doporučené pořadí 4 → 5 → 6 → 7.
 
 ## Provedený audit (24. 11. 2026)
 
@@ -25,7 +25,8 @@ Provedena další rozsáhlá revize překladových dat. Aktuální revize #114 b
 - [ ] Spustit regresní testy, typecheck, lint a build; pro poslední commit nebyl nalezen žádný PR workflow run. Testy nebyly lokálně spuštěny.
 - [ ] Dokončit jednotlivé ověření zbývajících názvů podle d20 a kontextovou kontrolu stavů, schopností, vybavení, odborností, skloňování a dosud nepokrytých zdrojů.
 - [x] Na začleněném snapshotu #114 aplikovat níže uvedené cílené změny.
-- [ ] Po finálním sloučení #114 ověřit případné nové změny a celý katalog a UI.
+- [x] Po finálním sloučení #114 ověřit případné nové změny: merge tree #114 je identický s již začleněným snapshotem; cílené kontroly katalogu a UI viz závěrečná evidence.
+- [ ] Úplné živé UI ověření je v #117.
 - **Mimo rozsah podle pokynu uživatele:** PDF: chybí lokalizační cesta; `src/lib/pdf/character-sheet-pdf.ts` má anglické popisky a standardní WinAnsi fonty, `sanitize` odstraňuje část českých znaků. `src/lib/pdf/download.ts` nepředává locale. Nutno napojit stávající katalog, zajistit české znaky a prověřit export. PDF není hotové.
 
 ### Rozhodnutí a výjimky
@@ -63,7 +64,7 @@ Zdroje: [Příručka hráče 2014](https://dnd5esrd.d20.cz/prirucka-hrace/), [Be
 - `3501b9b` — české zobrazování typů zranění, hodů a regresní případy.
 - `3055b3a` — Pravdivé vidění v poznámce ke kouzlu.
 
-PR #114 je stále otevřený; tato větev zůstává Draft, bez merge do cílové větve. Etapu #112-5 zatím neoznačovat jako dokončenou.
+Historický stav před sloučením #114; nyní je #114 sloučen, #115 zatím Draft. Etapu #112-5 zatím neoznačovat jako dokončenou.
 
 ## Pokračování — pouze překladová data
 
@@ -96,3 +97,23 @@ Nové commity: `83fd932`, `57aa1db`, `35c4505`, `ee67b00` (statbloky), `f96409b`
 - [ ] Vitest, typecheck, lint a build nebyly v tomto průchodu spuštěny. Úplné individuální ověření zbývajících externích schopností a vlastní názvy Tashy zůstávají otevřené.
 
 Commity: `c7b2a9a`, `33d924b`, `01c8a6e`, `b275f8e`, `a373d27`, `603d895`, `5f2684c`, `22d3ea8`, `592510b`. Žádná nová aplikační logika.
+
+## Integrační kontrola po sloučení #114
+
+- [x] Integrační základ `6d637f9ecbf772129146d2641d58391ac0cf73dc`; Git tree `e209d2af7500962af2f489637164bc8624b279ca` je identický s dříve začleněným snapshotem #114 `c654d347`. Merge do této větve `43a37e6` zachoval beze změny tree předchozího #115. Bez konfliktů.
+- [x] Znovu ověřeno skutečné pokrytí názvů: 72/72 odborností, 211/211 unikátních dvojic základních povolání a divotvůrce, 106/106 vestavěných rozšířených archetypů a 540/540 jejich schopností, 733/733 žánrových schopností (36 povolání). Všech 733 má také neprázdný překlad popisu podle původního klíče v CS katalogu; Alkahest má správně identický zápis názvu (známá chyba testu #117).
+- [x] Křížová kontrola 1544 klíčů schopností a 417 názvů resourceFeatureNames: všech 372 jednoznačných společných klíčů souhlasí. Všech 136 přímo párovatelných resource ID z resource-names-cs-extra.ts souhlasilo před dodatečnou synchronní opravou Unwavering Mark. U 47 přímo párovatelných UI klíčů jsou po opravě rozdíly pouze kontextové: Order = Pořadí (řazení UI, nikoli schopnost Řád) a (expertise) = (kvalifikace) (závorky zachovány).
+- [x] Opraveno 21 dalších hodnot UI: 2 věty s odkazy na kouzla (Tajemný výšleh, Sežehující paprsek), 6 názvů schopností a dalších 13 UI hodnot (např. Božská přízeň, Čchi, Ochromující úder, Kvalifikace, Technika otevřené ruky). Unwavering Mark sjednocen ve třech tabulkách na Neoblomná kořist, podle Xanathara. Storm Herald: Bouřlivá aura, Bouřlivá duše, Štítová bouře; Odvracení nemrtvých sjednoceno v kapitole klerika. Zdroje: [PHB 3](https://dnd5esrd.d20.cz/prirucka-hrace/3-kapitola.html), [PHB 6](https://dnd5esrd.d20.cz/prirucka-hrace/6-kapitola.html), [Xanathar 1](https://dnd5esrd.d20.cz/xanathar/1-kapitola.html), [Kouzelník / Zpěv meče](https://dnd5esrd.d20.cz/soupis/kouzelnik.html).
+- [x] CS UI: 12 915 klíčů, celkem 105 změněných hodnot proti integračnímu základu, totožné klíče, plurály a zástupné proměnné. 6/6 názvů vlastností shodných s UI; 18 názvů dovedností v českých datech, všech 8 přesně párovatelných UI hodnot shodných. Halfling v katalogu jazyků je Půlčíkština, odlišný pojem od rasy Hobit. Anglický a francouzský SRD, francouzský UI katalog a tabulka názvů, zdrojové feat/class/subclass JSON a resolver názvů mají stejné Git blob SHA jako integrační základ. Diff je omezen na česká data, testy a dokumentaci.
+- [x] Nové testy odborností a základních schopností používají přímo existující resolvery, bez vlastního kopírování normalizačních regexů; test společných názvů má čtyři konkrétní regresní případy. Úplná shoda 372 klíčů ověřena nezávisle staticky, nikoli spuštěním Vitestu.
+- [x] 15 nedoložených názvů z Tashy porovnáno s mechanikami vestavěných anglických odborností. D20 [odkazuje na pracovní podklady](https://www.d20.cz/diskuze/pravidla-diskuze/51780.html), cílová složka nebyla dostupná (404). Ponechány vlastní české názvy: Dotčený vílami / stínem (původ magie), Telekinetik / Telepat (pohyb a komunikace myslí), Znalec tajemných vzývání / metamagie (existující názvy mechanik), Expert na dovednosti (zdatnost a kvalifikace), Kuchař (příprava pokrmů), Drtič / Bodavec / Sekáč (druhy zranění), Travič (jedy), Střelec z palných zbraní (zdatnost se střelnými zbraněmi), Zasvěcenec boje / divotvůrců (bojový styl nebo kouzla a náčiní divotvůrce). Nejde o doložené komunitní názvy; anglický význam zachován.
+- [ ] Zbývá nezávislé jednotlivé doložení dalších rozšířených názvů podle d20, kde příslušný překlad existuje. Pokrytí názvů a shoda tabulek nejsou ekvivalentem úplného jazykového auditu všech 540 schopností. Externí balíčky řeší #116.
+
+### Předání technických a obsahových omezení do #117
+
+- `src/lib/help/index.ts:describeFeature` překládá přes UI katalog pouze classText; subclassFeatureDescription, exactSrdText, volby a další fallbacky vracejí EN. Všech 540 popisů z vestavěného subclasses.json nemá přesný klíč v cs.json. Je nutno doplnit české texty v existujícím mechanismu a lokalizovat zobrazovací resolver, nikoliv měnit pravidla.
+- `useFeatDescs.ts` načítá původní text přes packFeatText; žádný z 72 popisů vestavěných odborností nemá přesný klíč v cs.json. Zobrazovací text oddělit od EN textu pro feat engine. Názvy již fungují přes contentName; plný překlad popisů tím není prokázán. PDF a zobrazovací logika hodů / typů zranění nadále #117.
+- #114 Linux [45374480459](https://github.com/Nereziel/open-game-master/actions/runs/45374480459): lint prošel, 6/6 browser jobů prošlo, Knip a dva testovací shardy selhaly; logy prokázaly dříve známé Knip, Alkahest a dvě upstream inventury. #115 před integračními změnami [45378615980](https://github.com/Nereziel/open-game-master/actions/runs/45378615980): lint prošel, dead-code selhal, browser buildy prošly před zrušením jobů; testy zrušeny. Nové CI po synchronizaci a následných commitech se rušilo při novém pushi. Nelze z toho odvodit úspěch nových regresních testů ani absenci nové chyby.
+- Lokální npm příkazy nebyly provedeny: checkout přes GitHub v sandboxu selhal na DNS. #117 již řeší zděděná selhání; nepřenášet sem jeho opravy. Finální CI musí odpovídat finálnímu SHA; neoznačovat zrušené či nedokončené kontroly za úspěšné.
+
+Commity nového průchodu: `43a37e6`, `2301222`, `1d0051a`, `2a48418`, `94e44cd`, `027ff47`, `7273d61`, `c69794f`, `e223d3b`, `7de6e1b`, `b7bf2ec`. Žádná změna produkční aplikační logiky. Před případným merge znovu ověřit CI, head/base a splnění podmínky bez nových regresí.
