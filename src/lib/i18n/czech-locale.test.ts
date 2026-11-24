@@ -2,7 +2,7 @@ import { describe, expect, it } from "vitest";
 import csCatalog from "./cs.json";
 import frCatalog from "./fr.json";
 import { catalogInstalled, installCatalog, translate, translatePlural, type TranslateVars } from "./translate";
-import { localeFromAcceptLanguage, parseLocale, resolveLocale } from "./locale";
+import { localeFromAcceptLanguage, localeOfServerLanguage, parseLocale, resolveLocale, serverLanguageOfLocale } from "./locale";
 import { localeTag } from "../messages-logic";
 import { GENRE_PRESETS, genrePresetFor } from "../genres";
 import { portalCards, presetTheme, settingList, typeInPlan } from "../../app/create-campaign/portals";
@@ -16,6 +16,15 @@ describe("Czech locale following the upstream French catalog", () => {
     expect(localeFromAcceptLanguage("cs-CZ,cs;q=0.9,en;q=0.5")).toBe("cs");
     expect(resolveLocale({ cookieHeader: "odm_locale=cs", acceptLanguage: "fr-FR" })).toBe("cs");
     expect(localeTag("cs")).toBe("cs-CZ");
+  });
+
+  it("keeps UI tags and server-language names in the same registry", () => {
+    for (const [locale, server, tag] of [["en", "english", "en-US"], ["fr", "french", "fr-FR"], ["cs", "czech", "cs-CZ"]] as const) {
+      expect(localeTag(locale)).toBe(tag);
+      expect(serverLanguageOfLocale(locale)).toBe(server);
+      expect(localeOfServerLanguage(server)).toBe(locale === "en" ? null : locale);
+    }
+    expect(localeOfServerLanguage("italian")).toBeNull();
   });
 
   it("installs the original Czech gettext catalog", () => {
