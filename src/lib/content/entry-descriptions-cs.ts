@@ -1,7 +1,17 @@
+import gearDescriptions from "./item-descriptions-cs.json";
+import { textKey } from "@/lib/language/text-logic";
 import { expansionDescriptionCs } from "./expansion-descriptions-cs";
 import { czechFullTranslation } from "@/lib/rulebook/czech-companion";
 import { rulebookPageIdFor } from "@/lib/rulebook/catalog-rows";
 import type { RulebookKind } from "@/lib/rulebook/types";
+
+const GEAR_DESCRIPTIONS: Readonly<Record<string, string>> = gearDescriptions;
+
+export function czechGearDescription(name: string): string | undefined {
+  const key = textKey(name);
+  // Some editions spell Thieves\' Tools without the possessive apostrophe.
+  return Object.hasOwn(GEAR_DESCRIPTIONS, key) ? GEAR_DESCRIPTIONS[key] : undefined;
+}
 
 const KINDS: Record<string, RulebookKind> = {
   spells: "spell",
@@ -31,8 +41,9 @@ export function localizeEntryCs<T>(table: string, entry: T): T {
   }
   const id = rulebookPageIdFor(kind, row.name);
   const full = id ? czechFullTranslation(id) : undefined;
-  if (!full) return entry;
-  const desc = kind === "item" ? full.split(/\n\n+/).slice(1).join("\n\n").trim() : full;
+  const desc = full
+    ? (kind === "item" ? full.split(/\n\n+/).slice(1).join("\n\n").trim() : full)
+    : kind === "item" ? czechGearDescription(row.name) : undefined;
   if (!desc) return entry;
   return { ...row, data: { ...row.data, localized_desc: desc } };
 }

@@ -19,7 +19,13 @@ import frCatalog from "../i18n/fr.json";
 import { installCsTables } from "../i18n/cs-tables";
 import { installCatalog } from "../i18n/translate";
 import { registerFeatureText, type FeaturesFile } from "../classes/feature-text";
-import { describeFeature } from "../help";
+import { describeFeature, describeSkill, describeRace, describeRaceTrait, glossaryTerms } from "../help";
+import { translate } from "../i18n/translate";
+import { describeBackgroundFeature, localizeBackgroundFeatureText } from "../backgrounds";
+import { buildItemSheet } from "../help/item-sheet";
+import { damageTypeWord, damageWords, DAMAGE_TYPES } from "../dm/damage-logic";
+import { rollCardLabel } from "../roll-labels";
+import { rollCampaignTitle } from "../../app/create-campaign/titles";
 import darkFantasyFeatures from "../classes/dark-fantasy-features.json";
 import cyberpunkFeatures from "../classes/cyberpunk-features.json";
 import horrorFeatures from "../classes/horror-features.json";
@@ -166,8 +172,73 @@ describe("Czech content names through upstream helpers", () => {
     expect(features).toBe(733);
   });
 
+  it("localizes all glossary entries and skill explanations in Czech", () => {
+    installCatalog("cs", csCatalog);
+    expect(glossaryTerms()).toHaveLength(44);
+    for (const entry of glossaryTerms()) {
+      expect(entry.cs, entry.id).toBeTruthy();
+      expect(entry.shortCs, entry.id).toBeTruthy();
+      if (entry.long) expect(entry.longCs, entry.id).toBeTruthy();
+    }
+    const t = (key: string, vars?: Record<string, string | number>) => translate("cs", key, vars);
+    const text = describeSkill(t, "perception", "cs");
+    expect(text).toContain("Vnímání");
+    expect(text).toContain("Moudrost");
+    expect(text).not.toContain("Perception");
+  });
+
+  it("uses Czech campaign title banks for all seven genres and the fallback", () => {
+    const expected: Record<string, string> = {
+      high_fantasy: "Koruna bez dědice",
+      dark_fantasy: "Hniloba z temnot",
+      mystery: "Dopis bez adresy",
+      horror: "Hlad bez konce",
+      cyberpunk: "Signál mimo síť",
+      steampunk: "Stroj z mosazi",
+      post_apocalyptic: "Pustina posledního dne",
+      unknown: "Koruna bez dědice",
+    };
+    for (const [genre, title] of Object.entries(expected)) {
+      expect(rollCampaignTitle(genre, "", () => 0, "cs")).toBe(title);
+    }
+    expect(rollCampaignTitle("high_fantasy", "", () => 0, "en")).toBe("The Last Crown");
+    expect(rollCampaignTitle("high_fantasy", "", () => 0, "fr")).toBe("La Couronne sans Héritier");
+  });
+
+  it("localizes prices, damage types and roll details without changing numbers", () => {
+    for (const type of DAMAGE_TYPES) {
+      expect(damageTypeWord(type, "cs")).not.toBe(type);
+      expect(damageTypeWord(type, "en")).toBe(type);
+    }
+    expect(damageWords("1d6 slashing + 2d8 fire", "cs")).toBe("1k6 sečné + 2k8 ohnivé");
+    expect(damageWords("1d6 slashing", "fr")).toBe("1d6 tranchants");
+    expect(damageWords("1d6 slashing", "en")).toBe("1d6 slashing");
+    expect(buildItemSheet("Longsword", [{ cost: "15 gp" }], { locale: "cs" })?.cost).toBe("15 zl");
+    expect(buildItemSheet("Longsword", [{ cost: "15 gp" }], { locale: "en" })?.cost).toBe("15 gp");
+    const t = Object.assign((key: string) => key, { locale: "cs" as const });
+    expect(rollCardLabel(t, { kind: "attack", detail: "Longsword vs Aria, AC 16", attacker: null }, "Kara")).toContain("proti Aria, TZ 16");
+    expect(rollCardLabel(t, { kind: "damage", detail: "1d6 fire on Aria", attacker: null }, "Kara")).toContain("1k6 ohnivé na Aria");
+    expect(speciesTraitName("dwarf", "Darkvision 60 ft", "cs")).not.toContain(" ft");
+  });
+
   it("covers every message key carried by the French catalog", () => {
     const messages: Record<string, string> = csCatalog.messages;
     expect(Object.keys(frCatalog.messages).filter((key) => !Object.hasOwn(messages, key))).toEqual([]);
+  });
+});
+
+describe("Czech sheet descriptions", () => {
+  it("localizes the 18 bundled backgrounds without changing their English text", () => {
+    for (const row of backgroundsJson.backgrounds) {
+      expect(localizeBackgroundFeatureText(row.featureDesc, "cs"), row.id).not.toBe(row.featureDesc);
+      expect(localizeBackgroundFeatureText(row.featureDesc, "en")).toBe(row.featureDesc);
+      expect(describeBackgroundFeature(row.feature, "cs")).toBe(localizeBackgroundFeatureText(row.featureDesc, "cs"));
+    }
+  });
+  it("uses existing Czech trait translations in the race picker and sheet", () => {
+    const race = racesJson.races.find((row) => row.id === "hill_dwarf")!;
+    expect(describeRace(race.id, "en")).toBe(race.traits.join(". ") + ".");
+    expect(describeRace(race.id, "cs")).not.toBe(describeRace(race.id, "en"));
+    expect(describeRaceTrait(race.id, race.traits[0], "cs")).toBe(speciesTraitName(race.id, race.traits[0], "cs"));
   });
 });

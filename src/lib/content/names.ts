@@ -195,7 +195,15 @@ export function classFeatureName(classId: string, featureName: string, locale: L
 // "+1 HP per level"): it is the app's own shorthand, and only the official
 // name is translated. A trait the species's map does not carry (the French
 // SRD prints the subraces' own traits for some peoples only) stays English.
-function localizeTraitTail(tail: string): string {
+function localizeTraitTail(tail: string, locale: Locale): string {
+  if (locale === "cs") {
+    return tail
+      .replace(/\badv\. vs poison\b/gi, "výhoda proti jedu")
+      .replace(/\b(\d+)\s*ft\b/gi, "$1 stop")
+      .replace(/\blight and medium armor\b/gi, "lehká a střední zbroj")
+      .replace(/\b(battleaxe|handaxe|light hammer|warhammer|longsword|shortsword|longbow|shortbow|rapier)\b/gi, (weapon) => contentName("weapons", weapon, locale))
+      .replace(/\bHP per level\b/gi, "život za úroveň");
+  }
   return tail
     .replace(/\badv\. vs poison\b/gi, "avant. c/ poison")
     .replace(/\b(\d+)\s*ft\b/gi, "$1 pi")
@@ -229,14 +237,14 @@ export function speciesTraitName(raceId: string, traitLine: string, locale: Loca
   const bracketed = /\s*\(([^()]*)\)\s*$/.exec(traitLine);
   if (bracketed) {
     const head = traitLine.slice(0, bracketed.index);
-    const after = (locale === "fr" ? localizeTraitTail(traitLine.slice(bracketed.index)) : traitLine.slice(bracketed.index));
+    const after = localizeTraitTail(traitLine.slice(bracketed.index), locale);
     const headHit = carries(head);
     if (headHit) {
       return `${headHit}${after}`;
     }
     const noted = carries(bracketed[1]);
     if (noted) {
-      return `${head} (${noted})`;
+      return `${locale === "cs" ? localizeTraitTail(head, locale) : head} (${noted})`;
     }
   }
   // A trailing measurement the trait's name does not carry
@@ -245,10 +253,10 @@ export function speciesTraitName(raceId: string, traitLine: string, locale: Loca
   if (measured) {
     const bare = carries(traitLine.slice(0, measured.index));
     if (bare) {
-      return `${bare}${(locale === "fr" ? localizeTraitTail(traitLine.slice(measured.index)) : traitLine.slice(measured.index))}`;
+      return `${bare}${localizeTraitTail(traitLine.slice(measured.index), locale)}`;
     }
   }
-  return locale === "fr" ? localizeTraitTail(traitLine) : traitLine;
+  return localizeTraitTail(traitLine, locale);
 }
 
 // A background's granted feature as the sheet carries it ("Shelter of the

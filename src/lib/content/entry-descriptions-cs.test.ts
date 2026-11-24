@@ -1,5 +1,8 @@
 import { describe, expect, it } from "vitest";
-import { localizeEntryCs } from "./entry-descriptions-cs";
+import gearFr from "./item-descriptions-fr.json";
+import gearCs from "./item-descriptions-cs.json";
+import { buildItemSheet } from "../help/item-sheet";
+import { czechGearDescription, localizeEntryCs } from "./entry-descriptions-cs";
 import { bundledItemRows, bundledSpellRows } from "@/lib/rulebook/catalog-rows";
 import { czechFullTranslation } from "@/lib/rulebook/czech-companion";
 import { describeContentEntry } from "@/lib/help";
@@ -85,7 +88,7 @@ describe("Czech external display translations (without SQLite)", () => {
 describe("Source-specific Czech expansion names", () => {
   it("keeps all verified source names scoped to their source and slug", () => {
     let count = 0;
-    for (const [documentSlug, tables] of Object.entries(expansionTranslations)) {
+    for (const [documentSlug, tables] of Object.entries(expansionTranslations as Record<string, Record<string, Record<string, { englishName: string; name: string }>>>)) {
       for (const [table, entries] of Object.entries(tables)) {
         for (const [slug, hit] of Object.entries(entries)) {
           const kind = table as Parameters<typeof contentName>[0];
@@ -246,5 +249,37 @@ describe("Tome of Heroes archetypes", () => {
       const changed = { ...row, data: { ...row.data, desc: "Changed upstream text" } };
       expect(localizeEntryCs("archetypes", changed)).toBe(changed);
     }
+  });
+});
+
+describe("Czech everyday equipment display", () => {
+  it("covers exactly the same 120 equipment keys as French", () => {
+    expect(Object.keys(gearCs).sort()).toEqual(Object.keys(gearFr).sort());
+    expect(Object.keys(gearCs)).toHaveLength(120);
+    for (const [key, value] of Object.entries(gearCs)) {
+      expect(czechGearDescription(key)).toBe(value);
+      expect(value).not.toBe((gearFr as Record<string, string>)[key]);
+    }
+    expect(czechGearDescription("Healer's Kit")).toContain("10 použití");
+    expect(czechGearDescription("Thieves’ Tools")).toContain("zdatnostní bonus");
+  });
+
+  it("preserves source fields and gives the item dialog the Czech description", () => {
+    const row = { slug: "torch", name: "Torch", source: "open5e", documentSlug: "wotc-srd", data: { desc: "A torch burns for one hour.", cost: "1 cp", weight: "1 lb." } as Record<string, unknown> };
+    const translated = localizeEntryCs("items", row);
+    const { localized_desc, ...original } = translated.data;
+    expect(localized_desc).toBe(gearCs.torch);
+    expect(original).toEqual(row.data);
+    expect(buildItemSheet("Torch", [row.data, translated.data], { locale: "cs" })?.description).toBe(gearCs.torch);
+    for (const foreign of [
+      { ...row, source: "homebrew" },
+      { ...row, documentSlug: "srd-2024" },
+      { ...row, documentSlug: "other" },
+    ]) expect(localizeEntryCs("items", foreign)).toBe(foreign);
+  });
+
+  it("prefers reviewed localized prose for a matching background feature", () => {
+    const data = { feature: "Secret Lore", feature_desc: "English description.", localized_desc: "Tajná znalost a její pravidla." };
+    expect(describeContentEntry(data, "Secret Lore")).toBe(data.localized_desc);
   });
 });
