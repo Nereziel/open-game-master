@@ -203,7 +203,7 @@ export const CZECH_MONSTERS: Readonly<Record<string, string>> = {
   Specter: "Spektra",
   "Stone Giant": "Kamenný obr",
   "Fire Giant": "Ohnivý obr",
-  "Frost Giant": "Mrazivý obr",
+  "Frost Giant": "Ledový obr",
   "Hill Giant": "Kopcový obr",
   "Storm Giant": "Bouřný obr",
   Troll: "Troll",
