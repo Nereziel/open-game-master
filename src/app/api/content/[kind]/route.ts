@@ -1,5 +1,8 @@
 import { currentUser, unauthorized } from "@/lib/auth";
 import { withBestEffort } from "@/lib/content/entry-labels";
+import { contentNameMatches, type NamedRow } from "@/lib/content/names";
+import "@/lib/i18n/fr-catalog";
+import "@/lib/i18n/cs-catalog";
 import { localizeEntry } from "@/lib/content/entry-descriptions";
 import { catalogPrices } from "@/lib/characters/catalog";
 import { contentPackInstalled } from "@/lib/content/db";
@@ -63,8 +66,12 @@ export async function GET(
   const limitRaw = Number.parseInt(url.searchParams.get("limit") ?? "", 10);
   const offsetRaw = Number.parseInt(url.searchParams.get("offset") ?? "", 10);
   const mechanics = url.searchParams.get("mechanics") === "1";
+  const locale = bookLocaleOf(request);
+  const matches = (table: string, row: NamedRow) => contentNameMatches(table, row, q, locale, url.searchParams.get("class") ?? "");
+  const localizedSearch = locale !== "en" && Boolean(q.trim());
   const base = {
     q,
+    ...(localizedSearch ? { matchName: matches } : {}),
     userIds: scope.userIds,
     // Browsing (the reference: all=1) and the workshop's "start from"
     // (mechanics=1) see the entries a 5.1 table is not offered for play,
@@ -81,6 +88,11 @@ export async function GET(
     const filed = new Set((found as Array<{ name: string; documentSlug?: string }>).filter((row) => row.documentSlug === "wotc-srd").map((row) => textKey(row.name)));
     return bundled.filter((row) => !filed.has(textKey(row.name)));
   };
+
+  // Match translated bundled names before the existing fallback limits.
+  const bundledQuery = localizedSearch ? "" : q;
+  const matchingBundled = <T,>(table: string, rows: T[]): T[] =>
+    localizedSearch ? rows.filter((row) => matches(table, row as NamedRow)) : rows;
 
   let results: unknown[];
   switch (kind) {
@@ -101,13 +113,13 @@ export async function GET(
       // `book=1` (the rulebook's "start a copy"): the book's own rows beside
       // the pack's, for a page the pack files under no SRD row.
       if ((!packInstalled || fromBook) && mechanics) {
-        results = [...results, ...notFiled(results, bundledSpellRows(q)).slice(0, base.limit ?? 50)];
+        results = [...results, ...notFiled(results, matchingBundled("spells", bundledSpellRows(bundledQuery))).slice(0, base.limit ?? 50)];
       } else if (!packInstalled && url.searchParams.get("srd") === "1") {
         // `srd=1` (a picker that only names a spell, as a workshop species'
         // spells do, issue #833): with no pack the bundled book's spells
         // answer, so a bare server still offers the SRD's, not only the
         // author's homebrew.
-        results = [...results, ...notFiled(results, bundledSpellRows(q)).slice(0, base.limit ?? 50)];
+        results = [...results, ...notFiled(results, matchingBundled("spells", bundledSpellRows(bundledQuery))).slice(0, base.limit ?? 50)];
       }
       // `lite=1`: the names, levels and books a picker lists, without each
       // row's whole text, which a phone would download for nothing (the
@@ -150,8 +162,8 @@ export async function GET(
       // adventuring gear, whole, for the workshop to copy.
       if ((!packInstalled || fromBook) && mechanics) {
         const bundled = [
-          ...(!itemKind || itemKind === "magic_item" ? bundledItemRows(q) : []),
-          ...(itemKind === "magic_item" || packInstalled ? [] : bundledGearRows(q, itemKind)),
+          ...(!itemKind || itemKind === "magic_item" ? matchingBundled("items", bundledItemRows(bundledQuery)) : []),
+          ...(itemKind === "magic_item" || packInstalled ? [] : matchingBundled("items", bundledGearRows(bundledQuery, itemKind))),
         ];
         results = [...results, ...notFiled(results, bundled).slice(0, base.limit ?? 50)];
       }
@@ -208,25 +220,24 @@ export async function GET(
     // Artisan, a setting's Corpo Dropout) can be started from too, and with
     // no pack its races and subclasses.
     if (kind === "backgrounds") {
-      results = [...results, ...bundledBackgroundRows(q, results as Array<{ slug: string }>)];
+      results = [...results, ...matchingBundled("backgrounds", bundledBackgroundRows(bundledQuery, results as Array<{ slug: string }>))];
     }
     if (kind === "races" && !packInstalled) {
-      results = [...results, ...bundledRaceRows(q, results as Array<{ name: string }>)];
+      results = [...results, ...matchingBundled("races", bundledRaceRows(bundledQuery, results as Array<{ name: string }>))];
     }
     if (kind === "archetypes" && !packInstalled) {
-      results = [...results, ...bundledArchetypeRows(url.searchParams.get("class") ?? "", q, results as Array<{ name: string }>)];
+      results = [...results, ...matchingBundled("archetypes", bundledArchetypeRows(url.searchParams.get("class") ?? "", bundledQuery, results as Array<{ name: string }>))];
     }
     // The bundled classes, the SRD's and the settings', whole: a workshop
     // class starts from one with its features by level.
     if (kind === "classes") {
-      results = [...results, ...bundledClassRows(q, results as Array<{ name: string }>)];
+      results = [...results, ...matchingBundled("classes", bundledClassRows(bundledQuery, results as Array<{ name: string }>))];
     }
   }
   // A row the engine plays from mechanics it read and nobody checked says
   // so (issue #570).
   const classSlug = url.searchParams.get("class") ?? undefined;
   results = results.map((row) => withBestEffort(kind, row, { classSlug }));
-  const locale = bookLocaleOf(request);
   results = results.map((row) => localizeEntry(kind, row, locale));
   return Response.json({ results, packInstalled, unadmitted: unadmittedNames(scope, user.id, kind, q, url.searchParams.get("class") ?? "") }, { headers: { Vary: BOOK_LOCALE_VARY } });
 }
