@@ -3,7 +3,9 @@
 import catalog from "./cs.json";
 import authoredSubclassText from "./authored-subclass-text-cs.json";
 
-export default {
+const combinedCatalog = {
   ...catalog,
   messages: { ...authoredSubclassText, ...catalog.messages },
 };
+
+export default combinedCatalog;
