@@ -601,7 +601,7 @@ describe("Reviewed ODM authored feat rules", () => {
       const { localized_desc, ...canonical } = result.data;
       expect(typeof localized_desc, row.name).toBe("string");
       expect(String(localized_desc), row.name).not.toContain(original.desc);
-      expect(String(localized_desc).includes("*Požadavek:"), row.name).toBe(Boolean(original.prerequisite));
+      expect(String(localized_desc).includes("*Předpoklad:"), row.name).toBe(Boolean(original.prerequisite));
       expect(canonical).toEqual(row.data);
       expect(packFeatText(result.data)).toEqual(original);
       expect(result.slug).toBe(row.slug);
