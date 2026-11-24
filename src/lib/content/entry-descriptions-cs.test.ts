@@ -2,7 +2,8 @@ import { describe, expect, it } from "vitest";
 import gearFr from "./item-descriptions-fr.json";
 import gearCs from "./item-descriptions-cs.json";
 import { buildItemSheet } from "../help/item-sheet";
-import { czechGearDescription, localizeEntryCs } from "./entry-descriptions-cs";
+import { czechGearDescription } from "./entry-descriptions-cs";
+import { localizeEntry } from "./entry-descriptions";
 import { bundledItemRows, bundledSpellRows } from "@/lib/rulebook/catalog-rows";
 import { czechFullTranslation } from "@/lib/rulebook/czech-companion";
 import { describeContentEntry } from "@/lib/help";
@@ -13,6 +14,54 @@ import expansionTranslations from "./expansion-descriptions-cs.json";
 import { contentName } from "./names";
 import { expansionNameCs } from "./expansion-descriptions-cs";
 
+
+const localizeEntryCs = <T,>(table: string, row: T): T => localizeEntry(table, row, "cs");
+
+describe("Shared localized content descriptions", () => {
+  it("preserves canonical spell and item data for all reader languages", () => {
+    const spell = bundledSpellRows().find((row) => row.rulebook === "fireball")!;
+    const item = bundledItemRows().find((row) => row.rulebook === "cloak-of-protection")!;
+    for (const [table, row] of [["spells", spell], ["items", item]] as const) {
+      expect(localizeEntry(table, row, "en")).toBe(row);
+      for (const locale of ["fr", "cs"] as const) {
+        const result = localizeEntry(table, row, locale);
+        const { localized_desc, ...original } = result.data;
+        expect(localized_desc).toBeTypeOf("string");
+        expect(localized_desc).not.toBe(row.data.desc);
+        expect(original).toEqual(row.data);
+        expect(result.name).toBe(row.name);
+        expect(result.slug).toBe(row.slug);
+        expect(result.documentSlug).toBe(row.documentSlug);
+      }
+    }
+  });
+
+  it("uses French or Czech equipment prose without replacing the English row or a different source", () => {
+    const row = { slug: "torch", name: "Torch", source: "open5e", documentSlug: "wotc-srd", data: { desc: "A torch burns for one hour.", cost: "1 cp" } as Record<string, unknown> };
+    for (const [locale, description] of [["fr", gearFr.torch], ["cs", gearCs.torch]] as const) {
+      const result = localizeEntry("items", row, locale);
+      expect(result.data).toEqual({ ...row.data, localized_desc: description });
+      expect(buildItemSheet("Torch", [row.data, result.data], { locale })?.description).toBe(description);
+      for (const other of [
+        { ...row, source: "homebrew" },
+        { ...row, documentSlug: "srd-2024" },
+        { ...row, documentSlug: "unrelated-book" },
+        { ...row, data: {} },
+      ]) expect(localizeEntry("items", other, locale)).toBe(other);
+    }
+  });
+
+  it("uses the same display strategy for bundled and published core classes", () => {
+    for (const source of ["bundled", "open5e"]) {
+      const row = { slug: "fighter", name: "Fighter", source, documentSlug: "wotc-srd", data: { desc: "English class prose." } as Record<string, unknown> };
+      for (const locale of ["fr", "cs"] as const) {
+        const result = localizeEntry("classes", row, locale);
+        expect(result.data.localized_desc).toBeTypeOf("string");
+        expect(result.data.desc).toBe(row.data.desc);
+      }
+    }
+  });
+});
 
 describe("Czech SRD display descriptions", () => {
   it("serves every bundled spell and magic item without changing original fields", () => {
