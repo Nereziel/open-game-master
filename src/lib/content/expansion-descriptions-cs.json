@@ -2690,19 +2690,87 @@
       },
       "calm-beasts": {
         "englishName": "Calm Beasts",
-        "name": "Uklidni zvířata"
+        "name": "Uklidni zvířata",
+        "original": {
+          "desc": "You attempt to calm aggressive or frightened animals. Each beast in a 20-foot-radius sphere centered on a point you choose within range must make a Charisma saving throw. If a creature fails its saving throw, choose one of the following two effects.\n  ***Suppress Hold.*** You can suppress any effect causing the target to be charmed or frightened. When this spell ends, any suppressed effect resumes, provided that its duration has not expired in the meantime.\n  ***Suppress Hostility.*** You can make a target indifferent about creatures of your choice that it is hostile toward. This indifference ends if the target is attacked or harmed by a spell or if it witnesses any of its allies being harmed. When the spell ends, the creature becomes hostile again, unless the GM rules otherwise.",
+          "higher_level": "",
+          "duration": "Up to 1 minute",
+          "school": "enchantment",
+          "spell_level": 2,
+          "casting_time": "1 action",
+          "range": "60 Feet",
+          "requires_concentration": true,
+          "requires_verbal_components": true,
+          "requires_somatic_components": true,
+          "requires_material_components": false,
+          "material": "",
+          "can_be_cast_as_ritual": false,
+          "dnd_class": "Druid, Ranger"
+        },
+        "description": "**Očarování 2. úrovně**\n**Vyvolání:** 1 akce\n**Dosah:** 60 stop\n**Složky:** V, P\n**Trvání:** Soustředění, až 1 minuta\n**Povolání:** Druid, Hraničář\n\nPokusíš se uklidnit útočná či vystrašená zvířata. Každé zvíře v kouli o poloměru 20 stop se středem v bodě, který zvolíš v dosahu, si musí hodit záchranný hod na Charisma. Pokud tvor neuspěje, zvol jeden ze dvou následujících účinků.\n\n**Potlačení ovládnutí.** Můžeš potlačit jakýkoli účinek, který způsobuje, že je cíl zmámený nebo vystrašený. Když kouzlo skončí, potlačený účinek se obnoví, pokud mezitím nevypršelo jeho trvání.\n\n**Potlačení nepřátelství.** Můžeš způsobit, že cíl bude lhostejný vůči tvorům dle tvé volby, k nimž je nepřátelský. Lhostejnost skončí, pokud je cíl napaden či zraněn kouzlem nebo je svědkem toho, jak je ublíženo některému z jeho spojenců. Když kouzlo skončí, tvor se opět stane nepřátelským, nerozhodne-li PJ jinak."
       },
       "clear-the-board": {
         "englishName": "Clear the Board",
-        "name": "Rozdělení bojiště"
+        "name": "Rozdělení bojiště",
+        "original": {
+          "desc": "You send your allies and your enemies to opposite sides of the battlefield. Pick a cardinal direction. With a shout and a gesture, you and up to five willing friendly creatures within range are teleported up to 90 feet in that direction to spaces you can see. At the same time, up to six hostile creatures within range must make a Wisdom saving throw. On a failed save, the hostile creature is teleported up to 90 feet in the opposite direction of where you teleport yourself and the friendly creatures to spaces you can see. You can't teleport a target into dangerous terrain, such as lava or off the edge of a cliff, and each target must be teleported to an unoccupied space that is on the ground or on a floor.",
+          "higher_level": "",
+          "duration": "Instantaneous",
+          "school": "conjuration",
+          "spell_level": 7,
+          "casting_time": "1 action",
+          "range": "120 Feet",
+          "requires_concentration": false,
+          "requires_verbal_components": true,
+          "requires_somatic_components": true,
+          "requires_material_components": true,
+          "material": "",
+          "can_be_cast_as_ritual": false,
+          "dnd_class": "Wizard"
+        },
+        "description": "**Vyvolávání 7. úrovně**\n**Vyvolání:** 1 akce\n**Dosah:** 120 stop\n**Složky:** V, P, S (surovina ve zdroji neuvedena)\n**Trvání:** ihned\n**Povolání:** Kouzelník\n\nPřemístíš své spojence a nepřátele na protilehlé strany bojiště. Zvol jednu ze světových stran. Výkřikem a gestem se teleportuješ ty a až pět ochotných přátelských tvorů v dosahu až o 90 stop zvoleným směrem do prostorů, které vidíš. Současně si až šest nepřátelských tvorů v dosahu musí hodit záchranný hod na Moudrost. Při neúspěchu se nepřátelský tvor teleportuje až o 90 stop opačným směrem, než kterým teleportuješ sebe a přátelské tvory, do prostoru, který vidíš. Nemůžeš cíl teleportovat do nebezpečného terénu, například do lávy nebo přes okraj útesu. Každý cíl musí být teleportován do volného prostoru na zemi nebo podlaze."
       },
       "conjure-construct": {
         "englishName": "Conjure Construct",
-        "name": "Vyvolej konstrukt"
+        "name": "Vyvolej konstrukt",
+        "original": {
+          "desc": "You summon a construct of challenge rating 5 or lower to harry your foes. It appears in an unoccupied space you can see within range. It disappears when it drops to 0 hit points or when the spell ends.\n  The construct is friendly to you and your companions for the duration. Roll initiative for the construct, which has its own turns. It obeys any verbal commands that you issue to it (no action required by you). If you don't issue any commands to the construct, it defends itself from hostile creatures but otherwise takes no actions.\n  If your concentration is broken, the construct doesn't disappear. Instead, you lose control of the construct, it becomes hostile toward you and your companions, and it might attack. An uncontrolled construct can't be dismissed by you, and it disappears 1 hour after you summoned it.\n  The construct deals double damage to objects and structures.\n  The GM has the construct's statistics.",
+          "higher_level": "When you cast this spell using a spell slot of 7th level or higher, the challenge rating increases by 1 for each slot level above 6th.",
+          "duration": "Up to 1 minute",
+          "school": "conjuration",
+          "spell_level": 6,
+          "casting_time": "1 action",
+          "range": "60 Feet",
+          "requires_concentration": true,
+          "requires_verbal_components": true,
+          "requires_somatic_components": false,
+          "requires_material_components": true,
+          "material": "",
+          "can_be_cast_as_ritual": false,
+          "dnd_class": "Wizard"
+        },
+        "description": "**Vyvolávání 6. úrovně**\n**Vyvolání:** 1 akce\n**Dosah:** 60 stop\n**Složky:** V, S (surovina ve zdroji neuvedena)\n**Trvání:** Soustředění, až 1 minuta\n**Povolání:** Kouzelník\n\nPřivoláš konstrukt s nebezpečností 5 nebo nižší, aby sužoval tvé protivníky. Objeví se ve volném prostoru, který vidíš v dosahu. Zmizí, když jeho životy klesnou na 0 nebo když kouzlo skončí.\n\nPo dobu trvání je konstrukt přátelský k tobě a tvým společníkům. Hoď za něj iniciativu; má vlastní tahy. Poslouchá všechny tvé slovní příkazy (nevyžaduje to od tebe akci). Pokud mu žádný příkaz nedáš, brání se nepřátelským tvorům, ale jinak neprovádí žádné akce.\n\nJe-li tvé soustředění přerušeno, konstrukt nezmizí. Místo toho nad ním ztratíš kontrolu, stane se nepřátelským k tobě i tvým společníkům a může zaútočit. Neovládaný konstrukt nemůžeš propustit a zmizí 1 hodinu po přivolání.\n\nKonstrukt způsobuje předmětům a stavbám dvojnásobné zranění.\n\nStatistiky konstruktu má PJ.\n\n**Na vyšších úrovních.** Sešleš-li kouzlo s použitím pozice 7. či vyšší úrovně, nebezpečnost se zvýší o 1 za každou úroveň pozice nad 6."
       },
       "conjure-spectral-allies": {
         "englishName": "Conjure Spectral Allies",
-        "name": "Vyvolej přízračné spojence"
+        "name": "Vyvolej přízračné spojence",
+        "original": {
+          "desc": "You sprinkle some graveyard dirt before you and call forth vengeful spirits. The spirits erupt from the ground at a point you choose within range and sweep outward. Each creature in a 30-foot-radius sphere centered on that point must make a Wisdom saving throw. On a failed save, a creature takes 6d10 necrotic damage and becomes frightened for 1 minute. On a successful save, the creature takes half as much damage and isn't frightened.\n  At the end of each of its turns, a creature frightened by this spell can make another saving throw. On a success, this spell ends on the creature.",
+          "higher_level": "When you cast this spell using a spell slot of 8th level or higher, the damage increases by 1d10 for each slot level above 7th.",
+          "duration": "Instantaneous",
+          "school": "necromancy",
+          "spell_level": 7,
+          "casting_time": "1 action",
+          "range": "60 Feet",
+          "requires_concentration": false,
+          "requires_verbal_components": true,
+          "requires_somatic_components": true,
+          "requires_material_components": true,
+          "material": "",
+          "can_be_cast_as_ritual": false,
+          "dnd_class": "Cleric, Warlock, Wizard"
+        },
+        "description": "**Nekromancie 7. úrovně**\n**Vyvolání:** 1 akce\n**Dosah:** 60 stop\n**Složky:** V, P, S (surovina ve zdroji neuvedena)\n**Trvání:** ihned\n**Povolání:** Klerik, Černokněžník, Kouzelník\n\nRozsypeš před sebe trochu hlíny ze hřbitova a přivoláš pomstychtivé duchy. Duchové vyrazí ze země v bodě, který zvolíš v dosahu, a rozletí se do okolí. Každý tvor v kouli o poloměru 30 stop se středem v tomto bodě si musí hodit záchranný hod na Moudrost. Při neúspěchu utrpí nekrotické zranění 6k10 a je na 1 minutu vystrašený. Při úspěchu utrpí poloviční zranění a není vystrašený.\n\nNa konci každého svého tahu může tvor vystrašený tímto kouzlem provést další záchranný hod. Při úspěchu pro něj kouzlo skončí.\n\n**Na vyšších úrovních.** Sešleš-li kouzlo s použitím pozice 8. či vyšší úrovně, zranění se zvýší o 1k10 za každou úroveň pozice nad 7."
       },
       "convey-inner-peace": {
         "englishName": "Convey Inner Peace",
@@ -2726,31 +2794,150 @@
       },
       "damaging-intel": {
         "englishName": "Damaging Intel",
-        "name": "Škodlivé informace"
+        "name": "Škodlivé informace",
+        "original": {
+          "desc": "You study a creature you can see within range, learning its weaknesses. The creature must make a Charisma saving throw. If it fails, you learn its damage vulnerabilities, damage resistances, and damage immunities, and the next attack one of your allies in range makes against the target before the end of your next turn has advantage.",
+          "higher_level": "",
+          "duration": "1 round",
+          "school": "divination",
+          "spell_level": 1,
+          "casting_time": "1 action",
+          "range": "120 Feet",
+          "requires_concentration": false,
+          "requires_verbal_components": true,
+          "requires_somatic_components": false,
+          "requires_material_components": false,
+          "material": "",
+          "can_be_cast_as_ritual": false,
+          "dnd_class": "Bard, Warlock"
+        },
+        "description": "**Věštění 1. úrovně**\n**Vyvolání:** 1 akce\n**Dosah:** 120 stop\n**Složky:** V\n**Trvání:** 1 kolo\n**Povolání:** Bard, Černokněžník\n\nZkoumáš tvora, kterého vidíš v dosahu, a poznáváš jeho slabiny. Tvor si musí hodit záchranný hod na Charisma. Pokud neuspěje, zjistíš jeho zranitelnosti, odolnosti a imunity vůči zranění. Příští útok proti cíli, který před koncem tvého příštího tahu provede jeden z tvých spojenců v dosahu, má výhodu."
       },
       "deadly-salvo": {
         "englishName": "Deadly Salvo",
-        "name": "Smrtící salva"
+        "name": "Smrtící salva",
+        "original": {
+          "desc": "When you cast this spell, the ammunition flies from your hand with a loud bang, targeting up to five creatures or objects you can see within range. You can launch the bullets at one target or several. Make a ranged spell attack for each bullet. On a hit, the target takes 3d6 piercing damage. This damage can experience a burst, as described in the gunpowder weapon property (see the Adventuring Gear chapter), but this spell counts as a single effect for the purposes of determining how many times the damage can burst, regardless of the number of targets affected.",
+          "higher_level": "",
+          "duration": "Instantaneous",
+          "school": "transmutation",
+          "spell_level": 5,
+          "casting_time": "1 action",
+          "range": "120 Feet",
+          "requires_concentration": false,
+          "requires_verbal_components": true,
+          "requires_somatic_components": true,
+          "requires_material_components": true,
+          "material": "",
+          "can_be_cast_as_ritual": false,
+          "dnd_class": "Sorceror, Wizard"
+        },
+        "description": "**Transmutace 5. úrovně**\n**Vyvolání:** 1 akce\n**Dosah:** 120 stop\n**Složky:** V, P, S (surovina ve zdroji neuvedena)\n**Trvání:** ihned\n**Povolání:** Čaroděj, Kouzelník\n\nPři seslání tohoto kouzla vyletí munice z tvé ruky s hlasitou ranou a zamíří na až pět tvorů či předmětů, které vidíš v dosahu. Střely můžeš vyslat na jeden cíl nebo na několik cílů. Za každou střelu proveď útok kouzlem na dálku. Při zásahu cíl utrpí bodné zranění 3k6. Toto zranění může vyvolat dodatečný výbuch (burst) podle vlastnosti zbraní Střelný prach (viz kapitola Dobrodružné vybavení). Pro určení počtu možných opakování výbuchu se však celé kouzlo počítá jako jediný účinek bez ohledu na počet zasažených cílů."
       },
       "divine-retribution": {
         "englishName": "Divine Retribution",
-        "name": "Božská odplata"
+        "name": "Božská odplata",
+        "original": {
+          "desc": "With a last word before you fall unconscious, this spell inflicts radiant damage to your attacker equal to 1d8 + the amount of damage you took from the triggering attack. If the attacker is a fiend or undead, it takes an extra 1d8 radiant damage. The creature then must succeed on a Constitution saving throw or become stunned for 1 minute. At the end of each of its turns, the creature can make another Constitution saving throw. On a successful save, it is no longer stunned.",
+          "higher_level": "When you cast this spell using a spell slot of 2nd level or higher, the damage increases by 1d8 for each slot level above 1st.",
+          "duration": "Instantaneous",
+          "school": "evocation",
+          "spell_level": 1,
+          "casting_time": "1 reaction, which you take when a weapon attack reduces you to 0 hit points",
+          "range": "Self",
+          "requires_concentration": false,
+          "requires_verbal_components": true,
+          "requires_somatic_components": false,
+          "requires_material_components": false,
+          "material": "",
+          "can_be_cast_as_ritual": false,
+          "dnd_class": "Cleric, Paladin"
+        },
+        "description": "**Zaklínání 1. úrovně**\n**Vyvolání:** 1 reakce, kterou provedeš, když ti útok zbraní sníží životy na 0\n**Dosah:** Sesilatel\n**Složky:** V\n**Trvání:** ihned\n**Povolání:** Klerik, Paladin\n\nPosledním slovem, než upadneš do bezvědomí, způsobíš tímto kouzlem svému útočníkovi zářivé zranění rovné 1k8 + zranění, které jsi utrpěl vyvolávajícím útokem. Je-li útočník běs nebo nemrtvý, utrpí dodatečné zářivé zranění 1k8. Tvor pak musí uspět v záchranném hodu na Odolnost, jinak je na 1 minutu ochromený. Na konci každého svého tahu může provést další záchranný hod na Odolnost. Při úspěchu již není ochromený.\n\n**Na vyšších úrovních.** Sešleš-li kouzlo s použitím pozice 2. či vyšší úrovně, zranění se zvýší o 1k8 za každou úroveň pozice nad 1."
       },
       "dreamwine": {
         "englishName": "Dreamwine",
-        "name": "Snové víno"
+        "name": "Snové víno",
+        "original": {
+          "desc": "You imbue a bottle of wine with fey magic. While casting this spell, you and up to seven other creatures can drink the imbued wine. At the completion of the casting, each creature that drank the wine can see invisible creatures and objects as if they were visible, can see into the Ethereal plane, and has advantage on Charisma checks and saving throws for the duration. Ethereal creatures and objects appear ghostly and translucent.",
+          "higher_level": "",
+          "duration": "1 hour",
+          "school": "divination",
+          "spell_level": 4,
+          "casting_time": "1 minute",
+          "range": "30 Feet",
+          "requires_concentration": false,
+          "requires_verbal_components": true,
+          "requires_somatic_components": true,
+          "requires_material_components": true,
+          "material": "",
+          "can_be_cast_as_ritual": false,
+          "dnd_class": "Bard, Wizard"
+        },
+        "description": "**Věštění 4. úrovně**\n**Vyvolání:** 1 minuta\n**Dosah:** 30 stop\n**Složky:** V, P, S (surovina ve zdroji neuvedena)\n**Trvání:** 1 hodina\n**Povolání:** Bard, Kouzelník\n\nNaplníš láhev vína vílí magií. Během sesílání kouzla můžeš ty a až sedm dalších tvorů napít se očarovaného vína. Po dokončení sesílání každý tvor, který víno pil, po dobu trvání vidí neviditelné tvory a předměty, jako by byly viditelné, vidí do Éterické sféry a má výhodu k ověřením Charismatu a záchranným hodům na Charisma. Éteričtí tvorové a předměty vypadají přízračně a průsvitně."
       },
       "emerald-eyes": {
         "englishName": "Emerald Eyes",
-        "name": "Smaragdové oči"
+        "name": "Smaragdové oči",
+        "original": {
+          "desc": "You attempt to convince a creature to enter a paranoid, murderous rage. Choose a creature that you can see within range. The target must succeed on a Wisdom saving throw or be convinced those around it intend to steal anything and everything it possesses, from its position of employment, to the affections of its loved ones, to its monetary wealth and possessions, no matter how trusted those nearby might be or how ludicrous such a theft might seem. While affected by this spell, the target must use its action to attack the nearest creature other than itself or you. If the target starts its turn with no other creature near enough to move to and attack, the target can make another Wisdom saving throw. On a success, the target's head clears momentarily and it can act freely that turn. If the target starts its turn a second time with no other creature near enough to move to and attack, it can make another Wisdom saving throw. On a success, the spell ends on the target.\n  Each time the target takes damage, it can make another Wisdom saving throw. On a success, the spell ends on the target.",
+          "higher_level": "When you cast this spell using a spell slot of 4th level or higher, you can target one additional creature for each slot level above 3rd. The creatures must be within 30 feet of each other when you target them.",
+          "duration": "Up to 1 minute",
+          "school": "enchantment",
+          "spell_level": 3,
+          "casting_time": "1 action",
+          "range": "60 Feet",
+          "requires_concentration": true,
+          "requires_verbal_components": true,
+          "requires_somatic_components": true,
+          "requires_material_components": true,
+          "material": "",
+          "can_be_cast_as_ritual": false,
+          "dnd_class": "Sorceror, Warlock, Wizard"
+        },
+        "description": "**Očarování 3. úrovně**\n**Vyvolání:** 1 akce\n**Dosah:** 60 stop\n**Složky:** V, P, S (surovina ve zdroji neuvedena)\n**Trvání:** Soustředění, až 1 minuta\n**Povolání:** Čaroděj, Černokněžník, Kouzelník\n\nPokusíš se přimět tvora k paranoidnímu vražednému běsnění. Vyber tvora, kterého vidíš v dosahu. Cíl musí uspět v záchranném hodu na Moudrost, jinak je přesvědčený, že mu okolní tvorové hodlají ukrást vše, co má, od pracovního postavení přes náklonnost jeho blízkých až po peníze a majetek. Nezáleží na tom, jak důvěryhodní jsou okolní tvorové nebo jak směšná by taková krádež byla. Dokud je cíl ovlivněný kouzlem, musí svou akcí zaútočit na nejbližšího tvora kromě sebe a tebe. Pokud cíl začne tah a žádný jiný tvor není dost blízko, aby se k němu mohl přesunout a zaútočit na něj, může provést další záchranný hod na Moudrost. Při úspěchu se mu na okamžik vyjasní mysl a v daném tahu může jednat svobodně. Pokud cíl podruhé začne tah bez jiného tvora, k němuž by se mohl přesunout a zaútočit na něj, může provést další záchranný hod na Moudrost. Při úspěchu pro něj kouzlo skončí.\n\nPokaždé, když cíl utrpí zranění, může provést další záchranný hod na Moudrost. Při úspěchu pro něj kouzlo skončí.\n\n**Na vyšších úrovních.** Sešleš-li kouzlo s použitím pozice 4. či vyšší úrovně, můžeš zacílit jednoho dalšího tvora za každou úroveň pozice nad 3. Při zacílení musejí být tvorové do 30 stop od sebe."
       },
       "enchanted-bloom": {
         "englishName": "Enchanted Bloom",
-        "name": "Očarovaný květ"
+        "name": "Očarovaný květ",
+        "original": {
+          "desc": "You spend an hour anointing a rose with scented oils and imbuing it with fey magic. The first creature other than you that touches the rose before the spell ends pricks itself on the thorns and must make a Charisma saving throw. On a failed save, the creature falls into a deep slumber for 24 hours, and it can be awoken only by the greater restoration spell or similar magic or if you choose to end the spell as an action. While slumbering, the creature doesn't need to eat or drink, and it doesn't age.\n  Each time the creature takes damage, it makes a new Charisma saving throw. On a success, the spell ends on the creature.",
+          "higher_level": "When you cast this spell using a spell slot of a higher level, the duration of the slumber increases to 7 days with a 6th-level slot, to 30 days with a 7th-level slot, to 180 days with an 8th-level slot, and to a year with a 9th-level spell slot.",
+          "duration": "24 hours",
+          "school": "enchantment",
+          "spell_level": 5,
+          "casting_time": "1 hour",
+          "range": "Touch",
+          "requires_concentration": false,
+          "requires_verbal_components": true,
+          "requires_somatic_components": true,
+          "requires_material_components": true,
+          "material": "",
+          "can_be_cast_as_ritual": false,
+          "dnd_class": "Bard, Druid, Sorceror, Warlock, Wizard"
+        },
+        "description": "**Očarování 5. úrovně**\n**Vyvolání:** 1 hodina\n**Dosah:** Dotyk\n**Složky:** V, P, S (surovina ve zdroji neuvedena)\n**Trvání:** 24 hodin\n**Povolání:** Bard, Druid, Čaroděj, Černokněžník, Kouzelník\n\nStrávíš hodinu potíráním růže vonnými oleji a naplňováním růže vílí magií. První tvor kromě tebe, který se růže dotkne před skončením kouzla, se píchne o trny a musí si hodit záchranný hod na Charisma. Při neúspěchu upadne na 24 hodin do hlubokého spánku. Probudit ho může pouze kouzlo *mocné navrácení* či podobná magie nebo tvé rozhodnutí ukončit kouzlo akcí. Během spánku tvor nepotřebuje jíst ani pít a nestárne.\n\nPokaždé, když tvor utrpí zranění, provede nový záchranný hod na Charisma. Při úspěchu pro něj kouzlo skončí.\n\n**Na vyšších úrovních.** Sešleš-li kouzlo s použitím pozice vyšší úrovně, trvání spánku se prodlouží na 7 dní s pozicí 6. úrovně, na 30 dní s pozicí 7. úrovně, na 180 dní s pozicí 8. úrovně a na jeden rok s pozicí 9. úrovně."
       },
       "eruption": {
         "englishName": "Eruption",
-        "name": "Erupce"
+        "name": "Erupce",
+        "original": {
+          "desc": "You create a furiously erupting volcano centered on a point you can see within range. The ground heaves violently as a cinder cone that is 2 feet wide and 5 feet tall bursts up from it. Each creature within 30 feet of the cinder cone when it appears must make a Strength saving throw. On a failed save, a creature takes 8d6 bludgeoning damage and is knocked prone. On a successful save, a creature takes half as much damage and isn't knocked prone.\n  Each round you maintain concentration on this spell, the cinder cone produces additional effects on your turn.\n  ***Round 2.*** Smoke pours from the cinder cone. Each creature within 10 feet of the cinder cone when the smoke appears takes 4d6 poison damage. Afterwards, each creature that enters the smoky area for the first time on a turn or starts its turn there takes 2d6 poison damage. The smoke spreads around corners, and its area is heavily obscured. A wind of moderate or greater speed (at least 10 miles per hour) disperses the smoke until the start of your next turn, when the smoke reforms.\n  ***Round 3.*** Lava bubbles out from the cinder cone, spreading out to cover the ground within 20 feet of the cinder cone. Each creature and object in the area when the lava appears takes 10d10 fire damage and is on fire. Afterwards, each creature that enters the lava for the first time on a turn or starts its turn there takes 5d10 fire damage. In addition, the smoke spreads to fill a 20-foot-radius sphere centered on the cinder cone.\n  ***Round 4.*** The lava continues spreading and covers the ground within 30 feet of the cinder cone in lava that is 1-foot-deep. The lava-covered ground becomes difficult terrain. In addition, the smoke fills a 30-footradius sphere centered on the cinder cone.\n  ***Round 5.*** The lava expands to cover the ground within 40 feet of the cinder cone, and the smoke fills a 40-foot radius sphere centered on the cinder cone. In addition, the cinder cone begins spewing hot rocks. Choose up to three creatures within 90 feet of the cinder cone. Each target must succeed on a Dexterity saving throw or take 3d6 bludgeoning damage and 3d6 fire damage.\n  ***Rounds 6-10.*** The lava and smoke continue to expand in size by 10 feet each round. In addition, each round you can direct the cinder cone to spew hot rocks at three targets, as described in Round 5.\n  When the spell ends, the volcano ceases erupting, but the smoke and lava remain for 1 minute before cooling and dispersing. The landscape is permanently altered by the spell.",
+          "higher_level": "",
+          "duration": "Up to 1 minute",
+          "school": "conjuration",
+          "spell_level": 9,
+          "casting_time": "1 action",
+          "range": "120 Feet",
+          "requires_concentration": true,
+          "requires_verbal_components": true,
+          "requires_somatic_components": true,
+          "requires_material_components": false,
+          "material": "",
+          "can_be_cast_as_ritual": false,
+          "dnd_class": "Druid, Wizard"
+        },
+        "description": "**Vyvolávání 9. úrovně**\n**Vyvolání:** 1 akce\n**Dosah:** 120 stop\n**Složky:** V, P\n**Trvání:** Soustředění, až 1 minuta\n**Povolání:** Druid, Kouzelník\n\nVytvoříš zuřivě vybuchující sopku se středem v bodě, který vidíš v dosahu. Země se prudce vzdouvá, když z ní vyrazí struskový kužel široký 2 stopy a vysoký 5 stop. Každý tvor do 30 stop od kužele v okamžiku jeho vzniku si musí hodit záchranný hod na Sílu. Při neúspěchu utrpí drtivé zranění 8k6 a je sražen k zemi. Při úspěchu utrpí poloviční zranění a není sražen k zemi.\n\nKaždé kolo, po které se na kouzlo soustředíš, vyvolá kužel ve tvém tahu další účinky.\n\n**2. kolo.** Z kužele se valí kouř. Každý tvor do 10 stop od kužele v okamžiku vzniku kouře utrpí jedové zranění 4k6. Poté každý tvor, který v tahu poprvé vstoupí do zakouřené oblasti nebo v ní začne svůj tah, utrpí jedové zranění 2k6. Kouř se šíří za rohy a jeho oblast je hustě zahalená. Vítr mírné či větší rychlosti (alespoň 10 mil za hodinu) kouř rozežene do začátku tvého příštího tahu, kdy se kouř znovu vytvoří.\n\n**3. kolo.** Z kužele vybublá láva a pokryje zem do 20 stop od něj. Každý tvor a předmět v oblasti v okamžiku vzniku lávy utrpí ohnivé zranění 10k10 a vzplane. Poté každý tvor, který v tahu poprvé vstoupí do lávy nebo v ní začne svůj tah, utrpí ohnivé zranění 5k10. Kouř se navíc rozšíří do koule o poloměru 20 stop se středem v kuželu.\n\n**4. kolo.** Láva se dále šíří a pokryje zem do 30 stop od kužele vrstvou hlubokou 1 stopu. Zem pokrytá lávou se stane obtížným terénem. Kouř navíc vyplní kouli o poloměru 30 stop se středem v kuželu.\n\n**5. kolo.** Láva pokryje zem do 40 stop od kužele a kouř vyplní kouli o poloměru 40 stop se středem v kuželu. Kužel navíc začne chrlit žhavé kameny. Vyber až tři tvory do 90 stop od kužele. Každý cíl musí uspět v záchranném hodu na Obratnost, jinak utrpí drtivé zranění 3k6 a ohnivé zranění 3k6.\n\n**6.–10. kolo.** Láva a kouř se každé kolo nadále rozšiřují o 10 stop. Navíc můžeš každé kolo nasměrovat kužel, aby chrlil žhavé kameny na tři cíle podle pravidel 5. kola.\n\nKdyž kouzlo skončí, sopka přestane vybuchovat, ale kouř a láva zůstanou ještě 1 minutu, než se rozptýlí a vychladnou. Kouzlo trvale změní krajinu."
       },
       "feint": {
         "englishName": "Feint",
@@ -2764,23 +2951,108 @@
       },
       "fey-food": {
         "englishName": "Fey Food",
-        "name": "Vílí pokrm"
+        "name": "Vílí pokrm",
+        "original": {
+          "desc": "You enchant up to 1 pound of food or 1 gallon of drink within range with fey magic. Choose one of the effects below. For the duration, any creature that consumes the enchanted food or drink, up to four creatures per pound of food or gallon of drink, must succeed on a Charisma saving throw or succumb to the chosen effect.\n  ***Slumber.*** The creature falls asleep and is unconscious for 1 hour. This effect ends for a creature if the creature takes damage or someone uses an action to wake it.\n  ***Friendly Face.*** The creature is charmed by you for 1 hour. If you or your allies do anything harmful to it, the creature can make another Charisma saving throw. On a success, the spell ends on the creature.\n  ***Muddled Memory.*** The creature remembers only fragments of the events of the past hour. A remove curse or greater restoration spell cast on the creature restores the creature's memory.",
+          "higher_level": "When you cast this spell using a spell slot of 4th level or higher, you can enchant an additional pound of food or gallon of drink for each slot level over 3rd.",
+          "duration": "8 hours",
+          "school": "enchantment",
+          "spell_level": 3,
+          "casting_time": "10 minutes",
+          "range": "10 Feet",
+          "requires_concentration": false,
+          "requires_verbal_components": true,
+          "requires_somatic_components": true,
+          "requires_material_components": true,
+          "material": "",
+          "can_be_cast_as_ritual": false,
+          "dnd_class": "Sorceror, Warlock, Wizard"
+        },
+        "description": "**Očarování 3. úrovně**\n**Vyvolání:** 10 minut\n**Dosah:** 10 stop\n**Složky:** V, P, S (surovina ve zdroji neuvedena)\n**Trvání:** 8 hodin\n**Povolání:** Čaroděj, Černokněžník, Kouzelník\n\nOčaruješ vílí magií až 1 libru jídla nebo 1 galon nápoje v dosahu. Zvol jeden z níže uvedených účinků. Po dobu trvání musí každý tvor, který očarované jídlo sní nebo nápoj vypije, uspět v záchranném hodu na Charisma, jinak podlehne zvolenému účinku; takto lze ovlivnit až čtyři tvory na libru jídla nebo galon nápoje.\n\n**Spánek.** Tvor usne a je 1 hodinu v bezvědomí. Účinek pro něj skončí, pokud utrpí zranění nebo ho někdo akcí probudí.\n\n**Přátelská tvář.** Tvor je tebou zmámený na 1 hodinu. Pokud mu ty nebo tví spojenci jakkoli ublížíte, může provést další záchranný hod na Charisma. Při úspěchu pro něj kouzlo skončí.\n\n**Zmatená paměť.** Tvor si pamatuje pouze útržky událostí z poslední hodiny. Kouzlo *sejmi kletbu* či *mocné navrácení* seslané na tvora mu obnoví paměť.\n\n**Na vyšších úrovních.** Sešleš-li kouzlo s použitím pozice 4. či vyšší úrovně, můžeš očarovat další libru jídla nebo galon nápoje za každou úroveň pozice nad 3."
       },
       "fey-touched-blade": {
         "englishName": "Fey-Touched Blade",
-        "name": "Čepel dotčená vílami"
+        "name": "Čepel dotčená vílami",
+        "original": {
+          "desc": "You touch a nonmagical weapon and imbue it with the magic of the fey. Choose one of the following damage types: force, psychic, necrotic, or radiant. Until the spell ends, the weapon becomes a magic weapon and deals an extra 1d4 damage of the chosen type to any target it hits.",
+          "higher_level": "When you cast this spell using a spell slot of 3rd level or higher, you can imbue one additional weapon for each slot level above 2nd.",
+          "duration": "Up to 1 hour",
+          "school": "evocation",
+          "spell_level": 2,
+          "casting_time": "1 action",
+          "range": "Touch",
+          "requires_concentration": true,
+          "requires_verbal_components": true,
+          "requires_somatic_components": true,
+          "requires_material_components": false,
+          "material": "",
+          "can_be_cast_as_ritual": false,
+          "dnd_class": "Bard, Sorceror"
+        },
+        "description": "**Zaklínání 2. úrovně**\n**Vyvolání:** 1 akce\n**Dosah:** Dotyk\n**Složky:** V, P\n**Trvání:** Soustředění, až 1 hodina\n**Povolání:** Bard, Čaroděj\n\nDotkneš se nemagické zbraně a naplníš ji vílí magií. Vyber jeden z následujících typů zranění: silové, psychické, nekrotické nebo zářivé. Dokud kouzlo neskončí, zbraň je magickou zbraní a každému cíli, který zasáhne, způsobí dodatečné zranění 1k4 zvoleného typu.\n\n**Na vyšších úrovních.** Sešleš-li kouzlo s použitím pozice 3. či vyšší úrovně, můžeš očarovat jednu další zbraň za každou úroveň pozice nad 2."
       },
       "forced-reposition": {
         "englishName": "Forced Reposition",
-        "name": "Nucený přesun"
+        "name": "Nucený přesun",
+        "original": {
+          "desc": "One creature of your choice that you can see within range is teleported to an unoccupied space you can see up to 60 feet above you. The space can be open air or a balcony, ledge, or other surface above you. An unwilling creature that succeeds on a Constitution saving throw is unaffected. A creature teleported to open air immediately falls, taking falling damage as normal, unless it can fly or it has some other method of catching itself or preventing a fall. A creature can't be teleported into a solid object.",
+          "higher_level": "If you cast this spell using a spell slot of 5th level or higher, you can target one additional creature for each slot level above 4th. The targets must be within 30 feet of each other when you target them, but they don't need to be teleported to the same locations.",
+          "duration": "Instantaneous",
+          "school": "conjuration",
+          "spell_level": 4,
+          "casting_time": "1 action",
+          "range": "60 Feet",
+          "requires_concentration": false,
+          "requires_verbal_components": true,
+          "requires_somatic_components": true,
+          "requires_material_components": false,
+          "material": "",
+          "can_be_cast_as_ritual": false,
+          "dnd_class": "Cleric, Sorceror, Warlock, Wizard"
+        },
+        "description": "**Vyvolávání 4. úrovně**\n**Vyvolání:** 1 akce\n**Dosah:** 60 stop\n**Složky:** V, P\n**Trvání:** ihned\n**Povolání:** Klerik, Čaroděj, Černokněžník, Kouzelník\n\nJeden tvor dle tvé volby, kterého vidíš v dosahu, se teleportuje do volného prostoru, který vidíš až 60 stop nad sebou. Může jít o volný vzduch, balkon, římsu nebo jiný povrch nad tebou. Neochotný tvor, který uspěje v záchranném hodu na Odolnost, není ovlivněn. Tvor teleportovaný do volného vzduchu okamžitě padá a utrpí běžné zranění z pádu, pokud neumí létat nebo se nedokáže zachytit či jinak zabránit pádu. Tvora nelze teleportovat dovnitř pevného předmětu.\n\n**Na vyšších úrovních.** Sešleš-li kouzlo s použitím pozice 5. či vyšší úrovně, můžeš zacílit jednoho dalšího tvora za každou úroveň pozice nad 4. Při zacílení musejí být cíle do 30 stop od sebe, ale nemusejí být teleportovány na stejná místa."
       },
       "furious-wail": {
         "englishName": "Furious Wail",
-        "name": "Zuřivý nářek"
+        "name": "Zuřivý nářek",
+        "original": {
+          "desc": "You let out a scream of white-hot fury that pierces the minds of up to five creatures within range. Each target must make a Charisma saving throw. On a failed save, it takes 10d10 + 30 psychic damage and is stunned until the end of its next turn. On a success, it takes half as much damage.",
+          "higher_level": "",
+          "duration": "Instantaneous",
+          "school": "evocation",
+          "spell_level": 9,
+          "casting_time": "1 action",
+          "range": "120 Feet",
+          "requires_concentration": false,
+          "requires_verbal_components": true,
+          "requires_somatic_components": true,
+          "requires_material_components": false,
+          "material": "",
+          "can_be_cast_as_ritual": false,
+          "dnd_class": "Bard, Druid, Sorceror, Warlock, Wizard"
+        },
+        "description": "**Zaklínání 9. úrovně**\n**Vyvolání:** 1 akce\n**Dosah:** 120 stop\n**Složky:** V, P\n**Trvání:** ihned\n**Povolání:** Bard, Druid, Čaroděj, Černokněžník, Kouzelník\n\nVydáš výkřik spalující zuřivosti, který pronikne do myslí až pěti tvorů v dosahu. Každý cíl si musí hodit záchranný hod na Charisma. Při neúspěchu utrpí psychické zranění 10k10 + 30 a je ochromený do konce svého příštího tahu. Při úspěchu utrpí poloviční zranění."
       },
       "fuse-armor": {
         "englishName": "Fuse Armor",
-        "name": "Znehybnění kovu"
+        "name": "Znehybnění kovu",
+        "original": {
+          "desc": "Choose a manufactured metal object with movable parts, such as a drawbridge pulley or winch or a suit of heavy or medium metal armor, that you can see within range. You cause the object's moveable parts to fuse together for the duration. The object's movable aspects can't be moved: a pulley's wheel won't turn and the joints of armor won't bend.\n  A creature wearing armor affected by this spell has its speed reduced by 10 feet and has disadvantage on weapon attacks and ability checks that use Strength or Dexterity. At the end of each of its turns, the creature wearing the armor can make a Strength saving throw. On a success, the spell ends on the armor.\n  A creature in physical contact with an affected object that isn't a suit of armor can use its action to make a Strength check against your spell save DC. On a success, the spell ends on the object.\n  If you target a construct with this spell, it must succeed on a Strength saving throw or have its speed reduced by 10 feet and have disadvantage on weapon attacks. At the end of each of its turns, the construct can make another Strength saving throw. On a success, the spell ends on the construct.",
+          "higher_level": "When you cast this spell using a spell slot of 3rd level or higher, you can target one additional object for each slot level above 2nd. The objects must be within 30 feet of each other when you target them.",
+          "duration": "Up to 1 minute",
+          "school": "evocation",
+          "spell_level": 2,
+          "casting_time": "1 bonus action",
+          "range": "30 Feet",
+          "requires_concentration": true,
+          "requires_verbal_components": true,
+          "requires_somatic_components": true,
+          "requires_material_components": false,
+          "material": "",
+          "can_be_cast_as_ritual": false,
+          "dnd_class": "Bard, Cleric, Sorceror, Warlock, Wizard"
+        },
+        "description": "**Zaklínání 2. úrovně**\n**Vyvolání:** 1 bonusová akce\n**Dosah:** 30 stop\n**Složky:** V, P\n**Trvání:** Soustředění, až 1 minuta\n**Povolání:** Bard, Klerik, Čaroděj, Černokněžník, Kouzelník\n\nVyber vyrobený kovový předmět s pohyblivými částmi, který vidíš v dosahu, například kladku či naviják padacího mostu nebo těžkou či střední kovovou zbroj. Po dobu trvání spojíš jeho pohyblivé části napevno. Pohyblivé části předmětu se nemohou pohybovat: kolo kladky se neotáčí a klouby zbroje se neohýbají.\n\nTvor v takto ovlivněné zbroji má rychlost sníženou o 10 stop a nevýhodu k útokům zbraní a ověřením vlastností využívajícím Sílu či Obratnost. Na konci každého svého tahu může provést záchranný hod na Sílu. Při úspěchu kouzlo na zbroji skončí.\n\nTvor, který se fyzicky dotýká ovlivněného předmětu jiného než zbroje, může svou akcí provést ověření Síly proti tvému SO záchrany kouzla. Při úspěchu kouzlo na předmětu skončí.\n\nZacílíš-li tímto kouzlem konstrukt, musí uspět v záchranném hodu na Sílu, jinak se jeho rychlost sníží o 10 stop a má nevýhodu k útokům zbraní. Na konci každého svého tahu může provést další záchranný hod na Sílu. Při úspěchu pro něj kouzlo skončí.\n\n**Na vyšších úrovních.** Sešleš-li kouzlo s použitím pozice 3. či vyšší úrovně, můžeš zacílit jeden další předmět za každou úroveň pozice nad 2. Při zacílení musejí být předměty do 30 stop od sebe."
       },
       "gale": {
         "englishName": "Gale",

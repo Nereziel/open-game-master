@@ -135,9 +135,9 @@ describe("Tome of Heroes magic items", () => {
 
 
 describe("Reviewed external spell texts from Open5e", () => {
-  it("includes 26 Tome of Heroes and 19 Deep Magic spell descriptions", () => {
+  it("includes 42 Tome of Heroes and 19 Deep Magic spell descriptions", () => {
     for (const [documentSlug, spells, expected] of [
-      ["toh", expansionTranslations.toh.spells, 26],
+      ["toh", expansionTranslations.toh.spells, 42],
       ["dmag", expansionTranslations.dmag.spells, 19],
     ] as const) {
       const rows = Object.entries(spells).filter(([, hit]) => "description" in hit);
