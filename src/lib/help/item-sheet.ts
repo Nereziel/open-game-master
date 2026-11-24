@@ -1,7 +1,7 @@
 import { describeContentEntry } from "@/lib/help";
 import { textKey } from "@/lib/language/text-logic";
 import { DAMAGE_TYPE_BLURBS, WEAPON_PROPERTY_BLURBS } from "@/lib/help/terms";
-import { translate } from "@/lib/messages-logic";
+import { translate, type Locale } from "@/lib/messages-logic";
 import { armorNamed, type SrdArmor } from "@/lib/srd/armor";
 import { packCostCopper, priceText } from "@/lib/srd/currency";
 import { magicItemBonus, withoutBonus } from "@/lib/srd/item-row";
@@ -21,9 +21,6 @@ import { weaponNamed, type SrdWeapon } from "@/lib/srd/weapons";
 
 type Row = Record<string, unknown>;
 type T = (key: string, vars?: Record<string, string | number>) => string;
-type Locale = "en" | "fr" | "cs";
-
-const enT: T = (key, vars) => translate("en", key, vars);
 
 export type ItemProperty = { name: string; blurb: string | null };
 
@@ -96,17 +93,19 @@ function weightOf(row: Row, t: T): string | null {
   return pounds > 0 ? formatPounds(pounds, t) : null;
 }
 
+// Display-only currency conventions: parsing and arithmetic remain SRD
+// coin codes. Preserve the existing boundaries and French platinum spelling.
+const COIN_DISPLAY_BY_LOCALE: Partial<Record<Locale, {
+  pattern: RegExp;
+  words: Record<string, string>;
+}>> = {
+  cs: { pattern: /\b(gp|sp|cp|ep|pp)\b/g, words: { gp: "zl", sp: "st", cp: "md", ep: "el", pp: "pl" } },
+  fr: { pattern: / (gp|sp|cp|ep)/g, words: { gp: " po", sp: " pa", cp: " pc", ep: " pe" } },
+};
+
 function localizeCoins(text: string, locale: Locale): string {
-  if (locale === "cs") {
-    const coins: Record<string, string> = { gp: "zl", sp: "st", cp: "md", ep: "el", pp: "pl" };
-    return text.replace(/\b(gp|sp|cp|ep|pp)\b/g, (coin) => coins[coin]);
-  }
-  if (locale !== "fr") return text;
-  return text
-    .replace(/ gp/g, " po")
-    .replace(/ sp/g, " pa")
-    .replace(/ cp/g, " pc")
-    .replace(/ ep/g, " pe");
+  const display = COIN_DISPLAY_BY_LOCALE[locale];
+  return display ? text.replace(display.pattern, (match, coin: string) => display.words[coin] ?? match) : text;
 }
 
 // v1 rows say "15 gp", v2 rows a bare gold figure ("0.01"), homebrew
@@ -270,8 +269,8 @@ export function buildItemSheet(
   rows: Array<Row | undefined | null>,
   options?: { t?: T; locale?: Locale },
 ): ItemSheet | null {
-  const t = options?.t ?? enT;
   const locale = options?.locale ?? "en";
+  const t: T = options?.t ?? ((key, vars) => translate(locale, key, vars));
   const found = rows.filter((row): row is Row => Boolean(row) && typeof row === "object");
   const bonus = magicItemBonus(name);
   const homebrew = found.find(isHomebrew);
@@ -336,7 +335,7 @@ export function buildItemSheet(
     found.map((row) => weightOf(row, t)).find(Boolean) ?? (srdArmor ? formatPounds(srdArmor.weightLb, t) : null);
   const cost = found.map((row) => costOf(row, t, locale)).find(Boolean) ?? null;
   const description = found.map((row) => str(row, "localized_desc")).find(Boolean)
-    ?? found.map((row) => describeContentEntry(row)).find(Boolean) ?? null;
+    ?? found.map((row) => describeContentEntry(row, undefined, locale)).find(Boolean) ?? null;
   const rawRarity = magic ? capitalize(str(magic, "rarity").toLowerCase()) : null;
   const rarity = rawRarity ? t(rawRarity) : null;
   const attunement = found.some(
