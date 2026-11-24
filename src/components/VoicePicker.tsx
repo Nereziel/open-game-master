@@ -5,6 +5,7 @@ import { Select, type SelectOption } from "@/components/ui/Select";
 import { cn } from "@/lib/cn";
 import { ui } from "@/lib/ui";
 import { useT } from "@/lib/locale";
+import { translate } from "@/lib/i18n/translate";
 import { NARRATOR_DEFAULTS, TTS_VOICES, localizedVoiceLabel, voicesFirstIn } from "@/lib/tts-voices";
 import { TABLE_LANGUAGE_NAMES, type TableLanguage } from "@/lib/schemas/game-settings-options";
 
@@ -63,7 +64,7 @@ export function useTtsVoices(): VoiceList {
 // The name a voice goes by in a summary line.
 // A voice as a person reads it. A campaign with no voice of its own uses the
 // server's, and says so: "Heart (warm female) · server default".
-export function voiceLabel(list: VoiceList, voice: string, t: ReturnType<typeof useT>): string {
+export function voiceLabel(list: VoiceList, voice: string, t: (key: string, vars?: Record<string, string | number>) => string = (key, vars) => translate("en", key, vars)): string {
   const labelFor = (id: string) => {
     const entry = list.voices.find((candidate) => candidate.id === id);
     return entry ? localizedVoiceLabel(t, entry) : id;
