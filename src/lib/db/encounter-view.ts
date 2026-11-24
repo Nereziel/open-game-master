@@ -16,7 +16,7 @@ import { dmPlaysTurn } from "@/lib/dm/companion-command";
 import { aiRunsTestTable } from "@/lib/workshop/test-seats-logic";
 import { answerLabel, critTurnsNormal, heaviestHit, hitIdOf, openHits, reactedLate, type LastHit } from "@/lib/dm/last-hit";
 import { conditionNote, conditionNoteLine, namesLookup } from "@/lib/battlemap/condition-notes";
-import { translate } from "@/lib/messages-logic";
+import { tableTranslator } from "@/lib/messages-logic";
 import { healthState, type HealthState } from "@/lib/bestiary/health";
 import { creatureTypeOf } from "@/lib/bestiary/creature-type";
 import { isRegeneratingDown } from "@/lib/dm/regeneration";
@@ -396,7 +396,7 @@ export function publicEncounter(
   const hidden = new Set(options.hiddenRefIds ?? []);
   const cast = castLookup(encounter.campaignId);
   const language = getCampaignById(encounter.campaignId)?.gameSettings.tableLanguage ?? "english";
-  const t = (key: string, vars?: Record<string, string | number>) => translate(language === "french" ? "fr" : "en", key, vars);
+  const t = tableTranslator(language);
   // Names a condition's "until X's turn" or "from X" may show: the order as
   // this viewer sees it.
   const nameOf = namesLookup(
