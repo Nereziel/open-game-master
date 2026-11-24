@@ -2,7 +2,7 @@
 // The server keeps the English SRD 5.1 page IDs and canonical mechanics names.
 // Terminology reference: https://dnd5esrd.d20.cz/prirucka-hrace/
 // and https://dnd5esrd.d20.cz/pruvodce-pana-jeskyne/dodatek-B.html
-import { CZECH_MONSTER_SIZES, CZECH_CREATURE_TYPES } from "../i18n/game-term-labels";
+import { CZECH_MONSTER_SIZES, CZECH_CREATURE_TYPES, CZECH_SCHOOLS } from "../i18n/game-term-labels";
 import { CZECH_MONSTER_TITLES_6, CZECH_ITEM_TITLES_4 } from "./czech-bestiary-items-4";
 import { CZECH_MONSTER_TITLES_7 } from "./czech-monster-notes-7";
 import { CZECH_ITEM_TITLES_5 } from "./czech-item-notes-5";
@@ -653,16 +653,7 @@ export const CZECH_ITEMS: Readonly<Record<string, string>> = {
 
 // Magic schools follow the terminology of the Czech 5e SRD. We translate
 // only recognized SRD spell metadata; unknown text is left unchanged.
-export const CZECH_SCHOOLS: Readonly<Record<string, string>> = {
-  abjuration: "Vymítání",
-  conjuration: "Vyvolávání",
-  divination: "Věštění",
-  enchantment: "Očarování",
-  evocation: "Zaklínání",
-  illusion: "Iluze",
-  necromancy: "Nekromancie",
-  transmutation: "Transmutace",
-};
+export { CZECH_SCHOOLS } from "../i18n/game-term-labels";
 
 // The stat-block subtitle is display text, not part of the rules-engine
 // record. Translate only grammar we know; keep unknown source fragments.
