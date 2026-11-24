@@ -1,5 +1,6 @@
 {
   "messages": {
+    "The element of the {label} chosen: {type}. Elemental Affinity, where the subclass has it, adds to spells of this damage type and resists it.": "Élément choisi pour {label} : dégâts de type {type}. L’Affinité élémentaire, si l’archétype en dispose, renforce les sorts infligeant ce type de dégâts et confère une résistance à ce type.",
     "Cannot see. Fails any check that needs sight; attacks against it have advantage, its own attacks have disadvantage.": "Ne voit pas et échoue automatiquement à tout test nécessitant la vue. Les attaques contre lui ont l’avantage, ses propres attaques ont le désavantage.",
     "Cannot attack the charmer or target them with harmful effects; the charmer has advantage on social checks against it.": "Ne peut pas attaquer celui qui l’a charmé ni le viser par un effet nuisible. Celui-ci a l’avantage aux tests sociaux contre la créature charmée.",
     "Cannot hear. Fails any check that needs hearing.": "N’entend pas et échoue automatiquement à tout test nécessitant l’ouïe.",
