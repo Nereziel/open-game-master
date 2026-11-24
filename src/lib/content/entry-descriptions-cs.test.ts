@@ -11,12 +11,41 @@ import spellFixture from "../../../scripts/fixtures/reader-golden/spell.json";
 import featFixture from "../../../scripts/fixtures/reader-golden/feat.json";
 import backgroundFixture from "../../../scripts/fixtures/reader-golden/background.json";
 import expansionTranslations from "./expansion-descriptions-cs.json";
-import { contentName, localizedExpansionName } from "./names";
+import { contentName, contentNameMatches, localizedExpansionName } from "./names";
 import "../i18n/cs-catalog";
+import "../i18n/fr-catalog";
 import expansionNames from "./expansion-names-cs.json";
 
 
 const localizeEntryCs = <T,>(table: string, row: T): T => localizeEntry(table, row, "cs");
+
+describe("Source-safe display names and search", () => {
+  it("localizes bundled core rows and matches their translated labels", () => {
+    const row = bundledSpellRows().find((entry) => entry.rulebook === "fireball")!;
+    expect(contentName("spells", row, "cs")).toBe("Ohnivá koule");
+    expect(contentName("spells", row, "fr")).toBe("Boule de feu");
+    expect(contentNameMatches("spells", row, "ohniva kou", "cs")).toBe(true);
+    expect(contentNameMatches("spells", row, "boule de", "fr")).toBe(true);
+    expect(contentNameMatches("spells", row, "Fireball", "cs")).toBe(true);
+    expect(contentNameMatches("spells", row, "ohniva kou", "en")).toBe(false);
+    for (const foreign of [
+      { ...row, source: "homebrew" },
+      { ...row, source: "open5e", documentSlug: "unrelated-book" },
+      { ...row, source: "open5e", documentSlug: "srd-2024" },
+    ]) {
+      expect(contentName("spells", foreign, "cs")).toBe("Fireball");
+      expect(contentNameMatches("spells", foreign, "ohniva kou", "cs")).toBe(false);
+      expect(contentNameMatches("spells", foreign, "Fireball", "cs")).toBe(true);
+    }
+  });
+
+  it("matches the exact expansion label, not a translation from another book", () => {
+    const [slug, hit] = Object.entries(expansionTranslations.toh.spells).find(([, hit]) => hit.name !== hit.englishName)!;
+    const row = { slug, name: hit.englishName, source: "open5e", documentSlug: "toh" };
+    expect(contentNameMatches("spells", row, hit.name, "cs")).toBe(true);
+    expect(contentName("spells", { ...row, documentSlug: "unrelated-book" }, "cs")).toBe(row.name);
+  });
+});
 
 describe("Shared localized content descriptions", () => {
   it("preserves canonical spell and item data for all reader languages", () => {
