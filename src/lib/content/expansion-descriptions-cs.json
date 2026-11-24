@@ -154,6 +154,30 @@
         },
         "description": "*Předpoklad: Zdatnost s určitým typem dopravního prostředku.*\n\nJsi virtuózem v řízení a pilotování dopravních prostředků. Dokážeš překročit jejich běžné limity a s plynulou ladností s nimi manévrovat v nebezpečných situacích. Získáš následující výhody:\n\n- K ověřením vlastností při řízení či pilotování dopravního prostředku získáš kostku odbornosti (expertise die).\n- Při pilotování můžeš použít svou reakci k provedení akce vozidla Brzdění nebo Manévr.\n- Dopravní prostředek, který naložíš, uveze o 25 % více nákladu než obvykle.\n- Dopravní prostředky, které pilotuješ, utrpí poruchu až při poklesu na 25 % svých životů, nikoli na 50 %. Pokud k poruše dojde, hodíš dvakrát na tabulku manévrů a vybereš, který výsledek použiješ.\n- Dopravní prostředky, které pilotuješ, získají bonus k OČ rovný polovině tvého zdatnostního bonusu.\n- Při Brzdění se můžeš rozhodnout okamžitě zastavit dopravní prostředek, aniž by ujel přímo vpřed vzdálenost rovnou polovině své rychlosti pohybu."
       }
+    },
+    "backgrounds": {
+      "artisan": {
+        "englishName": "Artisan",
+        "name": "Řemeslník",
+        "original": {
+          "name": "Artisan",
+          "desc": "You are skilled enough in a trade to make a comfortable living and to aspire to mastery of your art. Yet here you are, ready to slog through mud and blood and danger.\n\nWhy did you become an adventurer? Did you flee a cruel master? Were you bored? Or are you a member in good standing, looking for new materials and new markets?",
+          "slug": "artisan",
+          "skill_proficiencies": "Persuasion, and either Insight or History.",
+          "tool_proficiencies": null,
+          "languages": null,
+          "equipment": "One set of artisan's tools, traveler's clothes.",
+          "feature": "Trade Mark",
+          "feature_desc": "When in a city or town, you have access to a fully-stocked workshop with everything you need to ply your trade. Furthermore, you can expect to earn full price when you sell items you have crafted (though there is no guarantee of a buyer).",
+          "suggested_characteristics": "### **Artisan Mementos**\n\n1. *Jeweler:* A 10,000 gold commission for a ruby ring (now all you need is a ruby worth 5,000 gold).\n2. *Smith:* Your blacksmith's hammer (treat as a light hammer).\n3. *Cook:* A well-seasoned skillet (treat as a mace).\n4. *Alchemist:* A formula with exotic ingredients that will produce...something.\n5. *Leatherworker:* An exotic monster hide which could be turned into striking-looking leather armor.\n6. *Mason:* Your trusty sledgehammer (treat as a warhammer).\n7. *Potter:* Your secret technique for vivid colors which is sure to disrupt Big Pottery.\n8. *Weaver:* A set of fine clothes (your own work).\n9. *Woodcarver:* A longbow, shortbow, or crossbow (your own work).\n10. *Calligrapher:* Strange notes you copied from a rambling manifesto. Do they mean something?",
+          "document__slug": "a5e"
+        },
+        "description": "Jsi natolik zručný v řemesle, že si dokážeš pohodlně vydělat na živobytí a můžeš usilovat o mistrovství ve svém umění. Přesto jsi tady, připraven brodit se blátem, krví a nebezpečím.\n\nProč ses stal dobrodruhem? Uprchl jsi od krutého mistra? Nudil ses? Nebo jsi váženým členem cechu, který hledá nové materiály a odbytiště?\n\n**Zdatnosti v dovednostech:** Přesvědčování a buď Vhled, nebo Historie.\n\n**Vybavení:** Jedna sada řemeslnického náčiní, cestovní oděv.\n\n**Schopnost: Značka řemesla.** Ve městě máš přístup k plně vybavené dílně se vším, co potřebuješ ke svému řemeslu. Kromě toho můžeš očekávat, že za předměty, které vyrobíš, dostaneš při prodeji plnou cenu (kupce ti však nikdo nezaručuje).\n\n### Řemeslníkovy památky\n\n1. *Klenotník:* Zakázka za 10 000 zl na rubínový prsten (teď už potřebuješ jen rubín v hodnotě 5 000 zl).\n2. *Kovář:* Tvé kovářské kladivo (počítá se jako lehké kladivo).\n3. *Kuchař:* Dobře vypálená pánev (počítá se jako palcát).\n4. *Alchymista:* Receptura s exotickými přísadami, která vytvoří… něco.\n5. *Kožedělník:* Exotická kůže nestvůry, z níž by šla vyrobit nápadná kožená zbroj.\n6. *Kameník:* Tvá věrná palice (počítá se jako válečné kladivo).\n7. *Hrnčíř:* Tvá tajná technika zářivých barev, která jistě otřese hrnčířským velkoprůmyslem.\n8. *Tkadlec:* Sada kvalitního oděvu (tvá vlastní práce).\n9. *Řezbář:* Dlouhý luk, krátký luk nebo kuše (tvá vlastní práce).\n10. *Kaligraf:* Podivné poznámky, které jsi opsal z nesouvislého manifestu. Znamenají něco?"
+      },
+      "guildmember": {
+        "englishName": "Guildmember",
+        "name": "Člen cechu"
+      }
     }
   },
   "spells-that-dont-suck": {
@@ -198,6 +222,336 @@
           "prerequisite": "*A race or background from a cold climate and the ability to cast at least one spell*"
         },
         "description": "*Předpoklad: Rasa nebo zázemí z oblasti s chladným podnebím a schopnost seslat alespoň jedno kouzlo.*\n\nPocházíš z oblasti s chladným podnebím a naučil ses přizpůsobit svou magii tak, aby odrážela tvůj původ. Získáš následující výhody:\n\n- Když sešleš kouzlo, které způsobuje zranění, můžeš použít reakci a změnit typ zranění způsobeného kouzlem na chladné zranění.\n- Když sešleš kouzlo, které způsobuje chladné zranění, získáš odolnost vůči chladnému zranění do začátku svého příštího tahu. Pokud už tuto odolnost máš, získáš místo ní imunitu vůči chladnému zranění do začátku svého příštího tahu."
+      }
+    },
+    "backgrounds": {
+      "destined": {
+        "englishName": "Destined",
+        "name": "Vyvolený osudem"
+      },
+      "diplomat": {
+        "englishName": "Diplomat",
+        "name": "Diplomat"
+      },
+      "forest-dweller": {
+        "englishName": "Forest Dweller",
+        "name": "Obyvatel lesa"
+      },
+      "freebooter": {
+        "englishName": "Freebooter",
+        "name": "Korzár"
+      },
+      "occultist": {
+        "englishName": "Occultist",
+        "name": "Okultista"
+      },
+      "court-servant": {
+        "englishName": "Court Servant",
+        "name": "Dvorní sluha",
+        "original": {
+          "name": "Court Servant",
+          "desc": "Even though you are independent now, you were once a servant to a merchant, noble, regent, or other person of high station. You are an expert in complex social dynamics and knowledgeable in the history and customs of courtly life. Work with your GM to determine whom you served and why you are no longer a servant: did your master or masters retire and no longer require servants, did you resign from the service of a harsh master, did the court you served fall to a neighboring empire, or did something else happen?",
+          "slug": "court-servant",
+          "skill_proficiencies": "History, Insight",
+          "tool_proficiencies": "One artisan's tools set of your choice",
+          "languages": "One of your choice",
+          "equipment": "A set of artisan's tools of your choice, a unique piece of jewelry, a set of fine clothes, a handcrafted pipe, and a belt pouch containing 20 gp",
+          "feature": "Servant's Invisibility",
+          "feature_desc": "The art of excellent service requires a balance struck between being always available and yet unobtrusive, and you've mastered it. If you don't perform a visible action, speak or be spoken to, or otherwise have attention drawn to you for at least 1 minute, creatures nearby have trouble remembering you are even in the room. Until you speak, perform a visible action, or have someone draw attention to you, creatures must succeed on a Wisdom (Perception) check (DC equal to 8 + your Charisma modifier + your proficiency bonus) to notice you. Otherwise, they conduct themselves as though you aren't present until either attention is drawn to you or one of their actions would take them into or within 5 feet of the space you occupy.",
+          "suggested_characteristics": "Court servants tend to be outwardly quiet and soft-spoken, but their insight into the nuances of conversation and societal happenings is unparalleled. When in crowds or around strangers, most court servants keep to themselves, quietly observing their surroundings and later sharing such observations with those they trust. \n\n| d8 | Personality Trait | \n|---|---|\n| 1 | Unless I must speak, I hold my breath while serving others.                                                |\n| 2  | It takes all my effort not to show the effusive emotions I feel when I help others. Best to quietly serve. |\n| 3  | It's getting harder to tolerate the prejudices of those I serve daily.                                     |\n| 4  | Though the old ways are hard to give up, I want to be my own boss. I'll decide my path.                    |\n| 5  | Serving my family and friends is the only thing I truly care about.                                        |\n| 6  | City life is killing my soul. I long for the old courtly ways.                                             |\n| 7  | It's time for my fellows to wake up and be taken advantage of no longer.                                   |\n| 8  | It's the small things that make it all worthwhile. I try to be present in every moment.                    |\n\n| d6 | Ideal                                                                                                                         |\n|----|-------------------------------------------------------------------------------------------------------------------------------|\n| 1  | **Family.** My family, whether the one I come from or the one I make, is the thing in this world most worth protecting. (Any) |\n| 2  | **Service.** I am most rewarded when I know I have performed a valuable service for another. (Good)                           |\n| 3  | **Sloth.** What's the point of helping anyone now that I've been discarded? (Chaotic)                                         |\n| 4  | **Compassion.** I can't resist helping anyone in need. (Good)                                                                 |\n| 5  | **Tradition.** Life under my master's rule was best, and things should be kept as close to their ideals as possible. (Lawful) |\n| 6  | **Joy.** The pursuit of happiness is the only thing worth serving anymore. (Neutral)                                          |\n\n| d6 | Bond                                                                                                                                                     |\n|----|----------------------------------------------------------------------------------------------------------------------------------------------------------|\n| 1  | My family needs me to provide for them. They mean everything to me, which means I'll do whatever it takes.  |\n| 2  | My kin have served this holding and its lords and ladies for generations. I serve them faithfully to make my lineage proud. |\n| 3  | I can't read the inscriptions on this odd ring, but it's all I have left of my family and our history of loyal service. |\n| 4  | I'm with the best friends a person can ask for, so why do I feel so lonesome and homesick? |\n| 5  | I've found a profession where my skills are put to good use, and I won't let anyone bring me down. |\n| 6  | I found peace in a special garden filled with beautiful life, but I only have this flower to remind me. Someday I'll remember where to find that garden. |\n\n| d6 | Flaw |\n|---|---|\n| 1  | I would rather serve darkness than serve no one. |\n| 2  | I'm afraid of taking risks that might be good for me. |\n| 3  | I believe my master's people are superior to all others, and I'm not afraid to share that truth. |\n| 4  | I always do as I'm told, even though sometimes I don't think I should. |\n| 5  | I know what's best for everyone, and they'd all be better off if they'd follow my advice. | \n| 6 | I can't stand seeing ugly or depressing things. I'd much rather think happy thoughts. |",
+          "document__slug": "toh"
+        },
+        "description": "Ačkoli jsi nyní nezávislý, kdysi jsi sloužil kupci, šlechtici, regentovi či jiné vysoce postavené osobě. Vyznáš se ve složitých společenských vztazích a znáš historii a zvyklosti dvorského života. Spolu s PJ urči, komu jsi sloužil a proč už nejsi sluhou. Odešel tvůj pán či páni na odpočinek a už služebnictvo nepotřebují? Opustil jsi služby krutého pána? Padl dvůr, jemuž jsi sloužil, do rukou sousední říše? Nebo se stalo něco jiného?\n\n**Zdatnosti v dovednostech:** Historie, Vhled.\n**Zdatnosti s náčiním:** Jedna sada řemeslnického náčiní dle tvého výběru.\n**Jazyky:** Jeden dle tvého výběru.\n**Vybavení:** Sada řemeslnického náčiní dle tvého výběru, jedinečný šperk, sada kvalitního oděvu, ručně vyrobená dýmka a měšec u opasku s 20 zl.\n\n**Schopnost: Neviditelnost služebníka.** Umění dokonalé služby vyžaduje rovnováhu mezi stálou dostupností a nenápadností; ty jsi je ovládl. Pokud alespoň 1 minutu neprovedeš žádnou viditelnou akci, nepromluvíš, nikdo tě neosloví ani na tebe jinak neupoutá pozornost, tvorové poblíž si jen těžko vybavují, že vůbec jsi v místnosti. Dokud nepromluvíš, neprovedeš viditelnou akci nebo na tebe někdo neupoutá pozornost, musí tvorové uspět v ověření Moudrosti (Vnímání) se SO 8 + tvá oprava Charismatu + tvůj zdatnostní bonus, aby si tě všimli. Jinak se chovají, jako bys nebyl přítomen, dokud na tebe někdo neupoutá pozornost nebo by je některá jejich akce zavedla do prostoru, který zaujímáš, či do vzdálenosti 5 stop od něj.\n\nDvorní sluhové bývají navenek tiší a mluví mírně, ale jejich porozumění nuancím rozhovorů a společenskému dění je nepřekonatelné. V davu nebo mezi cizími lidmi se většinou drží stranou, tiše pozorují okolí a později se o své postřehy dělí s těmi, jimž důvěřují.\n\n| k8 | Osobnostní rys |\n|---|---|\n| 1 | Když sloužím ostatním, zadržuji dech, pokud nemusím mluvit. |\n| 2 | Stojí mě veškeré úsilí nedat najevo bouřlivé emoce, které cítím, když druhým pomáhám. Nejlepší je tiše sloužit. |\n| 3 | Je čím dál těžší snášet předsudky těch, kterým denně sloužím. |\n| 4 | Starých způsobů se těžko zbavuje, ale chci být sám sobě pánem. O své cestě rozhodnu já. |\n| 5 | Služba rodině a přátelům je to jediné, na čem mi opravdu záleží. |\n| 6 | Městský život mi ubíjí duši. Toužím po starých dvorských zvycích. |\n| 7 | Je načase, aby se mí druhové probrali a už se nenechávali využívat. |\n| 8 | Právě drobnosti dávají všemu smysl. Snažím se být přítomen v každém okamžiku. |\n\n| k6 | Ideál |\n|---|---|\n| 1 | **Rodina.** Rodina, ať ta, z níž pocházím, nebo ta, kterou si vytvořím, je tím, co stojí za ochranu nejvíc na světě. (Libovolné) |\n| 2 | **Služba.** Největší odměnou je vědomí, že jsem druhému prokázal cennou službu. (Dobré) |\n| 3 | **Lenost.** Proč bych měl někomu pomáhat, když mě odhodili? (Chaotické) |\n| 4 | **Soucit.** Nedokážu nepomoci nikomu v nouzi. (Dobré) |\n| 5 | **Tradice.** Život pod vládou mého pána byl nejlepší a vše by se mělo držet jejich ideálů co nejvíc. (Zákonné) |\n| 6 | **Radost.** Jediné, čemu ještě stojí za to sloužit, je hledání štěstí. (Neutrální) |\n\n| k6 | Pouto |\n|---|---|\n| 1 | Má rodina potřebuje, abych ji živil. Znamená pro mě všechno, proto udělám cokoli bude třeba. |\n| 2 | Můj rod sloužil tomuto panství i jeho pánům a paním po generace. Věrně jim sloužím, aby na mě byl můj rod hrdý. |\n| 3 | Neumím přečíst nápisy na tomto zvláštním prstenu, ale je to vše, co mi zbylo po rodině a její dlouhé věrné službě. |\n| 4 | Mám ty nejlepší přátele, jaké si člověk může přát. Proč se tedy cítím tak osaměle a stýská se mi po domově? |\n| 5 | Našel jsem povolání, v němž své schopnosti dobře využiji, a nikomu nedovolím, aby mě srazil. |\n| 6 | Našel jsem klid ve zvláštní zahradě plné krásného života, ale připomíná mi ji jen tato květina. Jednou si vzpomenu, kde zahradu najít. |\n\n| k6 | Slabina |\n|---|---|\n| 1 | Raději bych sloužil temnotě, než nesloužil nikomu. |\n| 2 | Bojím se podstoupit rizika, která by mi mohla prospět. |\n| 3 | Věřím, že lidé mého pána jsou nadřazeni všem ostatním, a nebojím se tuto pravdu šířit. |\n| 4 | Vždy dělám, co mi kdo přikáže, i když si někdy myslím, že bych neměl. |\n| 5 | Vím, co je pro všechny nejlepší, a všem by bylo lépe, kdyby se řídili mými radami. |\n| 6 | Nesnesu pohled na ošklivé nebo skličující věci. Mnohem raději myslím na něco veselého. |"
+      }
+    },
+    "species": {
+      "acid-cap": {
+        "englishName": "Acid Cap",
+        "name": "Kyselinový klobouk"
+      },
+      "bhain-kwai": {
+        "englishName": "Bhain Kwai",
+        "name": "Bhain Kwai"
+      },
+      "catfolk": {
+        "englishName": "Catfolk",
+        "name": "Kočkolidé"
+      },
+      "darakhul": {
+        "englishName": "Darakhul",
+        "name": "Darakhul"
+      },
+      "delver": {
+        "englishName": "Delver",
+        "name": "Hlubinný průzkumník"
+      },
+      "erina": {
+        "englishName": "Erina",
+        "name": "Erina"
+      },
+      "derro": {
+        "englishName": "Derro",
+        "name": "Derro"
+      },
+      "drow": {
+        "englishName": "Drow",
+        "name": "Drow"
+      },
+      "dwarf-chassis": {
+        "englishName": "Dwarf Chassis",
+        "name": "Trpasličí tělo"
+      },
+      "gearforged": {
+        "englishName": "Gearforged",
+        "name": "Strojotvor"
+      },
+      "human-chassis": {
+        "englishName": "Human Chassis",
+        "name": "Lidské tělo"
+      },
+      "humanhalf-elf-heritage": {
+        "englishName": "Human/Half-Elf Heritage",
+        "name": "Dědictví lidí či půlelfů"
+      },
+      "malkin": {
+        "englishName": "Malkin",
+        "name": "Malkin"
+      },
+      "minotaur": {
+        "englishName": "Minotaur",
+        "name": "Minotaur"
+      },
+      "mushroomfolk": {
+        "englishName": "Mushroomfolk",
+        "name": "Houboví lidé"
+      },
+      "mutated": {
+        "englishName": "Mutated",
+        "name": "Zmutovaný"
+      },
+      "shade": {
+        "englishName": "Shade",
+        "name": "Stín"
+      },
+      "alseid": {
+        "englishName": "Alseid",
+        "name": "Alseid"
+      },
+      "boghaid": {
+        "englishName": "Boghaid",
+        "name": "Boghaid"
+      },
+      "derro-heritage": {
+        "englishName": "Derro Heritage",
+        "name": "Dědictví derrů"
+      },
+      "dragonborn-heritage": {
+        "englishName": "Dragonborn Heritage",
+        "name": "Dědictví drakorozených"
+      },
+      "drow-heritage": {
+        "englishName": "Drow Heritage",
+        "name": "Drowí dědictví"
+      },
+      "dwarf-heritage": {
+        "englishName": "Dwarf Heritage",
+        "name": "Trpasličí dědictví"
+      },
+      "elfshadow-fey-heritage": {
+        "englishName": "Elf/Shadow Fey Heritage",
+        "name": "Dědictví elfů či stínových víl"
+      },
+      "far-touched": {
+        "englishName": "Far-Touched",
+        "name": "Dotčený dálavami"
+      },
+      "favored": {
+        "englishName": "Favored",
+        "name": "Obdařený"
+      },
+      "fever-bit": {
+        "englishName": "Fever-Bit",
+        "name": "Poznamenaný horečkou"
+      },
+      "gnome-chassis": {
+        "englishName": "Gnome Chassis",
+        "name": "Gnómí tělo"
+      },
+      "gnome-heritage": {
+        "englishName": "Gnome Heritage",
+        "name": "Gnómí dědictví"
+      },
+      "halfling-heritage": {
+        "englishName": "Halfling Heritage",
+        "name": "Hobití dědictví"
+      },
+      "kobold-chassis": {
+        "englishName": "Kobold Chassis",
+        "name": "Koboldí tělo"
+      },
+      "kobold-heritage": {
+        "englishName": "Kobold Heritage",
+        "name": "Koboldí dědictví"
+      },
+      "morel": {
+        "englishName": "Morel",
+        "name": "Smrž"
+      },
+      "pantheran": {
+        "englishName": "Pantheran",
+        "name": "Pantheran"
+      },
+      "purified": {
+        "englishName": "Purified",
+        "name": "Očištěný"
+      },
+      "ravenfolk": {
+        "englishName": "Ravenfolk",
+        "name": "Havraní lidé"
+      },
+      "satarre": {
+        "englishName": "Satarre",
+        "name": "Satarre"
+      },
+      "tiefling-heritage": {
+        "englishName": "Tiefling Heritage",
+        "name": "Tieflingské dědictví"
+      },
+      "trollkin-heritage": {
+        "englishName": "Trollkin Heritage",
+        "name": "Dědictví trollích potomků"
+      },
+      "uncorrupted": {
+        "englishName": "Uncorrupted",
+        "name": "Nezkorumpovaný"
+      }
+    },
+    "subclasses": {
+      "soulspy": {
+        "englishName": "Soulspy",
+        "name": "Špeh duší"
+      }
+    }
+  },
+  "a5e-ag": {
+    "classes": {
+      "marshal": {
+        "englishName": "Marshal",
+        "name": "Maršál"
+      }
+    },
+    "backgrounds": {
+      "cultist": {
+        "englishName": "Cultist",
+        "name": "Kultista"
+      }
+    },
+    "subclasses": {
+      "gambling-general": {
+        "englishName": "Gambling General",
+        "name": "Hazardující generál"
+      }
+    }
+  },
+  "bfrd": {
+    "classes": {
+      "mechanist": {
+        "englishName": "Mechanist",
+        "name": "Mechanik"
+      }
+    }
+  },
+  "o5e": {
+    "backgrounds": {
+      "con-artist": {
+        "englishName": "Con Artist",
+        "name": "Podvodník",
+        "original": {
+          "name": "Con Artist",
+          "desc": "You have always had a knack for getting people to see your point of view, often to their own detriment. You know how people think, what they want, and how to best use that to your advantage.\n\nPeople should know better than to trust you when you offer exactly what they need for exactly as much money as they have, but for the desperate caution is a resource in short supply. Your mysterious bottles, unlikely rumors, and secret maps offer to deliver the salvation they need. When they realize they've been had, you're nowhere to be found.",
+          "slug": "con-artist",
+          "skill_proficiencies": "Deception, Sleight of Hand",
+          "tool_proficiencies": "Two of your choice",
+          "languages": null,
+          "equipment": "A set of fine clothes, a disguise kit, tools for your typical con (such as bottles full of colored water, a set of weighted dice, a deck of marked or filed cards, or a seal from an imaginary-or real-noble), and a pouch containing 15gp",
+          "feature": "Cover Story",
+          "feature_desc": "You have created a secondary persona that includes documents, mannerisms, a social presence and acquaintances. This also includes an alternate set of clothing and accessories as well as any elements needed for the disguise such as a wig or false teeth. Additionally, you can duplicate or fake documents-including official documents or personal correspondence-as long as you have seen a similar document and have an appropriate handwriting sample.",
+          "suggested_characteristics": "Coming soon!",
+          "document__slug": "o5e"
+        },
+        "description": "Vždycky jsi měl talent přimět lidi, aby přijali tvůj pohled na věc, často ke své vlastní škodě. Víš, jak lidé přemýšlejí, co chtějí a jak toho nejlépe využít ve svůj prospěch.\n\nLidé by ti neměli důvěřovat, když jim nabízíš přesně to, co potřebují, za přesně tolik peněz, kolik mají. Zoufalí lidé však opatrností šetří. Tvé tajemné lahvičky, nepravděpodobné zvěsti a tajné mapy slibují spásu, kterou potřebují. Když pochopí, že naletěli, už tě nikde nenajdou.\n\n**Zdatnosti v dovednostech:** Klamání, Čachry.\n\n**Zdatnosti s náčiním:** Dvě dle tvého výběru.\n\n**Vybavení:** Sada kvalitního oděvu, převleková souprava, pomůcky pro tvůj obvyklý podvod (např. lahvičky s obarvenou vodou, sada zatížených kostek, balíček označených či obroušených karet nebo pečeť smyšleného či skutečného šlechtice) a měšec s 15 zl.\n\n**Schopnost: Krycí identita.** Vytvořil sis druhou totožnost s doklady, způsoby chování, společenským vystupováním a známými. Patří k ní také náhradní sada oděvu a doplňků i veškeré součásti převleku, například paruka nebo falešné zuby. Navíc dokážeš napodobit nebo padělat dokumenty, včetně úředních listin či osobní korespondence, pokud jsi viděl podobný dokument a máš vhodný vzorek rukopisu.\n\n**Doporučené charakteristiky:** Budou doplněny (takto uvedeno ve zdroji)."
+      },
+      "scoundrel": {
+        "englishName": "Scoundrel",
+        "name": "Darebák"
+      }
+    },
+    "species": {
+      "stoor-halfling": {
+        "englishName": "Stoor Halfling",
+        "name": "Hobit statného rodu"
+      }
+    },
+    "subclasses": {
+      "college-of-skalds": {
+        "englishName": "College of Skalds",
+        "name": "Kolej skaldů"
+      }
+    }
+  },
+  "taldorei": {
+    "backgrounds": {
+      "crime-syndicate-member": {
+        "englishName": "Crime Syndicate Member",
+        "name": "Člen zločineckého syndikátu"
+      },
+      "lyceum-student": {
+        "englishName": "Lyceum Student",
+        "name": "Student lycea"
+      }
+    }
+  },
+  "a5e-ddg": {
+    "backgrounds": {
+      "deep-hunter": {
+        "englishName": "Deep Hunter",
+        "name": "Lovec hlubin"
+      },
+      "dungeon-robber": {
+        "englishName": "Dungeon Robber",
+        "name": "Vykradač podzemí"
+      }
+    }
+  },
+  "a5e-gpg": {
+    "backgrounds": {
+      "haunted": {
+        "englishName": "Haunted",
+        "name": "Pronásledovaný přízraky"
+      }
+    }
+  },
+  "open5e": {
+    "subclasses": {
+      "abjurationist": {
+        "englishName": "Abjurationist",
+        "name": "Ochranný mág"
+      }
+    }
+  },
+  "tob": {
+    "monsters": {
+      "deathwisp": {
+        "englishName": "Deathwisp",
+        "name": "Smrtná bludička"
+      }
+    }
+  },
+  "blackflag": {
+    "monsters": {
+      "balor_bf": {
+        "englishName": "Balor",
+        "name": "Balor"
       }
     }
   }

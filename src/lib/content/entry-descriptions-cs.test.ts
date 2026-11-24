@@ -44,13 +44,14 @@ describe("Czech SRD display descriptions", () => {
 
 import spellFixture from "../../../scripts/fixtures/reader-golden/spell.json";
 import featFixture from "../../../scripts/fixtures/reader-golden/feat.json";
+import backgroundFixture from "../../../scripts/fixtures/reader-golden/background.json";
 import expansionTranslations from "./expansion-descriptions-cs.json";
 import { contentName } from "./names";
 
 describe("Czech external display translations (without SQLite)", () => {
   it("localizes every reviewed fixture and preserves identity and mechanics", () => {
     let count = 0;
-    for (const [table, fixture] of [["spells", spellFixture], ["feats", featFixture]] as const) {
+    for (const [table, fixture] of [["spells", spellFixture], ["feats", featFixture], ["backgrounds", backgroundFixture]] as const) {
       for (const { row } of fixture.cases) {
         const books = expansionTranslations as Record<string, Record<string, Record<string, { name: string; description: string }>>>;
         const hit = books[row.documentSlug]?.[table]?.[row.slug];
@@ -76,6 +77,6 @@ describe("Czech external display translations (without SQLite)", () => {
         count++;
       }
     }
-    expect(count).toBe(16);
+    expect(count).toBe(19);
   });
 });

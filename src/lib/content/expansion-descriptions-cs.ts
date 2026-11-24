@@ -6,13 +6,13 @@ type Row = { slug?: string; name?: string; source?: string; documentSlug?: strin
 type Translation = {
   englishName: string;
   name: string;
-  original: Record<string, unknown>;
-  description: string;
+  original?: Record<string, unknown>;
+  description?: string;
 };
 const books: Record<string, Record<string, Record<string, Translation>>> = data;
 
 function translation(table: string, row: Row): Translation | undefined {
-  if (row.source !== "open5e" || !row.documentSlug || !row.slug) return undefined;
+  if (!row || row.source !== "open5e" || !row.documentSlug || !row.slug) return undefined;
   const book = Object.hasOwn(books, row.documentSlug) ? books[row.documentSlug] : undefined;
   const entries = book && Object.hasOwn(book, table) ? book[table] : undefined;
   const hit = entries && Object.hasOwn(entries, row.slug) ? entries[row.slug] : undefined;
@@ -24,8 +24,8 @@ export function expansionNameCs(table: string, row: Row): string | undefined {
 }
 
 export function expansionDescriptionCs(table: string, row: Row & { data?: Record<string, unknown> }): string | undefined {
-  const hit = translation(table, row);
-  if (!hit || !row.data) return undefined;
+  const hit = translation(table === "races" ? "species" : table === "archetypes" ? "subclasses" : table, row);
+  if (!hit?.description || !hit.original || !row.data) return undefined;
   const source = row.data;
   // Exact text and metadata from the checked-in golden row, not an inferred
   // slug or a guessed rule. Other fields remain unmodified.
