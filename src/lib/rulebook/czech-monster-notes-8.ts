@@ -151,7 +151,7 @@ export const CZECH_MONSTER_TITLES_8: Readonly<Record<string, string>> = {
   "Winter Wolf": "Sněžný vlk",
   "Archmage": "Arcimág",
   "Commoner": "Prostý obyvatel",
-  "Customizing NPCs": "Přizpůsobení nehráčských postav",
+  "Customizing NPCs": "Přizpůsobení CP",
   "Guard": "Stráž",
   "Mage": "Mág",
   "Noble": "Šlechtic",
