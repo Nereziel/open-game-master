@@ -706,7 +706,7 @@ export function SpellsSection({
     spellSaveDc: derived.preview?.derived.spellSaveDc,
     spellAttack: derived.preview?.derived.spellAttack,
     spellSlots: derived.spellSlots,
-  });
+  }, t);
   const caps = capLines({
     className: klass.name,
     level: derived.casterLevel ?? derived.effectiveLevel,
