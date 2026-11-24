@@ -1,5 +1,28 @@
 {
   "messages": {
+    "Custom voice…": "Vlastní hlas…",
+    "Type any voice this server understands": "Zadej libovolný hlas, který server podporuje",
+    "{label}: custom voice": "{label}: vlastní hlas",
+    "The server's default voice": "Výchozí hlas serveru",
+    "{voice} · server default": "{voice} · výchozí hlas serveru",
+    "Kokoro has no {language} voice, so the narration is read by a voice of another language.": "Kokoro nemá hlas pro jazyk {language}, proto vyprávění čte hlas jiného jazyka.",
+    "Heart (warm female)": "Heart (vřelý ženský hlas)",
+    "Bella (bright female)": "Bella (jasný ženský hlas)",
+    "Aoede (calm female)": "Aoede (klidný ženský hlas)",
+    "Nicole (soft female)": "Nicole (jemný ženský hlas)",
+    "Michael (warm male)": "Michael (vřelý mužský hlas)",
+    "Fenrir (deep male)": "Fenrir (hluboký mužský hlas)",
+    "Puck (lively male)": "Puck (živý mužský hlas)",
+    "Emma (British female)": "Emma (britský ženský hlas)",
+    "George (British male)": "George (britský mužský hlas)",
+    "Fable (British narrator)": "Fable (britský vypravěč)",
+    "Dora (Spanish female)": "Dora (španělský ženský hlas)",
+    "Alex (Spanish male)": "Alex (španělský mužský hlas)",
+    "Siwis (French female)": "Siwis (francouzský ženský hlas)",
+    "Sara (Italian female)": "Sara (italský ženský hlas)",
+    "Nicola (Italian male)": "Nicola (italský mužský hlas)",
+    "Dora (Portuguese female)": "Dora (portugalský ženský hlas)",
+    "Alex (Portuguese male)": "Alex (portugalský mužský hlas)",
     "Years written in it keep their numbers and read on the shared line.": "Roky zapsané v tomto kalendáři si ponechají své hodnoty a budou se číst na společné časové ose.",
     "Remove {name}?": "Odebrat {name}?",
     "The last box places this calendar's year 0 on the shared line: give the first calendar 0, and a later reckoning that began 1240 years after it 1240.": "Poslední pole určuje polohu roku 0 tohoto kalendáře na společné časové ose: prvnímu kalendáři zadej 0 a kalendáři, který začal o 1240 let později, zadej 1240.",
@@ -12960,6 +12983,54 @@
     "1/long rest, for 1 minute you and adjacent allies have resistance to all damage.": "Jednou za dlouhý odpočinek máte ty a sousedící spojenci po dobu 1 minuty odolnost vůči všemu zranění."
   },
   "contexts": {
+    "Swedish": {
+      "table.language": "švédština"
+    },
+    "Spanish": {
+      "table.language": "španělština"
+    },
+    "Russian": {
+      "table.language": "ruština"
+    },
+    "Portuguese": {
+      "table.language": "portugalština"
+    },
+    "Norwegian": {
+      "table.language": "norština"
+    },
+    "Italian": {
+      "table.language": "italština"
+    },
+    "Irish": {
+      "table.language": "irština"
+    },
+    "Indonesian": {
+      "table.language": "indonéština"
+    },
+    "Hungarian": {
+      "table.language": "maďarština"
+    },
+    "German": {
+      "table.language": "němčina"
+    },
+    "French": {
+      "table.language": "francouzština"
+    },
+    "Finnish": {
+      "table.language": "finština"
+    },
+    "Dutch": {
+      "table.language": "nizozemština"
+    },
+    "Danish": {
+      "table.language": "dánština"
+    },
+    "Czech": {
+      "table.language": "čeština"
+    },
+    "English": {
+      "table.language": "angličtina"
+    },
     "retired": {
       "world.canon": "Vyřazené"
     },
