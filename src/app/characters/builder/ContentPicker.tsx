@@ -148,7 +148,7 @@ export default function ContentPicker({
                   before adding it costs no extra request. */}
               <InfoButton
                 label={rowName(entry)}
-                meta={kind === "spells" ? spellSummary(entry.data) : undefined}
+                meta={kind === "spells" ? spellSummary(entry.data, t.locale) : undefined}
                 text={describeContentEntry(entry.data)}
                 reference={
                   entry.source === "homebrew" ? undefined : { kind, slug: entry.slug }
