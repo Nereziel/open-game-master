@@ -35,6 +35,14 @@ export const NARRATOR_DEFAULTS: Partial<Record<TableLanguage, string>> = {
   portuguese: "pf_dora",
 };
 
+// Translate only exact curated id/label pairs. A backend's own voice name
+// (even one that resembles a curated label) is not a translation key.
+type VoiceTranslator = (key: string, vars?: Record<string, string | number>) => string;
+export function localizedVoiceLabel(t: VoiceTranslator, voice: { id: string; label: string }): string {
+  const known = TTS_VOICES.find((entry) => entry.id === voice.id && entry.label === voice.label);
+  return known ? t(known.label) : voice.label;
+}
+
 const DEFAULT_VOICES = new Set(Object.values(NARRATOR_DEFAULTS));
 
 // Kokoro ids are <language><f|m>_<name>; the language letters of the table
