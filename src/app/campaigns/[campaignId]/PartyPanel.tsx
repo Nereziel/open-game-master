@@ -721,7 +721,7 @@ export function PartyPanel({
             ) : null}
 
             {(sheet.pets ?? []).map((pet) => {
-              const away = petAwayNote(pet);
+              const away = petAwayNote(pet, t);
               return (
                 <div key={pet.name} className={cn("mt-1", away && "opacity-60")}>
                   <div className="flex items-center justify-between text-[10px] text-stone-400" title={away ?? (pet.notes || pet.form)}>
@@ -743,7 +743,7 @@ export function PartyPanel({
                   {pet.conditions?.length ? (
                     <div className="mt-0.5 flex flex-wrap gap-1 pl-4">
                       {pet.conditions.map((condition) => {
-                        const detail = petConditionDetail(sheet, pet, condition, nameOf);
+                        const detail = petConditionDetail(sheet, pet, condition, nameOf, t);
                         return (
                           <span
                             key={condition}
