@@ -6,6 +6,8 @@ import { czechGearDescription } from "./entry-descriptions-cs";
 import { localizeEntry } from "./entry-descriptions";
 import { bundledItemRows, bundledSpellRows } from "@/lib/rulebook/catalog-rows";
 import { czechFullTranslation } from "@/lib/rulebook/czech-companion";
+import { rulebookPages } from "@/lib/rulebook/book";
+import { SRD_BACKGROUNDS } from "@/lib/srd";
 import { describeContentEntry } from "@/lib/help";
 import spellFixture from "../../../scripts/fixtures/reader-golden/spell.json";
 import featFixture from "../../../scripts/fixtures/reader-golden/feat.json";
@@ -421,5 +423,50 @@ describe("Item information card source identity", () => {
     const rows = itemCardRows("Torch", stats, [other, prose]);
     expect(rows).toEqual([stats.data, prose.data]);
     expect(buildItemSheet("Torch", rows, { locale: "cs" })?.description).toBe("Český popis");
+  });
+});
+
+describe("Core race and background presentation", () => {
+  it("serves all nine SRD race pages without changing identity or traits", () => {
+    const pages = rulebookPages("en").filter((page) => page.kind === "race");
+    expect(pages).toHaveLength(9);
+    for (const page of pages) {
+      const row = { slug: page.id, name: page.title, source: "open5e", documentSlug: "wotc-srd", data: { desc: page.md, traits: ["canonical trait"] } as Record<string, unknown> };
+      expect(localizeEntry("races", row, "en")).toBe(row);
+      for (const locale of ["fr", "cs"] as const) {
+        const result = localizeEntry("races", row, locale);
+        const { localized_desc, ...original } = result.data;
+        expect(typeof localized_desc, page.id + " " + locale).toBe("string");
+        expect(original).toEqual(row.data);
+        expect(result.slug).toBe(row.slug);
+      }
+      expect(localizeEntry("races", { ...row, source: "homebrew" }, "cs").data).toEqual(row.data);
+      expect(localizeEntry("races", { ...row, documentSlug: "unrelated-book" }, "cs").data).toEqual(row.data);
+    }
+  });
+
+  it("does not substitute the SRD subrace for a different bundled subrace", () => {
+    for (const name of ["Dwarf (Mountain)", "Elf (Wood)", "Halfling (Stout)", "Gnome (Forest)", "Human (Variant)"]) {
+      const row = { name, source: "bundled", documentSlug: "wotc-srd", data: { desc: "Own rules" } };
+      for (const locale of ["fr", "cs"] as const) expect(localizeEntry("races", row, locale)).toBe(row);
+    }
+    const hill = { name: "Dwarf (Hill)", source: "bundled", documentSlug: "wotc-srd", data: { desc: "Hill dwarf", traits: [] } as Record<string, unknown> };
+    expect(localizeEntry("races", hill, "cs").data.localized_desc).toBeTypeOf("string");
+  });
+
+  it("reuses the exact reviewed Czech feature text for a bundled background", () => {
+    const background = SRD_BACKGROUNDS.find((entry) => entry.id === "acolyte")!;
+    const row = { name: background.name, slug: background.id, source: "bundled", documentSlug: "odm", data: { desc: background.blurb, feature: background.feature, feature_desc: background.featureDesc } as Record<string, unknown> };
+    const result = localizeEntry("backgrounds", row, "cs");
+    const { localized_desc, ...original } = result.data;
+    expect(localized_desc).toContain("bezplatné léčení");
+    expect(original).toEqual(row.data);
+    expect(describeContentEntry(result.data)).toBe(localized_desc);
+    expect(localizeEntry("backgrounds", row, "en")).toBe(row);
+    for (const entry of [{ ...row, source: "homebrew" }, { ...row, source: "open5e", documentSlug: "other" }]) {
+      expect(localizeEntry("backgrounds", entry, "cs")).toBe(entry);
+    }
+    const changed = { ...row, data: { feature: background.feature, feature_desc: "Different source text." } };
+    expect(localizeEntry("backgrounds", changed, "cs")).toBe(changed);
   });
 });
