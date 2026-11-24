@@ -41,7 +41,6 @@ const input =
 type T = (key: string, vars?: Record<string, string | number>) => string;
 
 // An initial capital, as FeatChoicesFields writes its option labels.
-const capital = (value: string) => value.replace(/(^|\s)([a-z])/g, (_, before, letter) => `${before}${letter.toUpperCase()}`);
 
 export function NumberField({
   label,
@@ -318,7 +317,7 @@ export function SizeAndDefences({
   // The chip words: the damage types capitalized out of the French SRD's own
   // list, the conditions through the official names layer. English keeps the
   // raw term, exactly as the chips always read.
-  const damageWordFor = (term: string) => (locale === "fr" ? capital(damageTypeWord(term, locale)) : term);
+  const damageWordFor = (term: string) => (damageTypeWord(term, locale));
   const conditionWordFor = (term: string) => contentName("conditions", term, locale);
   return (
     <div className="flex flex-col gap-2.5">
