@@ -289,7 +289,7 @@ export default function ReferencePage() {
   function openRow(row: Row) {
     // What an entry built on rules this game does not play means at the
     // table comes first (issue #570).
-    const notes = [needsNote(row.needs ?? []), row.bestEffort ? t("Best effort: the app read this entry's rules from its text, and nobody has checked that reading yet. If it plays differently from what the text says, the text and the GM win, and a workshop copy can fix it for your table.") : null].filter(Boolean);
+    const notes = [needsNote(row.needs ?? [], t), row.bestEffort ? t("Best effort: the app read this entry's rules from its text, and nobody has checked that reading yet. If it plays differently from what the text says, the text and the GM win, and a workshop copy can fix it for your table.") : null].filter(Boolean);
     const text = describeContentEntry(row.data) ?? t("No description available for this entry.");
     setOpen({
       title: contentName(kindTable(kind), row, locale),
