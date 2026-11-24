@@ -192,3 +192,23 @@ describe("Tome of Heroes race descriptions", () => {
     }
   });
 });
+
+
+describe("Tome of Heroes spell metadata", () => {
+  it("keeps all 91 v1 descriptions tied to their checked casting metadata", () => {
+    const spells = Object.entries(expansionTranslations.toh.spells);
+    expect(spells).toHaveLength(91);
+    for (const [slug, hit] of spells) {
+      const data = hit.original as Record<string, unknown>;
+      expect(data.spell_level, slug).toBeTypeOf("number");
+      expect(data.school, slug).toBeTypeOf("string");
+      expect(data.casting_time, slug).toBeTypeOf("string");
+      expect(data.range, slug).toBeTypeOf("string");
+      expect(data.requires_concentration, slug).toBeTypeOf("boolean");
+      const row = { slug, name: hit.englishName, documentSlug: "toh", source: "open5e", data };
+      expect(localizeEntryCs("spells", row).data.localized_desc).toBe(hit.description);
+      const changed = { ...row, data: { ...data, spell_level: -1 } };
+      expect(localizeEntryCs("spells", changed)).toBe(changed);
+    }
+  });
+});
