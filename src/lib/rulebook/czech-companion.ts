@@ -257,7 +257,7 @@ Kouzla s označením **rituál** lze za příslušných podmínek seslat o deset
 
   conditions: `## Přehled stavů
 
-Stavy mění, co může tvor dělat a jaké hody provádí. Patří mezi ně například **slepý, zmámený, hluchý, únava (vyčerpání), vystrašený, uchvácený, neschopný, neviditelný, paralyzovaný, zkamenělý, otrávený, ležící, zadržený, ochromený a v bezvědomí**.
+Stavy mění, co může tvor dělat a jaké hody provádí. Patří mezi ně například **slepý, zmámený, hluchý, únava, vystrašený, uchvácený, neschopný, neviditelný, paralyzovaný, zkamenělý, otrávený, ležící, zadržený, ochromený a v bezvědomí**.
 
 Jednotlivé stavy mají různé mechanické účinky. Například **ležící** tvor se pohybuje plazením, jeho vlastní útoky mají nevýhodu a útoky proti němu ze vzdálenosti nejvýše 5 stop mají výhodu, ostatní nevýhodu. Přesné účinky a výjimky jsou v úplném českém znění níže.`,
 };
