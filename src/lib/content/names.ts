@@ -14,7 +14,7 @@ import { textKey } from "@/lib/language/text-logic";
 import type { Locale } from "@/lib/i18n/translate";
 import { srdRaceId } from "@/lib/srd/race-id";
 import { frTables } from "@/lib/i18n/fr-tables";
-import { expansionNameCs } from "./expansion-descriptions-cs";
+import { expansionTranslation, type ExpansionIndex } from "./expansion-identity";
 import { csTables } from "@/lib/i18n/cs-tables";
 
 // The tables the maps carry, as the helper's callers name them.
@@ -107,6 +107,13 @@ const NAME_TABLES: Partial<Record<Locale, () => Record<string, Record<string, st
 const EXTRA_NAME_TABLES: Partial<Record<Locale, () => Record<string, Record<string, string>>>> = { fr: frTranslated };
 const namesFor = (locale: Locale) => NAME_TABLES[locale]?.() ?? NONE;
 const translatedFor = (locale: Locale) => EXTRA_NAME_TABLES[locale]?.() ?? NONE;
+const EXPANSION_NAMES: Partial<Record<Locale, () => ExpansionIndex<{ englishName: string; name: string }> | undefined>> = {
+  cs: () => csTables()?.expansionNames,
+};
+
+export function localizedExpansionName(table: string, row: NamedRow, locale: Locale): string | undefined {
+  return expansionTranslation(EXPANSION_NAMES[locale]?.(), table, row)?.name;
+}
 
 function lookup(table: LocalizedNamesTable, key: string, locale: Locale): string | null {
   if (!key) {
@@ -158,10 +165,8 @@ export function contentName(
   if (!NAME_TABLES[locale] || !row.name || (row.source && row.source !== "open5e")) {
     return row.name;
   }
-  if (locale === "cs") {
-    const translated = expansionNameCs(table, row);
-    if (translated) return translated;
-  }
+  const translated = localizedExpansionName(table, row, locale);
+  if (translated) return translated;
   const tables: readonly LocalizedNamesTable[] = table === "items" ? ITEM_TABLES : [table];
   for (const each of tables) {
     for (const key of keysFor(each, row)) {
