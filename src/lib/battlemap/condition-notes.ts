@@ -67,6 +67,12 @@ export type ConditionNote = {
   meaning?: string | null;
 };
 
+// Only the six canonical ability abbreviations are translation keys.
+function abilityLabel(ability: string, t: T): string {
+  const key = ability.toUpperCase();
+  return ["STR", "DEX", "CON", "INT", "WIS", "CHA"].includes(key) ? t(key) : key;
+}
+
 export function conditionNote(
   name: string,
   meta: ConditionMetaLike | undefined,
@@ -97,7 +103,7 @@ export function conditionNote(
   // A hold whose save the creature picks (Nature's Wrath) names both.
   const save = meta.saveEnds
     ? t("save ends ({spec})", {
-        spec: `${meta.saveEnds.ability.toUpperCase()}${meta.saveEnds.or ? ` ${t("or")} ${meta.saveEnds.or.toUpperCase()}` : ""} ${meta.saveEnds.dc}${meta.saveEnds.beyondFeet ? `, ${t("beyond {feet} ft", { feet: meta.saveEnds.beyondFeet })}` : ""}${meta.saveEnds.unseen ? `, ${t("only out of the caster's sight; off the board, after its first turn")}` : ""}`,
+        spec: `${abilityLabel(meta.saveEnds.ability, t)}${meta.saveEnds.or ? ` ${t("or")} ${abilityLabel(meta.saveEnds.or, t)}` : ""} ${meta.saveEnds.dc}${meta.saveEnds.beyondFeet ? `, ${t("beyond {feet} ft", { feet: meta.saveEnds.beyondFeet })}` : ""}${meta.saveEnds.unseen ? `, ${t("only out of the caster's sight; off the board, after its first turn")}` : ""}`,
       })
     : null;
   let source: string | null = null;
