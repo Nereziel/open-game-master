@@ -115,7 +115,7 @@ export const CZECH_MONSTER_TITLES_6: Readonly<Record<string, string>> = {
   "Brass Dragon Wyrmling": "Mosazné dráče",
   "Bronze Dragon Wyrmling": "Bronzové dráče",
   "Chain Devil": "Řetězový ďábel",
-  "Chuul": "Klepetnatec",
+  "Chuul": "Chuul",
   "Clay Golem": "Hliněný golem",
   "Cloaker": "Pláštník",
   "Cloud Giant": "Oblačný obr",
