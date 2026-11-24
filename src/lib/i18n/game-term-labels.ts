@@ -89,9 +89,27 @@ const MOVEMENT_WORDS_CS = { walk: "chůze", burrow: "hrabání", climb: "šplhá
 const SENSE_WORDS_CS = { darkvision: "vidění ve tmě", blindsight: "mimozrakové vnímání", tremorsense: "citlivost na otřesy", truesight: "pravdivé vidění" };
 const DRAGON_COLOR_WORDS_CS = { black: "černý", blue: "modrý", brass: "mosazný", bronze: "bronzový", copper: "měděný", gold: "zlatý", green: "zelený", red: "rudý", silver: "stříbrný", white: "bílý" };
 
+export const CZECH_SCHOOLS: Readonly<Record<string, string>> = {
+  abjuration: "Vymítání",
+  conjuration: "Vyvolávání",
+  divination: "Věštění",
+  enchantment: "Očarování",
+  evocation: "Zaklínání",
+  illusion: "Iluze",
+  necromancy: "Nekromancie",
+  transmutation: "Transmutace",
+};
+
+const SPELL_SCHOOLS_FR = {
+  abjuration: "Abjuration", conjuration: "Invocation", divination: "Divination",
+  enchantment: "Enchantement", evocation: "Évocation", illusion: "Illusion",
+  necromancy: "Nécromancie", transmutation: "Transmutation",
+};
+
 type Words = Readonly<Record<string, string>>;
-type TermKind = "size" | "creatureType" | "movement" | "sense" | "dragonColor";
+type TermKind = "spellSchool" | "size" | "creatureType" | "movement" | "sense" | "dragonColor";
 const TERMS: Record<TermKind, Partial<Record<Locale, Words>>> = {
+  spellSchool: { fr: SPELL_SCHOOLS_FR, cs: CZECH_SCHOOLS },
   size: { fr: SIZE_WORDS_FR, cs: CZECH_MONSTER_SIZES },
   creatureType: { fr: CREATURE_TYPE_WORDS_FR, cs: CZECH_CREATURE_TYPES },
   movement: { fr: MOVEMENT_WORDS_FR, cs: MOVEMENT_WORDS_CS },
