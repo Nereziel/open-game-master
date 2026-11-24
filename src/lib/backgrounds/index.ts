@@ -63,7 +63,7 @@ export function describeBackgroundFeature(featureName: string, locale: "en" | "f
     return localizeBackgroundFeatureText(custom.featureDesc, locale);
   }
   const srd = SRD_BACKGROUNDS.find((entry) => textKey(entry.feature) === wanted);
-  return srd ? localizeBackgroundFeatureText(srd.featureDesc, locale) : null;
+  return srd?.featureDesc != null ? localizeBackgroundFeatureText(srd.featureDesc, locale) : null;
 }
 
 // The source text, not a feature name, identifies a reviewed description.
