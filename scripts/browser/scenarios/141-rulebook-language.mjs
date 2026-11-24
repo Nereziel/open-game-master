@@ -21,13 +21,14 @@ export default {
       const forcedCs = await ask("en-US", "cs");
       const response = await fetch("/api/rulebook/search?q=" + encodeURIComponent("Ohnivá koule"), { headers: { "x-odm-locale": "cs" }, cache: "no-store" });
       const results = await response.json();
-      const details = async (locale) => {
-        const r = await fetch("/api/content/spells/srd%3Afireball", { headers: { "x-odm-locale": locale }, cache: "no-store" });
+      const details = async (locale, slug = "srd%3Afireball") => {
+        const r = await fetch("/api/content/spells/" + slug, { headers: { "x-odm-locale": locale }, cache: "no-store" });
         return { status: r.status, entry: (await r.json()).entry };
       };
       return { fr: await ask("fr-FR,fr;q=0.9"), en: await ask("en-US,en;q=0.9"), cs, forcedCs,
         search: { status: response.status, found: results.hits?.some((hit) => hit.page === "fireball") ?? false },
-        csDetail: await details("cs"), enDetail: await details("en") };
+        csDetail: await details("cs"), enDetail: await details("en"),
+        canonical: await Promise.all(["en", "fr", "cs"].map((locale) => details(locale, "fireball"))) };
     });
     check(asked.fr.status === 200 && asked.fr.title === "Boule de feu", `the French ask reads the French book (${JSON.stringify(asked.fr)})`);
     check(asked.en.status === 200 && asked.en.title === "Fireball", "the English ask reads the English book");
@@ -36,6 +37,7 @@ export default {
     check(asked.forcedCs.status === 200 && asked.forcedCs.title === asked.cs.title, "the explicit locale overrides the browser language");
     check(/accept-language/i.test(asked.cs.vary ?? "") && /x-odm-locale/i.test(asked.cs.vary ?? ""), "the localized page varies by both language headers");
     check(asked.search.status === 200 && asked.search.found, "Czech text search finds the canonical fireball page");
+    check(asked.canonical.every((detail) => detail.status === 200 && detail.entry?.slug === asked.canonical[0].entry?.slug), "canonical spell detail resolves the same identity for EN, FR and CS");
     const { csDetail, enDetail } = asked;
     check(csDetail.status === 200 && enDetail.status === 200, "the bundled spell detail works in both locales");
     const { localized_desc, ...original } = csDetail.entry.data;
