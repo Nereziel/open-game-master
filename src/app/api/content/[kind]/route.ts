@@ -92,7 +92,7 @@ export async function GET(
   // Match translated bundled names before the existing fallback limits.
   const bundledQuery = localizedSearch ? "" : q;
   const matchingBundled = <T,>(table: string, rows: T[]): T[] =>
-    localizedSearch ? rows.filter((row) => matches(table, row as NamedRow)) : rows;
+    localizedSearch ? rows.filter((row) => matches(table, row as NamedRow) || (table === "races" && textKey(q).split(" ").filter(Boolean).every((word) => textKey((row as NamedRow).name).includes(word)))) : rows;
 
   let results: unknown[];
   switch (kind) {
