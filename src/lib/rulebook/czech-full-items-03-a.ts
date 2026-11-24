@@ -55,7 +55,7 @@ Libovolný tvor může do prstenu uložit kouzlo 1. až 5. stupně tak, že se p
 Když nosíš tento prsten, můžeš seslat libovolné kouzlo, které je v něm uložené. Kouzlo používá stupeň pozice, SO záchrany proti kouzlu, bonus k útoku kouzlem a sesílací vlastnost původního sesilatele; ve všem ostatním se považuje za tebou seslané. Seslané kouzlo se z prstenu odstraní a uvolní v něm místo.`,
   "ring-of-spell-turning": `*Prsten, legendární (vyžaduje sladění)*
 
-Když nosíš tento prsten, máš výhodu k záchranným hodům proti každému kouzlu, které cílí pouze na tebe (a nezasahuje tě v oblasti účinku). Navíc pokud při takovém záchranném hodu padne na kostce 20 a jde o kouzlo 7. nebo nižšího stupně, kouzlo na tebe nemá žádný účinek a místo tebe zacílí na svého sesilatele. Použije se stupeň jeho pozice kouzla, SO záchrany proti kouzlu, bonus k útoku kouzlem i sesílací vlastnost sesilatele.`,
+Když nosíš tento prsten, máš výhodu k záchranným hodům proti každému kouzlu, které cílí pouze na tebe (a nezasahuje tě v oblasti účinku). Navíc pokud při takovém záchranném hodu padne na kostce 20 a jde o kouzlo 7. nebo nižší úrovně, kouzlo na tebe nemá žádný účinek a místo tebe zacílí na svého sesilatele. Použije se stupeň jeho pozice kouzla, SO záchrany proti kouzlu, bonus k útoku kouzlem i sesílací vlastnost sesilatele.`,
   "ring-of-swimming": `*Prsten, neobvyklý*
 
 Když nosíš tento prsten, máš rychlost plavání 40 stop.`,
