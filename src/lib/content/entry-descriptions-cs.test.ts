@@ -646,6 +646,11 @@ describe("Reviewed authored archetypes", () => {
     { classId: "bard", subclasses: 7, featureCount: 31 },
     { classId: "cleric", subclasses: 13, featureCount: 76 },
     { classId: "druid", subclasses: 6, featureCount: 28 },
+    { classId: "fighter", subclasses: 9, featureCount: 55 },
+    { classId: "monk", subclasses: 9, featureCount: 41 },
+    { classId: "paladin", subclasses: 8, featureCount: 40 },
+    { classId: "ranger", subclasses: 7, featureCount: 35 },
+    { classId: "rogue", subclasses: 8, featureCount: 43 },
   ])("localizes $classId archetypes and their features without changing canonical rules", ({ classId, subclasses, featureCount }) => {
     const entries = AUTHORED_SUBCLASS_ENTRIES[classId];
     expect(entries).toHaveLength(subclasses);
