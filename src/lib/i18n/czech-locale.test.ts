@@ -23,6 +23,16 @@ describe("Czech locale following the upstream French catalog", () => {
     expect(translate("cs", "A missing translation")).toBe("A missing translation");
   });
 
+  it("uses the same Czech combat labels as the 2014 rulebook", () => {
+    expect(translate("cs", "AC")).toBe("OČ");
+    expect(translate("cs", "Armor class")).toBe("Obranné číslo");
+    expect(translate("cs", "Grappled")).toBe("uchvácený");
+    expect(translate("cs", "Prone")).toBe("ležící");
+    expect(translate("cs", "Exhaustion")).toBe("Únava");
+    expect(translate("cs", "force")).toBe("silové");
+    expect(translate("en", "AC")).toBe("AC");
+  });
+
   it("preserves the upstream French translation catalog", () => {
     expect(translate("fr", "Language")).toBe("Langue");
     expect(translate("fr", "Cancel")).toBe("Annuler");

@@ -1,5 +1,6 @@
 import { describe, expect, it } from "vitest";
 import { CS_NAMES_BY_TABLE } from "./names-cs";
+import { CZECH_SPELLS, CZECH_MONSTERS } from "../rulebook/czech-terms";
 import { contentName, classFeatureName, subclassName, speciesTraitName, backgroundFeatureLabel } from "./names";
 import racesJson from "../srd/races.json";
 import backgroundsJson from "../srd/backgrounds.json";
@@ -29,6 +30,25 @@ describe("Czech content names through upstream helpers", () => {
   it("translates canonical rulebook names without changing the original data", () => {
     expect(contentName("classes", "Fighter", "cs")).toBe("Bojovník");
     expect(contentName("classes", "Fighter", "en")).toBe("Fighter");
+  });
+
+  it("keeps the 2014 Czech spell and monster labels consistent with the rulebook", () => {
+    for (const [slug, title, expected] of [
+      ["eldritch-blast", "Eldritch Blast", "Tajemný výšleh"],
+      ["hellish-rebuke", "Hellish Rebuke", "Pekelné pokárání"],
+      ["entangle", "Entangle", "Zapletení"],
+      ["true-seeing", "True Seeing", "Pravdivé vidění"],
+      ["arcanists-magic-aura", "Arcanist's Magic Aura", "Nystulova magická aura"],
+    ]) {
+      expect(CS_NAMES_BY_TABLE.spells[slug]).toBe(expected);
+      expect(CZECH_SPELLS[title]).toBe(expected);
+    }
+    expect(CS_NAMES_BY_TABLE.monsters["frost-giant"]).toBe("Mrazivý obr");
+    expect(CZECH_MONSTERS["Frost Giant"]).toBe("Mrazivý obr");
+    expect(CS_NAMES_BY_TABLE.conditions.grappled).toBe("Uchvácený");
+    expect(CS_NAMES_BY_TABLE.conditions.restrained).toBe("Zadržený");
+    expect(CS_NAMES_BY_TABLE.conditions.stunned).toBe("Ochromený");
+    expect(CS_NAMES_BY_TABLE.conditions.incapacitated).toBe("Neschopný");
   });
 
   it("keeps homebrew names and unknown entries intact", () => {
