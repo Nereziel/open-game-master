@@ -362,6 +362,7 @@ export type ImportOutcome = {
   beatsAdded: number;
   // What both sides of a WorldForge reimport changed, kept as here (WF-03).
   worldConflicts?: string[];
+  worldConflictDisplays?: ImportResultNote[];
   // Stat blocks and roster monsters nothing at this table answers to.
   unresolved?: string[];
   // Hand-built monsters copied into this table's bestiary for the NPCs and
@@ -441,6 +442,7 @@ export function runContentImport(input: {
   const counts = { copied: 0, kept: 0, unbound: 0 };
   // Links changed here and in the copied world (world-link-merge.ts).
   let worldConflicts: string[] = [];
+  let worldConflictDisplays: ImportResultNote[] = [];
   const finalNames = new Map<string, string>(
     plan.items.map((item) => [`${item.kind}:${item.sourceId}`, item.finalName]),
   );
@@ -586,6 +588,7 @@ export function runContentImport(input: {
     counts.copied += world.count;
     counts.unbound += world.unbound;
     worldConflicts = world.conflicts;
+    worldConflictDisplays = world.conflictDisplays;
   }
 
   if (selected.has("lore") || storyboard) {
@@ -650,7 +653,7 @@ export function runContentImport(input: {
     kept: counts.kept,
     unbound: counts.unbound,
     beatsAdded,
-    ...(worldConflicts.length ? { worldConflicts } : {}),
+    ...(worldConflicts.length ? { worldConflicts, worldConflictDisplays } : {}),
     ...(unresolved.length ? { unresolved } : {}),
     ...(monsters.brought.length ? { monstersBrought: monsters.brought } : {}),
     ...(monsters.reused.length ? { monstersReused: monsters.reused } : {}),
