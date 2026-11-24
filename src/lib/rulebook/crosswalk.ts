@@ -137,7 +137,7 @@ function enTitleOf(id: string): string | undefined {
 
 export function crosswalkFor(page: Pick<RulebookPage, "id" | "kind" | "title">, locale: BookLocale = "en"): Crosswalk {
   const french = locale === "fr";
-  const walk = crosswalkEn(french ? { ...page, title: enTitleOf(page.id) ?? page.title } : page);
+  const walk = crosswalkEn({ ...page, title: enTitleOf(page.id) ?? page.title });
   if (!french) return walk;
   const fr = WHERE_FR[page.id];
   if (fr) return { ...walk, where: fr.where, ...(fr.template ? { template: fr.template } : {}) };
@@ -262,21 +262,21 @@ function crosswalkEn(page: Pick<RulebookPage, "id" | "kind" | "title">): Crosswa
   }
   switch (page.kind) {
     case "spell":
-      return { ...base, editor: "spell", ...spellSupport(page.title) };
+      return { ...base, editor: "spell", catalogName: page.title, ...spellSupport(page.title) };
     case "item": {
       const name = catalogName ?? page.title;
       return {
         ...base,
         editor: "item",
-        ...(catalogName ? { catalogName } : {}),
+        catalogName: name,
         ...(FAMILIES[page.id] ? { template: FAMILIES[page.id] } : {}),
         ...itemSupport(name),
       };
     }
     case "monster":
-      return { ...base, editor: "monster", ...(catalogName ? { catalogName } : {}), support: "engine", where: "The fight engine runs its block; the Bestiary copies it whole, printed text included" };
+      return { ...base, editor: "monster", catalogName: catalogName ?? page.title, support: "engine", where: "The fight engine runs its block; the Bestiary copies it whole, printed text included" };
     case "race":
-      return { ...base, editor: "race", support: "structured", where: "The builder grants its traits; Workshop: Species for a copy or a new one" };
+      return { ...base, editor: "race", catalogName: page.title, support: "structured", where: "The builder grants its traits; Workshop: Species for a copy or a new one" };
     case "class":
       return {
         ...base,
