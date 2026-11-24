@@ -20,9 +20,9 @@ export function localizedToolGuide(guide: ToolGuide, locale: Locale, t: (key: st
   return {
     title: localized?.title ?? t(guide.title),
     purpose: localized?.purpose ?? t(guide.purpose),
-    steps: localized?.steps ?? guide.steps.map(t),
+    steps: localized?.steps ?? guide.steps.map((step) => t(step)),
     atTable: localized?.atTable ?? t(guide.atTable),
-    tips: localized?.tips ?? guide.tips.map(t),
+    tips: localized?.tips ?? guide.tips.map((tip) => t(tip)),
   };
 }
 
