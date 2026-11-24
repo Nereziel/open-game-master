@@ -5,25 +5,25 @@ export const CZECH_FULL_ITEMS_03_E: Readonly<Record<string, string>> = {
 
 Tuto hůl lze použít jako magickou hůl (zbraň), která poskytuje bonus +2 k hodům na útok a zranění při útocích jí. Když ji držíš, máš bonus +2 k hodům na útok kouzlem.
 
-Hůl má 50 dávek pro následující vlastnosti. Každý den za úsvitu si obnoví 4k6+2 spotřebovaných dávek. Pokud utratíš poslední dávku, hoď k20. Při výsledku 20 si hůl obnoví 1k12+1 dávek.
+Hůl má 50 nábojů pro následující vlastnosti. Každý den za úsvitu si obnoví 4k6+2 spotřebovaných nábojů. Pokud utratíš poslední náboj, hoď k20. Při výsledku 20 si hůl obnoví 1k12+1 nábojů.
 
-***Pohlcení kouzla.*** Když držíš hůl, máš výhodu k záchranným hodům proti kouzlům. Kromě toho můžeš použít svou reakci, když jiný tvor sešle kouzlo, které cílí pouze na tebe. Pokud tak učiníš, hůl pohltí magii kouzla, zruší jeho účinek a získá počet dávek rovný stupni pohlceného kouzla. Pokud tím ale počet dávek hole překročí 50, hůl vybuchne, jako kdybys aktivoval její odvetný úder (viz níže).
+***Pohlcení kouzla.*** Když držíš hůl, máš výhodu k záchranným hodům proti kouzlům. Kromě toho můžeš použít svou reakci, když jiný tvor sešle kouzlo, které cílí pouze na tebe. Pokud tak učiníš, hůl pohltí magii kouzla, zruší jeho účinek a získá počet nábojů rovný stupni pohlceného kouzla. Pokud tím ale počet nábojů hole překročí 50, hůl vybuchne, jako kdybys aktivoval její odvetný úder (viz níže).
 
-***Kouzla.*** Když držíš hůl, můžeš jako akci utratit některé z jejích dávek a seslat jedno z následujících kouzel s použitím svého SO záchrany proti kouzlům a své sesílací vlastnosti: *vyvolej elementála* (7 dávek), *rozptyl magii* (3 dávky), *ohnivá koule* (ve verzi 7. stupně, 7 dávek), *planoucí koule* (2 dávky), *ledová bouře* (4 dávky), *neviditelnost* (2 dávky), *zaklepání* (2 dávky), *blesk* (ve verzi 7. stupně, 7 dávek), *projdi zdí* (5 dávek), *přesun mezi sférami* (7 dávek), *telekineze* (5 dávek), *ohnivá zeď* (4 dávky) nebo *pavučina* (2 dávky).
+***Kouzla.*** Když držíš hůl, můžeš jako akci utratit některé z jejích nábojů a seslat jedno z následujících kouzel s použitím svého SO záchrany proti kouzlům a své sesílací vlastnosti: *vyvolej elementála* (7 nábojů), *rozptyl magii* (3 náboje), *ohnivá koule* (ve verzi 7. stupně, 7 nábojů), *planoucí koule* (2 náboje), *ledová bouře* (4 náboje), *neviditelnost* (2 náboje), *zaklepání* (2 náboje), *blesk* (ve verzi 7. stupně, 7 nábojů), *projdi zdí* (5 nábojů), *přesun mezi sférami* (7 nábojů), *telekineze* (5 nábojů), *ohnivá zeď* (4 náboje) nebo *pavučina* (2 náboje).
 
-Jako akci můžeš z hole bez utrácení dávek seslat také jedno z těchto kouzel: *mystický zámek*, *najdi magii*, *zvětšení nebo zmenšení*, *světlo*, *mágova ruka* nebo *ochrana před zlem a dobrem*.
+Jako akci můžeš z hole bez utrácení nábojů seslat také jedno z těchto kouzel: *mystický zámek*, *najdi magii*, *zvětšení nebo zmenšení*, *světlo*, *mágova ruka* nebo *ochrana před zlem a dobrem*.
 
 ***Odvetný úder.*** Jako akci můžeš hůl zlomit přes koleno nebo o pevný povrch a provést odvetný úder. Hůl se zničí a její zbývající magie se uvolní ve výbuchu, který vyplní kouli o poloměru 30 stop se středem v holi.
 
-Máš 50procentní šanci okamžitě se přenést do náhodně určené sféry existence a výbuchu uniknout. Pokud mu neunikneš, utrpíš silové zranění rovné 16 × počet dávek v holi. Každý další tvor v oblasti musí provést záchranný hod na Obratnost se SO 17. Při neúspěchu utrpí zranění podle své vzdálenosti od místa výbuchu, jak uvádí tabulka. Při úspěchu utrpí poloviční zranění.
+Máš 50procentní šanci okamžitě se přenést do náhodně určené sféry existence a výbuchu uniknout. Pokud mu neunikneš, utrpíš silové zranění rovné 16 × počet nábojů v holi. Každý další tvor v oblasti musí provést záchranný hod na Obratnost se SO 17. Při neúspěchu utrpí zranění podle své vzdálenosti od místa výbuchu, jak uvádí tabulka. Při úspěchu utrpí poloviční zranění.
 
 **Tabulka – Hůl mágů**
 
 | Vzdálenost od středu | Zranění |
 |---------------------|---------|
-| 10 stop nebo méně | 8 × počet dávek v holi |
-| 11 až 20 stop | 6 × počet dávek v holi |
-| 21 až 30 stop | 4 × počet dávek v holi |`,
+| 10 stop nebo méně | 8 × počet nábojů v holi |
+| 11 až 20 stop | 6 × počet nábojů v holi |
+| 21 až 30 stop | 4 × počet nábojů v holi |`,
   "staff-of-the-python": `*Berla, neobvyklá (vyžaduje sladění klerikem, druidem nebo černokněžníkem)*
 
 Jako akci můžeš vyslovit příkazové slovo této hole a hodit ji na zem do vzdálenosti 10 stop od sebe. Hůl se změní v obřího hada škrtiče pod tvou kontrolou, který jedná podle vlastní iniciativy. Jako bonusovou akci můžeš znovu vyslovit příkazové slovo a vrátit hůl do původní podoby na místě, které předtím zabíral had.
@@ -35,13 +35,13 @@ Pokud životy hada klesnou na 0, zemře a vrátí se do podoby hole. Hůl se pot
 
 Tuto hůl lze použít jako magickou hůl (zbraň), která poskytuje bonus +2 k hodům na útok i zranění při útocích jí. Když ji držíš, máš bonus +2 k hodům na útok kouzlem.
 
-Hůl má 10 dávek pro následující vlastnosti. Každý den za úsvitu si obnoví 1k6+4 spotřebovaných dávek. Pokud utratíš poslední dávku, hoď k20. Při výsledku 1 hůl ztratí své vlastnosti a stane se nemagickou holí (zbraní).
+Hůl má 10 nábojů pro následující vlastnosti. Každý den za úsvitu si obnoví 1k6+4 spotřebovaných nábojů. Pokud utratíš poslední náboj, hoď k20. Při výsledku 1 hůl ztratí své vlastnosti a stane se nemagickou holí (zbraní).
 
-***Kouzla.*** Jako akci můžeš utratit 1 nebo více dávek hole a seslat s použitím svého SO záchrany proti kouzlům jedno z následujících kouzel: *přátelství zvířat* (1 dávka), *probuzení* (5 dávek), *kůrokůže* (2 dávky), *najdi zvířata a rostliny* (2 dávky), *mluv se zvířaty* (1 dávka), *mluv s rostlinami* (3 dávky) nebo *trnová zeď* (6 dávek).
+***Kouzla.*** Jako akci můžeš utratit 1 nebo více nábojů hole a seslat s použitím svého SO záchrany proti kouzlům jedno z následujících kouzel: *přátelství zvířat* (1 náboj), *probuzení* (5 nábojů), *kůrokůže* (2 náboje), *najdi zvířata a rostliny* (2 náboje), *mluv se zvířaty* (1 náboj), *mluv s rostlinami* (3 náboje) nebo *trnová zeď* (6 nábojů).
 
-Jako akci můžeš z hole bez utracení dávek seslat také kouzlo *projdi beze stop*.
+Jako akci můžeš z hole bez utracení nábojů seslat také kouzlo *projdi beze stop*.
 
-***Podoba stromu.*** Jako akci můžeš zabodnout jeden konec hole do úrodné půdy a utratit 1 dávku; hůl se promění ve zdravý strom. Strom je vysoký 60 stop, jeho kmen má průměr 5 stop a větve v koruně se rozprostírají v okruhu 20 stop.
+***Podoba stromu.*** Jako akci můžeš zabodnout jeden konec hole do úrodné půdy a utratit 1 náboj; hůl se promění ve zdravý strom. Strom je vysoký 60 stop, jeho kmen má průměr 5 stop a větve v koruně se rozprostírají v okruhu 20 stop.
 
 Strom vypadá obyčejně, ale pokud jej někdo zkoumá kouzlem *najdi magii*, vyzařuje slabou auru transmutační magie. Když se stromu dotýkáš a jako další akci vyslovíš příkazové slovo, vrátíš hůl do původní podoby. Všichni tvorové na stromě při jeho proměně zpět v hůl spadnou.`,
   "staff-of-thunder-and-lightning": `*Berla, velmi vzácná (vyžaduje sladění)*
@@ -59,9 +59,9 @@ Tuto hůl lze použít jako magickou hůl (zbraň), která poskytuje bonus +2 k 
 ***Hrom a blesk.*** Jako akci můžeš současně použít vlastnosti Bleskový úder a Hromová rána. Tím nespotřebuješ jejich samostatná denní použití, pouze denní použití této vlastnosti.`,
   "staff-of-withering": `*Berla, vzácná (vyžaduje sladění klerikem, druidem nebo černokněžníkem)*
 
-Tato hůl má 3 dávky a každý den za úsvitu si obnoví 1k3 spotřebovaných dávek.
+Tato hůl má 3 náboje a každý den za úsvitu si obnoví 1k3 spotřebovaných nábojů.
 
-Hůl lze použít jako magickou hůl (zbraň). Při zásahu způsobí zranění jako obyčejná hůl a můžeš utratit 1 dávku a způsobit cíli dodatečné nekrotické zranění 2k10. Cíl navíc musí uspět v záchranném hodu na Odolnost se SO 15, jinak má po dobu 1 hodiny nevýhodu ke všem ověřením vlastností a záchranným hodům využívajícím Sílu nebo Odolnost.`,
+Hůl lze použít jako magickou hůl (zbraň). Při zásahu způsobí zranění jako obyčejná hůl a můžeš utratit 1 náboj a způsobit cíli dodatečné nekrotické zranění 2k10. Cíl navíc musí uspět v záchranném hodu na Odolnost se SO 15, jinak má po dobu 1 hodiny nevýhodu ke všem ověřením vlastností a záchranným hodům využívajícím Sílu nebo Odolnost.`,
   "stone-of-controlling-earth-elementals": `*Divotvorný předmět, vzácný*
 
 Pokud se kámen dotýká země, můžeš jako akci vyslovit jeho příkazové slovo a přivolat zemního elementála, jako bys seslal kouzlo *vyvolej elementála*. Takto lze kámen znovu použít až za příštího úsvitu. Kámen váží 5 liber.`,
