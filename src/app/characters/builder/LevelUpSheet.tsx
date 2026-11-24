@@ -285,7 +285,7 @@ const tp = useTp();
       : null;
   const hpGain = preview && !preview.hpKept && preview.hpMethod !== "rolled" ? preview.maxHp - initial.maxHp : null;
   const who = initial.name.trim() || t("Your hero");
-  const shown = state.subclass ? pickers.chosenArchetype?.desc || subclassBlurb(klass?.id ?? "", state.subclass) : "";
+  const shown = state.subclass ? pickers.chosenArchetype?.localizedDesc || pickers.chosenArchetype?.desc || subclassBlurb(klass?.id ?? "", state.subclass) : "";
   const saveBlocked = Boolean(firstOwed) || busy || fill.running;
 
   return (
