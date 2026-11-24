@@ -37,6 +37,7 @@ import { textKey } from "@/lib/language/text-logic";
 import { useLocale, useT } from "@/lib/locale";
 import { contentName } from "@/lib/content/names";
 import { damageWords } from "@/lib/dm/damage-logic";
+import { canonicalRuleTermList } from "@/lib/i18n/rule-term-input";
 import { gameTermWord } from "@/lib/i18n/game-term-labels";
 
 // The half of the monster editor that picks rather than types.
@@ -78,6 +79,8 @@ export function TermPicker({
   wordFor?: (term: string) => string;
 }) {
   const t = useT();
+  const [editing, setEditing] = useState<string | null>(null);
+  const options = known.map((term) => ({ value: term, label: wordFor?.(term) ?? term }));
   const extras = parseTerms(value).filter(
     (term) => !known.some((entry) => textKey(entry) === textKey(term)),
   );
@@ -121,8 +124,13 @@ export function TermPicker({
         ))}
       </div>
       <input
-        value={value}
-        onChange={(event) => onChange(event.target.value)}
+        value={editing ?? value}
+        onChange={(event) => {
+          const input = event.target.value;
+          setEditing(input);
+          onChange(canonicalRuleTermList(input, options));
+        }}
+        onBlur={() => setEditing(null)}
         placeholder={t("or type your own, comma separated")}
         className={cn(input, "w-full")}
       />
