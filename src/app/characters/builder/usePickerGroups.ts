@@ -11,6 +11,7 @@ import { packRecommends, type Reskinned } from "@/lib/worlds/reskin-logic";
 import type { WorldPack } from "@/lib/worlds/types";
 import type { PickerGroup, PickerOption } from "./OptionPicker";
 import { contentName, subclassName } from "@/lib/content/names";
+import { expansionNameCs } from "@/lib/content/expansion-descriptions-cs";
 import { useLocale, useT } from "@/lib/locale";
 import type { Locale } from "@/lib/messages-logic";
 import type {
@@ -196,12 +197,18 @@ export function backgroundInfoText(entry: {
 // An option's own name reads in the reader's language when the official
 // maps carry it; a pack's reskin (packName) is its author's words and
 // stays. The id picked stays whatever it always was.
-function shownOption<T extends { name: string; packName?: string }>(
+function shownOption<T extends { id: string; name: string; packName?: string; documentSlug?: string }>(
   entry: T,
   table: "species" | "classes" | "backgrounds",
   locale: Locale,
 ): string {
-  return entry.packName ? entry.name : contentName(table, entry.name, locale);
+  if (entry.packName) return entry.name;
+  if (locale === "cs" && entry.documentSlug && entry.documentSlug !== "homebrew") {
+    const row = { name: entry.name, slug: entry.id, documentSlug: entry.documentSlug, source: "open5e" };
+    const translated = expansionNameCs(table, row);
+    if (translated) return translated;
+  }
+  return contentName(table, entry.name, locale);
 }
 
 export function usePickerGroups({

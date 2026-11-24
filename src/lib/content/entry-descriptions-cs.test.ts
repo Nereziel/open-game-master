@@ -3,6 +3,12 @@ import { localizeEntryCs } from "./entry-descriptions-cs";
 import { bundledItemRows, bundledSpellRows } from "@/lib/rulebook/catalog-rows";
 import { czechFullTranslation } from "@/lib/rulebook/czech-companion";
 import { describeContentEntry } from "@/lib/help";
+import spellFixture from "../../../scripts/fixtures/reader-golden/spell.json";
+import featFixture from "../../../scripts/fixtures/reader-golden/feat.json";
+import backgroundFixture from "../../../scripts/fixtures/reader-golden/background.json";
+import expansionTranslations from "./expansion-descriptions-cs.json";
+import { contentName } from "./names";
+
 
 describe("Czech SRD display descriptions", () => {
   it("serves every bundled spell and magic item without changing original fields", () => {
@@ -42,20 +48,14 @@ describe("Czech SRD display descriptions", () => {
   });
 });
 
-import spellFixture from "../../../scripts/fixtures/reader-golden/spell.json";
-import featFixture from "../../../scripts/fixtures/reader-golden/feat.json";
-import backgroundFixture from "../../../scripts/fixtures/reader-golden/background.json";
-import expansionTranslations from "./expansion-descriptions-cs.json";
-import { contentName } from "./names";
-
 describe("Czech external display translations (without SQLite)", () => {
   it("localizes every reviewed fixture and preserves identity and mechanics", () => {
     let count = 0;
     for (const [table, fixture] of [["spells", spellFixture], ["feats", featFixture], ["backgrounds", backgroundFixture]] as const) {
       for (const { row } of fixture.cases) {
-        const books = expansionTranslations as Record<string, Record<string, Record<string, { name: string; description: string }>>>;
+        const books = expansionTranslations as Record<string, Record<string, Record<string, { name: string; description?: string }>>>;
         const hit = books[row.documentSlug]?.[table]?.[row.slug];
-        if (!hit) continue;
+        if (!hit?.description) continue;
         const entry = { ...row, source: "open5e" as const, data: { ...row.data } as Record<string, unknown> };
         const translated = localizeEntryCs(table, entry);
         const { localized_desc, ...original } = translated.data;
@@ -78,5 +78,26 @@ describe("Czech external display translations (without SQLite)", () => {
       }
     }
     expect(count).toBe(19);
+  });
+});
+
+
+describe("Source-specific Czech expansion names", () => {
+  it("keeps all 81 known fixture names scoped to their source and slug", () => {
+    let count = 0;
+    for (const [documentSlug, tables] of Object.entries(expansionTranslations)) {
+      for (const [table, entries] of Object.entries(tables)) {
+        for (const [slug, hit] of Object.entries(entries)) {
+          const kind = table as Parameters<typeof contentName>[0];
+          const row = { slug, name: hit.englishName, source: "open5e", documentSlug };
+          expect(contentName(kind, row, "cs")).toBe(hit.name);
+          expect(contentName(kind, row, "en")).toBe(row.name);
+          expect(contentName(kind, { ...row, source: "homebrew" }, "cs")).toBe(row.name);
+          expect(contentName(kind, { ...row, name: "Unrelated source name", slug: "unrelated-id" }, "cs")).toBe("Unrelated source name");
+          count++;
+        }
+      }
+    }
+    expect(count).toBe(81);
   });
 });
