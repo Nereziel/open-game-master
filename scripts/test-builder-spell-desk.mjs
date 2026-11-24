@@ -222,6 +222,26 @@ test("the casting numbers are the sheet's, slots in order", () => {
   assert.deepEqual(desk.castingNumbers({ spellSaveDc: null, spellAttack: undefined, spellSlots: {} }), { dc: null, attack: null, slots: [] });
 });
 
+test("spell slot ordinal labels use the reader's language without changing casting numbers", () => {
+  const expected = {
+    en: ["1st", "2nd", "3rd", "4th", "5th", "6th", "7th", "8th", "9th"],
+    fr: ["1er", "2e", "3e", "4e", "5e", "6e", "7e", "8e", "9e"],
+    cs: ["1.", "2.", "3.", "4.", "5.", "6.", "7.", "8.", "9."],
+  };
+  const input = { spellSaveDc: 15, spellAttack: 7, spellSlots: Object.fromEntries(Array.from({ length: 9 }, (_, n) => [n + 1, { max: 9 - n }])) };
+  const before = JSON.stringify(input);
+  const original = desk.castingNumbers(input);
+  for (const locale of ["en", "fr", "cs"]) {
+    const catalog = locale === "en" ? {} : JSON.parse(read(`src/lib/i18n/${locale}.json`)).messages;
+    const numbers = desk.castingNumbers(input, (key) => catalog[key] ?? key);
+    assert.deepEqual(numbers.slots.map((slot) => slot.label), expected[locale]);
+    assert.deepEqual(numbers.slots.map(({ level, max }) => ({ level, max })), original.slots.map(({ level, max }) => ({ level, max })));
+    assert.equal(numbers.dc, original.dc);
+    assert.equal(numbers.attack, original.attack);
+    assert.equal(JSON.stringify(input), before);
+  }
+});
+
 test("a swap trades one spell for another where it stood, and never a granted one", () => {
   assert.deepEqual(desk.swapInList(["Magic Missile", "Shield", "Sleep"], "shield", "Mage Armor"), ["Magic Missile", "Mage Armor", "Sleep"]);
   assert.deepEqual(desk.swapCandidates(["Bless", "Cure Wounds", "Shield of Faith"], (name) => name === "Bless"), ["Cure Wounds", "Shield of Faith"]);
