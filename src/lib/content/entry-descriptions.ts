@@ -7,7 +7,8 @@ import { rulebookPageIdFor } from "@/lib/rulebook/catalog-rows";
 import type { RulebookKind } from "@/lib/rulebook/types";
 import { translate, type Locale } from "@/lib/i18n/translate";
 import { localizeBackgroundFeatureText } from "@/lib/backgrounds";
-import { backgroundFeatureLabel, subclassName } from "./names";
+import { backgroundFeatureLabel, speciesTraitName, subclassName } from "./names";
+import { SRD_RACES } from "@/lib/srd";
 import { subclassNamed } from "@/lib/srd/subclass-name";
 import { textKey } from "@/lib/language/text-logic";
 import { describeContentEntry } from "@/lib/help";
@@ -126,6 +127,17 @@ function archetypeDescription(row: Row & { name: string; data: Record<string, un
   return lines.slice(start, next < 0 ? undefined : next).join("\n").trim() || undefined;
 }
 
+// For an exact bundled race outside the printed SRD, reuse its own
+// localized trait summaries. Never substitute the parent race's full rules
+// or copy these summaries onto a third-party row with the same name.
+function bundledRaceDescription(row: Row, locale: Locale): string | undefined {
+  const race = SRD_RACES.find((entry) => entry.id === row.slug && entry.name === row.name);
+  if (!race || row.source !== "bundled" || !race.traits.length || row.data?.desc) return undefined;
+  const lines = race.traits.map((trait) => speciesTraitName(race.id, trait, locale));
+  if (lines.some((line, index) => line === race.traits[index])) return undefined;
+  return lines.join("\n\n");
+}
+
 // Use exact English source text for background translations, not merely a
 // matching feature title. Keep any untranslated prose in the display copy.
 function backgroundDescription(row: Row & { name: string; data: Record<string, unknown> }, locale: Locale): string | undefined {
@@ -158,6 +170,9 @@ export function localizeEntry<T>(table: string, entry: T, locale: Locale): T {
   const core = CORE_DOCUMENTS.has(row.documentSlug ?? "") && CORE_SOURCES.has(row.source ?? "");
   if (!desc && kind && core) {
     desc = provider.srd(kind, row.name, corePageId(kind, row.name)) ?? undefined;
+  }
+  if (!desc && table === "races" && core) {
+    desc = bundledRaceDescription(row, locale);
   }
   if (!desc && table === "archetypes" && core) {
     desc = archetypeDescription({ ...row, name: row.name, data: row.data }, locale, provider);
