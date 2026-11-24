@@ -2971,6 +2971,11 @@ export const CS_NAMES_BY_TABLE: Record<string, Record<string, string>> = {
     "steam_knight:unbreakable-vanguard": "Nezlomný předvoj",
   },
   "speciesTraits": {
+    "shifter:beasthide-shifted-an-extra-1d6-temporary-hit-points-and-1-more-ac": "Zvířecí kůže — Během proměny získáš navíc 1k6 dočasných životů a +1 k TZ.",
+    "shifter:longtooth-shifted-a-fangs-attack-as-a-bonus-action": "Dlouhé tesáky — Během proměny můžeš bonusovou akcí zaútočit tesáky.",
+    "shifter:fangs-while-shifted-1d6-piercing-unarmed-strike": "Tesáky — Během proměny způsobí neozbrojený úder tesáky 1k6 bodného zranění.",
+    "shifter:swiftstride-shifted-10-more-feet-of-speed-and-a-10-foot-step-as-a-reaction": "Hbitý krok — Během proměny se tvá rychlost zvýší o 10 stop a reakcí se můžeš pohnout o 10 stop.",
+    "shifter:wildhunt-shifted-advantage-on-wisdom-checks-no-attack-within-30-ft-has-it": "Divoký lov — Během proměny máš výhodu k ověřením Moudrosti a žádný útok proti tobě ze vzdálenosti do 30 stop nemá výhodu.",
     "dwarf:darkvision": "Vidění ve tmě",
     "elf:darkvision": "Vidění ve tmě",
     "halfling:lucky": "Štěstí",
