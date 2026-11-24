@@ -19,6 +19,7 @@ import {
   systemNoteWords,
   type CampaignMember,
 } from "@/lib/campaign-types";
+import type { Locale } from "@/lib/i18n/translate";
 import { useLocale, useT } from "@/lib/locale";
 import type { CampaignMessage } from "@/lib/db/messages";
 import type { CharacterSheet } from "@/lib/schemas/sheet";
@@ -409,7 +410,7 @@ export function translateSystemNote(t: T, raw: string): string {
 // Translates engine-bound English sentences emitted by `composeSentence` at
 // display time so the campaign chat log renders in the user's locale without
 // changing the stored English action prose that the DM engine parses.
-function translatePlayerAction(t: T, locale: "en" | "fr" | "cs", raw: string): string {
+function translatePlayerAction(t: T, locale: Locale, raw: string): string {
   if (locale === "en") return raw;
   const trimmed = raw.trim();
   if (trimmed === "I end my turn.") return t("I end my turn.");
@@ -473,7 +474,7 @@ function translatePlayerAction(t: T, locale: "en" | "fr" | "cs", raw: string): s
   return raw;
 }
 
-function translateActionTail(t: T, locale: "en" | "fr" | "cs", tail: string): string {
+function translateActionTail(t: T, locale: Locale, tail: string): string {
   const CLAUSES = [
     "I attack recklessly.",
     "If it hits, I use Stunning Strike.",
