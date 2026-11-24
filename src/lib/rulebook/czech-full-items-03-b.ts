@@ -22,7 +22,7 @@ Oči na rouchu nelze zavřít ani odvrátit. I když můžeš zavřít nebo odvr
 Kouzlo *světlo* seslané na roucho nebo kouzlo *denní světlo* seslané do vzdálenosti 5 stop od roucha způsobí, že oslepneš na 1 minutu. Na konci každého svého tahu můžeš opakovat záchranný hod na Odolnost (SO 11 pro *světlo*, SO 15 pro *denní světlo*); při úspěchu oslepnutí skončí.`,
   "robe-of-scintillating-colors": `*Divotvorný předmět, velmi vzácný (vyžaduje sladění)*
 
-Toto roucho má 3 dávky a každý den za úsvitu si obnoví 1k3 spotřebovaných dávek. Když je nosíš, můžeš jako akci utratit 1 dávku a nechat roucho až do konce svého příštího tahu zobrazovat proměnlivé obrazce oslnivých barev. Po tuto dobu vydává jasné světlo v okruhu 30 stop a šero dalších 30 stop. Tvorové, kteří tě vidí, mají nevýhodu k hodům na útok proti tobě. Navíc každý tvor v jasném světle, který tě vidí v okamžiku aktivace moci roucha, musí uspět v záchranném hodu na Moudrost se SO 15, jinak je omráčený až do konce účinku.`,
+Toto roucho má 3 náboje a každý den za úsvitu si obnoví 1k3 spotřebovaných nábojů. Když je nosíš, můžeš jako akci utratit 1 náboj a nechat roucho až do konce svého příštího tahu zobrazovat proměnlivé obrazce oslnivých barev. Po tuto dobu vydává jasné světlo v okruhu 30 stop a šero dalších 30 stop. Tvorové, kteří tě vidí, mají nevýhodu k hodům na útok proti tobě. Navíc každý tvor v jasném světle, který tě vidí v okamžiku aktivace moci roucha, musí uspět v záchranném hodu na Moudrost se SO 15, jinak je omráčený až do konce účinku.`,
   "robe-of-stars": `*Divotvorný předmět, velmi vzácný (vyžaduje sladění)*
 
 Toto černé nebo tmavomodré roucho je vyšité drobnými bílými či stříbrnými hvězdami. Když je nosíš, získáváš bonus +1 k záchranným hodům.
