@@ -1,5 +1,14 @@
 {
   "messages": {
+    "Not in the model catalog.": "Absent du catalogue de modèles.",
+    "{size} context": "contexte de {size}",
+    "paints pictures": "génère des images",
+    "tool calls": "appels d’outils",
+    "reasoning": "raisonnement",
+    "sees pictures": "analyse les images",
+    "open weights": "poids ouverts",
+    "{input} in / {output} out per M tokens": "{input} en entrée / {output} en sortie par million de jetons",
+    "Name the model.": "Indiquez le nom du modèle.",
     "Server language": "Langue du serveur",
     "The language your tables play in": "La langue dans laquelle jouent vos tables",
     "New campaigns start in it, and the Game Master's memory reads the story in it. Each campaign can still pick its own under Table language. The buttons and menus follow each reader's browser, or the language they pick under Settings > Language.": "Les nouvelles campagnes démarrent dans cette langue et la mémoire du maître du jeu y lit le récit. Chaque campagne peut toujours choisir sa propre langue sous Langue de la table. Les boutons et menus suivent la langue du navigateur de chaque lecteur ou celle choisie dans Paramètres > Langue.",
@@ -11071,6 +11080,15 @@
     "Concussive sound: thunderwave, shatter, a giant's shout.": "Onde sonore : vague tonnante, fracassement, cri de géant."
   },
   "contexts": {
+    "beta": {
+      "model.status": "bêta"
+    },
+    "alpha": {
+      "model.status": "alpha"
+    },
+    "deprecated": {
+      "model.status": "obsolète"
+    },
     "blinded": {
       "glossary.option": "Aveuglé"
     },
@@ -12068,6 +12086,7 @@
       "faction.attitude.wary": "méfiant"
     },
     "free": {
+      "model.price": "gratuit",
       "builder.gear.freeWord": "gratuit"
     },
     "poor": {
