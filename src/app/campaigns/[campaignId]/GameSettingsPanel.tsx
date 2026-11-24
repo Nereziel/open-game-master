@@ -259,7 +259,7 @@ export function GameSettingsPanel({
           <span className="flex items-center gap-1.5">
             <GameIcon icon={{ kind: "glyph", key: "cue-bell" }} size="size-5" />
             {narrating
-              ? t("Narration on ({voice})", { voice: voiceLabel(voices, settings.ttsVoice) })
+              ? t("Narration on ({voice})", { voice: voiceLabel(voices, settings.ttsVoice, t) })
               : narrationOff
                 ? t("Narration off on this server")
                 : t("Narration off")}
@@ -343,7 +343,7 @@ export function GameSettingsPanel({
   const context = {
     packName: selectedPack?.name ?? null,
     genreName: ({ "high_fantasy": t("High fantasy"), "dark_fantasy": t("Dark fantasy"), "mystery": t("Mystery"), "horror": t("Horror"), "cyberpunk": t("Cyberpunk"), "steampunk": t("Steampunk"), "post_apocalyptic": t("Post-apocalyptic"), "custom": t("Custom", { context: "creator.genre.custom" }), "coverAria": t("{name} cover plate"), "humansOnly": t("all-human world") } as Record<string, string>)[settings.genre] ?? String(settings.genre),
-    voiceName: voiceLabel(voices, settings.ttsVoice),
+    voiceName: voiceLabel(voices, settings.ttsVoice, t),
     narrationOff,
     statsRule: tableRerollWords(settings.abilityRerollBelow).toLowerCase(),
     lastingCompanions,
