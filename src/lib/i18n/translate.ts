@@ -59,6 +59,22 @@ export function translate(locale: Locale, english: string, vars?: TranslateVars)
   return interpolate(text, vars);
 }
 
+// Catalog grammar is selected only when a translation exists. English
+// fallback always uses English grammar, regardless of the reader locale.
+const SINGULAR_BY_LOCALE: Record<Locale, (count: number) => boolean> = {
+  en: (count) => count === 1,
+  fr: (count) => count <= 1,
+  cs: (count) => count === 1,
+};
+
+export function pluralCategory(locale: Locale, count: number): "one" | "other" {
+  return Number.isFinite(count) && (SINGULAR_BY_LOCALE[locale] ?? SINGULAR_BY_LOCALE.en)(count) ? "one" : "other";
+}
+
+const PLURAL_FORMS_BY_LOCALE: Partial<Record<Locale, (count: number) => 0 | 1 | 2>> = {
+  cs: (count) => count === 1 ? 0 : Number.isInteger(count) && count >= 2 && count <= 4 ? 1 : 2,
+};
+
 export function translatePlural(
   locale: Locale,
   englishOne: string,
@@ -70,14 +86,10 @@ export function translatePlural(
   if (catalog) {
     const pair = catalog.plurals[`${englishOne}\0${englishOther}`];
     if (pair) {
-      if (locale === "cs" && pair.length === 3) {
-        const count = vars.count;
-        const form = count === 1 ? 0 : Number.isInteger(count) && count >= 2 && count <= 4 ? 1 : 2;
-        return interpolate(pair[form], vars);
-      }
-      const isOne = locale === "fr" ? vars.count <= 1 : vars.count === 1;
-      return interpolate(isOne ? pair[0] : pair[1], vars);
+      const chooseForm = PLURAL_FORMS_BY_LOCALE[locale];
+      const form = pair.length === 3 && chooseForm ? chooseForm(vars.count) : pluralCategory(locale, vars.count) === "one" ? 0 : 1;
+      return interpolate(pair[form] ?? pair[1], vars);
     }
   }
-  return interpolate(vars.count === 1 ? englishOne : englishOther, vars);
+  return interpolate(pluralCategory("en", vars.count) === "one" ? englishOne : englishOther, vars);
 }
