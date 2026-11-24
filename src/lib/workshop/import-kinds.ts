@@ -160,7 +160,16 @@ export type ImportPlanItem = {
   kept?: boolean;
 };
 
-export type ImportWarning = { kind: ImportKind; message: string };
+// Optional display data for the reader's locale. Keep message as the
+// original English fallback for older clients and non-UI consumers.
+export type ImportWarningDisplay = {
+  key: string;
+  vars?: Record<string, string | number>;
+  kinds?: Record<string, readonly ImportKind[]>;
+  facts?: WorldRecordFacts;
+  cards?: readonly string[];
+};
+export type ImportWarning = { kind: ImportKind; message: string; display?: ImportWarningDisplay };
 
 export type ImportPlan = {
   items: ImportPlanItem[];
