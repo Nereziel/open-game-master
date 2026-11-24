@@ -1,9 +1,9 @@
 "use client";
 
-import { useId } from "react";
 import { Plus, Trash2 } from "lucide-react";
 import { cn } from "@/lib/cn";
 import { ui } from "@/lib/ui";
+import { RuleTermInput } from "@/components/ui/RuleTermInput";
 import { Select } from "@/components/ui/Select";
 import { Switch } from "@/components/ui/Switch";
 import { CONDITIONS, DAMAGE_TYPES } from "@/lib/bestiary/kit";
@@ -32,8 +32,6 @@ function withoutUnset<T extends object>(value: T): T {
 
 export function AttackDetails({ attack, onChange }: { attack: EnemyAttack; onChange: (next: EnemyAttack) => void }) {
   const t = useT();
-  const conditionList = useId();
-  const typeList = useId();
   const set = (patch: Patch) => onChange(withoutUnset({ ...attack, ...patch }));
   const onHit = attack.onHit ?? {};
   const setOnHit = (patch: Partial<OnHitRider>) => {
@@ -68,16 +66,6 @@ export function AttackDetails({ attack, onChange }: { attack: EnemyAttack; onCha
 
   return (
     <div className="reveal grid gap-3 rounded-lg border border-stone-800 bg-stone-950/50 p-3">
-      <datalist id={conditionList}>
-        {CONDITIONS.map((condition) => (
-          <option key={condition} value={condition} label={t(condition, { context: "glossary.option" })} />
-        ))}
-      </datalist>
-      <datalist id={typeList}>
-        {DAMAGE_TYPES.map((type) => (
-          <option key={type} value={type} label={t(type, { context: "glossary.option" })} />
-        ))}
-      </datalist>
 
       <div className="flex flex-wrap items-end gap-3">
         <Field label={t("Kind")}>
@@ -144,12 +132,12 @@ export function AttackDetails({ attack, onChange }: { attack: EnemyAttack; onCha
               onChange={(event) => setRiders(riders.map((row, at) => (at === index ? { ...row, dice: event.target.value } : row)))}
               className={cn(ui.input, "w-24")}
             />
-            <input
-              list={typeList}
+            <RuleTermInput
+              known={DAMAGE_TYPES}
               value={rider.type}
-              aria-label={t("Rider damage type")}
+              label={t("Rider damage type")}
               placeholder="fire"
-              onChange={(event) => setRiders(riders.map((row, at) => (at === index ? { ...row, type: event.target.value } : row)))}
+              onChange={(type) => setRiders(riders.map((row, at) => (at === index ? { ...row, type } : row)))}
               className={cn(ui.input, "w-28")}
             />
             <button type="button" aria-label={t("Remove rider")} onClick={() => setRiders(riders.filter((_, at) => at !== index))} className={cn(ui.iconAction, rowIcon, "hover:text-red-300")}>
@@ -176,7 +164,7 @@ export function AttackDetails({ attack, onChange }: { attack: EnemyAttack; onCha
         </Field>
         {bloodied ? (
           <Field as="label" label={t("Type", { context: "workshop.bestiary.attack.type" })}>
-            <input list={typeList} value={bloodied.type} placeholder="piercing" onChange={(event) => setBloodied(bloodied.damage, event.target.value)} className={cn(ui.input, "w-28")} />
+            <RuleTermInput known={DAMAGE_TYPES} value={bloodied.type} placeholder="piercing" onChange={(type) => setBloodied(bloodied.damage, type)} className={cn(ui.input, "w-28")} />
           </Field>
         ) : null}
         <span className="basis-full text-[11px] text-stone-500">{t("The blow it deals instead once it is down to half its hit points, as a swarm's bite weakens. Leave empty for the same blow throughout.")}</span>
@@ -196,10 +184,10 @@ export function AttackDetails({ attack, onChange }: { attack: EnemyAttack; onCha
             </Field>
           ) : null}
           <Field as="label" label={t("Condition")}>
-            <input list={conditionList} value={onHit.condition ?? ""} placeholder="grappled" onChange={(event) => setOnHit({ condition: event.target.value.toLowerCase() || undefined })} className={cn(ui.input, "w-32")} />
+            <RuleTermInput known={CONDITIONS} value={onHit.condition ?? ""} placeholder="grappled" onChange={(condition) => setOnHit({ condition: condition.toLowerCase() || undefined })} className={cn(ui.input, "w-32")} />
           </Field>
           <Field as="label" label={t("And also")}>
-            <input list={conditionList} value={onHit.alsoCondition ?? ""} placeholder="restrained" onChange={(event) => setOnHit({ alsoCondition: event.target.value.toLowerCase() || undefined })} className={cn(ui.input, "w-32")} />
+            <RuleTermInput known={CONDITIONS} value={onHit.alsoCondition ?? ""} placeholder="restrained" onChange={(alsoCondition) => setOnHit({ alsoCondition: alsoCondition.toLowerCase() || undefined })} className={cn(ui.input, "w-32")} />
           </Field>
           <Field label={t("Escape DC")}>
             <OptionalStepper label={t("Escape DC")} min={1} max={30} fallback={13} value={onHit.escapeDc} onChange={(escapeDc) => setOnHit({ escapeDc: escapeDc === "" ? undefined : escapeDc })} />
@@ -223,7 +211,7 @@ export function AttackDetails({ attack, onChange }: { attack: EnemyAttack; onCha
           {onHit.damage ? (
             <>
               <Field as="label" label={t("Type", { context: "workshop.bestiary.attack.type" })}>
-                <input list={typeList} value={onHit.damageType ?? ""} placeholder="poison" onChange={(event) => setOnHit({ damageType: event.target.value || undefined })} className={cn(ui.input, "w-28")} />
+                <RuleTermInput known={DAMAGE_TYPES} value={onHit.damageType ?? ""} placeholder="poison" onChange={(damageType) => setOnHit({ damageType: damageType || undefined })} className={cn(ui.input, "w-28")} />
               </Field>
               <Field label={t("Half on a success")}>
                 <Switch label={t("Half damage on a successful save")} on={onHit.halfOnSave === true} onChange={(on) => setOnHit({ halfOnSave: on || undefined })} />
