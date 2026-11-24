@@ -3,10 +3,9 @@
 import { ChevronRight, X } from "lucide-react";
 import { useCallback, useEffect, useLayoutEffect, useRef, useState } from "react";
 import { cn } from "@/lib/cn";
-import { localizedTourStep } from "@/lib/tours/logic";
 import { useLocale, useT } from "@/lib/locale";
 import type { TourEnd } from "@/lib/tours/account-logic";
-import { placeCard, resolveSteps, skipVanished, type ResolvedStep, type TourStep } from "@/lib/tours/logic";
+import { localizedTourStep, placeCard, resolveSteps, skipVanished, type ResolvedStep, type TourStep } from "@/lib/tours/logic";
 import { ui } from "@/lib/ui";
 
 // A spotlight walkthrough: dims the page, cuts a window around one control
