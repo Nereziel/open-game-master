@@ -10,7 +10,7 @@ export const CZECH_MONSTER_NOTES_8: Readonly<Record<string, string>> = {
   "Axe Beak": "Sekerozobák je velký nelétavý pták s rychlým během. Útočí mohutným **zobákem** a může sloužit jako neobvyklé jízdní či nákladní zvíře. Nemá zvláštní magické útoky.",
   "Baboon": "Pavián je malá opice, která se opírá o **taktiku smečky**: proti cíli vedle spojence získává výhodu. Útočí kousnutím a může se objevovat ve skupinách.",
   "Badger": "Jezevec má citlivý **čich** a umí se zahrabávat. V boji kouše, ale jeho hlavní využití je zvířecí chování a pohyb v norách. Nemá zvláštní magické schopnosti.",
-  "Bat": "Netopýr se orientuje **echolokací** a citlivým sluchem, dokud není ohlušen. Létá a může kousnout. Jeho nízká bojová síla z něj dělá hlavně průzkumný nebo atmosférický prvek.",
+  "Bat": "Netopýr se orientuje **echolokací** a citlivým sluchem, dokud není hluchý. Létá a může kousnout. Jeho nízká bojová síla z něj dělá hlavně průzkumný nebo atmosférický prvek.",
   "Blood Hawk": "Krvavý jestřáb je dravý pták s výborným zrakem, který může využívat **taktiku smečky**. Útočí zobákem a v hejnu je nebezpečnější než osamoceně.",
   "Boar": "Divočák útočí **kly** a při přímém rozběhu může způsobit další zranění. Schopnost **nezdolnost** mu někdy dovolí přežít smrtící úder. Je vhodný pro setkání v lesích a na cestách.",
   "Camel": "Velbloud je velké zvíře vhodné k přepravě nákladu a jízdě v suchých oblastech. Dokáže **kousnout**, ale jeho hlavní význam je cestovní a hospodářský.",

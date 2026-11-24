@@ -19,7 +19,7 @@ export const CZECH_ITEM_NOTES_6: Readonly<Record<string, string>> = {
   "Ring of the Ram": "Prsten vytváří magickou **beraní hlavu**, která zasáhne a odhodí cíl nebo rozbije předmět. Síla útoku roste s počtem spotřebovaných nábojů.",
   "Ring of Warmth": "Prsten poskytuje **odolnost vůči chladovému zranění** a chrání nositele i jeho vybavení před extrémně nízkými teplotami. Vyžaduje sladění.",
   "Ring of Water Walking": "Nositel může **stát a pohybovat se po kapalném povrchu**, jako by šlo o pevnou zem. Neznamená to ochranu proti samotným účinkům nebezpečné kapaliny.",
-  "Ring of X-ray Vision": "Prsten na krátkou dobu umožní **vidět skrz pevné překážky** omezené tloušťky. Opakované použití před dlouhým odpočinkem může způsobit **vyčerpání**.",
+  "Ring of X-ray Vision": "Prsten na krátkou dobu umožní **vidět skrz pevné překážky** omezené tloušťky. Opakované použití před dlouhým odpočinkem může způsobit **únavu**.",
   "Robe of Eyes": "Roucho umožňuje **vidět všemi směry**, spatřit neviditelné tvory a hledět do Éterické sféry. Poskytuje výhodu při zrakovém vnímání, ale silné světlo může oči na rouchu oslepit.",
   "Robe of Scintillating Colors": "Roucho za náboj vytvoří **oslnivou proměnlivou záři**, která nepřátelům ztěžuje útoky a může je **omráčit**. Účinek je krátký a náboje se obnovují.",
   "Robe of the Archmagi": "Legendární roucho určené vybranému typu sesilatele zvyšuje **obranné číslo bez zbroje**, posiluje **kouzelné útoky a obtížnost záchran** a chrání před magií. Barva souvisí s přesvědčením.",
