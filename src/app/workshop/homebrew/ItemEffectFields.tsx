@@ -38,8 +38,7 @@ const WEAPON_LABELS = { [UNARMED_STRIKE_KEY]: "Unarmed strike", ...Object.fromEn
 // The chips' words: damage types capitalized out of the French SRD's own list
 // (damageTypeWord's pattern, src/lib/dm/damage-logic.ts), conditions through
 // the official names layer. English keeps the raw term, exactly as shipped.
-const capital = (value: string) => value.charAt(0).toUpperCase() + value.slice(1);
-const damageLabel = (type: string, locale: Locale): string => (locale === "fr" ? capital(damageTypeWord(type, locale)) : type);
+const damageLabel = (type: string, locale: Locale): string => (damageTypeWord(type, locale));
 const conditionLabel = (term: string, locale: Locale): string => contentName("conditions", term, locale);
 
 export const MORE_EFFECT_LABELS = {
