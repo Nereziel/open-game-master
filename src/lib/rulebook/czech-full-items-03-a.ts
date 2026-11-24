@@ -48,14 +48,14 @@ Jako bonusovou akci můžeš každou kouli přesunout až o 30 stop, ale žádn�
 ***Padající hvězdy.*** Jako akci můžeš utratit 1 až 3 náboje. Za každý utracený náboj vystřelíš z prstenu zářící světelnou jiskru na bod, který vidíš do vzdálenosti 60 stop. Každého tvora v krychli o hraně 15 stop vycházející z daného bodu zasypou jiskry; musí uspět v záchranném hodu na Obratnost se SO 15, jinak utrpí ohnivé zranění 5k4. Při úspěchu utrpí poloviční zranění.`,
   "ring-of-spell-storing": `*Prsten, vzácný (vyžaduje sladění)*
 
-Tento prsten uchovává kouzla, která do něj někdo sešle, dokud je sladěný nositel nepoužije. Současně dokáže uchovávat kouzla v souhrnu nejvýše 5 stupňů. Při nalezení obsahuje kouzla v souhrnu 1k6 − 1 stupňů, která zvolí PJ.
+Tento prsten uchovává kouzla, která do něj někdo sešle, dokud je sladěný nositel nepoužije. Současně dokáže uchovávat kouzla v souhrnu nejvýše 5 úrovní. Při nalezení obsahuje kouzla v souhrnu 1k6 − 1 úrovní, která zvolí PJ.
 
-Libovolný tvor může do prstenu uložit kouzlo 1. až 5. stupně tak, že se při jeho sesílání prstenu dotýká. Kouzlo nemá žádný jiný účinek než uložení do prstenu. Pokud prsten kouzlo nepojme, kouzlo se spotřebuje bez účinku. Místo, které kouzlo zabere, určuje stupeň pozice použité k jeho seslání.
+Libovolný tvor může do prstenu uložit kouzlo 1. až 5. úrovně tak, že se při jeho sesílání prstenu dotýká. Kouzlo nemá žádný jiný účinek než uložení do prstenu. Pokud prsten kouzlo nepojme, kouzlo se spotřebuje bez účinku. Místo, které kouzlo zabere, určuje úroveň pozice použité k jeho seslání.
 
-Když nosíš tento prsten, můžeš seslat libovolné kouzlo, které je v něm uložené. Kouzlo používá stupeň pozice, SO záchrany proti kouzlu, bonus k útoku kouzlem a sesílací vlastnost původního sesilatele; ve všem ostatním se považuje za tebou seslané. Seslané kouzlo se z prstenu odstraní a uvolní v něm místo.`,
+Když nosíš tento prsten, můžeš seslat libovolné kouzlo, které je v něm uložené. Kouzlo používá úroveň pozice, SO záchrany proti kouzlu, bonus k útoku kouzlem a sesílací vlastnost původního sesilatele; ve všem ostatním se považuje za tebou seslané. Seslané kouzlo se z prstenu odstraní a uvolní v něm místo.`,
   "ring-of-spell-turning": `*Prsten, legendární (vyžaduje sladění)*
 
-Když nosíš tento prsten, máš výhodu k záchranným hodům proti každému kouzlu, které cílí pouze na tebe (a nezasahuje tě v oblasti účinku). Navíc pokud při takovém záchranném hodu padne na kostce 20 a jde o kouzlo 7. nebo nižší úrovně, kouzlo na tebe nemá žádný účinek a místo tebe zacílí na svého sesilatele. Použije se stupeň jeho pozice kouzla, SO záchrany proti kouzlu, bonus k útoku kouzlem i sesílací vlastnost sesilatele.`,
+Když nosíš tento prsten, máš výhodu k záchranným hodům proti každému kouzlu, které cílí pouze na tebe (a nezasahuje tě v oblasti účinku). Navíc pokud při takovém záchranném hodu padne na kostce 20 a jde o kouzlo 7. nebo nižší úrovně, kouzlo na tebe nemá žádný účinek a místo tebe zacílí na svého sesilatele. Použije se úroveň jeho pozice kouzla, SO záchrany proti kouzlu, bonus k útoku kouzlem i sesílací vlastnost sesilatele.`,
   "ring-of-swimming": `*Prsten, neobvyklý*
 
 Když nosíš tento prsten, máš rychlost plavání 40 stop.`,
