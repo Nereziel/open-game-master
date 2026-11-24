@@ -6,10 +6,10 @@ import { catalogInstalled, installCatalog, type Locale } from "./translate.ts";
 
 const loaders: Record<Exclude<Locale, "en">, () => Promise<void>> = {
   cs: async () => {
-    const [catalog, names, resources, expansions] = await Promise.all([
-      import("./cs-catalog-data.ts"), import("../content/names-cs.ts"), import("../srd/class-resources-cs-data.ts"), import("../content/expansion-names-cs.json"),
+    const [catalog, names, resources, expansions, guides] = await Promise.all([
+      import("./cs-catalog-data.ts"), import("../content/names-cs.ts"), import("../srd/class-resources-cs-data.ts"), import("../content/expansion-names-cs.json"), import("./workshop-guides-cs.json"),
     ]);
-    installCsTables({ names: names.CS_NAMES_BY_TABLE, guidance: resources.RESOURCE_CS_GUIDANCE, expansionNames: expansions.default ?? expansions });
+    installCsTables({ names: names.CS_NAMES_BY_TABLE, guidance: resources.RESOURCE_CS_GUIDANCE, expansionNames: expansions.default ?? expansions, workshopGuides: guides.default ?? guides });
     installCatalog("cs", catalog.default ?? catalog);
   },
   fr: async () => {
