@@ -9,6 +9,7 @@
 // Workstream ui-play of the second rules-enforcement repair
 // (/tmp/odm-enf2/fixes/ui-play.md). Pure: no database, no server.
 import assert from "node:assert/strict";
+import fs from "node:fs";
 import { register } from "node:module";
 import { staticImports } from "./lib/static-imports.mjs";
 
@@ -23,7 +24,8 @@ const { hudGates } = await import("../src/lib/battlemap/hand-hud.ts");
 const { conditionNote, conditionNoteLine, namesLookup } = await import("../src/lib/battlemap/condition-notes.ts");
 const { characterStageRows, enemyStageRows } = await import("../src/lib/battlemap/view-stage.ts");
 const { messageIntentSchema, describeIntent, intentAnswered, intentCorrection, intentTools } = await import("../src/lib/dm/intent-logic.ts");
-const { translate } = await import("../src/lib/messages-logic.ts");
+const { translate, tableTranslator } = await import("../src/lib/messages-logic.ts");
+const { installCatalog } = await import("../src/lib/i18n/translate.ts");
 const t = (key, vars) => translate("en", key, vars);
 const { maxHpView, speedView, hitDiceRows, hitDiceLine, itemStatus, stateTags } = await import(
   "../src/components/sheet/sheet-state.ts"
@@ -662,6 +664,27 @@ test("the board reaches no card builder of the Hand", () => {
   for (const heavy of ["lib/battlemap/hand.ts", "lib/battlemap/hand-spells.ts", "lib/battlemap/hand-granted.ts"]) {
     assert.ok(!reached.has(heavy), `the table page's first load imports ${heavy}`);
   }
+});
+
+test("player and enemy stage rows use the same table translator without changing IDs", () => {
+  const pc = { id: "pc", conditions: [], currentHp: 5, concentratingOn: "Bless" };
+  const enemy = { id: "enemy", conditions: ["unconscious"], conditionMeta: { unconscious: { source: "knocked out" } }, currentHp: 0 };
+  const original = structuredClone({ pc, enemy });
+  const enPc = characterStageRows(pc, () => null);
+  const enEnemy = enemyStageRows(enemy, () => null);
+  for (const [language, locale] of [["french", "fr"], ["czech", "cs"]]) {
+    installCatalog(locale, JSON.parse(fs.readFileSync(new URL(`../src/lib/i18n/${locale}.json`, import.meta.url), "utf8")));
+    const t = tableTranslator(language);
+    const pcRows = characterStageRows(pc, () => null, t);
+    const enemyRows = enemyStageRows(enemy, () => null, t);
+    assert.deepEqual(pcRows.map((row) => row.id), enPc.map((row) => row.id));
+    assert.deepEqual(enemyRows.map((row) => row.id), enEnemy.map((row) => row.id));
+    assert.equal(pcRows[0].label, t("Concentrating: {spell}", { spell: "Bless" }));
+    assert.equal(enemyRows[0].label, t("Knocked out"));
+    assert.notEqual(pcRows[0].label, enPc[0].label);
+    assert.notEqual(enemyRows[0].label, enEnemy[0].label);
+  }
+  assert.deepEqual({ pc, enemy }, original);
 });
 
 console.log(`test-hand-engine: ${passed} passed`);
