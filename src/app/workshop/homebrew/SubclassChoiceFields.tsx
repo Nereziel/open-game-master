@@ -27,8 +27,7 @@ import type { Locale } from "@/lib/messages-logic";
 // The chips' damage words in the reader's language: capitalized out of the
 // French SRD's own list (damageTypeWord's pattern,
 // src/lib/dm/damage-logic.ts). English keeps the raw term, exactly as shipped.
-const capital = (value: string) => value.charAt(0).toUpperCase() + value.slice(1);
-const damageLabel = (type: string, locale: Locale): string => (locale === "fr" ? capital(damageTypeWord(type, locale)) : type);
+const damageLabel = (type: string, locale: Locale): string => (damageTypeWord(type, locale));
 
 // A subclass whose player picks one of several options at a class level: a
 // bloodline, an elemental affinity (issue #833). Hidden behind one button
