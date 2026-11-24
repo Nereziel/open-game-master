@@ -1,5 +1,9 @@
 {
   "messages": {
+    "The board has nothing that happens on its main line, so there is no act to add.": "Na hlavní trase scénáře se nic neděje, takže není co přidat jako další dějství.",
+    "This campaign already has a story arc the table has been playing, so the board's beats are left here rather than written over it.": "Tato kampaň již má rozehraný příběhový oblouk. Dějové body scénáře se nepřenesou, aby jej nepřepsaly.",
+    "The arc needs something that says what this world is. Add a place or a piece of history and it can be written.": "Příběhový oblouk potřebuje popis světa. Přidejte místo nebo část jeho historie a oblouk bude možné vytvořit.",
+    "An arc needs at least {min} things that happen; the board has {count}.": "Příběhový oblouk potřebuje alespoň {min} dějových bodů; scénář jich má {count}.",
     "Nothing more": "Nic dalšího",
     "Timeline mentions: {count}": "Zmínky v časové ose: {count}",
     "Secret subjects or knowers: {count}": "Subjekty nebo znalci tajemství: {count}",
