@@ -11186,7 +11186,16 @@
     "That opportunity attack was already decided.": "Cette attaque d’opportunité a déjà fait l’objet d’une décision.",
     "No smite was offered on this attack: answer Strike or Let it go.": "Aucun Châtiment divin n’a été proposé pour cette attaque : choisissez Frapper ou Laisser passer.",
     "That is not one of the creatures this attack can be aimed at.": "Cette créature ne fait pas partie des cibles possibles de cette attaque.",
-    "Only this character's player decides whether to take the opportunity attack.": "Seul le joueur de ce personnage décide de porter ou non l’attaque d’opportunité."
+    "Only this character's player decides whether to take the opportunity attack.": "Seul le joueur de ce personnage décide de porter ou non l’attaque d’opportunité.",
+    "Act {act}: {title}": "Acte {act} : {title}",
+    "Chapter {index} (in progress)": "Chapitre {index} (en cours)",
+    "Chapter {index}: {title}": "Chapitre {index} : {title}",
+    "Untitled": "Sans titre",
+    "{title} (done)": "{title} (terminée)",
+    "{title} (failed)": "{title} (échouée)",
+    "{title} — Story": "{title} — Récit",
+    "Quest Log": "Journal de quêtes",
+    "Exported from Open Game Master on {date}.": "Exporté depuis Open Game Master le {date}."
   },
   "contexts": {
     "{table}: its row for the table {name} now names this campaign's own {name}, since the source's stayed behind.": {
