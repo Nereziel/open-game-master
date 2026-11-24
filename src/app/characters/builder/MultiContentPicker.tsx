@@ -42,7 +42,7 @@ export default function MultiContentPicker({
   const tp = useTp();
   const { query, setQuery, results, setResults, open, setOpen, loading, unavailable, failed, unadmitted } =
     useContentSearch(kind, extraParams);
-  const [pending, setPending] = useState<MultiPick[]>([]);
+  const [pending, setPending] = useState<(MultiPick & { source?: string; documentSlug?: string })[]>([]);
   const container = useRef<HTMLDivElement>(null);
 
   // The browse list opens on focus, so clicking elsewhere must collapse it
@@ -66,7 +66,7 @@ export default function MultiContentPicker({
     setPending((picks) =>
       picks.some((pick) => textKey(pick.name) === key)
         ? picks.filter((pick) => textKey(pick.name) !== key)
-        : [...picks, { name: entry.name, slug: entry.slug, level: entry.level }],
+        : [...picks, { name: entry.name, slug: entry.slug, level: entry.level, source: entry.source, documentSlug: entry.documentSlug }],
     );
   }
 
@@ -75,7 +75,7 @@ export default function MultiContentPicker({
     if (!key || selectedLower.has(key) || pendingLower.has(key)) {
       return;
     }
-    setPending((picks) => [...picks, { name: trimmedQuery }]);
+    setPending((picks) => [...picks, { name: trimmedQuery, source: "homebrew" }]);
     setQuery("");
     setResults([]);
     setOpen(false);
@@ -85,7 +85,7 @@ export default function MultiContentPicker({
     if (!pending.length) {
       return;
     }
-    onAdd(pending);
+    onAdd(pending.map(({ name, slug, level }) => ({ name, slug, level })));
     setPending([]);
     setQuery("");
     setResults([]);
@@ -189,13 +189,13 @@ export default function MultiContentPicker({
               key={pick.name}
               className="flex items-center gap-1 rounded-full bg-stone-800 px-2 py-0.5 text-xs text-stone-200"
             >
-              {pick.name}
+              {contentName(kind, pick, locale)}
               <button
                 type="button"
                 onClick={() =>
                   setPending((picks) => picks.filter((entry) => entry.name !== pick.name))
                 }
-                aria-label={t("Remove {name}", { name: pick.name })}
+                aria-label={t("Remove {name}", { name: contentName(kind, pick, locale) })}
                 className="text-stone-500 hover:text-red-400"
               >
                 <X className="size-3" />
