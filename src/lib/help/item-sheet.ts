@@ -3,7 +3,7 @@ import { textKey } from "@/lib/language/text-logic";
 import { DAMAGE_TYPE_BLURBS, WEAPON_PROPERTY_BLURBS } from "@/lib/help/terms";
 import { translate, type Locale } from "@/lib/messages-logic";
 import { armorNamed, type SrdArmor } from "@/lib/srd/armor";
-import { packCostCopper, priceText } from "@/lib/srd/currency";
+import { packCostCopper, priceText, localizeCoins } from "@/lib/srd/currency";
 import { magicItemBonus, withoutBonus } from "@/lib/srd/item-row";
 import { weaponNamed, type SrdWeapon } from "@/lib/srd/weapons";
 
@@ -91,21 +91,6 @@ function weightOf(row: Row, t: T): string | null {
     return /^0+(\.0+)?\s*lb/i.test(text) ? null : text.replace(/lb\.$/i, t("lb."));
   }
   return pounds > 0 ? formatPounds(pounds, t) : null;
-}
-
-// Display-only currency conventions: parsing and arithmetic remain SRD
-// coin codes. Preserve the existing boundaries and French platinum spelling.
-const COIN_DISPLAY_BY_LOCALE: Partial<Record<Locale, {
-  pattern: RegExp;
-  words: Record<string, string>;
-}>> = {
-  cs: { pattern: /\b(gp|sp|cp|ep|pp)\b/g, words: { gp: "zl", sp: "st", cp: "md", ep: "el", pp: "pl" } },
-  fr: { pattern: / (gp|sp|cp|ep)/g, words: { gp: " po", sp: " pa", cp: " pc", ep: " pe" } },
-};
-
-function localizeCoins(text: string, locale: Locale): string {
-  const display = COIN_DISPLAY_BY_LOCALE[locale];
-  return display ? text.replace(display.pattern, (match, coin: string) => display.words[coin] ?? match) : text;
 }
 
 // v1 rows say "15 gp", v2 rows a bare gold figure ("0.01"), homebrew
