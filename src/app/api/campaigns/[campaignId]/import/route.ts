@@ -174,6 +174,8 @@ export async function POST(
     ...(result.monstersReused?.length ? { monstersReused: result.monstersReused } : {}),
     ...(result.itemsBrought?.length ? { itemsBrought: result.itemsBrought } : {}),
     ...(result.itemsReused?.length ? { itemsReused: result.itemsReused } : {}),
+    ...(result.spellsBrought?.length ? { spellsBrought: result.spellsBrought } : {}),
+    ...(result.referenceNotes?.length ? { referenceNotes: result.referenceNotes, referenceNoteDisplays: result.referenceNoteDisplays } : {}),
     ...(pregensOffered.length ? { pregensOffered } : {}),
   });
 }
