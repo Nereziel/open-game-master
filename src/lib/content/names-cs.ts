@@ -1611,7 +1611,7 @@ export const CS_NAMES_BY_TABLE: Record<string, Record<string, string>> = {
     "rogue:elusive": "Nepolapitelnost",
     "rogue:evasion": "Vyváznutí",
     "rogue:expertise": "Kvalifikace",
-    "rogue:fast-hands": "Rychlé prsty",
+    "rogue:fast-hands": "Rychlé ruce",
     "rogue:reliable-talent": "Spolehlivý talent",
     "rogue:roguish-archetype": "Tulácký archetyp",
     "rogue:second-story-work": "Lupičství",
