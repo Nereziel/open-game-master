@@ -5,7 +5,7 @@ import Link from "next/link";
 import { useEffect, useState, useSyncExternalStore } from "react";
 import { cn } from "@/lib/cn";
 import { PIXEL_ICONS, UserAvatar, ui } from "@/lib/ui";
-import { localeTag } from "@/lib/messages-logic";
+import { localeTag, type Locale } from "@/lib/messages-logic";
 import { useLocale, useT, useTp } from "@/lib/locale";
 import { DiceLookSummary } from "@/components/DiceLookEditor";
 import { PageLoading, PageNotice, PageSection, PageShell } from "@/components/PageShell";
@@ -61,8 +61,8 @@ type Me = {
   deletionDueAt?: string | null;
 };
 
-function dueDate(iso: string, locale: string): string {
-  return new Date(iso).toLocaleDateString(localeTag(locale as "en" | "fr" | "cs"), {
+function dueDate(iso: string, locale: Locale): string {
+  return new Date(iso).toLocaleDateString(localeTag(locale), {
     year: "numeric",
     month: "long",
     day: "numeric",
