@@ -176,3 +176,19 @@ describe("Tome of Heroes mundane equipment", () => {
     }
   });
 });
+
+
+describe("Tome of Heroes race descriptions", () => {
+  it("serves the complete 11 parent race texts without changing canonical traits", () => {
+    const rows = Object.entries(expansionTranslations.toh.species).filter(([, hit]) => "description" in hit);
+    expect(rows).toHaveLength(11);
+    for (const [slug, hit] of rows) {
+      if (!("description" in hit) || !("original" in hit)) throw new Error(slug);
+      const row = { slug, name: hit.englishName, documentSlug: "toh", source: "open5e", data: hit.original as Record<string, unknown> };
+      const localized = localizeEntryCs("races", row);
+      expect(localized.data.localized_desc).toBe(hit.description);
+      const { localized_desc, ...original } = localized.data;
+      expect(original).toEqual(row.data);
+    }
+  });
+});
