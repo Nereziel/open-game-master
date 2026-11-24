@@ -74,7 +74,10 @@ function valuePart(key: string, fieldName?: (id: string) => string | undefined) 
     const id = key.slice("fields.".length);
     return { key: "“{field}” field", vars: { field: fieldName?.(id) ?? id } };
   }
-  return Object.hasOwn(VALUE_WORDS, key) ? { key: VALUE_WORDS[key] } : undefined;
+  if (Object.hasOwn(VALUE_WORDS, key)) return { key: VALUE_WORDS[key] };
+  // These schema fields were reported under their raw keys in the English
+  // message. Localize only their presentation, not the canonical message.
+  return ["bindings", "revealedAt", "revealedAs", "parentPinId", "party", "hidden"].includes(key) ? { key } : undefined;
 }
 
 export function worldEntryConflictNote(name: string | undefined, key: string, fieldName?: (id: string) => string | undefined): ImportResultNote {
