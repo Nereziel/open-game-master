@@ -62,15 +62,15 @@ Počty přímo z `src/lib/content/expansion-descriptions-cs.json` v aktuální r
 | Tome of Heroes – odbornosti | 13 | 13 | 0 |
 | Tome of Heroes – rasy a podrasy | 40 | 40 | 0 |
 | Tome of Heroes – zázemí | 18 | 18 | 0 |
-| Tome of Heroes – archetypy | 76 | 40 | 0 |
+| Tome of Heroes – archetypy | 76 | 45 | 0 |
 | Deep Magic | 62 | 19 | 0 |
 | Vault of Magic | 249 | 48 | 0 |
 | Ostatní fixture | 24 | 8 | 0 |
-| **Celkem** | **638** | **306** | **36** |
+| **Celkem** | **638** | **311** | **36** |
 
 Historických 474 názvů (ToH 169, DM 56, VoM 249) obnoveno po spárování s přesným originálním slugem a názvem. Všech 87 historických plných návrhů (ToH 27, DM 12, VoM 48) prošlo porovnáním; opraveny významové odchylky a nedostatečné podmínky, nikoli pouhý přenos. Orientační souhrny nepovažujeme za plná pravidla. Nově 40 ras/podras, 29 magických předmětů ToH, další dostupné texty a názvy. U 36 záznamů nemagické výzbroje přeloženy dostupné číselné a typové údaje, bez vymyšlených zvláštních vlastností, které veřejný záznam neobsahuje.
 
-Zbývající dostupné v1 texty: ToH 36 archetypů (36 popisů); Deep Magic 495 popisů (452 názvů chybí); Vault of Magic 757 popisů (556 názvů chybí). Ostatní knihy pouze dílčí pokrytí podle fixture. To jsou nezpracované dostupné originály, nikoli blokace SQLite. Úplná inventura instalovaných položek a počty velkých zkrácených bestiářů zůstávají neověřené.
+Zbývající dostupné v1 texty: ToH 31 archetypů (31 popisů); Deep Magic 495 popisů (452 názvů chybí); Vault of Magic 757 popisů (556 názvů chybí). Ostatní knihy pouze dílčí pokrytí podle fixture. To jsou nezpracované dostupné originály, nikoli blokace SQLite. Úplná inventura instalovaných položek a počty velkých zkrácených bestiářů zůstávají neověřené.
 
 ### Dokončení kouzel Tome of Heroes
 
@@ -99,13 +99,15 @@ Doplněny Haunted Warden, Hungering, Hunt Domain, Hunter in Darkness a Legionary
 
 Přeloženy Mercy Domain, Oath of Justice, Oath of Safeguarding, Oath of the Elements a Oath of the Guardian, včetně zásad, tabulek kouzel a všech schopností. Četnosti kostek shodné. Opakovaný guiding bolt v tabulce Justice zachován a označen. V této dílčí etapě 35/76 archetypů.
 
-Přeloženy Oath of the Hearth, Oath of the Plaguetouched, Old Wood, Path of Booming Magnificence a Path of Hellfire. Četnosti kostek shodné. U Hearth označena nedefinovaná kategorie cold creature, neobvyklé znění Fiery Smite a chybějící typ aktivační akce Roaring Fire. Celkem 40/76 archetypů, zbývá 36.
+Přeloženy Oath of the Hearth, Oath of the Plaguetouched, Old Wood, Path of Booming Magnificence a Path of Hellfire. Četnosti kostek shodné. U Hearth označena nedefinovaná kategorie cold creature, neobvyklé znění Fiery Smite a chybějící typ aktivační akce Roaring Fire. V této dílčí etapě 40/76 archetypů.
+
+Přeloženy zbývající barbarské cesty Mistwood, Dragon, Herald, Inner Eye a Thorns, včetně dračí tabulky, variant, reakcí a pravidel zuřivosti. Četnosti kostek shodné. Celkem 45/76 archetypů, zbývá 31.
 
 ## Načítání
 
 `contentName` a `localizeEntryCs` využívají existující lokalizační cestu. Přesná kombinace source=open5e, documentSlug, druh, slug a anglický název, u popisu také shoda uložených původních polí; jinak anglický fallback. Pouze zobrazovací `localized_desc`; nemění pravidla, identity ani databázi. ContentPicker/MultiContentPicker čtou české názvy, ale některé výběry předávají jen anglický název, zejména archetypy, odvozené rasové názvy a inline zázemí. Úplná propagace do UI, české vyhledávání a PDF nejsou potvrzené.
 
-Regresní testy v `entry-descriptions-cs.test.ts` pokrývají 638 názvů, původní fixture, 13 odborností, 29 předmětů, 36 stat záznamů, 91+19 kouzel, 48 předmětů VoM, 40 ras/podras, 18 zázemí a 40 archetypů; část testů používá uložená původní pole (nejde o nezávislý test živého importu). CI nebylo při zápisu výsledku potvrzené; lokální runtime bez clone nedostupný.
+Regresní testy v `entry-descriptions-cs.test.ts` pokrývají 638 názvů, původní fixture, 13 odborností, 29 předmětů, 36 stat záznamů, 91+19 kouzel, 48 předmětů VoM, 40 ras/podras, 18 zázemí a 45 archetypů; část testů používá uložená původní pole (nejde o nezávislý test živého importu). CI nebylo při zápisu výsledku potvrzené; lokální runtime bez clone nedostupný.
 
 Terminologie: [d20 PH 2014 vlastnosti](https://dnd5esrd.d20.cz/prirucka-hrace/7-kapitola.html), [boj](https://dnd5esrd.d20.cz/prirucka-hrace/9-kapitola.html), [stavy](https://dnd5esrd.d20.cz/prirucka-hrace/dodatek-a.html). Nedoložené názvy jsou vlastní překlady; nejsou vydávány za oficiální.
 
