@@ -3,7 +3,7 @@ import { isErrorResponse, requireMember, steersStory } from "@/lib/campaign-api"
 import { getImportSourceForUser } from "@/lib/db/import-sources";
 import { planContentImport, runContentImport } from "@/lib/db/content-import";
 import { openPreStoryTies } from "@/lib/dm/known-before";
-import { keptNotes } from "@/lib/db/world-forge-io";
+import { keptNoteDisplays } from "@/lib/db/world-forge-io";
 import { listOfferedPregens } from "@/lib/db/pregen-offers";
 import { IMPORT_KINDS } from "@/lib/workshop/import";
 import { publishEphemeral } from "@/lib/events";
@@ -65,7 +65,8 @@ export async function GET(
     if (!steersStory(context)) {
       return Response.json({ error: "Only the person steering the story reads this." }, { status: 403 });
     }
-    return Response.json({ kept: keptNotes(campaignId) });
+    const keptDisplays = keptNoteDisplays(campaignId);
+    return Response.json({ kept: keptDisplays.map((note) => note.message), keptDisplays });
   }
   const parsed = previewSchema.safeParse({
     sourceId: url.searchParams.get("sourceId") ?? "",
@@ -168,7 +169,7 @@ export async function POST(
     // What the picker reports after an import: a reimport's kept edits,
     // monsters nothing here answers to, and the hand-built monsters brought
     // into this table's bestiary. These were computed and then dropped here.
-    ...(result.worldConflicts?.length ? { worldConflicts: result.worldConflicts } : {}),
+    ...(result.worldConflicts?.length ? { worldConflicts: result.worldConflicts, worldConflictDisplays: result.worldConflictDisplays } : {}),
     ...(result.unresolved?.length ? { unresolved: result.unresolved } : {}),
     ...(result.monstersBrought?.length ? { monstersBrought: result.monstersBrought } : {}),
     ...(result.monstersReused?.length ? { monstersReused: result.monstersReused } : {}),
