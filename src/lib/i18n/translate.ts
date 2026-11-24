@@ -65,7 +65,7 @@ export function translatePlural(
   englishOther: string,
   vars: TranslateVars & { count: number },
 ): string {
-  const isOne = locale === "fr" ? vars.count <= 1 : vars.count === 1;
+
   const catalog = locale === "en" ? undefined : catalogs()[locale];
   if (catalog) {
     const pair = catalog.plurals[`${englishOne}\0${englishOther}`];
@@ -75,8 +75,9 @@ export function translatePlural(
         const form = count === 1 ? 0 : Number.isInteger(count) && count >= 2 && count <= 4 ? 1 : 2;
         return interpolate(pair[form], vars);
       }
+      const isOne = locale === "fr" ? vars.count <= 1 : vars.count === 1;
       return interpolate(isOne ? pair[0] : pair[1], vars);
     }
   }
-  return interpolate(isOne ? englishOne : englishOther, vars);
+  return interpolate(vars.count === 1 ? englishOne : englishOther, vars);
 }
