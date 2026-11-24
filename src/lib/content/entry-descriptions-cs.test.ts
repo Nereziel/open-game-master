@@ -236,11 +236,15 @@ describe("Tome of Heroes backgrounds", () => {
 describe("Tome of Heroes archetypes", () => {
   it("preserves the source prose of reviewed archetypes", () => {
     const rows = Object.entries(expansionTranslations.toh.subclasses).filter(([, hit]) => "description" in hit);
-    expect(rows).toHaveLength(2);
+    expect(rows).toHaveLength(6);
     for (const [slug, hit] of rows) {
       if (!("description" in hit) || !("original" in hit)) throw new Error(slug);
       const row = { slug, name: hit.englishName, documentSlug: "toh", source: "open5e", data: hit.original as Record<string, unknown> };
       expect(localizeEntryCs("archetypes", row).data.localized_desc).toBe(hit.description);
+      const { localized_desc, ...original } = localizeEntryCs("archetypes", row).data;
+      expect(original).toEqual(row.data);
+      const changed = { ...row, data: { ...row.data, desc: "Changed upstream text" } };
+      expect(localizeEntryCs("archetypes", changed)).toBe(changed);
     }
   });
 });

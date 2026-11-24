@@ -53,7 +53,7 @@ V1 ToH kouzla mají ve zdroji nulový počet level=0; neopravujeme zdrojová met
 
 ## Stav skutečných překladových dat
 
-Počty přímo z `src/lib/content/expansion-descriptions-cs.json` na kódu `46385f7a6313a1e8b8e9ee08614750a05ed749b5`. Plný text znamená přeložený dostupný zdrojový popis, nikoli potvrzení všech UI cest nebo všech metadat.
+Počty přímo z `src/lib/content/expansion-descriptions-cs.json` v aktuální revizi. Plný text znamená přeložený dostupný zdrojový popis, nikoli potvrzení všech UI cest nebo všech metadat.
 
 | Kniha / kategorie | Názvy | Plné dostupné texty | Pouze statistiky |
 |---|---:|---:|---:|
@@ -62,15 +62,15 @@ Počty přímo z `src/lib/content/expansion-descriptions-cs.json` na kódu `4638
 | Tome of Heroes – odbornosti | 13 | 13 | 0 |
 | Tome of Heroes – rasy a podrasy | 40 | 40 | 0 |
 | Tome of Heroes – zázemí | 18 | 18 | 0 |
-| Tome of Heroes – archetypy | 76 | 2 | 0 |
+| Tome of Heroes – archetypy | 76 | 6 | 0 |
 | Deep Magic | 62 | 19 | 0 |
 | Vault of Magic | 249 | 48 | 0 |
 | Ostatní fixture | 24 | 8 | 0 |
-| **Celkem** | **638** | **268** | **36** |
+| **Celkem** | **638** | **272** | **36** |
 
 Historických 474 názvů (ToH 169, DM 56, VoM 249) obnoveno po spárování s přesným originálním slugem a názvem. Všech 87 historických plných návrhů (ToH 27, DM 12, VoM 48) prošlo porovnáním; opraveny významové odchylky a nedostatečné podmínky, nikoli pouhý přenos. Orientační souhrny nepovažujeme za plná pravidla. Nově 40 ras/podras, 29 magických předmětů ToH, další dostupné texty a názvy. U 36 záznamů nemagické výzbroje přeloženy dostupné číselné a typové údaje, bez vymyšlených zvláštních vlastností, které veřejný záznam neobsahuje.
 
-Zbývající dostupné v1 texty: ToH 74 archetypů (74 popisů); Deep Magic 495 popisů (452 názvů chybí); Vault of Magic 757 popisů (556 názvů chybí). Ostatní knihy pouze dílčí pokrytí podle fixture. To jsou nezpracované dostupné originály, nikoli blokace SQLite. Úplná inventura instalovaných položek a počty velkých zkrácených bestiářů zůstávají neověřené.
+Zbývající dostupné v1 texty: ToH 70 archetypů (70 popisů); Deep Magic 495 popisů (452 názvů chybí); Vault of Magic 757 popisů (556 názvů chybí). Ostatní knihy pouze dílčí pokrytí podle fixture. To jsou nezpracované dostupné originály, nikoli blokace SQLite. Úplná inventura instalovaných položek a počty velkých zkrácených bestiářů zůstávají neověřené.
 
 ### Dokončení kouzel Tome of Heroes
 
@@ -80,13 +80,18 @@ Všech 91 záznamů v1 má český název, celý dostupný popis a pravidla vyš
 
 Všech 18 zázemí v1 má kompletní dostupný český text: úvod, zdatnosti, jazyky, výbavu, schopnost, charakteristiky a osobnostní tabulky. Přímá kontrola originálů: 534 tabulkových řádků včetně doplňujících tabulek původu, specializace a událostí; stejné počty řádků a velikosti tabulek, bez rozdílu ve zkontrolovaných uložených zdrojových polích. U diplomata zdroj opakuje ideál č. 4 v řádku č. 3; v české tabulce je uveden jednou na správném místě. Testy kontrolují 26 základních osobnostních položek každého zázemí a fallback při změně schopnosti. Neznamená to, že jsou české texty již propagovány do všech samostatných UI polí.
 
-Archetypy: přeloženy kompletní popisy Prastaří draci (Ancient Dragons) a Vládci zvířat (Animal Lords), včetně všech úrovní schopností, variant požehnání, výběru patrona a rozšířených seznamů kouzel. Názvy běžných SRD kouzel převzaty ze stávajícího names-cs.ts; názvy dosud nepřeložených externích kouzel označeny i anglicky. Zbývá 74 archetypů. Změny pouze v překladových datech, testech a dokumentaci; SQLite nedotčeno.
+Archetypy: přeloženy kompletní popisy Prastaří draci (Ancient Dragons) a Vládci zvířat (Animal Lords), včetně všech úrovní schopností, variant požehnání, výběru patrona a rozšířených seznamů kouzel. Názvy běžných SRD kouzel převzaty ze stávajícího names-cs.ts; názvy dosud nepřeložených externích kouzel označeny i anglicky. V této etapě zbývalo 74 archetypů. Změny pouze v překladových datech, testech a dokumentaci; SQLite nedotčeno.
+
+
+### Pokračování archetypů Tome of Heroes
+
+Doplněny čtyři úplné dostupné popisy v1 (Beast Trainer, Cantrip Adept, Cat Burglar, Chaplain). Přeloženy všechny úvody a schopnosti, `desc` zachováno přesně podle zdrojového JSON. Kontrola výrazů kostek d/k bez rozdílů. Beast Trainer nově Cvičitel zvířat (není omezen na šelmy). U Cat Burglar je označeno vložené číslo 118, pravděpodobně číslo stránky. Názvy schopností jsou vlastní překlady v duchu d20, nikoli potvrzené oficiální názvy. Test rozšířen o původní pole a anglický fallback při změně zdroje. CI zatím neověřeno. Celkem 6/76 archetypů, zbývá 70.
 
 ## Načítání
 
 `contentName` a `localizeEntryCs` využívají existující lokalizační cestu. Přesná kombinace source=open5e, documentSlug, druh, slug a anglický název, u popisu také shoda uložených původních polí; jinak anglický fallback. Pouze zobrazovací `localized_desc`; nemění pravidla, identity ani databázi. ContentPicker/MultiContentPicker čtou české názvy, ale některé výběry předávají jen anglický název, zejména archetypy, odvozené rasové názvy a inline zázemí. Úplná propagace do UI, české vyhledávání a PDF nejsou potvrzené.
 
-Regresní testy v `entry-descriptions-cs.test.ts` pokrývají 638 názvů, původní fixture, 13 odborností, 29 předmětů, 36 stat záznamů, 91+19 kouzel, 48 předmětů VoM, 40 ras/podras, 18 zázemí a 2 archetypy; část testů používá uložená původní pole (nejde o nezávislý test živého importu). CI nebylo při zápisu výsledku potvrzené; lokální runtime bez clone nedostupný.
+Regresní testy v `entry-descriptions-cs.test.ts` pokrývají 638 názvů, původní fixture, 13 odborností, 29 předmětů, 36 stat záznamů, 91+19 kouzel, 48 předmětů VoM, 40 ras/podras, 18 zázemí a 6 archetypů; část testů používá uložená původní pole (nejde o nezávislý test živého importu). CI nebylo při zápisu výsledku potvrzené; lokální runtime bez clone nedostupný.
 
 Terminologie: [d20 PH 2014 vlastnosti](https://dnd5esrd.d20.cz/prirucka-hrace/7-kapitola.html), [boj](https://dnd5esrd.d20.cz/prirucka-hrace/9-kapitola.html), [stavy](https://dnd5esrd.d20.cz/prirucka-hrace/dodatek-a.html). Nedoložené názvy jsou vlastní překlady; nejsou vydávány za oficiální.
 
