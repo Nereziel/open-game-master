@@ -640,17 +640,20 @@ describe("Locale-registered trait shorthand", () => {
   });
 });
 
-describe("Authored barbarian archetypes", () => {
-  it("localizes all eight paths and all 36 feature descriptions without changing canonical rules", () => {
-    const entries = AUTHORED_SUBCLASS_ENTRIES.barbarian;
-    expect(entries).toHaveLength(8);
+describe("Reviewed authored archetypes", () => {
+  it.each([
+    { classId: "barbarian", subclasses: 8, featureCount: 36 },
+    { classId: "bard", subclasses: 7, featureCount: 31 },
+  ])("localizes $classId archetypes and their features without changing canonical rules", ({ classId, subclasses, featureCount }) => {
+    const entries = AUTHORED_SUBCLASS_ENTRIES[classId];
+    expect(entries).toHaveLength(subclasses);
     let count = 0;
     for (const entry of entries) {
-      const slug = "barbarian-" + entry.name.toLowerCase().replace(/[^a-z0-9]+/g, "-");
+      const slug = classId + "-" + entry.name.toLowerCase().replace(/[^a-z0-9]+/g, "-");
       const levels = Object.entries(entry.levels).sort(([a], [b]) => Number(a) - Number(b));
       const desc = entry.desc + "\n\n" + levels.map(([level, features]) =>
         "**Level " + level + ".** " + features.map((feature) => "*" + feature.n + ".* " + feature.d).join(" ")).join("\n\n");
-      const published = { slug, name: entry.name, source: "open5e", documentSlug: "odm-expanded", data: { class: "barbarian", desc } as Record<string, unknown> };
+      const published = { slug, name: entry.name, source: "open5e", documentSlug: "odm-expanded", data: { class: classId, desc } as Record<string, unknown> };
       const bundled = { ...published, source: "bundled", documentSlug: "wotc-srd", data: { desc: "" } as Record<string, unknown> };
       const localized = localizeEntry("archetypes", published, "cs");
       const { localized_desc, ...original } = localized.data;
@@ -672,6 +675,6 @@ describe("Authored barbarian archetypes", () => {
         { ...published, slug: "another-path" },
       ]) expect(localizeEntry("archetypes", foreign, "cs")).toBe(foreign);
     }
-    expect(count).toBe(36);
+    expect(count).toBe(featureCount);
   });
 });
