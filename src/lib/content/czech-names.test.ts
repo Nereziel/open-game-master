@@ -13,6 +13,10 @@ import steampunk from "../classes/steampunk.json";
 import csCatalog from "../i18n/cs.json";
 import frCatalog from "../i18n/fr.json";
 import { installCsTables } from "../i18n/cs-tables";
+import { installCatalog } from "../i18n/translate";
+import { registerFeatureText } from "../classes/feature-text";
+import { describeFeature } from "../help";
+import darkFantasyFeatures from "../classes/dark-fantasy-features.json";
 
 installCsTables({ names: CS_NAMES_BY_TABLE, guidance: {} });
 
@@ -53,6 +57,22 @@ describe("Czech content names through upstream helpers", () => {
     }
     for (const row of backgroundsJson.backgrounds) {
       expect(backgroundFeatureLabel(row.name, row.feature, "cs"), row.id).not.toBe(row.feature);
+    }
+  });
+
+  it("localizes all Grave Knight rules through the actual sheet help resolver", () => {
+    installCatalog("cs", csCatalog);
+    registerFeatureText(darkFantasyFeatures);
+    const id = "grave_knight";
+    const table = darkFantasyFeatures.classes.grave_knight;
+    const subclass = table.subclass.name;
+    expect(subclassName(id, subclass, "cs")).toBe("Dvůr zvadlé růže");
+    const messages: Record<string, string> = csCatalog.messages;
+    for (const row of [...Object.values(table.levels), ...Object.values(table.subclass.levels)].flat()) {
+      expect(classFeatureName(id, row.n, "cs"), row.n).not.toBe(row.n);
+      expect(messages[row.d], row.n).toBeTruthy();
+      expect(describeFeature(id, subclass, row.n, "cs"), row.n).toBe(messages[row.d]);
+      expect(describeFeature(id, subclass, row.n, "en"), row.n).toBe(row.d);
     }
   });
 
