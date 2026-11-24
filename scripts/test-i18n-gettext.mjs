@@ -382,4 +382,50 @@ for (const locale of ["en", "fr", "cs"]) {
 assert.deepEqual(boundItem, boundBefore);
 assert.deepEqual(outlineAsset, outlineBefore);
 
+// Bestiary choices show localized labels without changing keys consumed by the engine.
+const { ABILITY_ORDER, SKILL_NAMES, SENSE_NAMES, ENVIRONMENTS, TRAIT_SECTIONS, SECTION_LABELS, withSection, sectionOfLine } = await import("../src/lib/bestiary/block-sections.ts");
+const { skillLabel } = await import("../src/lib/srd/index.ts");
+const { describeSkill } = await import("../src/lib/help/index.ts");
+const { gameTermWord } = await import("../src/lib/i18n/game-term-labels.ts");
+const { DAMAGE_TYPES, CONDITIONS } = await import("../src/lib/bestiary/kit.ts");
+const { LANGUAGES, appendTerm } = await import("../src/lib/workshop/pickers.ts");
+const capitalWord = (word) => word.charAt(0).toUpperCase() + word.slice(1);
+const vocabulariesBefore = structuredClone([ABILITY_ORDER, SKILL_NAMES, SENSE_NAMES, ENVIRONMENTS, TRAIT_SECTIONS, DAMAGE_TYPES, CONDITIONS, LANGUAGES]);
+for (const locale of ["en", "fr", "cs"]) {
+  const t = (key, vars) => translate(locale, key, vars);
+  const catalog = locale === "cs" ? csCatalog : frCatalog;
+  for (const ability of ABILITY_ORDER) {
+    if (locale !== "en") assert.ok(catalog.messages[ability.toUpperCase()]);
+    assert.ok(t(ability.toUpperCase()));
+  }
+  for (const name of SKILL_NAMES) {
+    const id = name.replaceAll(" ", "_");
+    const label = skillLabel(id, locale);
+    assert.notEqual(label, id, locale + ": " + id);
+    assert.ok(describeSkill(t, id, locale)?.includes(label), locale + ": " + id);
+  }
+  for (const sense of SENSE_NAMES) {
+    if (locale !== "en") assert.notEqual(gameTermWord("sense", sense, locale), sense);
+  }
+  for (const place of ENVIRONMENTS) {
+    if (locale !== "en") assert.ok(catalog.messages[capitalWord(place)], locale + ": " + place);
+  }
+  for (const section of TRAIT_SECTIONS) {
+    if (locale !== "en") assert.ok(catalog.messages[SECTION_LABELS[section]]);
+    assert.deepEqual(sectionOfLine(withSection("Custom breath", section)), { section, text: "Custom breath" });
+  }
+  for (const term of [...DAMAGE_TYPES, ...CONDITIONS]) {
+    if (locale !== "en") assert.ok(catalog.contexts[term]?.["glossary.option"], locale + ": " + term);
+    assert.equal(t(term, { context: "glossary.option" }), locale === "en" ? term : catalog.contexts[term]["glossary.option"]);
+  }
+  for (const language of LANGUAGES) {
+    if (locale !== "en") assert.ok(catalog.contexts[language]?.["character.language"] || catalog.messages[language], locale + ": " + language);
+    assert.equal(appendTerm("Custom", language), "Custom, " + language);
+  }
+  for (const key of ["Unaligned", "Any Alignment", "Common, Goblin", "Fire Bolt, Shield, Misty Step", "Fire Breath (Recharge 5-6): DC 15 Dex save, 6d6 fire, half on a success"]) {
+    if (locale !== "en") assert.ok(catalog.messages[key], locale + ": " + key);
+  }
+}
+assert.deepEqual([ABILITY_ORDER, SKILL_NAMES, SENSE_NAMES, ENVIRONMENTS, TRAIT_SECTIONS, DAMAGE_TYPES, CONDITIONS, LANGUAGES], vocabulariesBefore);
+
 console.log("test-i18n-gettext: all assertions and catalog placeholder checks passed");
