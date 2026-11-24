@@ -454,6 +454,18 @@ describe("Core race and background presentation", () => {
     expect(localizeEntry("races", hill, "cs").data.localized_desc).toBeTypeOf("string");
   });
 
+  it("uses reviewed Czech feature prose for every bundled base background", () => {
+    expect(SRD_BACKGROUNDS).toHaveLength(18);
+    for (const background of SRD_BACKGROUNDS) {
+      const row = { name: background.name, slug: background.id, source: "bundled", documentSlug: "odm", data: { desc: background.blurb, feature: background.feature, feature_desc: background.featureDesc } as Record<string, unknown> };
+      const result = localizeEntry("backgrounds", row, "cs");
+      const { localized_desc, ...original } = result.data;
+      expect(typeof localized_desc, background.id).toBe("string");
+      expect(String(localized_desc), background.id).not.toContain(background.featureDesc);
+      expect(original).toEqual(row.data);
+    }
+  });
+
   it("reuses the exact reviewed Czech feature text for a bundled background", () => {
     const background = SRD_BACKGROUNDS.find((entry) => entry.id === "acolyte")!;
     const row = { name: background.name, slug: background.id, source: "bundled", documentSlug: "odm", data: { desc: background.blurb, feature: background.feature, feature_desc: background.featureDesc } as Record<string, unknown> };
