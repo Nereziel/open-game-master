@@ -1,52 +1,40 @@
-// A catalog in the browser, fetched when the reader's language needs it: the
-// French one is its own chunk, so a reader in English never downloads it
-// (translate.ts), nor its name tables (fr-tables.ts). One fetch per locale
-// however many components ask.
+// Load only the selected locale's catalog and name tables in the browser.
 import { installFrTables } from "./fr-tables.ts";
 import { installCsTables } from "./cs-tables.ts";
 import { catalogInstalled, installCatalog, type Locale } from "./translate.ts";
+
+const loaders: Record<Exclude<Locale, "en">, () => Promise<void>> = {
+  cs: async () => {
+    const [catalog, names, resources] = await Promise.all([
+      import("./cs.json"), import("../content/names-cs.ts"), import("../srd/class-resources-cs-data.ts"),
+    ]);
+    installCsTables({ names: names.CS_NAMES_BY_TABLE, guidance: resources.RESOURCE_CS_GUIDANCE });
+    installCatalog("cs", catalog.default ?? catalog);
+  },
+  fr: async () => {
+    const [catalog, names, translated, resources] = await Promise.all([
+      import("./fr.json"), import("../content/names-fr.ts"),
+      import("../content/names-fr-translated.ts"), import("../srd/class-resources-fr-data.ts"),
+    ]);
+    installFrTables({ names: names.FR_NAMES_BY_TABLE, translated: translated.FR_TRANSLATED_NAMES_BY_TABLE, resources: resources.RESOURCE_FR });
+    installCatalog("fr", (catalog as { default?: unknown }).default ?? catalog);
+  },
+};
 
 const loading = new Map<Locale, Promise<void>>();
 
 export function loadCatalog(locale: Locale): Promise<void> {
   let pending = loading.get(locale);
-  if (pending) {
-    return pending;
-  }
-  if (catalogInstalled(locale)) {
+  if (pending) return pending;
+  if (locale === "en" || catalogInstalled(locale)) {
     pending = Promise.resolve();
-    loading.set(locale, pending);
-    return pending;
-  }
-  if (locale === "cs") {
-    pending = Promise.all([import("./cs.json"), import("../content/names-cs.ts"), import("../srd/class-resources-cs-data.ts")])
-      .then(([catalog, names, resources]) => {
-        installCsTables({ names: names.CS_NAMES_BY_TABLE, guidance: resources.RESOURCE_CS_GUIDANCE });
-        installCatalog("cs", catalog.default ?? catalog);
-      })
-      .catch((error) => {
-        loading.delete(locale);
-        console.error("[i18n] the Czech catalog did not load", error);
-      });
-    loading.set(locale, pending);
-    return pending;
-  }
-  pending = Promise.all([
-    import("./fr.json"),
-    import("../content/names-fr.ts"),
-    import("../content/names-fr-translated.ts"),
-    import("../srd/class-resources-fr-data.ts"),
-  ])
-    .then(([catalog, names, translated, resources]) => {
-      // The tables first: the catalog's arrival is what re-renders.
-      installFrTables({ names: names.FR_NAMES_BY_TABLE, translated: translated.FR_TRANSLATED_NAMES_BY_TABLE, resources: resources.RESOURCE_FR });
-      installCatalog(locale, (catalog as { default?: unknown }).default ?? catalog);
-    })
-    .catch((error) => {
-      // A failed fetch leaves English on screen and lets a later ask retry.
+  } else {
+    pending = loaders[locale]().catch((error) => {
+      // A failed fetch leaves English on screen and allows a later retry.
       loading.delete(locale);
-      console.error("[i18n] the French catalog did not load", error);
+      console.error(`[i18n] the ${locale} catalog did not load`, error);
     });
+  }
   loading.set(locale, pending);
   return pending;
 }

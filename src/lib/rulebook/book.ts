@@ -12,6 +12,9 @@
 // the book's own language (src/lib/rulebook/search.ts). Everything here is
 // read once per process and never changes while it runs.
 import data from "./srd-5.1.json";
+import { localeFromAcceptLanguage, parseLocale } from "../i18n/locale.ts";
+import type { Locale } from "../i18n/translate.ts";
+export { localeFromAcceptLanguage };
 import frData from "./srd-5.1-fr.json";
 import { czechCompanionBook } from "./czech-companion";
 import { buildIndex, buildIndexInSlices, searchRulebook, type RulebookIndex } from "./search";
@@ -26,31 +29,7 @@ import type {
   SearchResponse,
 } from "./types";
 
-export type BookLocale = "en" | "fr" | "cs";
-
-// The book language an Accept-Language header asks for: the most preferred
-// tag that names French or English wins (by q, ties in the header's order);
-// a tag weighted q=0 is one the reader refuses; a header that names neither
-// reads English.
-export function localeFromAcceptLanguage(header: string | null): BookLocale {
-  if (!header) return "en";
-  const tags = header
-    .split(",")
-    .map((part, at) => {
-      const [tag, ...params] = part.split(";");
-      const q = params.map((param) => /^\s*q\s*=\s*([0-9.]+)\s*$/i.exec(param)?.[1]).find((value) => value !== undefined);
-      const weight = q === undefined ? 1 : Number(q);
-      return { tag: tag.trim().toLowerCase(), weight: Number.isFinite(weight) ? weight : 0, at };
-    })
-    .filter(({ weight }) => weight > 0)
-    .sort((a, b) => b.weight - a.weight || a.at - b.at);
-  for (const { tag } of tags) {
-    if (tag === "fr" || tag.startsWith("fr-")) return "fr";
-    if (tag === "cs" || tag.startsWith("cs-")) return "cs";
-    if (tag === "en" || tag.startsWith("en-")) return "en";
-  }
-  return "en";
-}
+export type BookLocale = Locale;
 
 // Every request header bookLocaleOf reads. A response that depends on the
 // book's language names all of them in Vary, so no browser or shared cache
@@ -60,8 +39,8 @@ export const BOOK_LOCALE_VARY = "Accept-Language, X-Odm-Locale";
 // The reader's own choice (X-Odm-Locale: "en", "fr" or "cs") wins
 // over the browser's Accept-Language.
 export function bookLocaleOf(request: Request): BookLocale {
-  const own = request.headers.get("x-odm-locale");
-  if (own === "fr" || own === "en" || own === "cs") {
+  const own = parseLocale(request.headers.get("x-odm-locale"));
+  if (own) {
     return own;
   }
   return localeFromAcceptLanguage(request.headers.get("accept-language"));
