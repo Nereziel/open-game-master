@@ -1,8 +1,7 @@
 import { currentUser, unauthorized } from "@/lib/auth";
 import { withBestEffort } from "@/lib/content/entry-labels";
 import { contentNameMatches, type NamedRow } from "@/lib/content/names";
-import "@/lib/i18n/fr-catalog";
-import "@/lib/i18n/cs-catalog";
+import "@/lib/i18n/server-catalogs";
 import { localizeEntry } from "@/lib/content/entry-descriptions";
 import { catalogPrices } from "@/lib/characters/catalog";
 import { contentPackInstalled } from "@/lib/content/db";
