@@ -1,3 +1,4 @@
+import type { ImportMessagePart } from "./import-kinds.ts";
 import { BEAT_KINDS, boardGraph, routeOf, type BeatLinks, type Beat, type BeatKind, type BoardNode } from "./board.ts";
 
 // Compiling a storyboard into campaign structure.
@@ -291,6 +292,7 @@ export type CompileSummary = {
   lines: string[];
   // Why the arc will not be written, or "" when it will be.
   arcRefusal: string;
+  arcRefusalDisplay?: ImportMessagePart;
   total: number;
 };
 
@@ -328,23 +330,28 @@ export function summarizeCompile(
   }
 
   let arcRefusal = "";
+  let arcRefusalDisplay: ImportMessagePart | undefined;
   if (targetHasArc && arcMode === "append") {
     if (compiled.arcBeats.length) {
       lines.push(`a new act of up to ${compiled.arcBeats.length} beat${compiled.arcBeats.length === 1 ? "" : "s"}`);
     } else {
       arcRefusal = "The board has nothing that happens on its main line, so there is no act to add.";
+      arcRefusalDisplay = { key: arcRefusal };
     }
   } else if (targetHasArc) {
     arcRefusal =
       "This campaign already has a story arc the table has been playing, so the board's beats are left here rather than written over it.";
+    arcRefusalDisplay = { key: arcRefusal };
   } else if (!compiled.premise) {
     arcRefusal =
       "The arc needs something that says what this world is. Add a place or a piece of history and it can be written.";
+    arcRefusalDisplay = { key: arcRefusal };
   } else if (compiled.arcBeats.length < MIN_ARC_BEATS) {
     arcRefusal = `An arc needs at least ${MIN_ARC_BEATS} things that happen; the board has ${compiled.arcBeats.length}.`;
+    arcRefusalDisplay = { key: "An arc needs at least {min} things that happen; the board has {count}.", vars: { min: MIN_ARC_BEATS, count: compiled.arcBeats.length } };
   } else {
     lines.push(`a story arc of ${compiled.arcBeats.length} beats`);
   }
 
-  return { lines, arcRefusal, total: lines.length };
+  return { lines, arcRefusal, ...(arcRefusalDisplay ? { arcRefusalDisplay } : {}), total: lines.length };
 }
