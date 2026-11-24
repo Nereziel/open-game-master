@@ -12,14 +12,34 @@ export default {
     const { page } = t;
     await t.open("/rulebook");
     const asked = await page.evaluate(async () => {
-      const ask = async (language) => {
-        const response = await fetch("/api/rulebook/pages/fireball", { headers: { "accept-language": language }, cache: "no-store" });
+      const ask = async (language, choice) => {
+        const response = await fetch("/api/rulebook/pages/fireball", { headers: { "accept-language": language, ...(choice ? { "x-odm-locale": choice } : {}) }, cache: "no-store" });
         const body = await response.json().catch(() => null);
-        return { status: response.status, title: body?.page?.title ?? null, vary: response.headers.get("vary") };
+        return { status: response.status, title: body?.page?.title ?? null, id: body?.page?.id ?? null, md: body?.page?.md ?? "", vary: response.headers.get("vary") };
       };
-      return { fr: await ask("fr-FR,fr;q=0.9"), en: await ask("en-US,en;q=0.9") };
+      const cs = await ask("cs-CZ,cs;q=0.9");
+      const forcedCs = await ask("en-US", "cs");
+      const response = await fetch("/api/rulebook/search?q=" + encodeURIComponent("Ohnivá koule"), { headers: { "x-odm-locale": "cs" }, cache: "no-store" });
+      const results = await response.json();
+      const details = async (locale) => {
+        const r = await fetch("/api/content/spells/srd%3Afireball", { headers: { "x-odm-locale": locale }, cache: "no-store" });
+        return { status: r.status, entry: (await r.json()).entry };
+      };
+      return { fr: await ask("fr-FR,fr;q=0.9"), en: await ask("en-US,en;q=0.9"), cs, forcedCs,
+        search: { status: response.status, found: results.hits?.some((hit) => hit.page === "fireball") ?? false },
+        csDetail: await details("cs"), enDetail: await details("en") };
     });
     check(asked.fr.status === 200 && asked.fr.title === "Boule de feu", `the French ask reads the French book (${JSON.stringify(asked.fr)})`);
-    check(asked.en.status === 200 && asked.en.title === "Fireball", `the English ask reads the English book (${JSON.stringify(asked.en)})`);
+    check(asked.en.status === 200 && asked.en.title === "Fireball", "the English ask reads the English book");
+    check(asked.cs.status === 200 && asked.cs.id === "fireball" && asked.cs.title === "Ohnivá koule", "the Czech ask reads the same canonical page in Czech");
+    check(asked.cs.md.includes("Úplné znění pravidel v češtině"), "the Czech page includes its full localized text");
+    check(asked.forcedCs.status === 200 && asked.forcedCs.title === asked.cs.title, "the explicit locale overrides the browser language");
+    check(/accept-language/i.test(asked.cs.vary ?? "") && /x-odm-locale/i.test(asked.cs.vary ?? ""), "the localized page varies by both language headers");
+    check(asked.search.status === 200 && asked.search.found, "Czech text search finds the canonical fireball page");
+    const { csDetail, enDetail } = asked;
+    check(csDetail.status === 200 && enDetail.status === 200, "the bundled spell detail works in both locales");
+    const { localized_desc, ...original } = csDetail.entry.data;
+    check(typeof localized_desc === "string" && localized_desc.length > 0, "the Czech spell detail has localized prose");
+    check(csDetail.entry.slug === enDetail.entry.slug && JSON.stringify(original) === JSON.stringify(enDetail.entry.data), "the localized spell detail preserves the English mechanical fields and identity");
   },
 };

@@ -29,9 +29,23 @@ export default {
       check(/lang="fr-FR"/.test(ssr), "the server renders <html lang=fr-FR> from the cookie");
       await t.shot("french-reload");
     }
+    const czech = page.locator(`${root}button[aria-pressed]`).filter({ hasText: "Čeština" }).first();
+    await t.tap(czech);
+    await eventually(async () => (await page.evaluate(() => document.documentElement.lang)) === "cs-CZ", { timeoutMs: 20_000, label: "html lang turns cs-CZ" });
+    await eventually(async () => /Jazyk/.test(await page.locator(root || "body").first().innerText()), { timeoutMs: 20_000, label: "the section heading reads Jazyk" });
+    check(await page.evaluate(() => localStorage.getItem("odm.locale") === "cs"), "the Czech choice is stored on the device");
+    await t.shot("czech-live");
+    if (!t.app) {
+      check(await page.evaluate(() => document.cookie.split(";").some((part) => part.trim() === "odm_locale=cs")), "the Czech choice is stored in the SSR cookie");
+      await page.reload();
+      await eventually(async () => /Jazyk/.test(await page.locator("body").innerText()), { timeoutMs: 20_000, label: "Czech after a reload" });
+      const ssr = await (await page.request.get(page.url())).text();
+      check(/lang="cs-CZ"/.test(ssr), "the server renders <html lang=cs-CZ> from the cookie");
+      await t.shot("czech-reload");
+    }
     const hydration = errors.filter((text) => /hydrat|did not match|Minified React error #4(18|19|23|25)/i.test(text));
     check(hydration.length === 0, `no hydration error: ${hydration.join(" | ")}`);
-    const auto = page.locator(`${root}button[aria-pressed]`).filter({ hasText: /Automatique|Automatic/ }).first();
+    const auto = page.locator(`${root}button[aria-pressed]`).filter({ hasText: /Automatique|Automatic|Automaticky/ }).first();
     await t.tap(auto);
     await eventually(async () => /^en/.test(await page.evaluate(() => document.documentElement.lang)), { timeoutMs: 20_000, label: "English back on Automatic" });
   },
