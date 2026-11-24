@@ -149,7 +149,7 @@
       "desc": "You have three luck points, regained on a long rest. Spend one to roll an extra d20 on your own attack roll, ability check or saving throw and choose which die to use, or to roll an extra d20 on an attack made against you and choose which the attacker uses.",
       "prerequisite": ""
     },
-    "description": "Máš tři body štěstí, které se obnovují po dlouhém odpočinku. Utrať jeden, abys ke svému hodu na útok, ověření vlastnosti nebo záchrannému hodu hodil další k20 a vybral, kterou kostku použiješ. Můžeš také hodit další k20 při útoku proti tobě a vybrat, kterou kostku útočník použije."
+    "description": "Máš tři body štěstí, které se obnovují po důkladném odpočinku. Utrať jeden, abys ke svému hodu na útok, ověření vlastnosti nebo záchrannému hodu hodil další k20 a vybral, kterou kostku použiješ. Můžeš také hodit další k20 při útoku proti tobě a vybrat, kterou kostku útočník použije."
   },
   "magic-initiate": {
     "englishName": "Magic Initiate",
@@ -157,7 +157,7 @@
       "desc": "Choose a class: bard, cleric, druid, sorcerer, warlock or wizard. You learn two cantrips of your choice from that class's spell list. Choose one 1st-level spell from the same list: you learn it and can cast it once without expending a spell slot, at its lowest level, and again after a long rest. Your spellcasting ability for these spells depends on the class you chose: Charisma for bard, sorcerer or warlock; Wisdom for cleric or druid; Intelligence for wizard.",
       "prerequisite": ""
     },
-    "description": "Zvol povolání: bard, klerik, druid, čaroděj, černokněžník nebo kouzelník. Naučíš se dva triky podle svého výběru z jeho seznamu kouzel. Z téhož seznamu vyber jedno kouzlo 1. úrovně: naučíš se je a můžeš je jednou seslat na nejnižší úrovni bez utracení pozice kouzel, znovu po dlouhém odpočinku. Sesílací vlastností je Charisma pro barda, čaroděje a černokněžníka, Moudrost pro klerika a druida, Inteligence pro kouzelníka."
+    "description": "Zvol povolání: bard, klerik, druid, čaroděj, černokněžník nebo kouzelník. Naučíš se dva triky podle svého výběru z jeho seznamu kouzel. Z téhož seznamu vyber jedno kouzlo 1. úrovně: naučíš se je a můžeš je jednou seslat na nejnižší úrovni bez utracení pozice kouzel, znovu po důkladném odpočinku. Sesílací vlastností je Charisma pro barda, čaroděje a černokněžníka, Moudrost pro klerika a druida, Inteligence pro kouzelníka."
   },
   "mage-slayer": {
     "englishName": "Mage Slayer",
@@ -173,7 +173,7 @@
       "desc": "You learn two maneuvers from the Battle Master list and gain one superiority die of d6, which refills on a short or long rest.",
       "prerequisite": ""
     },
-    "description": "Naučíš se dva manévry ze seznamu Taktika a získáš jednu kostku převahy k6. Obnoví se po krátkém nebo dlouhém odpočinku."
+    "description": "Naučíš se dva manévry ze seznamu Taktika a získáš jednu kostku převahy k6. Obnoví se po krátkém nebo důkladném odpočinku."
   },
   "medium-armor-master": {
     "englishName": "Medium Armor Master",
@@ -317,7 +317,7 @@
       "desc": "Increase your Intelligence, Wisdom or Charisma by 1, to a maximum of 20. You learn misty step and one 1st-level divination or enchantment spell, each castable once per long rest without a slot as well as with slots.",
       "prerequisite": ""
     },
-    "description": "Zvyš svou Inteligenci, Moudrost nebo Charisma o 1, nejvýše na 20. Naučíš se Mlžný krok a jedno kouzlo 1. úrovně ze školy věštění nebo očarování. Každé z nich můžeš seslat jednou za dlouhý odpočinek bez utracení pozice kouzel i s využitím pozic kouzel."
+    "description": "Zvyš svou Inteligenci, Moudrost nebo Charisma o 1, nejvýše na 20. Naučíš se Mlžný krok a jedno kouzlo 1. úrovně ze školy věštění nebo očarování. Každé z nich můžeš seslat jednou za důkladný odpočinek bez utracení pozice kouzel i s využitím pozic kouzel."
   },
   "shadow-touched": {
     "englishName": "Shadow Touched",
@@ -325,7 +325,7 @@
       "desc": "Increase your Intelligence, Wisdom or Charisma by 1, to a maximum of 20. You learn invisibility and one 1st-level illusion or necromancy spell, each castable once per long rest without a slot as well as with slots.",
       "prerequisite": ""
     },
-    "description": "Zvyš svou Inteligenci, Moudrost nebo Charisma o 1, nejvýše na 20. Naučíš se Neviditelnost a jedno kouzlo 1. úrovně ze školy iluze nebo nekromancie. Každé z nich můžeš seslat jednou za dlouhý odpočinek bez utracení pozice kouzel i s využitím pozic kouzel."
+    "description": "Zvyš svou Inteligenci, Moudrost nebo Charisma o 1, nejvýše na 20. Naučíš se Neviditelnost a jedno kouzlo 1. úrovně ze školy iluze nebo nekromancie. Každé z nich můžeš seslat jednou za důkladný odpočinek bez utracení pozice kouzel i s využitím pozic kouzel."
   },
   "telekinetic": {
     "englishName": "Telekinetic",
@@ -341,7 +341,7 @@
       "desc": "Increase your Intelligence, Wisdom or Charisma by 1, to a maximum of 20. You can speak telepathically to any creature within 60 feet that shares a language with you, and you can cast detect thoughts once per long rest without a slot.",
       "prerequisite": ""
     },
-    "description": "Zvyš svou Inteligenci, Moudrost nebo Charisma o 1, nejvýše na 20. Můžeš telepaticky mluvit s každým tvorem do 60 stop, se kterým sdílíš jazyk, a jednou za dlouhý odpočinek můžeš seslat Odhal myšlenky bez utracení pozice kouzel."
+    "description": "Zvyš svou Inteligenci, Moudrost nebo Charisma o 1, nejvýše na 20. Můžeš telepaticky mluvit s každým tvorem do 60 stop, se kterým sdílíš jazyk, a jednou za důkladný odpočinek můžeš seslat Odhal myšlenky bez utracení pozice kouzel."
   },
   "eldritch-adept": {
     "englishName": "Eldritch Adept",
@@ -357,7 +357,7 @@
       "desc": "You learn two Metamagic options from the sorcerer list and gain 2 sorcery points to spend on them, refilled on a long rest.",
       "prerequisite": "Spellcasting or Pact Magic"
     },
-    "description": "*Požadavek: Sesílání kouzel nebo Magie daná paktem.*\n\nNaučíš se dvě možnosti metamagie ze seznamu čaroděje a získáš 2 body magie, které na ně můžeš utrácet. Obnoví se po dlouhém odpočinku."
+    "description": "*Požadavek: Sesílání kouzel nebo Magie daná paktem.*\n\nNaučíš se dvě možnosti metamagie ze seznamu čaroděje a získáš 2 čarodějné body, které na ně můžeš utrácet. Obnoví se po důkladném odpočinku."
   },
   "skill-expert": {
     "englishName": "Skill Expert",
@@ -373,7 +373,7 @@
       "desc": "Increase your Constitution or Wisdom by 1, to a maximum of 20, and gain proficiency with cook's utensils. Cooking during a short rest lets allies regain an extra 1d8 hit points, and with an hour's work as you finish a long rest you make a number of treats equal to your proficiency bonus that keep for 8 hours: a creature eats one as a bonus action and gains temporary hit points equal to your proficiency bonus.",
       "prerequisite": ""
     },
-    "description": "Zvyš svou Odolnost nebo Moudrost o 1, nejvýše na 20, a získáš zdatnost s kuchařským náčiním. Vařením při krátkém odpočinku umožníš spojencům obnovit si navíc 1k8 životů. Hodinou práce při dokončování dlouhého odpočinku připravíš počet pochoutek rovný tvému zdatnostnímu bonusu. Vydrží 8 hodin; tvor může jednu sníst bonusovou akcí a získat dočasné životy rovné tvému zdatnostnímu bonusu."
+    "description": "Zvyš svou Odolnost nebo Moudrost o 1, nejvýše na 20, a získáš zdatnost s kuchařským náčiním. Vařením při krátkém odpočinku umožníš spojencům obnovit si navíc 1k8 životů. Hodinou práce při dokončování důkladného odpočinku připravíš počet pochoutek rovný tvému zdatnostnímu bonusu. Vydrží 8 hodin; tvor může jednu sníst bonusovou akcí a získat dočasné životy rovné tvému zdatnostnímu bonusu."
   },
   "crusher": {
     "englishName": "Crusher",
@@ -493,7 +493,7 @@
       "desc": "You learn one cantrip of your choice from the druid spell list. You can also cast longstrider and pass without trace, each once per long rest without a spell slot. Wisdom is your spellcasting ability for these spells.",
       "prerequisite": "Wood elf"
     },
-    "description": "*Požadavek: Lesní elf.*\n\nNaučíš se jeden trik dle svého výběru ze seznamu druida. Můžeš také sesílat Dlouhokrok a Projdi beze stop, každé jednou za dlouhý odpočinek bez utracení pozice kouzel. Sesílací vlastností pro tato kouzla je Moudrost."
+    "description": "*Požadavek: Lesní elf.*\n\nNaučíš se jeden trik dle svého výběru ze seznamu druida. Můžeš také sesílat Dlouhokrok a Projdi beze stop, každé jednou za důkladný odpočinek bez utracení pozice kouzel. Sesílací vlastností pro tato kouzla je Moudrost."
   },
   "drow-high-magic": {
     "englishName": "Drow High Magic",
@@ -501,7 +501,7 @@
       "desc": "You can cast detect magic at will, without a spell slot. You can also cast levitate and dispel magic, each once per long rest without a spell slot. Charisma is your spellcasting ability for these spells.",
       "prerequisite": "Drow"
     },
-    "description": "*Požadavek: Drow.*\n\nNajdi magii můžeš sesílat dle libosti bez utrácení pozice kouzel. Můžeš také sesílat Levitaci a Rozptyl magii, každé jednou za dlouhý odpočinek bez utracení pozice kouzel. Sesílací vlastností pro tato kouzla je Charisma."
+    "description": "*Požadavek: Drow.*\n\nNajdi magii můžeš sesílat dle libosti bez utrácení pozice kouzel. Můžeš také sesílat Levitaci a Rozptyl magii, každé jednou za důkladný odpočinek bez utracení pozice kouzel. Sesílací vlastností pro tato kouzla je Charisma."
   },
   "artificer-initiate": {
     "englishName": "Artificer Initiate",
@@ -509,7 +509,7 @@
       "desc": "You learn one cantrip of your choice from the artificer spell list. Choose one 1st-level spell from the artificer spell list: you learn it, and you can cast it once without a spell slot, regaining that use when you finish a long rest, as well as with your spell slots. Intelligence is your spellcasting ability for these spells. You also gain proficiency with one type of artisan's tools of your choice.",
       "prerequisite": ""
     },
-    "description": "Naučíš se jeden trik dle svého výběru ze seznamu divotvůrce. Zvol jedno kouzlo 1. úrovně z jeho seznamu: naučíš se je a můžeš je seslat jednou bez utracení pozice kouzel; použití se obnoví po dlouhém odpočinku. Můžeš je sesílat také pomocí svých pozic kouzel. Sesílací vlastností pro tato kouzla je Inteligence. Získáš také zdatnost s jedním druhem řemeslnického náčiní dle svého výběru."
+    "description": "Naučíš se jeden trik dle svého výběru ze seznamu divotvůrce. Zvol jedno kouzlo 1. úrovně z jeho seznamu: naučíš se je a můžeš je seslat jednou bez utracení pozice kouzel; použití se obnoví po důkladném odpočinku. Můžeš je sesílat také pomocí svých pozic kouzel. Sesílací vlastností pro tato kouzla je Inteligence. Získáš také zdatnost s jedním druhem řemeslnického náčiní dle svého výběru."
   },
   "dragon-hide": {
     "englishName": "Dragon Hide",
@@ -533,7 +533,7 @@
       "desc": "Increase your Dexterity or Intelligence by 1, to a maximum of 20. Right after you take damage, you can use your reaction to turn invisible until the end of your next turn, or until you attack or cast a spell. Once you do so, you can't again until you finish a short or long rest.",
       "prerequisite": "Gnome"
     },
-    "description": "*Požadavek: Gnóm.*\n\nZvyš svou Obratnost nebo Inteligenci o 1, nejvýše na 20. Ihned poté, co utrpíš zranění, se můžeš reakcí stát neviditelným až do konce svého příštího tahu nebo dokud nezaútočíš či nesešleš kouzlo. Znovu můžeš schopnost použít až po krátkém nebo dlouhém odpočinku."
+    "description": "*Požadavek: Gnóm.*\n\nZvyš svou Obratnost nebo Inteligenci o 1, nejvýše na 20. Ihned poté, co utrpíš zranění, se můžeš reakcí stát neviditelným až do konce svého příštího tahu nebo dokud nezaútočíš či nesešleš kouzlo. Znovu můžeš schopnost použít až po krátkém nebo důkladném odpočinku."
   },
   "dragon-fear": {
     "englishName": "Dragon Fear",
@@ -549,7 +549,7 @@
       "desc": "Increase your Dexterity, Constitution, or Charisma by 1, to a maximum of 20. When a creature you can see hits you with an attack roll, you can use your reaction to make it roll that attack again, and it must use the new roll. Once you do so, you can't again until you roll initiative or finish a short or long rest.",
       "prerequisite": "Halfling"
     },
-    "description": "*Požadavek: Půlčík.*\n\nZvyš svou Obratnost, Odolnost nebo Charisma o 1, nejvýše na 20. Když tě tvor, kterého vidíš, zasáhne hodem na útok, můžeš reakcí přimět tvora hodit na tento útok znovu. Musí použít nový výsledek. Další použití je možné až po hodu na iniciativu nebo dokončení krátkého či dlouhého odpočinku."
+    "description": "*Požadavek: Půlčík.*\n\nZvyš svou Obratnost, Odolnost nebo Charisma o 1, nejvýše na 20. Když tě tvor, kterého vidíš, zasáhne hodem na útok, můžeš reakcí přimět tvora hodit na tento útok znovu. Musí použít nový výsledek. Další použití je možné až po hodu na iniciativu nebo dokončení krátkého či důkladného odpočinku."
   },
   "flames-of-phlegethos": {
     "englishName": "Flames of Phlegethos",
@@ -565,7 +565,7 @@
       "desc": "Increase your Strength or Constitution by 1, to a maximum of 20. When you hit with a weapon attack, you can roll one of the weapon's damage dice one more time and add it to the damage, of the weapon's own type. Once you do so, you can't again until you finish a short or long rest. Right after you use your Relentless Endurance, you can use your reaction to make one weapon attack.",
       "prerequisite": "Half-orc"
     },
-    "description": "*Požadavek: Půlork.*\n\nZvyš svou Sílu nebo Odolnost o 1, nejvýše na 20. Při zásahu útokem zbraní můžeš jednou navíc hodit jednou z kostek zranění zbraně a přičíst výsledek ke zranění stejného typu, jaký má zbraň. Znovu můžeš schopnost použít po krátkém nebo dlouhém odpočinku. Ihned po použití své Neúnavné houževnatosti můžeš reakcí provést jeden útok zbraní."
+    "description": "*Požadavek: Půlork.*\n\nZvyš svou Sílu nebo Odolnost o 1, nejvýše na 20. Při zásahu útokem zbraní můžeš jednou navíc hodit jednou z kostek zranění zbraně a přičíst výsledek ke zranění stejného typu, jaký má zbraň. Znovu můžeš schopnost použít po krátkém nebo důkladném odpočinku. Ihned po použití své Neúnavné houževnatosti můžeš reakcí provést jeden útok zbraní."
   },
   "bountiful-luck": {
     "englishName": "Bountiful Luck",
