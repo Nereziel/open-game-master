@@ -60,19 +60,20 @@ describe("Czech content names through upstream helpers", () => {
     }
   });
 
-  it("localizes all Grave Knight rules through the actual sheet help resolver", () => {
+  it("localizes all Dark Fantasy class rules and subclasses through the sheet help resolver", () => {
     installCatalog("cs", csCatalog);
     registerFeatureText(darkFantasyFeatures);
-    const id = "grave_knight";
-    const table = darkFantasyFeatures.classes.grave_knight;
-    const subclass = table.subclass.name;
-    expect(subclassName(id, subclass, "cs")).toBe("Dvůr zvadlé růže");
     const messages: Record<string, string> = csCatalog.messages;
-    for (const row of [...Object.values(table.levels), ...Object.values(table.subclass.levels)].flat()) {
-      expect(classFeatureName(id, row.n, "cs"), row.n).not.toBe(row.n);
-      expect(messages[row.d], row.n).toBeTruthy();
-      expect(describeFeature(id, subclass, row.n, "cs"), row.n).toBe(messages[row.d]);
-      expect(describeFeature(id, subclass, row.n, "en"), row.n).toBe(row.d);
+    expect(subclassName("grave_knight", "Court of the Wilted Rose", "cs")).toBe("Dvůr zvadlé růže");
+    for (const [id, table] of Object.entries(darkFantasyFeatures.classes)) {
+      const subclass = table.subclass.name;
+      expect(subclassName(id, subclass, "cs"), id).not.toBe(subclass);
+      for (const row of [...Object.values(table.levels), ...Object.values(table.subclass.levels)].flat()) {
+        expect(classFeatureName(id, row.n, "cs"), row.n).not.toBe(row.n);
+        expect(messages[row.d], row.n).toBeTruthy();
+        expect(describeFeature(id, subclass, row.n, "cs"), row.n).toBe(messages[row.d]);
+        expect(describeFeature(id, subclass, row.n, "en"), row.n).toBe(row.d);
+      }
     }
   });
 
