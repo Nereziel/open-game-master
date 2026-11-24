@@ -33,6 +33,7 @@ const { armorOfRow } = await import("../src/lib/srd/armor.ts");
 const { gearDefFor } = await import("../src/lib/srd/magic-gear.ts");
 const { magicItemBonus, rowName, withoutBonus } = await import("../src/lib/srd/item-row.ts");
 const { ITEM_EN_BY_LOCALIZED_NAME } = await import("../src/lib/srd/item-names-localized.ts");
+const { ITEM_EN_BY_FR } = await import("../src/lib/srd/item-names-fr.ts");
 const { textKey } = await import("../src/lib/language/text-logic.ts");
 const require = createRequire(import.meta.url);
 
@@ -359,6 +360,16 @@ test("localized SRD item names resolve without srdName and English names retain 
     const localized = ITEM_EN_BY_LOCALIZED_NAME[key];
     assert.ok(!localized || textKey(localized) === key, `the English "${name}" would read as "${localized}"`);
   }
+  // Retain the upstream FR generation artifact for compatibility; every
+  // surviving shared alias must agree with it, never pick a different row.
+  for (const [key, english] of Object.entries(ITEM_EN_BY_FR)) {
+    const shared = ITEM_EN_BY_LOCALIZED_NAME[key];
+    assert.ok(shared === undefined || textKey(shared) === textKey(english), key);
+  }
+  const generator = fileURLToPath(new URL("./build-names-fr.mjs", import.meta.url));
+  const refused = spawnSync(process.execPath, [generator, "--check", "--from", "unused"], { encoding: "utf8" });
+  assert.notEqual(refused.status, 0);
+  assert.match(refused.stderr, /--check is read-only/);
   const built = spawnSync(process.execPath, [fileURLToPath(new URL("./build-names-fr.mjs", import.meta.url)), "--check"], { encoding: "utf8" });
   assert.equal(built.status, 0, `build-names-fr --check: ${built.stderr}`);
 });
