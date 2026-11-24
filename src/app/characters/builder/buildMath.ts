@@ -15,7 +15,7 @@ import { ABILITY_NAMES } from "@/lib/srd/legality/types";
 import { armorClassLine, hitPointsLine } from "./derivedReasons";
 import { casterLevelFor } from "@/lib/srd/multiclass";
 import type { BuilderDerived } from "./useBuilderDerived";
-import { pluralOf } from "@/lib/messages-logic";
+import { pluralOf, type Locale } from "@/lib/messages-logic";
 
 const ABILITIES: Ability[] = ["str", "dex", "con", "int", "wis", "cha"];
 const COUNT_WORDS: Record<number, string> = { 1: "one", 2: "two", 3: "three", 4: "four" };
@@ -33,7 +33,7 @@ export type BuildMathRow = {
 export type BuildMathSection = { id: string; title: string; rows: BuildMathRow[] };
 
 // The reading takes the translator from the panel that draws the table.
-type Translator = (key: string, vars?: Record<string, string | number>) => string;
+type Translator = ((key: string, vars?: Record<string, string | number>) => string) & { locale?: Locale };
 
 export type BuildMathInput = {
   t: Translator;
@@ -208,7 +208,7 @@ export function buildMathSections({ t, derived, scores, klass, atTable }: BuildM
     })),
   });
 
-  const locale = (t as { locale?: "en" | "fr" }).locale ?? "en";
+  const locale = t.locale ?? "en";
   sections.push({
     id: "skills",
     title: t("Skills"),
