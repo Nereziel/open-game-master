@@ -5,7 +5,7 @@ export const CZECH_FULL_ITEMS_03_D: Readonly<Record<string, string>> = {
 
 *Kouzelný svitek* obsahuje slova jediného kouzla zapsaná tajemnou šifrou. Pokud je kouzlo na seznamu kouzel tvého povolání, můžeš jako akci svitek přečíst a seslat jeho kouzlo, aniž bys musel zajistit jakékoli složky kouzla. Jinak je pro tebe svitek nesrozumitelný.
 
-Pokud je kouzlo na seznamu tvého povolání, ale má vyšší stupeň, než jaký běžně dokážeš seslat, musíš provést ověření své sesílací vlastnosti, abys zjistil, zda kouzlo úspěšně sešleš. SO je rovno 10 + stupeň kouzla. Při neúspěchu kouzlo ze svitku zmizí bez dalšího účinku. Jakmile kouzlo sešleš, slova na svitku vyblednou a svitek se rozpadne na prach.
+Pokud je kouzlo na seznamu tvého povolání, ale má vyšší úroveň, než jakou běžně dokážeš seslat, musíš provést ověření své sesílací vlastnosti, abys zjistil, zda kouzlo úspěšně sešleš. SO je rovno 10 + stupeň kouzla. Při neúspěchu kouzlo ze svitku zmizí bez dalšího účinku. Jakmile kouzlo sešleš, slova na svitku vyblednou a svitek se rozpadne na prach.
 
 Stupeň kouzla na svitku určuje SO záchranného hodu proti kouzlu, bonus k útoku kouzlem i vzácnost svitku, jak ukazuje následující tabulka.
 
@@ -70,7 +70,7 @@ Hůl má 10 nábojů. Když ji držíš, můžeš jako akci utratit 1 nebo více
 Hůl si každý den za úsvitu obnoví 1k6+4 spotřebovaných nábojů. Pokud utratíš poslední náboj, hoď k20. Při výsledku 1 se hůl promění ve vodu a je zničena.`,
   "staff-of-healing": `*Berla, vzácná (vyžaduje sladění bardem, klerikem nebo druidem)*
 
-Tato hůl má 10 nábojů. Když ji držíš, můžeš jako akci utratit 1 nebo více nábojů a seslat jedno z následujících kouzel se svým SO záchrany proti kouzlům a opravou sesílací vlastnosti: *zhoj zranění* (1 náboj za každý stupeň kouzla, nejvýše 4. stupeň), *nižší navrácení* (2 náboje) nebo *hromadné zhojení zranění* (5 nábojů).
+Tato hůl má 10 nábojů. Když ji držíš, můžeš jako akci utratit 1 nebo více nábojů a seslat jedno z následujících kouzel se svým SO záchrany proti kouzlům a opravou sesílací vlastnosti: *zhoj zranění* (1 náboj za každou úroveň kouzla, nejvýše 4. stupeň), *nižší navrácení* (2 náboje) nebo *hromadné zhojení zranění* (5 nábojů).
 
 Hůl si každý den za úsvitu obnoví 1k6+4 spotřebovaných nábojů. Pokud utratíš poslední náboj, hoď k20. Při výsledku 1 hůl navždy zmizí v záblesku světla.`,
   "staff-of-power": `*Berla, velmi vzácná (vyžaduje sladění čarodějem, černokněžníkem nebo kouzelníkem)*
