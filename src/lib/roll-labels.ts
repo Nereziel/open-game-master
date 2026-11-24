@@ -13,6 +13,7 @@
 
 import type { HazardKind, StoredRoll } from "@/lib/db/rolls";
 import { contentName } from "@/lib/content/names";
+import { damageWords } from "@/lib/dm/damage-logic";
 import { textKey } from "@/lib/language/text-logic";
 
 type Worded = Pick<StoredRoll, "kind" | "detail" | "attacker">;
@@ -21,24 +22,30 @@ type Worded = Pick<StoredRoll, "kind" | "detail" | "attacker">;
 type T = ((key: string, vars?: Record<string, string | number>) => string) & { locale?: "en" | "fr" | "cs" };
 
 function localizeRollWhat(what: string, locale: "en" | "fr" | "cs"): string {
-  if (locale !== "fr" || !what) return what;
+  if (locale === "en" || !what) return what;
   const key = textKey(what);
-  const w = contentName("weapons", key, "fr");
+  const w = contentName("weapons", key, locale);
   if (w !== key) return w;
-  const s = contentName("spells", key, "fr");
+  const s = contentName("spells", key, locale);
   if (s !== key) return s;
+  if (locale === "cs") {
+    if (key === "attack") return "Útok";
+    if (key === "damage") return "Zranění";
+    if (/\b\d+d\d+\b/.test(what)) return damageWords(what, locale).replace(/\bft\b/g, "stop");
+  }
   return what;
 }
 
 function localizeDetail(detail: string, locale: "en" | "fr" | "cs"): string {
-  if (locale !== "fr" || !detail) return detail;
+  if (locale === "en" || !detail) return detail;
   const vsAt = detail.indexOf(" vs ");
   if (vsAt > 0) {
-    return `${localizeRollWhat(detail.slice(0, vsAt), locale)} c/ ${detail.slice(vsAt + 4)}`;
+    const target = detail.slice(vsAt + 4);
+    return `${localizeRollWhat(detail.slice(0, vsAt), locale)} ${locale === "cs" ? "proti" : "c/"} ${locale === "cs" ? target.replace(/, AC (\d+)$/, ", TZ $1") : target}`;
   }
   const onAt = detail.indexOf(" on ");
   if (onAt > 0) {
-    return `${localizeRollWhat(detail.slice(0, onAt), locale)} sur ${detail.slice(onAt + 4)}`;
+    return `${localizeRollWhat(detail.slice(0, onAt), locale)} ${locale === "cs" ? "na" : "sur"} ${detail.slice(onAt + 4)}`;
   }
   return localizeRollWhat(detail, locale);
 }

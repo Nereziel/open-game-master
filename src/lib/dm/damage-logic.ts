@@ -39,16 +39,31 @@ export const DAMAGE_TYPE_WORDS_FR: Record<string, string> = {
   thunder: "Tonnerre",
 };
 
+const DAMAGE_TYPE_WORDS_CS: Record<string, string> = {
+  "acid": "Kyselinové",
+  "bludgeoning": "Drtivé",
+  "cold": "Chladné",
+  "fire": "Ohnivé",
+  "force": "Silové",
+  "lightning": "Bleskové",
+  "necrotic": "Nekrotické",
+  "piercing": "Bodné",
+  "poison": "Jedové",
+  "psychic": "Psychické",
+  "radiant": "Zářivé",
+  "slashing": "Sečné",
+  "thunder": "Hromové"
+};
+
 export type DamageLocale = "en" | "fr" | "cs";
 
 // A damage type as a word on screen ("Slashing", « Tranchants »): the French
 // SRD's own capitalized list heading; a type the maps do not carry stays as
 // it was spelled in.
 export function damageTypeWord(type: string, locale: DamageLocale): string {
-  if (locale !== "fr") {
-    return type;
-  }
-  return DAMAGE_TYPE_WORDS_FR[type.trim().toLowerCase()] ?? type;
+  if (locale === "en") return type;
+  const words = locale === "cs" ? DAMAGE_TYPE_WORDS_CS : DAMAGE_TYPE_WORDS_FR;
+  return words[type.trim().toLowerCase()] ?? type;
 }
 
 // The type word inside a damage expression ("1d6 slashing") reads in the
@@ -60,10 +75,10 @@ const DAMAGE_TYPE_WORD_RE =
   /\b(acid|bludgeoning|cold|fire|force|lightning|necrotic|piercing|poison|psychic|radiant|slashing|thunder)\b/g;
 
 export function damageWords(damage: string, locale: DamageLocale): string {
-  if (locale !== "fr") {
-    return damage;
-  }
-  return damage.replace(DAMAGE_TYPE_WORD_RE, (word) => (DAMAGE_TYPE_WORDS_FR[word] ?? word).toLowerCase());
+  if (locale === "en") return damage;
+  const words = locale === "cs" ? DAMAGE_TYPE_WORDS_CS : DAMAGE_TYPE_WORDS_FR;
+  const localized = damage.replace(DAMAGE_TYPE_WORD_RE, (word) => (words[word] ?? word).toLowerCase());
+  return locale === "cs" ? localized.replace(/\b(\d+)d(\d+)\b/g, "$1k$2") : localized;
 }
 
 const wholeWord = (text: string, word: string) =>

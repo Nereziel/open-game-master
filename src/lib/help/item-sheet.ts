@@ -96,6 +96,10 @@ function weightOf(row: Row, t: T): string | null {
 }
 
 function localizeCoins(text: string, locale: Locale): string {
+  if (locale === "cs") {
+    const coins: Record<string, string> = { gp: "zl", sp: "st", cp: "md", ep: "el", pp: "pl" };
+    return text.replace(/\b(gp|sp|cp|ep|pp)\b/g, (coin) => coins[coin]);
+  }
   if (locale !== "fr") return text;
   return text
     .replace(/ gp/g, " po")

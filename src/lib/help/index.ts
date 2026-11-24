@@ -14,6 +14,7 @@ import glossaryJson from "@/lib/help/glossary.json";
 import srdFeaturesJson from "@/lib/help/srd-features.json";
 import starterSpellsJson from "@/lib/help/starter-spells.json";
 import skillsJson from "@/lib/srd/skills.json";
+import { skillLabel } from "@/lib/srd";
 import { describeBackgroundFeature } from "@/lib/backgrounds";
 import { classFeatureDescription, spellClassFor } from "@/lib/classes";
 import { srdRaceFor } from "@/lib/content/race-options";
@@ -39,6 +40,9 @@ export type GlossaryTerm = {
   short: string;
   // The French of `short`, present on every entry.
   shortFr?: string;
+  cs?: string;
+  shortCs?: string;
+  longCs?: string;
   long?: string;
   // The French of `long`, present wherever `long` is.
   longFr?: string;
@@ -179,11 +183,11 @@ export function describeSkill(
     return null;
   }
   const ability = glossaryTerm(skill.ability);
-  const skillName = locale === "fr" && skill.fr ? skill.fr : skill.name;
+  const skillName = skillLabel(skill.id, locale);
   const abilityName =
-    locale === "fr" && ability?.fr ? ability.fr : ability?.term ?? skill.ability.toUpperCase();
+    (locale === "cs" ? ability?.cs : locale === "fr" ? ability?.fr : undefined) ?? ability?.term ?? skill.ability.toUpperCase();
   return `${t("{skill} uses {ability}.", { skill: skillName, ability: abilityName })} ${
-    (locale === "fr" && ability?.shortFr ? ability.shortFr : ability?.short) ?? ""
+    (locale === "cs" ? ability?.shortCs : locale === "fr" ? ability?.shortFr : undefined) ?? ability?.short ?? ""
   }`.trim();
 }
 
