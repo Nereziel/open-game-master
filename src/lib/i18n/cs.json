@@ -1,5 +1,6 @@
 {
   "messages": {
+    "The element of the {label} chosen: {type}. Elemental Affinity, where the subclass has it, adds to spells of this damage type and resists it.": "Zvolený živel ({label}): {type} zranění. Živlová afinita, pokud ji archetyp má, posiluje kouzla tohoto typu zranění a poskytuje vůči němu odolání.",
     "Cannot see. Fails any check that needs sight; attacks against it have advantage, its own attacks have disadvantage.": "Tvor nevidí a automaticky neuspěje v ověření, které vyžaduje zrak. Útoky proti němu mají výhodu, jeho vlastní útoky nevýhodu.",
     "Cannot attack the charmer or target them with harmful effects; the charmer has advantage on social checks against it.": "Nemůže zaútočit na toho, kdo ho zmámil, ani ho zacílit škodlivým účinkem. Ten má výhodu při společenských ověřeních vůči zmámenému tvorovi.",
     "Cannot hear. Fails any check that needs hearing.": "Tvor neslyší a automaticky neuspěje v ověření, které vyžaduje sluch.",
