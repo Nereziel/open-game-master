@@ -219,7 +219,7 @@ function RuleList({ rows }: { rows: Array<{ label: string; text: string | null }
 
 // The item card: what it is, weight and value always on show, then the
 // armour or weapon stats, then the long text when there is any. The facts
-// come from every row that shares the name plus the bundled SRD tables
+// come from compatible rows that share the name plus the bundled SRD tables
 // (src/lib/help/item-sheet.ts), so a v1 table row with no prose, a v2 gear
 // row with no stats and a genre item the pack lacks all get a full card.
 function ItemBody({ reference }: { reference: ContentRef }) {
@@ -238,15 +238,13 @@ function ItemBody({ reference }: { reference: ContentRef }) {
       const headers = { "X-Odm-Locale": t.locale };
       const readJson = async (response: Response) => (response.ok ? response.json() : null);
       try {
-        const [{ buildItemSheet }, direct, search] = await Promise.all([
+        const [{ buildItemSheet, itemCardRows }, direct, search] = await Promise.all([
           import("@/lib/help/item-sheet"),
           fetch(`/api/content/items/${encodeURIComponent(reference.slug)}${scopeQuery(campaignId)}`, { headers }).then(readJson).catch(() => null),
           fetch(`/api/content/items?q=${encodeURIComponent(wanted)}&limit=20${scopeQuery(campaignId, "&")}`, { headers }).then(readJson).catch(() => null),
         ]);
-        const hits = ((search?.results ?? []) as Array<{ name: string; data?: Record<string, unknown> }>)
-          .filter((entry) => textKey(entry.name) === wanted)
-          .map((entry) => entry.data);
-        const sheet = buildItemSheet(name, [direct?.entry?.data, ...hits], { t, locale: t.locale });
+        const rows = itemCardRows(name, direct?.entry, search?.results ?? []);
+        const sheet = buildItemSheet(name, rows, { t, locale: t.locale });
         if (!cancelled) {
           setState({ sheet, loading: false });
         }
