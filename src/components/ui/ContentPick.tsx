@@ -4,7 +4,7 @@ import { useEffect, useRef } from "react";
 import { Loader2, Search } from "lucide-react";
 import { InfoButton } from "@/components/ui/InfoDialog";
 import { useT } from "@/lib/locale";
-import { contentName } from "@/lib/content/names";
+import { pickerName, pickerMeta } from "@/lib/content/picker-display";
 import { cn } from "@/lib/cn";
 import { describeContentEntry, spellSummary } from "@/lib/help";
 import { useContentSearch, type PickerEntry } from "@/app/characters/builder/useContentSearch";
@@ -80,11 +80,11 @@ export function ContentPick({
       </div>
       {failed ? (
         <p role="alert" className="reveal mt-1 rounded-lg border border-amber-900/50 bg-amber-950/20 px-3 py-1.5 text-[11px] text-amber-200/80">
-          Could not reach the server to search. Type again to retry.
+          {t("Could not reach the server to search. Type again to retry.")}
         </p>
       ) : open && !results.length && query.trim() && !loading ? (
         <p className="reveal mt-1 rounded-lg border border-stone-800 bg-stone-950/60 px-3 py-1.5 text-[11px] text-stone-500">
-          Nothing matched &quot;{query.trim()}&quot;. Try fewer letters.
+          {t('Nothing matched "{query}". Try fewer letters.', { query: query.trim() })}
         </p>
       ) : null}
       {open && results.length ? (
@@ -100,15 +100,15 @@ export function ContentPick({
                 }}
                 className="flex grow items-center justify-between gap-2 px-3 py-1.5 text-left text-sm"
               >
-                <span className={cn(entry.source === "homebrew" && "text-amber-300")}>{contentName(kind, entry, t.locale)}</span>
+                <span className={cn(entry.source === "homebrew" && "text-amber-300")}>{pickerName(kind, entry, t.locale)}</span>
                 <span className="text-[11px] text-stone-500">
-                  {entry.level !== undefined ? t("Level {level}", { level: entry.level }) : entry.rarity || entry.kind || ""}
+                  {pickerMeta(entry, t.locale)}
                 </span>
               </button>
               <InfoButton
-                label={contentName(kind, entry, t.locale)}
+                label={pickerName(kind, entry, t.locale)}
                 meta={kind === "spells" ? spellSummary(entry.data, t.locale) : undefined}
-                text={describeContentEntry(entry.data)}
+                text={describeContentEntry(entry.data, undefined, t.locale)}
                 reference={
                   entry.source === "homebrew" ? undefined : { kind, slug: entry.slug, name: entry.name }
                 }
