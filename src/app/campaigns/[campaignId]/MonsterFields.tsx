@@ -1,8 +1,9 @@
 "use client";
 
-import { useId, useState } from "react";
+import { useState } from "react";
 import { ChevronDown, Plus, Trash2 } from "lucide-react";
 import { cn } from "@/lib/cn";
+import { RuleTermInput } from "@/components/ui/RuleTermInput";
 import { NumberStepper } from "@/components/ui/NumberStepper";
 import { Select } from "@/components/ui/Select";
 import { CONDITION_BLURBS, DAMAGE_TYPE_BLURBS, glossaryFor } from "@/lib/help/terms";
@@ -78,8 +79,6 @@ export function AttackEditor({
 }) {
   const t = useT();
   const locale = useLocale();
-  // One list per mounted editor: a fixed id collided when two were open.
-  const damageListId = useId();
   // Which rows show their reach, range, riders and on-hit effect.
   const [opened, setOpened] = useState<Set<number>>(() => new Set());
   const toggle = (index: number) =>
@@ -95,11 +94,6 @@ export function AttackEditor({
 
   return (
     <div className="flex flex-col gap-1.5">
-      <datalist id={damageListId}>
-        {DAMAGE_TYPES.map((type) => (
-          <option key={type} value={type} />
-        ))}
-      </datalist>
       {attacks.map((attack, index) => (
         <div key={index} className="flex flex-col gap-1.5">
         <div className="flex flex-wrap items-center gap-1.5">
@@ -141,17 +135,18 @@ export function AttackEditor({
           {/* A list rather than a select: the thirteen types the engine
               knows are one keystroke away, and "chitin-shredding" is still
               typeable for a monster that wants it. */}
-          <input
-            list={damageListId}
+          <RuleTermInput
+            known={DAMAGE_TYPES}
+            label={t("Type", { context: "workshop.bestiary.attack.type" })}
             value={attack.type}
-            onChange={(event) =>
+            onChange={(type) =>
               setAttacks(
                 attacks.map((row, at) =>
-                  at === index ? { ...row, type: event.target.value } : row,
+                  at === index ? { ...row, type } : row,
                 ),
               )
             }
-            placeholder={t("slashing", { context: "workshop.bestiary.attack.typePlaceholder" })}
+            placeholder="slashing"
             className={cn(input, "w-24")}
           />
           <button
@@ -211,7 +206,7 @@ function attackExtras(attack: MonsterDraft["stats"]["attacks"][number], t: T, lo
     attack.bonusAction ? t("bonus action", { context: "workshop.bestiary.attack.chipBonus" }) : "",
     attack.range ? `${attack.range.normal}/${attack.range.long} ft` : attack.reach === 0 || (attack.reach && attack.reach > 5) ? t("reach {n}", { n: attack.reach }) : "",
     attack.riders?.length ? `+${attack.riders.map((rider) => damageWords(rider.type, locale)).join(", ")}` : "",
-    attack.onHit?.condition ?? (attack.onHit?.damage ? t("on hit") : ""),
+    attack.onHit?.condition ? (CONDITIONS.some((condition) => condition === attack.onHit?.condition) ? t(attack.onHit.condition, { context: "glossary.option" }) : attack.onHit.condition) : (attack.onHit?.damage ? t("on hit") : ""),
     attack.alternatives?.some((entry) => entry.when === "bloodied") ? t("weaker when bloodied") : "",
   ].filter(Boolean);
   return bits.length ? bits.join(" · ") : t("Details");
