@@ -9,12 +9,8 @@ export interface TourStep {
   id: string;
   title: string;
   body: string;
-  // The French step, shown by GuidedTour when the reader's locale is fr and
-  // present, the English line otherwise. Our own translations, not WotC
-  // text; the English fields stay the source of truth and the tour
-  // fingerprint (scripts/test-tours.mjs) hashes only these English fields.
-  titleFr?: string;
-  bodyFr?: string;
+  // Explicit localized copy; other locales can use the gettext catalog.
+  translations?: Partial<Record<import("../i18n/translate.ts").Locale, { title?: string; body?: string }>>;
   // data-tour values to point at, best first. An empty list is a centred
   // card with no spotlight (a welcome or a closing word).
   anchors: string[];
@@ -27,6 +23,12 @@ export interface TourStep {
   // the moment the tour starts. A lazy step whose target never appears
   // shows as a centred card.
   lazy?: boolean;
+}
+
+// Preserve the source text and tour fingerprint; localize only at render time.
+export function localizedTourStep(step: TourStep, locale: import("../i18n/translate.ts").Locale, t: (key: string) => string) {
+  const localized = step.translations?.[locale];
+  return { title: localized?.title ?? t(step.title), body: localized?.body ?? t(step.body) };
 }
 
 export interface ResolvedStep {
