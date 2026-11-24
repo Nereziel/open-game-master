@@ -15,6 +15,7 @@ register("./lib/register-alias.mjs", import.meta.url);
 const {
   describeFeature,
   describeRace,
+  describeRaceTrait,
   describeSkill,
   glossaryTerm,
   glossaryTerms,
@@ -267,6 +268,34 @@ test("a pack row's \"no\" is no: Light is neither concentration nor a ritual", (
   const light = spellSummary({ level: 0, school: "evocation", concentration: "no", ritual: "no" });
   assert.doesNotMatch(light, /concentration|ritual/);
   assert.match(spellSummary({ level: 1, school: "divination", concentration: "yes", ritual: "yes" }), /concentration · ritual/);
+});
+
+await import("../src/lib/i18n/server-catalogs.ts");
+const { speciesTraitName } = await import("../src/lib/content/names.ts");
+const { findOptionByFeatureName } = await import("../src/lib/srd/options.ts");
+
+test("feature and lineage help follow the common language lookup", () => {
+  const race = races.find((entry) => entry.id === "hill_dwarf");
+  const trait = race.traits[0];
+  for (const locale of ["en", "fr", "cs"]) {
+    const displayed = speciesTraitName(race.id, trait, locale);
+    assert.equal(describeRaceTrait(race.id, trait, locale), displayed === trait ? null : displayed);
+    assert.equal(describeRace(race.id, locale), race.traits.map((name) => speciesTraitName(race.id, name, locale)).join(". ") + ".");
+    const option = findOptionByFeatureName("Invocation: Agonizing Blast");
+    assert.ok(option);
+    const description = translate(locale, option.d);
+    const expected = option.req ? description + " (" + translate(locale, "Requires {req}", { req: translate(locale, option.req) }) + ".)" : description;
+    assert.equal(describeFeature("warlock", "", "Invocation: Agonizing Blast", locale), expected);
+  }
+  assert.notEqual(describeRace("hill_dwarf", "fr"), describeRace("hill_dwarf", "en"));
+  assert.notEqual(describeRace("hill_dwarf", "cs"), describeRace("hill_dwarf", "en"));
+});
+
+test("chosen element help translates its template and damage type without changing the feature key", () => {
+  const feature = "Bloodline damage type: Fire";
+  assert.match(describeFeature("sorcerer", "", feature, "en"), /Bloodline chosen: fire/);
+  assert.match(describeFeature("sorcerer", "", feature, "fr"), /Feu/);
+  assert.match(describeFeature("sorcerer", "", feature, "cs"), /Ohnivé/);
 });
 
 console.log(`\ntest-help-coverage: ${passed} passed`);
