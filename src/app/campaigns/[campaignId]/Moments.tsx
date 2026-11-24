@@ -8,6 +8,8 @@ import type { AuditEntry, CampaignLocation } from "@/app/campaigns/[campaignId]/
 import { effectiveMaxHp } from "@/lib/dm/condition-logic";
 import { prefersReducedMotion, useLowEffects } from "@/lib/effects-mode";
 import { useT } from "@/lib/locale";
+import { itemDisplayName } from "@/lib/content/item-display";
+import type { TranslateVars } from "@/lib/i18n/translate";
 import type { CharacterSheet, EquipmentItem } from "@/lib/schemas/sheet";
 import { magicItemBonus } from "@/lib/srd/item-row";
 import { matchMagicItem } from "@/lib/srd/magic-items";
@@ -35,6 +37,7 @@ export function LevelUpMoment({ sheet, level, onDone }: { sheet: CharacterSheet;
   // Under reduced motion or low effects the flourish is a still card that
   // waits for its Dismiss button: a moment that closed itself after 900 ms
   // was gone before it could be read. With motion it plays out and moves on.
+  const t = useT();
   const lowEffects = useLowEffects();
   const [still] = useState(() => lowEffects || prefersReducedMotion());
   const dismiss = useRef<HTMLButtonElement>(null);
@@ -60,14 +63,14 @@ export function LevelUpMoment({ sheet, level, onDone }: { sheet: CharacterSheet;
       </div>
       <div role="status">
         <p className="moment-kicker">
-          <GameIcon icon={{ kind: "glyph", key: "rest-level-up" }} size="size-7" /> Level up
+          <GameIcon icon={{ kind: "glyph", key: "rest-level-up" }} size="size-7" /> {t("Level up")}
         </p>
         <p className="gold-title moment-title">
-          {sheet.name} reaches level {level}
+          {t("{name} reaches level {level}", { name: sheet.name, level })}
         </p>
       </div>
       <button ref={dismiss} type="button" className="moment-dismiss" onClick={onDone}>
-        Dismiss
+        {t("Dismiss")}
       </button>
     </div>
   );
@@ -75,15 +78,15 @@ export function LevelUpMoment({ sheet, level, onDone }: { sheet: CharacterSheet;
 
 const REST_MS = 7000;
 
-function restLine(entry: AuditEntry, sheet: CharacterSheet | undefined): string {
+function restLine(entry: AuditEntry, sheet: CharacterSheet | undefined, t: (key: string, vars?: TranslateVars) => string): string {
   if (entry.kind === "rest_long") {
-    return "fully restored";
+    return t("fully restored");
   }
   const hp = typeof entry.delta.currentHp === "number" ? entry.delta.currentHp : null;
   if (hp !== null && sheet) {
-    return `${hp}/${effectiveMaxHp(sheet)} hit points`;
+    return t("{hp}/{max} hit points", { hp, max: effectiveMaxHp(sheet) });
   }
-  return entry.reason || "rested";
+  return entry.reason || t("rested");
 }
 
 // Watches the audit log for a rest the engine just recorded and gathers the
@@ -91,6 +94,7 @@ function restLine(entry: AuditEntry, sheet: CharacterSheet | undefined): string 
 // is what the log says. A rest already in the log when the table opened does
 // not replay.
 export function RestMoment({ auditLog, sheets }: { auditLog: AuditEntry[]; sheets: CharacterSheet[] }) {
+  const t = useT();
   const rests = useMemo(() => auditLog.filter((entry) => entry.kind.startsWith("rest_")), [auditLog]);
   const stamp = rests.map((entry) => entry.id).join(",");
   const [seen, setSeen] = useState(stamp);
@@ -118,7 +122,7 @@ export function RestMoment({ auditLog, sheets }: { auditLog: AuditEntry[]; sheet
     <div className="moment-stage" role="status" onClick={() => setSeen(stamp)}>
       <p className="moment-kicker">
         <GameIcon icon={{ kind: "glyph", key: long ? "rest-long" : "rest-short" }} size="size-7" />
-        {long ? "A long rest" : "A short rest"}
+        {long ? t("A long rest") : t("A short rest")}
       </p>
       <div className="moment-rest">
         <FxSprite sheetId="loop-campfire" loop className="moment-rest-fire" />
@@ -133,12 +137,12 @@ export function RestMoment({ auditLog, sheets }: { auditLog: AuditEntry[]; sheet
                 <Face sheet={sheet} />
               </PortraitMedallion>
               <span className="font-display text-sm text-amber-50">{sheet.name}</span>
-              <span className="text-[11px] text-amber-200/80">{entry ? restLine(entry, sheet) : ""}</span>
+              <span className="text-[11px] text-amber-200/80">{entry ? restLine(entry, sheet, t) : ""}</span>
             </li>
           );
         })}
       </ul>
-      <p className="mt-4 text-[11px] text-stone-400">Select anywhere, or press Esc, to return to the table</p>
+      <p className="mt-4 text-[11px] text-stone-400">{t("Select anywhere, or press Esc, to return to the table")}</p>
     </div>
   );
 }
@@ -213,7 +217,7 @@ export function LootMoment({ sheet }: { sheet: CharacterSheet | null | undefined
         </span>
         <span className="moment-loot-kicker">{tier === "epic" ? t("A treasure") : tier === "rare" ? t("A rare find") : t("Added to your pack")}</span>
         <span className="moment-loot-name">
-          {current.name}
+          {itemDisplayName(current.item, t.locale)}
           {current.qty > 1 ? ` x${current.qty}` : ""}
         </span>
       </div>
