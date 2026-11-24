@@ -1,7 +1,6 @@
 import { currentUser, unauthorized } from "@/lib/auth";
 import { withBestEffort } from "@/lib/content/entry-labels";
-import { localizeEntryCs } from "@/lib/content/entry-descriptions-cs";
-import { localizeItemEntryFr } from "@/lib/content/item-descriptions-fr";
+import { localizeEntry } from "@/lib/content/entry-descriptions";
 import { catalogPrices } from "@/lib/characters/catalog";
 import { contentPackInstalled } from "@/lib/content/db";
 import { contentScopeFor, unadmittedNames } from "@/lib/content/scope";
@@ -26,7 +25,7 @@ import { textKey } from "@/lib/language/text-logic";
 import { srdNameFor } from "@/lib/dm/item-logic";
 import { withoutBonus } from "@/lib/srd/item-row";
 import { bundledClassRows } from "@/lib/workshop/class-catalog";
-import { bookLocaleOf, rulebookPage } from "@/lib/rulebook/book";
+import { bookLocaleOf, BOOK_LOCALE_VARY } from "@/lib/rulebook/book";
 
 export const runtime = "nodejs";
 export const dynamic = "force-dynamic";
@@ -156,9 +155,6 @@ export async function GET(
         ];
         results = [...results, ...notFiled(results, bundled).slice(0, base.limit ?? 50)];
       }
-      if (bookLocaleOf(request) === "fr") {
-        results = (results as Array<{ name: string; source?: "open5e" | "srd" | "homebrew"; data?: unknown }>).map((entry) => localizeItemEntryFr(entry));
-      }
       break;
     }
     case "feats":
@@ -177,17 +173,7 @@ export async function GET(
       });
       break;
     case "classes": {
-      const rows = listClasses(base);
-      if (bookLocaleOf(request) === "fr") {
-        results = rows.map((entry) => {
-          const fr = rulebookPage(entry.slug, "fr");
-          if (!fr?.page.md) return entry;
-          const data = typeof entry.data === "object" && entry.data !== null ? { ...(entry.data as Record<string, unknown>), desc: fr.page.md } : entry.data;
-          return { ...entry, data };
-        });
-      } else {
-        results = rows;
-      }
+      results = listClasses(base);
       break;
     }
     case "archetypes": {
@@ -240,8 +226,7 @@ export async function GET(
   // so (issue #570).
   const classSlug = url.searchParams.get("class") ?? undefined;
   results = results.map((row) => withBestEffort(kind, row, { classSlug }));
-  if (bookLocaleOf(request) === "cs") {
-    results = results.map((row) => localizeEntryCs(kind, row));
-  }
-  return Response.json({ results, packInstalled, unadmitted: unadmittedNames(scope, user.id, kind, q, url.searchParams.get("class") ?? "") });
+  const locale = bookLocaleOf(request);
+  results = results.map((row) => localizeEntry(kind, row, locale));
+  return Response.json({ results, packInstalled, unadmitted: unadmittedNames(scope, user.id, kind, q, url.searchParams.get("class") ?? "") }, { headers: { Vary: BOOK_LOCALE_VARY } });
 }
