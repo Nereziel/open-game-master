@@ -277,4 +277,39 @@ for (const locale of ["en", "fr", "cs"]) {
 }
 assert.deepEqual(TTS_VOICES, voicesBefore);
 
+// Published trait selection uses translated labels only. The existing
+// publishedTraits and withTrait functions still decide the copied rules.
+const { publishedTraits, withTrait } = await import("../src/lib/workshop/species-traits.ts");
+const { publishedTraitChoices, publishedTraitMatches } = await import("../src/lib/workshop/species-trait-display.ts");
+const dragonborn = JSON.parse(fs.readFileSync(new URL("./fixtures/srd-race-rows.json", import.meta.url), "utf8")).rows.find((row) => row.slug === "dragonborn");
+const traitRows = [{ name: dragonborn.name, slug: dragonborn.slug, source: "open5e", documentSlug: dragonborn.documentSlug, traits: dragonborn.data.traits }];
+const canonicalTraits = publishedTraits(traitRows);
+const canonicalAncestry = canonicalTraits.find((trait) => trait.name === "Draconic Ancestry");
+assert.ok(canonicalAncestry);
+for (const [locale, label, from, query] of [
+  ["en", "Draconic Ancestry", "Dragonborn", "Draconic"],
+  ["fr", "Ascendance draconique", "Drakéide", "drakeide"],
+  ["cs", "Dračí původ", "Drakorozený", "draci puvod"],
+]) {
+  const choices = publishedTraitChoices(traitRows, locale);
+  assert.deepEqual(choices.map((choice) => choice.trait), canonicalTraits);
+  const choice = choices.find(({ trait }) => trait.name === "Draconic Ancestry");
+  assert.equal(choice.label, label);
+  assert.deepEqual(choice.fromLabels, [from]);
+  assert.ok(publishedTraitMatches(choice, query));
+  assert.ok(publishedTraitMatches(choice, "Draconic Ancestry"));
+  assert.ok(publishedTraitMatches(choice, "Dragonborn"));
+  assert.ok(!publishedTraitMatches(choice, "nonexistent"));
+  assert.equal(withTrait("", choice.trait), withTrait("", canonicalAncestry));
+  const custom = { ...traitRows[0], source: "homebrew", documentSlug: "custom" };
+  const foreign = { ...traitRows[0], documentSlug: "toh" };
+  for (const row of [custom, foreign, { ...traitRows[0], source: undefined }]) {
+    const unchanged = publishedTraitChoices([row], locale).find(({ trait }) => trait.name === "Draconic Ancestry");
+    assert.equal(unchanged.label, "Draconic Ancestry");
+  }
+  const collision = publishedTraitChoices([...traitRows, custom], locale).find(({ trait }) => trait.name === "Draconic Ancestry");
+  assert.equal(collision.label, "Draconic Ancestry", "ambiguous identical custom trait keeps its canonical heading");
+  assert.deepEqual(collision.fromLabels, ["Dragonborn"]);
+}
+
 console.log("test-i18n-gettext: all assertions and catalog placeholder checks passed");
