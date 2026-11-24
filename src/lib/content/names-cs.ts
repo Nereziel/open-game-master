@@ -1720,7 +1720,7 @@ export const CS_NAMES_BY_TABLE: Record<string, Record<string, string>> = {
     "barbarian:spirit-shield": "Duchovní štít",
     "barbarian:consult-the-spirits": "Rozmluva s duchy",
     "barbarian:vengeful-ancestors": "Pomstychtiví předkové",
-    "barbarian:storm-aura": "Aura bouře",
+    "barbarian:storm-aura": "Bouřlivá aura",
     "barbarian:storm-soul": "Duše bouře",
     "barbarian:shielding-storm": "Ochranná bouře",
     "barbarian:raging-storm": "Zuřící bouře",
