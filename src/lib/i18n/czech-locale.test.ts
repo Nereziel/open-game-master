@@ -4,7 +4,6 @@ import frCatalog from "./fr.json";
 import { catalogInstalled, installCatalog, translate, translatePlural } from "./translate";
 import { localeFromAcceptLanguage, parseLocale, resolveLocale } from "./locale";
 import { localeTag } from "../messages-logic";
-import { damageTypeWord, damageWords, DAMAGE_TYPES } from "../dm/damage-logic";
 
 installCatalog("cs", csCatalog);
 installCatalog("fr", frCatalog);
@@ -32,17 +31,6 @@ describe("Czech locale following the upstream French catalog", () => {
     expect(translate("cs", "Exhaustion")).toBe("Únava");
     expect(translate("cs", "force")).toBe("silové");
     expect(translate("en", "AC")).toBe("AC");
-  });
-
-  it("localizes all thirteen damage types through the existing catalog", () => {
-    for (const type of DAMAGE_TYPES) {
-      expect(damageTypeWord(type, "cs"), type).toBe(translate("cs", type));
-      expect(damageTypeWord(type, "cs"), type).not.toBe(type);
-      expect(damageTypeWord(type, "en"), type).toBe(type);
-    }
-    expect(damageWords("1d6 slashing + 1d4 force", "cs")).toBe("1d6 sečné + 1d4 silové");
-    expect(damageTypeWord("homebrew", "cs")).toBe("homebrew");
-    expect(damageWords("1d6 slashing", "fr")).toBe("1d6 tranchants");
   });
 
   it("preserves the upstream French translation catalog", () => {

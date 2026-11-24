@@ -5,7 +5,6 @@
 // re-exports everything here for the callers that have always found it
 // there.
 import { RAGING } from "@/lib/srd/class-resources";
-import { translate } from "@/lib/i18n/translate";
 import { conditionGrantedImmunity } from "@/lib/srd/condition-effect-queries";
 import { isWorn, matchArmor, type SrdArmor } from "@/lib/srd/armor";
 import { hasItemTag, type TaggedItem } from "@/lib/srd/item-tags";
@@ -46,14 +45,10 @@ export type DamageLocale = "en" | "fr" | "cs";
 // SRD's own capitalized list heading; a type the maps do not carry stays as
 // it was spelled in.
 export function damageTypeWord(type: string, locale: DamageLocale): string {
-  const key = type.trim().toLowerCase();
-  if (locale === "cs") {
-    return DAMAGE_TYPES.includes(key) ? translate("cs", key) : type;
-  }
   if (locale !== "fr") {
     return type;
   }
-  return DAMAGE_TYPE_WORDS_FR[key] ?? type;
+  return DAMAGE_TYPE_WORDS_FR[type.trim().toLowerCase()] ?? type;
 }
 
 // The type word inside a damage expression ("1d6 slashing") reads in the
@@ -65,9 +60,6 @@ const DAMAGE_TYPE_WORD_RE =
   /\b(acid|bludgeoning|cold|fire|force|lightning|necrotic|piercing|poison|psychic|radiant|slashing|thunder)\b/g;
 
 export function damageWords(damage: string, locale: DamageLocale): string {
-  if (locale === "cs") {
-    return damage.replace(DAMAGE_TYPE_WORD_RE, (word) => translate("cs", word));
-  }
   if (locale !== "fr") {
     return damage;
   }
