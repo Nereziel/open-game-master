@@ -3443,23 +3443,108 @@
       },
       "mud": {
         "englishName": "Mud",
-        "name": "Vazké bahno"
+        "name": "Vazké bahno",
+        "original": {
+          "desc": "The ground in a 20-foot radius centered on a point within range becomes thick, viscous mud. The area becomes difficult terrain for the duration. When a creature enters the affected area for the first time on a turn or starts its turn there, the creature must make a Strength saving throw. On a failed save, its movement speed is reduced to 0 until the start of its next turn.",
+          "higher_level": "",
+          "duration": "Up to 1 minute",
+          "school": "transmutation",
+          "spell_level": 2,
+          "casting_time": "1 action",
+          "range": "60 Feet",
+          "requires_concentration": true,
+          "requires_verbal_components": true,
+          "requires_somatic_components": true,
+          "requires_material_components": true,
+          "material": "",
+          "can_be_cast_as_ritual": false,
+          "dnd_class": "Druid, Wizard"
+        },
+        "description": "**Transmutace 2. úrovně**\n**Vyvolání:** 1 akce\n**Dosah:** 60 stop\n**Složky:** V, P, S (surovina ve zdroji neuvedena)\n**Trvání:** Soustředění, až 1 minuta\n**Povolání:** Druid, Kouzelník\n\nZem v okruhu 20 stop se středem v bodě v dosahu se promění v husté, vazké bláto. Oblast se po dobu trvání stane obtížným terénem. Když tvor v tahu poprvé vstoupí do ovlivněné oblasti nebo v ní začne svůj tah, musí si hodit záchranný hod na Sílu. Při neúspěchu se jeho rychlost pohybu sníží na 0 až do začátku jeho příštího tahu."
       },
       "muted-foe": {
         "englishName": "Muted Foe",
-        "name": "Umlčený nepřítel"
+        "name": "Umlčený nepřítel",
+        "original": {
+          "desc": "You touch a nonmagical weapon. The next time a creature hits with the affected weapon before the spell ends, the weapon booms with a thunderous peal as the weapon strikes. The attack deals an extra 1d6 thunder damage to the target, and the target becomes deafened, immune to thunder damage, and unable to cast spells with verbal components for 1 minute. At the end of each of its turns, the target can make a Wisdom saving throw. On a success, the effect ends.",
+          "higher_level": "When you cast this spell using a spell slot of 2nd level or higher, the extra damage increases by 1d6 for each slot level above 1st.",
+          "duration": "1 minute",
+          "school": "abjuration",
+          "spell_level": 1,
+          "casting_time": "1 bonus action",
+          "range": "Touch",
+          "requires_concentration": false,
+          "requires_verbal_components": true,
+          "requires_somatic_components": true,
+          "requires_material_components": false,
+          "material": "",
+          "can_be_cast_as_ritual": false,
+          "dnd_class": "Bard, Cleric, Sorceror, Warlock, Wizard"
+        },
+        "description": "**Vymítání 1. úrovně**\n**Vyvolání:** 1 bonusová akce\n**Dosah:** Dotyk\n**Složky:** V, P\n**Trvání:** 1 minuta\n**Povolání:** Bard, Klerik, Čaroděj, Černokněžník, Kouzelník\n\nDotkneš se nemagické zbraně. Při příštím zásahu tvora touto zbraní před koncem kouzla zbraň při úderu vydá hromovou ránu. Útok způsobí cíli dodatečné hromové zranění 1k6. Cíl je na 1 minutu hluchý, imunní vůči hromovému zranění a nemůže sesílat kouzla s verbálními složkami. Na konci každého svého tahu může provést záchranný hod na Moudrost. Při úspěchu účinek skončí.\n\n**Na vyšších úrovních.** Sešleš-li kouzlo s použitím pozice 2. či vyšší úrovně, dodatečné zranění se zvýší o 1k6 za každou úroveň pozice nad 1."
       },
       "never-surrender": {
         "englishName": "Never Surrender",
-        "name": "Nikdy se nevzdávej"
+        "name": "Nikdy se nevzdávej",
+        "original": {
+          "desc": "When the target is reduced to 0 hit points, it can fight looming death to stay in the fight. The target doesn't fall unconscious but must still make death saving throws, as normal. The target doesn't need to make a death saving throw until the end of its next turn, but it has disadvantage on that first death saving throw. In addition, massive damage required to kill the target outright must equal or exceed twice the target's hit point maximum instead. If the target regains 1 or more hit points, this spell ends.",
+          "higher_level": "If you cast this spell using a spell slot of 6th level or higher, the target doesn't have disadvantage on its first death saving throw.",
+          "duration": "Instantaneous",
+          "school": "abjuration",
+          "spell_level": 3,
+          "casting_time": "1 reaction, which you take when you or a creature within 60 feet of you drops to 0 hit points.",
+          "range": "60 Feet",
+          "requires_concentration": false,
+          "requires_verbal_components": true,
+          "requires_somatic_components": true,
+          "requires_material_components": false,
+          "material": "",
+          "can_be_cast_as_ritual": false,
+          "dnd_class": "Bard, Cleric, Paladin, Ranger"
+        },
+        "description": "**Vymítání 3. úrovně**\n**Vyvolání:** 1 reakce, kterou provedeš, když tobě nebo tvorovi do 60 stop od tebe klesnou životy na 0\n**Dosah:** 60 stop\n**Složky:** V, P\n**Trvání:** ihned\n**Povolání:** Bard, Klerik, Paladin, Hraničář\n\nKdyž životy cíle klesnou na 0, může vzdorovat blížící se smrti a pokračovat v boji. Cíl neupadne do bezvědomí, ale stále musí běžným způsobem provádět záchranné hody proti smrti. První záchranný hod proti smrti nemusí provést až do konce svého příštího tahu, ale má k němu nevýhodu. Navíc masivní zranění nutné k okamžitému zabití cíle musí místo toho dosáhnout alespoň dvojnásobku maxima jeho životů. Pokud si cíl obnoví 1 či více životů, kouzlo skončí.\n\n**Na vyšších úrovních.** Sešleš-li kouzlo s použitím pozice 6. či vyšší úrovně, cíl nemá nevýhodu k prvnímu záchrannému hodu proti smrti."
       },
       "oathbound-implement": {
         "englishName": "Oathbound Implement",
-        "name": "Přísahou vázaný nástroj"
+        "name": "Přísahou vázaný nástroj",
+        "original": {
+          "desc": "You place a magical oath upon a creature you can see within range, compelling it to complete a specific task or service that involves using a weapon as you decide. If the creature can understand you, it must succeed on a Wisdom saving throw or become bound by the task. When acting to complete the directed task, the target has advantage on the first attack roll it makes on each of its turns using a weapon. If the target attempts to use a weapon for a purpose other than completing the specific task or service, it has disadvantage on attack rolls with a weapon and must roll the weapon's damage dice twice, using the lower total.\n  Completing the task ends the spell early. Should you issue a suicidal task, the spell ends. You can end the spell early by using an action to dismiss it. A *remove curse*, *greater restoration*, or *wish* spell also ends it.",
+          "higher_level": "",
+          "duration": "10 days",
+          "school": "enchantment",
+          "spell_level": 3,
+          "casting_time": "1 minute",
+          "range": "30 Feet",
+          "requires_concentration": false,
+          "requires_verbal_components": true,
+          "requires_somatic_components": false,
+          "requires_material_components": false,
+          "material": "",
+          "can_be_cast_as_ritual": false,
+          "dnd_class": "Bard, Cleric"
+        },
+        "description": "**Očarování 3. úrovně**\n**Vyvolání:** 1 minuta\n**Dosah:** 30 stop\n**Složky:** V\n**Trvání:** 10 dní\n**Povolání:** Bard, Klerik\n\nUvalíš magickou přísahu na tvora, kterého vidíš v dosahu, a přiměješ ho splnit konkrétní úkol či službu zahrnující použití zbraně podle tvého rozhodnutí. Pokud ti tvor rozumí, musí uspět v záchranném hodu na Moudrost, jinak je úkolem vázán. Když jedná za účelem splnění určeného úkolu, má výhodu k prvnímu hodu na útok zbraní v každém svém tahu. Pokusí-li se použít zbraň k jinému účelu než ke splnění konkrétního úkolu či služby, má nevýhodu k hodům na útok zbraní a musí hodit kostkami zranění zbraně dvakrát a použít nižší součet.\n\nSplněním úkolu kouzlo předčasně skončí. Zadáš-li sebevražedný úkol, kouzlo skončí. Kouzlo můžeš předčasně ukončit akcí. Ukončí ho také kouzlo *sejmi kletbu*, *mocné navrácení* či *přání*."
       },
       "outmaneuver": {
         "englishName": "Outmaneuver",
-        "name": "Přemanévrování"
+        "name": "Přemanévrování",
+        "original": {
+          "desc": "When a creature provokes an opportunity attack from an ally you can see within range, you can force the creature to make a Wisdom saving throw. On a failed save, the creature's movement is reduced to 0, and you can move up to your speed toward the creature without provoking opportunity attacks. This spell doesn't interrupt your ally's opportunity attack, which happens before the effects of this spell.",
+          "higher_level": "",
+          "duration": "Instantaneous",
+          "school": "enchantment",
+          "spell_level": 1,
+          "casting_time": "1 reaction, which you take when a creature within 30 feet of you provokes an opportunity attack",
+          "range": "30 Feet",
+          "requires_concentration": false,
+          "requires_verbal_components": false,
+          "requires_somatic_components": true,
+          "requires_material_components": false,
+          "material": "",
+          "can_be_cast_as_ritual": false,
+          "dnd_class": "Bard, Cleric, Paladin, Sorceror, Warlock, Wizard"
+        },
+        "description": "**Očarování 1. úrovně**\n**Vyvolání:** 1 reakce, kterou provedeš, když tvor do 30 stop od tebe vyvolá příležitostný útok\n**Dosah:** 30 stop\n**Složky:** P\n**Trvání:** ihned\n**Povolání:** Bard, Klerik, Paladin, Čaroděj, Černokněžník, Kouzelník\n\nKdyž tvor vyvolá příležitostný útok od spojence, kterého vidíš v dosahu, můžeš tvora přinutit provést záchranný hod na Moudrost. Při neúspěchu se pohyb tvora sníží na 0 a ty se můžeš pohnout směrem k němu až o svou rychlost, aniž vyvoláš příležitostné útoky. Toto kouzlo nepřeruší příležitostný útok spojence, který proběhne před účinky kouzla."
       },
       "oversized-paws": {
         "englishName": "Oversized Paws",
@@ -3473,39 +3558,192 @@
       },
       "pincer": {
         "englishName": "Pincer",
-        "name": "Klešťový úder"
+        "name": "Klešťový úder",
+        "original": {
+          "desc": "You force your enemies into a tight spot. Choose two points you can see within range. The points must be at least 30 feet apart from each other. Each point then emits a thunderous boom in a 30-foot cone in the direction of the other point. The boom is audible out to 300 feet.\n  Each creature within a cone must make a Constitution saving throw. On a failed save, a creature takes 5d10 thunder damage and is pushed up to 10 feet away from the point that emitted the cone. On a successful save, the creature takes half as much damage and isn't pushed. Objects that aren't being worn or carried within each cone are automatically pushed.",
+          "higher_level": "When you cast this spell using a spell slot of 7th level or higher, the damage increases by 1d10 for each slot level above 6th.",
+          "duration": "Instantaneous",
+          "school": "evocation",
+          "spell_level": 6,
+          "casting_time": "1 action",
+          "range": "120 Feet",
+          "requires_concentration": false,
+          "requires_verbal_components": true,
+          "requires_somatic_components": true,
+          "requires_material_components": false,
+          "material": "",
+          "can_be_cast_as_ritual": false,
+          "dnd_class": "Wizard"
+        },
+        "description": "**Zaklínání 6. úrovně**\n**Vyvolání:** 1 akce\n**Dosah:** 120 stop\n**Složky:** V, P\n**Trvání:** ihned\n**Povolání:** Kouzelník\n\nZaženeš nepřátele do úzkých. Vyber dva body, které vidíš v dosahu. Musejí být od sebe vzdáleny alespoň 30 stop. Každý bod poté vydá hromovou ránu v kuželu dlouhém 30 stop směrem k druhému bodu. Ránu je slyšet až do 300 stop.\n\nKaždý tvor uvnitř kuželu si musí hodit záchranný hod na Odolnost. Při neúspěchu utrpí hromové zranění 5k10 a je odstrčen až o 10 stop od bodu, který kužel vyslal. Při úspěchu utrpí poloviční zranění a není odstrčen. Předměty uvnitř každého kuželu, které nikdo nenosí ani nedrží, jsou odstrčeny automaticky.\n\n**Na vyšších úrovních.** Sešleš-li kouzlo s použitím pozice 7. či vyšší úrovně, zranění se zvýší o 1k10 za každou úroveň pozice nad 6."
       },
       "pipers-lure": {
         "englishName": "Piper's Lure",
-        "name": "Vábivá píšťala"
+        "name": "Vábivá píšťala",
+        "original": {
+          "desc": "You touch a nonmagical pipe or horn instrument and imbue it with magic that lures creatures toward it. Each creature that enters or starts its turn within 150 feet of the affected object must succeed on a Wisdom saving throw or be charmed for 10 minutes. A creature charmed by this spell must take the Dash action and move toward the affected object by the safest available route on each of its turns. Once a charmed creature moves within 5 feet of the object, it is also incapacitated as it stares at the object and sways in place to a mesmerizing tune only it can hear. If the object is moved, the charmed creature attempts to follow it.\n  For every 10 minutes that elapse, the creature can make a new Wisdom saving throw. On a success, the spell ends on that creature. If a charmed creature is attacked, the spell ends immediately on that creature. Once a creature has been charmed by this spell, it can't be charmed by it again for 24 hours.",
+          "higher_level": "",
+          "duration": "Up to 1 hour",
+          "school": "enchantment",
+          "spell_level": 3,
+          "casting_time": "1 minute",
+          "range": "Touch",
+          "requires_concentration": true,
+          "requires_verbal_components": true,
+          "requires_somatic_components": true,
+          "requires_material_components": true,
+          "material": "",
+          "can_be_cast_as_ritual": false,
+          "dnd_class": "Ranger, Sorceror, Wizard"
+        },
+        "description": "**Očarování 3. úrovně**\n**Vyvolání:** 1 minuta\n**Dosah:** Dotyk\n**Složky:** V, P, S (surovina ve zdroji neuvedena)\n**Trvání:** Soustředění, až 1 hodina\n**Povolání:** Hraničář, Čaroděj, Kouzelník\n\nDotkneš se nemagické píšťaly či rohu a naplníš jej magií, která k němu láká tvory. Každý tvor, který vstoupí do okruhu 150 stop od ovlivněného předmětu nebo v něm začne svůj tah, musí uspět v záchranném hodu na Moudrost, jinak je na 10 minut zmámený. Tvor zmámený tímto kouzlem musí v každém svém tahu provést akci Sprint a pohybovat se k ovlivněnému předmětu nejbezpečnější dostupnou cestou. Jakmile se přiblíží do 5 stop od předmětu, je také neschopný, neboť na předmět zírá a pohupuje se na místě do rytmu podmanivé melodie, kterou slyší jen on. Je-li předmět přemístěn, zmámený tvor se ho pokusí následovat.\n\nPo každých uplynulých 10 minutách může tvor provést nový záchranný hod na Moudrost. Při úspěchu pro něj kouzlo skončí. Je-li zmámený tvor napaden, kouzlo pro něj okamžitě skončí. Jakmile byl tvor tímto kouzlem zmámený, nemůže jím být znovu zmámen po dobu 24 hodin."
       },
       "portal-jaunt": {
         "englishName": "Portal Jaunt",
-        "name": "Skok portálem"
+        "name": "Skok portálem",
+        "original": {
+          "desc": "You touch a specially prepared key to a door or gate, turning it into a one-way portal to another such door within range. This spell works with any crafted door, doorway, archway, or any other artificial opening, but not natural or accidental openings such as cave entrances or cracks in walls. You must be aware of your destination or be able to see it from where you cast the spell.\n  On completing the spell, the touched door opens, revealing a shimmering image of the location beyond the destination door. You can move through the door, emerging instantly out of the destination door. You can also allow one other willing creature to pass through the portal instead. Anything you carry moves through the door with you, including other creatures, willing or unwilling.\n  For the purpose of this spell, any locks, bars, or magical effects such as arcane lock are ineffectual for the spell's duration. You can travel only to a side of the door you can see or have physically visited in the past (divinations such as clairvoyance count as seeing). Once you or a willing creature passes through, both doors shut, ending the spell. If you or another creature does not move through the portal within 1 round, the spell ends.",
+          "higher_level": "When you cast this spell using a spell slot of 4th level or higher, the range increases by 100 feet and the duration increases by 1 round for each slot level above 3rd. Each round added to the duration allows one additional creature to move through the portal before the spell ends.",
+          "duration": "1 round",
+          "school": "conjuration",
+          "spell_level": 3,
+          "casting_time": "1 action",
+          "range": "300 Feet",
+          "requires_concentration": false,
+          "requires_verbal_components": true,
+          "requires_somatic_components": true,
+          "requires_material_components": true,
+          "material": "",
+          "can_be_cast_as_ritual": false,
+          "dnd_class": "Sorceror, Wizard"
+        },
+        "description": "**Vyvolávání 3. úrovně**\n**Vyvolání:** 1 akce\n**Dosah:** 300 stop\n**Složky:** V, P, S (surovina ve zdroji neuvedena)\n**Trvání:** 1 kolo\n**Povolání:** Čaroděj, Kouzelník\n\nDotkneš se speciálně připraveným klíčem dveří či brány a proměníš je v jednosměrný portál k jiným takovým dveřím v dosahu. Kouzlo funguje s jakýmikoli vyrobenými dveřmi, dveřním otvorem, obloukem či jiným umělým otvorem, nikoli s přirozenými nebo náhodně vzniklými otvory, například vchody do jeskyní nebo prasklinami ve zdech. Musíš vědět o cílovém místě nebo ho vidět z místa seslání.\n\nPo dokončení sesílání se dotčené dveře otevřou a odhalí třpytivý obraz místa za cílovými dveřmi. Můžeš dveřmi projít a okamžitě vyjít cílovými dveřmi. Místo sebe můžeš nechat portálem projít jednoho jiného ochotného tvora. Vše, co neseš, projde dveřmi s tebou, včetně jiných tvorů, ochotných i neochotných.\n\nPro účely tohoto kouzla jsou po dobu jeho trvání neúčinné všechny zámky, závory či magické účinky, například *mystický zámek*. Můžeš cestovat jen na tu stranu dveří, kterou vidíš nebo jsi v minulosti osobně navštívil (věštění, například *jasnozřivost*, se počítá jako vidění). Jakmile ty nebo ochotný tvor projdete, oboje dveře se zavřou a kouzlo skončí. Neprojde-li portálem do 1 kola ani jeden z vás, kouzlo skončí.\n\n**Na vyšších úrovních.** Sešleš-li kouzlo s použitím pozice 4. či vyšší úrovně, dosah se zvýší o 100 stop a trvání se prodlouží o 1 kolo za každou úroveň pozice nad 3. Za každé přidané kolo může před skončením kouzla projít portálem jeden další tvor."
       },
       "portal-trap": {
         "englishName": "Portal Trap",
-        "name": "Portálová past"
+        "name": "Portálová past",
+        "original": {
+          "desc": "You create a magical portal on a surface in an unoccupied space you can see within range. The portal occupies up to 5 square feet of the surface and is instantly covered with an illusion. The illusion looks like the surrounding terrain or surface features, such as mortared stone if the portal is placed on a stone wall, or a simple image of your choice like those created by the *minor illusion* spell. A creature that touches, steps on, or otherwise interacts with or enters the portal must succeed on a Wisdom saving throw or be teleported to an unoccupied space up to 30 feet away in a random direction. To determine the direction, roll a d8 and assign a direction to each die face. The creature can't be teleported into a solid object.\n  Physical interaction with the illusion reveals it to be an illusion, but such touching triggers the portal's effect. A creature that uses an action to examine the area where the portal is located can determine that it is an illusion with a successful Intelligence (Investigation) check against your spell save DC.",
+          "higher_level": "When you cast this spell using a spell slot of 3rd level or higher, you can create one additional portal for each slot level above 2nd.",
+          "duration": "Up to 1 minute",
+          "school": "conjuration",
+          "spell_level": 2,
+          "casting_time": "1 action",
+          "range": "60 Feet",
+          "requires_concentration": true,
+          "requires_verbal_components": true,
+          "requires_somatic_components": false,
+          "requires_material_components": false,
+          "material": "",
+          "can_be_cast_as_ritual": false,
+          "dnd_class": "Bard, Cleric, Sorceror, Warlock, Wizard"
+        },
+        "description": "**Vyvolávání 2. úrovně**\n**Vyvolání:** 1 akce\n**Dosah:** 60 stop\n**Složky:** V\n**Trvání:** Soustředění, až 1 minuta\n**Povolání:** Bard, Klerik, Čaroděj, Černokněžník, Kouzelník\n\nVytvoříš magický portál na povrchu ve volném prostoru, který vidíš v dosahu. Portál zabírá až 5 čtverečních stop povrchu a okamžitě je zakryt iluzí. Iluze vypadá jako okolní terén či povrch, například kámen spojený maltou, je-li portál na kamenné zdi, nebo jako jednoduchý obraz dle tvé volby podobný obrazům kouzla *drobná iluze*. Tvor, který se portálu dotkne, stoupne na něj, jinak s ním vstoupí do kontaktu či do něj vejde, musí uspět v záchranném hodu na Moudrost, jinak je teleportován do volného prostoru až 30 stop daleko náhodným směrem. Směr urči hodem k8, přičemž každé stěně kostky přiřaď směr. Tvora nelze teleportovat dovnitř pevného předmětu.\n\nFyzický kontakt s iluzí odhalí její iluzorní povahu, ale dotyk spustí účinek portálu. Tvor, který akcí prozkoumá oblast portálu, může poznat, že jde o iluzi, úspěšným ověřením Inteligence (Pátrání) proti tvému SO záchrany kouzla.\n\n**Na vyšších úrovních.** Sešleš-li kouzlo s použitím pozice 3. či vyšší úrovně, můžeš vytvořit jeden další portál za každou úroveň pozice nad 2."
       },
       "power-word-fling": {
         "englishName": "Power Word Fling",
-        "name": "Mocné slovo: Odhození"
+        "name": "Mocné slovo: Odhození",
+        "original": {
+          "desc": "You mutter a word of power that causes a creature you can see within range to be flung vertically or horizontally. The creature must succeed on a Strength saving throw or be thrown up to 15 feet vertically or horizontally. If the target impacts a surface, such as a ceiling or wall, it stops moving and takes 3d6 bludgeoning damage. If the target was thrown vertically, it plummets to the ground, taking falling damage as normal, unless it has a flying speed or other method of preventing a fall. If the target impacts a creature, the target stops moving and takes 3d6 bludgeoning damage, and the creature the target hits must succeed on a Strength saving throw or be knocked prone. After the target is thrown horizontally or it falls from being thrown vertically, regardless of whether it impacted a surface, it is knocked prone.\n  As a bonus action on each of your subsequent turns, you can attempt to fling the same creature again. The target must succeed on another Strength saving throw or be thrown.",
+          "higher_level": "When you cast this spell using a spell slot of 4th level or higher, the distance you can fling the target increases by 5 feet, and the damage from impacting a surface or creature increases by 1d6 for each slot level above 3rd.",
+          "duration": "Up to 1 minute",
+          "school": "conjuration",
+          "spell_level": 3,
+          "casting_time": "1 action",
+          "range": "30 Feet",
+          "requires_concentration": true,
+          "requires_verbal_components": true,
+          "requires_somatic_components": false,
+          "requires_material_components": false,
+          "material": "",
+          "can_be_cast_as_ritual": false,
+          "dnd_class": "Sorceror, Warlock, Wizard"
+        },
+        "description": "**Vyvolávání 3. úrovně**\n**Vyvolání:** 1 akce\n**Dosah:** 30 stop\n**Složky:** V\n**Trvání:** Soustředění, až 1 minuta\n**Povolání:** Čaroděj, Černokněžník, Kouzelník\n\nZamumláš slovo moci, které svisle či vodorovně vymrští tvora, kterého vidíš v dosahu. Tvor musí uspět v záchranném hodu na Sílu, jinak je vymrštěn až o 15 stop svisle či vodorovně. Pokud cíl narazí na povrch, například strop či zeď, jeho pohyb se zastaví a utrpí drtivé zranění 3k6. Byl-li vymrštěn svisle, zřítí se k zemi a utrpí běžné zranění z pádu, pokud nemá rychlost létání či jiný způsob, jak zabránit pádu. Pokud cíl narazí do tvora, jeho pohyb se zastaví, utrpí drtivé zranění 3k6 a zasažený tvor musí uspět v záchranném hodu na Sílu, jinak je sražen k zemi. Po vodorovném vymrštění nebo po pádu ze svislého vymrštění je cíl sražen k zemi bez ohledu na to, zda narazil do nějakého povrchu.\n\nV každém svém následujícím tahu se můžeš bonusovou akcí pokusit téhož tvora znovu vymrštit. Cíl musí uspět v dalším záchranném hodu na Sílu, jinak je vymrštěn.\n\n**Na vyšších úrovních.** Sešleš-li kouzlo s použitím pozice 4. či vyšší úrovně, vzdálenost, o kterou můžeš cíl vymrštit, se zvýší o 5 stop a zranění při nárazu do povrchu či tvora o 1k6 za každou úroveň pozice nad 3."
       },
       "power-word-rend": {
         "englishName": "Power Word Rend",
-        "name": "Mocné slovo: Rozervání"
+        "name": "Mocné slovo: Rozervání",
+        "original": {
+          "desc": "You speak a word of power that causes the internal organs of a creature you can see within range to rupture. The target must make a Constitution saving throw. It takes 4d6 + 20 force damage on a failed save, or half as much damage on a successful one. If the target is below half its hit point maximum, it has disadvantage on this saving throw. This spell has no effect on creatures without vital internal organs, such as constructs, oozes, and undead.",
+          "higher_level": "When you cast this spell using a spell slot of 5th level or higher, you can target one additional creature for each slot level above 4th. The creatures must be within 30 feet of each other when you target them.",
+          "duration": "Instantaneous",
+          "school": "evocation",
+          "spell_level": 4,
+          "casting_time": "1 action",
+          "range": "90 Feet",
+          "requires_concentration": false,
+          "requires_verbal_components": true,
+          "requires_somatic_components": false,
+          "requires_material_components": false,
+          "material": "",
+          "can_be_cast_as_ritual": false,
+          "dnd_class": "Bard, Sorceror, Warlock, Wizard"
+        },
+        "description": "**Zaklínání 4. úrovně**\n**Vyvolání:** 1 akce\n**Dosah:** 90 stop\n**Složky:** V\n**Trvání:** ihned\n**Povolání:** Bard, Čaroděj, Černokněžník, Kouzelník\n\nProneseš slovo moci, které způsobí prasknutí vnitřních orgánů tvora, kterého vidíš v dosahu. Cíl si musí hodit záchranný hod na Odolnost. Při neúspěchu utrpí silové zranění 4k6 + 20, při úspěchu poloviční. Má-li cíl méně než polovinu maxima životů, má k tomuto záchrannému hodu nevýhodu. Kouzlo nemá žádný účinek na tvory bez životně důležitých vnitřních orgánů, například konstrukty, slizy a nemrtvé.\n\n**Na vyšších úrovních.** Sešleš-li kouzlo s použitím pozice 5. či vyšší úrovně, můžeš zacílit jednoho dalšího tvora za každou úroveň pozice nad 4. Při zacílení musejí být tvorové do 30 stop od sebe."
       },
       "reapers-knell": {
         "englishName": "Reaper's Knell",
-        "name": "Umíráček žence"
+        "name": "Umíráček žence",
+        "original": {
+          "desc": "As the bell rings, a burst of necrotic energy ripples out in a 20-foot-radius sphere from a point you can see within range. Each creature in that area must make a Wisdom saving throw. On a failed save, the creature is marked with necrotic energy for the duration. If a marked creature is reduced to 0 hit points or dies before the spell ends, you regain hit points equal to 2d8 + your spellcasting ability modifier. Alternatively, you can choose for one ally you can see within range to regain the hit points instead.",
+          "higher_level": "When you cast this spell using a spell slot of 5th level or higher, the healing increases by 1d8 for each slot level above 4th.",
+          "duration": "Up to 1 minute",
+          "school": "necromancy",
+          "spell_level": 4,
+          "casting_time": "1 action",
+          "range": "60 Feet",
+          "requires_concentration": true,
+          "requires_verbal_components": true,
+          "requires_somatic_components": true,
+          "requires_material_components": true,
+          "material": "",
+          "can_be_cast_as_ritual": false,
+          "dnd_class": "Bard, Cleric, Sorceror, Warlock, Wizard"
+        },
+        "description": "**Nekromancie 4. úrovně**\n**Vyvolání:** 1 akce\n**Dosah:** 60 stop\n**Složky:** V, P, S (surovina ve zdroji neuvedena)\n**Trvání:** Soustředění, až 1 minuta\n**Povolání:** Bard, Klerik, Čaroděj, Černokněžník, Kouzelník\n\nKdyž zazní zvon, z bodu, který vidíš v dosahu, se šíří vlna nekrotické energie v kouli o poloměru 20 stop. Každý tvor v oblasti si musí hodit záchranný hod na Moudrost. Při neúspěchu je po dobu trvání označen nekrotickou energií. Klesnou-li před koncem kouzla životy označeného tvora na 0 nebo tvor zemře, obnovíš si počet životů rovný 2k8 + tvá oprava sesílací vlastnosti. Místo toho se můžeš rozhodnout, že si tyto životy obnoví jeden spojenec, kterého vidíš v dosahu.\n\n**Na vyšších úrovních.** Sešleš-li kouzlo s použitím pozice 5. či vyšší úrovně, léčení se zvýší o 1k8 za každou úroveň pozice nad 4."
       },
       "rebounding-bolt": {
         "englishName": "Rebounding Bolt",
-        "name": "Odrazová střela"
+        "name": "Odrazová střela",
+        "original": {
+          "desc": "You fire a vibrant blue beam of energy at a creature you can see within range. The beam then bounces to a creature of your choice within 30 feet of the target, losing some of its vibrancy and continuing to bounce to other creatures of your choice until it sputters out. Each subsequent target must be within 30 feet of the target affected before it, and the beam can't bounce to a target it has already affected.\n  Each target must make a Constitution saving throw. The first target takes 5d6 force damage on a failed save, or half as much damage on a successful one. The beam loses some of its power then bounces to the second target. The beam deals 1d6 force damage less (4d6, then 3d6, then 2d6, then 1d6) to each subsequent target with the final target taking 1d6 force damage on a failed save, or half as much damage on a successful one.",
+          "higher_level": "When you cast this spell using a spell slot of 4th level or higher, the damage increases by 1d6 for each slot level above 3rd. This increase allows the beam to jump an additional time, reducing the damage it deals by 1d6 with each bounce as normal.",
+          "duration": "Instantaneous",
+          "school": "evocation",
+          "spell_level": 3,
+          "casting_time": "1 action",
+          "range": "30 Feet",
+          "requires_concentration": false,
+          "requires_verbal_components": true,
+          "requires_somatic_components": false,
+          "requires_material_components": true,
+          "material": "",
+          "can_be_cast_as_ritual": false,
+          "dnd_class": "Wizard"
+        },
+        "description": "**Zaklínání 3. úrovně**\n**Vyvolání:** 1 akce\n**Dosah:** 30 stop\n**Složky:** V, S (surovina ve zdroji neuvedena)\n**Trvání:** ihned\n**Povolání:** Kouzelník\n\nVystřelíš zářivě modrý paprsek energie na tvora, kterého vidíš v dosahu. Paprsek poté přeskočí na tvora dle tvé volby do 30 stop od cíle, ztratí část své záře a dále přeskakuje na jiné tvory dle tvé volby, dokud nezhasne. Každý následující cíl musí být do 30 stop od předchozího cíle a paprsek nemůže přeskočit na již ovlivněný cíl.\n\nKaždý cíl si musí hodit záchranný hod na Odolnost. První cíl utrpí při neúspěchu silové zranění 5k6, při úspěchu poloviční. Paprsek ztratí část své moci a přeskočí na druhý cíl. Každému následujícímu cíli způsobí o 1k6 silového zranění méně (4k6, poté 3k6, poté 2k6 a poté 1k6). Poslední cíl utrpí silové zranění 1k6 při neúspěchu nebo poloviční při úspěchu.\n\n**Na vyšších úrovních.** Sešleš-li kouzlo s použitím pozice 4. či vyšší úrovně, zranění se zvýší o 1k6 za každou úroveň pozice nad 3. Toto zvýšení umožní paprsku pokaždé přeskočit o jeden cíl navíc, přičemž zranění se při každém přeskočení běžným způsobem sníží o 1k6."
       },
       "repulsing-wall": {
         "englishName": "Repulsing Wall",
-        "name": "Odpuzující zeď"
+        "name": "Odpuzující zeď",
+        "original": {
+          "desc": "You create a shimmering wall of light on a solid surface within range. You can make the wall up to 60 feet long, 20 feet high, and 1 foot thick, or a ringed wall up to 20 feet in diameter, 20 feet high, and 1 foot thick. The wall is translucent, and creatures have disadvantage on Wisdom (Perception) checks to look through the wall.\n  One side of the wall, selected by you when you cast this spell, deals 5d8 radiant damage when a creature enters the wall for the first time on a turn or ends its turn there. A creature attempting to pass through the wall must make a Strength saving throw. On a failed save, a creature is pushed 10 feet away from the wall and falls prone. A creature that is undead, a fiend, or vulnerable to radiant damage has disadvantage on this saving throw. The other side of the wall deals no damage and doesn't restrict movement through it.",
+          "higher_level": "When you cast this spell using a spell slot of 5th level or higher, the damage increases by 1d8 for each slot level above 4th.",
+          "duration": "Up to 1 minute",
+          "school": "evocation",
+          "spell_level": 4,
+          "casting_time": "1 action",
+          "range": "120 Feet",
+          "requires_concentration": true,
+          "requires_verbal_components": true,
+          "requires_somatic_components": true,
+          "requires_material_components": true,
+          "material": "",
+          "can_be_cast_as_ritual": false,
+          "dnd_class": "Cleric, Paladin, Warlock, Wizard"
+        },
+        "description": "**Zaklínání 4. úrovně**\n**Vyvolání:** 1 akce\n**Dosah:** 120 stop\n**Složky:** V, P, S (surovina ve zdroji neuvedena)\n**Trvání:** Soustředění, až 1 minuta\n**Povolání:** Klerik, Paladin, Černokněžník, Kouzelník\n\nVytvoříš třpytivou stěnu světla na pevném povrchu v dosahu. Stěna může být až 60 stop dlouhá, 20 stop vysoká a 1 stopu silná, nebo může tvořit prstenec o průměru až 20 stop, výšce 20 stop a tloušťce 1 stopy. Stěna je průsvitná a tvorové mají nevýhodu k ověřením Moudrosti (Vnímání) při pohledu skrz ni.\n\nJedna strana stěny, kterou vybereš při seslání kouzla, způsobuje zářivé zranění 5k8, když tvor v tahu poprvé vstoupí do stěny nebo v ní skončí svůj tah. Tvor, který se pokouší projít stěnou, si musí hodit záchranný hod na Sílu. Při neúspěchu je odstrčen 10 stop od stěny a padne na zem. Nemrtvý tvor, běs nebo tvor zranitelný vůči zářivému zranění má k tomuto záchrannému hodu nevýhodu. Druhá strana stěny nezpůsobuje zranění a neomezuje pohyb skrz ni.\n\n**Na vyšších úrovních.** Sešleš-li kouzlo s použitím pozice 5. či vyšší úrovně, zranění se zvýší o 1k8 za každou úroveň pozice nad 4."
       },
       "retribution": {
         "englishName": "Retribution",
@@ -3519,7 +3757,24 @@
       },
       "rockfall-ward": {
         "englishName": "Rockfall Ward",
-        "name": "Ochrana před sesuvem kamení"
+        "name": "Ochrana před sesuvem kamení",
+        "original": {
+          "desc": "You temporarily halt the fall of up to a 10-foot cube of nonmagical objects or debris, saving those who might have been crushed. The falling material's rate of descent slows to 60 feet per round and comes to a stop 5 feet above the ground, where it hovers until the spell ends. This spell can't prevent missile weapons from striking a target, and it can't slow the descent of an object larger than a 10-foot cube. However, at the GM's discretion, it can slow the descent of a section of a larger object, such as the wall of a falling building or a section of sail and rigging tied to a falling mast.",
+          "higher_level": "When you cast this spell using a spell slot of 2nd level or higher, the cube of debris and objects you can halt increases by 5 feet for each slot level above 1st.",
+          "duration": "1 minute",
+          "school": "transmutation",
+          "spell_level": 1,
+          "casting_time": "1 reaction, which you take when nonmagical debris fall within 120 feet of you",
+          "range": "120 Feet",
+          "requires_concentration": false,
+          "requires_verbal_components": true,
+          "requires_somatic_components": true,
+          "requires_material_components": false,
+          "material": "",
+          "can_be_cast_as_ritual": false,
+          "dnd_class": "Cleric, Druid, Sorceror, Warlock, Wizard"
+        },
+        "description": "**Transmutace 1. úrovně**\n**Vyvolání:** 1 reakce, kterou provedeš, když do 120 stop od tebe padají nemagické trosky\n**Dosah:** 120 stop\n**Složky:** V, P\n**Trvání:** 1 minuta\n**Povolání:** Klerik, Druid, Čaroděj, Černokněžník, Kouzelník\n\nDočasně zastavíš pád nemagických předmětů či trosek o objemu až krychle o hraně 10 stop, čímž zachráníš ty, které by mohly rozdrtit. Rychlost klesání padajícího materiálu se sníží na 60 stop za kolo a materiál se zastaví 5 stop nad zemí, kde se vznáší až do skončení kouzla. Kouzlo nemůže zabránit střelám a vrhaným zbraním zasáhnout cíl ani zpomalit pád předmětu většího než krychle o hraně 10 stop. Dle uvážení PJ však může zpomalit pád části většího předmětu, například zdi padající budovy nebo části plachty a lanoví přivázaných k padajícímu stěžni.\n\n**Na vyšších úrovních.** Sešleš-li kouzlo s použitím pozice 2. či vyšší úrovně, hrana krychle trosek a předmětů, které můžeš zastavit, se prodlouží o 5 stop za každou úroveň pozice nad 1."
       },
       "sacrifice-pawn": {
         "englishName": "Sacrifice Pawn",
@@ -3543,7 +3798,24 @@
       },
       "safe-transposition": {
         "englishName": "Safe Transposition",
-        "name": "Bezpečná záměna"
+        "name": "Bezpečná záměna",
+        "original": {
+          "desc": "You cast this spell when an ally below half its hit point maximum within range is attacked. You swap places with your ally, each of you instantly teleporting into the space the other just occupied. If there isn't room for you in the new space or for your ally in your former space, this spell fails. After the two of you teleport, the triggering attack roll is compared to your AC to determine if it hits you.",
+          "higher_level": "",
+          "duration": "Instantaneous",
+          "school": "conjuration",
+          "spell_level": 2,
+          "casting_time": "1 reaction, which you take when an injured ally is attacked",
+          "range": "30 Feet",
+          "requires_concentration": false,
+          "requires_verbal_components": false,
+          "requires_somatic_components": true,
+          "requires_material_components": false,
+          "material": "",
+          "can_be_cast_as_ritual": false,
+          "dnd_class": "Paladin"
+        },
+        "description": "**Vyvolávání 2. úrovně**\n**Vyvolání:** 1 reakce, kterou provedeš, když je napaden zraněný spojenec\n**Dosah:** 30 stop\n**Složky:** P\n**Trvání:** ihned\n**Povolání:** Paladin\n\nSešleš toto kouzlo, když je napaden spojenec v dosahu, který má méně než polovinu maxima životů. Vyměníš si s ním místo; oba se okamžitě teleportujete do prostoru, který právě zaujímal ten druhý. Pokud v novém prostoru není dost místa pro tebe nebo ve tvém původním prostoru pro spojence, kouzlo selže. Po teleportaci se hod na útok, jenž vyvolal toto kouzlo, porovná s tvým OČ a určí se, zda zasáhne tebe."
       },
       "secret-blind": {
         "englishName": "Secret Blind",
