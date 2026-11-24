@@ -7,7 +7,7 @@ Tuto hůl lze použít jako magickou hůl (zbraň), která poskytuje bonus +2 k 
 
 Hůl má 50 nábojů pro následující vlastnosti. Každý den za úsvitu si obnoví 4k6+2 spotřebovaných nábojů. Pokud utratíš poslední náboj, hoď k20. Při výsledku 20 si hůl obnoví 1k12+1 nábojů.
 
-***Pohlcení kouzla.*** Když držíš hůl, máš výhodu k záchranným hodům proti kouzlům. Kromě toho můžeš použít svou reakci, když jiný tvor sešle kouzlo, které cílí pouze na tebe. Pokud tak učiníš, hůl pohltí magii kouzla, zruší jeho účinek a získá počet nábojů rovný stupni pohlceného kouzla. Pokud tím ale počet nábojů hole překročí 50, hůl vybuchne, jako kdybys aktivoval její odvetný úder (viz níže).
+***Pohlcení kouzla.*** Když držíš hůl, máš výhodu k záchranným hodům proti kouzlům. Kromě toho můžeš použít svou reakci, když jiný tvor sešle kouzlo, které cílí pouze na tebe. Pokud tak učiníš, hůl pohltí magii kouzla, zruší jeho účinek a získá počet nábojů rovný úrovni pohlceného kouzla. Pokud tím ale počet nábojů hole překročí 50, hůl vybuchne, jako kdybys aktivoval její odvetný úder (viz níže).
 
 ***Kouzla.*** Když držíš hůl, můžeš jako akci utratit některé z jejích nábojů a seslat jedno z následujících kouzel s použitím svého SO záchrany proti kouzlům a své sesílací vlastnosti: *vyvolej elementála* (7 nábojů), *rozptyl magii* (3 náboje), *ohnivá koule* (ve verzi 7. stupně, 7 nábojů), *planoucí koule* (2 náboje), *ledová bouře* (4 náboje), *neviditelnost* (2 náboje), *zaklepání* (2 náboje), *blesk* (ve verzi 7. stupně, 7 nábojů), *projdi zdí* (5 nábojů), *přesun mezi sférami* (7 nábojů), *telekineze* (5 nábojů), *ohnivá zeď* (4 náboje) nebo *pavučina* (2 náboje).
 
