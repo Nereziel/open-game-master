@@ -43,6 +43,7 @@ import {
 } from "@/app/workshop/homebrew/ItemMagicFields";
 import { DAMAGE_TYPE_BLURBS, WEAPON_PROPERTY_BLURBS, glossaryFor } from "@/lib/help/terms";
 import { useT } from "@/lib/locale";
+import { damageTypeWord } from "@/lib/dm/damage-logic";
 
 // "1d8 slashing" as the two things a DM actually decides. A type the list
 // does not know (a homebrew "1d6 chitin-shredding") stays in the dice box
@@ -152,7 +153,7 @@ function WeaponBlock({ weapon, onChange }: { weapon: Weapon; onChange: (next: We
           value={splitDamage(String(weapon.damage ?? "")).type}
           options={[
             { value: "", label: t("Pick a type...") },
-            ...DAMAGE_TYPES.map((value) => ({ value, label: value })),
+            ...DAMAGE_TYPES.map((value) => ({ value, label: damageTypeWord(value, t.locale) })),
           ]}
           onChange={(type) => set({ damage: joinDamage(splitDamage(String(weapon.damage ?? "")).dice, type) })}
           hint={t("Slashing, piercing and bludgeoning are the weapon types; the rest are for enchanted blades.")}
