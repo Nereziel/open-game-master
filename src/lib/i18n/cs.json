@@ -13048,7 +13048,16 @@
     "That opportunity attack was already decided.": "O tomto příležitostném útoku již bylo rozhodnuto.",
     "No smite was offered on this attack: answer Strike or Let it go.": "U tohoto útoku nebyl nabídnut Boží úder. Zvol Zaútočit nebo Nechat projít.",
     "That is not one of the creatures this attack can be aimed at.": "Tato bytost není jedním z možných cílů útoku.",
-    "Only this character's player decides whether to take the opportunity attack.": "O provedení příležitostného útoku rozhoduje pouze hráč této postavy."
+    "Only this character's player decides whether to take the opportunity attack.": "O provedení příležitostného útoku rozhoduje pouze hráč této postavy.",
+    "Act {act}: {title}": "Dějství {act}: {title}",
+    "Chapter {index} (in progress)": "Kapitola {index} (rozepsaná)",
+    "Chapter {index}: {title}": "Kapitola {index}: {title}",
+    "Untitled": "Bez názvu",
+    "{title} (done)": "{title} (splněno)",
+    "{title} (failed)": "{title} (nesplněno)",
+    "{title} — Story": "{title} — Příběh",
+    "Quest Log": "Deník úkolů",
+    "Exported from Open Game Master on {date}.": "Exportováno z Open Game Master dne {date}."
   },
   "contexts": {
     "{table}: its row for the table {name} now names this campaign's own {name}, since the source's stayed behind.": {
