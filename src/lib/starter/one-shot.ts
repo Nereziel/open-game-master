@@ -1,6 +1,6 @@
 import { createCampaign, getCampaignForUser, setDmOutline, type Campaign } from "@/lib/db/campaigns";
 import { getClock, setClockInstant } from "@/lib/db/clock";
-type Locale = "en" | "fr" | "cs";
+import type { Locale } from "@/lib/i18n/translate";
 import { MINUTES_PER_DAY, MINUTES_PER_HOUR } from "@/lib/dm/calendar";
 
 // The starter one-shot: a table that opens in ten minutes for people who
@@ -71,9 +71,14 @@ const STARTER_ONE_SHOT_CS = {
 
 // The seed the creator reads: the request’s language, English by default,
 // so an English table’s stored premise and spine stay English.
+const STARTER_ONE_SHOT_BY_LOCALE: Partial<Record<Locale, Omit<typeof STARTER_ONE_SHOT, "id">>> = {
+  fr: STARTER_ONE_SHOT_FR,
+  cs: STARTER_ONE_SHOT_CS,
+};
+
 export function starterSeedFor(locale: Locale) {
-  if (locale === "cs") return { ...STARTER_ONE_SHOT, ...STARTER_ONE_SHOT_CS };
-  return locale === "fr" ? { ...STARTER_ONE_SHOT, ...STARTER_ONE_SHOT_FR } : STARTER_ONE_SHOT;
+  const localized = STARTER_ONE_SHOT_BY_LOCALE[locale];
+  return localized ? { ...STARTER_ONE_SHOT, ...localized } : STARTER_ONE_SHOT;
 }
 
 // narration: whether the server can read aloud (narrationAvailable in
