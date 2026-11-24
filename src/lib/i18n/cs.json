@@ -1,5 +1,13 @@
 {
   "messages": {
+    "Creature, CR {cr}, built on the {basis} · Bestiary": "Tvor, NB {cr}, založený na: {basis} · Bestiář",
+    "Creature, CR {cr}, original · Bestiary": "Tvor, NB {cr}, původní · Bestiář",
+    "Item, {kind} · Homebrew": "Předmět, {kind} · Vlastní obsah",
+    "Your stat blocks": "Vlastní statbloky",
+    "Your items": "Vlastní předměty",
+    "Lantern, Rope...": "Lucerna, lano…",
+    "Your own item": "Vlastní předmět",
+    "From the rulebook": "Z příručky pravidel",
     "{name}, year": "{name}, rok",
     "{name}, calendar": "{name}, kalendář",
     "Custom voice…": "Vlastní hlas…",
