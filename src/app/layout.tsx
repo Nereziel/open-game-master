@@ -1,4 +1,5 @@
 import { LocaleApplier, LocaleProvider } from "@/lib/locale";
+import { localeTag } from "@/lib/messages-logic";
 // The server renders a French page with the catalog in hand (translate.ts).
 import "@/lib/i18n/fr-catalog";
 import "@/lib/i18n/cs-catalog";
@@ -48,7 +49,7 @@ export default async function RootLayout({
   });
   return (
     <html
-      lang={initialLocale === "fr" ? "fr-FR" : "en-US"}
+      lang={localeTag(initialLocale)}
       className="h-full antialiased"
       // browser extensions (Grammarly among them) inject attributes into <html>
       // and <body> before React loads

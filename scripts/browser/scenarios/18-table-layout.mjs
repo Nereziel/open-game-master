@@ -5,7 +5,7 @@
 // every move, and the server never hears of it. A phone keeps its bottom
 // bar whatever a wide window arranged.
 import { readFileSync } from "node:fs";
-import { check, eventually, sleep, openPanelTab, newContext, signIn, untilStill, hydrated, upTo } from "../lib.mjs";
+import { check, eventually, sleep, openPanelTab, newContext, signIn, untilStill, hydrated, upTo, settle } from "../lib.mjs";
 
 const KEY = "odm:table-layout:player";
 
@@ -54,6 +54,15 @@ export default {
   viewports: ["desktop", "laptop", "phone"],
   async run(t) {
     const { page, root, ids, viewport } = t;
+    // The live table can keep network requests open. Wait for hydration and
+    // the scenario's explicit UI readiness checks instead of networkidle.
+    const openTable = async (id) => {
+      const route = `/campaigns/${id}`;
+      if (t.app) return t.open(route);
+      await page.goto(`${t.base}${route}`, { waitUntil: "domcontentloaded", timeout: 120_000 });
+      await hydrated(page);
+      await settle(page);
+    };
     const layoutCalls = [];
     page.on("request", (request) => {
       const { pathname } = new URL(request.url());
@@ -89,7 +98,7 @@ export default {
       }), { label: "the session renderer filling its viewport without a flat-board transform" });
     };
     if (viewport === "desktop" && !t.app) await installFixture(page);
-    await t.open(`/campaigns/${ids.campaignId}`);
+    await openTable(ids.campaignId);
     await dismissTour(page);
     await clearLayouts(page);
     await eventually(() => page.locator(`${root}.cine-stage`).count(), { timeoutMs: 30_000, label: "the table's stage" });
@@ -462,7 +471,7 @@ export default {
         const response = await route.fetch();
         await route.fulfill({ response, json: { ...await response.json(), dmStatus: "thinking", dmJob: { id: "layout-job", kind: "turn", stage: "starting", since: Date.now(), startedAt: Date.now(), stopping: false } } });
       });
-      await t.open(`/campaigns/${ids.campaignId}`);
+      await openTable(ids.campaignId);
       const status = page.locator(`${root}.session-compose-entry .session-status`);
       await eventually(() => status.isVisible(), { label: "native DM status in the session layout" });
       const statusBox = await boxOf(status);
@@ -477,7 +486,7 @@ export default {
       check(await status.evaluate(node => getComputedStyle(node).position) === "static", "native status placement returns without an addon");
       await page.unroute(`**/api/campaigns/${ids.campaignId}`);
       await t.tap(session);
-      await t.open(`/campaigns/${ids.quietId}`);
+      await openTable(ids.quietId);
       await eventually(() => row.getAttribute("data-presentation").then(v => v === "stage"), { label: "session presentation without a tactical map" });
       const frame = page.frameLocator('iframe[title="Fixture session board view, from Fixture"]');
       await eventually(() => frame.locator("body").getAttribute("data-message").then(v => v === "scene"), { label: "explicit no-map bridge message" });

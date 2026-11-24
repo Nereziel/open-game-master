@@ -2758,6 +2758,11 @@
         "pattern",
         4,
         "a fixed pattern over text that reads no record's name: its English words are scripts/text-comparisons.json's to classify"
+      ],
+      [
+        "key",
+        1,
+        "Check the canonical ID has no namespace separator before trying the bundled SRD fallback."
       ]
     ],
     "app/api/content/[kind]/[slug]/route.ts#whole": [
@@ -2765,6 +2770,11 @@
         "key",
         2,
         "route keys, refs, slugs and data URLs"
+      ],
+      [
+        "key",
+        2,
+        "Exact bundled spell/item slug matches for the canonical ID fallback; no partial name selection."
       ]
     ],
     "app/api/content/[kind]/route.ts#keyed": [
@@ -27972,6 +27982,20 @@
         "parse",
         2,
         "Regression assertion over fixed bundled translation IDs or expected display markers."
+      ]
+    ],
+    "lib/content/entry-descriptions-cs.ts#partial": [
+      [
+        "parse",
+        1,
+        "Split Czech item Markdown into paragraphs to remove the metadata header for display only."
+      ]
+    ],
+    "lib/content/entry-descriptions-cs.test.ts#first": [
+      [
+        "key",
+        1,
+        "Use the first bundled spell as a fixture for rejecting other sources and lite rows; no runtime identity selection."
       ]
     ]
   }
