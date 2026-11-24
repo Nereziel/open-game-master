@@ -9,6 +9,7 @@ import { ui } from "@/lib/ui";
 import { cn } from "@/lib/cn";
 import type { DefaultsState } from "@/app/create-campaign/useCampaignDefaults";
 import { useT } from "@/lib/locale";
+import { localeTag, type Locale } from "@/lib/messages-logic";
 
 // The creator's half of personal campaign defaults
 // (src/lib/campaign-defaults.ts): the bar on the first step that says what
@@ -51,10 +52,10 @@ const SAVED_GROUP_KEYS = [
   "Live voice chat and its rules",
 ] as const;
 
-const savedOn = (iso: string) => {
+const savedOn = (iso: string, locale: Locale) => {
   const date = iso ? new Date(iso) : null;
   return date && !Number.isNaN(date.getTime())
-    ? date.toLocaleDateString(undefined, { year: "numeric", month: "short", day: "numeric" })
+    ? date.toLocaleDateString(localeTag(locale), { year: "numeric", month: "short", day: "numeric" })
     : "";
 };
 
@@ -85,8 +86,8 @@ export function DefaultsBar({ actions }: { actions: DefaultsActions }) {
           : late && startFrom === "app"
             ? t("Your saved defaults arrived after you began, so nothing you set was changed. Choose My defaults to use them.")
             : startFrom === "mine"
-              ? savedOn(state.defaults.savedAt)
-                ? t("Starting from your saved defaults (saved {date}). The name, premise, theme, world pack, lore and prep stay this campaign's own.", { date: savedOn(state.defaults.savedAt) })
+              ? savedOn(state.defaults.savedAt, t.locale)
+                ? t("Starting from your saved defaults (saved {date}). The name, premise, theme, world pack, lore and prep stay this campaign's own.", { date: savedOn(state.defaults.savedAt, t.locale) })
                 : t("Starting from your saved defaults. The name, premise, theme, world pack, lore and prep stay this campaign's own.")
               : t("Starting from the app's defaults. Your saved defaults are one press away.");
   return (
@@ -195,7 +196,7 @@ export function DefaultsDialog({
             : state.status === "unavailable"
               ? t("Your saved defaults could not be read: {error}", { error: state.error })
               : saved
-                ? `${savedOn(state.defaults.savedAt) ? t("You saved defaults on {date}.", { date: savedOn(state.defaults.savedAt) }) : t("You saved defaults.")} ${actions.startFrom === "mine" ? t("This campaign is starting from them.") : t("This campaign is starting from the app's defaults.")}`
+                ? `${savedOn(state.defaults.savedAt, t.locale) ? t("You saved defaults on {date}.", { date: savedOn(state.defaults.savedAt, t.locale) }) : t("You saved defaults.")} ${actions.startFrom === "mine" ? t("This campaign is starting from them.") : t("This campaign is starting from the app's defaults.")}`
                 : t("You have not saved any defaults yet.")}
         </p>
         <div className="flex flex-wrap gap-2">

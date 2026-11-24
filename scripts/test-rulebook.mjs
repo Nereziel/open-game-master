@@ -484,6 +484,12 @@ try {
     // another reader's English request.
     const own = { headers: { "Accept-Language": "en", "X-Odm-Locale": "fr" } };
     const ownPage = await pageRoute.GET(new Request("http://x/api/rulebook/pages/fireball", own), params("fireball"));
+    assert.equal(ownPage.headers.get("cache-control"), "private, max-age=300");
+    const cookiePage = await pageRoute.GET(new Request("http://x/api/rulebook/pages/fireball", { headers: { "Accept-Language": "en", Cookie: "odm_locale=cs" } }), params("fireball"));
+    assert.equal(cookiePage.headers.get("cache-control"), "private, no-cache");
+    assert.equal((await cookiePage.json()).page.title, rulebookPage("fireball", "cs").page.title);
+    const overridePage = await pageRoute.GET(new Request("http://x/api/rulebook/pages/fireball", { headers: { "Accept-Language": "cs", Cookie: "odm_locale=cs", "X-Odm-Locale": "en" } }), params("fireball"));
+    assert.equal((await overridePage.json()).page.title, rulebookPage("fireball", "en").page.title);
     assert.equal((await ownPage.json()).page.title, "Boule de feu");
     const responses = [
       await contentsRoute.GET(new Request("http://x/api/rulebook")),
@@ -492,7 +498,7 @@ try {
     ];
     for (const response of responses) {
       const vary = (response.headers.get("vary") ?? "").toLowerCase().split(",").map((name) => name.trim());
-      assert.ok(vary.includes("accept-language") && vary.includes("x-odm-locale"), `Vary: ${response.headers.get("vary")}`);
+      assert.ok(vary.includes("accept-language") && vary.includes("x-odm-locale") && vary.includes("cookie"), `Vary: ${response.headers.get("vary")}`);
     }
   });
 

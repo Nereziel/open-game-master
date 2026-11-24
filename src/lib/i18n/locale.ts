@@ -42,7 +42,11 @@ function cookieValue(cookieHeader: string | null, name: string): string | null {
     const eq = part.indexOf("=");
     if (eq === -1) continue;
     if (part.slice(0, eq).trim() === name) {
-      return decodeURIComponent(part.slice(eq + 1).trim());
+      try {
+        return decodeURIComponent(part.slice(eq + 1).trim());
+      } catch {
+        return null;
+      }
     }
   }
   return null;
@@ -75,4 +79,9 @@ export function resolveRequestLocale(request: Request, savedLocale?: string | nu
     serverLocale,
     acceptLanguage: request.headers.get("accept-language"),
   });
+}
+
+// API readers may explicitly override their UI language. SSR profile resolution stays separate.
+export function resolveApiLocale(request: Request, serverLocale?: Locale | null): Locale {
+  return parseLocale(request.headers.get("x-odm-locale")) ?? resolveRequestLocale(request, null, serverLocale);
 }

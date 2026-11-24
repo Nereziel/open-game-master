@@ -17,8 +17,7 @@ import { heroFell } from "@/lib/characters/fallen-logic";
 import { heroDoorFor } from "@/lib/characters/hero-door";
 import { listMembers, setMemberReady } from "@/lib/db/campaigns";
 import { pregenSeatRefusal, recordPregenSeat } from "@/lib/db/pregen-offers";
-import { localeFromAcceptLanguage } from "@/lib/rulebook/book";
-import { translate } from "@/lib/messages-logic";
+import { requestT } from "@/lib/request-locale";
 import {
   admitLibraryCharacter,
   companionRoleRefusal,
@@ -95,13 +94,6 @@ function lobbyGuard(context: MemberContext, t: (key: string, vars?: Record<strin
     );
   }
   return null;
-}
-
-// The refusals read the asker's language (Accept-Language, as the rulebook
-// and the pregens do).
-function requestT(request: Request): (key: string, vars?: Record<string, string | number>) => string {
-  const locale = localeFromAcceptLanguage(request.headers.get("accept-language"));
-  return (key, vars) => translate(locale, key, vars);
 }
 
 // Changing your character invalidates your ready vote and swaps the sheet

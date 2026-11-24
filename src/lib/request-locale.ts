@@ -3,7 +3,7 @@
 // SSR requests carry the user's choice), then Accept-Language. Routes answer
 // their refusals in this language, falling back to English.
 import { getGlobalConfig } from "@/lib/db/app-settings";
-import { localeOfServerLanguage, parseLocale, resolveRequestLocale } from "@/lib/i18n/locale";
+import { localeOfServerLanguage, parseLocale, resolveApiLocale } from "@/lib/i18n/locale";
 import { translate, type Locale, type TranslateVars } from "@/lib/i18n/translate";
 // Route messages and display tables must be available synchronously.
 import "@/lib/i18n/server-catalogs";
@@ -15,7 +15,7 @@ export function bookLocaleOf(request: Request): BookLocale {
   if (own) {
     return own;
   }
-  return resolveRequestLocale(request, null, localeOfServerLanguage(getGlobalConfig().serverLanguage));
+  return resolveApiLocale(request, localeOfServerLanguage(getGlobalConfig().serverLanguage));
 }
 
 export function requestT(request: Request): ((english: string, vars?: TranslateVars) => string) & { locale: Locale } {

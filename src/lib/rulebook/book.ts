@@ -12,7 +12,7 @@
 // the book's own language (src/lib/rulebook/search.ts). Everything here is
 // read once per process and never changes while it runs.
 import data from "./srd-5.1.json";
-import { localeFromAcceptLanguage, parseLocale } from "../i18n/locale.ts";
+import { localeFromAcceptLanguage, resolveApiLocale } from "../i18n/locale.ts";
 import type { Locale } from "../i18n/translate.ts";
 export { localeFromAcceptLanguage };
 import frData from "./srd-5.1-fr.json";
@@ -34,16 +34,12 @@ export type BookLocale = Locale;
 // Every request header bookLocaleOf reads. A response that depends on the
 // book's language names all of them in Vary, so no browser or shared cache
 // hands a French answer to an English request or the other way round.
-export const BOOK_LOCALE_VARY = "Accept-Language, X-Odm-Locale";
+export const BOOK_LOCALE_VARY = "Accept-Language, X-Odm-Locale, Cookie";
 
 // The reader's own choice (X-Odm-Locale: "en", "fr" or "cs") wins
-// over the browser's Accept-Language.
+// over cookie and Accept-Language. Routes use the server-aware request resolver.
 export function bookLocaleOf(request: Request): BookLocale {
-  const own = parseLocale(request.headers.get("x-odm-locale"));
-  if (own) {
-    return own;
-  }
-  return localeFromAcceptLanguage(request.headers.get("accept-language"));
+  return resolveApiLocale(request);
 }
 
 const enBook = data as RulebookData;
