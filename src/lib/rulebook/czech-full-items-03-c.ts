@@ -30,7 +30,7 @@ Lano má OČ 20 a 20 životů. Pokud má alespoň 1 život, každých 5 minut si
 Když tento medailon ve tvaru brouka držíš v ruce po dobu 1 kola, objeví se na jeho povrchu nápis odhalující jeho magickou povahu. Dokud jej máš u sebe, poskytuje dvě výhody:
 
 - Máš výhodu k záchranným hodům proti kouzlům.
-- Skarabeus má 12 dávek. Když neuspěješ v záchranném hodu proti nekromantickému kouzlu nebo škodlivému účinku pocházejícímu od nemrtvého tvora, můžeš pomocí reakce utratit 1 dávku a změnit neúspěšný záchranný hod na úspěšný. Po spotřebování poslední dávky se skarabeus rozpadne na prach a je zničen.`,
+- Skarabeus má 12 nábojů. Když neuspěješ v záchranném hodu proti nekromantickému kouzlu nebo škodlivému účinku pocházejícímu od nemrtvého tvora, můžeš pomocí reakce utratit 1 náboj a změnit neúspěšný záchranný hod na úspěšný. Po spotřebování posledního náboje se skarabeus rozpadne na prach a je zničen.`,
   "scimitar-of-speed": `*Zbraň (šavle), velmi vzácná (vyžaduje sladění)*
 
 S touto magickou zbraní získáváš bonus +2 k hodům na útok i zranění. Kromě toho s ní můžeš v každém svém tahu provést jeden útok jako bonusovou akci.`,
