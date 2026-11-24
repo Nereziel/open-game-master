@@ -17,6 +17,7 @@
 // score order (#330, classAbilities.ts), the class skills' "Suggest the
 // rest" (playstyles.ts), the spell step's starter spells, and a companion's
 // improvements and spell ranking (src/lib/srd/companion-build.ts).
+import type { Locale } from "@/lib/i18n/translate";
 import { asiPickAmount } from "@/lib/srd/race-asi";
 import { ALL_SKILLS, STANDARD_LANGUAGES } from "@/lib/content/mechanics";
 import { textKey } from "@/lib/language/text-logic";
@@ -239,7 +240,7 @@ export type FillContext = {
   // picks' labels read in the reader's language.
   t: (key: string, vars?: Record<string, string | number>) => string;
   // The reader's locale, for the skills' official names.
-  locale?: "en" | "fr" | "cs";
+  locale?: Locale;
   fields: BuilderDraftFields;
   derived: BuilderDerived;
   race: RaceOption | undefined;
@@ -268,7 +269,7 @@ export type FillRound = { patch: Partial<BuilderDraftFields>; filled: FilledPick
 
 // A skill's name in the reader's language (the official French words where
 // the dictionaries carry them), the English row standing in.
-const skillName = (id: string, locale: "en" | "fr" | "cs" = "en") => skillLabel(id, locale);
+const skillName = (id: string, locale: Locale = "en") => skillLabel(id, locale);
 const has = (list: readonly string[], name: string) => list.some((entry) => textKey(entry) === textKey(name));
 
 // Fills a slot-indexed list's blanks (and the slots past its end) from the
