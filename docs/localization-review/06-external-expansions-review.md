@@ -62,15 +62,15 @@ Počty přímo z `src/lib/content/expansion-descriptions-cs.json` v aktuální r
 | Tome of Heroes – odbornosti | 13 | 13 | 0 |
 | Tome of Heroes – rasy a podrasy | 40 | 40 | 0 |
 | Tome of Heroes – zázemí | 18 | 18 | 0 |
-| Tome of Heroes – archetypy | 76 | 65 | 0 |
+| Tome of Heroes – archetypy | 76 | 70 | 0 |
 | Deep Magic | 62 | 19 | 0 |
 | Vault of Magic | 249 | 48 | 0 |
 | Ostatní fixture | 24 | 8 | 0 |
-| **Celkem** | **638** | **331** | **36** |
+| **Celkem** | **638** | **336** | **36** |
 
 Historických 474 názvů (ToH 169, DM 56, VoM 249) obnoveno po spárování s přesným originálním slugem a názvem. Všech 87 historických plných návrhů (ToH 27, DM 12, VoM 48) prošlo porovnáním; opraveny významové odchylky a nedostatečné podmínky, nikoli pouhý přenos. Orientační souhrny nepovažujeme za plná pravidla. Nově 40 ras/podras, 29 magických předmětů ToH, další dostupné texty a názvy. U 36 záznamů nemagické výzbroje přeloženy dostupné číselné a typové údaje, bez vymyšlených zvláštních vlastností, které veřejný záznam neobsahuje.
 
-Zbývající dostupné v1 texty: ToH 11 archetypů (11 popisů); Deep Magic 495 popisů (452 názvů chybí); Vault of Magic 757 popisů (556 názvů chybí). Ostatní knihy pouze dílčí pokrytí podle fixture. To jsou nezpracované dostupné originály, nikoli blokace SQLite. Úplná inventura instalovaných položek a počty velkých zkrácených bestiářů zůstávají neověřené.
+Zbývající dostupné v1 texty: ToH 6 archetypů (6 popisů); Deep Magic 495 popisů (452 názvů chybí); Vault of Magic 757 popisů (556 názvů chybí). Ostatní knihy pouze dílčí pokrytí podle fixture. To jsou nezpracované dostupné originály, nikoli blokace SQLite. Úplná inventura instalovaných položek a počty velkých zkrácených bestiářů zůstávají neověřené.
 
 ### Dokončení kouzel Tome of Heroes
 
@@ -109,13 +109,15 @@ Doplněny Rifthopper, Sapper, School of Liminality, Serpent Domain a Shadow Doma
 
 Doplněny Smuggler, Snake Speaker, Soulspy, Spear of the Weald a Spellsmith včetně úplné tabulky sesílání Soulspy (18 řádků), omezení a variant. Četnosti kostek shodné. V této dílčí etapě 60/76 archetypů.
 
-Doplněny Spore Sorcery, Timeblade, Tunnel Watcher, Underfoot a Vermin Domain včetně metamagie, rasového omezení a tabulky sesílání Underfoot. Četnosti kostek shodné. Celkem 65/76 archetypů, zbývá 11. V této etapě doplněno 25 úplných dostupných popisů.
+Doplněny Spore Sorcery, Timeblade, Tunnel Watcher, Underfoot a Vermin Domain včetně metamagie, rasového omezení a tabulky sesílání Underfoot. Četnosti kostek shodné. V této dílčí etapě 65/76 archetypů.
+
+Doplněny Wasteland Strider, Wastelander, Way of Concordant Motion, Way of the Dragon a Way of the Humble Elephant včetně tabulek a variant. U Wasteland Strider označen chybějící číselný dosah přivolání; mechanika nedomýšlena. Četnosti kostek shodné. Celkem 70/76 archetypů, zbývá 6. V této etapě doplněno 25 úplných dostupných popisů.
 
 ## Načítání
 
 `contentName` a `localizeEntryCs` využívají existující lokalizační cestu. Přesná kombinace source=open5e, documentSlug, druh, slug a anglický název, u popisu také shoda uložených původních polí; jinak anglický fallback. Pouze zobrazovací `localized_desc`; nemění pravidla, identity ani databázi. ContentPicker/MultiContentPicker čtou české názvy, ale některé výběry předávají jen anglický název, zejména archetypy, odvozené rasové názvy a inline zázemí. Úplná propagace do UI, české vyhledávání a PDF nejsou potvrzené.
 
-Regresní testy v `entry-descriptions-cs.test.ts` pokrývají 638 názvů, původní fixture, 13 odborností, 29 předmětů, 36 stat záznamů, 91+19 kouzel, 48 předmětů VoM, 40 ras/podras, 18 zázemí a 65 archetypů; část testů používá uložená původní pole (nejde o nezávislý test živého importu). CI nebylo při zápisu výsledku potvrzené; lokální runtime bez clone nedostupný.
+Regresní testy v `entry-descriptions-cs.test.ts` pokrývají 638 názvů, původní fixture, 13 odborností, 29 předmětů, 36 stat záznamů, 91+19 kouzel, 48 předmětů VoM, 40 ras/podras, 18 zázemí a 70 archetypů; část testů používá uložená původní pole (nejde o nezávislý test živého importu). CI nebylo při zápisu výsledku potvrzené; lokální runtime bez clone nedostupný.
 
 Terminologie: [d20 PH 2014 vlastnosti](https://dnd5esrd.d20.cz/prirucka-hrace/7-kapitola.html), [boj](https://dnd5esrd.d20.cz/prirucka-hrace/9-kapitola.html), [stavy](https://dnd5esrd.d20.cz/prirucka-hrace/dodatek-a.html). Nedoložené názvy jsou vlastní překlady; nejsou vydávány za oficiální.
 
