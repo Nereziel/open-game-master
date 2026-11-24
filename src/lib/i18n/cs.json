@@ -1,5 +1,6 @@
 {
   "messages": {
+    "Spells copied into this table's Homebrew: {list}.": "Kouzla zkopírovaná do vlastní tvorby tohoto stolu: {list}.",
     "The board has nothing that happens on its main line, so there is no act to add.": "Na hlavní trase scénáře se nic neděje, takže není co přidat jako další dějství.",
     "This campaign already has a story arc the table has been playing, so the board's beats are left here rather than written over it.": "Tato kampaň již má rozehraný příběhový oblouk. Dějové body scénáře se nepřenesou, aby jej nepřepsaly.",
     "The arc needs something that says what this world is. Add a place or a piece of history and it can be written.": "Příběhový oblouk potřebuje popis světa. Přidejte místo nebo část jeho historie a oblouk bude možné vytvořit.",
@@ -13020,6 +13021,24 @@
     "1/long rest, for 1 minute you and adjacent allies have resistance to all damage.": "Jednou za dlouhý odpočinek máte ty a sousedící spojenci po dobu 1 minuty odolnost vůči všemu zranění."
   },
   "contexts": {
+    "{table}: its row for the table {name} now names this campaign's own {name}, since the source's stayed behind.": {
+      "workshop.import.result": "{table}: řádek odkazující na tabulku {name} nyní odkazuje na vlastní tabulku této kampaně {name}, protože zdrojová tabulka nebyla přenesena."
+    },
+    "{table}: its row for the table {name} names nothing here, since that table stayed behind.": {
+      "workshop.import.result": "{table}: řádek odkazující na tabulku {name} zde nemá cíl, protože tato tabulka nebyla přenesena."
+    },
+    "{table}: its row for the NPC {name} now names this campaign's own {name}, since the source's stayed behind.": {
+      "workshop.import.result": "{table}: řádek odkazující na CP {name} nyní odkazuje na vlastní CP této kampaně {name}, protože zdrojová postava nebyla přenesena."
+    },
+    "{table}: its row for the NPC {name} names nothing here, since that NPC stayed behind.": {
+      "workshop.import.result": "{table}: řádek odkazující na CP {name} zde nemá cíl, protože tato postava nebyla přenesena."
+    },
+    "{table}: its row for the lore entry {name} now names this campaign's own {name}, since the source's stayed behind.": {
+      "workshop.import.result": "{table}: řádek odkazující na záznam světa {name} nyní odkazuje na vlastní záznam této kampaně {name}, protože zdrojový záznam nebyl přenesen."
+    },
+    "{table}: its row for the lore entry {name} names nothing here, since that lore entry stayed behind.": {
+      "workshop.import.result": "{table}: řádek odkazující na záznam světa {name} zde nemá cíl, protože tento záznam nebyl přenesen."
+    },
     "New beats: {count}, added as act {act} after {previous} existing beats. Played and skipped beats and recapped acts remain untouched.": {
       "workshop.import.plan": "Nové dějové body: {count}, přidané jako dějství {act} za dosavadních {previous} bodů. Odehrané a přeskočené body ani již shrnutá dějství se nezmění."
     },
