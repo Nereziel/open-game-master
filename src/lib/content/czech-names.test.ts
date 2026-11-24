@@ -1,5 +1,8 @@
 import { describe, expect, it } from "vitest";
 import { CS_NAMES_BY_TABLE } from "./names-cs";
+import authoredFeats from "../srd/authored-feats.json";
+import classFeatures from "../srd/class-features.json";
+import { RESOURCE_CS_FEATURE_NAME_LOOKUP } from "../srd/resource-feature-names-cs";
 import { CZECH_SPELLS, CZECH_MONSTERS, CZECH_ITEMS } from "../rulebook/czech-terms";
 import { contentName, classFeatureName, subclassName, speciesTraitName, backgroundFeatureLabel } from "./names";
 import racesJson from "../srd/races.json";
@@ -67,6 +70,41 @@ describe("Czech content names through upstream helpers", () => {
     expect(CS_NAMES_BY_TABLE.conditions.restrained).toBe("Zadržený");
     expect(CS_NAMES_BY_TABLE.conditions.stunned).toBe("Ochromený");
     expect(CS_NAMES_BY_TABLE.conditions.incapacitated).toBe("Neschopný");
+  });
+
+  it("covers all authored feats without changing the English names", () => {
+    for (const feat of authoredFeats.feats) {
+      const key = feat.name.toLowerCase().replace(/[^a-z0-9]+/g, "-").replace(/^-+|-+$/g, "");
+      expect(CS_NAMES_BY_TABLE.feats[key], feat.name).toBeTruthy();
+      expect(contentName("feats", feat.name, "cs")).toBe(CS_NAMES_BY_TABLE.feats[key]);
+      expect(contentName("feats", feat.name, "en")).toBe(feat.name);
+    }
+  });
+
+  it("covers every bundled core class feature name", () => {
+    for (const [id, row] of Object.entries(classFeatures.classes)) {
+      const names = [...Object.values(row.levels).flat(), ...row.subclasses.flatMap(s => Object.values(s.levels).flat())];
+      for (const name of names) {
+        const key = name.toLowerCase().replace(/['’,.;:!?()[\]"]/g, "").replace(/[^a-z0-9]+/g, "-").replace(/^-+|-+$/g, "");
+        expect(CS_NAMES_BY_TABLE.classFeatures[id + ":" + key], id + ": " + name).toBeTruthy();
+        expect(classFeatureName(id, name, "cs")).toBe(CS_NAMES_BY_TABLE.classFeatures[id + ":" + key]);
+      }
+    }
+    expect(classFeatureName("rogue", "Fast Hands", "cs")).toBe("Rychlé ruce");
+  });
+
+  it("keeps unambiguous shared resource and class feature labels consistent", () => {
+    const groups = new Map<string, Set<string>>();
+    for (const [key, value] of Object.entries(CS_NAMES_BY_TABLE.classFeatures)) {
+      const suffix = key.slice(key.indexOf(":") + 1);
+      const group = groups.get(suffix) ?? new Set<string>();
+      group.add(value);
+      groups.set(suffix, group);
+    }
+    for (const [key, value] of Object.entries(RESOURCE_CS_FEATURE_NAME_LOOKUP)) {
+      const group = groups.get(key);
+      if (group?.size === 1) expect(group.has(value), key).toBe(true);
+    }
   });
 
   it("keeps homebrew names and unknown entries intact", () => {
