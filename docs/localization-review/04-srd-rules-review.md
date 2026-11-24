@@ -82,3 +82,15 @@ Commity: `c27332f4`, `120d2d75`, `3424a1ab`, `19121cec`, `0d6ef6ac`. Souhrny pra
 - [ ] Terminologie bez jednoznačného potvrzení na d20: zejména vlastní jména a některé názvy nestvůr, předmětů a kouzel citované v pravidlech. Plošná kontrola samostatných katalogů je mimo tento PR.
 
 Další terminologické zdroje: [PHB 7](https://dnd5esrd.d20.cz/prirucka-hrace/7-kapitola.html), [PHB 9](https://dnd5esrd.d20.cz/prirucka-hrace/9-kapitola.html), [Bestiář – úvod](https://dnd5esrd.d20.cz/bestiar/uvod.html).
+
+## Navazující terminologická revize (24. 11. 2026)
+
+- `monster-statistics`: sjednoceny příklady s názvy v `czech-terms.ts` a `czech-monster-notes-7.ts` (ďáblík, poletucha, vyverna, etin, skurut, gobr, gnol, ještěrec, pekelný ohař, rakšáza, hobit, berserkr); opraveny názvy géniů, yugolotů, mykonidů, Příšeří a gramatika výtvorů/slizů. `e01c465b`, `783c1012`.
+- `adventuring`: Baldurova brána a Hlubina namísto anglických názvů. `99fe24a8`.
+- `adventuring-gear`: construct → výtvor v pravidle protijedu. `4da8e9fb`.
+- `languages`, `nonplayer-characters`: Hobitština, hobit, drakorození, Temné říše. `109cdec5`.
+- `diseases`: výtvory, hobiti, otyughové, upřesněna imunita vůči přenosu choroby od konkrétního nakaženého. `d5c2516b`.
+
+Zdroje názvosloví: [Bestiář – úvod](https://dnd5esrd.d20.cz/bestiar/uvod.html), [PHB 4](https://dnd5esrd.d20.cz/prirucka-hrace/4-kapitola.html), [PHB 8](https://dnd5esrd.d20.cz/prirucka-hrace/8-kapitola.html), [DMG 8](https://dnd5esrd.d20.cz/pruvodce-pana-jeskyne/8-kapitola.html). Pravdivé vidění, mimozrakové vnímání a vidění ve tmě potvrzeny v české PHB i Bestiáři. Rozdíly PHB vs SRD (mluvčí Hlubinštiny, volitelný záchranný hod u Cackle Fever) ponechány podle [SRD 5.1](https://5thsrd.org/character/languages/) a [SRD 5.1 – Diseases](https://5esrd.old.opengamingnetwork.com/gamemastering/diseases/). Odlišnosti společného názvosloví (např. vyčerpání/únava, vnímání otřesů/citlivost na otřesy, Grimlok/divous) ponechány pro koordinované sjednocení v etapě 5, nikoli izolovaně přejmenovány.
+
+Regresní porovnání pěti dotčených souborů vůči `81118ae`: shodné ID, posloupnost čísel, interní odkazy a počet oddělovačů tabulek; bez zásahu do anglického katalogu, samostatných katalogů a enginu. Jde o kontrolu integrity změn, nikoli výsledek běhu testů. CI původního commitu bylo při kontrole ve frontě; CI nového headu zatím není potvrzené. Úplná křížová terminologická kontrola stále otevřená.
