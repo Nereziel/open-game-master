@@ -28,8 +28,7 @@ export type GenrePreset = {
   defaultTheme: string;
   // The localized theme line a creator seeds (genrePresetFor); the
   // prompt-facing fields above stay English.
-  defaultThemeFr?: string;
-  defaultThemeCs?: string;
+  defaultThemeByLocale?: Partial<Record<Locale, string>>;
   // The weather table the sky rolls from (src/lib/srd/weather.ts).
   climate: Climate;
 };
@@ -58,8 +57,7 @@ export const GENRE_PRESETS: GenrePreset[] = [
     raceHint: "Any SRD race fits this world.",
     nameHints: "Evocative medieval-fantasy names (Thornhollow, the Gilded Reach).",
     defaultTheme: "A storied realm of kingdoms, wild frontiers, and buried ruins",
-    defaultThemeFr: "Un royaume chargé d'histoire, des frontières sauvages et des ruines enfouies",
-    defaultThemeCs: "Říše s bohatou historií, plná království, divokého pohraničí a pohřbených ruin",
+    defaultThemeByLocale: { fr: "Un royaume chargé d'histoire, des frontières sauvages et des ruines enfouies", cs: "Říše s bohatou historií, plná království, divokého pohraničí a pohřbených ruin" },
   },
   {
     id: "dark_fantasy",
@@ -75,8 +73,7 @@ export const GENRE_PRESETS: GenrePreset[] = [
     raceHint: "Any SRD race fits this world, worn down by it.",
     nameHints: "Bleak, heavy names (Mourngate, the Ashen Fen).",
     defaultTheme: "A blighted land under a dying sun where old powers stir",
-    defaultThemeFr: "Une terre ravagée sous un soleil mourant où d'anciens pouvoirs s'éveillent",
-    defaultThemeCs: "Zpustošená země pod umírajícím sluncem, v níž se probouzejí prastaré síly",
+    defaultThemeByLocale: { fr: "Une terre ravagée sous un soleil mourant où d'anciens pouvoirs s'éveillent", cs: "Zpustošená země pod umírajícím sluncem, v níž se probouzejí prastaré síly" },
   },
   {
     id: "mystery",
@@ -93,8 +90,7 @@ export const GENRE_PRESETS: GenrePreset[] = [
       "Everyone in this world is human; put their profession, bearing, and secrets in the personality brief instead of a fantasy species.",
     nameHints: "Grounded town-and-manor names (Harlowe House, Wickfield).",
     defaultTheme: "A tangled web of secrets in a town where everyone has something to hide",
-    defaultThemeFr: "Une toile d'intrigues dans une bourgade où chacun a quelque chose à cacher",
-    defaultThemeCs: "Spletitá síť tajemství ve městě, kde má každý co skrývat",
+    defaultThemeByLocale: { fr: "Une toile d'intrigues dans une bourgade où chacun a quelque chose à cacher", cs: "Spletitá síť tajemství ve městě, kde má každý co skrývat" },
   },
   {
     id: "horror",
@@ -111,8 +107,7 @@ export const GENRE_PRESETS: GenrePreset[] = [
       "Everyone in this world is human; whatever is not human is a monster, not a companion.",
     nameHints: "Wrong-feeling names (Hollow Vale, the Chapel of Quiet).",
     defaultTheme: "An isolated place where something ancient and hungry has woken",
-    defaultThemeFr: "Un lieu isolé où quelque chose d'ancien et d'affamé s'est réveillé",
-    defaultThemeCs: "Odloučené místo, kde se probudilo cosi prastarého a hladového",
+    defaultThemeByLocale: { fr: "Un lieu isolé où quelque chose d'ancien et d'affamé s'est réveillé", cs: "Odloučené místo, kde se probudilo cosi prastarého a hladového" },
   },
   {
     id: "cyberpunk",
@@ -129,8 +124,7 @@ export const GENRE_PRESETS: GenrePreset[] = [
       "Everyone in this world is human; put the chrome, augments, and street identity in the personality brief instead of a fantasy species.",
     nameHints: "Corporate and street names (Kiroshi Spire, the Sump, NCPD grid 7).",
     defaultTheme: "A rain-slick megacity where corporations own everything but the shadows",
-    defaultThemeFr: "Une mégapole battue par la pluie où les corporations possèdent tout, sauf les ombres",
-    defaultThemeCs: "Deštěm smáčená metropole, kde korporace vlastní vše kromě stínů",
+    defaultThemeByLocale: { fr: "Une mégapole battue par la pluie où les corporations possèdent tout, sauf les ombres", cs: "Deštěm smáčená metropole, kde korporace vlastní vše kromě stínů" },
   },
   {
     id: "steampunk",
@@ -146,8 +140,7 @@ export const GENRE_PRESETS: GenrePreset[] = [
     raceHint: "Any SRD race fits this world; gnomes and dwarves run the workshops.",
     nameHints: "Victorian-industrial names (Cogsworth Yards, the Aetherium Exchange).",
     defaultTheme: "A smoke-wreathed empire of invention on the brink of a power struggle",
-    defaultThemeFr: "Un empire enfumé d'inventions, au bord de la lutte pour le pouvoir",
-    defaultThemeCs: "Říše vynálezů zahalená kouřem, na prahu boje o moc",
+    defaultThemeByLocale: { fr: "Un empire enfumé d'inventions, au bord de la lutte pour le pouvoir", cs: "Říše vynálezů zahalená kouřem, na prahu boje o moc" },
   },
   {
     id: "post_apocalyptic",
@@ -164,8 +157,7 @@ export const GENRE_PRESETS: GenrePreset[] = [
       "People here are human survivors, or mutants (use half_orc for a mutant); describe the mutation in the personality brief.",
     nameHints: "Salvaged names (the Glasslands, Depot 9, New Haven).",
     defaultTheme: "A shattered world generations after the Fall, where ruins hold both treasure and death",
-    defaultThemeFr: "Un monde brisé, des générations après la Chute, où les ruines recèlent aussi bien des trésors que la mort",
-    defaultThemeCs: "Rozvrácený svět několik generací po Pádu, kde ruiny ukrývají poklady i smrt",
+    defaultThemeByLocale: { fr: "Un monde brisé, des générations après la Chute, où les ruines recèlent aussi bien des trésors que la mort", cs: "Rozvrácený svět několik generací po Pádu, kde ruiny ukrývají poklady i smrt" },
   },
   {
     id: "custom",
@@ -193,6 +185,6 @@ export function genrePreset(id: string): GenrePreset {
 // turns with the creator's locale.
 export function genrePresetFor(id: string, locale: Locale = "en"): GenrePreset {
   const preset = genrePreset(id);
-  const theme = locale === "fr" ? preset.defaultThemeFr : locale === "cs" ? preset.defaultThemeCs : undefined;
+  const theme = preset.defaultThemeByLocale?.[locale];
   return theme ? { ...preset, defaultTheme: theme } : preset;
 }
