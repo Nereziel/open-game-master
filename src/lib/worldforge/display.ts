@@ -1,4 +1,5 @@
 import { defaultTypes, LINK_LABELS, type FieldDef, type WorldType } from "./model.ts";
+import type { OutlineAsset, OutlineItemKind } from "./outline.ts";
 import type { TranslateVars } from "@/lib/i18n/translate";
 
 type T = (key: string, vars?: TranslateVars) => string;
@@ -30,4 +31,19 @@ export function worldFieldLabel(t: T, type: WorldType, field: FieldDef): string 
 
 export function worldFieldOption(t: T, type: WorldType, field: FieldDef, value: string): string {
   return defaultField(type, field)?.options.includes(value) ? t(value, { context: "world.field.option" }) : value;
+}
+
+const itemKindKeys: Record<OutlineItemKind, string> = {
+  weapon: "Weapon", armor: "Armor", gear: "Gear", magic_item: "Magic item",
+};
+
+// Outline prose and basis names belong to the author/model, not gettext.
+export function worldOutlineAssetLine(t: T, row: OutlineAsset): string {
+  if (row.kind === "creature") {
+    const cr = row.cr > 0 && row.cr < 1 ? `1/${Math.round(1 / row.cr)}` : String(row.cr);
+    return row.basis
+      ? t("Creature, CR {cr}, built on the {basis} · Bestiary", { cr, basis: row.basis })
+      : t("Creature, CR {cr}, original · Bestiary", { cr });
+  }
+  return t("Item, {kind} · Homebrew", { kind: t(itemKindKeys[row.itemKind]) });
 }
