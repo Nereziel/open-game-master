@@ -10,7 +10,7 @@
 // stays English: only the words on screen change, the way skillLabel
 // (src/lib/srd/index.ts) already works for skills.
 
-import { textKey } from "@/lib/language/text-logic";
+import { textKey, searchKey } from "@/lib/language/text-logic";
 import type { Locale } from "@/lib/i18n/translate";
 import { srdRaceId } from "@/lib/srd/race-id";
 import { frTables } from "@/lib/i18n/fr-tables";
@@ -144,10 +144,18 @@ function keysFor(table: LocalizedNamesTable, row: NamedRow): string[] {
     // its hyphens as spaces, so both spellings are tried.
     return [
       gearKey(row.name),
-      ...(row.slug ? [slugKey(row.slug).replace(/-/g, " ")] : []),
+      ...(row.slug ? [slugKey(row.slug.replace(/^srd(?:-gear)?:/, "")).replace(/-/g, " ")] : []),
     ];
   }
-  return [...(row.slug ? [slugKey(row.slug)] : []), slugKey(row.name)];
+  return [...(row.slug ? [slugKey(row.slug.replace(/^srd(?:-gear)?:/, ""))] : []), slugKey(row.name)];
+}
+
+// Common maps cover the core and ODM's own authored content. A known
+// foreign document needs an exact source-specific translation instead.
+const COMMON_DOCUMENTS = new Set(["wotc-srd", "srd-2014", "odm-expanded", "odm"]);
+function canUseCommonNames(row: NamedRow): boolean {
+  return (!row.source || ["open5e", "srd", "bundled"].includes(row.source)) &&
+    (!row.documentSlug || COMMON_DOCUMENTS.has(row.documentSlug));
 }
 
 // An official name beside its English one. `ref` is a content row (matched
@@ -162,11 +170,10 @@ export function contentName(
   locale: Locale,
 ): string {
   const row: NamedRow = typeof ref === "string" ? { name: ref } : ref;
-  if (!NAME_TABLES[locale] || !row.name || (row.source && row.source !== "open5e")) {
-    return row.name;
-  }
+  if (!NAME_TABLES[locale] || !row.name || (row.source && !["open5e", "srd", "bundled"].includes(row.source))) return row.name;
   const translated = localizedExpansionName(table, row, locale);
   if (translated) return translated;
+  if (!canUseCommonNames(row)) return row.name;
   const tables: readonly LocalizedNamesTable[] = table === "items" ? ITEM_TABLES : [table];
   for (const each of tables) {
     for (const key of keysFor(each, row)) {
@@ -177,6 +184,20 @@ export function contentName(
     }
   }
   return row.name;
+}
+
+// Display search only: never use accent-folded matches as a stored identity.
+export function contentNameMatches(table: string, row: NamedRow, query: string, locale: Locale, classId = ""): boolean {
+  const needle = textKey(query);
+  if (!needle || textKey(row.name).includes(needle)) return true;
+  if (locale === "en") return false;
+  const kind = table === "races" ? "species" : table === "archetypes" ? "subclasses" : table;
+  const exact = localizedExpansionName(kind, row, locale);
+  const label = exact ?? (kind === "subclasses" && classId && canUseCommonNames(row)
+    ? subclassName(classId, row.name, locale)
+    : contentName(kind as LocalizedNamesTable | "items", row, locale));
+  const folded = searchKey(query);
+  return label !== row.name && Boolean(folded) && searchKey(label).includes(folded);
 }
 
 // A class feature's name ("Channel Divinity: Turn Undead", "Bonus
