@@ -1,4 +1,7 @@
 import { resolveMonster } from "@/lib/bestiary/index";
+import { getContentDb } from "@/lib/content/db";
+import { SRD_CREATURES } from "@/lib/srd/srd-creatures";
+import type { NamedRow } from "@/lib/content/names";
 import { getEntryDetail } from "@/lib/content/index";
 import { getCampaignById } from "@/lib/db/campaigns";
 import { getDatabase } from "@/lib/db/core";
@@ -22,6 +25,8 @@ export type BoundRecord = {
   // own item"). Empty when the record cannot be found.
   name: string;
   detail: string;
+  // Exact published identity for presentation only; never a reskin or homebrew.
+  catalog?: NamedRow;
   // The author's own record: its homebrew id, for opening it in its tool.
   // "" for a rulebook record.
   ownId: string;
@@ -75,7 +80,17 @@ export function resolveBinding(campaignId: string, binding: Binding): BoundRecor
     // A homebrew ref is that row or nothing; a rulebook slug is its entry.
     if (!monster || (ownId && monster.slug !== binding.ref)) return missing;
     const cr = (monster.stats as { cr?: unknown }).cr;
-    return { ...binding, name: monster.reskinName ?? monster.baseName, detail: cr === undefined || cr === null ? "" : `CR ${String(cr)}`, ownId, found: true };
+    let catalog: NamedRow | undefined;
+    if (!monster.reskinName && !monster.slug.startsWith(HOMEBREW)) {
+      const row = getEntryDetail("monsters", monster.slug);
+      if (row?.source === "open5e" && row.name === monster.baseName) {
+        catalog = { slug: row.slug, name: row.name, source: row.source, documentSlug: row.documentSlug };
+      } else if (!getContentDb()) {
+        const bundled = SRD_CREATURES.find((entry) => entry.slug === monster.slug && entry.name === monster.baseName);
+        if (bundled) catalog = { slug: bundled.slug, name: bundled.name, source: "bundled", documentSlug: "wotc-srd" };
+      }
+    }
+    return { ...binding, ...(catalog ? { catalog } : {}), name: monster.reskinName ?? monster.baseName, detail: cr === undefined || cr === null ? "" : `CR ${String(cr)}`, ownId, found: true };
   }
   if (ownId) {
     for (const author of authors) {
@@ -86,7 +101,7 @@ export function resolveBinding(campaignId: string, binding: Binding): BoundRecor
   }
   try {
     const item = getEntryDetail("items", binding.ref);
-    return item ? { ...binding, name: item.name, detail: "From the rulebook", ownId, found: true } : missing;
+    return item ? { ...binding, ...(item.source === "open5e" ? { catalog: { slug: item.slug, name: item.name, source: item.source, documentSlug: item.documentSlug } } : {}), name: item.name, detail: "From the rulebook", ownId, found: true } : missing;
   } catch {
     // No content pack on this server: a rulebook item cannot be read.
     return missing;
