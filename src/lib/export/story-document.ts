@@ -7,6 +7,7 @@ import { listQuests } from "@/lib/db/quests";
 import { questLogForExport } from "@/lib/dm/quest-logic";
 import { slugOf } from "@/lib/language/text-logic";
 import { translate, type Locale } from "@/lib/i18n/translate";
+import { localeTag } from "@/lib/i18n/locale";
 import type { TableLanguage } from "@/lib/schemas/game-settings-options";
 
 // A serializer-independent view of a campaign's story, gathered once from the
@@ -169,7 +170,7 @@ export function storyPresentation(doc: StoryDocument) {
     contents: t("Contents"),
     questLog: t("Quest Log"),
     transcript: t("Transcript"),
-    footer: t("Exported from Open Game Master on {date}.", { date: new Date(doc.meta.exportedAt).toLocaleString(locale) }),
+    footer: t("Exported from Open Game Master on {date}.", { date: new Date(doc.meta.exportedAt).toLocaleString(localeTag(locale)) }),
   };
 }
 
