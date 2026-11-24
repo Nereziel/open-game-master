@@ -13,7 +13,7 @@ Křížová kontrola existujících českých překladů, nikoli opakování kom
 - [ ] Doložit auditovaná místa, rozhodnutí, výjimky a regresní testy pro sjednocené termíny.
 
 ## Stav
-Provedena další rozsáhlá revize překladových dat. Úplná individuální kontrola všech názvů, integrace #114 a finální CI zatím nejsou potvrzeny. Nepřidávat další lokalizační architekturu; zachovat stávající vzor francouzštiny. Před dokončením aktualizovat větev o předchozí sloučené etapy; doporučené pořadí 4 → 5 → 6 → 7.
+Provedena další rozsáhlá revize překladových dat. Aktuální revize #114 byla začleněna; úplná individuální kontrola všech názvů a finální CI zatím nejsou potvrzeny. Nepřidávat další lokalizační architekturu; zachovat stávající vzor francouzštiny. Před dokončením aktualizovat větev o předchozí sloučené etapy; doporučené pořadí 4 → 5 → 6 → 7.
 
 ## Provedený audit (24. 11. 2026)
 
@@ -24,7 +24,8 @@ Provedena další rozsáhlá revize překladových dat. Úplná individuální k
 - [x] Doplněny regresní případy do stávajících testů `czech-names.test.ts` a `czech-locale.test.ts`.
 - [ ] Spustit regresní testy, typecheck, lint a build; pro poslední commit nebyl nalezen žádný PR workflow run. Testy nebyly lokálně spuštěny.
 - [ ] Dokončit jednotlivé ověření zbývajících názvů podle d20 a kontextovou kontrolu stavů, schopností, vybavení, odborností, skloňování a dosud nepokrytých zdrojů.
-- [ ] Po začlenění #114 aplikovat níže uvedené změny na aktualizované kapitoly, poté ověřit celý katalog a UI.
+- [x] Na začleněném snapshotu #114 aplikovat níže uvedené cílené změny.
+- [ ] Po finálním sloučení #114 ověřit případné nové změny a celý katalog a UI.
 - **Mimo rozsah podle pokynu uživatele:** PDF: chybí lokalizační cesta; `src/lib/pdf/character-sheet-pdf.ts` má anglické popisky a standardní WinAnsi fonty, `sanitize` odstraňuje část českých znaků. `src/lib/pdf/download.ts` nepředává locale. Nutno napojit stávající katalog, zajistit české znaky a prověřit export. PDF není hotové.
 
 ### Rozhodnutí a výjimky
@@ -48,7 +49,7 @@ Provedena další rozsáhlá revize překladových dat. Úplná individuální k
 
 Zdroje: [Příručka hráče 2014](https://dnd5esrd.d20.cz/prirucka-hrace/), [Bestiář 2014](https://dnd5esrd.d20.cz/bestiar/), [Průvodce Pána jeskyně 2014](https://dnd5esrd.d20.cz/pruvodce-pana-jeskyne/), [kartotéka kouzel d20](https://kartoteky.d20.cz/dnd/kouzla). Při rozdílu v názvosloví mezi zdroji preferovat název konkrétního záznamu z příslušné příručky. U obrů ponechat existující názvy předmětů opasek/lektvar síly ledového obra podle DMG; v názvu samotné nestvůry preferovat Mrazivý obr. Omotávací lano je samostatný předmět, nikoliv kouzlo Entangle; Mystický výboj (Arcane Jolt) je samostatná schopnost, nikoliv Eldritch Blast. Tato místa se nesmějí hromadně nahrazovat.
 
-### Fronta změn po #114 (zatím bez editace dotčených kapitol)
+### Původní fronta změn po #114 (výsledky viz níže)
 - `czech-full-rules-3.ts`: názvy stavů Oslepený, Okouzlený, Ohlušený, Vyčerpání, Omráčený a odpovídající tvary ve vysvětleních; sjednotit s 2014 a rozlišovat obecné vyčerpání od stavu Únava.
 - `czech-full-rules-9.ts`: čtyři výskyty válečné zbraně v tabulce multiklasování.
 - `czech-full-rules-11.ts`: čtyři výskyty válečných zbraní v kapitole o zbraních.
@@ -62,7 +63,7 @@ Zdroje: [Příručka hráče 2014](https://dnd5esrd.d20.cz/prirucka-hrace/), [Be
 - `3501b9b` — české zobrazování typů zranění, hodů a regresní případy.
 - `3055b3a` — Pravdivé vidění v poznámce ke kouzlu.
 
-PR #114 je stále otevřený; tato větev zůstává Draft, bez merge. Etapu #112-5 zatím neoznačovat jako dokončenou.
+PR #114 je stále otevřený; tato větev zůstává Draft, bez merge do cílové větve. Etapu #112-5 zatím neoznačovat jako dokončenou.
 
 ## Pokračování — pouze překladová data
 
@@ -78,7 +79,20 @@ Rozsah upřesněn uživatelem: neopravovat logiku aplikace, načítání lokaliz
 - [x] Primární zdroje přímo ověřeny: [Dodatek A – stavy](https://dnd5esrd.d20.cz/prirucka-hrace/dodatek-a.html), [kapitola 5 – vybavení](https://dnd5esrd.d20.cz/prirucka-hrace/5-kapitola.html), [kapitola 11 – kouzla](https://dnd5esrd.d20.cz/prirucka-hrace/11-kapitola.html), [Obři](https://dnd5esrd.d20.cz/bestiar/obri.html), [seznam nestvůr](https://dnd5esrd.d20.cz/pruvodce-pana-jeskyne/dodatek-B.html), [poklad](https://dnd5esrd.d20.cz/pruvodce-pana-jeskyne/7-kapitola.html).
 - [x] Výjimky: běžné vyčerpání zásob, nábojů nebo použití se nemění na stav Únava. Sražení k zemi jako děj, oslepnutí/ohluchnutí jako děj a chytání balvanu jako akce nejsou slepě přejmenovávány. Válečná sekera a Válečné kladivo jsou vlastní názvy zbraní; kategorie zbraní je vojenské. Mrazivý obr je název konkrétního statbloku, i když seznamy a názvy některých předmětů používají ledový obr.
 - [ ] Zbývá úplná individuální kontrola termínů mimo cílený průchod, především všech názvů odborností a schopností a méně obvyklých variant v rozšířeních; externí balíčky souběžně řeší #116.
-- [ ] Kapitoly #114: čeká se na začlenění, bez zásahů z této větve. Stav #114 při kontrole: otevřený, nesloučený.
+- [x] Kapitoly aktuálního snapshotu #114 začleněny a terminologicky upraveny; viz následující část. PR #114 je otevřený, nesloučený.
 - [ ] Testy nebyly spuštěny; technické ověření mimo tento překladový průchod.
 
 Nové commity: `83fd932`, `57aa1db`, `35c4505`, `ee67b00` (statbloky), `f96409b` (oddělení logiky), `c96088e`, `f0f9ea5` (kouzla), `62cddfa`, `92b5ad9`, `3422af0`, `76d2447`, `8a9e20d`, `f0d0d50` (povolání, guidance a UI), `57c7c68` (předměty), `c775c9b`, `e83a5aa` (poznámky), `74b600f` (Ještěr, Trojzubec).
+
+## Odbornosti, schopnosti a integrace #114 (24. 11. 2026)
+
+- [x] Všech 72 názvů z `src/lib/srd/authored-feats.json` má český klíč v tabulce feats (původně 7, doplněno 65). Názvy z PHB 2014 a Xanathara porovnány s [PHB, kap. 6](https://dnd5esrd.d20.cz/prirucka-hrace/6-kapitola.html) a [Xanatharem, kap. 1](https://dnd5esrd.d20.cz/xanathar/1-kapitola.html). Popisy odborností nejsou součástí této kontroly názvů.
+- Vlastní pracovní názvy pro 15 odborností z Tashy bez jednoznačně ověřeného českého zdroje: Fey Touched, Shadow Touched, Telekinetic, Telepathic, Eldritch Adept, Metamagic Adept, Skill Expert, Chef, Crusher, Piercer, Slasher, Poisoner, Gunner, Fighting Initiate, Artificer Initiate. Přeloženy významově, nikoli označeny za doložené názvy d20.
+- [x] Všech 211 unikátních dvojic povolání–schopnost ze `class-features.json` má český název. Porovnáno s 12 českými kapitolami povolání; sjednoceny Rychlé ruce, Zvířecí podoba (vylepšení) a Rozený průzkumník (vylepšení). Zdroj: [PHB, kap. 3](https://dnd5esrd.d20.cz/prirucka-hrace/3-kapitola.html). Samostatné názvy vylepšení na kartách nemusejí mít vlastní nadpis v knize.
+- [x] Porovnáno 1544 klíčů classFeatures s 417 klíči resourceFeatureNames. Sjednoceno 111 odlišných hodnot u jednoznačně párovaných názvů; po opravách všech 372 jednoznačných společných klíčů souhlasí. Vlastní žánrová pojmenování zůstávají vlastními překlady; shoda tabulek není individuální revizí významu každé externí schopnosti.
+- [x] Integrační merge commit `33d924b` převzal všech 24 souborů z #114 na revizi `c654d347`; před integrací žádný překryv změněných souborů. #114 nebyl sloučen do cílové větve. Při případné další změně #114 synchronizovat znovu.
+- [x] Prohledáno 21 integrovaných souborů pravidel, companion a extensions. Vojenské zbraně, Pravdivé vidění a uvedené názvy kouzel již byly v dotčených kapitolách sjednoceny. Ve třech kapitolách a companion opraveny zbývající názvy stavů, únava a zmámení. Číselné tokeny a odkazy page: ve všech čtyřech změněných souborech zůstaly identické s #114.
+- [x] Přidány tři regresní testy: odbornosti, schopnosti základních povolání, shoda jednoznačných společných názvů. Nezávislá strukturální kontrola dat: 0 chybějících názvů odborností, 0 chybějících názvů schopností základních povolání, 0 neshod jednoznačných společných klíčů.
+- [ ] Vitest, typecheck, lint a build nebyly v tomto průchodu spuštěny. Úplné individuální ověření zbývajících externích schopností a vlastní názvy Tashy zůstávají otevřené.
+
+Commity: `c7b2a9a`, `33d924b`, `01c8a6e`, `b275f8e`, `a373d27`, `603d895`, `5f2684c`, `22d3ea8`, `592510b`. Žádná nová aplikační logika.
