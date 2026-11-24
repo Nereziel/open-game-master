@@ -94,7 +94,7 @@ test("a vial of basic poison is its row, by any of the row's spellings or its sr
 // The same thing at four tables without bundled reverse lookup: the English
 // row's name, then the name a player writes in Italian, Spanish and German,
 // read by no word of it and by the tags it carries. French SRD names like
-// "Torche" now resolve through ITEM_EN_BY_FR.
+// "Torche" now resolve through the shared localized item-name index.
 const TABLES = [
   ["Potion of Healing", "Pozione di guarigione", "Poción de curación", "Heiltrank"],
   ["Torch", "Torcia", "Antorcha", "Fackel"],
