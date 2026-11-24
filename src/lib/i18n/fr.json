@@ -1,5 +1,36 @@
 {
   "messages": {
+    "Could not reach the server to search. Type again to retry.": "Impossible de joindre le serveur pour la recherche. Saisissez à nouveau pour réessayer.",
+    "Nothing matched \"{query}\". Try fewer letters.": "Aucun résultat pour « {query} ». Essayez avec moins de lettres.",
+    "fully restored": "entièrement rétabli",
+    "{hp}/{max} hit points": "{hp}/{max} points de vie",
+    "rested": "repos terminé",
+    "A long rest": "Un repos long",
+    "A short rest": "Un repos court",
+    "Select anywhere, or press Esc, to return to the table": "Cliquez n’importe où ou appuyez sur Échap pour revenir à la table",
+    "The shop is not where the party is now.": "La boutique ne se trouve pas là où le groupe est actuellement.",
+    "{name} cannot trade right now.": "{name} ne peut pas commercer actuellement.",
+    "{shop} does not stock {item}.": "{shop} ne propose pas : {item}.",
+    "{shop} has only {qty} of {item}.": "{shop} n’a que {qty} exemplaire(s) de {item}.",
+    "Not enough money: {item} x{qty} costs {price}; {name} has {purse}.": "Fonds insuffisants : {item} ×{qty} coûte {price} ; {name} possède {purse}.",
+    "{name} cannot carry the purchase.": "{name} ne peut pas porter cet achat.",
+    "{shop} does not buy items.": "{shop} ne rachète pas d’objets.",
+    "{name} does not carry {item}.": "{name} ne possède pas sur soi : {item}.",
+    "This cursed item cannot be sold.": "Cet objet maudit ne peut pas être vendu.",
+    "{shop} does not buy this kind of magic item. Only potions and scrolls can be sold in shops.": "{shop} ne rachète pas ce type d’objet magique. Seuls les potions et les parchemins peuvent être vendus en boutique.",
+    "{name} cannot haggle right now.": "{name} ne peut pas marchander actuellement.",
+    "{name} has already haggled at {shop}.": "{name} a déjà marchandé chez {shop}.",
+    "The keeper will not accept another deception attempt. Try persuasion or intimidation.": "Le marchand ne se laissera plus tromper. Essayez la persuasion ou l’intimidation.",
+    "{name} cannot make that check.": "{name} ne peut pas effectuer ce test.",
+    "No such shop.": "Cette boutique n’existe pas.",
+    "Say what you are doing at the counter.": "Indiquez ce que vous voulez faire au comptoir.",
+    "You have no character to trade with.": "Vous n’avez pas de personnage pour commercer.",
+    "already at their lowest": "déjà au plus bas",
+    "already at their highest": "déjà au plus haut",
+    "a step higher, as high as they go": "un cran plus haut, au maximum",
+    "a step lower": "un cran plus bas",
+    "a step higher": "un cran plus haut",
+    "two steps higher": "deux crans plus haut",
     "{class} level {level}": "{class}, niveau {level}",
     "{class} level {level}, halved ({part})": "{class}, niveau {level}, divisé par deux ({part})",
     "{line} (never fewer than 1)": "{line} (minimum 1)",
@@ -11233,6 +11264,30 @@
     "Unlimited": "Illimitée"
   },
   "contexts": {
+    "magic_item": {
+      "content.itemKind": "objet magique"
+    },
+    "gear": {
+      "content.itemKind": "équipement"
+    },
+    "armor": {
+      "content.itemKind": "armure"
+    },
+    "shield": {
+      "item.armorCategory": "bouclier"
+    },
+    "exotic": {
+      "item.weaponCategory": "exotique"
+    },
+    "firearm": {
+      "item.weaponCategory": "à feu"
+    },
+    "martial": {
+      "item.weaponCategory": "de guerre"
+    },
+    "simple": {
+      "item.weaponCategory": "courante"
+    },
     "{table}: its row for the table {name} now names this campaign's own {name}, since the source's stayed behind.": {
       "workshop.import.result": "{table} : sa ligne pour la table {name} désigne désormais la table {name} de cette campagne, car celle de la source n’a pas été importée."
     },
@@ -11648,9 +11703,11 @@
       "glossary.option": "Poudre noire"
     },
     "heavy": {
+      "item.armorCategory": "lourde",
       "glossary.option": "Lourde"
     },
     "light": {
+      "item.armorCategory": "légère",
       "glossary.option": "Légère"
     },
     "loading": {
@@ -11922,6 +11979,7 @@
       "builder.undo.noun.level": "le niveau"
     },
     "weapon": {
+      "content.itemKind": "arme",
       "table.hand.attack.offhand.word.weapon": "une arme"
     },
     "class": {
@@ -12548,6 +12606,7 @@
       "pdf.stop": "Arrêter"
     },
     "medium": {
+      "item.armorCategory": "intermédiaire",
       "workbench.band.medium": "moyen"
     },
     "Could not save that.": {
