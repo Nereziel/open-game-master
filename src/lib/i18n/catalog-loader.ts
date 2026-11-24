@@ -1,5 +1,7 @@
 // Load only the selected locale's catalog and name tables in the browser.
-import { localizedTables, installLocalizedTables } from "./localized-tables.ts";
+import { localizedTables } from "./localized-tables.ts";
+import { installCsTables } from "./cs-tables.ts";
+import { installFrTables } from "./fr-tables.ts";
 import { catalogInstalled, installCatalog, type Locale } from "./translate.ts";
 
 const loaders: Record<Exclude<Locale, "en">, () => Promise<void>> = {
@@ -7,7 +9,7 @@ const loaders: Record<Exclude<Locale, "en">, () => Promise<void>> = {
     const [catalog, names, resources, expansions] = await Promise.all([
       import("./cs.json"), import("../content/names-cs.ts"), import("../srd/class-resources-cs-data.ts"), import("../content/expansion-names-cs.json"),
     ]);
-    installLocalizedTables("cs", { names: names.CS_NAMES_BY_TABLE, guidance: resources.RESOURCE_CS_GUIDANCE, expansionNames: expansions.default ?? expansions });
+    installCsTables({ names: names.CS_NAMES_BY_TABLE, guidance: resources.RESOURCE_CS_GUIDANCE, expansionNames: expansions.default ?? expansions });
     installCatalog("cs", catalog.default ?? catalog);
   },
   fr: async () => {
@@ -15,7 +17,7 @@ const loaders: Record<Exclude<Locale, "en">, () => Promise<void>> = {
       import("./fr.json"), import("../content/names-fr.ts"),
       import("../content/names-fr-translated.ts"), import("../srd/class-resources-fr-data.ts"),
     ]);
-    installLocalizedTables("fr", { names: names.FR_NAMES_BY_TABLE, translated: translated.FR_TRANSLATED_NAMES_BY_TABLE, resources: resources.RESOURCE_FR });
+    installFrTables({ names: names.FR_NAMES_BY_TABLE, translated: translated.FR_TRANSLATED_NAMES_BY_TABLE, resources: resources.RESOURCE_FR });
     installCatalog("fr", (catalog as { default?: unknown }).default ?? catalog);
   },
 };
