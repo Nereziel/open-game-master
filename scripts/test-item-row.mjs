@@ -322,7 +322,20 @@ test("an item whose own name and srdName both name rows reads the srdName row; E
 // The official French SRD names (src/lib/srd/item-names-localized.ts) are rows by
 // themselves: a French table's "Cotte de mailles" is worn as Chain Mail with
 // no srdName, a bonus in the name kept, and no English name changes meaning.
-test("an official French SRD item name is its row without srdName, and every English item name reads as before", () => {
+test("localized SRD item names resolve without srdName and English names retain their identity", () => {
+  for (const [name, english] of [
+    ["Dlouhý meč", "Longsword"],
+    ["Épée longue", "Longsword"],
+    ["Drátěná zbroj", "Chain Mail"],
+    ["Cotte de mailles", "Chain Mail"],
+    ["Ochranný plášť", "Cloak of Protection"],
+    ["Cape de protection", "Cloak of Protection"],
+    ["Lance", "Lance"],
+  ]) {
+    assert.deepEqual(srdNameFor(name, "grant_item"), { srdName: english }, name);
+    assert.match(srdNameFor(name + " +1", "grant_item").error ?? "", /carries a bonus, which belongs in name/, name);
+  }
+  assert.match(srdNameFor("Neznámý meč", "grant_item").error ?? "", /no SRD or pack item is called/);
   assert.equal(matchWeapon({ name: "Dlouhý meč" })?.name, "Longsword");
   assert.equal(matchWeapon({ name: "Dlouhý meč +1" })?.name, "Longsword");
   assert.equal(matchArmor({ name: "Drátěná zbroj" })?.name, "Chain Mail");
@@ -343,8 +356,8 @@ test("an official French SRD item name is its row without srdName, and every Eng
   const table = JSON.parse(readFileSync(new URL("../src/lib/classes/item-tags.json", import.meta.url), "utf8"));
   for (const [name] of table.items) {
     const key = textKey(withoutBonus(name));
-    const french = ITEM_EN_BY_LOCALIZED_NAME[key];
-    assert.ok(!french || textKey(french) === key, `the English "${name}" would read as "${french}"`);
+    const localized = ITEM_EN_BY_LOCALIZED_NAME[key];
+    assert.ok(!localized || textKey(localized) === key, `the English "${name}" would read as "${localized}"`);
   }
   const built = spawnSync(process.execPath, [fileURLToPath(new URL("./build-names-fr.mjs", import.meta.url)), "--check"], { encoding: "utf8" });
   assert.equal(built.status, 0, `build-names-fr --check: ${built.stderr}`);
