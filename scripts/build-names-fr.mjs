@@ -68,6 +68,9 @@ const args = process.argv.slice(2);
 const check = args.includes("--check");
 const fromAt = args.indexOf("--from");
 const fromDir = fromAt >= 0 ? args[fromAt + 1] : null;
+if (check && fromAt >= 0) {
+  throw new Error("--check is read-only; use --from in a separate generation run");
+}
 if (fromAt >= 0 && !fromDir) {
   throw new Error("--from needs the extraction folder that holds the <table>-fr.json files");
 }
@@ -170,10 +173,12 @@ if (fromDir) {
 // The English tables load the item math, which imports the item map: a
 // checkout without one starts from an empty map, which the tables never read.
 if (!existsSync(itemFile)) {
+  if (check) throw new Error("Missing generated item-names-fr.ts; run node scripts/build-names-fr.mjs");
   writeFileSync(itemFile, "export const ITEM_EN_BY_FR: Readonly<Record<string, string>> = {};\n", "utf8");
 }
 const sharedItemFile = join(root, "src", "lib", "srd", "item-names-localized.ts");
 if (!existsSync(sharedItemFile)) {
+  if (check) throw new Error("Missing generated item-names-localized.ts; run node scripts/build-names-fr.mjs");
   writeFileSync(sharedItemFile, "export const ITEM_EN_BY_LOCALIZED_NAME: Readonly<Record<string, string>> = {};\n", "utf8");
 }
 const { FR_NAMES_BY_TABLE } = await import(pathToFileURL(namesFile).href);
@@ -258,7 +263,9 @@ ${record("ITEM_EN_BY_FR", sorted, "Readonly<Record<string, string>>")}`;
 
 // Shared reverse index for supported name tables, preserving English rows.
 const { CS_NAMES_BY_TABLE } = await import("../src/lib/content/names-cs.ts");
-const localizedItems = new Map(Object.entries(sorted));
+// Carry rejected/ambiguous candidates into the shared pass: once ambiguous,
+// a name must not become valid because a later locale repeats one candidate.
+const localizedItems = new Map(items);
 const otherNameTables = [CS_NAMES_BY_TABLE];
 const mechanicalEnglish = { ...ENGLISH, magicitems: (slug) => tagBySlug.get(slug) };
 for (const tables of otherNameTables) {
@@ -270,7 +277,7 @@ for (const tables of otherNameTables) {
       if (localizedKey === textKey(english)) continue;
       const clash = englishByKey.get(localizedKey);
       if (clash && textKey(clash) !== textKey(english)) continue;
-      if (localizedItems.has(localizedKey) && textKey(localizedItems.get(localizedKey) ?? "") !== textKey(english)) {
+      if (localizedItems.has(localizedKey) && (localizedItems.get(localizedKey) === null || textKey(localizedItems.get(localizedKey)) !== textKey(english))) {
         localizedItems.set(localizedKey, null);
         continue;
       }
