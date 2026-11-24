@@ -2170,7 +2170,28 @@ export const CS_NAMES_BY_TABLE: Record<string, Record<string, string>> = {
     "artificer:battle-ready": "Připravenost k boji",
     "artificer:steel-defender": "Ocelový obránce",
     "artificer:arcane-jolt": "Mystický výboj",
-    "artificer:improved-defender": "Vylepšený obránce"
+    "artificer:improved-defender": "Vylepšený obránce",
+    "grave_knight:deathly-pact-blade": "Čepel smrtelného paktu",
+    "grave_knight:sepulchral-aura": "Hrobová aura",
+    "grave_knight:oathbound-casting": "Sesílání přísah",
+    "grave_knight:court": "Dvůr",
+    "grave_knight:extra-attack": "Útok navíc",
+    "grave_knight:grave-grip": "Hrobový stisk",
+    "grave_knight:knight-of-dust": "Rytíř prachu",
+    "grave_knight:barrow-ward": "Ochrana mohyly",
+    "grave_knight:deathless-vigor": "Nehynoucí vitalita",
+    "grave_knight:reaping-blade": "Čepel žence",
+    "grave_knight:sepulchral-dominion": "Hrobová nadvláda",
+    "grave_knight:the-tomb-provides": "Dar hrobky",
+    "grave_knight:wight-iron-will": "Železná vůle nemrtvého",
+    "grave_knight:squire-of-bones": "Kostěný panoš",
+    "grave_knight:champion-of-the-quiet-court": "Šampion tichého dvora",
+    "grave_knight:deathless-champion": "Nehynoucí šampion",
+    "grave_knight:rose-thorn-oath": "Přísaha růžového trnu",
+    "grave_knight:funerary-grace": "Pohřební důstojnost",
+    "grave_knight:petal-fall": "Pád okvětních lístků",
+    "grave_knight:garden-of-grief": "Zahrada žalu",
+    "grave_knight:the-last-rose": "Poslední růže",
   },
   "speciesTraits": {
     "dwarf:darkvision": "Vidění ve tmě",
@@ -2703,6 +2724,7 @@ export const CS_NAMES_BY_TABLE: Record<string, Record<string, string>> = {
     "artificer:artillerist": "Dělostřelec",
     "artificer:artillerist-artificer": "Dělostřelec",
     "artificer:battle-smith": "Bojový kovář",
-    "artificer:battlesmith": "Bojový kovář"
+    "artificer:battlesmith": "Bojový kovář",
+    "grave_knight:court-of-the-wilted-rose": "Dvůr zvadlé růže",
   }
 };
