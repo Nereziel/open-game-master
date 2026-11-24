@@ -32,7 +32,7 @@ Když držíš tento štít, máš výhodu k záchranným hodům proti kouzlům 
 
 Tato černá koule o průměru 2 stopy je otvorem v mnohovesmíru. Vznáší se v prostoru a stabilizuje ji okolní magické pole.
 
-Koule naprosto zničí veškerou hmotu, kterou prochází nebo která prochází jí. Výjimkou jsou artefakty. Pokud není artefakt náchylný ke zranění způsobenému *koulí zničení*, projde koulí bez újmy. Cokoli jiného, co se koule dotkne, ale není jí zcela pohlceno a zničeno, utrpí silové zranění 4k10.
+Koule naprosto zničí veškerou hmotu, kterou prochází nebo která prochází jí. Výjimkou jsou artefakty. Pokud není artefakt náchylný ke zranění způsobenému *koulí anihilace*, projde koulí bez újmy. Cokoli jiného, co se koule dotkne, ale není jí zcela pohlceno a zničeno, utrpí silové zranění 4k10.
 
 Dokud ji někdo neovládne, koule zůstává na místě. Pokud jsi do 60 stop od neovládané koule, můžeš jako akci provést ověření Inteligence (Mystiky) se SO 25. Při úspěchu se koule vznášením pohne směrem podle tvé volby až o počet stop rovný 5 × tvá oprava Inteligence (nejméně 5 stop). Při neúspěchu se koule pohne o 10 stop k tobě. Tvor, do jehož prostoru koule vstoupí, musí uspět v záchranném hodu na Obratnost se SO 13, jinak se ho dotkne a utrpí silové zranění 4k10.
 
@@ -40,7 +40,7 @@ Pokusíš-li se ovládnout kouli, kterou už řídí jiný tvor, provedeš ově�
 
 Pokud se koule dotkne portálu mezi sférami, například portálu vytvořeného kouzlem *brána*, nebo mimodimenzionálního prostoru, například v *přenosném otvoru*, PJ náhodně určí, co se stane, podle následující tabulky.
 
-**Tabulka – Koule zničení**
+**Tabulka – Koule anihilace**
 
 | k100 | Výsledek |
 |------|----------|
