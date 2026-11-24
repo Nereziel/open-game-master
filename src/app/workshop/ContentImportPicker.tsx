@@ -16,7 +16,7 @@ import {
   type ImportKind,
   type ImportPlan,
 } from "@/lib/workshop/import";
-import { importKindLabel, importWarningText } from "@/lib/workshop/import-display";
+import { importKindLabel, importWarningText, importResultNotesText, type ImportResultNote } from "@/lib/workshop/import-display";
 import type { ImportSourceSummary } from "@/app/workshop/types";
 import { pluralOf } from "@/lib/messages-logic";
 
@@ -518,13 +518,14 @@ function importNote(data: Record<string, unknown>, t: ImportT): string {
     names(data.worldConflicts).join(" "),
     // Roll-table rows whose table, NPC or lore entry stayed behind and that
     // now name this campaign's own of that name, or nothing.
-    names(data.referenceNotes).join(" "),
+    importResultNotesText(names(data.referenceNotes), Array.isArray(data.referenceNoteDisplays) ? data.referenceNoteDisplays as ImportResultNote[] : [], t).join(" "),
     // Hand-built monsters and items this table's authors did not have,
     // copied in so what names them still works (WF-07, WF-17).
     names(data.monstersBrought).length ? t("Copied into this table's bestiary: {list}.", { list: names(data.monstersBrought).join(", ") }) : "",
     names(data.monstersReused).length ? t("Already in this table's bestiary: {list}.", { list: names(data.monstersReused).join(", ") }) : "",
     names(data.itemsBrought).length ? t("Copied into this table's Homebrew: {list}.", { list: names(data.itemsBrought).join(", ") }) : "",
     names(data.itemsReused).length ? t("Already in this table's Homebrew: {list}.", { list: names(data.itemsReused).join(", ") }) : "",
+    names(data.spellsBrought).length ? t("Spells copied into this table's Homebrew: {list}.", { list: names(data.spellsBrought).join(", ") }) : "",
     offered.length ? t("Offered to players here: {list}.", { list: offered.join(", ") }) : "",
   ];
   return lines.filter(Boolean).join(" ");
