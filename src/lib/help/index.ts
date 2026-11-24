@@ -121,25 +121,25 @@ export function describeFeature(classId: string, subclass: string, name: string,
   // option list, before any of the feature tables are consulted.
   const option = findOptionByFeatureName(name);
   if (option) {
-    if (locale === "cs") {
-      const description = translate(locale, option.d);
-      return option.req ? `${description} (Vyžaduje: ${translate(locale, option.req)}.)` : description;
-    }
-    return option.req ? `${option.d} (Requires ${option.req}.)` : option.d;
+    const description = translate(locale, option.d);
+    return option.req ? `${description} (${translate(locale, "Requires {req}", { req: translate(locale, option.req) })}.)` : description;
   }
   // A workshop subclass's pick ("Bloodline (Storm)") from the subclasses the
   // page registered (issue #833).
   const pick = subclassChoicePickDescription(name);
   if (pick) {
-    return locale === "cs" ? translate(locale, pick) : pick;
+    return translate(locale, pick);
   }
-  // Written beside such a pick: the element its option deals in. The
-  // element's sentence stays the engine's English: it quotes the subclass's
-  // own rules text (rulebook prose, not a table word).
+  // The element's display sentence uses the common catalog. The stored
+  // choice name and damage type are not changed.
   const element = choiceDamageTypeOf(name);
   if (element) {
-    if (locale === "cs") return `Zvolený živel (${translate(locale, element.label)}): ${damageTypeWord(element.type, locale)} zranění. Živlová afinita, pokud ji archetyp má, posiluje kouzla tohoto typu zranění a poskytuje vůči němu odolání.`;
-    return `The element of the ${element.label} chosen: ${element.type}. Elemental Affinity, where the subclass has it, adds to spells of this damage type and resists it.`;
+    const message = "The element of the {label} chosen: {type}. Elemental Affinity, where the subclass has it, adds to spells of this damage type and resists it.";
+    const displayLocale = translate(locale, message) === message ? "en" : locale;
+    return translate(displayLocale, message, {
+      label: translate(displayLocale, element.label),
+      type: damageTypeWord(element.type, displayLocale),
+    });
   }
   const resource = matchResource(name);
   const classText = classFeatureDescription(classId, name);
@@ -155,7 +155,7 @@ export function describeFeature(classId: string, subclass: string, name: string,
     looseSrdText(classId, name);
   // Localize the text chosen by the original resolution order, not a less
   // specific description that happens to have a translation.
-  const localized = found && locale === "cs" ? translate(locale, found) : found;
+  const localized = found ? translate(locale, found) : found;
   return stripLeadingLabel(localized, name);
 }
 
@@ -183,13 +183,12 @@ export function backgroundFeatureReference(
 // pack's "odm-" copy of a bundled race resolves to the same entry.
 export function describeRace(raceId: string, locale: Locale = "en"): string | null {
   const race = srdRaceFor(raceId);
-  return race ? race.traits.map((trait) => locale === "cs" ? speciesTraitName(raceId, trait, locale) : trait).join(". ") + "." : null;
+  return race ? race.traits.map((trait) => speciesTraitName(raceId, trait, locale)).join(". ") + "." : null;
 }
 
 // The sheet stores the canonical trait line; use the same reader-facing map
 // as its title rather than looking up a class feature with the same name.
 export function describeRaceTrait(raceId: string, name: string, locale: Locale): string | null {
-  if (locale !== "cs") return null;
   const localized = speciesTraitName(raceId, name, locale);
   return localized !== name ? localized : null;
 }
@@ -204,7 +203,7 @@ const SKILLS = (skillsJson as { skills: Array<{ id: string; name: string; fr?: s
 export function describeSkill(
   t: (key: string, vars?: Record<string, string | number>) => string,
   skillId: string,
-  locale: "en" | "fr" | "cs" = "en",
+  locale: Locale = "en",
 ): string | null {
   const skill = SKILLS.find((entry) => entry.id === skillId.trim().toLowerCase());
   if (!skill) {
