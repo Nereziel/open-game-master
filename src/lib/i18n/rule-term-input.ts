@@ -21,3 +21,14 @@ export function canonicalRuleTerm(input: string, options: readonly { value: stri
 export function ruleTermLabel(value: string, options: readonly { value: string; label: string }[]): string {
   return options.find((option) => option.value === value)?.label ?? value;
 }
+
+// Preserve the punctuation and spacing of list fields. A compound clause
+// such as "fire from nonmagical attacks" is not a vocabulary entry.
+export function canonicalRuleTermList(input: string, options: readonly { value: string; label: string }[]): string {
+  return input.replace(/[^,;]+/g, (segment) => {
+    const term = segment.trim();
+    if (!term) return segment;
+    const canonical = canonicalRuleTerm(term, options);
+    return canonical === term ? segment : segment.replace(term, canonical);
+  });
+}
