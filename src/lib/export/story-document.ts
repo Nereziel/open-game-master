@@ -6,6 +6,8 @@ import { listSheets } from "@/lib/db/sheets";
 import { listQuests } from "@/lib/db/quests";
 import { questLogForExport } from "@/lib/dm/quest-logic";
 import { slugOf } from "@/lib/language/text-logic";
+import { translate, type Locale } from "@/lib/i18n/translate";
+import type { TableLanguage } from "@/lib/schemas/game-settings-options";
 
 // A serializer-independent view of a campaign's story, gathered once from the
 // database and then handed to the HTML/ODT/DOCX renderers. Player-safe by
@@ -34,6 +36,8 @@ export type StoryChapter = {
 };
 
 export type StoryDocument = {
+  locale?: Locale;
+  storyLanguage?: string;
   title: string;
   premise: string;
   meta: {
@@ -49,7 +53,8 @@ export type StoryDocument = {
 
 // Reads every player-safe narrative source for a campaign and folds it into a
 // StoryDocument. The caller is responsible for membership authorization.
-export function buildStoryDocument(campaignId: string): StoryDocument | null {
+export function buildStoryDocument(campaignId: string, locale: Locale = "en"): StoryDocument | null {
+  const t = storyTranslator(locale);
   const campaign = getCampaignById(campaignId);
   if (!campaign) {
     return null;
@@ -74,7 +79,8 @@ export function buildStoryDocument(campaignId: string): StoryDocument | null {
       lastActKey = actKey;
       const recap = arc ? actRecapFor(arc, chapter.act!, chapter.saga ?? 1) : null;
       const title = recap?.title || (arc && (chapter.saga ?? 1) === sagaIndexOf(arc) ? actTitle(arc, chapter.act!) : "");
-      actHeading = `Act ${romanNumeral(chapter.act!)}${title ? `: ${title}` : ""}`;
+      const act = romanNumeral(chapter.act!);
+      actHeading = title ? t("Act {act}: {title}", { act, title }) : t("Act {act}", { act });
       actRecap = recap?.recap || undefined;
     }
     const transcript: TranscriptLine[] = messages
@@ -89,18 +95,18 @@ export function buildStoryDocument(campaignId: string): StoryDocument | null {
         kind: message.authorType === "dm" ? "dm" : "player",
         speaker:
           message.authorType === "dm"
-            ? "Game Master"
+            ? t("Game Master")
             : (message.characterId && sheetNames.get(message.characterId)) ||
               (message.userId && memberNames.get(message.userId)) ||
-              "Adventurer",
+              t("Adventurer"),
         text: message.content.trim(),
       }));
 
     const title = chapter.title?.trim();
     const heading =
       chapter.status === "open"
-        ? `Chapter ${chapter.index} (in progress)`
-        : `Chapter ${chapter.index}: ${title || "Untitled"}`;
+        ? t("Chapter {index} (in progress)", { index: chapter.index })
+        : t("Chapter {index}: {title}", { index: chapter.index, title: title || t("Untitled") });
 
     return {
       index: chapter.index,
@@ -115,6 +121,8 @@ export function buildStoryDocument(campaignId: string): StoryDocument | null {
   });
 
   return {
+    locale,
+    storyLanguage: STORY_LANGUAGE_TAGS[campaign.gameSettings.tableLanguage],
     title: campaign.title,
     premise: campaign.description ?? "",
     meta: {
@@ -126,8 +134,42 @@ export function buildStoryDocument(campaignId: string): StoryDocument | null {
     },
     // The party's quest log and how each quest ended, not the stale copy on
     // the campaign row (issue 581); never a GM-only or hidden quest.
-    questLog: questLogForExport(listQuests(campaignId)),
+    questLog: questLogForExport(listQuests(campaignId), t),
     chapters: storyChapters,
+  };
+}
+
+// The UI locale and the language of the campaign prose are independent.
+// Language tags cover every supported table language, including those with
+// no UI catalog. Never infer a translation of authored text.
+const STORY_LANGUAGE_TAGS: Record<TableLanguage, string> = {
+  english: "en", czech: "cs", danish: "da", dutch: "nl", finnish: "fi",
+  french: "fr", german: "de", hungarian: "hu", indonesian: "id", irish: "ga",
+  italian: "it", norwegian: "no", portuguese: "pt", russian: "ru", spanish: "es", swedish: "sv",
+};
+
+function storyTranslator(locale: Locale) {
+  return (key: string, vars?: Record<string, string | number>) => translate(locale, key, vars);
+}
+
+export function storyPresentation(doc: StoryDocument) {
+  const locale = doc.locale ?? "en";
+  const t = storyTranslator(locale);
+  const metaBits = [
+    doc.meta.theme,
+    t("Level {level} start", { level: doc.meta.startingLevel }),
+    t(doc.meta.difficulty),
+    t(doc.meta.status),
+  ].filter(Boolean);
+  return {
+    locale,
+    storyLanguage: doc.storyLanguage ?? "und",
+    metaBits,
+    title: t("{title} — Story", { title: doc.title }),
+    contents: t("Contents"),
+    questLog: t("Quest Log"),
+    transcript: t("Transcript"),
+    footer: t("Exported from Open Game Master on {date}.", { date: new Date(doc.meta.exportedAt).toLocaleString(locale) }),
   };
 }
 
