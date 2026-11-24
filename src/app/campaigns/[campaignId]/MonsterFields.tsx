@@ -20,6 +20,7 @@ import { crLabel, type CrPart } from "@/lib/bestiary/derive-cr";
 import { Reveal } from "@/components/ui/Reveal";
 import { AttackDetails } from "@/app/workshop/bestiary/AttackDetails";
 import { useLocale, useT } from "@/lib/locale";
+import { gameTermWord } from "@/lib/i18n/game-term-labels";
 import { damageTypeWord, damageWords } from "@/lib/dm/damage-logic";
 import { contentName } from "@/lib/content/names";
 import type { Locale } from "@/lib/messages-logic";
@@ -256,53 +257,6 @@ export function SaveEditor({
   );
 }
 
-// The size words the French SRD's own category table prints (« Très
-// petite » ... « Gigantesque »), and the creature types its ranger list and
-// monster chapter print. The stored values stay the English ids; only the
-// label reads the reader's language (damageTypeWord's pattern,
-// src/lib/dm/damage-logic.ts). A word the maps do not carry reads as it was
-// spelled.
-const SIZE_WORDS_FR: Record<string, string> = {
-  Tiny: "Très petite",
-  Small: "Petite",
-  Medium: "Moyenne",
-  Large: "Grande",
-  Huge: "Très grande",
-  Gargantuan: "Gigantesque",
-};
-
-function sizeWord(size: string, locale: Locale): string {
-  if (locale !== "fr") {
-    return size;
-  }
-  return SIZE_WORDS_FR[size] ?? size;
-}
-
-const CREATURE_TYPE_WORDS_FR: Record<string, string> = {
-  aberration: "Aberration",
-  beast: "Bête",
-  celestial: "Céleste",
-  construct: "Artificiel",
-  dragon: "Dragon",
-  elemental: "Élémentaire",
-  fey: "Fée",
-  fiend: "Fiélon",
-  giant: "Géant",
-  humanoid: "Humanoïde",
-  monstrosity: "Monstrosité",
-  ooze: "Vase",
-  plant: "Plante",
-  undead: "Mort-vivant",
-};
-
-function creatureTypeWord(type: string, locale: Locale): string {
-  const en = type.charAt(0).toUpperCase() + type.slice(1);
-  if (locale !== "fr") {
-    return en;
-  }
-  return CREATURE_TYPE_WORDS_FR[type] ?? en;
-}
-
 export function SizeAndDefences({
   draft,
   onChange,
@@ -327,7 +281,7 @@ export function SizeAndDefences({
           <Select
             value={draft.stats.size ?? "Medium"}
             onChange={(size) => set({ size })}
-            options={SIZES.map((size) => ({ value: size as string, label: sizeWord(size, locale) }))}
+            options={SIZES.map((size) => ({ value: size as string, label: gameTermWord("size", size, locale) }))}
             label={t("Size")}
             size="sm"
             className="w-32"
@@ -341,7 +295,7 @@ export function SizeAndDefences({
           <Select
             value={creatureTypeOf(draft.stats) as string}
             onChange={(type) => set({ type })}
-            options={CREATURE_TYPES.map((type) => ({ value: type as string, label: creatureTypeWord(type, locale) }))}
+            options={CREATURE_TYPES.map((type) => ({ value: type as string, label: gameTermWord("creatureType", type, locale) }))}
             label={t("Type", { context: "workshop.bestiary.stats.type" })}
             size="sm"
             className="w-32"
