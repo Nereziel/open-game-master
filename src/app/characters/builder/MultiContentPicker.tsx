@@ -7,7 +7,8 @@ import { InfoButton } from "@/components/ui/InfoDialog";
 import { describeContentEntry, spellSummary } from "@/lib/help";
 import { useContentSearch, type PickerEntry } from "./useContentSearch";
 import { textKey } from "@/lib/language/text-logic";
-import { useT, useTp } from "@/lib/locale";
+import { useLocale, useT, useTp } from "@/lib/locale";
+import { expansionNameCs } from "@/lib/content/expansion-descriptions-cs";
 
 // `level` rides along for spells, so a cantrip picked here lands in the
 // cantrip list rather than among the levelled spells.
@@ -36,6 +37,8 @@ export default function MultiContentPicker({
   renderMeta?: (entry: PickerEntry) => string;
 }) {
   const t = useT();
+  const locale = useLocale();
+  const rowName = (entry: PickerEntry) => (locale === "cs" ? expansionNameCs(kind, entry) : undefined) ?? entry.name;
   const tp = useTp();
   const { query, setQuery, results, setResults, open, setOpen, loading, unavailable, failed, unadmitted } =
     useContentSearch(kind, extraParams);
@@ -130,7 +133,7 @@ export default function MultiContentPicker({
                       <Plus className="size-3.5 shrink-0 text-stone-600" />
                     )}
                     <span className={cn(entry.source === "homebrew" && "text-amber-300")}>
-                      {entry.name}
+                      {rowName(entry)}
                     </span>
                   </span>
                   <span className="shrink-0 text-xs text-stone-500">
@@ -142,7 +145,7 @@ export default function MultiContentPicker({
                   </span>
                 </button>
                 <InfoButton
-                  label={entry.name}
+                  label={rowName(entry)}
                   meta={kind === "spells" ? spellSummary(entry.data) : undefined}
                   text={describeContentEntry(entry.data)}
                   reference={entry.source === "homebrew" ? undefined : { kind, slug: entry.slug }}

@@ -1,3 +1,4 @@
+import { expansionDescriptionCs } from "./expansion-descriptions-cs";
 import { czechFullTranslation } from "@/lib/rulebook/czech-companion";
 import { rulebookPageIdFor } from "@/lib/rulebook/catalog-rows";
 import type { RulebookKind } from "@/lib/rulebook/types";
@@ -14,11 +15,14 @@ const KINDS: Record<string, RulebookKind> = {
 // still need the original English desc, higher_level and mechanical fields.
 export function localizeEntryCs<T>(table: string, entry: T): T {
   const row = entry as T & {
+    slug?: string;
     name?: string;
     source?: string;
     documentSlug?: string;
     data?: Record<string, unknown>;
   };
+  const expansion = expansionDescriptionCs(table, row);
+  if (expansion) return { ...row, data: { ...row.data, localized_desc: expansion } };
   const kind = KINDS[table];
   if (!kind || !row?.name || !row.data || !Object.keys(row.data).length ||
       (row.source !== "srd" && row.source !== "open5e") ||
