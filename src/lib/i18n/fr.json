@@ -11206,7 +11206,21 @@
     "Level Up Advanced 5e's {needs} is a rule this game does not play.": "La règle de Level Up Advanced 5e ({needs}) n'est pas utilisée dans ce jeu.",
     "Ley lines are from Deep Magic: the GM decides where they run.": "Les lignes telluriques viennent de Deep Magic : le MJ décide de leur tracé.",
     "It is not offered for play here; the GM can still read it, or copy it into the workshop and change it.": "Cette entrée n'est pas proposée pour jouer ici ; le MJ peut néanmoins la lire ou la copier dans l'atelier et la modifier.",
-    "The GM plays that part.": "Le MJ gère cette partie."
+    "The GM plays that part.": "Le MJ gère cette partie.",
+    "needs it": "nécessaire",
+    "not needed": "non nécessaire",
+    "1 action": "1 action",
+    "1 bonus action": "1 action bonus",
+    "1 reaction": "1 réaction",
+    "1 minute or longer": "1 minute ou plus",
+    "an action": "une action",
+    "a bonus action": "une action bonus",
+    "a reaction": "une réaction",
+    "a minute or longer": "une minute ou plus",
+    "no concentration": "sans concentration",
+    "{school} cantrip": "sort mineur ({school})",
+    "level {level} {school}": "{school}, niveau {level}",
+    "Unlimited": "Illimitée"
   },
   "contexts": {
     "{table}: its row for the table {name} now names this campaign's own {name}, since the source's stayed behind.": {
