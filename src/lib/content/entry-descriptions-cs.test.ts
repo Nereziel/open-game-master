@@ -196,7 +196,14 @@ describe("Czech external display translations (without SQLite)", () => {
 
 describe("Source-specific Czech expansion names", () => {
   it("keeps the compact name index in sync with the server-only descriptions", () => {
-    const expected = Object.fromEntries(Object.entries(expansionTranslations).map(([doc, tables]) => [doc, Object.fromEntries(Object.entries(tables).map(([table, rows]) => [table, Object.fromEntries(Object.entries(rows).map(([slug, row]) => [slug, { englishName: row.englishName, name: row.name }]))]))]));
+    const source: Record<string, Record<string, Record<string, { englishName: string; name: string }>>> = expansionTranslations;
+    const expected = Object.fromEntries(Object.entries(source).map(([doc, tables]) => [
+      doc, Object.fromEntries(Object.entries(tables).map(([table, rows]) => [
+        table, Object.fromEntries(Object.entries(rows).map(([slug, row]) => [
+          slug, { englishName: row.englishName, name: row.name },
+        ])),
+      ])),
+    ]));
     expect(expansionNames).toEqual(expected);
   });
   it("uses the same source identity for API and translation-table kind aliases", () => {
