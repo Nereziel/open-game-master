@@ -190,12 +190,12 @@ export function backgroundInfoText(entry: {
   featureDesc?: string;
   name?: string;
 }, locale: Locale = "en"): string | undefined {
-  const local = (value: string | undefined) => value && locale === "cs" ? translate(locale, value) : value;
-  if (entry.localizedDesc) return [local(entry.packBlurb || entry.blurb), entry.localizedDesc].filter(Boolean).join("\n\n");
+  const local = (value: string | undefined) => value ? translate(locale, value) : value;
+  if (entry.localizedDesc) return [entry.packBlurb || local(entry.blurb), entry.localizedDesc].filter(Boolean).join("\n\n");
   const feature = entry.feature
-    ? `**${locale === "cs" ? "Schopnost" : "Feature"}: ${locale === "cs" && entry.name ? backgroundFeatureLabel(entry.name, entry.feature, locale) : entry.feature}.**${entry.featureDesc ? ` ${localizeBackgroundFeatureText(entry.featureDesc, locale)}` : ""}`
+    ? `**${translate(locale, "Feature")}: ${entry.name ? backgroundFeatureLabel(entry.name, entry.feature, locale) : entry.feature}.**${entry.featureDesc ? ` ${localizeBackgroundFeatureText(entry.featureDesc, locale)}` : ""}`
     : "";
-  const parts = [local(entry.packBlurb || entry.blurb), feature, local(entry.desc)].filter(Boolean);
+  const parts = [entry.packBlurb || local(entry.blurb), feature, local(entry.desc)].filter(Boolean);
   return parts.length ? parts.join("\n\n") : undefined;
 }
 
