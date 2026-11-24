@@ -400,12 +400,18 @@ test("guided tours use the existing Czech catalog and preserve their original Fr
   assert.deepEqual(localizedTourStep(missing, "cs", csT), { title: missing.title, body: missing.body });
 });
 
-test("written workshop guides preserve the English and French copy and read Czech WorldForge", () => {
+test("all written workshop guides have complete Czech copy and preserve English and French", () => {
   for (const guide of WORKSHOP_GUIDES) {
     assert.deepEqual(localizedToolGuide(guide, "en", (key) => key), {
       title: guide.title, purpose: guide.purpose, steps: guide.steps, atTable: guide.atTable, tips: guide.tips,
     });
     assert.deepEqual(localizedToolGuide(guide, "fr", (key) => key), guide.translations.fr);
+    const cs = localizedToolGuide(guide, "cs", csT);
+    assert.ok(guide.translations.cs, guide.id);
+    assert.deepEqual(cs, guide.translations.cs);
+    assert.equal(cs.steps.length, guide.steps.length, guide.id);
+    assert.equal(cs.tips.length, guide.tips.length, guide.id);
+    assert.ok([cs.title, cs.purpose, cs.atTable, ...cs.steps, ...cs.tips].every((value) => typeof value === "string" && value.trim()), guide.id);
   }
   const world = guideFor("world");
   const cs = localizedToolGuide(world, "cs", csT);
