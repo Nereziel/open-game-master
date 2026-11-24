@@ -22,6 +22,10 @@ for (const file of ["../src/lib/request-locale.ts", "../src/app/layout.tsx", "..
 }
 await import("../src/lib/i18n/fr-catalog.ts");
 assert.equal(catalogInstalled("fr"), true);
+
+// The generated official-name inventory must describe its actual tables.
+const { FR_NAMES_BY_TABLE, FR_NAME_COUNTS } = await import("../src/lib/content/names-fr.ts");
+assert.deepEqual(FR_NAME_COUNTS, Object.fromEntries(Object.entries(FR_NAMES_BY_TABLE).map(([table, entries]) => [table, Object.keys(entries).length])));
 const { localeFromAcceptLanguage, localeOfServerLanguage, resolveLocale, resolveRequestLocale } = await import("../src/lib/i18n/locale.ts");
 const frCatalog = JSON.parse(fs.readFileSync(new URL("../src/lib/i18n/fr.json", import.meta.url), "utf8"));
 

@@ -73,7 +73,7 @@ if (fromAt >= 0 && !fromDir) {
 }
 
 // table -> export name. names-fr.ts commits every table under the key the
-// render helper (src/lib/content/names.ts) unions as a FrNamesTable.
+// render helper (src/lib/content/names.ts) unions as a LocalizedNamesTable.
 const TABLES = {
   spells: "SPELL_NAMES_FR",
   weapons: "WEAPON_NAMES_FR",

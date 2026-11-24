@@ -37,9 +37,6 @@ export type LocalizedNamesTable =
 
 // A content row as the API routes and the library send it, narrowed to the
 // fields a name lookup reads.
-/** @deprecated Use LocalizedNamesTable. */
-export type FrNamesTable = LocalizedNamesTable;
-
 export type NamedRow = {
   slug?: string;
   name: string;
