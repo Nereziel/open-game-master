@@ -13180,8 +13180,12 @@
     "World lore": {
       "workshop.import.kind": "Historie světa"
     },
-    "Forge": {"ambience.cue":"Kovárna"},
-    "The big one": {"ambience.cue":"Souboj s bossem"},
+    "Forge": {
+      "ambience.cue": "Kovárna"
+    },
+    "The big one": {
+      "ambience.cue": "Souboj s bossem"
+    },
     "chaotic evil": {
       "world.field.option": "chaotické zlo"
     },
@@ -14397,6 +14401,153 @@
     },
     "Mount": {
       "table.hand.card.mount": "Nasednout"
+    },
+    "{name}: kept your {value} over the import's.": {
+      "workshop.import.result": "{name}: zachována vlastní hodnota ({value}) namísto importované."
+    },
+    "{slice} “{label}”: kept your {value} over the import's.": {
+      "workshop.import.result": "{slice} „{label}“: zachována vlastní hodnota ({value}) namísto importované."
+    },
+    "{link}: changed here and in the import (which says {veracity}{rank}, one way); yours was kept.": {
+      "workshop.import.result": "{link}: změněno zde i v importu (který uvádí {veracity}{rank}, jednosměrně); zachována vlastní verze."
+    },
+    "{link}: changed here and in the import (which says {veracity}{rank}); yours was kept.": {
+      "workshop.import.result": "{link}: změněno zde i v importu (který uvádí {veracity}{rank}); zachována vlastní verze."
+    },
+    "{link}: gone from the import, but changed here; yours was kept.": {
+      "workshop.import.result": "{link}: v importu již není, ale zde došlo ke změně; zachována vlastní verze."
+    },
+    "“{field}” field": {
+      "workshop.import.result": "pole „{field}“"
+    },
+    "An entry": {
+      "workshop.import.result": "Záznam"
+    },
+    "Folder": {
+      "workshop.import.result": "Složka"
+    },
+    "Calendar": {
+      "workshop.import.result": "Kalendář"
+    },
+    "Event": {
+      "workshop.import.result": "Událost"
+    },
+    "Secret": {
+      "workshop.import.result": "Tajemství"
+    },
+    "Name to write": {
+      "workshop.import.result": "Název k doplnění"
+    },
+    "Map": {
+      "workshop.import.result": "Mapa"
+    },
+    "Pin": {
+      "workshop.import.result": "Značka"
+    },
+    "known": {
+      "workshop.import.result": "obecně známo"
+    },
+    "hidden": {
+      "workshop.import.result": "skryto"
+    },
+    "believed": {
+      "workshop.import.result": "považováno za pravdu"
+    },
+    "name": {
+      "workshop.import.result": "název"
+    },
+    "title": {
+      "workshop.import.result": "titulek"
+    },
+    "text": {
+      "workshop.import.result": "text"
+    },
+    "line": {
+      "workshop.import.result": "stručný popis"
+    },
+    "notes": {
+      "workshop.import.result": "poznámky"
+    },
+    "note": {
+      "workshop.import.result": "poznámka"
+    },
+    "article": {
+      "workshop.import.result": "článek"
+    },
+    "hidden truth": {
+      "workshop.import.result": "skrytá pravda"
+    },
+    "canon setting": {
+      "workshop.import.result": "nastavení kánonu"
+    },
+    "type": {
+      "workshop.import.result": "typ"
+    },
+    "folder": {
+      "workshop.import.result": "složka"
+    },
+    "parent folder": {
+      "workshop.import.result": "nadřazená složka"
+    },
+    "other names": {
+      "workshop.import.result": "jiné názvy"
+    },
+    "tags": {
+      "workshop.import.result": "štítky"
+    },
+    "picture": {
+      "workshop.import.result": "obrázek"
+    },
+    "list of who knows it": {
+      "workshop.import.result": "seznam zasvěcených"
+    },
+    "setting for whether the party knows it": {
+      "workshop.import.result": "nastavení, zda to družina ví"
+    },
+    "subject": {
+      "workshop.import.result": "předmět"
+    },
+    "date": {
+      "workshop.import.result": "datum"
+    },
+    "list of who and what it involves": {
+      "workshop.import.result": "seznam zúčastněných osob a věcí"
+    },
+    "era": {
+      "workshop.import.result": "éra"
+    },
+    "regions": {
+      "workshop.import.result": "oblasti"
+    },
+    "position": {
+      "workshop.import.result": "poloha"
+    },
+    "map": {
+      "workshop.import.result": "mapa"
+    },
+    "linked map": {
+      "workshop.import.result": "propojená mapa"
+    },
+    "marked entry": {
+      "workshop.import.result": "označený záznam"
+    },
+    "status": {
+      "workshop.import.result": "stav"
+    },
+    "abbreviation": {
+      "workshop.import.result": "zkratka"
+    },
+    "start year": {
+      "workshop.import.result": "počáteční rok"
+    },
+    "colour": {
+      "workshop.import.result": "barva"
+    },
+    "origin": {
+      "workshop.import.result": "původ"
+    },
+    "setting for whether only the GM sees it": {
+      "workshop.import.result": "nastavení viditelnosti pouze pro PJ"
     }
   },
   "plurals": {
