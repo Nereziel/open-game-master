@@ -7,7 +7,7 @@ import { catalogInstalled, installCatalog, type Locale } from "./translate.ts";
 const loaders: Record<Exclude<Locale, "en">, () => Promise<void>> = {
   cs: async () => {
     const [catalog, names, resources, expansions] = await Promise.all([
-      import("./cs.json"), import("../content/names-cs.ts"), import("../srd/class-resources-cs-data.ts"), import("../content/expansion-names-cs.json"),
+      import("./cs-catalog-data.ts"), import("../content/names-cs.ts"), import("../srd/class-resources-cs-data.ts"), import("../content/expansion-names-cs.json"),
     ]);
     installCsTables({ names: names.CS_NAMES_BY_TABLE, guidance: resources.RESOURCE_CS_GUIDANCE, expansionNames: expansions.default ?? expansions });
     installCatalog("cs", catalog.default ?? catalog);
