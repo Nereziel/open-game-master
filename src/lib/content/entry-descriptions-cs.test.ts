@@ -475,7 +475,7 @@ describe("Core race and background presentation", () => {
     }
     expect(count).toBe(188);
     const shifter = SRD_RACES.find((race) => race.id === "shifter")!;
-    const variantLines = shifter.variants?.options.flatMap((option) => option.lines) ?? [];
+    const variantLines = shifter.variants?.options.flatMap((option) => option.lines ?? []) ?? [];
     expect(variantLines).toHaveLength(5);
     for (const trait of variantLines) {
       expect(speciesTraitName("shifter", trait, "cs")).not.toBe(trait);
