@@ -428,4 +428,29 @@ for (const locale of ["en", "fr", "cs"]) {
 }
 assert.deepEqual([ABILITY_ORDER, SKILL_NAMES, SENSE_NAMES, ENVIRONMENTS, TRAIT_SECTIONS, DAMAGE_TYPES, CONDITIONS, LANGUAGES], vocabulariesBefore);
 
+// Mechanical term inputs accept exact translated words, but not fragments,
+ // unknown words, compound clauses or ambiguous aliases.
+const { canonicalRuleTerm, canonicalRuleTermList, ruleTermOptions, ruleTermLabel } = await import("../src/lib/i18n/rule-term-input.ts");
+for (const locale of ["en", "fr", "cs"]) {
+  const t = (key, vars) => translate(locale, key, vars);
+  for (const known of [DAMAGE_TYPES, CONDITIONS]) {
+    const options = ruleTermOptions(known, t);
+    for (const { value, label } of options) {
+      assert.equal(canonicalRuleTerm(value, options), value);
+      assert.equal(canonicalRuleTerm(label, options), value, locale + ": " + label);
+      assert.equal(ruleTermLabel(value, options), label);
+      assert.equal(canonicalRuleTerm(label + " custom", options), label + " custom");
+      assert.equal(ruleTermLabel("custom effect", options), "custom effect");
+    }
+    const first = options[0], second = options[1];
+    const custom = "fire from nonmagical attacks";
+    assert.equal(canonicalRuleTermList(first.label + ",  " + second.label + "; " + custom, options), first.value + ",  " + second.value + "; " + custom);
+  }
+}
+const ambiguousTerms = [{ value: "alpha", label: "Shared" }, { value: "beta", label: "Shared" }];
+assert.equal(canonicalRuleTerm("Shared", ambiguousTerms), "Shared");
+assert.equal(canonicalRuleTerm("alpha", ambiguousTerms), "alpha");
+assert.equal(canonicalRuleTerm("", ambiguousTerms), "");
+assert.equal(canonicalRuleTerm("alpha/beta", ambiguousTerms), "alpha/beta");
+
 console.log("test-i18n-gettext: all assertions and catalog placeholder checks passed");
