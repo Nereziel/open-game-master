@@ -7,7 +7,7 @@ import { localizeEntry } from "./entry-descriptions";
 import { bundledItemRows, bundledSpellRows } from "@/lib/rulebook/catalog-rows";
 import { czechFullTranslation } from "@/lib/rulebook/czech-companion";
 import { rulebookPages } from "@/lib/rulebook/book";
-import { SRD_BACKGROUNDS } from "@/lib/srd";
+import { SRD_BACKGROUNDS, SRD_RACES } from "@/lib/srd";
 import { CUSTOM_BACKGROUNDS, describeBackgroundFeature } from "@/lib/backgrounds";
 import { translate } from "@/lib/i18n/translate";
 import { describeContentEntry } from "@/lib/help";
@@ -16,7 +16,7 @@ import featFixture from "../../../scripts/fixtures/reader-golden/feat.json";
 import backgroundFixture from "../../../scripts/fixtures/reader-golden/background.json";
 import expansionTranslations from "./expansion-descriptions-cs.json";
 import { packFeatText } from "@/lib/srd/feat-text";
-import { contentName, contentNameMatches, localizedExpansionName, archetypeDisplayName } from "./names";
+import { contentName, contentNameMatches, localizedExpansionName, archetypeDisplayName, speciesTraitName } from "./names";
 import "../i18n/cs-catalog";
 import "../i18n/fr-catalog";
 import expansionNames from "./expansion-names-cs.json";
@@ -454,6 +454,32 @@ describe("Core race and background presentation", () => {
     }
     const hill = { name: "Dwarf (Hill)", source: "bundled", documentSlug: "wotc-srd", data: { desc: "Hill dwarf", traits: [] } as Record<string, unknown> };
     expect(localizeEntry("races", hill, "cs").data.localized_desc).toBeTypeOf("string");
+  });
+
+  it("reuses all bundled Czech trait summaries, including the shifter variants", () => {
+    expect(SRD_RACES).toHaveLength(46);
+    let count = 0;
+    for (const race of SRD_RACES) {
+      for (const trait of race.traits) {
+        expect(speciesTraitName(race.id, trait, "cs"), race.id + ": " + trait).not.toBe(trait);
+        count++;
+      }
+      const row = { slug: race.id, name: race.name, source: "bundled", documentSlug: "wotc-srd", data: { desc: "", traits: race.traits } as Record<string, unknown> };
+      const result = localizeEntry("races", row, "cs");
+      const { localized_desc, ...original } = result.data;
+      expect(typeof localized_desc, race.id).toBe("string");
+      expect(original).toEqual(row.data);
+      for (const foreign of [{ ...row, documentSlug: "other" }, { ...row, source: "homebrew" }]) {
+        expect(localizeEntry("races", foreign, "cs")).toBe(foreign);
+      }
+    }
+    expect(count).toBe(188);
+    const shifter = SRD_RACES.find((race) => race.id === "shifter")!;
+    const variantLines = shifter.variants?.options.flatMap((option) => option.lines) ?? [];
+    expect(variantLines).toHaveLength(5);
+    for (const trait of variantLines) {
+      expect(speciesTraitName("shifter", trait, "cs")).not.toBe(trait);
+    }
   });
 
   it("uses reviewed Czech feature prose for every bundled base background", () => {
