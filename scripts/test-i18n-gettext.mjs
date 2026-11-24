@@ -247,4 +247,34 @@ for (const [locale, catalog] of [["fr", frCatalog], ["cs", csCatalog]]) {
   assert.notEqual(label, "5 minutes ago");
 }
 
+// Curated voice names are presentation only; unknown backend labels and IDs
+// remain exactly as the backend sent them.
+const { TTS_VOICES, localizedVoiceLabel, voicesFirstIn, NARRATOR_DEFAULTS, narratorVoiceFor } = await import("../src/lib/tts-voices.ts");
+const { TABLE_LANGUAGE_NAMES } = await import("../src/lib/schemas/game-settings-options.ts");
+const voicesBefore = structuredClone(TTS_VOICES);
+for (const locale of ["en", "fr", "cs"]) {
+  const t = (key, vars) => translate(locale, key, vars);
+  for (const voice of TTS_VOICES) {
+    const label = localizedVoiceLabel(t, voice);
+    assert.equal(label, t(voice.label));
+    assert.ok(label.startsWith(voice.label.split(" (")[0] + " ("));
+    if (locale !== "en") assert.notEqual(label, voice.label);
+    assert.equal(localizedVoiceLabel(t, { ...voice, label: "My custom voice" }), "My custom voice");
+    assert.equal(localizedVoiceLabel(t, { id: "custom-id", label: voice.label }), voice.label);
+  }
+  const catalog = locale === "cs" ? csCatalog : frCatalog;
+  for (const { english } of Object.values(TABLE_LANGUAGE_NAMES)) {
+    if (locale !== "en") assert.ok(catalog.contexts[english]?.["table.language"], locale + ": " + english);
+  }
+  const language = t("Czech", { context: "table.language" });
+  const warning = t("Kokoro has no {language} voice, so the narration is read by a voice of another language.", { language });
+  assert.ok(warning.includes(language));
+  assert.ok(!warning.includes("{language}"));
+  assert.equal(NARRATOR_DEFAULTS.czech, undefined);
+  assert.equal(narratorVoiceFor("czech", "af_heart", false), "af_heart");
+  assert.equal(narratorVoiceFor("czech", "alloy", true), "alloy");
+  assert.equal(voicesFirstIn("french", TTS_VOICES)[0].id, "ff_siwis");
+}
+assert.deepEqual(TTS_VOICES, voicesBefore);
+
 console.log("test-i18n-gettext: all assertions and catalog placeholder checks passed");
