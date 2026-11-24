@@ -1,5 +1,15 @@
 {
   "messages": {
+    "{class} level {level}": "{class}, {level}. úroveň",
+    "{class} level {level}, halved ({part})": "{class}, {level}. úroveň, polovina ({part})",
+    "{line} (never fewer than 1)": "{line} (nejméně 1)",
+    "level ({level})": "úroveň ({level})",
+    "half your level, rounded down ({part})": "polovina úrovně, zaokrouhlená dolů ({part})",
+    "{ability} modifier ({mod})": "oprava vlastnosti {ability} ({mod})",
+    "{line}, and never fewer than 1": "{line}, nejméně však 1",
+    "{count}, from the {class} table at level {level}": "{count}, podle tabulky povolání {class} pro {level}. úroveň",
+    "6 at level 1 + 2 a level after = {count}": "6 na 1. úrovni + 2 za každou další úroveň = {count}",
+    "{count} at level 1": "{count} na 1. úrovni",
     "In its pocket dimension": "Ve své kapesní dimenzi",
     "Spells copied into this table's Homebrew: {list}.": "Kouzla zkopírovaná do vlastní tvorby tohoto stolu: {list}.",
     "The board has nothing that happens on its main line, so there is no act to add.": "Na hlavní trase scénáře se nic neděje, takže není co přidat jako další dějství.",
