@@ -267,6 +267,15 @@ export function speciesTraitName(raceId: string, traitLine: string, locale: Loca
   return localizeTraitTail(traitLine, locale);
 }
 
+// Catalog traits must not borrow a core race's name by coincidence. A
+// published row supplies the actual species id and source; custom and
+// external species keep their own trait headings unless a reviewed map
+// for that source is available.
+export function publishedSpeciesTraitName(row: NamedRow, trait: string, locale: Locale): string {
+  if (!row.slug || !row.source || !row.documentSlug || !canUseCommonNames(row)) return trait;
+  return speciesTraitName(row.slug.replace(/^srd:/, ""), trait, locale);
+}
+
 // A background's granted feature as the sheet carries it ("Shelter of the
 // Faithful (Acolyte)") in the reader's language: the maps key a feature by
 // its background and the feature's name ("acolyte:shelter-of-the-faithful"),
