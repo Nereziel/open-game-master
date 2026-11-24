@@ -175,9 +175,9 @@ function tier<T extends { id: string }>(
 // blurb, then the bundled line, then the content pack's full entry, and for
 // a background what its feature does. Joined so a short line and a long
 // rules text both show rather than one hiding the other.
-export function classInfoText(entry: { packBlurb?: string; blurb?: string; desc?: string }, t?: (key: string) => string): string | undefined {
+export function classInfoText(entry: { packBlurb?: string; blurb?: string; desc?: string; localizedDesc?: string }, t?: (key: string) => string): string | undefined {
   const blurb = entry.packBlurb || (entry.blurb && t ? t(entry.blurb) : entry.blurb);
-  const parts = [blurb, entry.desc].filter(Boolean);
+  const parts = [blurb, entry.localizedDesc || entry.desc].filter(Boolean);
   return parts.length ? parts.join("\n\n") : undefined;
 }
 
@@ -185,11 +185,13 @@ export function backgroundInfoText(entry: {
   packBlurb?: string;
   blurb?: string;
   desc?: string;
+  localizedDesc?: string;
   feature?: string;
   featureDesc?: string;
   name?: string;
 }, locale: Locale = "en"): string | undefined {
   const local = (value: string | undefined) => value && locale === "cs" ? translate(locale, value) : value;
+  if (entry.localizedDesc) return [local(entry.packBlurb || entry.blurb), entry.localizedDesc].filter(Boolean).join("\n\n");
   const feature = entry.feature
     ? `**${locale === "cs" ? "Schopnost" : "Feature"}: ${locale === "cs" && entry.name ? backgroundFeatureLabel(entry.name, entry.feature, locale) : entry.feature}.**${entry.featureDesc ? ` ${localizeBackgroundFeatureText(entry.featureDesc, locale)}` : ""}`
     : "";
@@ -312,7 +314,7 @@ export function usePickerGroups({
       // A pack-only lineage has no bundled lines; leaving the text empty
       // lets the dialog fetch the row's full trait write-up instead of
       // showing the card's clipped summary.
-      infoText: entry.packBlurb || describeRace(entry.id, locale) || undefined,
+      infoText: entry.packBlurb || entry.localizedDesc || describeRace(entry.id, locale) || undefined,
       // The pack row behind the option, which is not always the id
       // (src/lib/content/race-options.ts optionIdFor).
       reference: { kind: "races", slug: entry.slug ?? entry.id, name: entry.name },
