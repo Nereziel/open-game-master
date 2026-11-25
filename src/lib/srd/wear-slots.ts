@@ -195,13 +195,6 @@ export function wearConflictText(conflict: WearConflict, who: string): string {
   return `${who} already wears ${listOf(conflict.wearing)}, and a character wears ${kind} at a time: take ${them} off first, or the GM may allow both.`;
 }
 
-// The question the sheet asks before a swap: "Grey Cloak goes where Cloak of
-// Protection is: a character wears one cloak at a time."
-export function swapQuestion(conflict: WearConflict): string {
-  const kind = oneOfKind(conflict.slot) ?? "one of its kind";
-  return `${conflict.item} goes where ${listOf(conflict.wearing)} ${conflict.wearing.length > 1 ? "are" : "is"}: a character wears ${kind} at a time.`;
-}
-
 // The first conflict a change to the pack makes: a row that was not worn and
 // now is, in a place the rows worn after the change overfill. Rows the change
 // leaves alone are never blamed, so a pack that already held two (written
