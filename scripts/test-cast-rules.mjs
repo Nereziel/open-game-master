@@ -618,4 +618,48 @@ test("known enemy Counterspell refusals preserve actor and check identity", () =
   assert.equal(castRefusalDisplay(different, t, vars.name), different);
 });
 
+test("Awakened Spellbook refuses with complete localized advice and preserves source identities", () => {
+  const fixtures = [
+    [
+      true,
+      "Awakened Spellbook changes the damage type of a wizard spell from {name}'s spellbook, and {spell} is not in it. Leave the damage type out for {spell}'s own ({ownDamage}). Nothing was spent.",
+      "Awakened Spellbook mění typ zranění kouzelnického kouzla z knihy kouzel postavy {name}, ale kouzlo {spell} v ní není. Pro použití vlastního typu zranění kouzla {spell} ({ownDamage}) typ zranění nezadávej. Nic nebylo utraceno."
+    ],
+    [
+      false,
+      "Awakened Spellbook changes the damage type of a spell cast with a spell slot, and this casting of {spell} spends none. Leave the damage type out for {spell}'s own ({ownDamage}). Nothing was spent.",
+      "Awakened Spellbook mění typ zranění kouzla seslaného za použití pozice kouzla, ale toto seslání kouzla {spell} žádnou pozici nespotřebuje. Pro použití vlastního typu zranění kouzla {spell} ({ownDamage}) typ zranění nezadávej. Nic nebylo utraceno."
+    ],
+    [
+      true,
+      "Awakened Spellbook takes a damage type found in another spell of the slot's level in {name}'s spellbook, and no other level {bookLevel} spell there deals {askedDamage} damage (no other damaging spell of that level is in the book). Leave the damage type out for {spell}'s own ({ownDamage}). Nothing was spent.",
+      "Awakened Spellbook umožňuje použít typ zranění jiného kouzla z knihy kouzel postavy {name}, které má stejnou úroveň jako použitá pozice. Žádné jiné kouzlo {bookLevel}. úrovně v knize nepůsobí zranění typu {askedDamage} (v knize není žádné jiné zraňující kouzlo této úrovně). Pro použití vlastního typu zranění kouzla {spell} ({ownDamage}) typ zranění nezadávej. Nic nebylo utraceno."
+    ],
+    [
+      true,
+      "Awakened Spellbook takes a damage type found in another spell of the slot's level in {name}'s spellbook, and no other level {bookLevel} spell there deals {askedDamage} damage: the level {bookLevel} spells there deal {bookTypes}. Leave the damage type out for {spell}'s own ({ownDamage}). Nothing was spent.",
+      "Awakened Spellbook umožňuje použít typ zranění jiného kouzla z knihy kouzel postavy {name}, které má stejnou úroveň jako použitá pozice. Žádné jiné kouzlo {bookLevel}. úrovně v knize nepůsobí zranění typu {askedDamage}. Typy zranění kouzel {bookLevel}. úrovně z této knihy: {bookTypes}. Pro použití vlastního typu zranění kouzla {spell} ({ownDamage}) typ zranění nezadávej. Nic nebylo utraceno."
+    ]
+  ];
+  const vars = {"name":"Iris (A+B)","spell":"Custom [A+B]","ownDamage":"cold","askedDamage":"fire","bookLevel":"3","bookTypes":"acid (Custom [C+D]), lightning (Other (E+F))"};
+  for (const [hasActor, en, cs] of fixtures) {
+    const raw = translate("en", en, vars);
+    for (const [locale, expected] of [["en", en], ["cs", cs], ["fr", en]]) {
+      const t = (key, values) => translate(locale, key, values);
+      assert.equal(castRefusalDisplay(raw, t, vars.name), translate("en", expected, vars));
+      if (hasActor) assert.equal(castRefusalDisplay(raw, t, "Different actor"), raw);
+      assert.equal(castRefusalDisplay(raw + " Unknown tail.", t, vars.name), raw + " Unknown tail.");
+    }
+  }
+  const t = (key, values) => translate("cs", key, values);
+  for (const [index, invalid] of [[0,{"ownDamage":""}],[0,{"spell":"Unknown sentence. Custom"}],[2,{"bookLevel":"0"}],[2,{"bookLevel":"10"}],[2,{"bookLevel":"03"}],[2,{"askedDamage":""}],[3,{"bookTypes":"unknown list"}],[3,{"bookTypes":"acid (Custom). Unknown sentence"}],[3,{"bookTypes":""}]]) {
+    const raw = translate("en", fixtures[index][1], { ...vars, ...invalid });
+    assert.equal(castRefusalDisplay(raw, t, vars.name), raw);
+  }
+  const wrongSpell = translate("en", fixtures[0][1], vars).replace("for Custom [A+B]'s own", "for Another spell's own");
+  assert.equal(castRefusalDisplay(wrongSpell, t, vars.name), wrongSpell);
+  const wrongLevel = translate("en", fixtures[3][1], vars).replace("the level 3 spells", "the level 4 spells");
+  assert.equal(castRefusalDisplay(wrongLevel, t, vars.name), wrongLevel);
+});
+
 console.log(`test-cast-rules: ${passed} passed`);

@@ -75,6 +75,10 @@ const TEMPLATES = [
   "{name} has already used their bonus action this turn; casting {spell} needs one.",
   "{spell} is cast as a reaction: use_reaction with feature \"{spell}\" when its trigger happens; the server checks the trigger and applies it. Nothing was spent.",
   "A spell slot has a level from 1 to 9, not {level}. Name the slot {spell} is cast from, or leave the level out for the spell's own.",
+  "Awakened Spellbook changes the damage type of a wizard spell from {name}'s spellbook, and {spell} is not in it. Leave the damage type out for {spell}'s own ({ownDamage}). Nothing was spent.",
+  "Awakened Spellbook changes the damage type of a spell cast with a spell slot, and this casting of {spell} spends none. Leave the damage type out for {spell}'s own ({ownDamage}). Nothing was spent.",
+  "Awakened Spellbook takes a damage type found in another spell of the slot's level in {name}'s spellbook, and no other level {bookLevel} spell there deals {askedDamage} damage (no other damaging spell of that level is in the book). Leave the damage type out for {spell}'s own ({ownDamage}). Nothing was spent.",
+  "Awakened Spellbook takes a damage type found in another spell of the slot's level in {name}'s spellbook, and no other level {bookLevel} spell there deals {askedDamage} damage: the level {bookLevel} spells there deal {bookTypes}. Leave the damage type out for {spell}'s own ({ownDamage}). Nothing was spent.",
   "The caster is no longer at the table."
 ] as const;
 
@@ -190,6 +194,15 @@ export function castRefusalDisplay(error: string, t: T, actor?: string): string 
     if (!match) continue;
     const groups = match.groups ?? {};
     if (actor && groups.name !== undefined && groups.name !== actor) continue;
+    // Awakened Spellbook repeats the spell and slot level in its advice.
+    // patternFor enforces those repetitions; the damage type list stays opaque.
+    if (groups.ownDamage !== undefined) {
+      if (Object.values(groups).some((value) => !value.trim() || value.includes(". "))) continue;
+      if (!/^[^():\r\n]+$/.test(groups.ownDamage)) continue;
+      if (groups.askedDamage !== undefined && !/^[^():\r\n]+$/.test(groups.askedDamage)) continue;
+      if (groups.bookLevel !== undefined && !/^[1-9]$/.test(groups.bookLevel)) continue;
+      if (groups.bookTypes !== undefined && !/^[^()\r\n]+ \(.+\)$/.test(groups.bookTypes)) continue;
+    }
     const vars = Object.fromEntries(Object.entries(groups).map(([field, raw]) => [field, fragment(field, raw, t)]));
     if (ring && !groups.ring) continue;
     const message = t(key, vars);

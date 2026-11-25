@@ -28443,6 +28443,11 @@
     "lib/dm/cast-refusal-display.ts#partial": [
       [
         "parse",
+        5,
+        "Validate canonical Awakened Spellbook refusal captures and opaque source list format; reader only."
+      ],
+      [
+        "parse",
         4,
         "Match canonical Counterspell, its ability abbreviation, and reject ambiguous sentence captures in Counterspell and combined action notes."
       ],
