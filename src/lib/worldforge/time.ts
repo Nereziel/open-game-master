@@ -1,5 +1,6 @@
 import type { Calendar, Entry, FieldDef, FieldValue, WorldEvent, WorldType, YearValue } from "./model.ts";
 import { compareNames } from "../language/text-logic.ts";
+import { translate, translatePlural, type Locale } from "../i18n/translate.ts";
 
 // Years across a world's calendars, after WorldForge's years and fields
 // modules (by Smoebo). A calendar is a reckoning, "Tide Reckoning, TR", with
@@ -91,16 +92,19 @@ export function lifespan(type: WorldType, entry: Entry, calendars: Calendar[]): 
 
 // "12 years before their birth": an event that names someone outside their
 // own life, which is either a mistake or a ghost story.
-export function lifespanIssue(span: { birth: number | null; death: number | null }, year: number): string {
+export function lifespanIssue(span: { birth: number | null; death: number | null }, year: number, locale: Locale = "en"): string {
   if (!Number.isFinite(year)) return "";
-  const years = (count: number) => `${count} year${count === 1 ? "" : "s"}`;
-  if (span.birth !== null && year < span.birth) return `${years(span.birth - year)} before their birth`;
-  if (span.death !== null && year > span.death) return `${years(year - span.death)} after their death`;
+  if (span.birth !== null && year < span.birth) {
+    return translatePlural(locale, "{count} year before their birth", "{count} years before their birth", { count: span.birth - year });
+  }
+  if (span.death !== null && year > span.death) {
+    return translatePlural(locale, "{count} year after their death", "{count} years after their death", { count: year - span.death });
+  }
   return "";
 }
 
 // "61 TR to 118 TR (57 years)", "born 61 TR", "died 118 TR".
-export function formatLifespan(type: WorldType, entry: Entry, calendars: Calendar[]): string {
+export function formatLifespan(type: WorldType, entry: Entry, calendars: Calendar[], locale: Locale = "en"): string {
   const span = lifespan(type, entry, calendars);
   const shown = (role: "birth" | "death") => {
     const def = type.fields.find((field) => field.kind === "year" && field.role === role);
@@ -108,9 +112,12 @@ export function formatLifespan(type: WorldType, entry: Entry, calendars: Calenda
   };
   if (span.birth !== null && span.death !== null) {
     const length = span.death - span.birth;
-    return `${shown("birth")} to ${shown("death")} (${length < 0 ? "dies before being born" : `${length} year${length === 1 ? "" : "s"}`})`;
+    const birth = shown("birth");
+    const death = shown("death");
+    if (length < 0) return translate(locale, "{birth} to {death} (dies before being born)", { birth, death });
+    return translatePlural(locale, "{birth} to {death} ({count} year)", "{birth} to {death} ({count} years)", { birth, death, count: length });
   }
-  if (span.birth !== null) return `born ${shown("birth")}`;
-  if (span.death !== null) return `died ${shown("death")}`;
+  if (span.birth !== null) return translate(locale, "born {year}", { year: shown("birth") });
+  if (span.death !== null) return translate(locale, "died {year}", { year: shown("death") });
   return "";
 }

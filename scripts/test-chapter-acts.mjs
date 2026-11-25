@@ -154,6 +154,71 @@ try {
     assert.equal(glance.chapter.actTitle, "Beneath the Reliquary");
     assert.ok(!JSON.stringify(glance).includes("Find the tomb"));
   });
+
+  const { renderStoryDocx } = await import("../src/lib/export/docx.ts");
+  const { renderStoryOdt } = await import("../src/lib/export/odt.ts");
+  const { exportFilename, storyPresentation } = await import("../src/lib/export/story-document.ts");
+  const { questLogForExport } = await import("../src/lib/dm/quest-logic.ts");
+  const { installCatalog, translate } = await import("../src/lib/i18n/translate.ts");
+  const { localeTag } = await import("../src/lib/i18n/locale.ts");
+  const { default: JSZip } = await import("jszip");
+  for (const locale of ["cs", "fr"]) {
+    installCatalog(locale, JSON.parse(fs.readFileSync(new URL(`../src/lib/i18n/${locale}.json`, import.meta.url), "utf8")));
+  }
+  say("Příběh & <most> — À bientôt.");
+  const english = buildStoryDocument(campaign.id);
+  const quests = [
+    { title: "Úkol {title} & Étoile", status: "done", visibility: "party" },
+    { title: "Failed quest", status: "failed", visibility: "party" },
+    { title: "Active quest", status: "active", visibility: "party" },
+    { title: "SECRET hidden quest", status: "hidden", visibility: "party" },
+    { title: "SECRET GM quest", status: "active", visibility: "dm" },
+  ];
+  for (const locale of ["en", "cs", "fr"]) {
+    const t = (key, vars) => translate(locale, key, vars);
+    const doc = buildStoryDocument(campaign.id, locale);
+    assert.equal(doc.locale, locale);
+    assert.equal(doc.storyLanguage, "en", "UI locale does not change the table language");
+    assert.equal(doc.chapters[0].actHeading, t("Act {act}: {title}", { act: "I", title: "The Drowned Road" }));
+    assert.equal(doc.chapters[0].heading, t("Chapter {index}: {title}", { index: 1, title: "The Ferryman" }));
+    assert.equal(doc.chapters.at(-1).heading, t("Chapter {index} (in progress)", { index: doc.chapters.at(-1).index }));
+    assert.equal(doc.chapters[0].transcript[0].speaker, t("Game Master"));
+    assert.deepEqual(doc.chapters.map((ch) => ch.transcript.map((line) => line.text)), english.chapters.map((ch) => ch.transcript.map((line) => line.text)));
+    assert.deepEqual(doc.chapters.map((ch) => [ch.actRecap, ch.summary, ch.highlights]), english.chapters.map((ch) => [ch.actRecap, ch.summary, ch.highlights]));
+    doc.questLog = questLogForExport(quests, t);
+    assert.deepEqual(doc.questLog, [t("{title} (done)", { title: quests[0].title }), t("{title} (failed)", { title: quests[1].title }), quests[2].title]);
+    doc.meta.exportedAt = "2026-01-02T03:04:05.000Z";
+    doc.storyLanguage = "cs"; // test prose language independent of the UI
+    const view = storyPresentation(doc);
+    assert.equal(view.footer, t("Exported from Open Game Master on {date}.", { date: new Date(doc.meta.exportedAt).toLocaleString(localeTag(locale)) }));
+    assert.equal(exportFilename(doc, "html"), exportFilename(english, "html"));
+    const html = renderStoryHtml(doc);
+    assert.ok(html.includes(`<html lang="${locale}">`));
+    assert.ok(html.includes('<span lang="cs">Příběh &amp; &lt;most&gt; — À bientôt.</span>'));
+    assert.ok(html.includes(view.footer));
+    const word = await JSZip.loadAsync(await renderStoryDocx(doc));
+    const odt = await JSZip.loadAsync(await renderStoryOdt(doc));
+    const wordBody = await word.file("word/document.xml").async("string");
+    const wordMeta = await word.file("docProps/core.xml").async("string");
+    const odtBody = await odt.file("content.xml").async("string");
+    const odtMeta = await odt.file("meta.xml").async("string");
+    for (const output of [html, wordBody, odtBody]) {
+      for (const label of [view.contents, view.questLog, view.transcript, view.metaBits[1], doc.chapters[0].actHeading, doc.chapters[0].heading, t("Game Master")]) {
+        assert.ok(output.includes(label), `${locale}: missing ${label}`);
+      }
+      assert.ok(output.includes("Příběh &amp; &lt;most"), "authored unicode and XML escaping");
+      assert.ok(output.includes("À bientôt."));
+      assert.ok(!output.includes("SECRET hidden quest"));
+      assert.ok(!output.includes("SECRET GM quest"));
+      assert.ok(!output.includes("Find the tomb"));
+      assert.ok(!output.includes("drowned city"));
+    }
+    assert.ok(wordMeta.includes(view.title));
+    assert.ok(odtMeta.includes(view.title));
+    assert.ok(odtMeta.includes("<dc:language>cs</dc:language>"));
+    passed += 1;
+    console.log(`ok: localized HTML, DOCX and ODT (${locale})`);
+  }
 } finally {
   removeTempDir(dir);
 }

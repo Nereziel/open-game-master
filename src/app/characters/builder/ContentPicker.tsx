@@ -8,7 +8,6 @@ import { describeContentEntry, spellSummary } from "@/lib/help";
 import { useContentSearch, type PickerEntry } from "./useContentSearch";
 import { useLocale, useT, useTp } from "@/lib/locale";
 import { contentName } from "@/lib/content/names";
-import { expansionNameCs } from "@/lib/content/expansion-descriptions-cs";
 
 export type { PickerEntry } from "./useContentSearch";
 
@@ -47,9 +46,7 @@ export default function ContentPicker({
   // A feat's row name reads in the reader's language (the official maps; a
   // homebrew row stays its author's words) while the pick itself stores the
   // row's own English name.
-  const rowName = (entry: PickerEntry) => kind === "feats"
-    ? contentName("feats", entry, locale)
-    : (locale === "cs" ? expansionNameCs(kind, entry) : undefined) ?? entry.name;
+  const rowName = (entry: PickerEntry) => contentName(kind, entry, locale);
   const { query, setQuery, results: found, setResults, open, setOpen, loading, unavailable, failed, unadmitted } =
     useContentSearch(kind, extraParams);
   const results = hide ? found.filter((entry) => !hide(entry)) : found;
@@ -90,12 +87,11 @@ export default function ContentPicker({
       {failed ? (
         // A refused request or a dropped connection is not a missing pack.
         <p role="alert" className="mt-1 rounded-lg border border-amber-900/50 bg-amber-950/20 px-3 py-2 text-xs text-amber-200/80">
-          Could not reach the server to search. Type again to retry.
+          {t("Could not reach the server to search. Type again to retry.")}
         </p>
       ) : unavailable ? (
         <p className="mt-1 rounded-lg border border-amber-900/50 bg-amber-950/20 px-3 py-2 text-xs text-amber-200/80">
-          The content pack is not installed on this server, so there is nothing to search or
-          browse. Whoever runs it can install it with: node scripts/import-open5e.mjs
+          {t("The content pack is not installed on this server, so there is nothing to list. Whoever runs it can install it with: node scripts/import-open5e.mjs")}
         </p>
       ) : open && !results.length && query.trim() && !loading ? (
         <p className="mt-1 rounded-lg border border-stone-800 bg-stone-950/60 px-3 py-2 text-xs text-stone-500">
@@ -151,8 +147,8 @@ export default function ContentPicker({
                   before adding it costs no extra request. */}
               <InfoButton
                 label={rowName(entry)}
-                meta={kind === "spells" ? spellSummary(entry.data) : undefined}
-                text={describeContentEntry(entry.data)}
+                meta={kind === "spells" ? spellSummary(entry.data, t.locale) : undefined}
+                text={describeContentEntry(entry.data, undefined, locale)}
                 reference={
                   entry.source === "homebrew" ? undefined : { kind, slug: entry.slug }
                 }

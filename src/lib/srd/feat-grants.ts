@@ -19,6 +19,7 @@ import { featSpellsOwed, type CastingAbility } from "@/lib/srd/feat-spells";
 import { featGrantSpec, featGrantsAnything, lowerText as lower, type FeatGrantSpec, type PickKind } from "@/lib/srd/feat-grant-text";
 import { SRD_WEAPONS } from "@/lib/srd/weapons";
 import { featChoice } from "@/lib/schemas/sheet";
+import { translate, translatePlural, type Locale, type MessageVars } from "@/lib/messages-logic";
 
 export { featGrantSpec, featGrantsAnything, KNOWN_TOOLS, type FeatGrantSpec, type PickKind } from "@/lib/srd/feat-grant-text";
 
@@ -44,7 +45,10 @@ export type FeatPicks = {
 export type FeatChoices = Record<string, FeatPicks>;
 
 const SINGULAR: Record<PickKind, string> = { skills: "skill", languages: "language", tools: "tool", weapons: "weapon", armor: "armor" };
-const plural = (n: number, word: string) => `${n} ${word}${n === 1 || word === "armor" ? "" : "s"}`;
+const pickKindWord = (locale: Locale, kind: PickKind, count: number) =>
+  translatePlural(locale, SINGULAR[kind], kind === "armor" ? "armor" : kind, { count });
+const countedPick = (locale: Locale, kind: PickKind, count: number) =>
+  `${count} ${pickKindWord(locale, kind, count)}`;
 const named = (list: string[] | undefined) => (list ?? []).filter((entry) => entry && entry.trim());
 const dedicated = (spec: FeatGrantSpec, kind: PickKind) => (kind === "armor" ? 0 : spec[kind]);
 
@@ -64,39 +68,39 @@ export function pickSlots(spec: FeatGrantSpec, picks: FeatPicks | undefined, kin
 }
 
 // What the feat still waits for, as the sentence the gate shows, or null.
-export function featPicksOwed(feat: string, spec: FeatGrantSpec, picks: FeatPicks | undefined): string | null {
+export function featPicksOwed(feat: string, spec: FeatGrantSpec, picks: FeatPicks | undefined, locale: Locale = "en"): string | null {
   const has = (list: string[] | undefined) => named(list).length;
   const owed: string[] = [];
   if (spec.languages > has(picks?.languages)) {
-    owed.push(plural(spec.languages - has(picks?.languages), "language"));
+    owed.push(countedPick(locale, "languages", spec.languages - has(picks?.languages)));
   }
   if (spec.skills > has(picks?.skills)) {
-    owed.push(plural(spec.skills - has(picks?.skills), "skill"));
+    owed.push(countedPick(locale, "skills", spec.skills - has(picks?.skills)));
   }
   if (spec.expertise > has(picks?.expertise)) {
-    owed.push(`expertise in ${plural(spec.expertise - has(picks?.expertise), "skill")}`);
+    owed.push(translatePlural(locale, "expertise in {count} skill", "expertise in {count} skills", { count: spec.expertise - has(picks?.expertise) }));
   }
   if (spec.weapons > has(picks?.weapons)) {
-    owed.push(plural(spec.weapons - has(picks?.weapons), "weapon"));
+    owed.push(countedPick(locale, "weapons", spec.weapons - has(picks?.weapons)));
   }
   if (spec.tools > has(picks?.tools)) {
-    owed.push(plural(spec.tools - has(picks?.tools), "tool"));
+    owed.push(countedPick(locale, "tools", spec.tools - has(picks?.tools)));
   }
   const shared = spec.any - anyPicksMade(spec, picks);
   if (shared > 0) {
-    const kinds = spec.anyKinds.map((kind) => (shared === 1 ? SINGULAR[kind] : kind === "armor" ? "armor" : kind));
-    owed.push(`${shared} ${kinds.join(" or ")}`);
+    const kinds = spec.anyKinds.map((kind) => pickKindWord(locale, kind, shared));
+    owed.push(`${shared} ${kinds.join(translate(locale, " or "))}`);
   }
   if (spec.damageTypes.length && !(picks?.damageType ?? "").trim()) {
-    owed.push("a damage type");
+    owed.push(translate(locale, "a damage type"));
   }
-  return owed.length ? `${feat}: pick ${owed.join(", ")}.` : null;
+  return owed.length ? translate(locale, "{feat}: pick {choices}.", { feat, choices: owed.join(", ") }) : null;
 }
 
 // Everything a feat still waits for, training and spells alike: the one
 // sentence the builder's gate and the level-up dialog show.
-export function featOwed(feat: string, spec: FeatGrantSpec, picks: FeatPicks | undefined): string | null {
-  return featPicksOwed(feat, spec, picks) ?? featSpellsOwed(feat, spec.taught, picks);
+export function featOwed(feat: string, spec: FeatGrantSpec, picks: FeatPicks | undefined, locale: Locale = "en"): string | null {
+  return featPicksOwed(feat, spec, picks, locale) ?? featSpellsOwed(feat, spec.taught, picks, locale);
 }
 
 export type FeatGrantInput = {
@@ -116,6 +120,8 @@ export type FeatGrantInput = {
   // feat. A file exported before a feat asked for its picks names none of
   // them (issue #430), and what it does name is still somebody's hand edit.
   picksMayWait?: boolean;
+  // Optional reader locale for validation messages; rules and stored names stay canonical.
+  locale?: Locale;
 };
 
 // `owed`: the picks still to make, when they may wait (picksMayWait).
@@ -128,6 +134,7 @@ const weaponName = (name: string) => SRD_WEAPONS.find((weapon) => lower(weapon.n
 // The sheet's training with every feat's grants in. Fixed grants always;
 // picks as the sheet records them, held to the feat's text when strict.
 export function applyFeatGrants(input: FeatGrantInput): FeatGrantVerdict {
+  const t = (key: string, vars?: MessageVars) => translate(input.locale ?? "en", key, vars);
   const problems: string[] = [];
   const owedPicks: string[] = [];
   let languages = [...input.proficiencies.languages];
@@ -173,13 +180,13 @@ export function applyFeatGrants(input: FeatGrantInput): FeatGrantVerdict {
       }
     }
     if (input.strict) {
-      const owed = featPicksOwed(feat.name, spec, picks);
+      const owed = featPicksOwed(feat.name, spec, picks, input.locale);
       if (owed) {
         (input.picksMayWait ? owedPicks : problems).push(owed);
       }
       const element = lower(picks.damageType ?? "");
       if (spec.damageTypes.length && element && !spec.damageTypes.includes(element)) {
-        problems.push(`"${picks.damageType}" is not a damage type ${feat.name} offers; pick one of ${spec.damageTypes.join(", ")}.`);
+        problems.push(t("\"{value}\" is not a damage type {feat} offers; pick one of {choices}.", { value: picks.damageType ?? "", feat: feat.name, choices: spec.damageTypes.join(", ") }));
       }
     }
     // Each kind takes its own count, then what is left of the shared one
@@ -198,19 +205,19 @@ export function applyFeatGrants(input: FeatGrantInput): FeatGrantVerdict {
     for (const skill of pickedSkills) {
       if (!ALL_SKILLS.includes(skill as (typeof ALL_SKILLS)[number])) {
         if (input.strict) {
-          problems.push(`"${skill}" is not a skill; ${feat.name}'s skill is picked from the skill list.`);
+          problems.push(t("\"{skill}\" is not a skill; {feat}'s skill is picked from the skill list.", { skill, feat: feat.name }));
         }
         continue;
       }
       if (spec.skillsFrom.length && !spec.skillsFrom.includes(skill)) {
         if (input.strict) {
-          problems.push(`${skill.replace(/_/g, " ")} is not a skill ${feat.name} offers; pick from ${spec.skillsFrom.map((entry) => entry.replace(/_/g, " ")).join(", ")}.`);
+          problems.push(t("{skill} is not a skill {feat} offers; pick from {choices}.", { skill: skill.replace(/_/g, " "), feat: feat.name, choices: spec.skillsFrom.map((entry) => entry.replace(/_/g, " ")).join(", ") }));
         }
         continue;
       }
       if (has(skills, skill)) {
         if (input.strict) {
-          problems.push(`${feat.name} grants a new skill; this character is already proficient in ${skill}.`);
+          problems.push(t("{feat} grants a new skill; this character is already proficient in {skill}.", { feat: feat.name, skill }));
         }
         continue;
       }
@@ -231,7 +238,7 @@ export function applyFeatGrants(input: FeatGrantInput): FeatGrantVerdict {
     for (const language of pickedLanguages) {
       if (has(languages, language)) {
         if (input.strict) {
-          problems.push(`${feat.name}'s languages are new ones; this character already speaks ${language}.`);
+          problems.push(t("{feat}'s languages are new ones; this character already speaks {language}.", { feat: feat.name, language }));
         }
         continue;
       }
@@ -242,13 +249,13 @@ export function applyFeatGrants(input: FeatGrantInput): FeatGrantVerdict {
     for (const skill of pickedExpertise) {
       if (!has(skills, skill)) {
         if (input.strict) {
-          problems.push(`${feat.name}'s expertise doubles a skill the character has; ${skill} is not among them.`);
+          problems.push(t("{feat}'s expertise doubles a skill the character has; {skill} is not among them.", { feat: feat.name, skill }));
         }
         continue;
       }
       if (has(expertise, skill)) {
         if (input.strict) {
-          problems.push(`This character already has expertise in ${skill}; ${feat.name}'s goes on another skill.`);
+          problems.push(t("This character already has expertise in {skill}; {feat}'s goes on another skill.", { skill, feat: feat.name }));
         }
         continue;
       }
@@ -259,13 +266,13 @@ export function applyFeatGrants(input: FeatGrantInput): FeatGrantVerdict {
     for (const tool of pickedTools) {
       if (spec.toolsFrom.length && !spec.toolsFrom.includes(tool)) {
         if (input.strict) {
-          problems.push(`"${tool}" is not a tool ${feat.name} offers.`);
+          problems.push(t("\"{tool}\" is not a tool {feat} offers.", { tool, feat: feat.name }));
         }
         continue;
       }
       if (has(tools, tool)) {
         if (input.strict) {
-          problems.push(`${feat.name} grants a new tool; this character already has ${tool}.`);
+          problems.push(t("{feat} grants a new tool; this character already has {tool}.", { feat: feat.name, tool }));
         }
         continue;
       }
@@ -278,13 +285,13 @@ export function applyFeatGrants(input: FeatGrantInput): FeatGrantVerdict {
       const name = weaponName(weapon);
       if (!name || !WEAPON_NAMES.has(lower(name))) {
         if (input.strict) {
-          problems.push(`"${weapon}" is not a weapon on the table; ${feat.name}'s weapons are picked from it.`);
+          problems.push(t("\"{weapon}\" is not a weapon on the table; {feat}'s weapons are picked from it.", { weapon, feat: feat.name }));
         }
         continue;
       }
       if (spec.weaponsFrom.length && !spec.weaponsFrom.some((offered) => lower(offered) === lower(name))) {
         if (input.strict) {
-          problems.push(`${name} is not a weapon ${feat.name} offers.`);
+          problems.push(t("{name} is not a weapon {feat} offers.", { name, feat: feat.name }));
         }
         continue;
       }
@@ -299,7 +306,7 @@ export function applyFeatGrants(input: FeatGrantInput): FeatGrantVerdict {
       const kinds = new Set(pickedWeapons.map((weapon) => WEAPON_KINDS.get(lower(weapon))));
       const missing = spec.weaponKinds.find((kind) => !kinds.has(kind));
       if (missing) {
-        problems.push(`${feat.name} takes one ${spec.weaponKinds.join(" and one ")} weapon, and none of its picks is a ${missing} weapon.`);
+        problems.push(t("{feat} takes one {kinds} weapon, and none of its picks is a {missing} weapon.", { feat: feat.name, kinds: spec.weaponKinds.join(t(" and one ")), missing }));
       }
     }
     // Armor: what the feat offers (shields), not already worn.
@@ -307,13 +314,13 @@ export function applyFeatGrants(input: FeatGrantInput): FeatGrantVerdict {
     for (const piece of pickedArmor) {
       if (!spec.armorFrom.includes(piece)) {
         if (input.strict) {
-          problems.push(`"${piece}" is not armor ${feat.name} offers.`);
+          problems.push(t("\"{piece}\" is not armor {feat} offers.", { piece, feat: feat.name }));
         }
         continue;
       }
       if (has(armor, piece)) {
         if (input.strict) {
-          problems.push(`${feat.name} grants new armor training; this character already has ${piece}.`);
+          problems.push(t("{feat} grants new armor training; this character already has {piece}.", { feat: feat.name, piece }));
         }
         continue;
       }

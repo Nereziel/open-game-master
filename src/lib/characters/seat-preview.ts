@@ -45,9 +45,10 @@ type Refused = { ok: false; problems: string[] };
 
 // The table's catalog for the picks: its DMs' homebrew, as the level-up
 // reads it (src/app/api/campaigns/[campaignId]/sheet/route.ts PATCH).
-export function seatPicksContextFor(campaign: Pick<Campaign, "id">): SeatPicksContext {
+export function seatPicksContextFor(campaign: Pick<Campaign, "id">, locale: Locale = "en"): SeatPicksContext {
   const owner = tableAuthors(campaign.id);
   return {
+    locale,
     classOf: (classId) => classGrantsFor(classId, owner),
     featOf: (name) => featFactsFor(name, owner),
     spellOf: (name) => spellFactsFor(name, owner),
@@ -67,15 +68,16 @@ export function withSeatPicks<T extends Seated>(
   picks: SeatPicks | null | undefined,
   campaign: Campaign,
   userId: string,
+  locale: Locale = "en",
 ): T | Seated | Refused {
   if (!hasSeatPicks(picks)) {
     return admitted;
   }
-  const applied = applySeatPicks(admitted.sheet, level, picks, seatPicksContextFor(campaign));
+  const applied = applySeatPicks(admitted.sheet, level, picks, seatPicksContextFor(campaign, locale));
   if (!applied.ok) {
     return applied;
   }
-  const judged = admitSheet({ door: "stored", level, sheet: applied.sheet, userId, campaign });
+  const judged = admitSheet({ door: "stored", level, sheet: applied.sheet, userId, campaign, locale });
   if (!judged.ok) {
     return judged;
   }
@@ -100,9 +102,9 @@ export type PregenAdmitted =
 // level earned were never offered, so they are owed, not taken (backlog B6,
 // the rule a library hero joining above its level follows), unless the
 // player picks them on the confirm sheet.
-export function admitPregen(pregen: Pregen, campaign: Campaign, userId: string, picks?: SeatPicks | null): PregenAdmitted {
+export function admitPregen(pregen: Pregen, campaign: Campaign, userId: string, picks?: SeatPicks | null, locale: Locale = "en"): PregenAdmitted {
   const built = createSheetSchema.parse(pregen.sheet);
-  const admitted = admitSheet({ door: "table", level: campaign.startingLevel, sheet: built, userId, campaign });
+  const admitted = admitSheet({ door: "table", level: campaign.startingLevel, sheet: built, userId, campaign, locale });
   if (!admitted.ok) {
     return admitted;
   }
@@ -117,6 +119,7 @@ export function admitPregen(pregen: Pregen, campaign: Campaign, userId: string, 
     picks,
     campaign,
     userId,
+    locale,
   );
   if (!seated.ok) {
     return seated;
@@ -139,13 +142,14 @@ export function admitLibraryForSeat(
   userId: string,
   level: number,
   picks?: SeatPicks | null,
+  locale: Locale = "en",
 ): { ok: true; sheet: CreateSheetInput; rolledHp?: number[]; settle?: () => void } | { ok: false; error: string; problems: string[] } {
-  const admitted = admitLibraryCharacter(character, campaign, userId, level);
+  const admitted = admitLibraryCharacter(character, campaign, userId, level, undefined, locale);
   if (!admitted.ok) {
     return admitted;
   }
-  const seated = withSeatPicks(admitted, level, picks, campaign, userId);
-  return seated.ok ? seated : { ok: false, error: seated.problems[0] ?? enT("Those picks are not within the rules."), problems: seated.problems };
+  const seated = withSeatPicks(admitted, level, picks, campaign, userId, locale);
+  return seated.ok ? seated : { ok: false, error: seated.problems[0] ?? translate(locale, "Those picks are not within the rules."), problems: seated.problems };
 }
 
 function preview(
@@ -179,14 +183,14 @@ function preview(
 
 export function previewLibraryJoin(character: LibraryCharacter, campaign: Campaign, userId: string, picks?: SeatPicks | null, t: T = enT, locale: Locale = "en"): JoinPreview {
   const level = Math.max(1, Math.min(20, campaign.startingLevel));
-  const unpicked = admitLibraryCharacter(character, campaign, userId, level);
-  const admitted = hasSeatPicks(picks) && unpicked.ok ? withSeatPicks(unpicked, level, picks, campaign, userId) : unpicked;
+  const unpicked = admitLibraryCharacter(character, campaign, userId, level, undefined, locale);
+  const admitted = hasSeatPicks(picks) && unpicked.ok ? withSeatPicks(unpicked, level, picks, campaign, userId, locale) : unpicked;
   return preview(character.name, character.sheet, character.level, level, unpicked, admitted, campaign, t, locale);
 }
 
 export function previewPregenJoin(pregen: Pregen, campaign: Campaign, userId: string, picks?: SeatPicks | null, t: T = enT, locale: Locale = "en"): JoinPreview {
-  const unpicked = admitPregen(pregen, campaign, userId);
-  const admitted = hasSeatPicks(picks) && unpicked.ok ? admitPregen(pregen, campaign, userId, picks) : unpicked;
+  const unpicked = admitPregen(pregen, campaign, userId, undefined, locale);
+  const admitted = hasSeatPicks(picks) && unpicked.ok ? admitPregen(pregen, campaign, userId, picks, locale) : unpicked;
   const built = createSheetSchema.parse(pregen.sheet);
   return preview(built.name, built, 1, campaign.startingLevel, unpicked, admitted, campaign, t, locale);
 }
@@ -196,6 +200,6 @@ export function previewPregenJoin(pregen: Pregen, campaign: Campaign, userId: st
 // every choice its level offers, so the confirm sheet asks for none.
 export function previewBuiltJoin(sheet: CreateSheetInput, campaign: Campaign, userId: string, olderBuilder: OlderBuilder | null = null, t: T = enT, locale: Locale = "en"): JoinPreview {
   const level = Math.max(1, Math.min(20, campaign.startingLevel));
-  const admitted = admitSheet({ door: "table", level, sheet, userId, campaign, olderBuilder });
+  const admitted = admitSheet({ door: "table", level, sheet, userId, campaign, olderBuilder, locale });
   return preview(sheet.name, sheet, level, level, { ok: false }, admitted, campaign, t, locale);
 }

@@ -1,23 +1,14 @@
-// The class resources' names and guidance in the reader's language. The map
-// itself (class-resources-fr-data.ts, about 6 KiB gzip) is installed with the
-// French catalog (src/lib/i18n/fr-tables.ts), so a page in English never
-// loads it; until it is in, a French reader sees the stored English def.
-import { frTables } from "@/lib/i18n/fr-tables";
-import { csTables } from "@/lib/i18n/cs-tables";
+// Display-only resource names and guidance in any reader language.
+// Keep the upstream module path so existing consumers need no rewiring.
+import { localizedTables } from "@/lib/i18n/localized-tables";
+import type { Locale } from "@/lib/i18n/translate";
 
-type Locale = "en" | "fr" | "cs";
-
-// A resource's display name in the reader's language; null outside French or
-// when the map does not carry the id, so the caller falls back to the def.
 export function resourceDisplayName(id: string, locale: Locale): string | null {
-  if (locale === "cs") return csTables()?.names.resources?.[id] ?? null;
-  if (locale !== "fr") return null;
-  return frTables()?.resources[id]?.name ?? null;
+  const tables = localizedTables(locale);
+  return tables?.resources?.[id]?.name ?? tables?.names.resources?.[id] ?? null;
 }
 
-// A resource's guidance line in the reader's language, same fallback.
 export function resourceGuidance(id: string, locale: Locale): string | null {
-  if (locale === "cs") return csTables()?.guidance[id] ?? null;
-  if (locale !== "fr") return null;
-  return frTables()?.resources[id]?.guidance ?? null;
+  const tables = localizedTables(locale);
+  return tables?.resources?.[id]?.guidance ?? tables?.guidance?.[id] ?? null;
 }

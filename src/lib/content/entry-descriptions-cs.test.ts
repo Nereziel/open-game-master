@@ -1,17 +1,126 @@
 import { describe, expect, it } from "vitest";
 import gearFr from "./item-descriptions-fr.json";
 import gearCs from "./item-descriptions-cs.json";
-import { buildItemSheet } from "../help/item-sheet";
-import { czechGearDescription, localizeEntryCs } from "./entry-descriptions-cs";
+import { buildItemSheet, itemCardRows } from "../help/item-sheet";
+import { czechGearDescription } from "./entry-descriptions-cs";
+import { localizeEntry } from "./entry-descriptions";
 import { bundledItemRows, bundledSpellRows } from "@/lib/rulebook/catalog-rows";
 import { czechFullTranslation } from "@/lib/rulebook/czech-companion";
+import { rulebookPages } from "@/lib/rulebook/book";
+import { SRD_BACKGROUNDS, SRD_RACES } from "@/lib/srd";
+import { AUTHORED_SUBCLASS_ENTRIES } from "@/lib/srd/features";
+import { CUSTOM_BACKGROUNDS, describeBackgroundFeature } from "@/lib/backgrounds";
+import { translate } from "@/lib/i18n/translate";
 import { describeContentEntry } from "@/lib/help";
 import spellFixture from "../../../scripts/fixtures/reader-golden/spell.json";
 import featFixture from "../../../scripts/fixtures/reader-golden/feat.json";
 import backgroundFixture from "../../../scripts/fixtures/reader-golden/background.json";
 import expansionTranslations from "./expansion-descriptions-cs.json";
-import { contentName } from "./names";
+import { packFeatText } from "@/lib/srd/feat-text";
+import { authoredFeatEntries } from "./authored-feats";
+import authoredFeatTranslations from "./authored-feat-descriptions-cs.json";
+import { contentName, contentNameMatches, localizedExpansionName, archetypeDisplayName, speciesTraitName } from "./names";
+import "../i18n/cs-catalog";
+import "../i18n/fr-catalog";
+import expansionNames from "./expansion-names-cs.json";
 
+
+const localizeEntryCs = <T,>(table: string, row: T): T => localizeEntry(table, row, "cs");
+
+describe("Source-safe display names and search", () => {
+  it("localizes bundled core rows and matches their translated labels", () => {
+    const row = bundledSpellRows().find((entry) => entry.rulebook === "fireball")!;
+    expect(contentName("spells", row, "cs")).toBe("Ohnivá koule");
+    expect(contentName("spells", row, "fr")).toBe("Boule de feu");
+    expect(contentNameMatches("spells", row, "ohniva kou", "cs")).toBe(true);
+    expect(contentNameMatches("spells", row, "boule de", "fr")).toBe(true);
+    expect(contentNameMatches("spells", row, "Fireball", "cs")).toBe(true);
+    expect(contentNameMatches("spells", row, "ohniva kou", "en")).toBe(false);
+    for (const foreign of [
+      { ...row, source: "homebrew" },
+      { ...row, source: "open5e", documentSlug: "unrelated-book" },
+      { ...row, source: "open5e", documentSlug: "srd-2024" },
+    ]) {
+      expect(contentName("spells", foreign, "cs")).toBe("Fireball");
+      expect(contentNameMatches("spells", foreign, "ohniva kou", "cs")).toBe(false);
+      expect(contentNameMatches("spells", foreign, "Fireball", "cs")).toBe(true);
+    }
+  });
+
+  it("matches the exact expansion label, not a translation from another book", () => {
+    const [slug, hit] = Object.entries(expansionTranslations.toh.spells).find(([, hit]) => hit.name !== hit.englishName)!;
+    const row = { slug, name: hit.englishName, source: "open5e", documentSlug: "toh" };
+    expect(contentNameMatches("spells", row, hit.name, "cs")).toBe(true);
+    expect(contentName("spells", { ...row, documentSlug: "unrelated-book" }, "cs")).toBe(row.name);
+  });
+});
+
+describe("Archetype and feat display is separate from mechanics", () => {
+  it("resolves every reviewed Tome of Heroes archetype by its actual source", () => {
+    for (const [slug, hit] of Object.entries(expansionTranslations.toh.subclasses)) {
+      const row = { slug, name: hit.englishName, source: "open5e", documentSlug: "toh" };
+      expect(archetypeDisplayName("fighter", row.name, "cs", row)).toBe(hit.name);
+      expect(archetypeDisplayName("fighter", row.name, "cs", { ...row, documentSlug: "other" })).toBe(row.name);
+      expect(archetypeDisplayName("fighter", row.name, "cs", { ...row, source: "homebrew" })).toBe(row.name);
+    }
+  });
+  it("keeps every reviewed Tome of Heroes feat's mechanical rules unchanged", () => {
+    for (const [slug, hit] of Object.entries(expansionTranslations.toh.feats)) {
+      const row = { slug, name: hit.englishName, source: "open5e", documentSlug: "toh", data: hit.original as Record<string, unknown> };
+      const canonical = packFeatText(row.data);
+      for (const locale of ["en", "fr", "cs"] as const) {
+        expect(packFeatText(localizeEntry("feats", row, locale).data)).toEqual(canonical);
+      }
+      expect(localizeEntry("feats", row, "cs").data.localized_desc).toBe(hit.description);
+    }
+  });
+});
+
+describe("Shared localized content descriptions", () => {
+  it("preserves canonical spell and item data for all reader languages", () => {
+    const spell = bundledSpellRows().find((row) => row.rulebook === "fireball")!;
+    const item = bundledItemRows().find((row) => row.rulebook === "cloak-of-protection")!;
+    for (const [table, row] of [["spells", spell], ["items", item]] as const) {
+      expect(localizeEntry(table, row, "en")).toBe(row);
+      for (const locale of ["fr", "cs"] as const) {
+        const result = localizeEntry(table, row, locale);
+        const { localized_desc, ...original } = result.data;
+        expect(localized_desc).toBeTypeOf("string");
+        expect(localized_desc).not.toBe(row.data.desc);
+        expect(original).toEqual(row.data);
+        expect(result.name).toBe(row.name);
+        expect(result.slug).toBe(row.slug);
+        expect(result.documentSlug).toBe(row.documentSlug);
+      }
+    }
+  });
+
+  it("uses French or Czech equipment prose without replacing the English row or a different source", () => {
+    const row = { slug: "torch", name: "Torch", source: "open5e", documentSlug: "wotc-srd", data: { desc: "A torch burns for one hour.", cost: "1 cp" } as Record<string, unknown> };
+    for (const [locale, description] of [["fr", gearFr.torch], ["cs", gearCs.torch]] as const) {
+      const result = localizeEntry("items", row, locale);
+      expect(result.data).toEqual({ ...row.data, localized_desc: description });
+      expect(buildItemSheet("Torch", [row.data, result.data], { locale })?.description).toBe(description);
+      for (const other of [
+        { ...row, source: "homebrew" },
+        { ...row, documentSlug: "srd-2024" },
+        { ...row, documentSlug: "unrelated-book" },
+        { ...row, data: {} },
+      ]) expect(localizeEntry("items", other, locale)).toBe(other);
+    }
+  });
+
+  it("uses the same display strategy for bundled and published core classes", () => {
+    for (const source of ["bundled", "open5e"]) {
+      const row = { slug: "fighter", name: "Fighter", source, documentSlug: "wotc-srd", data: { desc: "English class prose." } as Record<string, unknown> };
+      for (const locale of ["fr", "cs"] as const) {
+        const result = localizeEntry("classes", row, locale);
+        expect(result.data.localized_desc).toBeTypeOf("string");
+        expect(result.data.desc).toBe(row.data.desc);
+      }
+    }
+  });
+});
 
 describe("Czech SRD display descriptions", () => {
   it("serves every bundled spell and magic item without changing original fields", () => {
@@ -86,6 +195,28 @@ describe("Czech external display translations (without SQLite)", () => {
 
 
 describe("Source-specific Czech expansion names", () => {
+  it("keeps the compact name index in sync with the server-only descriptions", () => {
+    const source: Record<string, Record<string, Record<string, { englishName: string; name: string }>>> = expansionTranslations;
+    const expected = Object.fromEntries(Object.entries(source).map(([doc, tables]) => [
+      doc, Object.fromEntries(Object.entries(tables).map(([table, rows]) => [
+        table, Object.fromEntries(Object.entries(rows).map(([slug, row]) => [
+          slug, { englishName: row.englishName, name: row.name },
+        ])),
+      ])),
+    ]));
+    expect(expansionNames).toEqual(expected);
+  });
+  it("uses the same source identity for API and translation-table kind aliases", () => {
+    for (const [apiKind, table] of [["races", "species"], ["archetypes", "subclasses"]] as const) {
+      for (const [slug, hit] of Object.entries(expansionTranslations.toh[table])) {
+        const row = { slug, name: hit.englishName, documentSlug: "toh", source: "open5e" };
+        expect(localizedExpansionName(apiKind, row, "cs"), slug).toBe(hit.name);
+        expect(localizedExpansionName(table, row, "cs"), slug).toBe(hit.name);
+        expect(localizedExpansionName(apiKind, { ...row, source: "homebrew" }, "cs")).toBeUndefined();
+      }
+    }
+  });
+
   it("keeps all verified source names scoped to their source and slug", () => {
     let count = 0;
     for (const [documentSlug, tables] of Object.entries(expansionTranslations as Record<string, Record<string, Record<string, { englishName: string; name: string }>>>)) {
@@ -184,7 +315,7 @@ describe("Tome of Heroes mundane equipment", () => {
 describe("Tome of Heroes race descriptions", () => {
   it("serves all 40 race and subrace texts without changing canonical traits", () => {
     const rows = Object.entries(expansionTranslations.toh.species).filter(([, hit]) => "description" in hit);
-    expect(rows).toHaveLength(76);
+    expect(rows).toHaveLength(40);
     for (const [slug, hit] of rows) {
       if (!("description" in hit) || !("original" in hit)) throw new Error(slug);
       const row = { slug, name: hit.englishName, documentSlug: "toh", source: "open5e", data: hit.original as Record<string, unknown> };
@@ -239,7 +370,7 @@ describe("Tome of Heroes backgrounds", () => {
 describe("Tome of Heroes archetypes", () => {
   it("preserves the source prose of reviewed archetypes", () => {
     const rows = Object.entries(expansionTranslations.toh.subclasses).filter(([, hit]) => "description" in hit);
-    expect(rows).toHaveLength(40);
+    expect(rows).toHaveLength(76);
     for (const [slug, hit] of rows) {
       if (!("description" in hit) || !("original" in hit)) throw new Error(slug);
       const row = { slug, name: hit.englishName, documentSlug: "toh", source: "open5e", data: hit.original as Record<string, unknown> };
@@ -281,5 +412,295 @@ describe("Czech everyday equipment display", () => {
   it("prefers reviewed localized prose for a matching background feature", () => {
     const data = { feature: "Secret Lore", feature_desc: "English description.", localized_desc: "Tajná znalost a její pravidla." };
     expect(describeContentEntry(data, "Secret Lore")).toBe(data.localized_desc);
+  });
+});
+
+describe("Item information card source identity", () => {
+  it("never borrows localized prose from a different book or homebrew with the same name", () => {
+    const core = { name: "Torch", slug: "torch", source: "open5e", documentSlug: "wotc-srd", data: { desc: "Core torch", localized_desc: "Pochodeň ze SRD" } };
+    const foreign = { name: "Torch", slug: "torch-toh", source: "open5e", documentSlug: "toh", data: { desc: "Different torch" } };
+    const brew = { name: "Torch", slug: "homebrew:torch", source: "homebrew", documentSlug: "homebrew", data: { desc: "My torch" } };
+    const otherBrew = { ...brew, slug: "homebrew:other", data: { localized_desc: "Unrelated" } };
+    for (const locale of ["en", "fr", "cs"] as const) {
+      expect(buildItemSheet("Torch", itemCardRows("Torch", foreign, [core, brew]), { locale })?.description).toBe("Different torch");
+      expect(buildItemSheet("Torch", itemCardRows("Torch", brew, [core, foreign, otherBrew]), { locale })?.description).toBe("My torch");
+      expect(itemCardRows("Torch", null, [foreign, core])).toEqual([foreign.data]);
+    }
+  });
+
+  it("still combines complementary SRD rows without borrowing another source", () => {
+    const stats = { name: "Torch", slug: "torch", source: "open5e", documentSlug: "wotc-srd", data: { weight: "1 lb." } };
+    const prose = { ...stats, slug: "torch-v2", documentSlug: "srd-2014", data: { desc: "English prose", localized_desc: "Český popis" } };
+    const other = { ...prose, documentSlug: "srd-2024", data: { localized_desc: "Wrong edition" } };
+    const rows = itemCardRows("Torch", stats, [other, prose]);
+    expect(rows).toEqual([stats.data, prose.data]);
+    expect(buildItemSheet("Torch", rows, { locale: "cs" })?.description).toBe("Český popis");
+  });
+});
+
+describe("Core race and background presentation", () => {
+  it("serves all nine SRD race pages without changing identity or traits", () => {
+    const pages = rulebookPages("en").filter((page) => page.kind === "race");
+    expect(pages).toHaveLength(9);
+    for (const page of pages) {
+      const row = { slug: page.id, name: page.title, source: "open5e", documentSlug: "wotc-srd", data: { desc: page.md, traits: ["canonical trait"] } as Record<string, unknown> };
+      expect(localizeEntry("races", row, "en")).toBe(row);
+      for (const locale of ["fr", "cs"] as const) {
+        const result = localizeEntry("races", row, locale);
+        const { localized_desc, ...original } = result.data;
+        expect(typeof localized_desc, page.id + " " + locale).toBe("string");
+        expect(original).toEqual(row.data);
+        expect(result.slug).toBe(row.slug);
+      }
+      expect(localizeEntry("races", { ...row, source: "homebrew" }, "cs").data).toEqual(row.data);
+      expect(localizeEntry("races", { ...row, documentSlug: "unrelated-book" }, "cs").data).toEqual(row.data);
+    }
+  });
+
+  it("does not substitute the SRD subrace for a different bundled subrace", () => {
+    for (const name of ["Dwarf (Mountain)", "Elf (Wood)", "Halfling (Stout)", "Gnome (Forest)", "Human (Variant)"]) {
+      const row = { name, source: "bundled", documentSlug: "wotc-srd", data: { desc: "Own rules" } };
+      for (const locale of ["fr", "cs"] as const) expect(localizeEntry("races", row, locale)).toBe(row);
+    }
+    const hill = { name: "Dwarf (Hill)", source: "bundled", documentSlug: "wotc-srd", data: { desc: "Hill dwarf", traits: [] } as Record<string, unknown> };
+    expect(localizeEntry("races", hill, "cs").data.localized_desc).toBeTypeOf("string");
+  });
+
+  it("reuses all bundled Czech trait summaries, including the shifter variants", () => {
+    expect(SRD_RACES).toHaveLength(46);
+    let count = 0;
+    for (const race of SRD_RACES) {
+      for (const trait of race.traits) {
+        expect(speciesTraitName(race.id, trait, "cs"), race.id + ": " + trait).not.toBe(trait);
+        count++;
+      }
+      const row = { slug: race.id, name: race.name, source: "bundled", documentSlug: "wotc-srd", data: { desc: "", traits: race.traits } as Record<string, unknown> };
+      const result = localizeEntry("races", row, "cs");
+      const { localized_desc, ...original } = result.data;
+      expect(typeof localized_desc, race.id).toBe("string");
+      expect(original).toEqual(row.data);
+      for (const foreign of [{ ...row, documentSlug: "other" }, { ...row, source: "homebrew" }]) {
+        expect(localizeEntry("races", foreign, "cs")).toBe(foreign);
+      }
+    }
+    expect(count).toBe(188);
+    const shifter = SRD_RACES.find((race) => race.id === "shifter")!;
+    const variantLines = shifter.variants?.options.flatMap((option) => option.lines ?? []) ?? [];
+    expect(variantLines).toHaveLength(5);
+    for (const trait of variantLines) {
+      expect(speciesTraitName("shifter", trait, "cs")).not.toBe(trait);
+    }
+  });
+
+  it("uses reviewed Czech feature prose for every bundled base background", () => {
+    expect(SRD_BACKGROUNDS).toHaveLength(18);
+    for (const background of SRD_BACKGROUNDS) {
+      const row = { name: background.name, slug: background.id, source: "bundled", documentSlug: "odm", data: { desc: background.blurb, feature: background.feature, feature_desc: background.featureDesc } as Record<string, unknown> };
+      const result = localizeEntry("backgrounds", row, "cs");
+      const { localized_desc, ...original } = result.data;
+      expect(typeof localized_desc, background.id).toBe("string");
+      expect(String(localized_desc), background.id).not.toContain(background.featureDesc);
+      expect(original).toEqual(row.data);
+    }
+  });
+
+  it("reuses the installed gettext translations for every ODM genre background", () => {
+    expect(CUSTOM_BACKGROUNDS).toHaveLength(36);
+    for (const background of CUSTOM_BACKGROUNDS) {
+      const row = { name: background.name, slug: background.id, source: "bundled", documentSlug: "odm", data: { desc: background.blurb, feature: background.feature, feature_desc: background.featureDesc } as Record<string, unknown> };
+      const result = localizeEntry("backgrounds", row, "cs");
+      const { localized_desc, ...original } = result.data;
+      expect(contentName("backgrounds", row, "cs"), row.slug).not.toBe(row.name);
+      for (const key of ["name", "blurb", "feature", "featureDesc"] as const) {
+        expect(translate("cs", background[key]), row.slug + " " + key).not.toBe(background[key]);
+      }
+      expect(describeBackgroundFeature(background.feature, "cs")).toBe(translate("cs", background.featureDesc));
+      expect(String(localized_desc), row.slug).toContain(translate("cs", background.featureDesc));
+      expect(String(localized_desc), row.slug).toContain(translate("cs", background.blurb));
+      expect(String(localized_desc), row.slug).not.toContain("**Feature:");
+      expect(original).toEqual(row.data);
+      expect(localizeEntry("backgrounds", row, "en")).toBe(row);
+    }
+  });
+
+  it("reuses the exact reviewed Czech feature text for a bundled background", () => {
+    const background = SRD_BACKGROUNDS.find((entry) => entry.id === "acolyte")!;
+    const row = { name: background.name, slug: background.id, source: "bundled", documentSlug: "odm", data: { desc: background.blurb, feature: background.feature, feature_desc: background.featureDesc } as Record<string, unknown> };
+    const result = localizeEntry("backgrounds", row, "cs");
+    const { localized_desc, ...original } = result.data;
+    expect(localized_desc).toContain("bezplatné léčení");
+    expect(original).toEqual(row.data);
+    expect(describeContentEntry(result.data)).toBe(localized_desc);
+    expect(localizeEntry("backgrounds", row, "en")).toBe(row);
+    for (const entry of [{ ...row, source: "homebrew" }, { ...row, source: "open5e", documentSlug: "other" }]) {
+      expect(localizeEntry("backgrounds", entry, "cs")).toBe(entry);
+    }
+    const changed = { ...row, data: { feature: background.feature, feature_desc: "Different source text." } };
+    expect(localizeEntry("backgrounds", changed, "cs")).toBe(changed);
+  });
+});
+
+describe("Core SRD archetype display", () => {
+  const examples = [
+    ["barbarian", "Path of the Berserker", "Cesta berserkra"],
+    ["bard", "College of Lore", "Kolej znalostí"],
+    ["cleric", "Life Domain", "Doména Život"],
+    ["druid", "Circle of the Land", "Kruh země"],
+    ["fighter", "Champion", "Šampion"],
+    ["monk", "Way of the Open Hand", "Cesta otevřené ruky"],
+    ["paladin", "Oath of Devotion", "Přísaha oddanosti"],
+    ["ranger", "Hunter", "Lovec"],
+    ["rogue", "Thief", "Zloděj"],
+    ["sorcerer", "Draconic Bloodline", "Dračí rodokmen"],
+    ["warlock", "The Fiend", "Běs"],
+    ["wizard", "School of Evocation", "Škola zaklínání"],
+  ];
+  it("reuses the existing twelve Czech book sections without changing source rules", () => {
+    for (const [classId, name, heading] of examples) {
+      for (const source of ["bundled", "open5e"]) {
+        const row = { name, slug: classId + "-" + name.toLowerCase().replace(/ /g, "-"), documentSlug: "wotc-srd", source, data: { desc: "Canonical rules", class: classId } as Record<string, unknown> };
+        const result = localizeEntry("archetypes", row, "cs");
+        const { localized_desc, ...original } = result.data;
+        expect(String(localized_desc), name).toMatch(new RegExp("^### " + heading));
+        expect(String(localized_desc).length).toBeGreaterThan(100);
+        expect(original).toEqual(row.data);
+        expect(localizeEntry("archetypes", row, "en")).toBe(row);
+        for (const foreign of [{ ...row, documentSlug: "other" }, { ...row, source: "homebrew" }, { ...row, data: { ...row.data, class: "unrelated-class" } }]) {
+          expect(localizeEntry("archetypes", foreign, "cs")).toBe(foreign);
+        }
+      }
+    }
+  });
+  it("extracts all twelve French sections from the official localized book", () => {
+    for (const [classId, name] of examples) {
+      const row = { name, slug: classId + "-" + name.toLowerCase().replace(/ /g, "-"), documentSlug: "wotc-srd", source: "bundled", data: { desc: "Canonical rules", class: classId } as Record<string, unknown> };
+      const result = localizeEntry("archetypes", row, "fr");
+      const { localized_desc, ...original } = result.data;
+      expect(String(localized_desc), name).toMatch(/^### /);
+      expect(String(localized_desc).length, name).toBeGreaterThan(100);
+      expect(original).toEqual(row.data);
+    }
+  });
+  it("does not substitute another subclass from the same class", () => {
+    const row = { name: "Battle Master", slug: "fighter-battle-master", source: "bundled", documentSlug: "wotc-srd", data: { desc: "Different rules" } };
+    expect(localizeEntry("archetypes", row, "cs")).toBe(row);
+    expect(localizeEntry("archetypes", row, "fr")).toBe(row);
+  });
+});
+
+describe("Reviewed ODM authored feat rules", () => {
+  it("serves all 72 authored descriptions and preserves mechanical input", () => {
+    const rows = authoredFeatEntries();
+    expect(rows).toHaveLength(72);
+    expect(Object.keys(authoredFeatTranslations)).toHaveLength(rows.length);
+    let prerequisites = 0;
+    for (const row of rows) {
+      const original = packFeatText(row.data);
+      if (original.prerequisite) prerequisites++;
+      const result = localizeEntry("feats", row, "cs");
+      const { localized_desc, ...canonical } = result.data;
+      expect(typeof localized_desc, row.name).toBe("string");
+      expect(String(localized_desc), row.name).not.toContain(original.desc);
+      expect(String(localized_desc).includes("*Předpoklad:"), row.name).toBe(Boolean(original.prerequisite));
+      expect(canonical).toEqual(row.data);
+      expect(packFeatText(result.data)).toEqual(original);
+      expect(result.slug).toBe(row.slug);
+      expect(result.name).toBe(row.name);
+      expect(localizeEntry("feats", row, "en")).toBe(row);
+      expect(localizeEntry("feats", row, "fr")).toBe(row);
+      expect(localizeEntry("feats", { ...row, slug: "odm-" + row.slug }, "cs").data.localized_desc).toBe(localized_desc);
+      for (const foreign of [
+        { ...row, documentSlug: "unrelated-book" },
+        { ...row, source: "homebrew" },
+        { ...row, slug: "different-slug" },
+        { ...row, data: { ...row.data, desc: original.desc + " Changed." } },
+        { ...row, data: { ...row.data, prerequisite: original.prerequisite + " Changed." } },
+      ]) {
+        expect(localizeEntry("feats", foreign, "cs")).toBe(foreign);
+      }
+    }
+    expect(prerequisites).toBe(30);
+  });
+});
+
+describe("Locale-registered trait shorthand", () => {
+  it("leaves English untouched and retains the existing French and Czech shorthand", () => {
+    const text = "adv. vs poison, 45 ft, light and medium armor, battleaxe, +2 HP per level";
+    expect(speciesTraitName("unlisted-race", text, "en")).toBe(text);
+    expect(speciesTraitName("unlisted-race", text, "fr")).toBe("avant. c/ poison, 45 pi, armures légères et intermédiaires, hache d’armes, +2 HP per level");
+    expect(speciesTraitName("unlisted-race", text, "cs")).toBe(
+      "výhoda proti jedu, 45 stop, lehká a střední zbroj, " + contentName("weapons", "battleaxe", "cs") + ", +2 život za úroveň",
+    );
+  });
+  it("preserves the different noted-head policies without branching in the name resolver", () => {
+    const text = "+2 HP per level (Dwarven Toughness)";
+    expect(speciesTraitName("hill_dwarf", text, "fr")).toBe("+2 HP per level (Ténacité naine)");
+    expect(speciesTraitName("hill_dwarf", text, "cs")).toBe("+2 život za úroveň (Trpasličí nezdolnost)");
+    expect(speciesTraitName("hill_dwarf", text, "en")).toBe(text);
+  });
+  it("keeps whole-line translations ahead of shorthand replacement", () => {
+    const trait = "Darkvision 60 ft";
+    const translated = speciesTraitName("shifter", trait, "cs");
+    expect(translated).toContain("Vidění ve tmě");
+    expect(translated).toContain("60 stop");
+    expect(translated).not.toContain("60 ft");
+  });
+});
+
+describe("Reviewed authored archetypes", () => {
+  it.each([
+    { classId: "barbarian", subclasses: 8, featureCount: 36 },
+    { classId: "bard", subclasses: 7, featureCount: 31 },
+    { classId: "cleric", subclasses: 13, featureCount: 76 },
+    { classId: "druid", subclasses: 6, featureCount: 28 },
+    { classId: "fighter", subclasses: 9, featureCount: 55 },
+    { classId: "monk", subclasses: 9, featureCount: 41 },
+    { classId: "paladin", subclasses: 8, featureCount: 40 },
+    { classId: "ranger", subclasses: 7, featureCount: 35 },
+    { classId: "rogue", subclasses: 8, featureCount: 43 },
+    { classId: "sorcerer", subclasses: 7, featureCount: 38 },
+    { classId: "warlock", subclasses: 8, featureCount: 36 },
+    { classId: "wizard", subclasses: 12, featureCount: 59 },
+    { classId: "artificer", subclasses: 4, featureCount: 22 },
+  ])("localizes $classId archetypes and their features without changing canonical rules", ({ classId, subclasses, featureCount }) => {
+    const entries = AUTHORED_SUBCLASS_ENTRIES[classId];
+    expect(entries).toHaveLength(subclasses);
+    let count = 0;
+    for (const entry of entries) {
+      const slug = classId + "-" + entry.name.toLowerCase().replace(/[^a-z0-9]+/g, "-");
+      const levels = Object.entries(entry.levels).sort(([a], [b]) => Number(a) - Number(b));
+      const spells = Object.entries(entry.spells ?? {}).sort(([a], [b]) => Number(a) - Number(b));
+      const spellText = entry.spells ? "\n\n**Always-prepared spells.** " + spells.map(([level, names]) => `Level ${level}: ${names.join(", ")}.`).join(" ") : "";
+      const desc = entry.desc + "\n\n" + levels.map(([level, features]) =>
+        "**Level " + level + ".** " + features.map((feature) => "*" + feature.n + ".* " + feature.d).join(" ")).join("\n\n") + spellText;
+      const published = { slug, name: entry.name, source: "open5e", documentSlug: "odm-expanded", data: { class: classId, desc } as Record<string, unknown> };
+      const bundled = { ...published, source: "bundled", documentSlug: "wotc-srd", data: { desc: "" } as Record<string, unknown> };
+      const localized = localizeEntry("archetypes", published, "cs");
+      const { localized_desc, ...original } = localized.data;
+      expect(typeof localized_desc, entry.name).toBe("string");
+      expect(String(localized_desc)).toContain(translate("cs", entry.desc));
+      expect(original).toEqual(published.data);
+      expect(localizeEntry("archetypes", bundled, "cs").data.localized_desc).toBe(localized_desc);
+      for (const [, features] of levels) for (const feature of features) {
+        count++;
+        const text = translate("cs", feature.d);
+        expect(text, feature.n).not.toBe(feature.d);
+        expect(String(localized_desc), feature.n).toContain(text);
+      }
+      if (spells.length) {
+        expect(String(localized_desc)).toContain("Stále připravená kouzla");
+        for (const [level, names] of spells) {
+          expect(String(localized_desc)).toContain(translate("cs", "Level {level}", { level }) + ": " + names.map((name) => contentName("spells", name, "cs")).join(", ") + ".");
+        }
+      }
+      expect(localizeEntry("archetypes", published, "en")).toBe(published);
+      for (const foreign of [
+        { ...published, source: "homebrew" },
+        { ...published, documentSlug: "other" },
+        { ...published, data: { ...published.data, desc: desc + " Changed." } },
+        { ...published, slug: "another-path" },
+      ]) expect(localizeEntry("archetypes", foreign, "cs")).toBe(foreign);
+    }
+    expect(count).toBe(featureCount);
   });
 });

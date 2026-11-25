@@ -7,6 +7,7 @@ import { useState } from "react";
 import { cn } from "@/lib/cn";
 import { offerCorrectionReason } from "@/lib/correction-offer";
 import { milestoneLine } from "@/lib/dm/story-panel-logic";
+import { characterEventDisplay } from "@/lib/characters/event-display";
 import { ui } from "@/lib/ui";
 import { useT, useTp } from "@/lib/locale";
 import type { CharacterEvent } from "@/lib/db/character-events";
@@ -233,7 +234,7 @@ export function EventLog({
                 className="check-log rounded-md border border-amber-900/40 bg-amber-950/15 px-2.5 py-1.5 text-xs text-stone-300"
               >
                 <Star className="mr-1.5 inline size-3 text-amber-400" />
-                {milestoneLine(nameForCharacter(item.event.campaignCharacterId), item.event.summary)}
+                {milestoneLine(nameForCharacter(item.event.campaignCharacterId), characterEventDisplay(item.event, t.locale))}
               </li>
             );
           }

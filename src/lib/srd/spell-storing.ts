@@ -9,6 +9,7 @@
 //
 // Pure: the row in, the words and the numbers out.
 
+import { formatMessage, type MessageVars } from "@/lib/messages-logic";
 import { findNamed } from "@/lib/language/text-logic";
 import { isWorn } from "@/lib/srd/armor";
 import { isWorkshopRow, type RowItem } from "@/lib/srd/item-row";
@@ -112,7 +113,10 @@ export function storedSpellsLine(item: StorerRow): string {
 }
 
 // The sheet's short line under the ring.
-export function storedSpellsSummary(item: StorerRow): string {
+export function storedSpellsSummary(item: StorerRow, t: (key: string, vars?: MessageVars) => string = formatMessage): string {
   const held = storedSpellsOf(item);
-  return held.length ? `Holds ${held.map((entry) => `${entry.spell} (level ${entry.level})`).join(", ")}` : "Holds no spells";
+  // Stored spell names have no reliable source identity; only translate the wrapper.
+  return held.length
+    ? t("Holds {spells}", { spells: held.map((entry) => `${entry.spell} (${t("level {level}", { level: entry.level })})`).join(", ") })
+    : t("Holds no spells");
 }

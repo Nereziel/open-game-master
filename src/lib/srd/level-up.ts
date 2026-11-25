@@ -66,7 +66,8 @@ import { casterViewsOf, countingScores, dedupeNames, withCasterViews, type Caste
 import { isThirdCaster } from "@/lib/srd/third-caster";
 import { featureHitPoints, holdsFeature, withPrimalChampion } from "@/lib/srd/trait-rules";
 import { isChoiceFeature, unmetPrerequisite } from "@/lib/srd/legality/features";
-import { findOptionByFeatureName, openOptionSlots, optionReqProblem, pickInSpellbook, requiredPickProblem } from "@/lib/srd/options";
+import { findOptionByFeatureName, openOptionSlots, pickInSpellbook } from "@/lib/srd/options";
+import { localizedOptionReqProblem, localizedRequiredPickProblem } from "@/lib/content/option-labels";
 import { sheetCantrips, sheetSpellbook } from "@/lib/srd/owed-picks-logic";
 import { subclassChoicePickProblems } from "@/lib/srd/subclass-choice-picks";
 import { castingClassesOf } from "@/lib/srd/legality/spells";
@@ -82,8 +83,11 @@ import { splitToolGrants, toolPickProblem } from "@/lib/srd/tool-choices";
 import { carrySwapRecords } from "@/lib/dm/ar-ws-spell-swap-record";
 import { petsAtLevel } from "@/lib/dm/pet-level-logic";
 import { featChoice } from "@/lib/schemas/sheet";
+import { translate, translatePlural, type Locale } from "@/lib/messages-logic";
 
 export type LevelUpContext = {
+  // Optional reader locale for shared grant validation messages.
+  locale?: Locale;
   hpMethod: HpMethod;
   // Whether the table lets a NEW class be taken.
   multiclassAllowed: boolean;
@@ -128,6 +132,7 @@ type AbilityScoresKey = keyof AbilityScores;
 function improvementsAsked(
   sheet: CharacterSheet,
   request: LevelUpRequest,
+  locale: Locale = "en",
 ): { choices: AsiChoice[] } | { error: string } {
   if (request.asiChoices?.length) {
     return { choices: request.asiChoices };
@@ -145,14 +150,14 @@ function improvementsAsked(
       const delta = request.abilities[ability] - sheet.abilities[ability];
       if (delta < 0) {
         return {
-          error: `An Ability Score Improvement raises scores; it cannot lower ${ABILITY_NAMES[ability]} from ${sheet.abilities[ability]} to ${request.abilities[ability]}.`,
+          error: translate(locale, "An Ability Score Improvement raises scores; it cannot lower {ability} from {before} to {after}.", { ability: translate(locale, ABILITY_NAMES[ability]), before: sheet.abilities[ability], after: request.abilities[ability] }),
         };
       }
       // Held at 20 even where a manual or tome raised the maximum: SRD 5.1,
       // "you can't increase an ability score above 20 using this feature".
       if (request.abilities[ability] > ABILITY_SCORE_CAP && delta > 0) {
         return {
-          error: `An Ability Score Improvement cannot raise ${ABILITY_NAMES[ability]} above ${ABILITY_SCORE_CAP}.`,
+          error: translate(locale, "An Ability Score Improvement cannot raise {ability} above {cap}.", { ability: translate(locale, ABILITY_NAMES[ability]), cap: ABILITY_SCORE_CAP }),
         };
       }
       for (let point = 0; point < delta; point += 1) {
@@ -212,29 +217,30 @@ export function buildLevelUp(
   request: LevelUpRequest,
   context: LevelUpContext,
 ): LevelUpResult {
+  const t = (key: string, vars?: Record<string, string | number>) => translate(context.locale ?? "en", key, vars);
   // ---- may this character level at all, and to this level ----
   if (sheet.deathSaves?.dead) {
-    return refuse(`${sheet.name} is dead, and the dead gain no levels.`, 409);
+    return refuse(t("{name} is dead, and the dead gain no levels.", { name: sheet.name }), 409);
   }
   if (sheet.currentHp <= 0) {
     return refuse(
-      `${sheet.name} is at 0 hit points. A character levels up once they are back on their feet.`,
+      t("{name} is at 0 hit points. A character levels up once they are back on their feet.", { name: sheet.name }),
       409,
     );
   }
   const target = request.level ?? sheet.level + 1;
   if (target > 20) {
-    return refuse("No character passes level 20.");
+    return refuse(t("No character passes level 20."));
   }
   if (target !== sheet.level + 1) {
     return refuse(
-      `A character gains one level at a time: ${sheet.name} is level ${sheet.level}, so the next level is ${sheet.level + 1}. Take the levels one after another.`,
+      t("A character gains one level at a time: {name} is level {level}, so the next level is {next}. Take the levels one after another.", { name: sheet.name, level: sheet.level, next: sheet.level + 1 }),
     );
   }
   const reached = levelForXp(sheet.xp);
   if (reached < target) {
     return refuse(
-      `Level ${target} takes ${XP_THRESHOLDS[target - 1]} experience points and ${sheet.name} has ${sheet.xp}. A level is earned in play, or granted by whoever runs the table.`,
+      t("Level {level} takes {xp} experience points and {name} has {have}. A level is earned in play, or granted by whoever runs the table.", { level: target, xp: XP_THRESHOLDS[target - 1], name: sheet.name, have: sheet.xp }),
       403,
     );
   }
@@ -244,7 +250,7 @@ export function buildLevelUp(
   const classId = (request.levelUpClass ?? "").trim().toLowerCase() || before[0].id.toLowerCase();
   const klass = context.classOf(classId);
   if (!klass) {
-    return refuse(`Unknown class "${classId}".`);
+    return refuse(t("Unknown class \"{name}\".", { name: classId }));
   }
   const classes = before.map((entry) => ({ ...entry }));
   let leveled = classes.find((entry) => entry.id.toLowerCase() === classId);
@@ -252,13 +258,13 @@ export function buildLevelUp(
   if (!leveled) {
     if (!context.multiclassAllowed) {
       return refuse(
-        "Multiclassing is turned off for this campaign (a lobby setting the owner controls).",
+        t("Multiclassing is turned off for this campaign (a lobby setting the owner controls)."),
         403,
       );
     }
-    const check = canMulticlassInto(sheet, classId);
+    const check = canMulticlassInto(sheet, classId, context.locale);
     if (!check.ok) {
-      return refuse(check.error ?? "Cannot multiclass into that class.");
+      return refuse(check.error ?? t("Cannot multiclass into that class."));
     }
     leveled = { id: klass.id, subclass: "", level: 0 };
     classes.push(leveled);
@@ -271,23 +277,23 @@ export function buildLevelUp(
   if (wantedSubclass && textKey(wantedSubclass) !== textKey(leveled.subclass)) {
     if (leveled.subclass) {
       return refuse(
-        `${sheet.name} is a ${leveled.subclass}; a subclass is chosen once and later levels build on it.`,
+        t("{name} is a {subclass}; a subclass is chosen once and later levels build on it.", { name: sheet.name, subclass: leveled.subclass }),
       );
     }
     const pickLevel = subclassLevelFor(klass.id);
     if (pickLevel !== null && leveled.level < pickLevel) {
       return refuse(
-        `A ${klass.name} chooses a subclass at ${klass.name} level ${pickLevel}; this is level ${leveled.level}.`,
+        t("A {className} chooses a subclass at {className} level {required}; this is level {level}.", { className: klass.name, required: pickLevel, level: leveled.level }),
       );
     }
     if (!context.subclassOffered(klass.id, wantedSubclass)) {
-      return refuse(`${wantedSubclass} is not a subclass of the ${klass.name}; pick one from that class's list.`);
+      return refuse(t("{subclass} is not a subclass of the {className}; pick one from that class's list.", { subclass: wantedSubclass, className: klass.name }));
     }
     leveled.subclass = bundledSubclassName(klass.id, wantedSubclass) ?? wantedSubclass;
   }
 
   // ---- improvements and feats ----
-  const asked = improvementsAsked(sheet, request);
+  const asked = improvementsAsked(sheet, request, context.locale);
   if ("error" in asked) {
     return refuse(asked.error);
   }
@@ -296,8 +302,8 @@ export function buildLevelUp(
   if (asked.choices.length > owed) {
     return refuse(
       owed
-        ? `This level gives ${sheet.name} ${owed} Ability Score Improvement${owed === 1 ? "" : "s"}: two points, or one feat, each. The request asks for ${asked.choices.length}.`
-        : `${klass.name} level ${leveled.level} gives no Ability Score Improvement, so ability scores and feats stay as they are. Improvements come at the class's own levels.`,
+        ? translatePlural(context.locale ?? "en", "This level gives {name} {count} Ability Score Improvement: two points, or one feat, each. The request asks for {picked}.", "This level gives {name} {count} Ability Score Improvements: two points, or one feat, each. The request asks for {picked}.", { name: sheet.name, count: owed, picked: asked.choices.length })
+        : t("{className} level {level} gives no Ability Score Improvement, so ability scores and feats stay as they are. Improvements come at the class's own levels.", { className: klass.name, level: leveled.level }),
     );
   }
   let abilities = applyChoices(sheet.abilities, asked.choices);
@@ -312,14 +318,14 @@ export function buildLevelUp(
     }
     if (feats.some((feat) => textKey(feat) === textKey(choice.feat))) {
       // Taken once, but for the feat whose text allows another (feat-repeat.ts).
-      const again = featRepeatRefusal({ ...sheet, feats }, choice.feat, featChoice(request.featChoices, choice.feat));
+      const again = featRepeatRefusal({ ...sheet, feats }, choice.feat, featChoice(request.featChoices, choice.feat), context.locale);
       if (again) {
         return refuse(again);
       }
     }
     const facts = context.featOf(choice.feat);
     if (!facts) {
-      return refuse(`"${choice.feat}" is not a feat this table offers; pick one from the feat list.`);
+      return refuse(t("\"{feat}\" is not a feat this table offers; pick one from the feat list.", { feat: choice.feat }));
     }
     const unmet = unmetPrerequisite(facts.prerequisite, {
       abilities,
@@ -333,10 +339,10 @@ export function buildLevelUp(
       level: target,
     });
     if (unmet) {
-      return refuse(`${facts.name} requires ${unmet}, which ${sheet.name} does not have.`);
+      return refuse(t("{feat} requires {prerequisite}, which {name} does not have.", { feat: facts.name, prerequisite: unmet, name: sheet.name }));
     }
     feats.push(facts.name);
-    const raised = applyFeatIncrease(abilities, facts.name, choice.ability ?? null, facts.desc);
+    const raised = applyFeatIncrease(abilities, facts.name, choice.ability ?? null, facts.desc, context.locale);
     if ("error" in raised) {
       return refuse(raised.error);
     }
@@ -404,7 +410,7 @@ export function buildLevelUp(
     const { fixed: fixedTools, choices: toolChoices } = splitToolGrants(grants.tools);
     const toolPicks = (request.levelUpTools ?? []).map((tool) => tool.trim()).filter(Boolean);
     if (toolPicks.length) {
-      const problem = toolChoices.length ? toolPickProblem(toolChoices, toolPicks) : `${klass.name} leaves no tool to choose.`;
+      const problem = toolChoices.length ? toolPickProblem(toolChoices, toolPicks, context.locale) : t("{className} leaves no tool to choose.", { className: klass.name });
       if (problem) {
         return refuse(problem);
       }
@@ -438,6 +444,7 @@ export function buildLevelUp(
         return { name: facts?.name ?? name, desc: facts?.desc ?? "" };
       }),
       choices: request.featChoices ?? {},
+      locale: context.locale,
       strict: true,
     });
     if (granted.problems.length) {
@@ -470,6 +477,7 @@ export function buildLevelUp(
       proficiencies,
       grants: freshTraining,
       choices: trainingChoices,
+      locale: context.locale,
       strict: true,
       abilities,
     });
@@ -491,6 +499,7 @@ export function buildLevelUp(
     choices: request.featChoices ?? {},
     raisedAbility: (feat) => raisedThisLevel.get(textKey(feat)) ?? null,
     spellOf: context.spellOf,
+    locale: context.locale,
     strict: true,
   });
   if (taught.problems.length) {
@@ -503,14 +512,14 @@ export function buildLevelUp(
     if (picks.length > Math.max(0, slots - held.length)) {
       return refuse(
         slots
-          ? `${sheet.name} has earned expertise in ${slots} skills and holds ${held.length}; ${picks.length} more cannot be picked.`
-          : "Expertise is a rogue's feature (1st and 6th level) and a bard's (3rd and 10th); this character has none to pick.",
+          ? t("{name} has earned expertise in {slots} skills and holds {held}; {picked} more cannot be picked.", { name: sheet.name, slots, held: held.length, picked: picks.length })
+          : t("Expertise is a rogue's feature (1st and 6th level) and a bard's (3rd and 10th); this character has none to pick."),
       );
     }
     const unproficient = picks.filter((skill) => !expertiseAllowed(skill, proficiencies.skills, classes.map((entry) => entry.id)));
     if (unproficient.length) {
       return refuse(
-        `Expertise doubles a proficiency the character has; ${unproficient.join(", ")} ${unproficient.length === 1 ? "is" : "are"} not among ${sheet.name}'s skills.`,
+        translatePlural(context.locale ?? "en", "Expertise doubles a proficiency the character has; {skills} is not among {name}'s skills.", "Expertise doubles a proficiency the character has; {skills} are not among {name}'s skills.", { count: unproficient.length, skills: unproficient.join(", "), name: sheet.name }),
       );
     }
     proficiencies = { ...proficiencies, expertise: [...held, ...picks] };
@@ -522,7 +531,7 @@ export function buildLevelUp(
     const changed = applyLevelUpChanges(sheet, classId, request.levelUpChanges, {
       classLevel: (id) => classes.find((entry) => textKey(entry.id) === textKey(id))?.level ?? 0,
       cantrips: sheetCantrips(sheet),
-    });
+    }, context.locale);
     if ("error" in changed) {
       return refuse(changed.error);
     }
@@ -551,6 +560,7 @@ export function buildLevelUp(
     (request.features ?? []).filter((feature) => feature.source === "choice" && !heldPickNames.has(textKey(feature.name))),
     classes,
     context.subclassExtras,
+    context.locale,
   )[0];
   if (choiceProblem) {
     return refuse(choiceProblem);
@@ -569,16 +579,16 @@ export function buildLevelUp(
   for (const pick of picked) {
     const option = findOptionByFeatureName(pick.name);
     if (option && !pickInSpellbook(option, book)) {
-      return refuse(`${option.n} is not in ${sheet.name}'s spellbook; ${pick.name.split(":")[0]} names a spell written there.`);
+      return refuse(t("{spell} is not in {name}'s spellbook; {feature} names a spell written there.", { spell: option.n, name: sheet.name, feature: pick.name.split(":")[0] }));
     }
     // An invocation's level, pact boon or cantrip (options.ts optionReqProblem),
     // by the class levels after this one.
     const unmet = option
-      ? optionReqProblem(option, {
+      ? localizedOptionReqProblem(option, {
           classLevel: (id) => classes.find((entry) => textKey(entry.id) === textKey(id))?.level ?? 0,
           features: featuresWithPicks,
           cantrips,
-        })
+        }, context.locale)
       : null;
     if (unmet) {
       return refuse(unmet);
@@ -592,7 +602,7 @@ export function buildLevelUp(
       const heldStyles = chosenFightingStyles(featuresWithPicks.filter((feature) => feature.name !== pick.name));
       if (!newStyleFits(heldStyles, style, after)) {
         const open = fightingStyleChoices(after).filter((entry) => newStyleFits(heldStyles, entry.name, after));
-        return refuse(`${style} is not a fighting style ${sheet.name}'s classes offer; pick one of ${open.map((entry) => entry.name).join(", ") || "none"}.`);
+        return refuse(t("{style} is not a fighting style {name}'s classes offer; pick one of {styles}.", { style, name: sheet.name, styles: open.map((entry) => entry.name).join(", ") || t("none") }));
       }
     }
   }
@@ -600,7 +610,7 @@ export function buildLevelUp(
   // Four Elements monk's disciplines), once this level's picks are made.
   for (const entry of classes) {
     for (const slot of openOptionSlots({ classId: entry.id, subclass: entry.subclass ?? "", level: entry.level, features: featuresWithPicks })) {
-      const missing = picked.some((pick) => findOptionByFeatureName(pick.name)?.k === slot.kind) ? requiredPickProblem(slot) : null;
+      const missing = picked.some((pick) => findOptionByFeatureName(pick.name)?.k === slot.kind) ? localizedRequiredPickProblem(slot, context.locale) : null;
       if (missing) {
         return refuse(missing);
       }
@@ -684,6 +694,7 @@ export function buildLevelUp(
         features,
         spellOf: context.spellOf,
         picks,
+        locale: context.locale,
       });
       if ("error" in learned) {
         return refuse(learned.error);

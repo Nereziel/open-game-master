@@ -9,6 +9,7 @@
 // Pure and zod-free, so the builder, the NPC form and the test scripts
 // import it directly.
 
+import type { Locale } from "./i18n/translate.ts";
 import { GENDERS, type Gender } from "./gender.ts";
 import { textKey } from "./language/text-logic.ts";
 
@@ -26,6 +27,15 @@ export const ATTRACTION_CHOICES: ReadonlyArray<{ gender: AttractionGender; label
   { gender: "Male", label: "Men", word: "men" },
   { gender: "Nonbinary", label: "Nonbinary people", word: "nonbinary people" },
 ];
+
+const ATTRACTION_LABELS: Partial<Record<Locale, Record<string, string>>> = {
+  fr: { Women: "Femmes", Men: "Hommes", "Nonbinary people": "Personnes non binaires" },
+  cs: { Women: "Ženy", Men: "Muži", "Nonbinary people": "Nebinární osoby" },
+};
+
+export function attractionLabel(label: string, locale: Locale): string {
+  return ATTRACTION_LABELS[locale]?.[label] ?? label;
+}
 
 // The drawnTo word that says someone keeps more than one partner (issue
 // 642): beside who they are drawn to, as the picker shows it.

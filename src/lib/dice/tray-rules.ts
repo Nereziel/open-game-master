@@ -9,6 +9,8 @@
 //
 // Pure: no database and no alias imports beyond the dice parser.
 import { rollExpression } from "../dice.ts";
+import { formatMessage, type MessageVars } from "../messages-logic.ts";
+import { diceErrorDisplay } from "./error-display.ts";
 
 import { TRAY_MODIFIER_LIMIT } from "./tray-pool.ts";
 
@@ -16,23 +18,23 @@ export { TRAY_MODIFIER_LIMIT };
 
 // Null when the expression may be rolled, otherwise the sentence to refuse
 // it with.
-export function trayExpressionProblem(expression: string): string | null {
+export function trayExpressionProblem(expression: string, t: (key: string, vars?: MessageVars) => string = formatMessage): string | null {
   let terms;
   try {
     // A constant face: only the grammar is being read here.
     terms = rollExpression(expression, () => 1).terms;
   } catch (error) {
-    return error instanceof Error ? error.message : "Bad dice expression.";
+    return diceErrorDisplay(error instanceof Error ? error.message : "Bad dice expression.", t);
   }
   if (!terms.some((term) => term.kind === "dice")) {
-    return "A roll needs at least one die, such as 1d20+3: a bare number is not a roll.";
+    return t("A roll needs at least one die, such as 1d20+3: a bare number is not a roll.");
   }
   const flat = terms.reduce(
     (sum, term) => (term.kind === "modifier" ? sum + term.sign * term.value : sum),
     0,
   );
   if (Math.abs(flat) > TRAY_MODIFIER_LIMIT) {
-    return `A roll's flat bonus is at most ${TRAY_MODIFIER_LIMIT} either way: roll the dice and add the rest at the table.`;
+    return t("A roll's flat bonus is at most {limit} either way: roll the dice and add the rest at the table.", { limit: TRAY_MODIFIER_LIMIT });
   }
   return null;
 }

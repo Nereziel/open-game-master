@@ -35,10 +35,15 @@ export function baseName(name: string): string {
   return name.replace(/\s*\([^)]*\)\s*$/, "");
 }
 
+// Exact reverse lookup shared by item readers and tool argument validation.
+export function canonicalLocalizedItemName(name: string): string {
+  return ITEM_EN_BY_LOCALIZED_NAME[textKey(name)] ?? name;
+}
+
 export function rowName(item: RowItem): string {
   if (item.srdName) return item.srdName;
   const bare = withoutBonus(item.name);
-  return ITEM_EN_BY_LOCALIZED_NAME[textKey(bare)] ?? bare;
+  return canonicalLocalizedItemName(bare);
 }
 
 // Whether the line is a workshop entry's: its slug names the entry

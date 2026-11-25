@@ -274,6 +274,19 @@ try {
       assert.notEqual(themeDescription(fr, entry), entry.description, `${entry.id} has a French description`);
     }
   });
+  await import("../src/lib/i18n/cs-catalog.ts");
+  const cs = (key, vars) => translate("cs", key, vars);
+  test("all appearance names and descriptions have Czech catalog entries", () => {
+    const catalog = JSON.parse(readFileSync(new URL("../src/lib/i18n/cs.json", import.meta.url), "utf8"));
+    for (const entry of APPEARANCE_THEMES) {
+      const name = catalog.contexts[entry.name]?.[`appearance.theme.${entry.id}`];
+      assert.ok(name, `${entry.id} is missing a Czech contextual name`);
+      assert.ok(catalog.messages[entry.description], `${entry.id} is missing a Czech description`);
+      assert.equal(themeName(cs, entry), name);
+      assert.equal(themeDescription(cs, entry), catalog.messages[entry.description]);
+    }
+    assert.equal(translate("cs", "{rider} or {mount}?", { rider: "Mira", mount: "Wolf" }), "Mira, nebo Wolf?");
+  });
   test("every line the theme panel and its picker say has its French entry", () => {
     const catalog = JSON.parse(readFileSync(new URL("../src/lib/i18n/fr.json", import.meta.url), "utf8"));
     for (const file of ["../src/components/AppearancePicker.tsx", "../src/components/ThemePanel.tsx", "../src/components/ThemePanelHost.tsx"]) {

@@ -95,6 +95,7 @@ export type PackRaceOption = {
   id: string;
   name: string;
   note: string;
+  localizedDesc?: string;
   // The pack row behind the option, for its write-up; differs from the id
   // only for a third-party row under a bundled slug (see optionIdFor).
   slug: string;
@@ -325,6 +326,7 @@ export function packRaceOptions(rows: RaceRow[], keepIds: Iterable<string> = [])
       name: subraceLabel(row.name, parent?.name),
       ...mechanics,
       note: mechanics.traitsSummary,
+      ...(typeof row.data.localized_desc === "string" ? { localizedDesc: row.data.localized_desc } : {}),
       slug: row.slug,
       documentSlug: row.documentSlug,
       source: row.document ?? row.documentSlug,

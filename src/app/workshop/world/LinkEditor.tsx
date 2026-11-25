@@ -1,5 +1,7 @@
 "use client";
 
+import { worldLinkLabel } from "@/lib/worldforge/display";
+
 import { ArrowRight, Check, X } from "lucide-react";
 import { useState } from "react";
 import { cn } from "@/lib/cn";
@@ -81,7 +83,7 @@ export function LinkEditor({
                 }
               }}
               options={[
-                ...LINK_LABELS.map((words) => ({ value: words as string, label: words })),
+                ...LINK_LABELS.map((words) => ({ value: words as string, label: worldLinkLabel(t, words) })),
                 { value: CUSTOM, label: t("Other words..."), hint: t("Write your own") },
               ]}
             />

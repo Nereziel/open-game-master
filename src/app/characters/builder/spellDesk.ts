@@ -4,6 +4,7 @@
 // scripts/test-builder-spell-desk.mjs can check it without React.
 import { formatModifier } from "@/lib/srd";
 import { textKey } from "@/lib/language/text-logic";
+import { translate, type Locale } from "@/lib/i18n/translate";
 import { preparedCapLine, type PreparedSum } from "./casting";
 
 // Which list a swap changes: the cantrips, the levelled spells (a known
@@ -59,12 +60,12 @@ export function castingNumbers(input: {
   spellSaveDc: number | null | undefined;
   spellAttack: number | null | undefined;
   spellSlots: Record<string, { max: number }>;
-}): { dc: string | null; attack: string | null; slots: Array<{ level: number; label: string; max: number }> } {
+}, t: (key: string) => string = (key) => key): { dc: string | null; attack: string | null; slots: Array<{ level: number; label: string; max: number }> } {
   const slots = Object.entries(input.spellSlots)
     .map(([level, slot]) => ({ level: Number(level), max: slot.max }))
     .filter((slot) => slot.max > 0 && slot.level >= 1 && slot.level <= 9)
     .sort((a, b) => a.level - b.level)
-    .map((slot) => ({ ...slot, label: ORDINALS[slot.level] }));
+    .map((slot) => ({ ...slot, label: t(ORDINALS[slot.level]) }));
   return {
     dc: typeof input.spellSaveDc === "number" ? String(input.spellSaveDc) : null,
     attack: typeof input.spellAttack === "number" ? formatModifier(input.spellAttack) : null,
@@ -82,26 +83,28 @@ export function capLines(input: {
   spellbookCap: number | null;
   spellCap: { label: string; count: number; sum?: PreparedSum } | null;
   known: boolean;
-}): Array<{ id: string; label: string; line: string }> {
+}, locale: Locale = "en"): Array<{ id: string; label: string; line: string }> {
   const { className, level } = input;
-  const table = `from the ${className} table at level ${level}`;
+  const tableLine = (count: number) => translate(locale, "{count}, from the {class} table at level {level}", { count, class: className, level });
   const lines: Array<{ id: string; label: string; line: string }> = [];
   if (input.cantripCap !== null) {
-    lines.push({ id: "cantrips", label: "Cantrips", line: `${input.cantripCap}, ${table}` });
+    lines.push({ id: "cantrips", label: translate(locale, "Cantrips", { context: "sheet.spells.cantrips" }), line: tableLine(input.cantripCap) });
   }
   if (input.spellbookCap !== null) {
     lines.push({
       id: "spellbook",
-      label: "Spellbook",
-      line: level > 1 ? `6 at level 1 + 2 a level after = ${input.spellbookCap}` : `${input.spellbookCap} at level 1`,
+      label: translate(locale, "Spellbook"),
+      line: level > 1
+        ? translate(locale, "6 at level 1 + 2 a level after = {count}", { count: input.spellbookCap })
+        : translate(locale, "{count} at level 1", { count: input.spellbookCap }),
     });
   }
   if (input.spellCap) {
     const { count, sum } = input.spellCap;
     lines.push(
       input.known || !sum
-        ? { id: "list", label: input.known ? "Known" : "Prepared", line: `${count}, ${table}` }
-        : { id: "list", label: "Prepared", line: preparedCapLine(className, sum, count) },
+        ? { id: "list", label: input.known ? translate(locale, "Known", { context: "sheet.spells.known" }) : translate(locale, "Prepared"), line: tableLine(count) }
+        : { id: "list", label: translate(locale, "Prepared"), line: preparedCapLine(className, sum, count, locale) },
     );
   }
   return lines;

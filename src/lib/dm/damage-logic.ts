@@ -4,6 +4,7 @@
 // worn under heavy armor). Database-free, like condition-logic.ts, which
 // re-exports everything here for the callers that have always found it
 // there.
+import type { Locale } from "@/lib/i18n/translate";
 import { RAGING } from "@/lib/srd/class-resources";
 import { conditionGrantedImmunity } from "@/lib/srd/condition-effect-queries";
 import { isWorn, matchArmor, type SrdArmor } from "@/lib/srd/armor";
@@ -55,15 +56,23 @@ const DAMAGE_TYPE_WORDS_CS: Record<string, string> = {
   "thunder": "Hromové"
 };
 
-export type DamageLocale = "en" | "fr" | "cs";
+// Display strategy only: damage keys, dice arithmetic and resistance parsing
+// remain canonical. A new locale registers its vocabulary and optional dice
+// notation without adding branches to either display function.
+export type DamageLocale = Locale;
+const DAMAGE_DISPLAY_BY_LOCALE: Partial<Record<Locale, {
+  words: Record<string, string>;
+  formatDice?: (text: string) => string;
+}>> = {
+  fr: { words: DAMAGE_TYPE_WORDS_FR },
+  cs: { words: DAMAGE_TYPE_WORDS_CS, formatDice: (text) => text.replace(/\b(\d+)d(\d+)\b/g, "$1k$2") },
+};
 
 // A damage type as a word on screen ("Slashing", « Tranchants »): the French
 // SRD's own capitalized list heading; a type the maps do not carry stays as
 // it was spelled in.
 export function damageTypeWord(type: string, locale: DamageLocale): string {
-  if (locale === "en") return type;
-  const words = locale === "cs" ? DAMAGE_TYPE_WORDS_CS : DAMAGE_TYPE_WORDS_FR;
-  return words[type.trim().toLowerCase()] ?? type;
+  return DAMAGE_DISPLAY_BY_LOCALE[locale]?.words[type.trim().toLowerCase()] ?? type;
 }
 
 // The type word inside a damage expression ("1d6 slashing") reads in the
@@ -75,10 +84,10 @@ const DAMAGE_TYPE_WORD_RE =
   /\b(acid|bludgeoning|cold|fire|force|lightning|necrotic|piercing|poison|psychic|radiant|slashing|thunder)\b/g;
 
 export function damageWords(damage: string, locale: DamageLocale): string {
-  if (locale === "en") return damage;
-  const words = locale === "cs" ? DAMAGE_TYPE_WORDS_CS : DAMAGE_TYPE_WORDS_FR;
-  const localized = damage.replace(DAMAGE_TYPE_WORD_RE, (word) => (words[word] ?? word).toLowerCase());
-  return locale === "cs" ? localized.replace(/\b(\d+)d(\d+)\b/g, "$1k$2") : localized;
+  const display = DAMAGE_DISPLAY_BY_LOCALE[locale];
+  if (!display) return damage;
+  const localized = damage.replace(DAMAGE_TYPE_WORD_RE, (word) => (display.words[word] ?? word).toLowerCase());
+  return display.formatDice?.(localized) ?? localized;
 }
 
 const wholeWord = (text: string, word: string) =>

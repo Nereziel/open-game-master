@@ -17,8 +17,7 @@ import { heroFell } from "@/lib/characters/fallen-logic";
 import { heroDoorFor } from "@/lib/characters/hero-door";
 import { listMembers, setMemberReady } from "@/lib/db/campaigns";
 import { pregenSeatRefusal, recordPregenSeat } from "@/lib/db/pregen-offers";
-import { localeFromAcceptLanguage } from "@/lib/rulebook/book";
-import { translate } from "@/lib/messages-logic";
+import { requestT } from "@/lib/request-locale";
 import {
   admitLibraryCharacter,
   companionRoleRefusal,
@@ -73,11 +72,12 @@ function picksOf(raw: unknown, t: (key: string, vars?: Record<string, string | n
 
 // The library door with the picks made: the hero is adapted and admitted
 // as ever, then the picks are applied and judged (seat-preview.ts).
-function admitWith(campaign: MemberContext["campaign"], picks: SeatPicks | null) {
+function admitWith(campaign: MemberContext["campaign"], picks: SeatPicks | null, locale: ReturnType<typeof requestT>["locale"]) {
   return hasSeatPicks(picks)
     ? (character: Parameters<typeof admitLibraryForSeat>[0], _campaign: unknown, userId: string, level: number) =>
-        admitLibraryForSeat(character, campaign, userId, level, picks)
-    : undefined;
+        admitLibraryForSeat(character, campaign, userId, level, picks, locale)
+    : (character: Parameters<typeof admitLibraryCharacter>[0], table: Parameters<typeof admitLibraryCharacter>[1], userId: string, level: number) =>
+        admitLibraryCharacter(character, table, userId, level, undefined, locale);
 }
 
 const editSchema = z.object({
@@ -95,13 +95,6 @@ function lobbyGuard(context: MemberContext, t: (key: string, vars?: Record<strin
     );
   }
   return null;
-}
-
-// The refusals read the asker's language (Accept-Language, as the rulebook
-// and the pregens do).
-function requestT(request: Request): (key: string, vars?: Record<string, string | number>) => string {
-  const locale = localeFromAcceptLanguage(request.headers.get("accept-language"));
-  return (key, vars) => translate(locale, key, vars);
 }
 
 // Changing your character invalidates your ready vote and swaps the sheet
@@ -224,7 +217,7 @@ export async function POST(
       campaignId,
       context.user.id,
       door.level,
-      admitWith(door.campaign, picked.picks),
+      admitWith(door.campaign, picked.picks, t.locale),
     );
     if ("error" in result) {
       return Response.json(result, { status: 400 });
@@ -254,6 +247,7 @@ export async function POST(
   // the request claims is held to the rules, and what has one legal answer
   // is written by the server whatever the request says.
   const admitted = admitSheet({
+    locale: t.locale,
     door: "table",
     level: door.level,
     sheet: parsed.data,
@@ -339,7 +333,7 @@ export async function PUT(
     // Picks that are not within the rules are refused before the old sheet
     // goes too: the switch is judged first, then made.
     if (hasSeatPicks(picked.picks)) {
-      const judged = admitLibraryForSeat(character, context.campaign, context.user.id, Math.max(1, Math.min(20, context.campaign.startingLevel)), picked.picks);
+      const judged = admitLibraryForSeat(character, context.campaign, context.user.id, Math.max(1, Math.min(20, context.campaign.startingLevel)), picked.picks, t.locale);
       if (!judged.ok) {
         return refusal(judged.problems);
       }
@@ -356,7 +350,7 @@ export async function PUT(
       campaignId,
       context.user.id,
       context.campaign.startingLevel,
-      admitWith(context.campaign, picked.picks),
+      admitWith(context.campaign, picked.picks, t.locale),
     );
     if ("error" in result) {
       // The old sheet is already gone; the lobby falls back to its
@@ -409,6 +403,7 @@ export async function PUT(
       return Response.json({ error: held }, { status: 409 });
     }
     const edited = admitSheet({
+      locale: t.locale,
       door: "library",
       level: context.campaign.startingLevel,
       sheet: edit.data.sheet,
@@ -459,7 +454,7 @@ export async function PUT(
       campaignId,
       context.user.id,
       context.campaign.startingLevel,
-      (entry, table, user, level) => admitLibraryCharacter(entry, table, user, level, replaced.classes ?? []),
+      (entry, table, user, level) => admitLibraryCharacter(entry, table, user, level, replaced.classes ?? [], t.locale),
     );
     if ("error" in result) {
       publishPersisted(campaignId, "sheet_deleted", {
@@ -484,6 +479,7 @@ export async function PUT(
     );
   }
   const replaced = admitSheet({
+    locale: t.locale,
     door: "table",
     level: context.campaign.startingLevel,
     sheet: parsed.data,
@@ -624,7 +620,7 @@ export async function PATCH(
   if (typeof parsed.data.level === "number" && !levelingUp && !companionPortrait) {
     return Response.json(
       {
-        error: `${sheet.name} is already level ${sheet.level}. ${sheet.level >= 20 ? "No character passes level 20." : `A level-up names the next level, ${sheet.level + 1}.`}`,
+        error: `${t("{name} is already level {level}.", { name: sheet.name, level: sheet.level })} ${sheet.level >= 20 ? t("No character passes level 20.") : t("A level-up names the next level, {next}.", { next: sheet.level + 1 })}`,
         level: sheet.level,
       },
       { status: 403 },
@@ -634,7 +630,7 @@ export async function PATCH(
     return Response.json(
       {
         error:
-          "Only portrait, notes, backstory, personality, and hopes for the story can be changed here outside of a level-up. Ask the party lead to adjust other stats.",
+          t("Only portrait, notes, backstory, personality, and hopes for the story can be changed here outside of a level-up. Ask the party lead to adjust other stats."),
       },
       { status: 403 },
     );
@@ -647,13 +643,14 @@ export async function PATCH(
   if (levelingUp) {
     if (companionPortrait) {
       return Response.json(
-        { error: "Only a companion's portrait can be changed from here." },
+        { error: t("Only a companion's portrait can be changed from here.") },
         { status: 403 },
       );
     }
     // The table's homebrew, whoever of its DM seats wrote it.
     const owner = tableAuthors(context.campaign.id);
     const built = buildLevelUp(sheet, parsed.data, {
+      locale: t.locale,
       hpMethod: context.campaign.gameSettings.hpMethod ?? "average",
       multiclassAllowed: context.campaign.gameSettings.multiclassingEnabled !== false,
       // The table's workshop classes are classes here as at creation: a

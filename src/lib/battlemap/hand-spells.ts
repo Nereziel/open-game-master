@@ -13,6 +13,7 @@ import { translate, type Locale } from "@/lib/messages-logic";
 type T = (key: string, vars?: Record<string, string | number>) => string;
 const enT: T = (key, vars) => translate("en", key, vars);
 import { bonusCastOf, castComponents, casterStateProblem, grantCastsFree, grantedCastOf, materialPlan, silenceRefusal, slotPlan, turnCharge } from "@/lib/dm/cast-rules";
+import { castRefusalDisplay } from "@/lib/dm/cast-refusal-display";
 import { castingAbilityMod, healAdditions, healModifier } from "@/lib/dm/heal-bonus";
 import { spellAttackLines } from "@/lib/battlemap/hand-attack-lines";
 import { freeCastResourceId, freeCastRestOf, heldFreeCastId, isFreeCastResource } from "@/lib/srd/feat-spells";
@@ -404,7 +405,8 @@ export function spellCard(sheet: CharacterSheet, turn: HandTurn, riders: CombatR
   // untrained armor, a verbal component while silenced, no free hand, a
   // costly material neither carried nor affordable, no slot, and the
   // bonus-action spell rule.
-  const problem = (refusal: ToolError | null, spent = false): Gate => (refusal ? { reason: refusal.error, spent } : null);
+  const refusalText = (error: string) => castRefusalDisplay(error, t, sheet.name);
+  const problem = (refusal: ToolError | null, spent = false): Gate => (refusal ? { reason: refusalText(refusal.error), spent } : null);
   const components = castComponents(sheet, facts, grantedCastOf(sheet, name, facts), undefined);
   const material = materialPlan(sheet, facts, { inFight: true, slotLevel: slotLevel ?? fact.level });
   const slotRefusal =
@@ -431,7 +433,7 @@ export function spellCard(sheet: CharacterSheet, turn: HandTurn, riders: CombatR
     bonusCast: bonusCastOf(sheet, facts, null),
     attackCantrip: asAttack,
   });
-  const chargeGate: Gate = "error" in charge ? { reason: charge.error, spent: charge.error.includes("already used") } : null;
+  const chargeGate: Gate = "error" in charge ? { reason: refusalText(charge.error), spent: charge.error.includes("already used") } : null;
   // Sorcery points in place of the slot (Psionic Sorcery, Eyes of the Dark),
   // as the cast guard pays them: a psionic spell is cast bare when a component
   // cannot be made, and the points pay when no slot can
@@ -576,8 +578,8 @@ export function spellCard(sheet: CharacterSheet, turn: HandTurn, riders: CombatR
     bare ? null : problem(components.problem ?? (hushed ? silenceRefusal(sheet.name, options.board!.silence!.by || null, components.facts!.name) : null)),
     // A reaction spell needs a reaction to spend (slowed takes it away).
     cost === "reaction" ? costGate("reaction", turn, sheet, name, t) : null,
-    !bare && "error" in material ? { reason: material.error, spent: false } : null,
-    !byPoints && slotRefusal && "error" in slotRefusal ? { reason: slotRefusal.error, spent: true } : null,
+    !bare && "error" in material ? { reason: refusalText(material.error), spent: false } : null,
+    !byPoints && slotRefusal && "error" in slotRefusal ? { reason: refusalText(slotRefusal.error), spent: true } : null,
     chargeGate,
     // Last: what else would shut it says more (slowed, no slot).
     waits,

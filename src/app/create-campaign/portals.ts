@@ -39,7 +39,7 @@ const enT: T = (key, vars) => translate("en", key, vars);
 export function portalCards(selected: Genre, t: T = enT): PortalCard[] {
   return GENRE_PRESETS.map((preset, index) => ({
     id: preset.id,
-    name: t(preset.name),
+    name: ({ "high_fantasy": t("High fantasy"), "dark_fantasy": t("Dark fantasy"), "mystery": t("Mystery"), "horror": t("Horror"), "cyberpunk": t("Cyberpunk"), "steampunk": t("Steampunk"), "post_apocalyptic": t("Post-apocalyptic"), "custom": t("Custom", { context: "creator.genre.custom" }) } as Record<string, string>)[preset.id] ?? String(preset.id),
     blurb: ({ "high_fantasy": t("Classic swords, sorcery, and shining kingdoms."), "dark_fantasy": t("Grim lands where hope is scarce and victories cost."), "mystery": t("Clues, suspects, and secrets behind every door."), "horror": t("Dread, isolation, and things best left unseen."), "cyberpunk": t("Neon streets, chrome bodies, corporate gods. 5e reskinned."), "steampunk": t("Brass, steam, airships, and impossible machines."), "post_apocalyptic": t("Scavenge, survive, and rebuild among the ruins."), "custom": t("Describe your own world and tone.") } as Record<string, string>)[preset.id] ?? String(preset.id),
     climate: t(preset.climate),
     humansOnly: isHumansOnly(preset),
@@ -47,6 +47,11 @@ export function portalCards(selected: Genre, t: T = enT): PortalCard[] {
     chosen: preset.id === selected,
     delayMs: index * 40,
   }));
+}
+
+// Keep help and cards on the same translated display data.
+export function settingList(selected: Genre, t: T = enT): string {
+  return portalCards(selected, t).map((card) => `**${card.name}**: ${card.blurb}`).join("\n\n");
 }
 
 export type WorldFact = { key: string; value: string };

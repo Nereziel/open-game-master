@@ -37,10 +37,9 @@ function entryOf(feat: AuthoredFeat): ContentEntry {
 }
 
 // The authored feats whose names contain `q`, sorted by name.
-export function authoredFeatEntries(q?: string): ContentEntry[] {
+export function authoredFeatEntries(q?: string, matchName?: (row: ContentEntry) => boolean): ContentEntry[] {
   const wanted = textKey(q ?? "");
-  return FEATS.filter((feat) => textKey(feat.name).includes(wanted))
-    .map(entryOf)
+  return FEATS.map(entryOf).filter((row) => textKey(row.name).includes(wanted) || matchName?.(row))
     .sort(byName);
 }
 
@@ -50,13 +49,13 @@ export function authoredFeatEntries(q?: string): ContentEntry[] {
 // list meets each feat once.
 export function withAuthoredFeats(
   served: ContentEntry[],
-  options: { q?: string; offset?: number; packNames: string[] },
+  options: { q?: string; offset?: number; packNames: string[]; matchName?: (table: string, row: ContentEntry) => boolean },
 ): ContentEntry[] {
   if ((options.offset ?? 0) > 0) {
     return served;
   }
   const names = new Set(options.packNames.map(textKey));
-  const missing = authoredFeatEntries(options.q).filter(
+  const missing = authoredFeatEntries(options.q, (row) => options.matchName?.("feats", row) ?? false).filter(
     (entry) => !names.has(textKey(entry.name)),
   );
   if (!missing.length) {

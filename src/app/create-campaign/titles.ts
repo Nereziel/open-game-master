@@ -11,7 +11,7 @@
 // Voix du royaume de cendre » assembles mechanically and always reads
 // right. Evocative translations, not word-for-word ones.
 
-type Locale = "en" | "fr" | "cs";
+import type { Locale } from "@/lib/i18n/translate";
 type Bank = { things: string[]; places: string[]; marks: string[] };
 
 const FANTASY: Bank = {
@@ -344,30 +344,37 @@ const pickOne = <T,>(list: T[], random: () => number) => list[Math.floor(random(
 // ("le Serment" -> "Le Serment"); marks and places keep their case.
 const cap = (title: string) => title.charAt(0).toUpperCase() + title.slice(1);
 
+type TitleComposer = (bank: Bank, shape: number, random: () => number) => string;
+
+const composeEnglish: TitleComposer = (bank, shape, random) =>
+  shape === 0
+    ? `The ${pickOne(bank.marks, random)} ${pickOne(bank.things, random)}`
+    : shape === 1
+      ? `${pickOne(bank.things, random)} of ${pickOne(bank.places, random)}`
+      : `The ${pickOne(bank.marks, random)} ${pickOne(bank.things, random)} of ${pickOne(bank.places, random)}`;
+
+// These banks contain ready-made grammatical phrases, including prepositions.
+const composePhrases: TitleComposer = (bank, shape, random) =>
+  cap(
+    shape === 0
+      ? `${pickOne(bank.things, random)} ${pickOne(bank.marks, random)}`
+      : shape === 1
+        ? `${pickOne(bank.things, random)} ${pickOne(bank.places, random)}`
+        : `${pickOne(bank.things, random)} ${pickOne(bank.marks, random)} ${pickOne(bank.places, random)}`,
+  );
+
+const TITLE_BANKS_BY_LOCALE: Record<Locale, { banks: Record<string, Bank>; fallback: Bank; compose: TitleComposer }> = {
+  en: { banks: BANKS, fallback: FANTASY, compose: composeEnglish },
+  fr: { banks: BANKS_FR, fallback: FANTASY_FR, compose: composePhrases },
+  cs: { banks: BANKS_CS, fallback: BANKS_CS.high_fantasy, compose: composePhrases },
+};
+
 export function rollCampaignTitle(genre: string, current = "", random: () => number = Math.random, locale: Locale = "en"): string {
-  const french = locale === "fr";
-  const czech = locale === "cs";
-  const bank = czech ? BANKS_CS[genre] ?? BANKS_CS.high_fantasy : french ? BANKS_FR[genre] ?? FANTASY_FR : BANKS[genre] ?? FANTASY;
+  const { banks, fallback, compose } = TITLE_BANKS_BY_LOCALE[locale] ?? TITLE_BANKS_BY_LOCALE.en;
+  const bank = banks[genre] ?? fallback;
   for (let attempt = 0; attempt < 8; attempt += 1) {
-    const shape = Math.floor(random() * 3);
-    // The three shapes: « Le X Y », « Le X de Z », « Le X Y de Z » in
-    // French; "The X Y", "X of Z", "The X Y of Z" in English.
-    const title = french || czech
-      ? cap(
-          shape === 0
-            ? `${pickOne(bank.things, random)} ${pickOne(bank.marks, random)}`
-            : shape === 1
-              ? `${pickOne(bank.things, random)} ${pickOne(bank.places, random)}`
-              : `${pickOne(bank.things, random)} ${pickOne(bank.marks, random)} ${pickOne(bank.places, random)}`,
-        )
-      : shape === 0
-        ? `The ${pickOne(bank.marks, random)} ${pickOne(bank.things, random)}`
-        : shape === 1
-          ? `${pickOne(bank.things, random)} of ${pickOne(bank.places, random)}`
-          : `The ${pickOne(bank.marks, random)} ${pickOne(bank.things, random)} of ${pickOne(bank.places, random)}`;
+    const title = compose(bank, Math.floor(random() * 3), random);
     if (title !== current) return title;
   }
-  return french || czech
-    ? cap(`${pickOne(bank.things, random)} ${pickOne(bank.places, random)}`)
-    : `${pickOne(bank.things, random)} of ${pickOne(bank.places, random)}`;
+  return compose(bank, 1, random);
 }

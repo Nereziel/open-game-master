@@ -1,11 +1,14 @@
 import { currentUser, unauthorized } from "@/lib/auth";
 import { getEntryDetail } from "@/lib/content";
 import { withBestEffort } from "@/lib/content/entry-labels";
-import { localizeEntryCs } from "@/lib/content/entry-descriptions-cs";
-import { localizeItemEntryFr } from "@/lib/content/item-descriptions-fr";
-import { bookLocaleOf } from "@/lib/rulebook/book";
+import "@/lib/i18n/server-catalogs";
+import { localizeEntry } from "@/lib/content/entry-descriptions";
+import { bookLocaleOf, BOOK_LOCALE_VARY } from "@/lib/rulebook/book";
 import { bundledItemRows, bundledSpellRows } from "@/lib/rulebook/catalog-rows";
 import { bundledGearRow } from "@/lib/workshop/bundled-gear-rows";
+import { bundledArchetypeRows, bundledBackgroundRows, bundledRaceRows } from "@/lib/workshop/catalog-mechanics";
+import { bundledClassRows } from "@/lib/workshop/class-catalog";
+import { ALL_CLASSES } from "@/lib/srd";
 import { contentScopeFor } from "@/lib/content/scope";
 import { findHomebrewBySlug, getAuthorsHomebrew } from "@/lib/db/homebrew";
 import type { HomebrewKind } from "@/lib/schemas/homebrew";
@@ -63,12 +66,12 @@ export async function GET(
   }
 
   const locale = bookLocaleOf(request);
-  const localize = <T extends { name: string; source?: "open5e" | "srd" | "homebrew"; data?: unknown }>(row: T): T =>
-    locale === "cs" ? localizeEntryCs(kind, row) : homebrewKind === "item" && locale === "fr" ? localizeItemEntryFr(row) : row;
+  const localizedResponse = (row: unknown) =>
+    Response.json({ entry: localizeEntry(kind, row, locale) }, { headers: { Vary: BOOK_LOCALE_VARY } });
   const entry = getEntryDetail(kind as Parameters<typeof getEntryDetail>[0], decoded);
   if (entry) {
     const withLabel = withBestEffort(kind, entry, { classSlug: String(entry.data.class_slug ?? "") || undefined });
-    return Response.json({ entry: localize(withLabel) });
+    return localizedResponse(withLabel);
   }
   // The bundled book's rows the search serves with no pack ("srd:web",
   // "srd-gear:longsword"), so their info reads with no pack too.
@@ -81,15 +84,30 @@ export async function GET(
           ? bundledGearRow(decoded)
           : null;
   if (bundled) {
-    return Response.json({ entry: localize(bundled) });
+    return localizedResponse(bundled);
   }
   const brewed = homebrewKind ? findHomebrewBySlug(scope.userIds, homebrewKind, decoded) : null;
   if (brewed) return asEntry(brewed);
   // The info button may know the canonical ID without the bundled srd: prefix.
-  if (locale === "cs" && !decoded.includes(":")) {
+  if (!decoded.includes(":")) {
     const row = kind === "spells" ? bundledSpellRows().find((r) => r.slug === `srd:${decoded}`)
       : kind === "items" ? bundledItemRows().find((r) => r.slug === `srd:${decoded}`) : undefined;
-    if (row) return Response.json({ entry: localize(row) });
+    if (row) return localizedResponse(row);
+  }
+  // The workshop's bundled lists also expose exact slugs for these
+  // entries. Published and scoped homebrew lookups above keep precedence.
+  const bundledRows = kind === "races" ? bundledRaceRows("", [])
+    : kind === "backgrounds" ? bundledBackgroundRows("", [])
+    : kind === "classes" ? bundledClassRows("", [])
+    : kind === "archetypes" ? ALL_CLASSES
+      .filter((klass) => decoded.startsWith(`${klass.id}-`))
+      .flatMap((klass) => bundledArchetypeRows(klass.id, "", []))
+    : [];
+  const bundledDetail = bundledRows.find((row) => row.slug === decoded);
+  if (bundledDetail) {
+    const classSlug = kind === "archetypes"
+      ? (bundledDetail.table as { classSlug?: string } | undefined)?.classSlug : undefined;
+    return localizedResponse(withBestEffort(kind, bundledDetail, { classSlug }));
   }
   return Response.json({ error: "Not found." }, { status: 404 });
 }

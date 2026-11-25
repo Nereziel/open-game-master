@@ -18,6 +18,7 @@
 // (landingWithin).
 
 import { TERRAIN, chebyshev, tileAt, tileIndex, type XY } from "@/lib/battlemap/types";
+import { formatMessage, type MessageVars } from "@/lib/messages-logic";
 
 const TILE_FEET = 5;
 const LOW_WALL_FEET = 3;
@@ -79,42 +80,42 @@ export function planLongJump(input: {
   dieFeet?: number;
   budgetTiles: number;
   name: string;
-}): JumpPlan {
+}, t: (key: string, vars?: MessageVars) => string = formatMessage): JumpPlan {
   const { terrain, width, height, occupied, from, to, name } = input;
   if (to.x < 0 || to.y < 0 || to.x >= width || to.y >= height) {
-    return { ok: false, error: "Invalid destination." };
+    return { ok: false, error: t("Invalid destination.") };
   }
   const tiles = chebyshev(from.x, from.y, to.x, to.y);
   const feet = tiles * TILE_FEET;
   const reach = longJumpFeet(input.strength, input.runningStart) + Math.max(0, input.extraFeet ?? 0) + Math.max(0, input.dieFeet ?? 0);
   if (tiles < 1) {
-    return { ok: false, error: "A jump has to go somewhere." };
+    return { ok: false, error: t("A jump has to go somewhere.") };
   }
   if (feet > reach) {
     return {
       ok: false,
-      error: `${name} can long jump ${reach} feet ${input.runningStart ? "with a running start" : "from a standing start (a 10-foot run first doubles it)"}, not ${feet}. The GM may call for a Strength (Athletics) check to jump farther.`,
+      error: t("{name} can long jump {reach} feet {start}, not {feet}. The GM may call for a Strength (Athletics) check to jump farther.", { name, reach, start: t(input.runningStart ? "with a running start" : "from a standing start (a 10-foot run first doubles it)"), feet }),
     };
   }
   if (tiles > input.budgetTiles) {
-    return { ok: false, error: `Each foot of a jump costs a foot of movement: ${feet} feet is more than ${name} has left this turn.` };
+    return { ok: false, error: t("Each foot of a jump costs a foot of movement: {feet} feet is more than {name} has left this turn.", { feet, name }) };
   }
   const path = jumpLine(from, to);
   for (const square of path.slice(0, -1)) {
     const ground = tileAt(terrain, width, square.x, square.y);
     if (ground === TERRAIN.wall) {
-      return { ok: false, error: `A wall stands in the way at (${square.x},${square.y}); nobody jumps through it.` };
+      return { ok: false, error: t("A wall stands in the way at ({x},{y}); nobody jumps through it.", { x: square.x, y: square.y }) };
     }
     if (ground === TERRAIN.lowwall && feet < LOW_WALL_FEET * 4) {
-      return { ok: false, error: `Clearing the low wall at (${square.x},${square.y}) takes a jump of at least ${LOW_WALL_FEET * 4} feet.` };
+      return { ok: false, error: t("Clearing the low wall at ({x},{y}) takes a jump of at least {feet} feet.", { x: square.x, y: square.y, feet: LOW_WALL_FEET * 4 }) };
     }
     if (occupied.has(tileIndex(width, square.x, square.y))) {
-      return { ok: false, error: `Someone stands at (${square.x},${square.y}), in the way of the jump.` };
+      return { ok: false, error: t("Someone stands at ({x},{y}), in the way of the jump.", { x: square.x, y: square.y }) };
     }
   }
   const landing = tileAt(terrain, width, to.x, to.y);
   if (landing === TERRAIN.wall || landing === TERRAIN.lowwall || occupied.has(tileIndex(width, to.x, to.y))) {
-    return { ok: false, error: `Nobody can land at (${to.x},${to.y}).` };
+    return { ok: false, error: t("Nobody can land at ({x},{y}).", { x: to.x, y: to.y }) };
   }
   return { ok: true, cost: tiles, path, feet, landsInDifficult: landing === TERRAIN.difficult };
 }

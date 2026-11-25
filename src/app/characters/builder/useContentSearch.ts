@@ -90,12 +90,14 @@ export function useContentSearch(kind: string, extraParams: Record<string, strin
             signal: controller.signal,
             headers: { "X-Odm-Locale": locale },
           });
+          if (controller.signal.aborted) return;
           if (response.ok) {
             const data = (await response.json()) as {
               results?: PickerEntry[];
               packInstalled?: boolean;
               unadmitted?: string[];
             };
+            if (controller.signal.aborted) return;
             setFailed(false);
             setPackMissing(data.packInstalled === false);
             setUnadmitted(Array.isArray(data.unadmitted) ? data.unadmitted : []);

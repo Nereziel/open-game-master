@@ -1,4 +1,5 @@
 import type { MonsterDraft } from "@/lib/bestiary/monster-draft";
+import { gameTermWord } from "@/lib/i18n/game-term-labels";
 import { damageWords } from "@/lib/dm/damage-logic";
 import { translate, type Locale } from "@/lib/messages-logic";
 
@@ -14,24 +15,6 @@ const enT: T = (key, vars) => translate("en", key, vars);
 export type MonsterFold = "actions" | "spellcasting" | "regeneration" | "senses";
 
 const plural = (count: number, one: string, many: string) => `${count} ${count === 1 ? one : many}`;
-
-// The sight words the French SRD's own stat blocks print (« Sens » lines:
-// vision dans le noir, vision aveugle, perception des vibrations, vision
-// lucide). The stored keys stay English; only the line reads the reader's
-// language. Feet stay feet: they are the engine's own unit here.
-const SENSE_WORDS_FR: Record<string, string> = {
-  darkvision: "vision dans le noir",
-  blindsight: "vision aveugle",
-  tremorsense: "perception des vibrations",
-  truesight: "vision lucide",
-};
-
-function senseWord(sense: string, locale: Locale): string {
-  if (locale !== "fr") {
-    return sense;
-  }
-  return SENSE_WORDS_FR[sense] ?? sense;
-}
 
 export function monsterFoldSummary(fold: MonsterFold, draft: MonsterDraft, t: T = enT, locale: Locale = "en"): string {
   const stats = draft.stats;
@@ -74,7 +57,7 @@ export function monsterFoldSummary(fold: MonsterFold, draft: MonsterDraft, t: T 
       const senses = stats.senses ?? {};
       const sight = (["darkvision", "blindsight", "tremorsense", "truesight"] as const)
         .filter((sense) => senses[sense])
-        .map((sense) => `${senseWord(sense, locale)} ${senses[sense]} ft`);
+        .map((sense) => `${gameTermWord("sense", sense, locale)} ${senses[sense]} ft`);
       const skills = Object.keys(stats.skills ?? {}).length;
       const parts = [
         skills ? plural(skills, t("skill"), t("skills")) : "",

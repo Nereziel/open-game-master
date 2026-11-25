@@ -1,7 +1,7 @@
 "use client";
 
 import { BookOpen, Loader2 } from "lucide-react";
-import { useCallback, useEffect, useRef, useState } from "react";
+import { Suspense, lazy, useCallback, useEffect, useRef, useState } from "react";
 import { appNotice } from "@/components/ui/ConfirmDialog";
 import { cn } from "@/lib/cn";
 import { ui } from "@/lib/ui";
@@ -10,9 +10,11 @@ import { hostOffers, offersStoryModel, useCapabilities } from "@/lib/use-capabil
 import type { MatchOption } from "@/lib/pdf-import/match-logic";
 import type { ImportView, ReviewView } from "@/lib/pdf-import/view";
 import type { MatchChoice } from "./PdfMatches";
-import { PdfReview } from "@/app/workshop/pdf-import/PdfReview";
-import { sendBook, type SendProgress } from "@/app/workshop/pdf-import/send-book";
+import type { SendProgress } from "@/app/workshop/pdf-import/send-book";
 import { useT } from "@/lib/locale";
+
+// The review is only needed after a book has been read (or resumed).
+const PdfReview = lazy(() => import("@/app/workshop/pdf-import/PdfReview").then((module) => ({ default: module.PdfReview })));
 
 // "Import an adventure PDF": the GM picks their own copy of a book, the
 // page reads it (src/lib/pdf-import/read-pdf.ts), the server reads what it
@@ -150,13 +152,16 @@ export function PdfImportButton({
   async function pick(file: File | undefined) {
     if (!file) return;
     setError("");
-    signal.current = { cancelled: false };
+    const readingSignal = { cancelled: false };
+    signal.current = readingSignal;
     setPhase({ kind: "sending", progress: { phase: "opening", done: 0, total: 0 }, fileName: file.name });
     try {
+      const { sendBook } = await import("@/app/workshop/pdf-import/send-book");
+      if (readingSignal.cancelled) throw new Error(t("Stopped."));
       const item = await sendBook(t, file, {
         campaignId,
         continueId: continueId || undefined,
-        signal: signal.current,
+        signal: readingSignal,
         onProgress: (progress) => setPhase({ kind: "sending", progress, fileName: file.name }),
       });
       setContinueId("");
@@ -330,23 +335,25 @@ export function PdfImportButton({
       ) : null}
 
       {phase.kind === "review" ? (
-        <PdfReview
-          importId={phase.item.id}
-          review={phase.review}
-          destination={destination}
-          busy={busy}
-          error={error}
-          matchError={matchError}
-          srd={phase.srd}
-          onChoose={(choices) => void choose(phase.item, phase.srd, choices)}
-          onReread={() =>
-            void json<{ import: ImportView }>(t, `/api/pdf-imports/${phase.item.id}`, { method: "POST", body: JSON.stringify({ action: "start" }) })
-              .then((data) => follow(data.import))
-              .catch((thrown) => setError(thrown instanceof Error ? thrown.message : t("It could not start again.")))
-          }
-          onImport={(choices) => void bringIn(phase.item, choices)}
-          onDiscard={() => void discard(phase.item.id)}
-        />
+        <Suspense fallback={<div className="skeleton-block mt-3 h-28 rounded-xl" role="status"><span className="sr-only">{t("Loading")}</span></div>}>
+          <PdfReview
+            importId={phase.item.id}
+            review={phase.review}
+            destination={destination}
+            busy={busy}
+            error={error}
+            matchError={matchError}
+            srd={phase.srd}
+            onChoose={(choices) => void choose(phase.item, phase.srd, choices)}
+            onReread={() =>
+              void json<{ import: ImportView }>(t, `/api/pdf-imports/${phase.item.id}`, { method: "POST", body: JSON.stringify({ action: "start" }) })
+                .then((data) => follow(data.import))
+                .catch((thrown) => setError(thrown instanceof Error ? thrown.message : t("It could not start again.")))
+            }
+            onImport={(choices) => void bringIn(phase.item, choices)}
+            onDiscard={() => void discard(phase.item.id)}
+          />
+        </Suspense>
       ) : null}
 
       {error && phase.kind !== "review" ? (

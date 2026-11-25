@@ -17,7 +17,8 @@ import { useLocale, useT } from "@/lib/locale";
 import { wearingIsExplicit } from "@/lib/srd/armor";
 import { isTack, onMount } from "@/lib/srd/tack";
 import { oneOfKind, wornButIdle } from "@/lib/srd/wear-slots";
-import { magicItemBonus, rowName, srdNameWithBonus } from "@/lib/srd/item-row";
+import { rowName, srdNameWithBonus } from "@/lib/srd/item-row";
+import { itemDisplayName } from "@/lib/content/item-display";
 import { backgroundFeatureName, classFeatureName, contentName, speciesTraitName } from "@/lib/content/names";
 import { matchWeapon } from "@/lib/srd/weapons";
 import { cardArtwork } from "@/lib/battlemap/card-art";
@@ -378,13 +379,9 @@ export function EquipmentChips({
         return {
           id: item.name,
           grab: grab?.(index) ?? false,
-          name: (() => {
-            const shown = contentName("items", rowName(item), locale);
-            const bonus = magicItemBonus(item.name);
-            return `${bonus ? `${shown} +${bonus}` : shown}${item.qty > 1 ? ` x${item.qty}` : ""}`;
-          })(),
+          name: `${itemDisplayName(item, locale)}${item.qty > 1 ? ` x${item.qty}` : ""}`,
           icon: cardArtwork({ kind: "item" as const, key: item.name, family: "item-gear" }),
-          lead: { icon: inventoryItemIcon(item), label: ITEM_CATEGORY_LABEL[category], tone: category, style: itemToneStyle(category, "chip") },
+          lead: { icon: inventoryItemIcon(item), label: t(ITEM_CATEGORY_LABEL[category]), tone: category, style: itemToneStyle(category, "chip") },
           note:
             [
               wornNote(item),
@@ -395,7 +392,7 @@ export function EquipmentChips({
               .join(", ") || undefined,
           // The card is the row's (src/lib/srd/item-row.ts), with the bonus the
           // item's own name declares.
-          reference: { kind: "items", slug: contentSlug(rowName(item)), name: srdNameWithBonus(item) },
+          reference: { kind: "items", slug: item.slug || contentSlug(rowName(item)), name: srdNameWithBonus(item) },
         };
       })}
     />
@@ -447,7 +444,7 @@ export function FeatureChips({
   );
 }
 
-export function FeatChips({ feats, classId, subclass }: { feats: string[]; classId: string; subclass?: string | null }) {
+export function FeatChips({ feats }: { feats: string[]; classId: string; subclass?: string | null }) {
   const locale = useLocale();
   return (
     <InfoChipList
@@ -456,7 +453,8 @@ export function FeatChips({ feats, classId, subclass }: { feats: string[]; class
         // official maps); the reference lookup stays the stored name.
         name: contentName("feats", feat, locale),
         icon: { kind: "feat" as const, key: feat },
-        text: describeFeature(classId, subclass ?? "", feat, locale) ?? undefined,
+        // A feat is a catalog entry, not a same-named class feature.
+        // Let the localized content detail resolve its rules.
         reference: { kind: "feats", slug: contentSlug(feat), name: feat },
       }))}
     />

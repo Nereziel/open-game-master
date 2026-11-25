@@ -59,7 +59,7 @@ export function MapRollPanel({
           onChange={setScene}
           label={t("Kind of place")}
           className="w-full"
-          options={[{ value: "", label: t("Not set: open ground") }, ...sceneOptions()]}
+          options={[{ value: "", label: t("Not set: open ground") }, ...sceneOptions(t)]}
         />
       </div>
       <div className="space-y-1">

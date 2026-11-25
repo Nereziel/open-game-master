@@ -307,7 +307,7 @@ export const RESOURCE_CS_FEATURE_NAME_LOOKUP: Record<string, string> = {
   "song-that-ends": "Píseň konce",
   "speak-with-the-departed": "Mluv s zesnulými",
   "spell-storing-item": "Předmět uchovávající kouzlo",
-  "spell-thief": "Zloděj kouzel",
+  "spell-thief": "Kouzelný zloděj",
   "spirit-projection": "Projekce ducha",
   "spirit-session": "Spiritistická seance",
   "spirit-totem": "Duchovní totem",

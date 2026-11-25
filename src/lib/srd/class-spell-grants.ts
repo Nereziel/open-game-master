@@ -27,6 +27,7 @@ import { chosenOptions } from "@/lib/srd/options";
 import { holdsFeature } from "@/lib/srd/feature-names";
 import { subclassNamedBare } from "@/lib/srd/subclass-name";
 import { textKey } from "@/lib/language/text-logic";
+import { translate, type Locale } from "@/lib/i18n/translate";
 
 export type ClassSpellGrants = {
   // Spells (or cantrips) this caster may take from any class's list.
@@ -228,21 +229,25 @@ export function offListProblems(input: {
   strays: Array<{ name: string; cantrip: boolean; ritual?: boolean }>;
   list: string;
   label: string;
+  locale?: Locale;
 }): string[] {
-  const { grants } = input;
+  const { grants, locale = "en" } = input;
+  const feature = translate(locale, grants.feature);
   const offList = (stray: { name: string; cantrip: boolean }) =>
     stray.cantrip
-      ? `${stray.name} is not a ${input.list} cantrip, so a ${input.label} cannot learn it`
-      : `${stray.name} is not on the ${input.list} spell list, so a ${input.label} cannot learn or prepare it`;
+      ? translate(locale, "{name} is not a {list} cantrip, so a {label} cannot learn it", { name: stray.name, list: input.list, label: input.label })
+      : translate(locale, "{name} is not on the {list} spell list, so a {label} cannot learn or prepare it", { name: stray.name, list: input.list, label: input.label });
   const takes = (stray: { cantrip: boolean; ritual?: boolean }) => grants.anyList > 0 && (stray.cantrip || grants.anyListSpells) && (!grants.ritualsOnly || stray.ritual === true);
   const problems = input.strays
     .filter((stray) => !takes(stray))
-    .map((stray) => (grants.ritualsOnly && grants.anyList > 0 && !stray.cantrip ? `${offList(stray)}: ${grants.feature} takes rituals only, and it is not one.` : `${offList(stray)}.`));
+    .map((stray) => (grants.ritualsOnly && grants.anyList > 0 && !stray.cantrip ? translate(locale, "{refusal}: {feature} takes rituals only, and it is not one.", { refusal: offList(stray), feature }) : `${offList(stray)}.`));
   const taken = input.strays.filter(takes);
   const used = Math.min(input.allowedBefore, input.kept);
   if (taken.length && used + taken.length > grants.anyList) {
     problems.push(
-      `${offList(taken[0])}: through ${grants.feature} a ${input.label} holds ${grants.anyList} ${grants.anyListSpells ? "spells" : "cantrips"} from other classes' lists, and this would make ${used + taken.length}.`,
+      translate(locale, grants.anyListSpells
+        ? "{refusal}: through {feature} a {label} holds {count} spells from other classes' lists, and this would make {actual}."
+        : "{refusal}: through {feature} a {label} holds {count} cantrips from other classes' lists, and this would make {actual}.", { refusal: offList(taken[0]), feature, label: input.label, count: grants.anyList, actual: used + taken.length }),
     );
   }
   return problems;

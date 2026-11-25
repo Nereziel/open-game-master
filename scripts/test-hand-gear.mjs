@@ -9,6 +9,7 @@
 // engine would not charge.
 import assert from "node:assert/strict";
 import { register } from "node:module";
+import { readFileSync } from "node:fs";
 
 register("./lib/register-alias.mjs", import.meta.url);
 
@@ -487,6 +488,53 @@ test("gained gear arrives as it did before the marks: a cloak worn while its pla
   const older = [{ name: "Shortsword", qty: 1, equipped: true }, cloak("Old Cloak")];
   assert.equal(mark(wearGained(older, older.map((row) => ({ ...row }))), "Old Cloak"), undefined);
   assert.equal(wearGained([{ name: "Rope", qty: 1 }], [{ name: "Rope", qty: 1 }, cloak("New Cloak")])[1].equipped, undefined, "a sheet that never said wears everything already");
+});
+
+const { engineRefusalKey, spendActionReason } = await import("../src/lib/dm/player-refusals.ts");
+const { installCatalog, translate } = await import("../src/lib/i18n/translate.ts");
+const { spendAction, CASTING_HELD } = await import("../src/lib/dm/action-budget.ts");
+const { canAct } = await import("../src/lib/dm/can-act.ts");
+for (const locale of ["cs", "fr"]) {
+  installCatalog(locale, JSON.parse(readFileSync(new URL(`../src/lib/i18n/${locale}.json`, import.meta.url), "utf8")));
+}
+test("player refusal display localizes without altering canonical rules or budgets", () => {
+  const hero = sheet({ currentHp: 0 });
+  const snapshot = structuredClone(hero);
+  const verdict = canAct({ sheet: hero, encounter: null, kind: "move" });
+  assert.equal(verdict.ok, false);
+  assert.match(verdict.error, /at 0 HP and cannot move/);
+  const used = budget({ actionUsed: true, interaction: { what: "drawing Old Sword", weapons: 1 } });
+  const before = structuredClone(used);
+  const input = { who: "Kael", what: "drawing New Sword" };
+  const canonical = spendInteraction(used, input);
+  assert.equal(canonical.ok, false);
+  assert.match(canonical.error, /Old Sword/);
+  const action = spendAction(used, "action", "Handling a shield", "Kael");
+  assert.equal(action.ok, false);
+  for (const locale of ["en", "cs", "fr"]) {
+    const t = (key, vars) => translate(locale, key, vars);
+    const displayed = engineRefusalKey(verdict.error, "move", hero.name, "", t);
+    assert.match(displayed, /Kael/);
+    assert.equal(displayed === verdict.error, locale === "en");
+    const refusal = spendInteraction(used, { ...input, displayWhat: t("drawing {item}", { item: "New Sword" }) }, t);
+    assert.equal(refusal.ok, false);
+    assert.equal(refusal.refused, canonical.refused);
+    assert.match(refusal.error, /New Sword/);
+    assert.doesNotMatch(refusal.error, /Old Sword/);
+    const shield = spendActionReason(used, "action", "Handling a shield", "Kael", action.error, t, t("Handling a shield"));
+    assert.match(shield, /Kael/);
+    assert.equal(shield === action.error, locale === "en");
+    const casting = budget({ actionUsed: true, oncePerTurn: [CASTING_HELD] });
+    const cast = spendAction(casting, "action", "Handling a shield", "Kael");
+    assert.equal(cast.ok, false);
+    assert.match(cast.error, /clear_condition/);
+    assert.doesNotMatch(spendActionReason(casting, "action", "Handling a shield", "Kael", cast.error, t), /clear_condition/);
+    assert.equal(engineRefusalKey("Unrecognized refusal.", "free", "Kael", "", t), "Unrecognized refusal.");
+    const free = spendInteraction(budget(), { ...input, displayWhat: t("drawing {item}", { item: "New Sword" }) }, t);
+    assert.deepEqual(free.budget.interaction, { what: input.what, weapons: 0 });
+  }
+  assert.deepEqual(hero, snapshot);
+  assert.deepEqual(used, before);
 });
 
 console.log(`test-hand-gear: ${passed} passed`);

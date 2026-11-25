@@ -346,7 +346,7 @@ function CharacterBuilderForm({
   const featDescs = featTexts.descs;
   // The classes taken after the first (backlog F9), with their rows.
   const extras = useMemo(() => extraClassRows(state.extraClasses, classes), [state.extraClasses, classes]);
-  const derived = useBuilderDerived({ state, race, klass, background, extras, fixedLevel, rules: table.rules, featDescs, genre });
+  const derived = useBuilderDerived({ state, race, klass, background, extras, fixedLevel, rules: table.rules, featDescs, genre, optionLocale: locale });
   // The header's hit die in words, its die with "Show rules and numbers" on (backlog F11).
   const numbers = useShowNumbers();
   // Each feat's prerequisite judged as the save judges it, against the

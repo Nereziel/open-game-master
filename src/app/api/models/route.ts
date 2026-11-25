@@ -1,11 +1,7 @@
 import { currentUser } from "@/lib/auth";
 import { unauthorized } from "@/lib/auth";
 import { assessModel, findCatalogModel, providerForBaseUrl } from "@/lib/model-registry/catalog-logic";
-import { translate } from "@/lib/messages-logic";
-
-// English-bound: the verdict's words are rules for now; the picker words
-// what it shows around them.
-const enT = (key: string, vars?: Record<string, string | number>) => translate("en", key, vars);
+import { requestT } from "@/lib/request-locale";
 import { modelCatalog } from "@/lib/model-registry/catalog";
 
 export const runtime = "nodejs";
@@ -20,15 +16,18 @@ export async function GET(request: Request) {
   if (!user) {
     return unauthorized();
   }
+  const t = requestT(request);
   const url = new URL(request.url);
   const model = (url.searchParams.get("model") ?? "").trim().slice(0, 200);
   const baseUrl = (url.searchParams.get("baseUrl") ?? "").trim().slice(0, 500);
   const roleParam = url.searchParams.get("role");
   const role = roleParam === "utility" || roleParam === "image" ? roleParam : "story";
   if (!model) {
-    return Response.json({ error: "Name the model." }, { status: 400 });
+    return Response.json({ error: t("Name the model.") }, { status: 400 });
   }
   const { providers } = modelCatalog();
   const catalog = findCatalogModel(providers, model, providerForBaseUrl(baseUrl, providers));
-  return Response.json({ model, catalog, verdict: assessModel(enT, { role, id: model, catalog, listed: null }) });
+  return Response.json({ model, catalog, verdict: assessModel(t, { role, id: model, catalog, listed: null }) }, {
+    headers: { "Cache-Control": "private, no-store", Vary: "Accept-Language, X-Odm-Locale, Cookie" },
+  });
 }

@@ -3,6 +3,8 @@
 // a homebrew spell's), else from the bundled spell facts. Pure, so
 // scripts/test-builder-spell-desk.mjs can check it without React.
 import { textKey } from "@/lib/language/text-logic";
+import { gameTermWord } from "@/lib/i18n/game-term-labels";
+import { translate, type Locale } from "@/lib/i18n/translate";
 import { bundledSpellFacts, bundledSpellSchool, castingTimeFrom, spellFlagsOf, type CastingTime } from "@/lib/srd/spell-facts";
 
 export type CastingTimeKind = "action" | "bonus" | "reaction" | "longer";
@@ -37,8 +39,8 @@ export const CASTING_TIME_LABELS: Record<CastingTimeKind, string> = {
 // A school key as a player reads it: "evocation" is "Evocation". Written
 // here rather than left to CSS, which a native list and a screen reader
 // never see.
-export function schoolLabel(school: string): string {
-  return school.replace(/(^|\s)(\p{L})/gu, (_, gap: string, letter: string) => gap + letter.toUpperCase());
+export function schoolLabel(school: string, locale: Locale = "en"): string {
+  return gameTermWord("spellSchool", school, locale).replace(/(^|\s)(\p{L})/gu, (_, gap: string, letter: string) => gap + letter.toUpperCase());
 }
 
 const CASTING_TIME_WORDS: Record<CastingTimeKind, string> = {
@@ -131,24 +133,25 @@ export type SpellFilterPicker = {
 // The pickers worth drawing, each only when it can narrow the list: a
 // school or casting time once two are on the page, concentration once some
 // spell asks for it. The ritual filter is a checkbox beside them.
-export function spellFilterPickers(options: SpellFilterOptions): SpellFilterPicker[] {
+export function spellFilterPickers(options: SpellFilterOptions, locale: Locale = "en"): SpellFilterPicker[] {
+  const t = (key: string, vars?: Record<string, string>) => translate(locale, key, vars);
   const picker = (key: SpellFilterPicker["key"], label: string, values: Array<{ value: string; label: string }>): SpellFilterPicker => ({
     key,
     label,
-    options: [{ value: ANY_SPELL_FILTER, label: `${label}: any` }, ...values.map((entry) => ({ value: entry.value, label: `${label}: ${entry.label}` }))],
+    options: [{ value: ANY_SPELL_FILTER, label: t("{label}: any", { label }) }, ...values.map((entry) => ({ value: entry.value, label: t("{label}: {value}", { label, value: entry.label }) }))],
   });
   return [
     ...(options.schools.length > 1
-      ? [picker("school", "School", options.schools.map((school) => ({ value: school, label: schoolLabel(school) })))]
+      ? [picker("school", t("School"), options.schools.map((school) => ({ value: school, label: schoolLabel(school, locale) })))]
       : []),
     ...(options.castingTimes.length > 1
-      ? [picker("castingTime", "Casting time", options.castingTimes.map((kind) => ({ value: kind, label: CASTING_TIME_LABELS[kind] })))]
+      ? [picker("castingTime", t("Casting time"), options.castingTimes.map((kind) => ({ value: kind, label: t(CASTING_TIME_LABELS[kind]) })))]
       : []),
     ...(options.anyConcentration
       ? [
-          picker("concentration", "Concentration", [
-            { value: "yes", label: "needs it" },
-            { value: "no", label: "not needed" },
+          picker("concentration", t("Concentration"), [
+            { value: "yes", label: t("needs it") },
+            { value: "no", label: t("not needed") },
           ]),
         ]
       : []),
@@ -169,12 +172,13 @@ export function withSpellFilterPick(filter: SpellFilter, key: SpellFilterPicker[
 
 // A few words for what the filters ask, for the heading over the tiles:
 // "Evocation, ritual, no concentration".
-export function spellFilterWords(filter: SpellFilter): string {
+export function spellFilterWords(filter: SpellFilter, locale: Locale = "en"): string {
+  const t = (key: string) => translate(locale, key);
   return [
-    filter.school ? schoolLabel(filter.school) : "",
-    filter.ritual ? "ritual" : "",
-    filter.concentration === "yes" ? "concentration" : filter.concentration === "no" ? "no concentration" : "",
-    filter.castingTime ? CASTING_TIME_WORDS[filter.castingTime] : "",
+    filter.school ? schoolLabel(filter.school, locale) : "",
+    filter.ritual ? t("ritual") : "",
+    filter.concentration === "yes" ? t("concentration") : filter.concentration === "no" ? t("no concentration") : "",
+    filter.castingTime ? t(CASTING_TIME_WORDS[filter.castingTime]) : "",
   ]
     .filter(Boolean)
     .join(", ");

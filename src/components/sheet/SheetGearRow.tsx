@@ -8,9 +8,8 @@ import { WIELD_LABEL, changeWears, gearWornState, isAttunable, isWeaponRow, isWo
 import { isHeldFocus } from "@/components/sheet/paperdoll-logic";
 import { armorChangeMinutes } from "@/lib/dm/don-doff";
 import { guessStands, matchArmor } from "@/lib/srd/armor";
-import { swapQuestion, wearConflict, type WearConflict } from "@/lib/srd/wear-slots";
-import { contentName } from "@/lib/content/names";
-import { magicItemBonus, rowName } from "@/lib/srd/item-row";
+import { oneOfKind, wearConflict, type WearConflict } from "@/lib/srd/wear-slots";
+import { itemDisplayName } from "@/lib/content/item-display";
 import { isTack } from "@/lib/srd/tack";
 import { useLocale } from "@/lib/locale";
 import type { CharacterSheet, EquipmentItem } from "@/lib/schemas/sheet";
@@ -64,11 +63,7 @@ export function SheetGearRow({
   // The row reads in the reader's language (gear, weapons, armor), the magic
   // bonus riding on the translated base; the row's own key, the icon and
   // every patch sent stay the stored English name.
-  const shownName = (() => {
-    const shown = contentName("items", { slug: item.slug, name: rowName(item) }, locale);
-    const bonus = magicItemBonus(item.name);
-    return bonus ? `${shown} +${bonus}` : shown;
-  })();
+  const shownName = itemDisplayName(item, locale);
   const isArmor = matchArmor(item) !== null;
   const isShield = matchArmor(item)?.category === "shield";
   // What the fight bars now (sheet-state.ts wearLock): the route refused an
@@ -112,6 +107,8 @@ export function SheetGearRow({
   // left the question, and its answer buttons, below the fold.
   const question = useRef<HTMLDivElement>(null);
   const asking = conflict?.item ?? null;
+  const offNames = conflict?.wearing.map((name) => itemDisplayName(sheet.equipment.find((row) => row.name === name) ?? { name }, locale, false)) ?? [];
+  const off = offNames.length > 1 ? `${offNames.slice(0, -1).join(", ")}${t(" and ")}${offNames.at(-1)}` : offNames[0] ?? "";
   useEffect(() => {
     if (asking) {
       question.current?.scrollIntoView({ block: "nearest" });
@@ -122,11 +119,11 @@ export function SheetGearRow({
     <div data-gear-row={item.name} data-tone={category} style={itemToneStyle(category, "row")} className="flex items-center gap-2 text-xs text-stone-300">
       <GameIcon icon={inventoryItemIcon(item)} size="size-6" className="tone-rim" />
       <span className="min-w-0 grow truncate">
-        <span className="sr-only">{ITEM_CATEGORY_LABEL[category]}: </span>
+        <span className="sr-only">{t(ITEM_CATEGORY_LABEL[category])}: </span>
         {shownName}
       </span>
       {idle ? (
-        <span className="motion-pop shrink-0 rounded-full border border-stone-700 px-1.5 text-[10px] text-stone-400" title={t("Worn, but a character wears {kind} at a time, so its magic does not count.", { kind: idle })}>
+        <span className="motion-pop shrink-0 rounded-full border border-stone-700 px-1.5 text-[10px] text-stone-400" title={t("Worn, but a character wears {kind} at a time, so its magic does not count.", { kind: t(idle) })}>
           {t("not in effect")}
         </span>
       ) : item.layered && worn ? (
@@ -159,27 +156,27 @@ export function SheetGearRow({
         aria-busy={busy}
         aria-label={
           inHand
-            ? `${item.name}: ${wearLabel}. ${worn ? "Pack it away" : "Take it in hand"}.`
+            ? t("{name}: {state}. {action}.", { name: shownName, state: wearLabel, action: worn ? t("Pack it away") : t("Take it in hand") })
             : tack
-              ? `${item.name}: ${wearLabel}. ${worn ? "Take it off your mount" : "Put it on your mount"}.`
+              ? t("{name}: {state}. {action}.", { name: shownName, state: wearLabel, action: worn ? t("Take it off your mount") : t("Put it on your mount") })
               : undefined
         }
         title={
           dead
             ? t("{name} is dead and cannot change what they wear or are attuned to.", { name: sheet.name })
             : weaponHint
-              ? weaponHint
+              ? t(weaponHint)
               : tack && !inCombat
               ? worn
                 ? t("On your mount, so it weighs nothing for you. Press to pack it, and carry its weight.")
                 : t("In your pack, where it does nothing and you carry its weight. Press to put it on your mount.")
               : !inCombat
               ? // What the route will charge the clock (don-doff.ts), before the press.
-                armorChangeMinutes(sheet.equipment, { [item.name]: { equipped: !worn } }).lines.join(" ") || undefined
+                armorChangeMinutes(sheet.equipment, { [item.name]: { equipped: !worn } }, { locale }).lines.join(" ") || undefined
               : !isArmor
                 ? wornLocked
-                  ? "Putting something on or taking it off happens on your own turn; it is not your turn."
-                  : "Putting something on or taking it off takes your free object interaction, on your own turn."
+                  ? t("Putting something on or taking it off happens on your own turn; it is not your turn.")
+                  : t("Putting something on or taking it off takes your free object interaction, on your own turn.")
                 : isShield
                   ? shieldLocked
                     ? t("A shield takes your action, on your own turn; it is not your turn.")
@@ -210,7 +207,7 @@ export function SheetGearRow({
             : (status.attuneRefusal ??
               // Ending it on purpose moves the clock an hour (don-doff.ts).
               (item.attuned
-                ? armorChangeMinutes(sheet.equipment, { [item.name]: { attuned: false } }).lines.join(" ")
+                ? armorChangeMinutes(sheet.equipment, { [item.name]: { attuned: false } }, { locale }).lines.join(" ")
                 : undefined))
         }
         onClick={() => onGear({ attuned: !(item.attuned || item.attuning) })}
@@ -228,10 +225,10 @@ export function SheetGearRow({
     {status.stored ? <p className="ml-8 text-[11px] text-stone-400">{status.stored}</p> : null}
     {conflict ? (
       <div ref={question} role="group" aria-label={t("Wear {name}?", { name: shownName })} className="reveal ml-8 space-y-1.5 rounded border border-amber-800/60 bg-amber-950/30 px-2 py-1.5 text-[11px] text-amber-100">
-        <p>{swapQuestion(conflict)}</p>
+        <p>{t(conflict.wearing.length > 1 ? "{name} goes where {off} are: a character wears {kind} at a time." : "{name} goes where {off} is: a character wears {kind} at a time.", { name: shownName, off, kind: t(oneOfKind(conflict.slot) ?? "one of its kind") })}</p>
         <div className="flex flex-wrap gap-1.5">
           <button type="button" disabled={busy} onClick={onSwap} className="motion-press rounded border border-amber-700/70 bg-amber-950/40 px-1.5 py-0.5 text-amber-200 disabled:opacity-40">
-            {t("Take off {off}, wear {name}", { off: conflict.wearing.join(" and "), name: shownName })}
+            {t("Take off {off}, wear {name}", { off, name: shownName })}
           </button>
           {canLayer ? (
             <button type="button" disabled={busy} onClick={onLayer} title={t("The SRD's exception, the GM's call: a circlet under a helmet, two cloaks layered.")} className="motion-press rounded border border-stone-600 px-1.5 py-0.5 text-stone-200 disabled:opacity-40">

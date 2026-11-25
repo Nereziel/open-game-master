@@ -21,7 +21,7 @@ export type PrintedAbility = { name: string; desc: string; engine: "runs" | "tex
 
 // Where a copy's block came from: the published entry's name, its book and
 // the bundled rulebook page it is printed on.
-export type PrintedSource = { name: string; document?: string; rulebook?: string };
+export type PrintedSource = { name: string; document?: string; rulebook?: string; slug?: string; documentSlug?: string };
 
 export type PrintedBlock = {
   traits: PrintedAbility[];
@@ -47,7 +47,9 @@ function sourceOf(raw: unknown): PrintedSource | null {
   if (!name) return null;
   const document = text(item.document, 120);
   const rulebook = text(item.rulebook, 120);
-  return { name, ...(document ? { document } : {}), ...(rulebook ? { rulebook } : {}) };
+  const slug = text(item.slug, 200);
+  const documentSlug = text(item.documentSlug, 120);
+  return { name, ...(document ? { document } : {}), ...(rulebook ? { rulebook } : {}), ...(slug && documentSlug ? { slug, documentSlug } : {}) };
 }
 
 // The source's whole block, each entry with its engine status (see
@@ -129,4 +131,16 @@ export function unrunPrintedAbilities(stats: { traits?: string[]; printed?: Prin
   const carried = (stats.traits ?? []).filter((line) => !line.endsWith("...")).map(textKey);
   const named = (ability: PrintedAbility) => carried.some((line) => line.includes(textKey(ability.name)));
   return [...printed.traits, ...printed.actions, ...(printed.bonus ?? []), ...printed.reactions].filter((ability) => ability.engine === "text" && !named(ability));
+}
+
+// The printed text is a snapshot, not a rulebook page id. Even one changed
+// line makes the reference unsuitable as a translation of that snapshot.
+export function samePrintedEntries(left: PrintedBlock, right: PrintedBlock): boolean {
+  const sections = ["traits", "actions", "bonus", "reactions", "legendary"] as const;
+  return (left.legendaryDesc ?? "") === (right.legendaryDesc ?? "") && sections.every((section) => {
+    const a = left[section] ?? [];
+    const b = right[section] ?? [];
+    return a.length === b.length && a.every((entry, index) =>
+      entry.name === b[index].name && entry.desc === b[index].desc && entry.engine === b[index].engine);
+  });
 }

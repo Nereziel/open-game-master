@@ -18,6 +18,8 @@ import { speciesSpellsShown } from "@/lib/srd/species-spell-view";
 import { Ribbon } from "@/components/ui/Ribbon";
 import { cn } from "@/lib/cn";
 import { useT } from "@/lib/locale";
+import { characterEventDisplay } from "@/lib/characters/event-display";
+import { localeTag } from "@/lib/i18n/locale";
 import type { CreateSheetInput } from "@/lib/schemas/sheet";
 import { computeSheetDerived, formatModifier, speedFor, type DerivedPart,
   mathPartLabel,
@@ -221,10 +223,10 @@ export function StorySoFar({ events }: { events: CharacterEvent[] }) {
                   {t(KIND_LABELS[event.kind] ?? event.kind)}
                 </span>
                 <span className="text-xs text-stone-500">
-                  {new Date(event.createdAt).toLocaleDateString()}
+                  {new Date(event.createdAt).toLocaleDateString(localeTag(t.locale))}
                 </span>
               </div>
-              <p className="mt-1 text-stone-200">{event.summary}</p>
+              <p className="mt-1 text-stone-200">{characterEventDisplay(event, t.locale)}</p>
             </li>
           ))}
         </ol>

@@ -1,6 +1,7 @@
 import { getDatabase, parseJson } from "@/lib/db/core";
 import { copiesFrom } from "@/lib/db/content-origins";
 import { textKey } from "@/lib/language/text-logic";
+import { referenceImportNote, type ImportResultNote } from "@/lib/workshop/import-display";
 
 // The references a campaign import's copies make to each other by NAME, or
 // by the source's row ids, pointed at what they became at the target
@@ -21,8 +22,7 @@ type Rec = Record<string, unknown>;
 const TABLE_OF = { tables: "roll_tables", npcs: "npcs", lore: "lore_entries", locations: "locations" } as const;
 type NamedKind = keyof typeof TABLE_OF;
 const LABEL_OF = { tables: "name", npcs: "name", lore: "title", locations: "name" } as const;
-const ROW_REF: Record<string, NamedKind> = { table: "tables", npc: "npcs", lore: "lore" };
-const NOUN: Record<NamedKind, string> = { tables: "table", npcs: "NPC", lore: "lore entry", locations: "place" };
+const ROW_REF: Record<string, Exclude<NamedKind, "locations"> | undefined> = { table: "tables", npc: "npcs", lore: "lore" };
 
 function nameOf(kind: NamedKind, id: string): string | null {
   const row = getDatabase().prepare(`SELECT ${LABEL_OF[kind]} AS name FROM ${TABLE_OF[kind]} WHERE id = ?`).get(id) as { name: string } | undefined;
@@ -39,7 +39,7 @@ export function remapImportedRefs(input: {
   campaignId: string;
   // `kind:sourceRowId` -> the row this import wrote.
   idMap: Map<string, string>;
-}): { notes: string[]; unbound: number } {
+}): { notes: string[]; noteDisplays: ImportResultNote[]; unbound: number } {
   const { sourceId, campaignId, idMap } = input;
   const db = getDatabase();
   // Every copy at the target of a source row, this import's and earlier ones'.
@@ -54,7 +54,7 @@ export function remapImportedRefs(input: {
     if (from !== null && to !== null && !names[kind].has(textKey(from))) names[kind].set(textKey(from), to);
   }
   const written = (kind: string) => [...idMap].filter(([key]) => key.startsWith(`${kind}:`)).map(([, id]) => id);
-  const notes = new Set<string>();
+  const notes = new Map<string, ImportResultNote>();
   let unbound = 0;
 
   // Roll tables: a row that is another table, an NPC or a lore entry.
@@ -74,11 +74,8 @@ export function remapImportedRefs(input: {
       }
       // What it names stayed behind at the source: say what it reads now.
       if (hasNamed(kind, sourceId, ref.name)) {
-        notes.add(
-          hasNamed(kind, campaignId, ref.name)
-            ? `${row.name}: its row for the ${NOUN[kind]} ${ref.name} now names this campaign's own ${ref.name}, since the source's stayed behind.`
-            : `${row.name}: its row for the ${NOUN[kind]} ${ref.name} names nothing here, since that ${NOUN[kind]} stayed behind.`,
-        );
+        const note = referenceImportNote(kind, row.name, ref.name, hasNamed(kind, campaignId, ref.name));
+        if (!notes.has(note.message)) notes.set(note.message, note);
       }
       return entry;
     });
@@ -142,7 +139,7 @@ export function remapImportedRefs(input: {
     if (changed) db.prepare(`UPDATE prepared_maps SET labels_json = ? WHERE id = ?`).run(JSON.stringify(labels), id);
   }
 
-  return { notes: [...notes], unbound };
+  return { notes: [...notes.keys()], noteDisplays: [...notes.values()], unbound };
 }
 
 // For the preview: how many of the source's roll-table rows name an NPC, a
@@ -161,7 +158,7 @@ export function tableRowsLeftBehind(
     for (const entry of parseJson<Rec[]>(table.entries_json, [])) {
       const ref = entry?.ref as { kind?: unknown; name?: unknown } | undefined;
       const kind = typeof ref?.kind === "string" ? ROW_REF[ref.kind] : undefined;
-      if (!kind || kind === "locations" || typeof ref?.name !== "string") continue;
+      if (!kind || typeof ref?.name !== "string") continue;
       const named = sources[kind].filter((row) => textKey(row.name) === textKey(ref.name as string));
       if (named.length && !named.some((row) => arriving(kind, row.id))) left += 1;
     }

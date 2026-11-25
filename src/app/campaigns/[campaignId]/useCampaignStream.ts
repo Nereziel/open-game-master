@@ -37,7 +37,7 @@ import { queuedIntents } from "@/lib/dm/intent-queue";
 import type { CampaignAsk } from "@/lib/db/asks";
 import type { WorldFact } from "@/lib/db/facts";
 import type { SideThread } from "@/lib/db/side-chat";
-import { EMPTY_AMBIENCE, type AmbienceState } from "@/lib/ambience/logic";
+import { EMPTY_AMBIENCE, type AmbienceState } from "@/lib/ambience/state";
 import type { PlayerMapView } from "@/lib/battlemap/view";
 import { redactFx, type FxEvent } from "@/lib/battlemap/fx-plan";
 import type { CameraEvent, HandoutShown, SceneState, TitleCard } from "@/lib/scene/state";

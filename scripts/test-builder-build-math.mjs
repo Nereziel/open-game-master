@@ -15,9 +15,10 @@ const { openBuilder } = await import("./lib/enforce-builder.mjs");
 const { buildMathSections, changeLine, createChangeAnnouncer, knownSoFarRows, snapshotOf, workingOf } = await import(
   "../src/app/characters/builder/buildMath.ts"
 );
-const { computeSheetDerived, deriveAc, formatModifier, SRD_SKILLS } = await import("../src/lib/srd/index.ts");
+const { computeSheetDerived, deriveAc, formatModifier, SRD_SKILLS, skillLabel } = await import("../src/lib/srd/index.ts");
 const { translate } = await import("../src/lib/messages-logic.ts");
 const t = (key, vars) => translate("en", key, vars);
+const { installCatalog } = await import("../src/lib/i18n/translate.ts");
 const { withSpeciesVariant } = await import("../src/lib/content/species-variants.ts");
 const { deriveHand } = await import("../src/lib/battlemap/hand.ts");
 const { storedSheetSchema } = await import("../src/lib/schemas/sheet.ts");
@@ -160,6 +161,35 @@ for (const { label, fields, weapon } of CASES) {
     }
   });
 }
+
+test("build math uses reader-language labels and retains mechanical values and row IDs", () => {
+  const built = builder.build(CASES[1].fields);
+  const args = { derived: built.derived, scores: built.state.scores, klass: builder.classes.find((entry) => entry.id === "wizard"), atTable: false };
+  const original = rowsOf(buildMathSections({ ...args, t }));
+  for (const locale of ["en", "fr", "cs"]) {
+    if (locale !== "en") {
+      installCatalog(locale, JSON.parse(read(`../src/lib/i18n/${locale}.json`)));
+    }
+    const say = Object.assign((key, vars) => translate(locale, key, vars), { locale });
+    const rows = rowsOf(buildMathSections({ ...args, t: say }));
+    assert.deepEqual([...rows.keys()], [...original.keys()]);
+    for (const [id, row] of rows) {
+      if (!id.startsWith("weapon-") && id !== "slots-pact") assert.equal(row.value, original.get(id).value, id);
+    }
+    assert.equal(rows.get("ability-str").label, translate(locale, "Strength"));
+    assert.equal(rows.get("slots-1").label, locale === "cs" ? "pozice 1. úrovně" : locale === "fr" ? "emplacements de niveau 1er" : "1st-level slots");
+    const known = rowsOf([{ id: "known", title: "", rows: knownSoFarRows({
+      level: 1, klass: { name: "Custom Class", hitDie: 8, saves: ["dex", "cha"] },
+      race: { name: "Custom Ancestry", speed: 30, asi: { cha: 2 }, asiChoice: { count: 2, amount: 1, amounts: [2, 1] } },
+      racialBonus: { cha: 2 }, proficientSkills: ["acrobatics"], t: say,
+    }) }]);
+    assert.equal(known.get("save-proficiencies").value, [translate(locale, "Dexterity"), translate(locale, "Charisma")].join(", "));
+    assert.equal(known.get("skill-proficiencies").value, skillLabel("acrobatics", locale));
+    assert.equal(known.get("ancestry-bonuses").working, "Custom Ancestry");
+    assert.equal(known.get("hit-die").working, "Custom Class");
+    assert.equal(known.get("ancestry-bonuses").value, locale === "cs" ? "Charisma +2, +2 a +1 dle tvé volby (zbývá vlastností: 2)" : locale === "fr" ? "Charisme +2, +2 et +1 au choix (caractéristiques restantes : 2)" : "Charisma +2, +2 and +1 to two more of your choice");
+  }
+});
 
 test("the working names its parts: a rogue's Dexterity save and an expert's Stealth", () => {
   const built = builder.build(CASES[2].fields);

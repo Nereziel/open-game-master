@@ -24,7 +24,7 @@ import { hasPack, openWorld } from "./lib/enforce-world.mjs";
 
 const { test, finish } = suite("test-rulebook-crosswalk");
 const { rulebookPages } = await import("../src/lib/rulebook/book.ts");
-const { crosswalkAll, ruleRowIds } = await import("../src/lib/rulebook/crosswalk.ts");
+const { crosswalkAll, crosswalkFor, ruleRowIds } = await import("../src/lib/rulebook/crosswalk.ts");
 const { bundledSpellRows, bundledItemRows } = await import("../src/lib/rulebook/catalog-rows.ts");
 const { withMechanics } = await import("../src/lib/workshop/catalog-mechanics.ts");
 const { draftFromCatalog } = await import("../src/app/workshop/homebrew/draft.ts");
@@ -61,6 +61,42 @@ await test("F18, F19: all 933 pages have a destination, and the counts by kind a
     assert.ok(walk.where.trim(), `${walk.page} says nowhere`);
     if (walk.kind !== "rules") assert.ok(walk.editor, `${walk.page} has no editor`);
   }
+});
+
+await test("The canonical crosswalk identity and engine support are independent of reader language", () => {
+  for (const locale of ["en", "fr", "cs"]) {
+    const localized = rulebookPages(locale);
+    assert.equal(localized.length, pages.length);
+    for (const page of localized) {
+      const actual = crosswalkFor(page, locale);
+      const expected = byPage.get(page.id);
+      assert.ok(expected, page.id);
+      for (const key of ["editor", "classId", "catalogName", "support", "runs"]) {
+        assert.deepEqual(actual[key], expected[key], `${locale} ${page.id}: ${key}`);
+      }
+    }
+  }
+});
+
+await test("Crosswalk guidance is localized for every French and Czech page without changing engine template IDs", () => {
+  for (const locale of ["fr", "cs"]) {
+    for (const page of rulebookPages(locale)) {
+      const actual = crosswalkFor(page, locale);
+      const expected = byPage.get(page.id);
+      assert.ok(actual.where.trim(), `${locale} ${page.id}: empty guidance`);
+      assert.notEqual(actual.where, expected.where, `${locale} ${page.id}: English guidance`);
+      if (expected.editor === "monster" && expected.template) {
+        assert.equal(actual.template, expected.template, `${locale} ${page.id}: template ID`);
+      }
+      if (expected.editor === "item" && expected.template) {
+        assert.ok(actual.template?.trim());
+        assert.notEqual(actual.template, expected.template, `${locale} ${page.id}: English family guidance`);
+      }
+      assert.ok(!actual.where.includes("{fields}"), `${locale} ${page.id}: unresolved field labels`);
+    }
+  }
+  assert.match(crosswalkFor(pages.find((page) => page.id === "combat"), "cs").where, /iniciativa/);
+  assert.match(crosswalkFor(pages.find((page) => page.id === "fireball"), "cs").where, /sesílání/);
 });
 
 await test("F19: every one of the 36 rules pages has a row written for it.", () => {

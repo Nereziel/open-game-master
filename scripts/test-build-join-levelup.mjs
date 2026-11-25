@@ -219,4 +219,70 @@ await test("A level 1 fighter seated at a level 5 table takes the subclass it mi
   world.close();
 });
 
+await test("The ready-made hero preview and actual join refuse the same invalid picks in each reader language.", async () => {
+  const table = await openCreation();
+  const { world, campaignId, player } = table;
+  world.signIn(player);
+  const previewRoute = await world.route("campaigns/[campaignId]/sheet/preview");
+  const pregenRoute = await world.route("campaigns/[campaignId]/sheet/pregen");
+  const { translate } = await import("../src/lib/messages-logic.ts");
+  const picks = { subclasses: { wizard: "School of Evocation" } };
+  const original = JSON.stringify(picks);
+  const errors = [];
+  for (const locale of ["en", "cs", "fr"]) {
+    const post = async (route, body) => {
+      const response = await route.POST(new Request("http://test/", { method: "POST", headers: { "content-type": "application/json", "x-odm-locale": locale }, body: JSON.stringify(body) }), { params: Promise.resolve({ campaignId }) });
+      return { status: response.status, json: await response.json() };
+    };
+    const { status, json } = await post(previewRoute, { pregenId: "kara", picks });
+    assert.equal(status, 200);
+    assert.equal(json.preview.ok, false);
+    const expected = translate(locale, "{name} has no {className} levels to choose a subclass for.", { name: json.preview.name, className: "Wizard" });
+    assert.deepEqual(json.preview.problems, [expected]);
+    const joined = await post(pregenRoute, { id: "kara", picks });
+    assert.equal(joined.status, 400);
+    assert.deepEqual(joined.json.problems, json.preview.problems);
+    assert.equal(joined.json.error, expected);
+    assert.equal(table.sheets.getSheetForUser(campaignId, player.id), null);
+    errors.push(expected);
+    // Counted refusals exercise singular, Czech paucal and plural forms.
+    for (const count of [1, 2, 5]) {
+      const skills = Array.from({ length: count }, (_, i) => `invalid-skill-${i + 1}`);
+      const cases = [
+        { picks: { skills }, expected: locale === "en"
+          ? `${skills.join(", ")} ${count === 1 ? "is not a skill" : "are not skills"} ${json.preview.name}'s class still offers.`
+          : locale === "cs"
+            ? `${count === 1 ? "Dovednost" : "Dovednosti"} ${skills.join(", ")} už povolání postavy ${json.preview.name} nenabízí.`
+            : `La classe de ${json.preview.name} ne propose plus ${count === 1 ? "la compétence" : "les compétences"} ${skills.join(", ")}.` },
+        { picks: { expertise: skills }, expected: locale === "en"
+          ? `Expertise doubles a proficiency the character has; ${skills.join(", ")} ${count === 1 ? "is" : "are"} not among ${json.preview.name}'s skills.`
+          : locale === "cs"
+            ? `Kvalifikace zdvojnásobuje zdatnostní bonus; ${count === 1 ? "dovednost" : "dovednosti"} ${skills.join(", ")} ${count === 1 ? "není" : "nejsou"} mezi dovednostmi postavy ${json.preview.name}.`
+            : `L’expertise double le bonus de maîtrise d’une compétence maîtrisée ; ${skills.join(", ")} ${count === 1 ? "ne fait" : "ne font"} pas partie des compétences de ${json.preview.name}.` },
+      ];
+      for (const entry of cases) {
+        const preview = await post(previewRoute, { pregenId: "kara", picks: entry.picks });
+        const join = await post(pregenRoute, { id: "kara", picks: entry.picks });
+        assert.equal(preview.status, 200);
+        assert.equal(preview.json.preview.ok, false);
+        assert.deepEqual(preview.json.preview.problems, [entry.expected]);
+        assert.equal(join.status, 400);
+        assert.deepEqual(join.json.problems, preview.json.preview.problems);
+      }
+    }
+    const tooEarly = { asiChoices: [{ mode: "plus2", ability: "str" }] };
+    const preview = await post(previewRoute, { pregenId: "kara", picks: tooEarly });
+    const join = await post(pregenRoute, { id: "kara", picks: tooEarly });
+    assert.equal(preview.status, 200);
+    assert.equal(preview.json.preview.ok, false);
+    assert.deepEqual(preview.json.preview.problems, [translate(locale, "{name} is owed no Ability Score Improvement at this table's level.", { name: json.preview.name })]);
+    assert.equal(join.status, 400);
+    assert.deepEqual(join.json.problems, preview.json.preview.problems);
+    assert.equal(table.sheets.getSheetForUser(campaignId, player.id), null);
+  }
+  assert.equal(new Set(errors).size, 3);
+  assert.equal(JSON.stringify(picks), original);
+  world.close();
+});
+
 finish();

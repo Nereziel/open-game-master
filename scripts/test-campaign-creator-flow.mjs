@@ -64,6 +64,28 @@ await test("a rolled title is in the genre's words and never the one already the
   assert.ok(rollCampaignTitle("unknown-genre", "", steps).length > 4, "an unknown genre falls back to fantasy words");
 });
 
+await test("title locale strategies retain all three shapes, fallback and random draw order", async () => {
+  const { rollCampaignTitle } = await import("../src/app/create-campaign/titles.ts");
+  const expected = {
+    en: ["The Last Crown", "Crown of the Ash Kingdom", "The Last Crown of the Ash Kingdom"],
+    fr: ["La Couronne sans Héritier", "La Couronne du royaume de cendre", "La Couronne sans Héritier du royaume de cendre"],
+    cs: ["Koruna bez dědice", "Koruna v Popelavém království", "Koruna bez dědice v Popelavém království"],
+  };
+  for (const [locale, titles] of Object.entries(expected)) {
+    for (const [shape, title] of titles.entries()) {
+      for (const genre of ["high_fantasy", "unknown-genre"]) {
+        let draws = 0;
+        const random = () => draws++ === 0 ? shape / 3 : 0;
+        assert.equal(rollCampaignTitle(genre, "", random, locale), title);
+        assert.equal(draws, shape === 2 ? 4 : 3);
+      }
+    }
+    let draws = 0;
+    assert.equal(rollCampaignTitle("high_fantasy", titles[0], () => { draws++; return 0; }, locale), titles[1]);
+    assert.equal(draws, 26);
+  }
+});
+
 await test("every named group sits on the step that owns it, once", () => {
   const groupsIn = (source) => [...source.matchAll(/groupProps\(groups, "(\w+)"\)/g)].map((match) => match[1]);
   const onEssentials = groupsIn(essentials);

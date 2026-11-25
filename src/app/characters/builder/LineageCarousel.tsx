@@ -108,7 +108,7 @@ function Traits({ slide }: { slide: LineageSlide }) {
             )}
             {open ? (
               <div id={bodyId} className="creator-trait-body pb-2.5 pl-[42px] pr-3 font-serif text-base leading-normal text-stone-300">
-                {locale === "cs" && parsed.body ? t(parsed.body) : parsed.body}
+                {parsed.body ? t(parsed.body) : parsed.body}
               </div>
             ) : null}
           </div>

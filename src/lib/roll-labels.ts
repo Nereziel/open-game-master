@@ -11,6 +11,7 @@
 // The kind words are the dictionaries' (rollmap.kind.*); the surface that
 // shows them passes its translator.
 
+import type { Locale } from "@/lib/i18n/translate";
 import type { HazardKind, StoredRoll } from "@/lib/db/rolls";
 import { contentName } from "@/lib/content/names";
 import { damageWords } from "@/lib/dm/damage-logic";
@@ -19,33 +20,49 @@ import { textKey } from "@/lib/language/text-logic";
 type Worded = Pick<StoredRoll, "kind" | "detail" | "attacker">;
 
 // The shape of a translator, as the pure sentence builders take it.
-type T = ((key: string, vars?: Record<string, string | number>) => string) & { locale?: "en" | "fr" | "cs" };
+type T = ((key: string, vars?: Record<string, string | number>) => string) & { locale?: Locale };
 
-function localizeRollWhat(what: string, locale: "en" | "fr" | "cs"): string {
+const ROLL_DISPLAY_BY_LOCALE: Partial<Record<Locale, {
+  against: string;
+  on: string;
+  words?: Record<string, string>;
+  formatTarget?: (target: string) => string;
+  formatDice?: (text: string, locale: Locale) => string;
+}>> = {
+  fr: { against: "c/", on: "sur" },
+  cs: {
+    against: "proti", on: "na",
+    words: { attack: "Útok", damage: "Zranění" },
+    formatTarget: (target) => target.replace(/, AC (\d+)$/, ", TZ $1"),
+    formatDice: (text, locale) => damageWords(text, locale).replace(/\bft\b/g, "stop"),
+  },
+};
+
+function localizeRollWhat(what: string, locale: Locale): string {
   if (locale === "en" || !what) return what;
   const key = textKey(what);
   const w = contentName("weapons", key, locale);
   if (w !== key) return w;
   const s = contentName("spells", key, locale);
   if (s !== key) return s;
-  if (locale === "cs") {
-    if (key === "attack") return "Útok";
-    if (key === "damage") return "Zranění";
-    if (/\b\d+d\d+\b/.test(what)) return damageWords(what, locale).replace(/\bft\b/g, "stop");
-  }
+  const display = ROLL_DISPLAY_BY_LOCALE[locale];
+  const word = display?.words?.[key];
+  if (word) return word;
+  if (display?.formatDice && /\b\d+d\d+\b/.test(what)) return display.formatDice(what, locale);
   return what;
 }
 
-function localizeDetail(detail: string, locale: "en" | "fr" | "cs"): string {
-  if (locale === "en" || !detail) return detail;
+function localizeDetail(detail: string, locale: Locale): string {
+  const display = ROLL_DISPLAY_BY_LOCALE[locale];
+  if (!display || !detail) return detail;
   const vsAt = detail.indexOf(" vs ");
   if (vsAt > 0) {
     const target = detail.slice(vsAt + 4);
-    return `${localizeRollWhat(detail.slice(0, vsAt), locale)} ${locale === "cs" ? "proti" : "c/"} ${locale === "cs" ? target.replace(/, AC (\d+)$/, ", TZ $1") : target}`;
+    return `${localizeRollWhat(detail.slice(0, vsAt), locale)} ${display.against} ${display.formatTarget?.(target) ?? target}`;
   }
   const onAt = detail.indexOf(" on ");
   if (onAt > 0) {
-    return `${localizeRollWhat(detail.slice(0, onAt), locale)} ${locale === "cs" ? "na" : "sur"} ${detail.slice(onAt + 4)}`;
+    return `${localizeRollWhat(detail.slice(0, onAt), locale)} ${display.on} ${detail.slice(onAt + 4)}`;
   }
   return localizeRollWhat(detail, locale);
 }

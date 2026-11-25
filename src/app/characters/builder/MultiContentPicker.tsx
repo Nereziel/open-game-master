@@ -8,7 +8,7 @@ import { describeContentEntry, spellSummary } from "@/lib/help";
 import { useContentSearch, type PickerEntry } from "./useContentSearch";
 import { textKey } from "@/lib/language/text-logic";
 import { useLocale, useT, useTp } from "@/lib/locale";
-import { expansionNameCs } from "@/lib/content/expansion-descriptions-cs";
+import { contentName } from "@/lib/content/names";
 
 // `level` rides along for spells, so a cantrip picked here lands in the
 // cantrip list rather than among the levelled spells.
@@ -38,11 +38,11 @@ export default function MultiContentPicker({
 }) {
   const t = useT();
   const locale = useLocale();
-  const rowName = (entry: PickerEntry) => (locale === "cs" ? expansionNameCs(kind, entry) : undefined) ?? entry.name;
+  const rowName = (entry: PickerEntry) => contentName(kind, entry, locale);
   const tp = useTp();
   const { query, setQuery, results, setResults, open, setOpen, loading, unavailable, failed, unadmitted } =
     useContentSearch(kind, extraParams);
-  const [pending, setPending] = useState<MultiPick[]>([]);
+  const [pending, setPending] = useState<(MultiPick & { source?: string; documentSlug?: string })[]>([]);
   const container = useRef<HTMLDivElement>(null);
 
   // The browse list opens on focus, so clicking elsewhere must collapse it
@@ -66,7 +66,7 @@ export default function MultiContentPicker({
     setPending((picks) =>
       picks.some((pick) => textKey(pick.name) === key)
         ? picks.filter((pick) => textKey(pick.name) !== key)
-        : [...picks, { name: entry.name, slug: entry.slug, level: entry.level }],
+        : [...picks, { name: entry.name, slug: entry.slug, level: entry.level, source: entry.source, documentSlug: entry.documentSlug }],
     );
   }
 
@@ -75,7 +75,7 @@ export default function MultiContentPicker({
     if (!key || selectedLower.has(key) || pendingLower.has(key)) {
       return;
     }
-    setPending((picks) => [...picks, { name: trimmedQuery }]);
+    setPending((picks) => [...picks, { name: trimmedQuery, source: "homebrew" }]);
     setQuery("");
     setResults([]);
     setOpen(false);
@@ -85,7 +85,7 @@ export default function MultiContentPicker({
     if (!pending.length) {
       return;
     }
-    onAdd(pending);
+    onAdd(pending.map(({ name, slug, level }) => ({ name, slug, level })));
     setPending([]);
     setQuery("");
     setResults([]);
@@ -146,8 +146,8 @@ export default function MultiContentPicker({
                 </button>
                 <InfoButton
                   label={rowName(entry)}
-                  meta={kind === "spells" ? spellSummary(entry.data) : undefined}
-                  text={describeContentEntry(entry.data)}
+                  meta={kind === "spells" ? spellSummary(entry.data, t.locale) : undefined}
+                  text={describeContentEntry(entry.data, undefined, locale)}
                   reference={entry.source === "homebrew" ? undefined : { kind, slug: entry.slug }}
                 />
               </li>
@@ -162,13 +162,13 @@ export default function MultiContentPicker({
                 onClick={addCustom}
                 className="flex w-full items-center gap-1.5 px-3 py-1.5 text-left text-sm text-amber-300 hover:bg-stone-800"
               >
-                <Plus className="size-3.5 shrink-0" /> Add &quot;{trimmedQuery}&quot; as custom
+                <Plus className="size-3.5 shrink-0" /> {t('Add "{name}" as custom', { name: trimmedQuery })}
               </button>
             </li>
           ) : null}
           {failed ? (
             <li role="alert" className="px-3 py-1.5 text-xs text-amber-300/90">
-              Could not reach the server to search; type again to retry, or add entries by name.
+              {t("Could not reach the server to search; type again to retry, or add entries by name.")}
             </li>
           ) : unavailable ? (
             <li className="px-3 py-1.5 text-xs text-stone-500">
@@ -189,13 +189,13 @@ export default function MultiContentPicker({
               key={pick.name}
               className="flex items-center gap-1 rounded-full bg-stone-800 px-2 py-0.5 text-xs text-stone-200"
             >
-              {pick.name}
+              {contentName(kind, pick, locale)}
               <button
                 type="button"
                 onClick={() =>
                   setPending((picks) => picks.filter((entry) => entry.name !== pick.name))
                 }
-                aria-label={t("Remove {name}", { name: pick.name })}
+                aria-label={t("Remove {name}", { name: contentName(kind, pick, locale) })}
                 className="text-stone-500 hover:text-red-400"
               >
                 <X className="size-3" />

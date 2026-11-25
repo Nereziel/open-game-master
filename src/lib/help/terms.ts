@@ -5,7 +5,9 @@
 // native <option> cannot carry that, so the forms show one glossary button
 // per list (src/components/ui/OptionGlossary.tsx) built from these.
 
-export type GlossaryEntry = { name: string; blurb: string };
+import { translate, type Locale } from "../i18n/translate.ts";
+
+export type GlossaryEntry = { name: string; blurb: string; optionKey?: string };
 
 export const CONDITION_BLURBS: Record<string, string> = {
   blinded: "Cannot see. Fails any check that needs sight; attacks against it have advantage, its own attacks have disadvantage.",
@@ -76,11 +78,15 @@ export function glossaryFor(
 ): GlossaryEntry[] {
   return names.flatMap((name) => {
     const blurb = blurbs[name.toLowerCase()];
-    return blurb ? [{ name, blurb }] : [];
+    return blurb ? [{ name, blurb, ...([CONDITION_BLURBS, SPELL_SCHOOL_BLURBS, WEAPON_PROPERTY_BLURBS, DAMAGE_TYPE_BLURBS].includes(blurbs) ? { optionKey: name.toLowerCase() } : {}) }] : [];
   });
 }
 
 // The dialog body: one line per option, so the whole list reads at once.
-export function glossaryText(entries: readonly GlossaryEntry[]): string {
-  return entries.map((entry) => `${entry.name}: ${entry.blurb}`).join("\n\n");
+export function glossaryText(entries: readonly GlossaryEntry[], locale: Locale = "en"): string {
+  return entries.map((entry) => {
+    if (locale === "en" || !entry.optionKey) return `${entry.name}: ${entry.blurb}`;
+    const name = translate(locale, entry.optionKey, { context: "glossary.option" });
+    return `${name === entry.optionKey ? entry.name : name}: ${translate(locale, entry.blurb)}`;
+  }).join("\n\n");
 }

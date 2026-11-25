@@ -1,8 +1,9 @@
 "use client";
 
-import { useId, useState } from "react";
+import { useState } from "react";
 import { ChevronDown, Plus, Trash2 } from "lucide-react";
 import { cn } from "@/lib/cn";
+import { RuleTermInput } from "@/components/ui/RuleTermInput";
 import { NumberStepper } from "@/components/ui/NumberStepper";
 import { Select } from "@/components/ui/Select";
 import { CONDITION_BLURBS, DAMAGE_TYPE_BLURBS, glossaryFor } from "@/lib/help/terms";
@@ -20,6 +21,7 @@ import { crLabel, type CrPart } from "@/lib/bestiary/derive-cr";
 import { Reveal } from "@/components/ui/Reveal";
 import { AttackDetails } from "@/app/workshop/bestiary/AttackDetails";
 import { useLocale, useT } from "@/lib/locale";
+import { gameTermWord } from "@/lib/i18n/game-term-labels";
 import { damageTypeWord, damageWords } from "@/lib/dm/damage-logic";
 import { contentName } from "@/lib/content/names";
 import type { Locale } from "@/lib/messages-logic";
@@ -41,7 +43,6 @@ const input =
 type T = (key: string, vars?: Record<string, string | number>) => string;
 
 // An initial capital, as FeatChoicesFields writes its option labels.
-const capital = (value: string) => value.replace(/(^|\s)([a-z])/g, (_, before, letter) => `${before}${letter.toUpperCase()}`);
 
 export function NumberField({
   label,
@@ -78,8 +79,6 @@ export function AttackEditor({
 }) {
   const t = useT();
   const locale = useLocale();
-  // One list per mounted editor: a fixed id collided when two were open.
-  const damageListId = useId();
   // Which rows show their reach, range, riders and on-hit effect.
   const [opened, setOpened] = useState<Set<number>>(() => new Set());
   const toggle = (index: number) =>
@@ -95,11 +94,6 @@ export function AttackEditor({
 
   return (
     <div className="flex flex-col gap-1.5">
-      <datalist id={damageListId}>
-        {DAMAGE_TYPES.map((type) => (
-          <option key={type} value={type} />
-        ))}
-      </datalist>
       {attacks.map((attack, index) => (
         <div key={index} className="flex flex-col gap-1.5">
         <div className="flex flex-wrap items-center gap-1.5">
@@ -141,17 +135,18 @@ export function AttackEditor({
           {/* A list rather than a select: the thirteen types the engine
               knows are one keystroke away, and "chitin-shredding" is still
               typeable for a monster that wants it. */}
-          <input
-            list={damageListId}
+          <RuleTermInput
+            known={DAMAGE_TYPES}
+            label={t("Type", { context: "workshop.bestiary.attack.type" })}
             value={attack.type}
-            onChange={(event) =>
+            onChange={(type) =>
               setAttacks(
                 attacks.map((row, at) =>
-                  at === index ? { ...row, type: event.target.value } : row,
+                  at === index ? { ...row, type } : row,
                 ),
               )
             }
-            placeholder={t("slashing", { context: "workshop.bestiary.attack.typePlaceholder" })}
+            placeholder="slashing"
             className={cn(input, "w-24")}
           />
           <button
@@ -211,7 +206,7 @@ function attackExtras(attack: MonsterDraft["stats"]["attacks"][number], t: T, lo
     attack.bonusAction ? t("bonus action", { context: "workshop.bestiary.attack.chipBonus" }) : "",
     attack.range ? `${attack.range.normal}/${attack.range.long} ft` : attack.reach === 0 || (attack.reach && attack.reach > 5) ? t("reach {n}", { n: attack.reach }) : "",
     attack.riders?.length ? `+${attack.riders.map((rider) => damageWords(rider.type, locale)).join(", ")}` : "",
-    attack.onHit?.condition ?? (attack.onHit?.damage ? t("on hit") : ""),
+    attack.onHit?.condition ? (CONDITIONS.some((condition) => condition === attack.onHit?.condition) ? t(attack.onHit.condition, { context: "glossary.option" }) : attack.onHit.condition) : (attack.onHit?.damage ? t("on hit") : ""),
     attack.alternatives?.some((entry) => entry.when === "bloodied") ? t("weaker when bloodied") : "",
   ].filter(Boolean);
   return bits.length ? bits.join(" · ") : t("Details");
@@ -257,53 +252,6 @@ export function SaveEditor({
   );
 }
 
-// The size words the French SRD's own category table prints (« Très
-// petite » ... « Gigantesque »), and the creature types its ranger list and
-// monster chapter print. The stored values stay the English ids; only the
-// label reads the reader's language (damageTypeWord's pattern,
-// src/lib/dm/damage-logic.ts). A word the maps do not carry reads as it was
-// spelled.
-const SIZE_WORDS_FR: Record<string, string> = {
-  Tiny: "Très petite",
-  Small: "Petite",
-  Medium: "Moyenne",
-  Large: "Grande",
-  Huge: "Très grande",
-  Gargantuan: "Gigantesque",
-};
-
-function sizeWord(size: string, locale: Locale): string {
-  if (locale !== "fr") {
-    return size;
-  }
-  return SIZE_WORDS_FR[size] ?? size;
-}
-
-const CREATURE_TYPE_WORDS_FR: Record<string, string> = {
-  aberration: "Aberration",
-  beast: "Bête",
-  celestial: "Céleste",
-  construct: "Artificiel",
-  dragon: "Dragon",
-  elemental: "Élémentaire",
-  fey: "Fée",
-  fiend: "Fiélon",
-  giant: "Géant",
-  humanoid: "Humanoïde",
-  monstrosity: "Monstrosité",
-  ooze: "Vase",
-  plant: "Plante",
-  undead: "Mort-vivant",
-};
-
-function creatureTypeWord(type: string, locale: Locale): string {
-  const en = type.charAt(0).toUpperCase() + type.slice(1);
-  if (locale !== "fr") {
-    return en;
-  }
-  return CREATURE_TYPE_WORDS_FR[type] ?? en;
-}
-
 export function SizeAndDefences({
   draft,
   onChange,
@@ -318,7 +266,7 @@ export function SizeAndDefences({
   // The chip words: the damage types capitalized out of the French SRD's own
   // list, the conditions through the official names layer. English keeps the
   // raw term, exactly as the chips always read.
-  const damageWordFor = (term: string) => (locale === "fr" ? capital(damageTypeWord(term, locale)) : term);
+  const damageWordFor = (term: string) => (damageTypeWord(term, locale));
   const conditionWordFor = (term: string) => contentName("conditions", term, locale);
   return (
     <div className="flex flex-col gap-2.5">
@@ -328,7 +276,7 @@ export function SizeAndDefences({
           <Select
             value={draft.stats.size ?? "Medium"}
             onChange={(size) => set({ size })}
-            options={SIZES.map((size) => ({ value: size as string, label: sizeWord(size, locale) }))}
+            options={SIZES.map((size) => ({ value: size as string, label: gameTermWord("size", size, locale) }))}
             label={t("Size")}
             size="sm"
             className="w-32"
@@ -342,7 +290,7 @@ export function SizeAndDefences({
           <Select
             value={creatureTypeOf(draft.stats) as string}
             onChange={(type) => set({ type })}
-            options={CREATURE_TYPES.map((type) => ({ value: type as string, label: creatureTypeWord(type, locale) }))}
+            options={CREATURE_TYPES.map((type) => ({ value: type as string, label: gameTermWord("creatureType", type, locale) }))}
             label={t("Type", { context: "workshop.bestiary.stats.type" })}
             size="sm"
             className="w-32"

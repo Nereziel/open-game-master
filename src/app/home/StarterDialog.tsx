@@ -3,7 +3,8 @@
 import { Loader2, Play, Users } from "lucide-react";
 import { useEffect, useState } from "react";
 import { ui } from "@/lib/ui";
-import { odmLocaleHeaders, useT } from "@/lib/locale";
+import { useT } from "@/lib/locale";
+import type { Locale } from "@/lib/messages-logic";
 import { Dialog } from "@/components/ui/Dialog";
 
 type Starter = {
@@ -24,7 +25,9 @@ export function StarterDialog({
   onCreated: (campaignId: string) => void;
 }) {
   const t = useT();
-  const [starter, setStarter] = useState<Starter | null>(null);
+  const locale = t.locale;
+  const [loaded, setLoaded] = useState<{ locale: Locale; data: Starter } | null>(null);
+  const starter = loaded?.locale === locale ? loaded.data : null;
   const [busy, setBusy] = useState<"" | "solo" | "friends">("");
   const [error, setError] = useState("");
 
@@ -32,15 +35,19 @@ export function StarterDialog({
     if (!open || starter) {
       return;
     }
-    fetch("/api/starter", { headers: odmLocaleHeaders() })
+    // A cached preview belongs to its locale. Ignore a late response from
+    // an earlier language (or a dialog that has already closed).
+    let cancelled = false;
+    fetch("/api/starter", { headers: { "X-Odm-Locale": locale } })
       .then((response) => (response.ok ? response.json() : null))
       .then((data: Starter | null) => {
-        if (data) {
-          setStarter(data);
+        if (data && !cancelled) {
+          setLoaded({ locale, data });
         }
       })
       .catch(() => undefined);
-  }, [open, starter]);
+    return () => { cancelled = true; };
+  }, [open, starter, locale]);
 
   async function start(solo: boolean) {
     setBusy(solo ? "solo" : "friends");
@@ -48,7 +55,7 @@ export function StarterDialog({
     try {
       const response = await fetch("/api/starter", {
         method: "POST",
-        headers: { "Content-Type": "application/json", ...odmLocaleHeaders() },
+        headers: { "Content-Type": "application/json", "X-Odm-Locale": locale },
         body: JSON.stringify({ solo }),
       });
       const data = await response.json().catch(() => ({}));

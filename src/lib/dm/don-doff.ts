@@ -14,6 +14,8 @@ import { bardingSuit } from "@/lib/srd/barding";
 import { rowName } from "@/lib/srd/item-row";
 import { rowIsOn } from "@/lib/srd/tack";
 import type { EquipmentItem } from "@/lib/schemas/sheet";
+import { translate, translatePlural, type Locale } from "@/lib/i18n/translate";
+import { itemDisplayName } from "@/lib/content/item-display";
 
 const MINUTES: Record<"light" | "medium" | "heavy", { don: number; doff: number }> = {
   light: { don: 1, doff: 1 },
@@ -30,15 +32,16 @@ const SHORT_REST_MINUTES = 60;
 export function armorChangeMinutes(
   equipment: EquipmentItem[],
   gear: Record<string, { equipped?: boolean; attuned?: boolean }>,
-  options: { helped?: boolean } = {},
+  options: { helped?: boolean; locale?: Locale } = {},
 ): { minutes: number; lines: string[] } {
+  const locale = options.locale ?? "en";
   let minutes = 0;
   const lines: string[] = [];
   for (const item of equipment) {
     const entry = gear[item.name];
     if (entry?.attuned === false && item.attuned) {
       minutes += SHORT_REST_MINUTES;
-      lines.push(`Ending the attunement to ${item.name} takes a short rest spent with it (1 hour).`);
+      lines.push(translate(locale, "Ending the attunement to {item} takes a short rest spent with it (1 hour).", { item: itemDisplayName(item, locale) }));
     }
     if (!entry || entry.equipped === undefined) {
       continue;
@@ -60,7 +63,12 @@ export function armorChangeMinutes(
     const helped = !entry.equipped && options.helped === true;
     const taken = entry.equipped ? table.don : helped ? table.doff / 2 : table.doff;
     minutes += taken;
-    lines.push(`${entry.equipped ? "Putting on" : "Taking off"} ${item.name}${helped ? " with help" : ""} takes ${taken} minute${taken === 1 ? "" : "s"}.`);
+    const vars = { item: itemDisplayName(item, locale), count: taken };
+    lines.push(entry.equipped
+      ? translatePlural(locale, "Putting on {item} takes {count} minute.", "Putting on {item} takes {count} minutes.", vars)
+      : helped
+        ? translatePlural(locale, "Taking off {item} with help takes {count} minute.", "Taking off {item} with help takes {count} minutes.", vars)
+        : translatePlural(locale, "Taking off {item} takes {count} minute.", "Taking off {item} takes {count} minutes.", vars));
   }
   return { minutes, lines };
 }

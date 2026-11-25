@@ -10,6 +10,7 @@
 // cache file). It is read field by field into fresh objects: nothing in it
 // is ever executed, and an unknown field is dropped.
 
+import { translate } from "@/lib/messages-logic";
 import { storyWindowVerdict } from "@/lib/story-window";
 import { SMALL_MODEL_PARAMS } from "@/lib/dm/model-tuning-logic";
 
@@ -361,27 +362,30 @@ export function formatTokens(tokens: number): string {
   return `${Math.round(tokens / 1_000)}K`;
 }
 
-function formatPrice(cost: CatalogModel["cost"]): string {
+type ModelTranslator = (key: string, vars?: Record<string, string | number>) => string;
+const enT: ModelTranslator = (key, vars) => translate("en", key, vars);
+
+function formatPrice(cost: CatalogModel["cost"], t: ModelTranslator): string {
   if (!cost) return "";
-  if (cost.input === 0 && cost.output === 0) return "free";
+  if (cost.input === 0 && cost.output === 0) return t("free", { context: "model.price" });
   const dollars = (value: number) => (value >= 1 ? `$${Math.round(value * 100) / 100}` : `$${value}`);
-  return `${dollars(cost.input)} in / ${dollars(cost.output)} out per M tokens`;
+  return t("{input} in / {output} out per M tokens", { input: dollars(cost.input), output: dollars(cost.output) });
 }
 
 // `local`: the weights run on the admin's own machine, so a hosting
 // provider's price and retirement of them are not this model's.
-export function describeCatalogModel(model: CatalogModel | null, options: { local?: boolean } = {}): string {
-  if (!model) return "Not in the model catalog.";
+export function describeCatalogModel(model: CatalogModel | null, options: { local?: boolean } = {}, t: ModelTranslator = enT): string {
+  if (!model) return t("Not in the model catalog.");
   const parts: string[] = [];
-  if (model.contextTokens) parts.push(`${formatTokens(model.contextTokens)} context`);
-  if (model.output.includes("image")) parts.push("paints pictures");
-  if (model.toolCall) parts.push("tool calls");
-  if (model.reasoning) parts.push("reasoning");
-  if (model.input.includes("image")) parts.push("sees pictures");
-  if (model.openWeights) parts.push("open weights");
-  const price = options.local ? "" : formatPrice(model.cost);
+  if (model.contextTokens) parts.push(t("{size} context", { size: formatTokens(model.contextTokens) }));
+  if (model.output.includes("image")) parts.push(t("paints pictures"));
+  if (model.toolCall) parts.push(t("tool calls"));
+  if (model.reasoning) parts.push(t("reasoning"));
+  if (model.input.includes("image")) parts.push(t("sees pictures"));
+  if (model.openWeights) parts.push(t("open weights"));
+  const price = options.local ? "" : formatPrice(model.cost, t);
   if (price) parts.push(price);
-  if (model.status && !options.local) parts.push(model.status);
+  if (model.status && !options.local) parts.push(t(model.status, { context: "model.status" }));
   return parts.join(" · ") || model.name;
 }
 
@@ -449,7 +453,7 @@ export function assessModel(
     if (role === "image" && !isImageModelId(input.id)) {
       warn(t("Not in the catalog, and its name does not say it paints. ODM will try it as a picture model."));
     }
-    return { fit: fit === "ok" ? "unknown" : fit, warnings, summary: describeCatalogModel(null) };
+    return { fit: fit === "ok" ? "unknown" : fit, warnings, summary: describeCatalogModel(null, {}, t) };
   }
   if (input.local) {
     // Weights on the admin's own disk are nobody's to retire.
@@ -498,5 +502,5 @@ export function assessModel(
       warn(t("A {size} window is small for the helper; its longer jobs (summaries, lore checks) will go to the storyteller instead.", { size: formatTokens(window) }));
     }
   }
-  return { fit, warnings, summary: describeCatalogModel(catalog, { local: input.local }) };
+  return { fit, warnings, summary: describeCatalogModel(catalog, { local: input.local }, t) };
 }

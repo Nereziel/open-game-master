@@ -5,7 +5,7 @@ import { useCallback, useEffect, useLayoutEffect, useRef, useState } from "react
 import { cn } from "@/lib/cn";
 import { useLocale, useT } from "@/lib/locale";
 import type { TourEnd } from "@/lib/tours/account-logic";
-import { placeCard, resolveSteps, skipVanished, type ResolvedStep, type TourStep } from "@/lib/tours/logic";
+import { localizedTourStep, placeCard, resolveSteps, skipVanished, type ResolvedStep, type TourStep } from "@/lib/tours/logic";
 import { ui } from "@/lib/ui";
 
 // A spotlight walkthrough: dims the page, cuts a window around one control
@@ -226,10 +226,10 @@ export function GuidedTour({
           </button>
         </div>
         <h3 className="mt-1.5 font-display text-base tracking-wide text-amber-50">
-          {locale === "fr" && current.step.titleFr ? current.step.titleFr : current.step.title}
+          {localizedTourStep(current.step, locale, t).title}
         </h3>
         <p className="mt-1.5 text-sm leading-relaxed text-stone-300">
-          {locale === "fr" && current.step.bodyFr ? current.step.bodyFr : current.step.body}
+          {localizedTourStep(current.step, locale, t).body}
         </p>
         <div className="mt-3 flex justify-end gap-2">
           {index > 0 ? (

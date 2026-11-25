@@ -3,7 +3,7 @@
 import { useState } from "react";
 import { cn } from "@/lib/cn";
 import { InfoDialog } from "@/components/ui/InfoDialog";
-import { glossaryTerm } from "@/lib/help";
+import { glossaryTerm, localizedGlossaryTerm } from "@/lib/help";
 import { useLocale } from "@/lib/locale";
 
 // An inline rules word a new player can tap: "Armor Class", "Saving throws",
@@ -35,13 +35,9 @@ export function GameTerm({
   if (!entry) {
     return <>{children}</>;
   }
-  const label = (locale === "cs" ? entry.cs : locale === "fr" ? entry.fr : undefined) ?? (children ?? entry.term);
-  const body = [
-    (locale === "cs" ? entry.shortCs : locale === "fr" ? entry.shortFr : undefined) ?? entry.short,
-    (locale === "cs" ? entry.longCs : locale === "fr" ? entry.longFr : undefined) ?? entry.long,
-  ]
-    .filter(Boolean)
-    .join("\n\n");
+  const localized = localizedGlossaryTerm(entry, locale);
+  const label = localized.label ?? children ?? entry.term;
+  const body = [localized.short, localized.long].filter(Boolean).join("\n\n");
   return (
     <>
       <button

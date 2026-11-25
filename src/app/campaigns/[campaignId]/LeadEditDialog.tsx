@@ -479,6 +479,7 @@ export function LeadEditDialog({
               <div className="space-y-1">
                 <span className="eyebrow text-[10px] text-amber-400/80">{t("Cantrips", { context: "lead.edit.cantrips" })}</span>
                 <ChipList
+                  kind="spells"
                   values={cantrips}
                   onRemove={(value) =>
                     setCantrips((list) => list.filter((entry) => entry !== value))
@@ -497,6 +498,7 @@ export function LeadEditDialog({
               <div className="space-y-1">
                 <span className="eyebrow text-[10px] text-amber-400/80">{t("Known", { context: "lead.edit.known" })}</span>
                 <ChipList
+                  kind="spells"
                   values={known}
                   onRemove={(value) => setKnown((list) => list.filter((entry) => entry !== value))}
                 />
@@ -517,6 +519,7 @@ export function LeadEditDialog({
                 <div className="space-y-1">
                   <span className="eyebrow text-[10px] text-amber-400/80">{t("Spellbook")}</span>
                   <ChipList
+                    kind="spells"
                     values={spellbook}
                     onRemove={(value) => {
                       setSpellbook((list) => list.filter((entry) => entry !== value));
@@ -540,6 +543,7 @@ export function LeadEditDialog({
               <div className="space-y-1">
                 <span className="eyebrow text-[10px] text-amber-400/80">{t("Prepared")}</span>
                 <ChipList
+                  kind="spells"
                   values={prepared}
                   onRemove={(value) =>
                     setPrepared((list) => list.filter((entry) => entry !== value))
@@ -567,6 +571,7 @@ export function LeadEditDialog({
                 <div className="space-y-1">
                   <span className="eyebrow text-[10px] text-sky-300/80">{t("Prepared at the next long rest")}</span>
                   <ChipList
+                    kind="spells"
                     values={pending}
                     onRemove={(value) => setPending((list) => list.filter((entry) => entry !== value))}
                   />
@@ -579,6 +584,7 @@ export function LeadEditDialog({
           <div className="mt-3 space-y-1 text-xs">
             <SectionHead title={t("Feats")} glyph="rest-level-up" level="h3" aside={feats.length || null} />
             <ChipList
+              kind="feats"
               values={feats}
               onRemove={(value) => setFeats((list) => list.filter((entry) => entry !== value))}
             />

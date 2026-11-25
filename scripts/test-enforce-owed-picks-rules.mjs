@@ -26,9 +26,9 @@ const { chosenOptions, openOptionSlots } = await import("../src/lib/srd/options.
 const owedRoute = await world.route("campaigns/[campaignId]/sheet/owed");
 const homebrew = await world.route("homebrew");
 
-async function post(body, user = world.owner) {
+async function post(body, user = world.owner, locale = "en") {
   world.signIn(user);
-  const request = new Request("http://test/", { method: "POST", headers: { "content-type": "application/json" }, body: JSON.stringify(body) });
+  const request = new Request("http://test/", { method: "POST", headers: { "content-type": "application/json", "x-odm-locale": locale }, body: JSON.stringify(body) });
   const response = await owedRoute.POST(request, { params: Promise.resolve({ campaignId: world.campaignId }) });
   return { status: response.status, json: await response.json() };
 }
@@ -110,6 +110,63 @@ await test("The level-up holds an invocation's prerequisite too.", async () => {
   const out = await table.levelUp("warlock", { features: [{ name: "Invocation: Thirsting Blade", source: "choice" }] });
   assert.ok(out.status >= 400, `the level-up took it: ${out.status}`);
   assert.match(out.error ?? "", /warlock level 5/);
+});
+
+await test("Owed prerequisite refusals follow the reader language and leave the sheet unchanged.", async () => {
+  const hero = table.hero({ class: "warlock", subclass: "The Fiend", level: 2, proficiencies: TRAINED });
+  const before = world.sheet(hero.id).features;
+  const body = { characterId: hero.id, features: ["Invocation: Thirsting Blade"] };
+  const en = await post(body);
+  assert.equal(en.status, 400);
+  assert.match(en.json.error, /warlock level 5/);
+  const cs = await post(body, world.owner, "cs");
+  const fr = await post(body, world.owner, "fr");
+  assert.equal(cs.status, 400);
+  assert.equal(fr.status, 400);
+  assert.match(cs.json.error, /5\. úroveň/);
+  assert.match(fr.json.error, /niveau 5/);
+  assert.deepEqual(world.sheet(hero.id).features, before);
+});
+
+await test("Shared training refusals follow the reader locale without changing the grant.", async () => {
+  const { applyFeatGrants, featGrantSpec } = await import("../src/lib/srd/feat-grants.ts");
+  const spec = { ...featGrantSpec(""), languages: 1 };
+  const input = { proficiencies: PROF, feats: [{ name: "Custom training", desc: "", spec }], choices: { "custom training": { languages: ["Common"] } }, strict: true };
+  const before = structuredClone(input);
+  const en = applyFeatGrants(input);
+  assert.deepEqual(en.problems, ["Custom training's languages are new ones; this character already speaks Common."]);
+  const cs = applyFeatGrants({ ...input, locale: "cs" });
+  const fr = applyFeatGrants({ ...input, locale: "fr" });
+  assert.match(cs.problems[0], /Postava už mluví jazykem Common/);
+  assert.match(fr.problems[0], /ce personnage parle déjà Common/);
+  assert.deepEqual(cs.proficiencies, en.proficiencies);
+  assert.deepEqual(fr.proficiencies, en.proficiencies);
+  assert.deepEqual(input, before);
+});
+
+await test("Missing feat choices retain counts, order and canonical picks in EN, CS and FR.", async () => {
+  const { featPicksOwed, featOwed, featGrantSpec, applyFeatGrants } = await import("../src/lib/srd/feat-grants.ts");
+  const { featSpellsOwed } = await import("../src/lib/srd/feat-spells.ts");
+  const base = featGrantSpec("");
+  const spec = { ...base, languages: 1, skills: 2, expertise: 1, any: 5, anyKinds: ["skills", "tools"], damageTypes: ["fire"] };
+  const picks = {};
+  const before = structuredClone({ spec, picks });
+  assert.equal(featPicksOwed("Custom", spec, picks), "Custom: pick 1 language, 2 skills, expertise in 1 skill, 5 skills or tools, a damage type.");
+  assert.equal(featPicksOwed("Custom", spec, picks, "cs"), "Custom: vyber 1 jazyk, 2 dovednosti, kvalifikaci v 1 dovednosti, 5 dovedností nebo nástrojů, typ zranění.");
+  assert.equal(featPicksOwed("Custom", spec, picks, "fr"), "Custom : choisis 1 langue, 2 compétences, l’expertise dans 1 compétence, 5 compétences ou outils, un type de dégâts.");
+  const spellSpec = { ...base.taught, cantrips: 2, attackCantrip: true, spells: 1, spellLevel: 1, schools: ["divination", "enchantment"], ritualBook: true, listChoice: true, ability: "choice" };
+  assert.equal(featSpellsOwed("Custom", spellSpec, picks), "Custom: pick a class list, a spellcasting ability, 2 attack cantrips, 1 1st-level divination or enchantment ritual spell.");
+  assert.equal(featSpellsOwed("Custom", spellSpec, picks, "cs"), "Custom: vyber seznam kouzel povolání, sesílací vlastnost, 2 útočné triky, 1 rituální kouzlo 1. stupně (Věštění nebo Očarování).");
+  assert.equal(featSpellsOwed("Custom", spellSpec, picks, "fr"), "Custom : choisis une liste de classe, une caractéristique d’incantation, 2 sorts mineurs d’attaque, 1 sort rituel de niveau 1 (Divination ou Enchantement).");
+  const complete = { cantrips: ["A", "B"], spells: ["C"], list: "wizard", ability: "int" };
+  for (const locale of ["en", "cs", "fr"]) {
+    assert.equal(featSpellsOwed("Custom", spellSpec, complete, locale), null);
+    assert.equal(featOwed("Custom", { ...base, taught: spellSpec }, picks, locale), featSpellsOwed("Custom", spellSpec, picks, locale));
+    const applied = applyFeatGrants({ proficiencies: PROF, feats: [{ name: "Custom", desc: "", spec }], choices: {}, strict: true, locale });
+    assert.equal(applied.problems[0], featPicksOwed("Custom", spec, picks, locale));
+    assert.deepEqual(applied.proficiencies, PROF);
+  }
+  assert.deepEqual({ spec, picks }, before);
 });
 
 // ---- fighting styles ----

@@ -1,5 +1,6 @@
 import { LIMITS, newId, type Entry, type Origin, type WorldDoc, type YearValue } from "./model";
 import { textKey } from "../language/text-logic";
+import { makeImportResultNote, type ImportResultNote } from "../workshop/import-display";
 
 // A world brought in again: a WorldForge file imported a second time, or a
 // workshop copied into a campaign again. Audit findings WF-03 and WF-04.
@@ -66,6 +67,25 @@ const VALUE_WORDS: Record<string, string> = {
 // What a value is called in a report. A type field by its name when known.
 export const valueWords = (key: string, fieldName?: (id: string) => string | undefined) =>
   key.startsWith("fields.") ? `“${fieldName?.(key.slice("fields.".length)) ?? key.slice("fields.".length)}” field` : VALUE_WORDS[key] ?? key;
+
+// Known value labels can be localized; custom field names and unknown keys cannot.
+function valuePart(key: string, fieldName?: (id: string) => string | undefined) {
+  if (key.startsWith("fields.")) {
+    const id = key.slice("fields.".length);
+    return { key: "“{field}” field", vars: { field: fieldName?.(id) ?? id } };
+  }
+  if (Object.hasOwn(VALUE_WORDS, key)) return { key: VALUE_WORDS[key] };
+  // These schema fields were reported under their raw keys in the English
+  // message. Localize only their presentation, not the canonical message.
+  return ["bindings", "revealedAt", "revealedAs", "parentPinId", "party", "hidden"].includes(key) ? { key } : undefined;
+}
+
+export function worldEntryConflictNote(name: string | undefined, key: string, fieldName?: (id: string) => string | undefined): ImportResultNote {
+  const part = valuePart(key, fieldName);
+  return makeImportResultNote("{name}: kept your {value} over the import's.",
+    { name: name ?? "An entry", value: valueWords(key, fieldName) },
+    { ...(name === undefined ? { name: { key: "An entry" } } : {}), ...(part ? { value: part } : {}) });
+}
 
 // ---- values ----
 
@@ -220,12 +240,12 @@ export function remapEntryIds(entry: Entry, plan: IdPlan): Entry {
 const LOCAL_ONLY = new Set(["id", "role", "frame", "regionLink"]);
 const withoutId = (row: Row): Record<string, unknown> => Object.fromEntries(Object.entries(row).filter(([key]) => !LOCAL_ONLY.has(key)));
 
-export type RowMerge = { added: number; updated: number; conflicts: string[]; pending: Array<{ origin: string; key: string; source: string }> };
+export type RowMerge = { added: number; updated: number; conflicts: string[]; conflictDisplays: ImportResultNote[]; pending: Array<{ origin: string; key: string; source: string }> };
 
 // Incoming rows (already remapped; `sourceIds` are their ids at the source,
 // in the same order) merged into the document's slice, value by value.
 export function mergeSliceRows(doc: WorldDoc, slice: ImportSlice, rows: Row[], sourceIds: string[], source: string): RowMerge {
-  const result: RowMerge = { added: 0, updated: 0, conflicts: [], pending: [] };
+  const result: RowMerge = { added: 0, updated: 0, conflicts: [], conflictDisplays: [], pending: [] };
   const own = [...(doc[slice] as unknown as Row[])];
   const origins = (doc.origins ??= {});
   rows.forEach((theirs, index) => {
@@ -248,8 +268,17 @@ export function mergeSliceRows(doc: WorldDoc, slice: ImportSlice, rows: Row[], s
       result.updated += 1;
     }
     const label = String(own[at].name ?? own[at].title ?? own[at].id);
-    for (const clash of [...new Set(merged.clashes.map((key) => valueWords(key)))]) {
-      result.conflicts.push(`${SLICE_WORDS[slice]} “${label}”: kept your ${clash} over the import's.`);
+    const seen = new Set<string>();
+    for (const key of merged.clashes) {
+      const clash = valueWords(key);
+      if (seen.has(clash)) continue;
+      seen.add(clash);
+      const part = valuePart(key);
+      const note = makeImportResultNote("{slice} “{label}”: kept your {value} over the import's.",
+        { slice: SLICE_WORDS[slice], label, value: clash },
+        { slice: { key: SLICE_WORDS[slice] }, ...(part ? { value: part } : {}) });
+      result.conflicts.push(note.message);
+      result.conflictDisplays.push(note);
     }
     origins[key] = { from, at: merged.at };
     for (const { key: value, source: read } of merged.pending) result.pending.push({ origin: key, key: value, source: read });

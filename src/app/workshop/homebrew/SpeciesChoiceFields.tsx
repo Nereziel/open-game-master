@@ -49,8 +49,7 @@ const TOOLS = TOOL_PROFICIENCIES.map((tool) => tool.toLowerCase());
 // The damage words in the reader's language: capitalized out of the French
 // SRD's own list (damageTypeWord's pattern, src/lib/dm/damage-logic.ts).
 // English keeps the raw term, exactly as shipped; values stay the ids.
-const capital = (value: string) => value.charAt(0).toUpperCase() + value.slice(1);
-const damageLabel = (type: string, locale: Locale): string => (locale === "fr" ? capital(damageTypeWord(type, locale)) : type);
+const damageLabel = (type: string, locale: Locale): string => (damageTypeWord(type, locale));
 
 // An option as the draft holds it, read for its summary line.
 function readOption(raw: Data): SpeciesVariantOption {

@@ -12,6 +12,8 @@ import { describeContentEntry, spellSummary } from "@/lib/help";
 import { useContentSearch, type PickerEntry } from "@/app/characters/builder/useContentSearch";
 import { CLASS_IDS, type EditorKind } from "@/app/workshop/homebrew/types";
 import { useT } from "@/lib/locale";
+import { pickerName, pickerMeta } from "@/lib/content/picker-display";
+import { classDisplayNameFor } from "@/lib/characters/class-words";
 
 // "Start from": a search over the content pack that hands back a row to
 // copy into the draft. Pick, do not type: a DM changing one number on an
@@ -71,7 +73,7 @@ export function CatalogStart({
             value={classSlug}
             label={t("Class to browse")}
             onChange={setClassSlug}
-            options={CLASS_IDS.map((id) => ({ value: id as string, label: id, icon: { kind: "family" as const, key: `class-${id}` } }))}
+            options={CLASS_IDS.map((id) => ({ value: id as string, label: classDisplayNameFor(id, t.locale), icon: { kind: "family" as const, key: `class-${id}` } }))}
           />
         </span>
       ) : null}
@@ -108,7 +110,7 @@ export function CatalogStart({
       {open && results.length ? (
         <ul className="reveal mt-1 max-h-64 w-full basis-full overflow-y-auto panel panel-smoke rounded-lg text-sm">
           {results.slice(0, 40).map((entry) => (
-            <li key={entry.slug} className="flex items-center gap-1 pr-2 hover:bg-stone-800">
+            <li key={`${entry.source}:${entry.documentSlug ?? ""}:${entry.slug}`} className="flex items-center gap-1 pr-2 hover:bg-stone-800">
               <button
                 type="button"
                 onClick={() => {
@@ -123,10 +125,10 @@ export function CatalogStart({
                     const icon = homebrewIcon(kind, entry.name, entry.data as Record<string, unknown>);
                     return icon ? <GameIcon icon={icon} size="size-6" /> : null;
                   })()}
-                  <span className="truncate">{entry.name}</span>
+                  <span className="truncate">{pickerName(CONTENT_KIND[kind], entry, t.locale, classSlug)}</span>
                 </span>
                 <span className="flex shrink-0 flex-col items-end text-[11px] text-stone-500">
-                  <span>{entry.level !== undefined ? t("level {level}", { level: entry.level }) : entry.rarity || entry.kind || ""}</span>
+                  <span>{pickerMeta(entry, t.locale, "level {level}")}</span>
                   {/* Where the row is from, so a pack's version and the SRD's are told apart. */}
                   <span className="text-[10px] text-stone-600">
                     {entry.source === "homebrew" ? t("your homebrew") : entry.document || (entry.source === "srd" || entry.source === "bundled" ? "SRD 5.1" : "")}
@@ -134,9 +136,9 @@ export function CatalogStart({
                 </span>
               </button>
               <InfoButton
-                label={entry.name}
-                meta={kind === "spell" ? spellSummary(entry.data) : undefined}
-                text={describeContentEntry(entry.data)}
+                label={pickerName(CONTENT_KIND[kind], entry, t.locale, classSlug)}
+                meta={kind === "spell" ? spellSummary(entry.data, t.locale) : pickerMeta(entry, t.locale, "level {level}") || undefined}
+                text={describeContentEntry(entry.data, undefined, t.locale)}
               />
             </li>
           ))}

@@ -9,6 +9,7 @@ import { BINDINGS_MAX, isPlaceBinding, type Binding, type BindingKind, type Plac
 import type { WorldEntity } from "@/lib/db/world-forge";
 import type { WorldApi } from "./useWorld";
 import type { OpenSystem } from "./WorldForgePanel";
+import { worldBoundName, worldBoundDetail } from "@/lib/worldforge/display";
 import { useT } from "@/lib/locale";
 
 // "Use at the table": the playable records a World entry stands for (audit
@@ -20,9 +21,9 @@ import { useT } from "@/lib/locale";
 
 // A place's battle maps and encounters are its own section (PlaceBattleMaps).
 type RecordKind = Exclude<BindingKind, PlaceBindingKind>;
-const WORD_KEYS: Record<RecordKind, { one: string; tool: string; system: string }> = {
-  monster: { one: "stat block", tool: "Bestiary", system: "bestiary" },
-  item: { one: "item", tool: "Homebrew", system: "homebrew" },
+const WORD_KEYS: Record<RecordKind, { one: string; own: string; tool: string; system: string }> = {
+  monster: { one: "stat block", own: "Your stat blocks", tool: "Bestiary", system: "bestiary" },
+  item: { one: "item", own: "Your items", tool: "Homebrew", system: "homebrew" },
 };
 
 type Own = { ref: string; name: string };
@@ -167,8 +168,8 @@ export function BoundRecords({
           <span className="text-[10px] uppercase tracking-[0.12em] text-stone-500">{t(WORD_KEYS[record.kind].one)}</span>
           {record.found ? (
             <span className="text-stone-100">
-              {record.name}
-              {record.detail ? <span className="text-stone-500"> · {record.detail}</span> : null}
+              {worldBoundName(record, t.locale)}
+              {record.detail ? <span className="text-stone-500"> · {worldBoundDetail(t, record)}</span> : null}
             </span>
           ) : (
             <span className="text-amber-300">{t("Not found at this table any more")}</span>
@@ -210,9 +211,9 @@ export function BoundRecords({
             <span className="text-xs text-stone-400">{t("Link a {one} from your own {tool}, or the rulebook's.", { one: t(WORD_KEYS[adding].one), tool: t(WORD_KEYS[adding].tool) })}</span>
             {own.length ? (
               <Select
-                label={t("Your {one}s", { one: t(WORD_KEYS[adding].one) })}
+                label={t(WORD_KEYS[adding].own)}
                 value="__none"
-                placeholder={t("Your {one}s", { one: t(WORD_KEYS[adding].one) })}
+                placeholder={t(WORD_KEYS[adding].own)}
                 onChange={(ref) => ref !== "__none" && void link(adding, ref)}
                 options={[{ value: "__none", label: t("One of yours") }, ...own.map((row) => ({ value: row.ref, label: row.name }))]}
               />
@@ -220,7 +221,7 @@ export function BoundRecords({
             <ContentPick
               kind={adding === "monster" ? "monsters" : "items"}
               label={t("Pick a {one} from the rulebook", { one: t(WORD_KEYS[adding].one) })}
-              placeholder={adding === "monster" ? "Goblin, Owlbear..." : "Lantern, Rope..."}
+              placeholder={adding === "monster" ? t("Goblin, Owlbear...") : t("Lantern, Rope...")}
               onPick={(entry) => entry.slug && void link(adding, entry.slug)}
             />
             <span className="flex flex-wrap gap-1.5">

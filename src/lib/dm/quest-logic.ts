@@ -244,8 +244,8 @@ export function questLogLines(quests: readonly Quest[]): string[] {
 
 // The party's quests for the exported story: what they took on and how
 // each ended. Never a GM-only or hidden one.
-export function questLogForExport(quests: readonly Quest[]): string[] {
+export function questLogForExport(quests: readonly Quest[], t?: (key: string, vars?: Record<string, string | number>) => string): string[] {
   return quests
     .filter((quest) => quest.visibility === "party" && quest.status !== "hidden")
-    .map((quest) => (quest.status === "done" ? `${quest.title} (done)` : quest.status === "failed" ? `${quest.title} (failed)` : quest.title));
+    .map((quest) => (quest.status === "done" ? (t ? t("{title} (done)", { title: quest.title }) : `${quest.title} (done)`) : quest.status === "failed" ? (t ? t("{title} (failed)", { title: quest.title }) : `${quest.title} (failed)`) : quest.title));
 }

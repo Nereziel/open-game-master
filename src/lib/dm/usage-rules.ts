@@ -8,6 +8,7 @@
 //
 // Database-free like the other *-logic modules, so the route stays a thin
 // shell and scripts can exercise every branch.
+import { formatMessage, type MessageVars } from "@/lib/messages-logic";
 import { armorOfRow, wearingIsExplicit } from "@/lib/srd/armor";
 import { gearDefOfRow } from "@/lib/srd/magic-gear";
 import { isTack, rowIsOn } from "@/lib/srd/tack";
@@ -108,6 +109,7 @@ export function gearChanges(
 export function attunementRefusal(
   sheet: Pick<CharacterSheet, "name" | "equipment" | "class" | "classes" | "race" | "alignment" | "spellcasting">,
   gear: NonNullable<UsageAsk["gear"]>,
+  t: (key: string, vars?: MessageVars) => string = formatMessage,
 ): string | null {
   // A cursed item's attunement holds until remove curse (SRD 5.1: Berserker
   // Axe, Armor of Vulnerability, Demon Armor, Shield of Missile Attraction).
@@ -115,7 +117,7 @@ export function attunementRefusal(
     (item) => item.attuned && gear[item.name]?.attuned === false && gearDefOfRow(item)?.cursed,
   );
   if (cursed) {
-    return `${cursed.name} is cursed: ${sheet.name} cannot end the attunement until remove curse or similar magic breaks it.`;
+    return t("{item} is cursed: {who} cannot end the attunement until remove curse or similar magic breaks it.", { item: cursed.name, who: sheet.name });
   }
   let pack = sheet.equipment.map((item) =>
     gear[item.name]?.attuned === false ? { ...item, attuned: false, attuning: false } : item,
@@ -125,7 +127,7 @@ export function attunementRefusal(
     if (gear[item.name]?.attuned !== true || item.attuned || item.attuning) {
       continue;
     }
-    const problem = attunementProblem(item, pack, sheet);
+    const problem = attunementProblem(item, pack, sheet, t);
     if (problem) {
       return problem;
     }
@@ -184,11 +186,12 @@ export function gearPatch(
   sheet: Pick<CharacterSheet, "name" | "equipment">,
   gear: NonNullable<UsageAsk["gear"]>,
   options: { corrects: boolean; armor: { armorName: string | null; shieldName: string | null } },
+  t: (key: string, vars?: MessageVars) => string = formatMessage,
 ): GearPatch {
   if (!options.corrects && Object.values(gear).some((entry) => entry.layered)) {
     return {
       status: 403,
-      error: `Wearing two of a kind at once is the GM's exception to make: the GM or the party lead can let ${sheet.name} wear both.`,
+      error: t("Wearing two of a kind at once is the GM's exception to make: the GM or the party lead can let {name} wear both.", { name: sheet.name }),
     };
   }
   const wasExplicit = wearingIsExplicit(sheet.equipment);
@@ -227,7 +230,7 @@ export function gearPatch(
   const before = stillWorn ? sheet.equipment.map((item) => ({ ...item, equipped: stillWorn.has(item) })) : sheet.equipment;
   const conflict = firstWearConflict(before, equipment);
   if (conflict) {
-    return { status: 409, error: wearConflictText(conflict, sheet.name), conflict };
+    return { status: 409, error: wearConflictText(conflict, sheet.name, t), conflict };
   }
   return { equipment };
 }

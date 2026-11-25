@@ -36,6 +36,8 @@
 // Pure.
 import { swapRecordFits, swapRecordName, swapsOf, withoutSwapRecords, type SpellSwap } from "@/lib/dm/ar-ws-spell-swap-record";
 import { textKey } from "@/lib/language/text-logic";
+import { translate, type Locale } from "@/lib/i18n/translate";
+import { gameTermWord } from "@/lib/i18n/game-term-labels";
 import { subclassSpellListsFor, subclassSpellsFor } from "@/lib/srd/features";
 import type { SpellFacts } from "@/lib/srd/legality/types";
 import { dedupeNames, spellOnCasterList, type CasterView } from "@/lib/srd/spell-prep";
@@ -123,22 +125,22 @@ export function originSpellNotes(view: Origin): string {
 }
 
 // Why a spell cannot take the place of an origin spell of `level`, or null.
-function misfit(rule: SwapRule, spell: SpellFacts, level: number | null, top: number): string | null {
+function misfit(rule: SwapRule, spell: SpellFacts, level: number | null, top: number, locale: Locale = "en"): string | null {
   if (rule.sameLevel && spell.level !== level) {
-    const what = (at: number | null) => (at === 0 ? "a cantrip" : `a level ${at} spell`);
-    return `it is ${what(spell.level)}, and the spell it replaces is ${what(level)}`;
+    const what = (at: number | null) => (at === 0 ? translate(locale, "a cantrip") : translate(locale, "a level {level} spell", { level: String(at) }));
+    return translate(locale, "it is {actual}, and the spell it replaces is {expected}", { actual: what(spell.level), expected: what(level) });
   }
   if (!rule.sameLevel && spell.level === 0) {
-    return "it is a cantrip";
+    return translate(locale, "it is a cantrip");
   }
   if (!rule.sameLevel && spell.level > top) {
-    return `it is a level ${spell.level} spell, above the level ${top} the sorcerer has spell slots for`;
+    return translate(locale, "it is a level {level} spell, above the level {top} the sorcerer has spell slots for", { level: spell.level, top });
   }
   if (rule.schools && !rule.schools.some((school) => textKey(school) === textKey(spell.school ?? ""))) {
-    return spell.school ? `its school is ${textKey(spell.school)}` : "the server does not know its school";
+    return spell.school ? translate(locale, "its school is {school}", { school: gameTermWord("spellSchool", textKey(spell.school), locale) }) : translate(locale, "the server does not know its school");
   }
   if (!spell.classes.some((entry) => rule.lists.some((list) => textKey(list) === textKey(entry)))) {
-    return `it is not on the ${rule.listed} spell list`;
+    return translate(locale, "it is not on the {list} spell list", { list: translate(locale, rule.listed) });
   }
   return null;
 }
@@ -151,7 +153,7 @@ function misfit(rule: SwapRule, spell: SpellFacts, level: number | null, top: nu
 // holds now, which the door would not read as new. Null when there is no swap.
 export function originSwapOffer(
   view: Origin,
-  input: { top: number; held: readonly string[]; candidates: readonly SpellFacts[]; spellOf: (name: string) => SpellFacts | null },
+  input: { top: number; held: readonly string[]; candidates: readonly SpellFacts[]; spellOf: (name: string) => SpellFacts | null; locale?: Locale },
 ): ChangeOffer | null {
   const rule = ruleFor(view.classId, view.subclass);
   const slots = swappableSpells(view);
@@ -178,7 +180,7 @@ export function originSwapOffer(
     options,
     optionsFor,
     shown: {},
-    note: `The new spell must be ${rule.say}, and it stays free of your spells known.`,
+    note: translate(input.locale ?? "en", "The new spell must be {rule}, and it stays free of your spells known.", { rule: translate(input.locale ?? "en", rule.say) }),
   };
 }
 
@@ -222,37 +224,39 @@ export function originSwap(input: {
   // The highest spell level the class casts after the level.
   top: number;
   spellOf: (name: string) => SpellFacts | null;
+  locale?: Locale;
 }): OriginSwap {
-  const { before, after, forget } = input;
+  const { before, after, forget, locale = "en" } = input;
   const rule = ruleFor(after.classId, after.subclass);
   const slot = swappableSpells(after).find((entry) => textKey(entry.current) === textKey(forget));
   if (!rule || !slot) {
     return null;
   }
-  const ours = `${after.subclass}'s ${rule.feature}`;
+  const ours = translate(locale, "{subclass}'s {feature}", { subclass: after.subclass, feature: translate(locale, rule.feature) });
+  const requirement = translate(locale, rule.say);
   const held = new Set([...before.known, ...before.prepared, ...before.pending, ...before.cantrips, ...before.spellbook].map(textKey));
   const named = dedupeNames([...after.known, ...after.cantrips]).filter((name) => !held.has(textKey(name)));
   if (!named.length) {
-    return { error: `${slot.current} is one of the spells of ${ours}: to give it up, name the spell that takes its place in levelUpSpells (${rule.say}). Nothing was changed.` };
+    return { error: translate(locale, "{current} is one of the spells of {origin}: to give it up, name the spell that takes its place in levelUpSpells ({rule}). Nothing was changed.", { current: slot.current, origin: ours, rule: requirement }) };
   }
   const level = input.spellOf(slot.original)?.level ?? null;
   if (rule.sameLevel && level === null) {
-    return { error: `The server does not know the level of ${slot.original}, so it cannot judge a spell of the same level to replace it. Nothing was changed.` };
+    return { error: translate(locale, "The server does not know the level of {original}, so it cannot judge a spell of the same level to replace it. Nothing was changed.", { original: slot.original }) };
   }
   const judged = named.map((name) => {
     const spell = input.spellOf(name);
-    return { name, spell, why: spell ? misfit(rule, spell, level, input.top) : "it is not a spell this server knows" };
+    return { name, spell, why: spell ? misfit(rule, spell, level, input.top, locale) : translate(locale, "it is not a spell this server knows") };
   });
   const fits = judged.flatMap((entry) => (entry.spell && !entry.why ? [entry.spell] : []));
   if (!fits.length) {
-    return { error: `${judged[0].spell?.name ?? judged[0].name} cannot take the place of ${slot.current}: ${judged[0].why}. ${ours} replaces one of its spells with ${rule.say}. Nothing was changed.` };
+    return { error: translate(locale, "{name} cannot take the place of {current}: {reason}. {origin} replaces one of its spells with {rule}. Nothing was changed.", { name: judged[0].spell?.name ?? judged[0].name, current: slot.current, reason: String(judged[0].why), origin: ours, rule: requirement }) };
   }
   const taken = fits.find((spell) => !spellOnCasterList(after, spell)) ?? fits[0];
   const swap: SpellSwap = { from: slot.original, to: taken.name };
   // Back to the spell the table names: the record is dropped.
   const back = textKey(swap.from) === textKey(swap.to);
   if (!back && !swapRecordFits(swap)) {
-    return { error: `${swap.from} and ${swap.to} are too long to record as one swap on the sheet; choose a spell with a shorter name. Nothing was changed.` };
+    return { error: translate(locale, "{from} and {to} are too long to record as one swap on the sheet; choose a spell with a shorter name. Nothing was changed.", { from: swap.from, to: swap.to }) };
   }
   const records = [...swapsOf(after.features).filter((entry) => textKey(entry.from) !== textKey(slot.original)), ...(back ? [] : [swap])];
   const gone = textKey(forget);

@@ -1,4 +1,6 @@
 import { z } from "zod";
+import { requestT } from "@/lib/request-locale";
+import { translatePlural } from "@/lib/messages-logic";
 import { isErrorResponse, requireMember } from "@/lib/campaign-api";
 import { refuseDuringBreak } from "@/lib/dm/table-break";
 import { getCampaignById } from "@/lib/db/campaigns";
@@ -93,33 +95,34 @@ export async function POST(
   if (isErrorResponse(context)) {
     return context;
   }
+  const t = requestT(request);
   const parsed = spendSchema.safeParse(await request.json().catch(() => ({})));
   if (!parsed.success) {
-    return Response.json({ error: "Send the number of hit dice to spend, 1 or more, and with faces one whole number for each die rolled." }, { status: 400 });
+    return Response.json({ error: t("Send the number of hit dice to spend, 1 or more, and with faces one whole number for each die rolled.") }, { status: 400 });
   }
   // A short rest's hit dice roll and heal: play, which waits out a break.
-  const paused = refuseDuringBreak(campaignId);
+  const paused = refuseDuringBreak(campaignId, undefined, request);
   if (paused) {
     return paused;
   }
   const sheet = ownSheetFor(campaignId, context.user.id, parsed.data.characterId);
   if (!sheet) {
     return Response.json(
-      { error: parsed.data.characterId ? "That is not one of your characters." : "You have no character in this campaign." },
+      { error: parsed.data.characterId ? t("That is not one of your characters.") : t("You have no character in this campaign.") },
       { status: 404 },
     );
   }
   if (getActiveEncounter(campaignId)) {
-    return refuse("Hit dice are spent at the end of a short rest, and a fight is going on.");
+    return refuse(t("Hit dice are spent at the end of a short rest, and a fight is going on."));
   }
   if (!inShortRestWindow(campaignId, sheet.id)) {
     return refuse(
-      `Hit dice are spent at the end of a short rest. ${sheet.name} is not resting now; ask the GM for a short rest and spend them when it ends.`,
+      t("Hit dice are spent at the end of a short rest. {name} is not resting now; ask the GM for a short rest and spend them when it ends.", { name: sheet.name }),
     );
   }
   const campaign = getCampaignById(campaignId);
   if (!campaign) {
-    return Response.json({ error: "Campaign not found." }, { status: 404 });
+    return Response.json({ error: t("Campaign not found.") }, { status: 404 });
   }
   // Song of Rest and a Chef's meal: one extra die each for a creature that
   // spends hit dice, once per rest. The GM's own spend added the meal's die
@@ -130,7 +133,7 @@ export async function POST(
   if (sent?.some((face) => face !== "digital") && !typesFaces(campaignId, context.user.id)) {
     // As a roll card refuses them (pending-rolls/[pendingRollId]/route.ts).
     return refuse(
-      "These hit dice are rolled by the server: typed dice count only for a player rolling real dice at a table that allows them. Spend the hit die without them.",
+      t("These hit dice are rolled by the server: typed dice count only for a player rolling real dice at a table that allows them. Spend the hit die without them."),
       403,
     );
   }
@@ -143,12 +146,12 @@ export async function POST(
     const sides = ask ? entryDice(ask.expression) : [];
     if (ask && sides.length !== sent.length) {
       return refuse(
-        `The dice for this hit die changed while you rolled: it is ${ask.expression} now, ${sides.length} ${sides.length === 1 ? "die" : "dice"}, and ${sent.length} came in. No hit die was spent; roll what the sheet shows now.`,
+        translatePlural(t.locale, "The dice for this hit die changed while you rolled: it is {expression} now, {count} die, and {actual} came in. No hit die was spent; roll what the sheet shows now.", "The dice for this hit die changed while you rolled: it is {expression} now, {count} dice, and {actual} came in. No hit die was spent; roll what the sheet shows now.", { expression: ask.expression, count: sides.length, actual: sent.length }),
       );
     }
     const wrong = sent.findIndex((face, index) => face !== "digital" && face > sides[index]);
     if (wrong >= 0) {
-      return refuse(`Die ${wrong + 1} is a d${sides[wrong]}: enter a whole number from 1 to ${sides[wrong]}. No hit die was spent.`, 400);
+      return refuse(t("Die {index} is a d{sides}: enter a whole number from 1 to {sides}. No hit die was spent.", { index: wrong + 1, sides: sides[wrong] }), 400);
     }
   }
   const spent = spendHitDice({
@@ -159,6 +162,7 @@ export async function POST(
     ...extra,
     reason: `Short rest: hit dice spent by ${context.user.username}`,
     requestedBy: "player",
+    locale: t.locale,
     ...(sent ? { faces: sent.map((face) => (face === "digital" ? null : face)) } : {}),
   });
   if ("error" in spent) {

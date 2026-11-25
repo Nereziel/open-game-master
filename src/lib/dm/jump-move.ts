@@ -27,6 +27,7 @@ import { publishBattleMapUpdate } from "@/lib/dm/map-tools";
 import { resolveOpportunityAttacks, type OpportunityOutcome } from "@/lib/dm/opportunity";
 import { zonesAfterMove } from "@/lib/dm/zone-triggers";
 import type { CharacterSheet } from "@/lib/schemas/sheet";
+import { formatMessage, type MessageVars } from "@/lib/messages-logic";
 
 export type JumpOutcome =
   | { error: string; status: number }
@@ -46,10 +47,10 @@ export function jumpMove(input: {
   budgetTiles: number;
   scene: boolean;
   disengaged: boolean;
-}): JumpOutcome {
+}, t: (key: string, vars?: MessageVars) => string = formatMessage): JumpOutcome {
   const { campaign, encounter, map, sheet, token, to, scene } = input;
   if (sheet.conditions.some((entry) => entry.trim().toLowerCase() === "prone")) {
-    return { error: `${sheet.name} is prone and cannot jump from the ground; they stand up first (half their speed).`, status: 409 };
+    return { error: t("{name} is prone and cannot jump from the ground; they stand up first (half their speed).", { name: sheet.name }), status: 409 };
   }
   const enemiesById = new Map(listEnemies(encounter.id).map((enemy) => [enemy.id, enemy]));
   const occupied = occupiedTiles(map, listTokens(map.id), token, footprintLookup(enemiesById));
@@ -74,7 +75,7 @@ export function jumpMove(input: {
       runningStart,
       budgetTiles: input.budgetTiles,
       name: sheet.name,
-    });
+    }, t);
   const bare = longJumpFeet(reach.strength, runningStart) + reach.extraFeet;
   const wanted = chebyshev(token.x, token.y, to.x, to.y) * 5;
   let plan = planTo(to, 0);
@@ -94,12 +95,12 @@ export function jumpMove(input: {
     if (covers < wanted) {
       const short = landingWithin(token, to, covers);
       if (!short) {
-        return { error: `Mirthful Leaps rolled ${rolled}: ${sheet.name}'s jump covers ${covers} feet, not a whole square. They stay where they are.`, status: 400 };
+        return { error: t("Mirthful Leaps rolled {rolled}: {name}'s jump covers {covers} feet, not a whole square. They stay where they are.", { rolled, name: sheet.name, covers }), status: 400 };
       }
       landing = short;
     }
     plan = planTo(landing, rolled);
-    leapNote = `Mirthful Leaps: +${rolled} feet${landing !== to ? `, so the jump comes down ${covers} feet on` : ""}`;
+    leapNote = landing !== to ? t("Mirthful Leaps: +{rolled} feet, so the jump comes down {covers} feet on", { rolled, covers }) : t("Mirthful Leaps: +{rolled} feet", { rolled });
   }
   if (!plan.ok) {
     return { error: plan.error, status: 400 };
@@ -107,7 +108,7 @@ export function jumpMove(input: {
   const from = { x: token.x, y: token.y };
   moveToken(token.id, landing.x, landing.y, scene ? 0 : token.movedThisRound + plan.cost);
   const letGo = releaseGrapplesOutOfReach(campaign);
-  let landed = "on their feet";
+  let landed = t("on their feet");
   if (plan.landsInDifficult) {
     const check = rollCharacterCheck(campaign, sheet, { skill: "acrobatics" }, `${sheet.name}: Acrobatics to land the jump (DC 10)`);
     if (check.autoFailed || check.total < 10) {
@@ -116,9 +117,9 @@ export function jumpMove(input: {
       if (updated) {
         publishPersisted(campaign.id, "sheet_updated", { sheet: updated });
       }
-      landed = `prone (Acrobatics ${check.total} against DC 10 in difficult terrain)`;
+      landed = t("prone (Acrobatics {total} against DC 10 in difficult terrain)", { total: check.total });
     } else {
-      landed = `on their feet (Acrobatics ${check.total} against DC 10)`;
+      landed = t("on their feet (Acrobatics {total} against DC 10)", { total: check.total });
     }
   }
   publishBattleMapUpdate(campaign.id);

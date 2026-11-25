@@ -16,7 +16,7 @@ import {
 import { getHouseRulesText, setHouseRules } from "@/lib/db/rules";
 import { mergeHouseRules } from "@/lib/rulesets/logic";
 import { arcRoom } from "@/lib/dm/arc-logic";
-import { checkProse, proseWarningLine } from "@/lib/workshop/prose-check";
+import { checkProse, proseWarningLine, proseWarningParts } from "@/lib/workshop/prose-check";
 import { copiesFrom, recordOrigin, type OriginKind } from "@/lib/db/content-origins";
 import { linkWorkshop } from "@/lib/db/campaign-workshops";
 import {
@@ -32,6 +32,7 @@ import { getWorldDoc, hasWorldDoc } from "@/lib/db/world-forge";
 import { arrivingShelf, bringItems, bringMonsters } from "@/lib/db/import-monsters";
 import { importRowsOf, remapImportedRefs, tableRowsLeftBehind } from "@/lib/db/content-import-refs";
 import { parseRef } from "@/lib/worldforge/model";
+import type { ImportResultNote } from "@/lib/workshop/import-display";
 import { copyWorldDoc } from "@/lib/db/world-forge-io";
 import { normalizeStock } from "@/lib/db/shops";
 import {
@@ -227,6 +228,7 @@ function usedLinks(compiled: CompiledBoard): Record<LinkKind, string[]> {
 
 function boardFactsFor(source: Campaign, compiled: CompiledBoard, common: Campaign | null): BoardFacts {
   const links = usedLinks(compiled);
+  const summary = summarizeCompile(compiled, false);
   const inCommon = (kind: LinkKind) =>
     common
       ? [...new Set(links[kind])].filter((id) =>
@@ -247,11 +249,15 @@ function boardFactsFor(source: Campaign, compiled: CompiledBoard, common: Campai
       : null,
     beats: compiled.arcBeats,
     moments: compiled.moments.length,
-    arcProblem: summarizeCompile(compiled, false).arcRefusal,
+    arcProblem: summary.arcRefusal,
+    ...(summary.arcRefusalDisplay ? { arcProblemDisplay: summary.arcRefusalDisplay } : {}),
     beatTitles: compiled.arcPlan.map((beat) => getBeat(beat.cardId)?.title ?? beat.cardId),
     momentTitles: compiled.moments.map((moment) => moment.name),
     proseNotes: listBeats(source.id)
-      .map((card) => ({ title: card.title, message: proseWarningLine(checkProse(card.body)) }))
+      .map((card) => {
+        const warnings = checkProse(card.body);
+        return { title: card.title, message: proseWarningLine(warnings), parts: proseWarningParts(warnings, card.body) };
+      })
       .filter((note) => note.message),
   };
 }
@@ -356,6 +362,7 @@ export type ImportOutcome = {
   beatsAdded: number;
   // What both sides of a WorldForge reimport changed, kept as here (WF-03).
   worldConflicts?: string[];
+  worldConflictDisplays?: ImportResultNote[];
   // Stat blocks and roster monsters nothing at this table answers to.
   unresolved?: string[];
   // Hand-built monsters copied into this table's bestiary for the NPCs and
@@ -371,6 +378,7 @@ export type ImportOutcome = {
   // Roll-table rows whose table, NPC or lore entry stayed behind, and what
   // each names here now (src/lib/db/content-import-refs.ts).
   referenceNotes?: string[];
+  referenceNoteDisplays?: ImportResultNote[];
 };
 
 // Copies the planned rows. One transaction, so a constraint the planner
@@ -434,6 +442,7 @@ export function runContentImport(input: {
   const counts = { copied: 0, kept: 0, unbound: 0 };
   // Links changed here and in the copied world (world-link-merge.ts).
   let worldConflicts: string[] = [];
+  let worldConflictDisplays: ImportResultNote[] = [];
   const finalNames = new Map<string, string>(
     plan.items.map((item) => [`${item.kind}:${item.sourceId}`, item.finalName]),
   );
@@ -579,6 +588,7 @@ export function runContentImport(input: {
     counts.copied += world.count;
     counts.unbound += world.unbound;
     worldConflicts = world.conflicts;
+    worldConflictDisplays = world.conflictDisplays;
   }
 
   if (selected.has("lore") || storyboard) {
@@ -643,14 +653,14 @@ export function runContentImport(input: {
     kept: counts.kept,
     unbound: counts.unbound,
     beatsAdded,
-    ...(worldConflicts.length ? { worldConflicts } : {}),
+    ...(worldConflicts.length ? { worldConflicts, worldConflictDisplays } : {}),
     ...(unresolved.length ? { unresolved } : {}),
     ...(monsters.brought.length ? { monstersBrought: monsters.brought } : {}),
     ...(monsters.reused.length ? { monstersReused: monsters.reused } : {}),
     ...(items.brought.length ? { itemsBrought: items.brought } : {}),
     ...(items.reused.length ? { itemsReused: items.reused } : {}),
     ...(spellsBrought.length ? { spellsBrought } : {}),
-    ...(refs.notes.length ? { referenceNotes: refs.notes } : {}),
+    ...(refs.notes.length ? { referenceNotes: refs.notes, referenceNoteDisplays: refs.noteDisplays } : {}),
   };
 }
 

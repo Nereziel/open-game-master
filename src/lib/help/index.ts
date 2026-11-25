@@ -25,7 +25,8 @@ import { textKey } from "@/lib/language/text-logic";
 import { matchResource } from "@/lib/srd/class-resources";
 import { resourceGuidance } from "@/lib/srd/class-resources-fr";
 import type { Locale } from "@/lib/messages-logic";
-import { translate } from "@/lib/i18n/translate";
+import { translate, translatePlural } from "@/lib/i18n/translate";
+import { gameTermWord } from "@/lib/i18n/game-term-labels";
 import { guidanceFor } from "@/lib/srd/feature-effects";
 import { subclassFeatureDescription } from "@/lib/srd/features";
 import { findOptionByFeatureName } from "@/lib/srd/options";
@@ -64,6 +65,16 @@ export function glossaryTerms(): GlossaryTerm[] {
 
 export function glossaryTerm(id: string): GlossaryTerm | null {
   return TERMS_BY_ID.get(id) ?? null;
+}
+
+// Adapt the existing data fields once; consumers do not branch on language.
+export function localizedGlossaryTerm(entry: GlossaryTerm, locale: Locale) {
+  const translations: Partial<Record<Locale, { term?: string; short?: string; long?: string }>> = {
+    fr: { term: entry.fr, short: entry.shortFr, long: entry.longFr },
+    cs: { term: entry.cs, short: entry.shortCs, long: entry.longCs },
+  };
+  const localized = translations[locale];
+  return { label: localized?.term, term: localized?.term ?? entry.term, short: localized?.short ?? entry.short, long: localized?.long ?? entry.long };
 }
 
 // Numbered SRD variants ("Indomitable (2 uses)", "Extra Attack (2)") are
@@ -111,25 +122,25 @@ export function describeFeature(classId: string, subclass: string, name: string,
   // option list, before any of the feature tables are consulted.
   const option = findOptionByFeatureName(name);
   if (option) {
-    if (locale === "cs") {
-      const description = translate(locale, option.d);
-      return option.req ? `${description} (Vyžaduje: ${translate(locale, option.req)}.)` : description;
-    }
-    return option.req ? `${option.d} (Requires ${option.req}.)` : option.d;
+    const description = translate(locale, option.d);
+    return option.req ? `${description} (${translate(locale, "Requires {req}", { req: translate(locale, option.req) })}.)` : description;
   }
   // A workshop subclass's pick ("Bloodline (Storm)") from the subclasses the
   // page registered (issue #833).
   const pick = subclassChoicePickDescription(name);
   if (pick) {
-    return locale === "cs" ? translate(locale, pick) : pick;
+    return translate(locale, pick);
   }
-  // Written beside such a pick: the element its option deals in. The
-  // element's sentence stays the engine's English: it quotes the subclass's
-  // own rules text (rulebook prose, not a table word).
+  // The element's display sentence uses the common catalog. The stored
+  // choice name and damage type are not changed.
   const element = choiceDamageTypeOf(name);
   if (element) {
-    if (locale === "cs") return `Zvolený živel (${translate(locale, element.label)}): ${damageTypeWord(element.type, locale)} zranění. Živlová afinita, pokud ji archetyp má, posiluje kouzla tohoto typu zranění a poskytuje vůči němu odolání.`;
-    return `The element of the ${element.label} chosen: ${element.type}. Elemental Affinity, where the subclass has it, adds to spells of this damage type and resists it.`;
+    const message = "The element of the {label} chosen: {type}. Elemental Affinity, where the subclass has it, adds to spells of this damage type and resists it.";
+    const displayLocale = translate(locale, message) === message ? "en" : locale;
+    return translate(displayLocale, message, {
+      label: translate(displayLocale, element.label),
+      type: damageTypeWord(element.type, displayLocale),
+    });
   }
   const resource = matchResource(name);
   const classText = classFeatureDescription(classId, name);
@@ -145,7 +156,7 @@ export function describeFeature(classId: string, subclass: string, name: string,
     looseSrdText(classId, name);
   // Localize the text chosen by the original resolution order, not a less
   // specific description that happens to have a translation.
-  const localized = found && locale === "cs" ? translate(locale, found) : found;
+  const localized = found ? translate(locale, found) : found;
   return stripLeadingLabel(localized, name);
 }
 
@@ -173,13 +184,12 @@ export function backgroundFeatureReference(
 // pack's "odm-" copy of a bundled race resolves to the same entry.
 export function describeRace(raceId: string, locale: Locale = "en"): string | null {
   const race = srdRaceFor(raceId);
-  return race ? race.traits.map((trait) => locale === "cs" ? speciesTraitName(raceId, trait, locale) : trait).join(". ") + "." : null;
+  return race ? race.traits.map((trait) => speciesTraitName(raceId, trait, locale)).join(". ") + "." : null;
 }
 
 // The sheet stores the canonical trait line; use the same reader-facing map
 // as its title rather than looking up a class feature with the same name.
 export function describeRaceTrait(raceId: string, name: string, locale: Locale): string | null {
-  if (locale !== "cs") return null;
   const localized = speciesTraitName(raceId, name, locale);
   return localized !== name ? localized : null;
 }
@@ -194,7 +204,7 @@ const SKILLS = (skillsJson as { skills: Array<{ id: string; name: string; fr?: s
 export function describeSkill(
   t: (key: string, vars?: Record<string, string | number>) => string,
   skillId: string,
-  locale: "en" | "fr" | "cs" = "en",
+  locale: Locale = "en",
 ): string | null {
   const skill = SKILLS.find((entry) => entry.id === skillId.trim().toLowerCase());
   if (!skill) {
@@ -202,10 +212,10 @@ export function describeSkill(
   }
   const ability = glossaryTerm(skill.ability);
   const skillName = skillLabel(skill.id, locale);
-  const abilityName =
-    (locale === "cs" ? ability?.cs : locale === "fr" ? ability?.fr : undefined) ?? ability?.term ?? skill.ability.toUpperCase();
+  const localized = ability ? localizedGlossaryTerm(ability, locale) : undefined;
+  const abilityName = localized?.term ?? skill.ability.toUpperCase();
   return `${t("{skill} uses {ability}.", { skill: skillName, ability: abilityName })} ${
-    (locale === "cs" ? ability?.shortCs : locale === "fr" ? ability?.shortFr : undefined) ?? ability?.short ?? ""
+    localized?.short ?? ""
   }`.trim();
 }
 
@@ -238,7 +248,7 @@ function textOf(value: unknown): string {
 // `focus` names the part asked about: a background's feature chip on a sheet
 // opens the feature alone, not three paragraphs of the background's story
 // with the feature at their foot.
-export function describeContentEntry(data: Record<string, unknown> | undefined, focus?: string): string | null {
+export function describeContentEntry(data: Record<string, unknown> | undefined, focus?: string, locale: Locale = "en"): string | null {
   if (!data) {
     return null;
   }
@@ -254,7 +264,7 @@ export function describeContentEntry(data: Record<string, unknown> | undefined, 
     return normalizeRulesText(data.localized_desc) || null;
   }
   if (focus && focusFeature && focusText && textKey(focus) === textKey(focusFeature)) {
-    return normalizeRulesText(`**Feature: ${focusFeature}.** ${focusText}`) || null;
+    return normalizeRulesText(`**${translate(locale, "Feature")}: ${focusFeature}.** ${focusText}`) || null;
   }
   const parts: string[] = [];
   for (const key of ["desc", "description", "traits", "benefits"]) {
@@ -269,7 +279,7 @@ export function describeContentEntry(data: Record<string, unknown> | undefined, 
   const effects = textOf(data.effects_desc);
   if (effects.trim()) {
     const prerequisite = typeof data.prerequisite === "string" && data.prerequisite.trim()
-      ? `*Prerequisite: ${data.prerequisite.trim()}*\n\n`
+      ? `*${translate(locale, "Requires {prereq}", { prereq: data.prerequisite.trim() })}*\n\n`
       : "";
     parts.push(
       `${prerequisite}${effects
@@ -282,9 +292,9 @@ export function describeContentEntry(data: Record<string, unknown> | undefined, 
   const feature = typeof data.feature === "string" ? data.feature.trim() : "";
   const featureText = textOf(data.feature_desc).trim();
   if (feature && featureText) {
-    parts.push(`**Feature: ${feature}.** ${featureText}`);
+    parts.push(`**${translate(locale, "Feature")}: ${feature}.** ${featureText}`);
   } else if (feature) {
-    parts.push(`**Feature: ${feature}.**`);
+    parts.push(`**${translate(locale, "Feature")}: ${feature}.**`);
   }
   const joined = normalizeRulesText(parts.join("\n\n"));
   return joined ? joined : null;
@@ -328,9 +338,37 @@ export function spellRowConcentrates(data: Record<string, unknown> | undefined):
   return Boolean(data && flagged(data.concentration));
 }
 
+// Translate only complete recognized metadata values, never parse a
+// conditional reaction or a custom range as if it were a simpler rule.
+function spellCastingTimeLabel(value: unknown, locale: Locale): string {
+  const raw = String(value ?? "");
+  if (locale === "en") return raw;
+  const clean = raw.trim().toLowerCase();
+  if (["1 action", "1 bonus action", "1 reaction"].includes(clean)) return translate(locale, clean);
+  const time = /^(\d+)\s+(minute|hour)s?$/.exec(clean);
+  if (time) {
+    const count = Number(time[1]);
+    return time[2] === "minute"
+      ? translatePlural(locale, "{count} minute", "{count} minutes", { count })
+      : translatePlural(locale, "{count} hour", "{count} hours", { count });
+  }
+  return raw;
+}
+
+function spellRangeLabel(value: unknown, locale: Locale): string {
+  const raw = String(value ?? "");
+  if (locale === "en") return raw;
+  const clean = raw.trim().toLowerCase();
+  const labels: Record<string, string> = { self: "Self", touch: "Touch", sight: "Sight", unlimited: "Unlimited", special: "Special" };
+  if (Object.hasOwn(labels, clean)) return translate(locale, labels[clean]);
+  const distance = /^(\d+)\s+(?:feet|ft\.?|foot)$/.exec(clean);
+  if (distance) return translate(locale, "{feet} ft", { feet: Number(distance[1]) });
+  return raw;
+}
+
 // The one-line summary shown under a spell's name in a picker: level, school
 // and the flags that change how it is cast.
-export function spellSummary(data: Record<string, unknown> | undefined): string {
+export function spellSummary(data: Record<string, unknown> | undefined, locale: Locale = "en"): string {
   if (!data) {
     return "";
   }
@@ -338,12 +376,15 @@ export function spellSummary(data: Record<string, unknown> | undefined): string 
   const school = String(
     (data.school as { name?: string })?.name ?? data.school ?? "",
   ).toLowerCase();
+  const schoolWord = gameTermWord("spellSchool", school, locale).toLowerCase();
   const parts = [
-    level === 0 ? `${school} cantrip` : `level ${level} ${school}`.trim(),
-    String(data.casting_time ?? ""),
-    String(data.range ?? ""),
-    flagged(data.concentration) ? "concentration" : "",
-    flagged(data.ritual) ? "ritual" : "",
+    level === 0
+      ? (schoolWord ? translate(locale, "{school} cantrip", { school: schoolWord }) : translate(locale, "cantrip"))
+      : (schoolWord ? translate(locale, "level {level} {school}", { level, school: schoolWord }) : translate(locale, "level {level}", { level })),
+    spellCastingTimeLabel(data.casting_time, locale),
+    spellRangeLabel(data.range, locale),
+    flagged(data.concentration) ? translate(locale, "concentration") : "",
+    flagged(data.ritual) ? translate(locale, "ritual") : "",
   ].filter(Boolean);
   return parts.join(" · ");
 }

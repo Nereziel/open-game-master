@@ -1,4 +1,5 @@
 import { readiedReleaseFor } from "@/lib/dm/readied-release";
+import type { MessageVars } from "@/lib/messages-logic";
 import { noteRun } from "@/lib/dm/mt-fb-charge";
 import { endShadowInvisibility } from "@/lib/dm/one-with-shadows";
 import { cloakIntoLight } from "@/lib/dm/mt-mr-spends";
@@ -177,10 +178,10 @@ export function stillAt(tokens: BattleToken[], mover: BattleToken): string {
 // that walk carries them (SRD 5.1, Controlling a Mount; issue 1036, rulings
 // 2 and 3). Their own turn keeps their action, and getting down. Null for
 // anyone else, and in a scene, which has no turns to move on.
-export function carriedRefusal(campaignId: string, encounter: Pick<Encounter, "kind">, sheet: Pick<CharacterSheet, "id" | "name">): string | null {
+export function carriedRefusal(campaignId: string, encounter: Pick<Encounter, "kind">, sheet: Pick<CharacterSheet, "id" | "name">, t?: (key: string, vars?: MessageVars) => string): string | null {
   const mount = encounter.kind === "scene" ? null : independentMountOf(campaignId, sheet.id);
   return mount
-    ? `${sheet.name} rides ${mount.name}, an independent mount: it moves on its own turn, as the GM plays it, and carries ${sheet.name} with it. On their own turn ${sheet.name} acts, or gets down (dismount), and does not move the pair.`
+    ? t ? t("{name} rides {mount}, an independent mount: it moves on its own turn, as the GM plays it, and carries {name} with it. On their own turn {name} acts, or dismounts, and does not move the pair.", { name: sheet.name, mount: mount.name }) : `${sheet.name} rides ${mount.name}, an independent mount: it moves on its own turn, as the GM plays it, and carries ${sheet.name} with it. On their own turn ${sheet.name} acts, or gets down (dismount), and does not move the pair.`
     : null;
 }
 

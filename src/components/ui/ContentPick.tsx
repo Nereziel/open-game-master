@@ -3,6 +3,8 @@
 import { useEffect, useRef } from "react";
 import { Loader2, Search } from "lucide-react";
 import { InfoButton } from "@/components/ui/InfoDialog";
+import { useT } from "@/lib/locale";
+import { pickerName, pickerMeta } from "@/lib/content/picker-display";
 import { cn } from "@/lib/cn";
 import { describeContentEntry, spellSummary } from "@/lib/help";
 import { useContentSearch, type PickerEntry } from "@/app/characters/builder/useContentSearch";
@@ -38,6 +40,7 @@ export function ContentPick({
   className?: string;
   extraParams?: Record<string, string>;
 }) {
+  const t = useT();
   const { query, setQuery, results, open, setOpen, loading, unavailable, failed } = useContentSearch(
     kind,
     extraParams ?? {},
@@ -77,17 +80,17 @@ export function ContentPick({
       </div>
       {failed ? (
         <p role="alert" className="reveal mt-1 rounded-lg border border-amber-900/50 bg-amber-950/20 px-3 py-1.5 text-[11px] text-amber-200/80">
-          Could not reach the server to search. Type again to retry.
+          {t("Could not reach the server to search. Type again to retry.")}
         </p>
       ) : open && !results.length && query.trim() && !loading ? (
         <p className="reveal mt-1 rounded-lg border border-stone-800 bg-stone-950/60 px-3 py-1.5 text-[11px] text-stone-500">
-          Nothing matched &quot;{query.trim()}&quot;. Try fewer letters.
+          {t('Nothing matched "{query}". Try fewer letters.', { query: query.trim() })}
         </p>
       ) : null}
       {open && results.length ? (
         <ul className="reveal panel panel-smoke mt-1 max-h-56 w-full overflow-y-auto rounded-lg">
           {results.slice(0, 40).map((entry) => (
-            <li key={entry.slug} className="flex items-center gap-1 pr-2 hover:bg-stone-800">
+            <li key={`${entry.source}:${entry.documentSlug ?? ""}:${entry.slug}`} className="flex items-center gap-1 pr-2 hover:bg-stone-800">
               <button
                 type="button"
                 onClick={() => {
@@ -97,15 +100,15 @@ export function ContentPick({
                 }}
                 className="flex grow items-center justify-between gap-2 px-3 py-1.5 text-left text-sm"
               >
-                <span className={cn(entry.source === "homebrew" && "text-amber-300")}>{entry.name}</span>
+                <span className={cn(entry.source === "homebrew" && "text-amber-300")}>{pickerName(kind, entry, t.locale)}</span>
                 <span className="text-[11px] text-stone-500">
-                  {entry.level !== undefined ? `level ${entry.level}` : entry.rarity || entry.kind || ""}
+                  {pickerMeta(entry, t.locale)}
                 </span>
               </button>
               <InfoButton
-                label={entry.name}
-                meta={kind === "spells" ? spellSummary(entry.data) : undefined}
-                text={describeContentEntry(entry.data)}
+                label={pickerName(kind, entry, t.locale)}
+                meta={kind === "spells" ? spellSummary(entry.data, t.locale) : pickerMeta(entry, t.locale) || undefined}
+                text={describeContentEntry(entry.data, undefined, t.locale)}
                 reference={
                   entry.source === "homebrew" ? undefined : { kind, slug: entry.slug, name: entry.name }
                 }

@@ -10,12 +10,14 @@
 //
 // Pure: the sheet dialog asks the same as the server.
 
+import { formatMessage, type MessageVars, type Locale } from "@/lib/messages-logic";
 import { asiOwed } from "@/lib/srd/asi-ledger";
 import { expertiseAllowed, expertiseSlotsFor, subclassLevelFor, THIEVES_TOOLS } from "@/lib/srd/features";
 import { classListFor } from "@/lib/srd/multiclass";
 import { SRD_CLASSES } from "@/lib/srd";
 import type { CharacterSheet } from "@/lib/schemas/sheet";
 import { classWords } from "@/lib/sheet-words";
+import { classDisplayNameFor } from "@/lib/characters/class-words";
 import { owedPickLines, type OwedContext } from "@/lib/srd/owed-picks-logic";
 import { classOptionOf, grantedSkillsOf } from "@/lib/srd/owed-languages";
 
@@ -38,7 +40,7 @@ export function owedChoices(sheet: Owing, context: OwedContext = {}): string[] {
 // where it is made (owedChoicesSentences, joinOwedNote).
 export type OwedChoiceGroups = { levelUp: string[]; onSheet: string[] };
 
-export function owedChoiceGroups(sheet: Owing, context: OwedContext = {}): OwedChoiceGroups {
+export function owedChoiceGroups(sheet: Owing, context: OwedContext = {}, t: (key: string, vars?: MessageVars) => string = formatMessage, locale: Locale = "en"): OwedChoiceGroups {
   const classes = classListFor(sheet);
   const out: string[] = [];
   // The first class's skill picks: as many of its list as it offers (a
@@ -54,12 +56,12 @@ export function owedChoiceGroups(sheet: Owing, context: OwedContext = {}): OwedC
     ).length;
     if (held < first.skillChoices.count) {
       const left = first.skillChoices.count - held;
-      out.push(`${left} ${first.name} skill${left === 1 ? "" : "s"}`);
+      out.push(t(left === 1 ? "{count} {class} skill" : "{count} {class} skills", { count: left, class: locale === "en" ? first.name : classDisplayNameFor(classes[0]?.id ?? sheet.class, locale) }));
     }
   }
   const asi = asiOwed(sheet, classes);
   if (asi > 0) {
-    out.push(`${asi} Ability Score Improvement${asi === 1 ? "" : "s"} (two points, or a feat)`);
+    out.push(t(asi === 1 ? "{count} Ability Score Improvement (two points, or a feat)" : "{count} Ability Score Improvements (two points, or a feat)", { count: asi }));
   }
   const held = sheet.proficiencies.expertise ?? [];
   const slots = classes.reduce((sum, entry) => sum + expertiseSlotsFor(entry.id, entry.level), 0);
@@ -67,16 +69,17 @@ export function owedChoiceGroups(sheet: Owing, context: OwedContext = {}): OwedC
   const open = [...sheet.proficiencies.skills, THIEVES_TOOLS].filter((pick) => expertiseAllowed(pick, sheet.proficiencies.skills, classIds) && !held.includes(pick)).length;
   const expertise = Math.min(Math.max(0, slots - held.length), open);
   if (expertise > 0) {
-    out.push(`expertise in ${expertise} more ${expertise === 1 ? "proficiency" : "proficiencies"}`);
+    out.push(t(expertise === 1 ? "expertise in {count} more proficiency" : "expertise in {count} more proficiencies", { count: expertise }));
   }
   for (const entry of classes) {
     if (subclassOwed(entry, entry.level)) {
       // The class by its words: the sheet dialog and the join confirmation
       // read this line, and printed "a subclass for plague_doctor".
-      out.push(`a subclass for ${classWords(entry.id)} (due at ${classWords(entry.id)} level ${subclassLevelFor(entry.id)})`);
+      const name = locale === "en" ? classWords(entry.id) : classDisplayNameFor(entry.id, locale);
+      out.push(t("a subclass for {class} (due at {class} level {level})", { class: name, level: subclassLevelFor(entry.id) ?? 0 }));
     }
   }
-  return { levelUp: out, onSheet: owedPickLines(sheet, context) };
+  return { levelUp: out, onSheet: owedPickLines(sheet, context, t) };
 }
 
 // Where the sheet's reader makes the class feature's picks: right there
@@ -89,20 +92,19 @@ export type OwedPicksWhere = "here" | "owner" | "level-up";
 // next level-up takes, one for the class feature's picks, saying where those
 // are made. "The next level-up takes them" once closed a list whose picks
 // the sheet itself offered just below.
-export function owedChoicesSentences(groups: OwedChoiceGroups, where: OwedPicksWhere): string[] {
+export function owedChoicesSentences(groups: OwedChoiceGroups, where: OwedPicksWhere, t: (key: string, vars?: MessageVars) => string = formatMessage): string[] {
   const lines: string[] = [];
   if (groups.levelUp.length) {
-    lines.push(`Earned and not yet made: ${groups.levelUp.join("; ")}. The next level-up takes them.`);
+    lines.push(t("Earned and not yet made: {choices}. The next level-up takes them.", { choices: groups.levelUp.join("; ") }));
   }
   if (groups.onSheet.length) {
-    const lead = groups.levelUp.length ? "A class feature's picks, also owed" : "Earned and not yet made";
-    const list = `${lead}: ${groups.onSheet.join("; ")}.`;
+    const list = t(groups.levelUp.length ? "A class feature's picks, also owed: {choices}." : "Earned and not yet made: {choices}.", { choices: groups.onSheet.join("; ") });
     lines.push(
       where === "here"
-        ? `${list} Made below, now, without waiting for a level-up.`
+        ? t("{list} Made below, now, without waiting for a level-up.", { list })
         : where === "owner"
-          ? `${list} Made on the player's own sheet, without waiting for a level-up.`
-          : `${list} Made when a level-up offers the choice.`,
+          ? t("{list} Made on the player's own sheet, without waiting for a level-up.", { list })
+          : t("{list} Made when a level-up offers the choice.", { list }),
     );
   }
   return lines;
@@ -111,27 +113,27 @@ export function owedChoicesSentences(groups: OwedChoiceGroups, where: OwedPicksW
 // The join confirmation's word on the choices the seat leaves open, said
 // where each is made. `onSheet` is the part the character sheet makes (a
 // host older than it sends none, so all are the level-up's, as there).
-export function joinOwedNote(name: string, owed: string[], onSheet: string[] = []): string {
+export function joinOwedNote(name: string, owed: string[], onSheet: string[] = [], t: (key: string, vars?: MessageVars) => string = formatMessage): string {
   const sheetSide = owed.filter((line) => onSheet.includes(line));
   const levelUp = owed.filter((line) => !onSheet.includes(line));
-  const lead = `This level earned them and ${name} has not made them yet.`;
+  const lead = t("This level earned them and {name} has not made them yet.", { name });
   if (!sheetSide.length) {
-    return `${lead} The first level-up at this table offers every one, with the usual pickers, and the character sheet lists them until then.`;
+    return t("{lead} The first level-up at this table offers every one, with the usual pickers, and the character sheet lists them until then.", { lead });
   }
   if (!levelUp.length) {
-    return `${lead} Once seated, they are made on the character sheet under Choices owed, without waiting for a level-up.`;
+    return t("{lead} Once seated, they are made on the character sheet under Choices owed, without waiting for a level-up.", { lead });
   }
-  return `${lead} The first level-up at this table offers ${levelUp.join("; ")}. The rest (${sheetSide.join("; ")}) are made on the character sheet under Choices owed once seated, without waiting for a level-up.`;
+  return t("{lead} The first level-up at this table offers {levelUp}. The rest ({sheetSide}) are made on the character sheet under Choices owed once seated, without waiting for a level-up.", { lead, levelUp: levelUp.join("; "), sheetSide: sheetSide.join("; ") });
 }
 
 // After the confirm sheet's own pickers: what stays for the first level-up,
 // and what the character sheet makes once seated.
-export function joinOwedLeft(owed: string[], onSheet: string[] = []): string[] {
+export function joinOwedLeft(owed: string[], onSheet: string[] = [], t: (key: string, vars?: MessageVars) => string = formatMessage): string[] {
   const levelUp = owed.filter((line) => !onSheet.includes(line));
   const sheetSide = owed.filter((line) => onSheet.includes(line));
   return [
-    ...(levelUp.length ? [`Left for the first level-up: ${levelUp.join("; ")}.`] : []),
-    ...(sheetSide.length ? [`Made on the character sheet once seated: ${sheetSide.join("; ")}.`] : []),
+    ...(levelUp.length ? [t("Left for the first level-up: {choices}.", { choices: levelUp.join("; ") })] : []),
+    ...(sheetSide.length ? [t("Made on the character sheet once seated: {choices}.", { choices: sheetSide.join("; ") })] : []),
   ];
 }
 

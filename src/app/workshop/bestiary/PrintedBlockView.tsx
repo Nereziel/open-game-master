@@ -1,10 +1,14 @@
 "use client";
 
-import { useState } from "react";
+import { useEffect, useState } from "react";
 import { BookOpen, ChevronDown } from "lucide-react";
 import { ui } from "@/lib/ui";
 import { RulebookDialog } from "@/components/rulebook/RulebookDialog";
 import { cn } from "@/lib/cn";
+import { renderRules } from "@/components/ui/InfoDialog";
+import { scopeQuery, useContentCampaign } from "@/lib/content-scope";
+import { samePrintedEntries } from "@/lib/bestiary/printed-block";
+import { parseMonster } from "@/lib/bestiary/statblock";
 import { useT, useTp } from "@/lib/locale";
 import type { PrintedAbility, PrintedBlock } from "@/lib/bestiary/statblock";
 import type { MonsterDraft } from "@/lib/bestiary/monster-draft";
@@ -51,6 +55,37 @@ export function PrintedBlockView({ draft }: { draft: MonsterDraft }) {
   const printed = draft.stats.printed;
   const [open, setOpen] = useState(false);
   const [reading, setReading] = useState(false);
+  const campaignId = useContentCampaign();
+  const source = printed?.source;
+  const slug = source?.slug;
+  const name = source?.name;
+  const documentSlug = source?.documentSlug;
+  const locale = t.locale;
+  const referenceKey = JSON.stringify([slug, name, documentSlug, locale, campaignId]);
+  const [reference, setReference] = useState<{ key: string; block: PrintedBlock; text: string } | null>(null);
+  useEffect(() => {
+    if (!open || locale === "en" || !slug || !name || documentSlug !== "wotc-srd") return;
+    const controller = new AbortController();
+    async function load() {
+      try {
+        const response = await fetch(`/api/content/monsters/${encodeURIComponent(slug!)}${scopeQuery(campaignId)}`, {
+          signal: controller.signal, headers: { "X-Odm-Locale": locale },
+        });
+        if (!response.ok) return;
+        const { entry } = await response.json();
+        if (controller.signal.aborted || entry?.source !== "open5e" || entry.slug !== slug ||
+            entry.name !== name || entry.documentSlug !== documentSlug || typeof entry.data?.localized_desc !== "string") return;
+        const block = parseMonster(entry.data, typeof entry.data.cr === "number" ? entry.data.cr : 0).printed;
+        if (block && !controller.signal.aborted) setReference({ key: referenceKey, block, text: entry.data.localized_desc });
+      } catch {
+        // The stored original remains usable even when the source is unavailable.
+      }
+    }
+    void load();
+    return () => controller.abort();
+  }, [open, slug, name, documentSlug, locale, campaignId, referenceKey]);
+  const translatedReference = printed && reference?.key === referenceKey && samePrintedEntries(printed, reference.block)
+    ? reference.text : null;
   if (!printed) {
     return null;
   }
@@ -90,6 +125,13 @@ export function PrintedBlockView({ draft }: { draft: MonsterDraft }) {
       ) : null}
       {open ? (
         <div className="reveal space-y-3 border-t border-stone-800 px-3 py-2">
+          {translatedReference ? (
+            <details className="rounded-md border border-stone-800 p-2">
+              <summary className="cursor-pointer text-amber-200">{t("Translated published reference")}</summary>
+              <p className="my-2 text-stone-400">{t("Reference text from the source book, not the edited monster's rules.")}</p>
+              <div className="space-y-2 text-stone-300">{renderRules(translatedReference)}</div>
+            </details>
+          ) : null}
           {SECTIONS.filter((section) => entries(section.key).length).map((section) => (
             <section key={section.key} className="space-y-1.5">
               <h4 className="text-[11px] uppercase tracking-wider text-stone-500">{t(section.titleKey)}</h4>

@@ -7,6 +7,7 @@ import { getSheetById, getSheetForUser, patchSheet } from "@/lib/db/sheets";
 import { subclassExtrasForTable } from "@/lib/db/subclass-extras";
 import { insertSheetAudit } from "@/lib/db/sheet-audit";
 import { publishPersisted } from "@/lib/events";
+import { requestT } from "@/lib/request-locale";
 import type { FullPatchSheetInput } from "@/lib/schemas/sheet";
 import {
   casterViewsOf,
@@ -57,6 +58,7 @@ async function changeSpell(
   request: Request,
   { params }: { params: Promise<{ campaignId: string }> },
 ) {
+  const t = requestT(request);
   const { campaignId } = await params;
   const context = await requireMember(campaignId);
   if (isErrorResponse(context)) {
@@ -65,7 +67,7 @@ async function changeSpell(
   const parsed = spellsSchema.safeParse(await request.json().catch(() => ({})));
   if (!parsed.success) {
     return Response.json(
-      { error: parsed.error.issues[0]?.message || "Invalid spell change." },
+      { error: parsed.error.issues[0]?.message || t("Invalid spell change.") },
       { status: 400 },
     );
   }
@@ -77,10 +79,10 @@ async function changeSpell(
       ? named
       : getSheetForUser(campaignId, context.user.id);
   if (!sheet) {
-    return Response.json({ error: "You have no character in this campaign." }, { status: 404 });
+    return Response.json({ error: t("You have no character in this campaign.") }, { status: 404 });
   }
   if (!sheet.spellcasting) {
-    return Response.json({ error: `${sheet.name} does not cast spells.` }, { status: 403 });
+    return Response.json({ error: t("{name} does not cast spells.", { name: sheet.name }) }, { status: 403 });
   }
 
   // The table's workshop subclasses: a homebrew domain's always-prepared
@@ -90,7 +92,7 @@ async function changeSpell(
     ? views.find((entry) => entry.classId.toLowerCase() === classId.toLowerCase())
     : (views.find((entry) => entry.style !== "known") ?? views[0]);
   if (!view) {
-    return Response.json({ error: `${sheet.name} has no such caster class.` }, { status: 400 });
+    return Response.json({ error: t("{name} has no such caster class.", { name: sheet.name }) }, { status: 400 });
   }
 
   // The spell must be on the list this caster prepares from, at a level it
@@ -111,6 +113,7 @@ async function changeSpell(
 
   const authors = spellAuthorsFor(context.campaign);
   const result = changePreparation(view, action, spell, {
+    locale: t.locale,
     // A worn Headband of Intellect's 19 counts (spell-prep.ts countingScores).
     abilities: countingScores(sheet),
     inClassList,
@@ -131,7 +134,7 @@ async function changeSpell(
   };
   const updated = patchSheet(sheet.id, patch);
   if (!updated) {
-    return Response.json({ error: "Character not found." }, { status: 404 });
+    return Response.json({ error: t("Character not found.") }, { status: 404 });
   }
   const entry = insertSheetAudit({
     campaignId,
@@ -140,7 +143,7 @@ async function changeSpell(
     actor: "player",
     kind: "player_adjust",
     delta: { spells: { action, spell } },
-    reason: `${result.note} (${context.user.username})`,
+    reason: `${result.auditNote ?? result.note} (${context.user.username})`,
     seq: allocateSeq(campaignId),
     before: sheet,
     patch: patch as Record<string, unknown>,

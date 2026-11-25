@@ -1779,7 +1779,7 @@
     "app/api/campaigns/[campaignId]/actions/route.ts#str-eq": [
       [
         "key",
-        3,
+        1,
         "the action body's kind, a fixed choice (table talk)"
       ]
     ],
@@ -2024,6 +2024,11 @@
         "key",
         2,
         "Fixed route kind and locale choices for the Czech display adapter and canonical ID fallback."
+      ],
+      [
+        "key",
+        5,
+        "Bundled detail lookup branches by content kind."
       ]
     ],
     "app/api/content/[kind]/[slug]/route.ts#str-key": [
@@ -2045,6 +2050,11 @@
         "key",
         1,
         "UI: ids, fixed choices, DOM and keyboard names, stored values"
+      ],
+      [
+        "key",
+        1,
+        "Check core race list metadata."
       ]
     ],
     "app/api/content/[kind]/route.ts#str-list": [
@@ -2671,6 +2681,11 @@
         "key",
         2,
         "UI: ids, fixed choices, DOM and keyboard names, stored values"
+      ],
+      [
+        "key",
+        1,
+        "Price and purse interpolation field names."
       ]
     ],
     "app/campaigns/[campaignId]/MarketShopEditor.tsx#str-eq": [
@@ -2713,13 +2728,6 @@
         "key",
         1,
         "UI: ids, fixed choices, DOM and keyboard names, stored values"
-      ]
-    ],
-    "app/campaigns/[campaignId]/MonsterFields.tsx#toUpperCase": [
-      [
-        "display",
-        2,
-        "ability abbreviation and creature type shown"
       ]
     ],
     "app/campaigns/[campaignId]/MonsterHand.tsx#str-eq": [
@@ -3451,8 +3459,8 @@
     "app/characters/builder/derivedReasons.ts#str-eq": [
       [
         "key",
-        7,
-        "UI: ids, fixed choices, DOM and keyboard names, stored values"
+        1,
+        "Rolled starting purse discriminator."
       ]
     ],
     "app/characters/builder/door.ts#str-eq": [
@@ -3620,6 +3628,11 @@
         "key",
         2,
         "UI: ids, fixed choices, DOM and keyboard names, stored values"
+      ],
+      [
+        "key",
+        1,
+        "Core document discriminator in the spell picker."
       ]
     ],
     "app/characters/builder/steps/SpellsGearStep.tsx#toLowerCase": [
@@ -3698,6 +3711,11 @@
         "key",
         1,
         "row source kinds"
+      ],
+      [
+        "key",
+        1,
+        "Filter by catalog row provenance."
       ]
     ],
     "app/characters/builder/useContentSearch.ts#str-eq": [
@@ -3719,6 +3737,11 @@
         "key",
         2,
         "UI: ids, fixed choices, DOM and keyboard names, stored values"
+      ],
+      [
+        "key",
+        1,
+        "Group catalog rows by their document identity."
       ]
     ],
     "app/characters/builder/usePickerGroups.ts#str-list": [
@@ -3798,18 +3821,11 @@
         "UI: ids, fixed choices, DOM and keyboard names, stored values"
       ]
     ],
-    "app/create-campaign/titles.ts#str-key": [
-      [
-        "english-source",
-        2,
-        "the campaign title generator's own English words (UI copy, not a reader)"
-      ]
-    ],
     "app/create-campaign/titles.ts#str-list": [
       [
-        "english-source",
-        42,
-        "the campaign title generator's own English words (UI copy, not a reader)"
+        "display",
+        63,
+        "Language-specific word banks for composing campaign titles."
       ]
     ],
     "app/home/ContinueHero.tsx#str-eq": [
@@ -3890,15 +3906,20 @@
     "app/reference/ResultBadges.tsx#str-key": [
       [
         "key",
-        1,
-        "item rarities and kinds (the content pack's and the workshop's fixed vocabulary)"
+        2,
+        "Fixed rarity and item-kind label tables."
       ]
     ],
     "app/reference/ResultBadges.tsx#toLowerCase": [
       [
-        "display",
+        "key",
         4,
-        "badge text"
+        "Rarity, school and creature type codes."
+      ],
+      [
+        "display",
+        2,
+        "Lowercase the translated words on their badges."
       ]
     ],
     "app/reference/page.tsx#str-eq": [
@@ -4100,8 +4121,8 @@
     "app/workshop/bestiary/StatBlockFields.tsx#toUpperCase": [
       [
         "display",
-        2,
-        "capitalised text, ability abbreviations"
+        3,
+        "Capitalize displayed field words and ability labels."
       ]
     ],
     "app/workshop/bestiary/monster-folds.ts#str-list": [
@@ -4233,7 +4254,7 @@
     "app/workshop/homebrew/HazardFields.tsx#toUpperCase": [
       [
         "display",
-        5,
+        4,
         "ability abbreviations shown"
       ]
     ],
@@ -4918,6 +4939,11 @@
         "key",
         4,
         "UI: ids, fixed choices, DOM and keyboard names, stored values"
+      ],
+      [
+        "key",
+        1,
+        "Feature source discriminator for its label."
       ]
     ],
     "components/sheet/SheetParts.tsx#toLowerCase": [
@@ -5004,13 +5030,6 @@
         "UI: ids, fixed choices, DOM and keyboard names, stored values"
       ]
     ],
-    "components/ui/DateTimePicker.tsx#str-list": [
-      [
-        "key",
-        1,
-        "UI: ids, fixed choices, DOM and keyboard names, stored values"
-      ]
-    ],
     "components/ui/GuidedTour.tsx#str-eq": [
       [
         "key",
@@ -5037,6 +5056,11 @@
         "key",
         2,
         "UI: ids, fixed choices, DOM and keyboard names, stored values"
+      ],
+      [
+        "key",
+        1,
+        "Dispatch by the referenced content kind."
       ]
     ],
     "components/ui/InfoDialog.tsx#toUpperCase": [
@@ -5600,13 +5624,6 @@
         "key",
         4,
         "condition labels (engine vocabulary)"
-      ]
-    ],
-    "lib/dm/swallow.ts#toUpperCase": [
-      [
-        "display",
-        1,
-        "a sentence's first letter, shown"
       ]
     ],
     "lib/language/player-text.ts#[a-z]": [
@@ -6350,6 +6367,11 @@
         "key",
         1,
         "condition labels (engine vocabulary)"
+      ],
+      [
+        "key",
+        1,
+        "Canonical ability abbreviations."
       ]
     ],
     "lib/battlemap/condition-notes.ts#toLowerCase": [
@@ -6362,7 +6384,7 @@
     "lib/battlemap/condition-notes.ts#toUpperCase": [
       [
         "display",
-        2,
+        1,
         "ability abbreviations shown (a save and the one it may be swapped for)"
       ]
     ],
@@ -6483,13 +6505,6 @@
         "english-source",
         1,
         "display: an English range shortened to \"ft\"; any other text is shown as written, nothing is inferred"
-      ]
-    ],
-    "lib/battlemap/hand-core.ts#str-eq": [
-      [
-        "english-source",
-        1,
-        "engine's fixed placeholder name \"the enemy\" in can-act turn verdict"
       ]
     ],
     "lib/battlemap/hand-core.ts#str-key": [
@@ -15382,6 +15397,11 @@
         "key",
         1,
         "a content-pack row's flag value (\"yes\")"
+      ],
+      [
+        "english-source",
+        2,
+        "Recognize the printed duration and distance units in help text."
       ]
     ],
     "lib/help/index.ts#str-list": [
@@ -15401,6 +15421,16 @@
         "english-source",
         2,
         "ODM's own feature guidance strings (bundled data)"
+      ],
+      [
+        "english-source",
+        2,
+        "Printed casting time and spell range."
+      ],
+      [
+        "display",
+        1,
+        "Lowercase the translated school within the spell summary."
       ]
     ],
     "lib/help/index.ts#toUpperCase": [
@@ -15415,6 +15445,11 @@
         "key",
         1,
         "feature sources"
+      ],
+      [
+        "english-source",
+        1,
+        "Duration unit captured from the printed casting time."
       ]
     ],
     "lib/help/item-sheet.ts#re-affix": [
@@ -15474,8 +15509,8 @@
     "lib/help/terms.ts#toLowerCase": [
       [
         "key",
-        1,
-        "weapon properties and damage types (engine vocabulary)"
+        2,
+        "Glossary blurb and gettext option keys from fixed vocabulary."
       ]
     ],
     "lib/homebrew/background-data.ts#str-list": [
@@ -15847,6 +15882,11 @@
         "human",
         5,
         "the shared helpers themselves"
+      ],
+      [
+        "human",
+        1,
+        "Literal vocabulary keys preserve punctuation and internal spacing in user input."
       ]
     ],
     "lib/language/text-logic.ts#Intl.Collator": [
@@ -15875,6 +15915,11 @@
         "human",
         1,
         "the shared helpers themselves"
+      ],
+      [
+        "human",
+        1,
+        "Literal vocabulary keys preserve punctuation and internal spacing in user input."
       ]
     ],
     "lib/language/text-logic.ts#toUpperCase": [
@@ -15882,6 +15927,11 @@
         "human",
         1,
         "the shared helpers themselves"
+      ],
+      [
+        "human",
+        1,
+        "Literal vocabulary keys preserve punctuation and internal spacing in user input."
       ]
     ],
     "lib/login-throttle.ts#str-eq": [
@@ -16766,27 +16816,6 @@
         "roll kind ids"
       ]
     ],
-    "lib/rulebook/book.ts#str-eq": [
-      [
-        "key",
-        6,
-        "the request's Accept-Language and X-Odm-Locale headers: BCP 47 language tags and their q weights (protocol), never a record's name"
-      ]
-    ],
-    "lib/rulebook/book.ts#str-startsWith": [
-      [
-        "key",
-        3,
-        "the request's Accept-Language and X-Odm-Locale headers: BCP 47 language tags and their q weights (protocol), never a record's name"
-      ]
-    ],
-    "lib/rulebook/book.ts#toLowerCase": [
-      [
-        "key",
-        1,
-        "the request's Accept-Language and X-Odm-Locale headers: BCP 47 language tags and their q weights (protocol), never a record's name"
-      ]
-    ],
     "lib/rulebook/catalog-rows.ts#RegExp i": [
       [
         "english-source",
@@ -16832,7 +16861,7 @@
     "lib/rulebook/crosswalk.ts#str-key": [
       [
         "key",
-        4,
+        2,
         "page ids and engine field names"
       ]
     ],
@@ -18209,13 +18238,6 @@
         "a language name title-cased"
       ]
     ],
-    "lib/srd/feat-grants.ts#str-eq": [
-      [
-        "english-source",
-        1,
-        "the grant line ODM writes"
-      ]
-    ],
     "lib/srd/feat-spells.ts#[a-z]": [
       [
         "key",
@@ -18920,13 +18942,6 @@
         "key",
         1,
         "skill ids"
-      ]
-    ],
-    "lib/srd/owed-picks-logic.ts#str-replace": [
-      [
-        "key",
-        1,
-        "an option kind id said in words (engine vocabulary)"
       ]
     ],
     "lib/srd/race-id.ts#[a-z]": [
@@ -20612,6 +20627,11 @@
         "key",
         2,
         "import slices, and the fields a campaign keeps as its own"
+      ],
+      [
+        "key",
+        1,
+        "Field names on the imported asset."
       ]
     ],
     "lib/worldforge/outline.ts#str-key": [
@@ -21147,6 +21167,11 @@
         "key",
         1,
         "the workshop class id's own prefix"
+      ],
+      [
+        "key",
+        3,
+        "homebrew class/list id prefixes prevent conflating authored classes with published display names"
       ]
     ],
     "lib/homebrew/species-choice-server.ts#re-word": [
@@ -22888,6 +22913,11 @@
         "english-source",
         12,
         "a block's resistance line (pack rows; the workshop writes it from its toggles)"
+      ],
+      [
+        "display",
+        2,
+        "Word boundaries on a dice expression when formatting its localized label."
       ]
     ],
     "lib/dm/enemy-attack.ts#\\b": [
@@ -24377,18 +24407,11 @@
         "creature types (engine vocabulary)"
       ]
     ],
-    "lib/starter/pregens.ts#str-key": [
-      [
-        "key",
-        1,
-        "starter pregen key lookup"
-      ]
-    ],
     "lib/content/names.ts#toLowerCase": [
       [
         "key",
-        4,
-        "official SRD table key normalizers (slugKey, canonicalKey, classId) for FR_NAMES_BY_TABLE lookup"
+        5,
+        "Normalize official table, class and weapon lookup keys."
       ]
     ],
     "lib/content/names.ts#[a-z]": [
@@ -24396,13 +24419,6 @@
         "key",
         2,
         "slug normalizers stripping non-alphanumeric ASCII characters (slugKey, gearKey)"
-      ]
-    ],
-    "lib/srd/item-names-fr.ts#str-key": [
-      [
-        "key",
-        1,
-        "French SRD item names by textKey to their English row (ITEM_EN_BY_FR, generated by scripts/build-names-fr.mjs)"
       ]
     ],
     "lib/srd/class-resources-fr-data.ts#str-key": [
@@ -24739,20 +24755,6 @@
         "locale tag normalization"
       ]
     ],
-    "lib/i18n/locale.ts#str-eq": [
-      [
-        "key",
-        8,
-        "locale code comparisons, and the server's language code (global config serverLanguage)"
-      ]
-    ],
-    "lib/i18n/locale.ts#str-startsWith": [
-      [
-        "key",
-        3,
-        "locale tag prefix checks"
-      ]
-    ],
     "lib/i18n/translate.ts#[a-z]": [
       [
         "key",
@@ -24765,27 +24767,6 @@
         "key",
         1,
         "locale code comparison"
-      ]
-    ],
-    "app/campaigns/[campaignId]/MonsterFields.tsx#[a-z]": [
-      [
-        "display",
-        1,
-        "capitalize each word for display"
-      ]
-    ],
-    "app/campaigns/[campaignId]/MonsterKitFields.tsx#[a-z]": [
-      [
-        "display",
-        1,
-        "capitalize each word for display"
-      ]
-    ],
-    "app/campaigns/[campaignId]/MonsterKitFields.tsx#toUpperCase": [
-      [
-        "display",
-        1,
-        "capitalize each word for display"
       ]
     ],
     "app/characters/builder/CardText.tsx#toUpperCase": [
@@ -24809,20 +24790,6 @@
         "capitalizing the first letter of a generated campaign title"
       ]
     ],
-    "app/workshop/homebrew/SpeciesChoiceFields.tsx#toUpperCase": [
-      [
-        "display",
-        1,
-        "capitalizing the first letter of a species choice label"
-      ]
-    ],
-    "app/workshop/homebrew/SubclassChoiceFields.tsx#toUpperCase": [
-      [
-        "display",
-        1,
-        "capitalizing the first letter of a damage type label"
-      ]
-    ],
     "lib/locale.tsx#toLowerCase": [
       [
         "key",
@@ -24837,13 +24804,6 @@
         "message template placeholder pattern"
       ]
     ],
-    "lib/locale.tsx#str-eq": [
-      [
-        "key",
-        6,
-        "locale code comparisons"
-      ]
-    ],
     "lib/srd/index.ts#str-list": [
       [
         "english-source",
@@ -24856,20 +24816,6 @@
         "english-source",
         1,
         "SRD ability gain text pattern"
-      ]
-    ],
-    "lib/request-locale.ts#str-eq": [
-      [
-        "key",
-        3,
-        "request locale code comparisons"
-      ]
-    ],
-    "app/api/campaigns/[campaignId]/actions/route.ts#str-startsWith": [
-      [
-        "key",
-        1,
-        "action route prefix check"
       ]
     ],
     "app/campaigns/[campaignId]/AfterRollCard.tsx#str-case": [
@@ -24926,20 +24872,6 @@
         "english-source",
         1,
         "calling setup text pattern"
-      ]
-    ],
-    "lib/gender.ts#str-key": [
-      [
-        "key",
-        1,
-        "gender key lookup table"
-      ]
-    ],
-    "lib/dm/damage-logic.ts#str-key": [
-      [
-        "key",
-        1,
-        "damage type key lookup table"
       ]
     ],
     "lib/srd/index.ts#str-key": [
@@ -25012,13 +24944,6 @@
         "DM odds panel key lookup"
       ]
     ],
-    "components/AttractionPicker.tsx#str-key": [
-      [
-        "key",
-        1,
-        "attraction picker key lookup"
-      ]
-    ],
     "app/workshop/cast/NpcEditorFields.tsx#str-key": [
       [
         "key",
@@ -25038,27 +24963,6 @@
         "key",
         2,
         "rulebook contents key lookups"
-      ]
-    ],
-    "app/workshop/bestiary/monster-folds.ts#str-key": [
-      [
-        "key",
-        1,
-        "monster folds key lookup"
-      ]
-    ],
-    "app/campaigns/[campaignId]/MonsterKitFields.tsx#str-key": [
-      [
-        "key",
-        2,
-        "monster kit fields key lookups"
-      ]
-    ],
-    "app/campaigns/[campaignId]/MonsterFields.tsx#str-key": [
-      [
-        "key",
-        2,
-        "monster fields key lookups"
       ]
     ],
     "app/characters/builder/AbilityText.tsx#str-key": [
@@ -25103,13 +25007,6 @@
         "hero tips key lookup"
       ]
     ],
-    "app/workshop/homebrew/ItemEffectFields.tsx#str-key": [
-      [
-        "key",
-        1,
-        "item effect fields key lookup"
-      ]
-    ],
     "components/DeviceSettings.tsx#str-key": [
       [
         "key",
@@ -25119,16 +25016,21 @@
     ],
     "lib/content/names.ts#\\b": [
       [
-        "key",
-        24,
-        "plural/suffix normalization for English SRD name lookup in names.ts"
+        "english-source",
+        10,
+        "Boundaries in the printed English trait and weapon vocabulary for display."
       ]
     ],
     "lib/content/names.ts#re-word": [
       [
         "key",
-        11,
-        "plural/suffix normalization for English SRD name lookup in names.ts"
+        3,
+        "Strip SRD slug namespaces."
+      ],
+      [
+        "english-source",
+        4,
+        "English trait or weapon phrases in printed catalog labels."
       ]
     ],
     "lib/content/names.ts#re-affix": [
@@ -25248,13 +25150,6 @@
         "key",
         1,
         "placeholder variable interpolation in passthrough fallback in embedding-language-text.ts"
-      ]
-    ],
-    "app/characters/builder/derivedReasons.ts#str-key": [
-      [
-        "key",
-        1,
-        "display-only ability abbreviation lookup in localizeAcPart in derivedReasons.ts"
       ]
     ],
     "components/sheet/paperdoll-logic.ts#\\w": [
@@ -25831,25 +25726,11 @@
         "Static bundled Czech SRD translation dictionary keyed by canonical page ID or original title."
       ]
     ],
-    "lib/content/entry-descriptions-cs.ts#str-eq": [
-      [
-        "key",
-        2,
-        "Check the published SRD source and document identifiers; never infer source from prose."
-      ]
-    ],
-    "lib/content/entry-descriptions-cs.ts#str-key": [
-      [
-        "key",
-        1,
-        "Map fixed API content table keys to canonical rulebook kinds."
-      ]
-    ],
     "lib/content/entry-descriptions-cs.test.ts#str-eq": [
       [
         "key",
-        1,
-        "Select the exact canonical fireball rulebook ID in the regression fixture."
+        6,
+        "Select exact bundled race, background and rulebook fixture IDs."
       ]
     ],
     "lib/content/czech-names.test.ts#str-eq": [
@@ -25857,6 +25738,383 @@
         "english-source",
         2,
         "Explicit bundled alchemist ID and source feature spelling for the same-spelling Czech Alkahest regression."
+      ]
+    ],
+    "lib/srd/currency.ts#\\b": [
+      [
+        "key",
+        2,
+        "boundaries around fixed canonical denomination codes for display conversion; not natural-language coin names"
+      ]
+    ],
+    "lib/srd/currency.ts#re-affix": [
+      [
+        "key",
+        1,
+        "canonical coin-code display pattern; denomination values stay unchanged"
+      ]
+    ],
+    "lib/content/expansion-identity.ts#str-eq": [
+      [
+        "key",
+        2,
+        "fixed content-table kind aliases races/species and archetypes/subclasses for exact source identity"
+      ]
+    ],
+    "lib/bestiary/printed-block.ts#str-list": [
+      [
+        "key",
+        1,
+        "fixed printed-block section field names for exact snapshot comparison"
+      ]
+    ],
+    "lib/workshop/import-display.ts#\\w": [
+      [
+        "key",
+        1,
+        "ASCII gettext-style placeholder identifiers in generated English import notes, not human names"
+      ]
+    ],
+    "lib/workshop/import-display.ts#str-eq": [
+      [
+        "key",
+        1,
+        "fixed locale code chooses the existing English import message"
+      ]
+    ],
+    "lib/i18n/game-term-labels.ts#toUpperCase": [
+      [
+        "display",
+        1,
+        "capitalize presentation label without changing canonical creature type or dragon color"
+      ]
+    ],
+    "lib/i18n/game-term-labels.ts#str-key": [
+      [
+        "key",
+        3,
+        "fixed locale dictionaries for spell school, size, creature type, movement, sense and dragon color"
+      ]
+    ],
+    "lib/content/entry-descriptions-cs.test.ts#toLowerCase": [
+      [
+        "key",
+        3,
+        "Normalize fixed fixture names for the expected catalog keys."
+      ]
+    ],
+    "lib/content/entry-descriptions-cs.test.ts#[a-z]": [
+      [
+        "key",
+        1,
+        "Construct the expected slug from a published subclass name in the fixture."
+      ]
+    ],
+    "lib/content/entry-descriptions-cs.test.ts#str-list": [
+      [
+        "key",
+        21,
+        "Locale, kind, field and expected translated archetype fixtures."
+      ]
+    ],
+    "lib/content/entry-descriptions.ts#toLowerCase": [
+      [
+        "key",
+        2,
+        "Normalize class ID and derive a published subclass slug."
+      ],
+      [
+        "english-source",
+        2,
+        "Compare the printed English race title to its source."
+      ]
+    ],
+    "lib/content/entry-descriptions.ts#[a-z]": [
+      [
+        "key",
+        1,
+        "Reproduce the bundled subclass slug format from its canonical English name."
+      ]
+    ],
+    "lib/content/entry-descriptions.ts#str-list": [
+      [
+        "key",
+        2,
+        "Published sources and description field names."
+      ],
+      [
+        "english-source",
+        1,
+        "Exact SRD race spellings whose book section can be used."
+      ]
+    ],
+    "lib/content/entry-descriptions.ts#str-eq": [
+      [
+        "key",
+        10,
+        "Dispatch on content kinds, source IDs and document slugs."
+      ]
+    ],
+    "lib/content/entry-descriptions.ts#str-key": [
+      [
+        "key",
+        2,
+        "SRD race title aliases and content kind to rulebook kind."
+      ]
+    ],
+    "lib/content/names.ts#str-list": [
+      [
+        "key",
+        3,
+        "Allowlisted published document and source IDs."
+      ]
+    ],
+    "lib/content/names.ts#str-eq": [
+      [
+        "key",
+        3,
+        "Content kind aliases and table identifiers."
+      ]
+    ],
+    "lib/help/index.ts#str-key": [
+      [
+        "english-source",
+        1,
+        "Printed spell range words used by the display formatter."
+      ]
+    ],
+    "lib/roll-labels.ts#\\b": [
+      [
+        "display",
+        4,
+        "Boundaries for feet and dice in the stored roll detail."
+      ]
+    ],
+    "lib/roll-labels.ts#re-affix": [
+      [
+        "display",
+        1,
+        "Localize the unit ft in the displayed roll detail."
+      ]
+    ],
+    "lib/help/item-sheet.ts#str-list": [
+      [
+        "key",
+        1,
+        "Published source identifiers on item-card results."
+      ]
+    ],
+    "lib/content/item-display.ts#str-eq": [
+      [
+        "key",
+        1,
+        "Keep homebrew source labels verbatim."
+      ]
+    ],
+    "lib/content/picker-display.ts#str-eq": [
+      [
+        "key",
+        3,
+        "Picker row kinds for archetypes, hazards and races."
+      ]
+    ],
+    "app/workshop/bestiary/PrintedBlockView.tsx#str-eq": [
+      [
+        "key",
+        1,
+        "Check the SRD document identifier before displaying a label."
+      ]
+    ],
+    "lib/characters/event-display.ts#str-eq": [
+      [
+        "key",
+        4,
+        "Stored event kinds."
+      ],
+      [
+        "english-source",
+        1,
+        "Buy versus sell verb in the recorded engine template."
+      ]
+    ],
+    "lib/characters/event-display.ts#re-word": [
+      [
+        "english-source",
+        14,
+        "Exact historical engine event formats, for translated display only."
+      ]
+    ],
+    "lib/worldforge/display.ts#re-affix": [
+      [
+        "english-source",
+        1,
+        "Printed CR detail from a bound monster."
+      ]
+    ],
+    "lib/worldforge/display.ts#str-eq": [
+      [
+        "english-source",
+        2,
+        "Stock detail strings supplied by the binding reader."
+      ]
+    ],
+    "app/characters/builder/derivedReasons.ts#str-list": [
+      [
+        "key",
+        1,
+        "Engine ability abbreviations."
+      ]
+    ],
+    "lib/content/czech-names.test.ts#str-list": [
+      [
+        "key",
+        15,
+        "Published slug and expected EN/CS name fixtures."
+      ]
+    ],
+    "lib/i18n/czech-locale.test.ts#str-list": [
+      [
+        "key",
+        4,
+        "Test tables of language tags and locale IDs."
+      ]
+    ],
+    "lib/i18n/localized-tables.test.ts#str-list": [
+      [
+        "key",
+        15,
+        "Test data for locales, fixed choices and expected translated labels."
+      ]
+    ],
+    "lib/srd/item-names-localized.ts#str-key": [
+      [
+        "key",
+        1,
+        "Generated exact reverse index from localized SRD item names to canonical English rows."
+      ]
+    ],
+    "lib/content/option-labels.test.ts#\\w": [
+      [
+        "key",
+        1,
+        "Assert that no ASCII gettext variable placeholder remains in the rendered prerequisite fixture."
+      ]
+    ],
+    "lib/content/option-labels.test.ts#str-list": [
+      [
+        "key",
+        10,
+        "Fixed locale lists and exact localized option labels in regression fixtures."
+      ]
+    ],
+    "lib/content/option-labels.test.ts#str-eq": [
+      [
+        "english-source",
+        1,
+        "Select the published Agonizing Blast invocation fixture by its exact source name."
+      ]
+    ],
+    "lib/srd/tool-choices.ts#str-split": [
+      [
+        "english-source",
+        1,
+        "canonical English alternative delimiter in tool label presentation"
+      ]
+    ],
+    "lib/srd/spell-prep.ts#str-startsWith": [
+      [
+        "key",
+        1,
+        "homebrew class id prefix"
+      ]
+    ],
+    "lib/dm/player-refusals.ts#str-startsWith": [
+      [
+        "english-source",
+        1,
+        "canonical canAct turn-refusal sentence prefix, reader-only"
+      ]
+    ],
+    "lib/dm/player-refusals.ts#str-eq": [
+      [
+        "english-source",
+        3,
+        "fixed engine placeholders for enemy, someone else and reaction; display only"
+      ]
+    ],
+    "lib/dm/gear-hands.ts#re-word": [
+      [
+        "english-source",
+        1,
+        "match canonical storyteller hands-full wording for the reader; no player prose parsed"
+      ]
+    ],
+    "lib/dm/gear-hands.ts#str-eq": [
+      [
+        "english-source",
+        1,
+        "captured engine verb distinguishes draw from shield donning"
+      ]
+    ],
+    "lib/dm/cast-refusal-display.ts#\\w": [
+      [
+        "key",
+        2,
+        "gettext placeholder field names and canonical SRD class-id token in a known focus refusal"
+      ]
+    ],
+    "lib/dm/cast-refusal-display.ts#re-word": [
+      [
+        "english-source",
+        5,
+        "fixed canonical spell refusal fragments: available slots, number of uses and attacks, focus requirement"
+      ]
+    ],
+    "lib/dm/cast-refusal-display.ts#str-eq": [
+      [
+        "key",
+        8,
+        "named placeholder fields controlling display formatting"
+      ],
+      [
+        "english-source",
+        3,
+        "canonical fallback labels none, no spells, their armor"
+      ]
+    ],
+    "lib/dm/cast-refusal-display.ts#str-split": [
+      [
+        "english-source",
+        1,
+        "canonical focus alternative delimiter"
+      ]
+    ],
+    "lib/dm/cast-refusal-display.ts#str-list": [
+      [
+        "key",
+        1,
+        "placeholder field names for formatting"
+      ]
+    ],
+    "lib/dice/error-display.ts#re-word": [
+      [
+        "english-source",
+        1,
+        "canonical numeric die validation diagnostic"
+      ]
+    ],
+    "lib/srd/level-up-spells.ts#str-startsWith": [
+      [
+        "key",
+        2,
+        "Homebrew class/list id prefixes preserve custom names in display."
+      ]
+    ],
+    "lib/srd/sheet-legality.ts#str-key": [
+      [
+        "key",
+        1,
+        "Six canonical ability ids mapped to gettext ability labels for reader presentation."
       ]
     ]
   }

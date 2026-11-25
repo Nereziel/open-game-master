@@ -4,6 +4,7 @@
 // same rules end to end by scripts/test-enforce-casting*.mjs.
 import assert from "node:assert/strict";
 import { register } from "node:module";
+import { readFileSync } from "node:fs";
 
 register("./lib/register-alias.mjs", import.meta.url);
 
@@ -432,6 +433,47 @@ test("War Caster frees the gestures with both hands full, never the material", (
   const full = { equipment: [{ name: "Longsword", qty: 1, equipped: true }, { name: "Shield", qty: 1, equipped: true }], feats: ["War Caster"] };
   assert.equal(componentProblem(caster(full), facts("Shocking Grasp") ?? facts("Magic Missile")), null);
   assert.match(componentProblem(caster(full), facts("Fireball"))?.error, /War Caster frees the gestures, not the material/);
+});
+
+const { castRefusalDisplay } = await import("../src/lib/dm/cast-refusal-display.ts");
+const { installCatalog, translate } = await import("../src/lib/i18n/translate.ts");
+for (const locale of ["cs", "fr"]) {
+  installCatalog(locale, JSON.parse(readFileSync(new URL(`../src/lib/i18n/${locale}.json`, import.meta.url), "utf8")));
+}
+test("casting refusals use the reader's locale and preserve the rules and identities", () => {
+  const iris = caster({ name: "Iris (A+B)", conditions: ["raging"] });
+  const before = structuredClone(iris);
+  const cases = [
+    casterStateProblem(iris),
+    componentProblem(caster({ name: iris.name, conditions: ["silenced"] }), facts("Magic Missile")),
+    focusProblem(caster({ name: iris.name }), facts("Fireball")),
+    spellHeldProblem(iris, "Fly", facts("Fly")),
+    spellHeldProblem(iris, "Detect Magic", facts("Detect Magic")),
+    spellHeldProblem(iris, "Counterspell", facts("Counterspell")),
+    slotPlan(iris, "Fireball", facts("Fireball"), 1),
+    slotPlan(caster({ name: iris.name, spellcasting: { slots: { 3: { max: 1, used: 1 } } } }), "Fireball", facts("Fireball"), 3),
+    ritualProblem(iris, "Fireball", facts("Fireball")),
+  ];
+  for (const refusal of cases) {
+    assert.equal(typeof refusal?.error, "string");
+    const canonical = structuredClone(refusal);
+    for (const locale of ["en", "cs", "fr"]) {
+      const t = (key, vars) => translate(locale, key, vars);
+      const display = castRefusalDisplay(refusal.error, t, iris.name);
+      assert.equal(display === refusal.error, locale === "en", refusal.error);
+      assert.doesNotMatch(display, /\{\w+\}/);
+      if (refusal.error.includes(iris.name)) assert.ok(display.includes(iris.name));
+      assert.equal(castRefusalDisplay("Unrecognized refusal.", t, iris.name), "Unrecognized refusal.");
+      assert.deepEqual(refusal, canonical);
+    }
+  }
+  assert.deepEqual(iris, before);
+  const t = (key, vars) => translate("cs", key, vars);
+  const raw = casterStateProblem(iris).error;
+  assert.equal(castRefusalDisplay(raw, t, "Another actor"), raw);
+  const custom = 'Iris (A+B) cannot cast "Custom [A+B]": it is not among the spells they know or have prepared (none).';
+  assert.match(castRefusalDisplay(custom, t, iris.name), /Custom \[A\+B\]/);
+  assert.equal(castRefusalDisplay(custom + " Unrecognized tail.", t, iris.name), custom + " Unrecognized tail.");
 });
 
 console.log(`test-cast-rules: ${passed} passed`);

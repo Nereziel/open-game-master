@@ -94,7 +94,7 @@ export function EncounterForm({
           label={t("Kind of ground")}
           value={value.scene}
           onChange={(scene) => set({ scene })}
-          options={[{ value: "", label: t("Where the party is") }, ...sceneOptions()]}
+          options={[{ value: "", label: t("Where the party is") }, ...sceneOptions(t)]}
         />
       </Field>
       <div data-tour="encounters-map">

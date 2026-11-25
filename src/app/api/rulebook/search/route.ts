@@ -1,5 +1,7 @@
 import { currentUser, unauthorized } from "@/lib/auth";
-import { BOOK_LOCALE_VARY, bookLocaleOf, rulebookSearchAsync } from "@/lib/rulebook/book";
+import { bookLocaleOf } from "@/lib/request-locale";
+import { parseLocale } from "@/lib/i18n/locale";
+import { BOOK_LOCALE_VARY, rulebookSearchAsync } from "@/lib/rulebook/book";
 
 export const runtime = "nodejs";
 export const dynamic = "force-dynamic";
@@ -17,6 +19,6 @@ export async function GET(request: Request) {
   }
   const q = (new URL(request.url).searchParams.get("q") ?? "").slice(0, QUERY_MAX);
   return Response.json(await rulebookSearchAsync(q, undefined, bookLocaleOf(request)), {
-    headers: { Vary: BOOK_LOCALE_VARY },
+    headers: { "Cache-Control": parseLocale(request.headers.get("x-odm-locale")) ? "private, max-age=300" : "private, no-cache", Vary: BOOK_LOCALE_VARY },
   });
 }

@@ -4,7 +4,7 @@ import { GameTerm } from "@/components/ui/GameTerm";
 import { InfoButton } from "@/components/ui/InfoDialog";
 import { cn } from "@/lib/cn";
 import { describeSkill } from "@/lib/help";
-import { SRD_SKILLS } from "@/lib/srd";
+import { SRD_SKILLS, skillLabel } from "@/lib/srd";
 import { expertiseAllowed, expertiseSlotsFor, THIEVES_TOOLS } from "@/lib/srd/features";
 import type { ClassOption } from "../useBuilderOptions";
 import type { BuilderActions, BuilderDerived } from "../useBuilderDerived";
@@ -13,6 +13,7 @@ import { PickPill, StepPanel } from "./shared";
 import { textKey } from "@/lib/language/text-logic";
 import { splitToolGrants, toolLabel } from "@/lib/srd/tool-choices";
 import { contentName } from "@/lib/content/names";
+import { fightingStyleDisplayName, optionDisplayName } from "@/lib/content/option-labels";
 import { optionFeatureName, optionKindRule, optionPicksSpells } from "@/lib/srd/options";
 import { contentSlug } from "@/lib/help";
 import { useLocale, useT, useTp } from "@/lib/locale";
@@ -95,7 +96,7 @@ export function ClassChoices({
               return (
                 <PickPill
                   key={skillId}
-                  label={skill?.name ?? (skillId === THIEVES_TOOLS ? t("Thieves' tools") : skillId)}
+                  label={skillId === THIEVES_TOOLS ? t("Thieves' tools") : skillLabel(skillId, locale)}
                   selected={selected}
                   info={{ text: skill ? describeSkill(t, skillId, locale) : t("Your proficiency bonus is doubled for ability checks you make with thieves' tools.") }}
                   onClick={() =>
@@ -111,7 +112,7 @@ export function ClassChoices({
                     })
                   }
                 >
-                  {skill?.name ?? skillId}
+                  {skillId === THIEVES_TOOLS ? t("Thieves' tools") : skillLabel(skillId, locale)}
                 </PickPill>
               );
             })}
@@ -150,8 +151,8 @@ export function ClassChoices({
                   }
                   className={optionCard(selected)}
                 >
-                  <span className="block text-xs">{style.name}</span>
-                  <span className="block text-sm text-stone-500">{style.description}</span>
+                  <span className="block text-xs">{fightingStyleDisplayName(style, locale)}</span>
+                  <span className="block text-sm text-stone-500">{t(style.description)}</span>
                 </button>
               );
             })}
@@ -169,7 +170,7 @@ export function ClassChoices({
         <StepPanel
           key={slot.kind}
           anchor="options"
-          title={t("{label} (pick {total})", { label: slot.label, total: slot.total })}
+          title={t("{label} (pick {total})", { label: t(slot.label), total: slot.total })}
           help={
             <>
               {slot.remaining > 0 ? (
@@ -183,9 +184,9 @@ export function ClassChoices({
                   .{" "}
                 </span>
               ) : null}
-              {rule ? `${rule} ` : null}
+              {rule ? `${t(rule)} ` : null}
               {spells
-                ? "Tap the info button on any one to read the spell."
+                ? t("Tap the info button on any one to read the spell.")
                 : t(" These are real abilities your character gets. Tap the info button on any one to read what it does.")}
             </>
           }
@@ -199,6 +200,8 @@ export function ClassChoices({
               // closed, as the level-up shows it. One already chosen can
               // still be let go.
               const notYet = selected ? undefined : derived.optionUnmet?.[optionFeatureName(slot.kind, option.n)];
+              // These spell lists come from the bundled class checklist, not a workshop name.
+              const label = optionDisplayName(option, locale);
               return (
                 <div key={option.n} className={cn(optionCard(selected), "flex items-start gap-1", splitCard, notYet && "opacity-60")}>
                   <button
@@ -210,21 +213,21 @@ export function ClassChoices({
                     // spell's name (a Legerdemain cantrip).
                     className="min-h-10 grow text-left disabled:cursor-not-allowed"
                   >
-                    <span className="block text-xs">{option.n}</span>
+                    <span className="block text-xs">{label}</span>
                     {notYet || option.req || !spells ? (
                       <span className="block text-sm text-stone-500">
-                        {notYet ? `Not yet: ${notYet} ` : option.req ? t("Requires {req}. ", { req: option.req }) : ""}
-                        {spells ? "" : option.d}
+                        {notYet ? t("Not yet: {reason} ", { reason: notYet }) : option.req ? t("Requires {req}. ", { req: t(option.req) }) : ""}
+                        {spells ? "" : t(option.d)}
                       </span>
                     ) : null}
                   </button>
                   {spells ? (
-                    <InfoButton label={option.n} note={option.d} reference={{ kind: "spells", slug: contentSlug(option.n), name: option.n }} />
+                    <InfoButton label={label} note={t(option.d)} reference={{ kind: "spells", slug: contentSlug(option.n), name: option.n }} />
                   ) : (
                     <InfoButton
-                      label={option.n}
-                      meta={option.req ? t("Requires {req}", { req: option.req }) : undefined}
-                      text={option.d}
+                      label={label}
+                      meta={option.req ? t("Requires {req}", { req: t(option.req) }) : undefined}
+                      text={t(option.d)}
                     />
                   )}
                 </div>
@@ -242,11 +245,11 @@ export function ClassChoices({
         <StepPanel
           key={`${slot.classId}|${slot.label}`}
           anchor="options"
-          title={`${slot.label} (pick 1)`}
+          title={t("{label} (pick {total})", { label: slot.label, total: 1 })}
           help={
             <>
               {slot.chosen ? null : <span className="text-amber-300">{t("1 still to choose. ")}</span>}
-              {slot.subclass} asks for this. Each option gives your character what its card says.
+              {t("{subclass} asks for this. Each option gives your character what its card says.", { subclass: slot.subclass })}
             </>
           }
         >

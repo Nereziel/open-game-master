@@ -6,6 +6,7 @@
 // what it left out.
 // See docs/workshop-plan.md phase 6.
 import assert from "node:assert/strict";
+import fs from "node:fs";
 import { register } from "node:module";
 
 register("./lib/register-alias.mjs", import.meta.url);
@@ -16,6 +17,9 @@ const { PARTY_BASELINE, baselineFor, workbench } = await import(
 const { evaluateEncounter, thresholdsForParty, xpForCr } = await import(
   "../src/lib/srd/encounter-math.ts"
 );
+
+const { tableTranslator } = await import("../src/lib/messages-logic.ts");
+const { installCatalog } = await import("../src/lib/i18n/translate.ts");
 
 let passed = 0;
 function test(name, fn) {
@@ -244,6 +248,27 @@ test("a one-round fight is called out as not being a fight", () => {
     roster: [{ name: "Rat", count: 1, stats: monster({ maxHp: 4, ac: 10, cr: 0 }) }],
   });
   assert.ok(readout.attrition.warnings.some((warning) => /not a fight/.test(warning)));
+});
+
+test("table language changes readout words, never encounter maths", () => {
+  const input = { partyLevels: party, roster: goblins };
+  const original = structuredClone(input);
+  const en = workbench(input);
+  const mechanics = (result) => {
+    const { parts: _budgetWords, ...budget } = result.budget;
+    const { parts: _partyWords, ...party } = result.attrition.party;
+    const { parts: _monsterWords, ...monsters } = result.attrition.monsters;
+    return { budget, party, monsters };
+  };
+  for (const [language, locale, rawXp] of [["french", "fr", "PX bruts"], ["czech", "cs", "Základní ZK"]]) {
+    installCatalog(locale, JSON.parse(fs.readFileSync(new URL(`../src/lib/i18n/${locale}.json`, import.meta.url), "utf8")));
+    const localized = workbench(input, tableTranslator(language));
+    assert.deepEqual(mechanics(localized), mechanics(en));
+    assert.equal(localized.budget.parts[0].label, rawXp);
+    assert.notEqual(localized.attrition.outcome, en.attrition.outcome);
+  }
+  assert.deepEqual(workbench(input, tableTranslator("italian")), en);
+  assert.deepEqual(input, original);
 });
 
 console.log(`encounter workbench: ${passed} assertions passed.`);

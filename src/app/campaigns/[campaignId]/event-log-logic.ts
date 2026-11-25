@@ -3,8 +3,12 @@ import type { CharacterEvent } from "@/lib/db/character-events";
 import type { ClockTurn } from "@/lib/db/clock-moves";
 import type { TurnChangeView } from "@/lib/db/turn-changes";
 import { quietTick } from "@/lib/sheet-audit-logic";
-import { translate } from "@/lib/messages-logic";
-import { COPPER_PER_GOLD, formatPrice } from "@/lib/srd/currency";
+import { translate, type Locale } from "@/lib/messages-logic";
+import { damageTypeWord } from "@/lib/dm/damage-logic";
+import { contentName } from "@/lib/content/names";
+import { itemDisplayName } from "@/lib/content/item-display";
+import { resourceDisplayName } from "@/lib/srd/class-resources-fr";
+import { COPPER_PER_GOLD, formatPrice, localizeCoins } from "@/lib/srd/currency";
 import { pluralOf } from "@/lib/messages-logic";
 
 // What the event log lists and which turns it offers to revert. Pure, so a
@@ -125,7 +129,7 @@ export function revertableTurns(auditLog: AuditEntry[], clockTurns: ClockTurn[] 
 type Delta = Record<string, unknown>;
 
 // The translator a caller binds to its own locale (useT in a component).
-type Say = (key: string, vars?: Record<string, string | number>) => string;
+type Say = ((key: string, vars?: Record<string, string | number>) => string) & { locale?: Locale };
 
 // English, for the callers that carry no translator (the test suite, an old
 // reader): the same words the dictionaries hold.
@@ -193,7 +197,11 @@ export function describeKnownEntry(
 function knownEntryText(t: Say, entry: { kind: string; delta: Delta }, name: string): string | null {
   const tp = pluralOf(t);
   const delta = entry.delta ?? {};
-  const item = word(delta.name) ?? word(delta.item) ?? t("an item");
+  const locale = t.locale ?? "en";
+  const itemWord = (name: string) => itemDisplayName({ name, srdName: word(delta.srdName) ?? undefined, slug: word(delta.slug) ?? undefined }, locale, false);
+  const conditionWord = (name: string) => contentName("conditions", name, locale);
+  const priceWord = (cp: number) => localizeCoins(formatPrice(cp), locale);
+  const item = itemWord(word(delta.name) ?? word(delta.item) ?? t("an item"));
   const qty = amount(delta.qty);
   switch (entry.kind) {
     case "apply_damage": {
@@ -216,10 +224,11 @@ function knownEntryText(t: Say, entry: { kind: string; delta: Delta }, name: str
       if (delta.relentlessRage) return t("{name} holds on at 1 HP (Relentless Rage)", { name });
       if (delta.deathWard) return t("{name} holds on at 1 HP (Death Ward)", { name });
       const type = word(delta.type);
+      const typeLabel = type ? damageTypeWord(type, locale) : null;
       const hp = amount(delta.currentHp);
       const dmg = amount(delta.amount);
       const line = dmg !== null ? t("{name} takes {amount} damage", { name, amount: dmg }) : t("{name} takes some damage", { name });
-      return `${line}${type ? t(" ({type})", { type }) : ""}${hp !== null ? t(" ({hp} HP)", { hp }) : ""}`;
+      return `${line}${typeLabel ? t(" ({type})", { type: typeLabel }) : ""}${hp !== null ? t(" ({hp} HP)", { hp }) : ""}`;
     }
     case "heal": {
       const form = word(delta.form);
@@ -241,7 +250,7 @@ function knownEntryText(t: Say, entry: { kind: string; delta: Delta }, name: str
     case "set_effect": {
       const max = amount(delta.maxHp);
       const hp = amount(delta.currentHp);
-      return max !== null ? `${name}'s hit point maximum is now ${max}${hp !== null ? ` (${hp} HP)` : ""}` : `${name}'s hit point maximum changes`;
+      return max !== null ? `${t("{name}'s hit point maximum is now {max}", { name, max })}${hp !== null ? t(" ({hp} HP)", { hp }) : ""}` : t("{name}'s hit point maximum changes", { name });
     }
     case "award_xp": {
       const xp = amount(delta.amount);
@@ -252,14 +261,14 @@ function knownEntryText(t: Say, entry: { kind: string; delta: Delta }, name: str
       const change = amount(delta.delta);
       const copper = amount(delta.copper);
       const purse = amount(delta.purseCopper);
-      const held = purse !== null ? formatPrice(purse) : amount(delta.gold) !== null ? `${amount(delta.gold)} gp` : null;
+      const held = purse !== null ? priceWord(purse) : amount(delta.gold) !== null ? localizeCoins(`${amount(delta.gold)} gp`, locale) : null;
       const after = held ? t(" ({purse})", { purse: held }) : "";
       // Five silver spent was "gains 0 gold": the whole-gold figure rounds a
       // part of a gold piece away, and the copper it came from is recorded.
       if (copper !== null && copper % COPPER_PER_GOLD !== 0) {
         return copper >= 0
-          ? t("{name} gains {amount}{after}", { name, amount: formatPrice(Math.abs(copper)), after })
-          : t("{name} loses {amount}{after}", { name, amount: formatPrice(Math.abs(copper)), after });
+          ? t("{name} gains {amount}{after}", { name, amount: priceWord(Math.abs(copper)), after })
+          : t("{name} loses {amount}{after}", { name, amount: priceWord(Math.abs(copper)), after });
       }
       if (change === null) return t("{name}'s purse changes", { name });
       return `${change >= 0 ? t("{name} gains {amount} gold", { name, amount: Math.abs(change) }) : t("{name} loses {amount} gold", { name, amount: Math.abs(change) })}${after}`;
@@ -277,7 +286,7 @@ function knownEntryText(t: Say, entry: { kind: string; delta: Delta }, name: str
     case "item": {
       const added = word(delta.added);
       const removed = word(delta.removed);
-      return added ? t("{name} receives {item}{times}", { name, item: added, times: "" }) : removed ? t("{name} gives up {item}", { name, item: removed }) : t("{name}'s pack changes", { name });
+      return added ? t("{name} receives {item}{times}", { name, item: itemWord(added), times: "" }) : removed ? t("{name} gives up {item}", { name, item: itemWord(removed) }) : t("{name}'s pack changes", { name });
     }
     case "trade": {
       const partner = word(delta.with);
@@ -301,14 +310,14 @@ function knownEntryText(t: Say, entry: { kind: string; delta: Delta }, name: str
       const created = word(delta.created);
       const bonded = word(delta.bonded);
       const unbonded = word(delta.unbonded);
-      if (created) return `${name} creates a pact weapon: ${created}`;
-      if (bonded) return `${name} bonds with ${bonded} as a pact weapon`;
-      if (unbonded) return `${name} breaks the pact bond with ${unbonded}`;
-      return `${name} dismisses ${word(delta.dismissed) ?? "the pact weapon"}`;
+      if (created) return t("{name} creates a pact weapon: {item}", { name, item: itemWord(created) });
+      if (bonded) return t("{name} bonds with {item} as a pact weapon", { name, item: itemWord(bonded) });
+      if (unbonded) return t("{name} breaks the pact bond with {item}", { name, item: itemWord(unbonded) });
+      return t("{name} dismisses {item}", { name, item: word(delta.dismissed) ? itemWord(String(delta.dismissed)) : t("the pact weapon") });
     }
     // Pact of the Tome: a new book, the old one gone with it.
     case "book_of_shadows":
-      return delta.replaced === true ? `${name} makes a new Book of Shadows, and the old one is gone` : `${name} makes a Book of Shadows`;
+      return delta.replaced === true ? t("{name} makes a new Book of Shadows, and the old one is gone", { name }) : t("{name} makes a Book of Shadows", { name });
     case "hand_item": {
       const to = word(delta.to);
       const from = word(delta.from);
@@ -327,7 +336,7 @@ function knownEntryText(t: Say, entry: { kind: string; delta: Delta }, name: str
       return t("{name} picks up {item}{times}", { name, item, times: times(amount(delta.taken)) });
     case "use_item": {
       const used = word(delta.item);
-      return used ? t("{name} uses {item}", { name, item: used }) : t("{name} spends charges from an item", { name });
+      return used ? t("{name} uses {item}", { name, item: itemWord(used) }) : t("{name} spends charges from an item", { name });
     }
     case "dawn_recharge":
       return t("{name}'s items regain charges at dawn", { name });
@@ -339,14 +348,15 @@ function knownEntryText(t: Say, entry: { kind: string; delta: Delta }, name: str
       if (inside !== null)
         return t("{name} has dealt {who} {amount} damage from inside this turn", { name, who: word(delta.swallower) ?? t("what swallowed them"), amount: inside });
       const condition = word(delta.condition);
-      return condition ? t("{name} is {condition}", { name, condition }) : t("{name} gains a condition", { name });
+      return condition ? t("{name} is {condition}", { name, condition: conditionWord(condition) }) : t("{name} gains a condition", { name });
     }
     case "clear_condition": {
       const level = amount(delta.level);
       if (word(delta.condition) === "exhaustion" && level !== null) {
         return t("{name}'s exhaustion falls to level {level}", { name, level });
       }
-      const ended = word(delta.condition) ?? (words(delta.ended).join(" or ") || null);
+      const single = word(delta.condition);
+      const ended = single ? conditionWord(single) : (words(delta.ended).map(conditionWord).join(t(" or ")) || null);
       return ended ? t("{name} is no longer {ended}", { name, ended }) : t("{name} is rid of a condition", { name });
     }
     case "exhaustion": {
@@ -360,10 +370,10 @@ function knownEntryText(t: Say, entry: { kind: string; delta: Delta }, name: str
     // The once-a-turn mark of Spirit Projection's Form of Dread heal
     // (spirit-projection.ts), written apart from the heal itself.
     case "spirit_projection":
-      return `${name} draws on Form of Dread for this turn`;
+      return t("{name} draws on Form of Dread for this turn", { name });
     case "condition_clock": {
       const ended = words(delta.ended);
-      return ended.length ? t("{name} is no longer {ended}", { name, ended: ended.join(" or ") }) : t("Time runs on {name}'s conditions", { name });
+      return ended.length ? t("{name} is no longer {ended}", { name, ended: ended.map(conditionWord).join(t(" or ")) }) : t("Time runs on {name}'s conditions", { name });
     }
     case "concentration_clock":
       return t("Time runs on {name}'s {spell}", { name, spell: word(delta.spell) ?? t("spell") });
@@ -386,10 +396,11 @@ function knownEntryText(t: Say, entry: { kind: string; delta: Delta }, name: str
     // What a reaction itself did to the sheet (reaction-refund.ts reactionPatch).
     case "reaction": {
       const what = word(delta.reaction);
-      return what ? `${name}: ${what}` : `${name} takes a reaction`;
+      return what ? `${name}: ${what}` : t("{name} takes a reaction", { name });
     }
     case "use_resource": {
-      const resource = word(delta.resource) ?? t("a feature");
+      const rawResource = word(delta.resource);
+      const resource = rawResource ? (resourceDisplayName(rawResource, locale) ?? rawResource) : t("a feature");
       const from = word(delta.from);
       if (from) return t("{name} receives {item}{times} from {from}", { name, item: resource, times: "", from });
       const spent = amount(delta.spent) ?? 1;
@@ -407,7 +418,7 @@ function knownEntryText(t: Say, entry: { kind: string; delta: Delta }, name: str
     case "death_moment":
       return t("The moment {name} died is written down", { name });
     case "spirit_anchor":
-      return `${name}'s spirit is held by Anchor of the Living`;
+      return t("{name}'s spirit is held by Anchor of the Living", { name });
     case "stabilize": {
       const healer = word(delta.healer);
       const woke = amount(delta.currentHp) === 1;

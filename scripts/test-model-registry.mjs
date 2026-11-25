@@ -151,6 +151,38 @@ try {
     assert.equal(logic.looseModelKey("gemma4:31b-it-qat"), logic.looseModelKey("google/gemma-4-31B-it"));
   });
 
+  await test("model verdicts localize summaries and warnings without changing fit or catalog data", async () => {
+    await import("../src/lib/i18n/server-catalogs.ts");
+    const fixtures = [
+      { role: "story", id: "gpt-5.6", catalog: providers.openai.models["gpt-5.6"], listed: null },
+      { role: "story", id: "gpt-4", catalog: providers.openai.models["gpt-4"], listed: null },
+      { role: "utility", id: "sao10k/l3-lunaris-8b", catalog: providers.openrouter.models["sao10k/l3-lunaris-8b"], listed: null },
+      { role: "image", id: "gpt-5.6", catalog: providers.openai.models["gpt-5.6"], listed: null },
+      { role: "image", id: "unknown-example", catalog: null, listed: null },
+    ];
+    for (const input of fixtures) {
+      const original = structuredClone(input);
+      const en = logic.assessModel(enT, input);
+      for (const locale of ["fr", "cs"]) {
+        const t = (key, vars) => translate(locale, key, vars);
+        const verdict = logic.assessModel(t, input);
+        assert.equal(verdict.fit, en.fit, locale);
+        assert.equal(verdict.warnings.length, en.warnings.length, locale);
+        assert.notEqual(verdict.summary, en.summary, locale);
+        for (const [index, warning] of verdict.warnings.entries()) {
+          assert.notEqual(warning, en.warnings[index], locale);
+        }
+        if (input.id === "gpt-5.6") {
+          assert.ok(verdict.summary.includes("1.1M") && verdict.summary.includes("$4") && verdict.summary.includes("$20"));
+        }
+        const free = { ...providers.openai.models["gpt-5.6"], cost: { input: 0, output: 0 } };
+        assert.ok(logic.describeCatalogModel(free, {}, t).endsWith(locale === "fr" ? "gratuit" : "zdarma"));
+        assert.ok(!logic.describeCatalogModel(free, { local: true }, t).includes(locale === "fr" ? "gratuit" : "zdarma"));
+      }
+      assert.deepEqual(input, original);
+    }
+  });
+
   await test("the table's needs: text out and tool calls for the story, pictures out for images", () => {
     const story = (id, hint) => logic.assessModel(enT, { role: "story", id, catalog: logic.findCatalogModel(providers, id, hint), listed: true });
     assert.equal(story("gpt-5.6", "openai").fit, "ok");

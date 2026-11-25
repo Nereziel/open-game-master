@@ -11,6 +11,7 @@ import { IMMUNE_CONDITIONS, SPEED_MODES } from "@/lib/homebrew/item-data";
 import type { MagicItemEffect } from "@/lib/srd/magic-items";
 import { SRD_WEAPONS, UNARMED_STRIKE_KEY } from "@/lib/srd/weapons";
 import { textKey } from "@/lib/language/text-logic";
+import { gameTermWord } from "@/lib/i18n/game-term-labels";
 import { damageTypeWord } from "@/lib/dm/damage-logic";
 import { contentName } from "@/lib/content/names";
 import { useLocale, useT } from "@/lib/locale";
@@ -27,9 +28,11 @@ const ABILITIES = ["str", "dex", "con", "int", "wis", "cha"] as const;
 // movement family: « vol », « nage », « escalade »), capitalized here as the
 // picker's options. Values stay the SPEED_MODES ids.
 const SPEED_LABELS: Record<(typeof SPEED_MODES)[number], string> = { fly: "Flying", swim: "Swimming", climb: "Climbing" };
-const SPEED_LABELS_FR: Record<string, string> = { fly: "Vol", swim: "Nage", climb: "Escalade" };
-const speedLabel = (mode: string, locale: Locale): string =>
-  locale === "fr" ? (SPEED_LABELS_FR[mode] ?? SPEED_LABELS[mode as (typeof SPEED_MODES)[number]]) : SPEED_LABELS[mode as (typeof SPEED_MODES)[number]];
+const speedLabel = (mode: string, locale: Locale): string => {
+  const english = SPEED_LABELS[mode as (typeof SPEED_MODES)[number]] ?? mode;
+  const word = gameTermWord("movement", mode, locale);
+  return word === mode ? english : word.charAt(0).toUpperCase() + word.slice(1);
+};
 // The unarmed strike, then the SRD's own weapons, by the key the attack engine
 // matches them on. Labels read the reader's language through the names layer
 // (the unarmed strike's FR print is official; the SRD weapons' names are data).
@@ -38,8 +41,7 @@ const WEAPON_LABELS = { [UNARMED_STRIKE_KEY]: "Unarmed strike", ...Object.fromEn
 // The chips' words: damage types capitalized out of the French SRD's own list
 // (damageTypeWord's pattern, src/lib/dm/damage-logic.ts), conditions through
 // the official names layer. English keeps the raw term, exactly as shipped.
-const capital = (value: string) => value.charAt(0).toUpperCase() + value.slice(1);
-const damageLabel = (type: string, locale: Locale): string => (locale === "fr" ? capital(damageTypeWord(type, locale)) : type);
+const damageLabel = (type: string, locale: Locale): string => (damageTypeWord(type, locale));
 const conditionLabel = (term: string, locale: Locale): string => contentName("conditions", term, locale);
 
 export const MORE_EFFECT_LABELS = {

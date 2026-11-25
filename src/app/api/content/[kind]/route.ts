@@ -1,7 +1,8 @@
 import { currentUser, unauthorized } from "@/lib/auth";
 import { withBestEffort } from "@/lib/content/entry-labels";
-import { localizeEntryCs } from "@/lib/content/entry-descriptions-cs";
-import { localizeItemEntryFr } from "@/lib/content/item-descriptions-fr";
+import { contentNameMatches, type NamedRow } from "@/lib/content/names";
+import "@/lib/i18n/server-catalogs";
+import { localizeEntry } from "@/lib/content/entry-descriptions";
 import { catalogPrices } from "@/lib/characters/catalog";
 import { contentPackInstalled } from "@/lib/content/db";
 import { contentScopeFor, unadmittedNames } from "@/lib/content/scope";
@@ -26,7 +27,7 @@ import { textKey } from "@/lib/language/text-logic";
 import { srdNameFor } from "@/lib/dm/item-logic";
 import { withoutBonus } from "@/lib/srd/item-row";
 import { bundledClassRows } from "@/lib/workshop/class-catalog";
-import { bookLocaleOf, rulebookPage } from "@/lib/rulebook/book";
+import { bookLocaleOf, BOOK_LOCALE_VARY } from "@/lib/rulebook/book";
 
 export const runtime = "nodejs";
 export const dynamic = "force-dynamic";
@@ -64,8 +65,12 @@ export async function GET(
   const limitRaw = Number.parseInt(url.searchParams.get("limit") ?? "", 10);
   const offsetRaw = Number.parseInt(url.searchParams.get("offset") ?? "", 10);
   const mechanics = url.searchParams.get("mechanics") === "1";
+  const locale = bookLocaleOf(request);
+  const matches = (table: string, row: NamedRow) => contentNameMatches(table, row, q, locale, url.searchParams.get("class") ?? "");
+  const localizedSearch = locale !== "en" && Boolean(q.trim());
   const base = {
     q,
+    ...(localizedSearch ? { matchName: matches } : {}),
     userIds: scope.userIds,
     // Browsing (the reference: all=1) and the workshop's "start from"
     // (mechanics=1) see the entries a 5.1 table is not offered for play,
@@ -82,6 +87,11 @@ export async function GET(
     const filed = new Set((found as Array<{ name: string; documentSlug?: string }>).filter((row) => row.documentSlug === "wotc-srd").map((row) => textKey(row.name)));
     return bundled.filter((row) => !filed.has(textKey(row.name)));
   };
+
+  // Match translated bundled names before the existing fallback limits.
+  const bundledQuery = localizedSearch ? "" : q;
+  const matchingBundled = <T,>(table: string, rows: T[]): T[] =>
+    localizedSearch ? rows.filter((row) => matches(table, row as NamedRow) || (table === "races" && textKey(q).split(" ").filter(Boolean).every((word) => textKey((row as NamedRow).name).includes(word)))) : rows;
 
   let results: unknown[];
   switch (kind) {
@@ -102,13 +112,13 @@ export async function GET(
       // `book=1` (the rulebook's "start a copy"): the book's own rows beside
       // the pack's, for a page the pack files under no SRD row.
       if ((!packInstalled || fromBook) && mechanics) {
-        results = [...results, ...notFiled(results, bundledSpellRows(q)).slice(0, base.limit ?? 50)];
+        results = [...results, ...notFiled(results, matchingBundled("spells", bundledSpellRows(bundledQuery))).slice(0, base.limit ?? 50)];
       } else if (!packInstalled && url.searchParams.get("srd") === "1") {
         // `srd=1` (a picker that only names a spell, as a workshop species'
         // spells do, issue #833): with no pack the bundled book's spells
         // answer, so a bare server still offers the SRD's, not only the
         // author's homebrew.
-        results = [...results, ...notFiled(results, bundledSpellRows(q)).slice(0, base.limit ?? 50)];
+        results = [...results, ...notFiled(results, matchingBundled("spells", bundledSpellRows(bundledQuery))).slice(0, base.limit ?? 50)];
       }
       // `lite=1`: the names, levels and books a picker lists, without each
       // row's whole text, which a phone would download for nothing (the
@@ -151,13 +161,10 @@ export async function GET(
       // adventuring gear, whole, for the workshop to copy.
       if ((!packInstalled || fromBook) && mechanics) {
         const bundled = [
-          ...(!itemKind || itemKind === "magic_item" ? bundledItemRows(q) : []),
-          ...(itemKind === "magic_item" || packInstalled ? [] : bundledGearRows(q, itemKind)),
+          ...(!itemKind || itemKind === "magic_item" ? matchingBundled("items", bundledItemRows(bundledQuery)) : []),
+          ...(itemKind === "magic_item" || packInstalled ? [] : matchingBundled("items", bundledGearRows(bundledQuery, itemKind))),
         ];
         results = [...results, ...notFiled(results, bundled).slice(0, base.limit ?? 50)];
-      }
-      if (bookLocaleOf(request) === "fr") {
-        results = (results as Array<{ name: string; source?: "open5e" | "srd" | "homebrew"; data?: unknown }>).map((entry) => localizeItemEntryFr(entry));
       }
       break;
     }
@@ -177,17 +184,7 @@ export async function GET(
       });
       break;
     case "classes": {
-      const rows = listClasses(base);
-      if (bookLocaleOf(request) === "fr") {
-        results = rows.map((entry) => {
-          const fr = rulebookPage(entry.slug, "fr");
-          if (!fr?.page.md) return entry;
-          const data = typeof entry.data === "object" && entry.data !== null ? { ...(entry.data as Record<string, unknown>), desc: fr.page.md } : entry.data;
-          return { ...entry, data };
-        });
-      } else {
-        results = rows;
-      }
+      results = listClasses(base);
       break;
     }
     case "archetypes": {
@@ -222,26 +219,31 @@ export async function GET(
     // Artisan, a setting's Corpo Dropout) can be started from too, and with
     // no pack its races and subclasses.
     if (kind === "backgrounds") {
-      results = [...results, ...bundledBackgroundRows(q, results as Array<{ slug: string }>)];
+      results = [...results, ...matchingBundled("backgrounds", bundledBackgroundRows(bundledQuery, results as Array<{ slug: string }>))];
     }
     if (kind === "races" && !packInstalled) {
-      results = [...results, ...bundledRaceRows(q, results as Array<{ name: string }>)];
+      results = [...results, ...matchingBundled("races", bundledRaceRows(bundledQuery, results as Array<{ name: string }>))];
     }
     if (kind === "archetypes" && !packInstalled) {
-      results = [...results, ...bundledArchetypeRows(url.searchParams.get("class") ?? "", q, results as Array<{ name: string }>)];
+      results = [...results, ...matchingBundled("archetypes", bundledArchetypeRows(url.searchParams.get("class") ?? "", bundledQuery, results as Array<{ name: string }>))];
     }
     // The bundled classes, the SRD's and the settings', whole: a workshop
     // class starts from one with its features by level.
     if (kind === "classes") {
-      results = [...results, ...bundledClassRows(q, results as Array<{ name: string }>)];
+      results = [...results, ...matchingBundled("classes", bundledClassRows(bundledQuery, results as Array<{ name: string }>))];
     }
+  }
+  // The character picker already offers the built-in subclasses locally.
+  // Opt in to their display rows when the optional pack is absent, without
+  // requesting workshop mechanics or changing the published search results.
+  if (!mechanics && !packInstalled && kind === "archetypes" && url.searchParams.get("bundled") === "1") {
+    const bundled = matchingBundled("archetypes", bundledArchetypeRows(url.searchParams.get("class") ?? "", bundledQuery, results as Array<{ name: string }>));
+    results = [...results, ...bundled.map(({ table: _table, ...row }) => row)];
   }
   // A row the engine plays from mechanics it read and nobody checked says
   // so (issue #570).
   const classSlug = url.searchParams.get("class") ?? undefined;
   results = results.map((row) => withBestEffort(kind, row, { classSlug }));
-  if (bookLocaleOf(request) === "cs") {
-    results = results.map((row) => localizeEntryCs(kind, row));
-  }
-  return Response.json({ results, packInstalled, unadmitted: unadmittedNames(scope, user.id, kind, q, url.searchParams.get("class") ?? "") });
+  results = results.map((row) => localizeEntry(kind, row, locale));
+  return Response.json({ results, packInstalled, unadmitted: unadmittedNames(scope, user.id, kind, q, url.searchParams.get("class") ?? "") }, { headers: { Vary: BOOK_LOCALE_VARY } });
 }

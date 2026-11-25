@@ -9,7 +9,8 @@ import {
   type AttackSpendOptions,
   type TurnBudget,
 } from "@/lib/dm/action-budget";
-import { canAct, type ActKind, type ActingEncounter, type CannotActReason } from "@/lib/dm/can-act";
+import { canAct, type ActKind, type ActingEncounter } from "@/lib/dm/can-act";
+import { engineRefusalKey, spendActionReason } from "@/lib/dm/player-refusals";
 import { translate } from "@/lib/messages-logic";
 import type { OrderEntry } from "@/lib/db/encounters";
 import type { IconRef } from "@/lib/icons";
@@ -527,103 +528,7 @@ export function actingEncounter(turn: HandTurn, kind: ActKind): ActingEncounter 
 // it is open on anyone's turn.
 export function standingGate(sheet: CharacterSheet, turn: HandTurn, kind: ActKind = "action", t: T = enT): Gate {
   const verdict = canAct({ sheet, encounter: actingEncounter(turn, kind), kind });
-  return verdict.ok ? null : { reason: standingReason(sheet, turn, kind, verdict, t), spent: false };
-}
-
-// canAct's own words for each kind of act (src/lib/dm/can-act.ts
-// KIND_WORDS, mirrored here so its sentences can be matched exactly). If
-// that table drifts, the match misses and the refusal falls back to the
-// engine's English rather than mistranslating.
-const KIND_WORDS: Record<ActKind, string> = {
-  action: "take an action",
-  bonus: "take a bonus action",
-  reaction: "take a reaction",
-  attack: "attack",
-  cast: "cast a spell",
-  move: "move",
-  free: "act",
-};
-
-const KIND_KEY: Record<ActKind, string> = {
-  action: "take an action",
-  bonus: "take a bonus action",
-  reaction: "take a reaction",
-  attack: "attack",
-  cast: "cast a spell",
-  move: "move",
-  free: "act",
-};
-
-// canAct's refusal in the reader's words. The sentences are matched exactly
-// and carried into the keys, so the card says what the server will say and
-// says it in the table's language. Each mapping, refusal → key:
-//   dead                           → table.hand.gate.dead
-//   down (0 HP)                    → table.hand.gate.down
-//   incapacitated, by a condition  → table.hand.gate.stopped
-//   incapacitated, by a spell's hold → table.hand.gate.spellHeld
-//   surprised, a reaction          → table.hand.gate.surprisedReaction
-//   surprised, the first round     → table.hand.gate.surprised
-//   no_initiative                  → table.hand.gate.noInitiative
-//   not_your_turn                  → table.hand.gate.notYourTurn
-// A sentence the mirror has drifted from keeps the engine's English.
-function standingReason(sheet: CharacterSheet, turn: HandTurn, kind: ActKind, verdict: { reason: CannotActReason; error: string }, t: T): string {
-  const what = t(KIND_KEY[kind]);
-  const name = sheet.name;
-  switch (verdict.reason) {
-    case "dead":
-      if (verdict.error === `${name} is dead and cannot ${KIND_WORDS[kind]}. Only magic that raises the dead brings them back.`) {
-        return t("{name} is dead and cannot {what}. Only magic that raises the dead brings them back.", { name, what });
-      }
-      break;
-    case "down":
-      if (verdict.error === `${name} is at 0 HP and cannot ${KIND_WORDS[kind]}. They act again once they are healed above 0.`) {
-        return t("{name} is at 0 HP and cannot {what}. They act again once they are healed above 0.", { name, what });
-      }
-      break;
-    case "incapacitated": {
-      const prefix = `${name} is `;
-      const stoppedTail = ` and cannot ${KIND_WORDS[kind]} until the condition ends.`;
-      if (verdict.error.startsWith(prefix) && verdict.error.endsWith(stoppedTail)) {
-        const condition = verdict.error.slice(prefix.length, verdict.error.length - stoppedTail.length);
-        if (condition) {
-          return t("{name} is {condition} and cannot {what} until the condition ends.", { name, condition, what });
-        }
-      }
-      const heldTail = ` and cannot ${KIND_WORDS[kind]} while it lasts.`;
-      if (verdict.error.startsWith(prefix) && verdict.error.endsWith(heldTail)) {
-        const held = verdict.error.slice(prefix.length, verdict.error.length - heldTail.length);
-        if (held) {
-          return t("{name} is {held} and cannot {what} while it lasts.", { name, held, what });
-        }
-      }
-      break;
-    }
-    case "surprised":
-      if (verdict.error === `${name} is surprised and has no reaction until their first turn has passed.`) {
-        return t("{name} is surprised and has no reaction until their first turn has passed.", { name });
-      }
-      if (verdict.error === `${name} is surprised and cannot ${KIND_WORDS[kind]} in the first round. They act from round 2.`) {
-        return t("{name} is surprised and cannot {what} in the first round. They act from round 2.", { name, what });
-      }
-      break;
-    case "no_initiative":
-      if (verdict.error === `Initiative is still being rolled, so ${name} cannot ${KIND_WORDS[kind]} yet. Roll initiative for every character first.`) {
-        return t("Initiative is still being rolled, so {name} cannot {what} yet. Roll initiative for every character first.", { name, what });
-      }
-      break;
-    case "not_your_turn": {
-      const acting = actingEncounter(turn, kind)?.order[0]?.name;
-      const who = acting ?? "someone else";
-      if (verdict.error === `It is ${who}'s turn, not ${name}'s. Off their own turn a character can only use their reaction. What they declared waits for their turn.`) {
-        if (who === "the enemy") {
-          return t("It is the enemy's turn, not {name}'s. Off their own turn a character can only use their reaction. What they declared waits for their turn.", { name });
-        }
-        return t("It is {who}'s turn, not {name}'s. Off their own turn a character can only use their reaction. What they declared waits for their turn.", { who: acting ? acting : t("someone else"), name });
-      }
-      break;
-    }
-  }
-  return verdict.error;
+  return verdict.ok ? null : { reason: engineRefusalKey(verdict.error, kind, sheet.name, "", t), spent: false };
 }
 
 // A hand that is only waiting: the one thing in this character's way is
@@ -650,7 +555,7 @@ export function waitingHand(sheet: CharacterSheet, turn: HandTurn, t: T = enT): 
     }
     // The same mapping the cards' own gates read through (standingReason), so
     // the sentences match the disabled reasons card by card.
-    const reason = standingReason(sheet, turn, kind, verdict, t);
+    const reason = engineRefusalKey(verdict.error, kind, sheet.name, "", t);
     note ||= reason;
     sentences.add(reason);
   }
@@ -746,51 +651,6 @@ export function budgetOf(turn: HandTurn, sheet: Pick<CharacterSheet, "id">, allo
     ...(turn.oneHandMeleeAttack ? { oneHandMeleeAttack: true } : {}),
     ...(turn.interactionUsed ? { interaction: { what: "an object", weapons: 2 } } : {}),
   };
-}
-
-// spendAction's refusals (src/lib/dm/action-budget.ts), matched exactly and// carried into the reader's words; a sentence the mapping has not met keeps
-// the engine's English. Each mapping, refusal → key:
-//   the action gone (with the Haste tail when it applies) → table.hand.gate.actionSpent
-//   the bonus action gone → table.hand.gate.bonusSpent
-//   the reaction gone     → table.hand.gate.reactionSpent
-//   slowed, both halves spent → table.hand.gate.slowedBoth
-function spendActionReason(budget: TurnBudget, kind: "action" | "bonus" | "reaction", what: string, who: string, error: string, t: T): string {
-  const other = kind === "bonus" ? "action" : "bonus action";
-  if (error === `${who} is slowed: an action or a bonus action this turn, not both, and the ${other} is already spent. ${what} does not happen.`) {
-    return t("{name} is slowed: an action or a bonus action this turn, not both, and the {other} is already spent. {what} does not happen.", {
-      name: who,
-      other: (other === "action" ? t("action", { context: "table.hand.gate.word.action" }) : t("bonus action", { context: "table.hand.gate.word.bonus" })),
-      what,
-    });
-  }
-  if (kind === "action") {
-    const hasted = (budget.extraActions ?? 0) > 0;
-    const bonusLeft = !budget.bonusUsed;
-    if (
-      error ===
-      `${who} has already used their action this turn; ${what} needs one.${
-        hasted ? " The extra action from Haste is only for one weapon attack, Dash, Disengage, Hide or Use an Object." : ""
-      } They can still move${bonusLeft ? " or take a bonus action" : ""}, or end their turn.`
-    ) {
-      return t("{name} has already used their action this turn; {what} needs one.{haste} They can still move{bonus}, or end their turn.", {
-        name: who,
-        what,
-        haste: hasted ? t(" The extra action from Haste is only for one weapon attack, Dash, Disengage, Hide or Use an Object.") : "",
-        bonus: bonusLeft ? t(" or take a bonus action") : "",
-      });
-    }
-  }
-  if (kind === "bonus") {
-    if (error === `${who} has already used their bonus action this turn; ${what} needs one.`) {
-      return t("{name} has already used their bonus action this turn; {what} needs one.", { name: who, what });
-    }
-  }
-  if (kind === "reaction") {
-    if (error === `${who} has already used their reaction; it comes back at the start of their next turn. ${what} does not happen.`) {
-      return t("{name} has already used their reaction; it comes back at the start of their next turn. {what} does not happen.", { name: who, what });
-    }
-  }
-  return error;
 }
 
 // `what` is the card's name as the engine would name the spend ("Dash",

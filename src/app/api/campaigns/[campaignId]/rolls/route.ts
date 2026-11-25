@@ -1,10 +1,12 @@
 import { z } from "zod";
+import { requestT } from "@/lib/request-locale";
 import { capsFor, isErrorResponse, requireMember } from "@/lib/campaign-api";
 import { listSheets } from "@/lib/db/sheets";
 import { actingSheetFor } from "@/lib/character-seat";
 import { listRollsVisibleTo } from "@/lib/db/rolls";
 import { rollExpression, type Advantage } from "@/lib/dice";
 import { trayExpressionProblem } from "@/lib/dice/tray-rules";
+import { diceErrorDisplay } from "@/lib/dice/error-display";
 import { findSkill } from "@/lib/srd";
 import { rollExtrasFor, spendRollCarriers } from "@/lib/dm/forced-save";
 import { resolveRollExpression, type RollArgs } from "@/lib/dm/rolls";
@@ -64,6 +66,7 @@ export async function POST(
   request: Request,
   { params }: { params: Promise<{ campaignId: string }> },
 ) {
+  const t = requestT(request);
   const { campaignId } = await params;
   const context = await requireMember(campaignId);
   if (isErrorResponse(context)) {
@@ -73,13 +76,13 @@ export async function POST(
   const raw = await request.json().catch(() => ({}));
   const parsed = rollRequestSchema.safeParse(raw);
   if (!parsed.success) {
-    return Response.json({ error: "Invalid roll request." }, { status: 400 });
+    return Response.json({ error: t("Invalid roll request.") }, { status: 400 });
   }
 
   const input = parsed.data;
   const sheet = actingSheetFor(campaignId, context.user.id, input.characterId);
   if (input.characterId && !sheet) {
-    return Response.json({ error: "That is not one of your characters." }, { status: 404 });
+    return Response.json({ error: t("That is not one of your characters.") }, { status: 404 });
   }
 
   let expression: string;
@@ -96,7 +99,7 @@ export async function POST(
     // Loose dice are still dice: the log never holds a number a player wrote.
     // Nothing on the sheet rides them either: the tray throws what it was
     // asked to throw.
-    const problem = trayExpressionProblem(input.expression);
+    const problem = trayExpressionProblem(input.expression, t);
     if (problem) {
       return Response.json({ error: problem }, { status: 400 });
     }
@@ -104,25 +107,25 @@ export async function POST(
   } else {
     if (!sheet) {
       return Response.json(
-        { error: "Create a character before rolling checks." },
+        { error: t("Create a character before rolling checks.") },
         { status: 400 },
       );
     }
     if (input.kind === "skill_check" && !(input.skill && findSkill(input.skill))) {
-      return Response.json({ error: "Unknown skill." }, { status: 400 });
+      return Response.json({ error: t("Unknown skill.") }, { status: 400 });
     }
     if (input.kind !== "skill_check" && !input.ability) {
-      return Response.json({ error: "Missing ability." }, { status: 400 });
+      return Response.json({ error: t("Missing ability.") }, { status: 400 });
     }
     // The dead roll nothing: not at the DM's word (src/lib/dm/invoke-roll.ts),
     // and not from their own sheet.
     if (sheet.deathSaves?.dead) {
-      return Response.json({ error: `${sheet.name} is dead and makes no rolls.` }, { status: 409 });
+      return Response.json({ error: t("{name} is dead and makes no rolls.", { name: sheet.name }) }, { status: 409 });
     }
     // A check or a save is play, and it spends what rides it (a held
     // inspiration die, Guidance, a Help): it waits out a table break. Loose
     // dice from the tray are only dice, and go on.
-    const paused = refuseDuringBreak(campaignId);
+    const paused = refuseDuringBreak(campaignId, undefined, request);
     if (paused) {
       return paused;
     }
@@ -151,7 +154,7 @@ export async function POST(
       // Nothing is left to the dice (a paralyzed character's Dexterity save),
       // so none are thrown and nothing is logged; the roller is told why.
       return Response.json(
-        { error: `${sheet.name} automatically fails: ${resolved.notes.join("; ")}.`, autoFailed: true },
+        { error: t("{name} automatically fails: {reason}.", { name: sheet.name, reason: resolved.notes.join("; ") }), autoFailed: true },
         { status: 409 },
       );
     }
@@ -166,7 +169,7 @@ export async function POST(
     result = rollExpression(expression);
   } catch (error) {
     return Response.json(
-      { error: error instanceof Error ? error.message : "Bad dice expression." },
+      { error: diceErrorDisplay(error instanceof Error ? error.message : "Bad dice expression.", t) },
       { status: 400 },
     );
   }

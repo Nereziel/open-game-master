@@ -13,6 +13,7 @@
 //
 // Pure data and pure functions, client-importable like the rest of srd/.
 
+import { formatMessage, type MessageVars } from "@/lib/messages-logic";
 import { featOptionSlots } from "@/lib/srd/feat-combat";
 import optionsJson from "@/lib/srd/options.json";
 import subclassesJson from "@/lib/srd/subclasses.json";
@@ -145,6 +146,10 @@ export function optionPicksSpells(kind: OptionKind): boolean {
 }
 
 // That rule, for a kind that picks spells; null for any other kind.
+export function optionKindLabel(kind: OptionKind): string {
+  return KINDS[kind].label;
+}
+
 export function optionKindRule(kind: OptionKind): string | null {
   return optionPicksSpells(kind) ? (SPELL_PICK_TEXT[kind] ?? null) : null;
 }
@@ -431,6 +436,11 @@ const GRANTS: Grant[] = [
   },
 ];
 
+// The published class owning this pick list, even when another class or a feat grants a pick.
+export function optionSourceClassId(kind: OptionKind): string {
+  return GRANTS.find((grant) => grant.kind === kind)?.classId ?? "";
+}
+
 // The subclass a grant belongs to, named by the sheet: exactly, by an alias,
 // or with the titles off both sides (src/lib/srd/subclass-name.ts, the rule
 // features.ts grants by). A fragment ("Master", "Elements") opens nothing.
@@ -517,10 +527,10 @@ export function slotTakes(slot: Pick<OptionSlot, "remaining">, option: Pick<Opti
 }
 
 // "1 still to choose", or "one more humanoid race" when half a pick is left.
-export function remainingWords(slot: Pick<OptionSlot, "remaining">): string {
+export function remainingWords(slot: Pick<OptionSlot, "remaining">, t: (key: string, vars?: MessageVars) => string = formatMessage, still = true): string {
   const whole = Math.floor(slot.remaining);
   const half = slot.remaining - whole >= 0.5;
-  return [whole ? `${whole} still to choose` : "", half ? `${whole ? "and " : ""}one more humanoid race to pair` : ""].filter(Boolean).join(" ");
+  return [whole ? t(still ? "{count} still to choose" : "{count} to choose", { count: whole }) : "", half ? t(whole ? "and one more humanoid race to pair" : "one more humanoid race to pair") : ""].filter(Boolean).join(" ");
 }
 
 // The spells a spellbook holds, for the kinds that pick from it. Undefined:
@@ -580,12 +590,12 @@ export function openOptionSlots(input: {
 
 // Why a slot's picks are not legal: they fill it without the option the
 // kind requires (two disciplines, neither Elemental Attunement), or null.
-export function requiredPickProblem(slot: Pick<OptionSlot, "kind" | "label" | "chosen" | "remaining" | "total">): string | null {
+export function requiredPickProblem(slot: Pick<OptionSlot, "kind" | "label" | "chosen" | "remaining" | "total">, describe?: (required: string) => string): string | null {
   const required = KINDS[slot.kind]?.required;
   if (!required || slot.total <= 0 || slot.remaining > 0 || slot.chosen.some((name) => textKey(name) === textKey(required))) {
     return null;
   }
-  return `${slot.label}: ${required} is one of the picks, learned with the first; choose it in place of another.`;
+  return describe?.(required) ?? `${slot.label}: ${required} is one of the picks, learned with the first; choose it in place of another.`;
 }
 
 // The kinds whose picks a level of this class may trade for others of
@@ -627,10 +637,15 @@ export function picksFromSpellbook(kind: OptionKind): boolean {
 // level-up both ask (issue #833 review).
 // `cantripsLater`: the builder's class step, whose cantrips are chosen on a
 // later step, leaves a cantrip prerequisite to the save.
+export type OptionReqIssue =
+  | { kind: "level"; classId: string; level: number }
+  | { kind: "pact"; name: string }
+  | { kind: "cantrip"; name: string };
+
 export function optionReqProblem(
   option: Pick<OptionDef, "k" | "n" | "req">,
   facts: { classLevel: (classId: string) => number; features: Array<{ name: string }>; cantrips: readonly string[] },
-  { cantripsLater = false }: { cantripsLater?: boolean } = {},
+  { cantripsLater = false, describe }: { cantripsLater?: boolean; describe?: (issue: OptionReqIssue) => string } = {},
 ): string | null {
   const req = (option.req ?? "").trim();
   if (!req) {
@@ -641,19 +656,19 @@ export function optionReqProblem(
     const level = /^level (\d+)$/i.exec(part);
     if (level) {
       if (facts.classLevel(classId) < Number(level[1])) {
-        return `${option.n} needs ${classId} level ${level[1]}.`;
+        return describe?.({ kind: "level", classId, level: Number(level[1]) }) ?? `${option.n} needs ${classId} level ${level[1]}.`;
       }
       continue;
     }
     if (/^pact of the /i.test(part)) {
       if (!chosenOptions(facts.features, "pact_boon").some((boon) => textKey(boon) === textKey(part))) {
-        return `${option.n} needs the ${part}.`;
+        return describe?.({ kind: "pact", name: part }) ?? `${option.n} needs the ${part}.`;
       }
       continue;
     }
     const cantrip = /^(.+) cantrip$/i.exec(part);
     if (cantrip && !cantripsLater && !facts.cantrips.some((name) => textKey(name) === textKey(cantrip[1]))) {
-      return `${option.n} needs the ${cantrip[1]} cantrip.`;
+      return describe?.({ kind: "cantrip", name: cantrip[1] }) ?? `${option.n} needs the ${cantrip[1]} cantrip.`;
     }
   }
   return null;

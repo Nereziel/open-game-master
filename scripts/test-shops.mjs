@@ -301,6 +301,47 @@ test("the purse and the shelf refuse what they cannot cover", () => {
   assert.match(String(handleBuyItem(campaign, JSON.stringify({ characterId: marla.id, shop: shop.id, item: "dragon" })).error), /does not stock/);
 });
 
+test("the Market receives structured refusal notices without changing model errors or state", () => {
+  const before = JSON.stringify({ sheet: getSheetById(marla.id), shop: getShop(shop.id) });
+  for (const [item, qty, key] of [
+    ["Plate Armor", 1, "Not enough money: {item} x{qty} costs {price}; {name} has {purse}."],
+    ["Rope, Hempen (50 feet)", 5, "{shop} has only {qty} of {item}."],
+    ["dragon", 1, "{shop} does not stock {item}."],
+  ]) {
+    const args = JSON.stringify({ characterId: marla.id, shop: shop.id, item, qty });
+    const model = handleBuyItem(campaign, args);
+    const market = handleBuyItem(campaign, args, { atCounter: true });
+    assert.equal(model.notice, undefined);
+    assert.equal(market.notice?.key, key, JSON.stringify(market));
+    const { notice, ...unchanged } = market;
+    assert.deepEqual(unchanged, model);
+    assert.ok(notice.vars);
+  }
+  assert.equal(JSON.stringify({ sheet: getSheetById(marla.id), shop: getShop(shop.id) }), before);
+});
+
+test("market lookup and argument refusals preserve the model response and state", () => {
+  const before = JSON.stringify({ sheet: getSheetById(marla.id), shop: getShop(shop.id) });
+  for (const handler of [handleBuyItem, handleSellItem, handleHaggle]) {
+    const valid = { characterId: marla.id, shop: shop.id, item: "Longsword" };
+    for (const [args, key] of [
+      [{}, "Say what you are doing at the counter."],
+      [{ ...valid, characterId: "missing-character-925" }, "Character not found."],
+      [{ ...valid, shop: "missing-shop-925" }, "No such shop."],
+    ]) {
+      const raw = JSON.stringify(args);
+      const model = handler(campaign, raw);
+      const market = handler(campaign, raw, { atCounter: true });
+      assert.ok(model.error, JSON.stringify(model));
+      assert.equal(model.notice, undefined);
+      assert.equal(market.notice?.key, key, JSON.stringify(market));
+      const { notice, ...unchanged } = market;
+      assert.deepEqual(unchanged, model);
+    }
+  }
+  assert.equal(JSON.stringify({ sheet: getSheetById(marla.id), shop: getShop(shop.id) }), before);
+});
+
 test("selling pays half list for a known item and restocks the shelf", () => {
   // priceCp is the fallback for a runner without the content pack; with the pack the list price wins.
   const result = handleSellItem(campaign, JSON.stringify({ characterId: marla.id, shop: shop.id, item: "Longsword", priceCp: 750 }));

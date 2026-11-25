@@ -4,6 +4,8 @@ import { endShadowInvisibility } from "@/lib/dm/one-with-shadows";
 import { cloakIntoLight } from "@/lib/dm/mt-mr-spends";
 import { tokenSides } from "@/lib/dm/combatant";
 import { z } from "zod";
+import { requestT } from "@/lib/request-locale";
+import { engineRefusalKey } from "@/lib/dm/player-refusals";
 import { actingSheetFor } from "@/lib/character-seat";
 import { capsFor, isErrorResponse, requireMember } from "@/lib/campaign-api";
 import { getFloor } from "@/lib/db/campaigns";
@@ -103,8 +105,9 @@ export async function POST(
     return context;
   }
   const { user } = context;
+  const t = requestT(request);
   // Tokens stay where they stood while the table is on a break.
-  const paused = refuseDuringBreak(campaignId);
+  const paused = refuseDuringBreak(campaignId, undefined, request);
   if (paused) {
     return paused;
   }
@@ -114,7 +117,7 @@ export async function POST(
   const encounter = getActiveBoard(campaignId);
   const map = encounter ? getBattleMapForEncounter(encounter.id) : null;
   if (!encounter || !map) {
-    return Response.json({ error: "No active battle map." }, { status: 404 });
+    return Response.json({ error: t("No active battle map.") }, { status: 404 });
   }
   const campaign = getCampaignById(campaignId);
   // The mover is the character acting now, whichever sheet the player has
@@ -122,13 +125,13 @@ export async function POST(
   const sheet = actingSheetFor(campaignId, user.id, undefined, encounter);
   const token = sheet ? getTokenByRef(map.id, sheet.id) : null;
   if (!sheet || !token) {
-    return Response.json({ error: "You have no token on this map." }, { status: 400 });
+    return Response.json({ error: t("You have no token on this map.") }, { status: 400 });
   }
   // A character dominated by the other side is the GM's to play until the
   // charm ends (src/lib/dm/companion-command.ts), its walk included: the
   // actions route refused its player's words while this route still walked
   // its token on its turn.
-  const held = dominatedRefusal(campaignId, sheet);
+  const held = dominatedRefusal(campaignId, sheet, t);
   if (held) {
     return Response.json({ error: held, dominated: true }, { status: 409 });
   }
@@ -137,20 +140,20 @@ export async function POST(
   // a fight nobody moves on a turn that is not theirs.
   // The move they readied releases off their turn: their reaction, up to
   // their full speed, their own turn's movement untouched (readied-release.ts).
-  const readied = readiedReleaseFor(sheet, encounter, "move");
+  const readied = readiedReleaseFor(sheet, encounter, "move", t);
   if (readied && "error" in readied) {
     return Response.json({ error: readied.error }, { status: 409 });
   }
   if (!readied) {
     const allowed = canAct({ sheet, encounter, kind: "move" });
     if (!allowed.ok) {
-      return Response.json({ error: allowed.error }, { status: 409 });
+      return Response.json({ error: engineRefusalKey(allowed.error, "move", sheet.name, "", t) }, { status: 409 });
     }
   }
 
   // On an independent mount the pair moves on the mount's turn, which the
   // GM plays (token-rules.ts carriedRefusal).
-  const carriedOn = carriedRefusal(campaignId, encounter, sheet);
+  const carriedOn = carriedRefusal(campaignId, encounter, sheet, t);
   if (carriedOn) {
     return Response.json({ error: carriedOn }, { status: 409 });
   }
@@ -158,7 +161,7 @@ export async function POST(
   const floor = getFloor(campaignId);
   // Their End Turn is in and the move waits on a watcher's stop
   // (src/lib/dm/turn-hold.ts): the turn is over.
-  const ending = heldMoveLine(encounter, sheet.id);
+  const ending = heldMoveLine(encounter, sheet.id, t);
   if (ending) {
     return Response.json({ error: ending }, { status: 409 });
   }
@@ -168,19 +171,19 @@ export async function POST(
   if (!readied && encounter.legendary.turnStart === sheet.id) {
     const ahead = enemiesAhead(encounter, sheet.id);
     if (ahead.length || floor.mode === "hold") {
-      return Response.json({ error: heldTurnLine(sheet.name, ahead) }, { status: 409 });
+      return Response.json({ error: heldTurnLine(sheet.name, ahead, "moves", t) }, { status: 409 });
     }
   }
   if (floor.mode === "initiative") {
     const current = encounter.orderReady ? encounter.order[encounter.turnIndex] : undefined;
     if (!readied && (!current || current.kind !== "pc" || current.characterId !== sheet.id)) {
       return Response.json(
-        { error: `It is ${current?.name || "another combatant"}'s turn to move.` },
+        { error: t("It is {name}'s turn to move.", { name: current?.name || t("another combatant") }) },
         { status: 409 },
       );
     }
   } else if (floor.mode !== "open") {
-    return Response.json({ error: "You cannot move right now." }, { status: 409 });
+    return Response.json({ error: t("You cannot move right now.") }, { status: 409 });
   }
   if (!readied) {
     beginHeldTurnOf(encounter, sheet.id);
@@ -189,7 +192,7 @@ export async function POST(
   const raw = await request.json().catch(() => ({}));
   const parsed = moveSchema.safeParse(raw);
   if (!parsed.success || parsed.data.x >= map.width || parsed.data.y >= map.height) {
-    return Response.json({ error: "Invalid destination." }, { status: 400 });
+    return Response.json({ error: t("Invalid destination.") }, { status: 400 });
   }
   const { x, y } = parsed.data;
   // An answer still waiting on the reaction to a hit lands before the walk
@@ -212,7 +215,7 @@ export async function POST(
   // Swallowed (src/lib/dm/swallow.ts): inside a living creature the route
   // says so, and how out; out of a dead one the walk is the climb out of its
   // corpse.
-  const climb = campaign && !readied ? swallowWalk(campaign, encounter, map, sheet, token) : null;
+  const climb = campaign && !readied ? swallowWalk(campaign, encounter, map, sheet, token, t) : null;
   if (climb) {
     return "error" in climb
       ? Response.json({ error: climb.error }, { status: 409 })
@@ -220,10 +223,10 @@ export async function POST(
   }
   if (speed <= 0) {
     const cause =
-      sheet.conditions.join(", ") ||
-      ((sheet.exhaustion ?? 0) >= 5 ? `exhaustion level ${sheet.exhaustion}` : "a condition");
+      sheet.conditions.map((condition) => t(condition)).join(", ") ||
+      ((sheet.exhaustion ?? 0) >= 5 ? t("exhaustion level {level}", { level: sheet.exhaustion ?? 0 }) : t("a condition"));
     return Response.json(
-      { error: `You cannot move while ${cause} holds you (speed 0).` },
+      { error: t("You cannot move while {cause} holds you (speed 0).", { cause }) },
       { status: 409 },
     );
   }
@@ -256,13 +259,13 @@ export async function POST(
   const feared = scene ? [] : fearSourcesAt(map.id, sheet.conditions, sheet.conditionMeta as Record<string, ConditionMeta>);
   if (parsed.data.jump && campaign) {
     if (readied) {
-      return Response.json({ error: "A readied move is a walk up to your speed; jump on your own turn." }, { status: 409 });
+      return Response.json({ error: t("A readied move is a walk up to your speed; jump on your own turn.") }, { status: 409 });
     }
     const line = jumpLine(token, { x, y });
     if (awayFromFear(token, line, feared).length < line.length) {
-      return Response.json({ error: "You are frightened and cannot move closer to what you fear. Move away from it, or hold your ground." }, { status: 409 });
+      return Response.json({ error: t("You are frightened and cannot move closer to what you fear. Move away from it, or hold your ground.") }, { status: 409 });
     }
-    const leap = jumpMove({ campaign, encounter, map, sheet, token, to: { x, y }, budgetTiles: budget, scene, disengaged: turnState?.disengaged ?? false });
+    const leap = jumpMove({ campaign, encounter, map, sheet, token, to: { x, y }, budgetTiles: budget, scene, disengaged: turnState?.disengaged ?? false }, t);
     if ("error" in leap) {
       return Response.json({ error: leap.error }, { status: leap.status });
     }
@@ -339,13 +342,13 @@ export async function POST(
     const lockedDoor = lockedDoorNear(map, { x: token.x, y: token.y }, { x, y });
     if (lockedDoor) {
       publishFx(campaignId, planDoorFx({ at: lockedDoor, state: "locked" }));
-      return Response.json({ error: "The door there is locked." }, { status: 400 });
+      return Response.json({ error: t("The door there is locked.") }, { status: 400 });
     }
     return Response.json(
       {
         error: prone
-          ? "You are prone: standing costs half your speed and every foot crawled costs one extra. You cannot reach that tile this turn."
-          : "You cannot reach that tile this turn.",
+          ? t("You are prone: standing costs half your speed and every foot crawled costs one extra. You cannot reach that tile this turn.")
+          : t("You cannot reach that tile this turn."),
       },
       { status: 400 },
     );
@@ -354,7 +357,7 @@ export async function POST(
   // The lit squares were priced at full speed; a careful walk pays double.
   if (careful && !prone && cost > budget) {
     return Response.json(
-      { error: `Moving carefully at half speed doubles every square: that move costs ${cost * 5} feet and ${budget * 5} are left this turn.` },
+      { error: t("Moving carefully at half speed doubles every square: that move costs {cost} feet and {left} are left this turn.", { cost: cost * 5, left: budget * 5 }) },
       { status: 400 },
     );
   }
@@ -380,7 +383,7 @@ export async function POST(
   // fear than where it began (SRD 5.1, Frightened).
   if (path && awayFromFear(token, path, feared).length < path.length) {
     return Response.json(
-      { error: "You are frightened and cannot move closer to what you fear. Move away from it, or hold your ground." },
+      { error: t("You are frightened and cannot move closer to what you fear. Move away from it, or hold your ground.") },
       { status: 409 },
     );
   }
@@ -391,11 +394,11 @@ export async function POST(
   // on their word (issue 503, src/lib/dm/party-conduct.ts).
   // An orc's Aggressive Dash carries only toward a hostile creature they
   // can see (src/lib/dm/mt-species-board.ts).
-  const rush = path && turnState ? aggressiveRefusal({ encounter, map, sheet, token, path, budgetTiles: budget, speedTiles: speedToTiles(speed), marks: turnState.oncePerTurn, traits }) : null;
+  const rush = path && turnState ? aggressiveRefusal({ encounter, map, sheet, token, path, budgetTiles: budget, speedTiles: speedToTiles(speed), marks: turnState.oncePerTurn, traits }, t) : null;
   if (rush) {
     return Response.json({ error: rush }, { status: 409 });
   }
-  const refusedOrder = campaign && path && !readied ? riskyOrderGate(campaign, sheet, user.id, [from, ...path], turnState?.disengaged ?? false) : null;
+  const refusedOrder = campaign && path && !readied ? riskyOrderGate(campaign, sheet, user.id, [from, ...path], turnState?.disengaged ?? false, t) : null;
   if (refusedOrder) {
     return Response.json({ error: refusedOrder }, { status: 409 });
   }
@@ -407,15 +410,15 @@ export async function POST(
       .map((enemy) => ({ token: tokens.find((entry) => entry.refId === enemy.id), enemy }))
       .filter((entry): entry is { token: (typeof tokens)[number]; enemy: (typeof held)[number] } => Boolean(entry.token));
     if (!heldTokens.length) {
-      return Response.json({ error: `${sheet.name} is not grappling anyone on the board, so there is nothing to drag. Move without dragging.` }, { status: 400 });
+      return Response.json({ error: t("{name} is not grappling anyone on the board, so there is nothing to drag. Move without dragging.", { name: sheet.name }) }, { status: 400 });
     }
     if (prone) {
-      return Response.json({ error: `${sheet.name} is prone; they stand up before dragging anyone.` }, { status: 409 });
+      return Response.json({ error: t("{name} is prone; they stand up before dragging anyone.", { name: sheet.name }) }, { status: 409 });
     }
     // A careful drag is half speed, as the drag alone is (drag.ts).
     spend = (stepCost ?? cost) * walkCostFactor(dragCostFactor(sheetSize(sheet), held.map((enemy) => ({ refId: enemy.id, name: enemy.displayName, size: enemy.stats.size }))), careful);
     if (spend > budget) {
-      return Response.json({ error: `Dragging a grappled creature halves ${sheet.name}'s speed: that move costs ${spend * 5} feet and ${budget * 5} are left this turn.` }, { status: 400 });
+      return Response.json({ error: t("Dragging a grappled creature halves {name}'s speed: that move costs {cost} feet and {left} are left this turn.", { name: sheet.name, cost: spend * 5, left: budget * 5 }) }, { status: 400 });
     }
     const heldIds = new Set(heldTokens.map((entry) => entry.token.id));
     const landed = tokens.filter((entry) => !heldIds.has(entry.id)).map((entry) => (entry.id === token.id ? { ...entry, x, y } : entry));
@@ -429,7 +432,7 @@ export async function POST(
       dragged: heldTokens.map((entry) => ({ token: entry.token, footprint: footprintLookup(enemiesById)(entry.token) })),
     });
     if (!placed) {
-      return Response.json({ error: `There is no room beside (${x},${y}) to set down the creature ${sheet.name} drags. Choose another square.` }, { status: 400 });
+      return Response.json({ error: t("There is no room beside ({x},{y}) to set down the creature {name} drags. Choose another square.", { x, y, name: sheet.name }) }, { status: 400 });
     }
     carried = placed;
   }

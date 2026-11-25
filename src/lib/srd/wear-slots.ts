@@ -25,6 +25,7 @@
 // Pure and client-safe, like armor.ts: the sheet, the routes and the rules
 // engines read the same answer.
 import slotsJson from "@/lib/classes/item-slots.json";
+import { formatMessage, type MessageVars } from "@/lib/messages-logic";
 import { armorOfRow, isWorn, type WornItem } from "@/lib/srd/armor";
 import { textKey } from "@/lib/language/text-logic";
 import { rowName } from "@/lib/srd/item-row";
@@ -185,21 +186,15 @@ export function wearConflict<T extends SlotRow>(item: T, equipment: readonly T[]
   return filling.length >= limit ? { item: item.name, slot, wearing: filling.map((entry) => entry.name) } : null;
 }
 
-const listOf = (names: string[]) =>
-  names.length <= 1 ? (names[0] ?? "") : `${names.slice(0, -1).join(", ")} and ${names[names.length - 1]}`;
+const listOf = (names: string[], t: (key: string, vars?: MessageVars) => string) =>
+  names.length <= 1 ? (names[0] ?? "") : `${names.slice(0, -1).join(", ")} ${t("and")} ${names[names.length - 1]}`;
 
 // The refusal, in one sentence a player can act on.
-export function wearConflictText(conflict: WearConflict, who: string): string {
-  const kind = oneOfKind(conflict.slot) ?? "one of those";
-  const them = conflict.wearing.length > 1 ? "them" : "it";
-  return `${who} already wears ${listOf(conflict.wearing)}, and a character wears ${kind} at a time: take ${them} off first, or the GM may allow both.`;
-}
-
-// The question the sheet asks before a swap: "Grey Cloak goes where Cloak of
-// Protection is: a character wears one cloak at a time."
-export function swapQuestion(conflict: WearConflict): string {
-  const kind = oneOfKind(conflict.slot) ?? "one of its kind";
-  return `${conflict.item} goes where ${listOf(conflict.wearing)} ${conflict.wearing.length > 1 ? "are" : "is"}: a character wears ${kind} at a time.`;
+export function wearConflictText(conflict: WearConflict, who: string, t: (key: string, vars?: MessageVars) => string = formatMessage): string {
+  const kind = t(oneOfKind(conflict.slot) ?? "one of those");
+  return t(conflict.wearing.length > 1
+    ? "{who} already wears {items}, and a character wears {kind} at a time: take them off first, or the GM may allow both."
+    : "{who} already wears {items}, and a character wears {kind} at a time: take it off first, or the GM may allow both.", { who, items: listOf(conflict.wearing, t), kind });
 }
 
 // The first conflict a change to the pack makes: a row that was not worn and

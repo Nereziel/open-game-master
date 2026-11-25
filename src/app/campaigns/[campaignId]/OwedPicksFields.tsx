@@ -13,6 +13,8 @@ import { featChoice, withFeatChoice, type AsiChoice } from "@/lib/schemas/sheet"
 import type { OwedPicks, SeatPicks } from "@/lib/characters/seat-picks";
 import { useLocale, useT } from "@/lib/locale";
 import { skillLabel } from "@/lib/srd";
+import { classDisplayNameFor } from "@/lib/characters/class-words";
+import { THIEVES_TOOLS } from "@/lib/srd/features";
 import { expertiseOptionsAfter } from "@/lib/srd/owed-picks-logic";
 import AsiFeatEditor from "@/app/characters/builder/AsiFeatEditor";
 import FeatChoicesFields from "@/app/characters/builder/FeatChoicesFields";
@@ -145,7 +147,7 @@ export function OwedPicksFields({
       {owed.subclasses.map((entry) => (
         <fieldset key={entry.classId} className="space-y-1.5" data-owed-subclass={entry.classId}>
           <legend className="text-stone-200">
-            {entry.className} subclass <span className="text-xs text-stone-400">(due at {entry.className} level {entry.dueAt})</span>
+            {t("a subclass for {class} (due at {class} level {level})", { class: locale === "en" ? entry.className : classDisplayNameFor(entry.classId, locale) || entry.className, level: entry.dueAt })}
           </legend>
           <div className="max-h-56 space-y-1.5 overflow-y-auto pr-1">
             {entry.options.map((option) => {
@@ -187,7 +189,7 @@ export function OwedPicksFields({
       {owed.skills.count ? (
         <fieldset className="space-y-1.5" data-owed-skills>
           <legend className="text-stone-200">
-            Class skills: pick {owed.skills.count}
+            {t("Class skills (pick {count})", { count: owed.skills.count })}
           </legend>
           <div className="flex flex-wrap gap-1.5">
             {owed.skills.options.map((id) => {
@@ -208,7 +210,7 @@ export function OwedPicksFields({
       {owed.asi ? (
         <div className="space-y-1.5" data-owed-asi>
           <p className="text-stone-200">
-            {owed.asi === 1 ? "An Ability Score Improvement" : `${owed.asi} Ability Score Improvements`}: two points, or a feat, each.
+            {t(owed.asi === 1 ? "{count} Ability Score Improvement (two points, or a feat)" : "{count} Ability Score Improvements (two points, or a feat)", { count: owed.asi })}
           </p>
           <AsiFeatEditor
             slotLevels={owed.asiLevels}
@@ -227,7 +229,7 @@ export function OwedPicksFields({
       {owed.expertise.count ? (
         <fieldset className="space-y-1.5" data-owed-expertise>
           <legend className="text-stone-200">
-            Expertise: pick {owed.expertise.count} of {name}&apos;s skills to double their proficiency bonus in
+            {t("Expertise: pick {count} of {name}'s proficient skills to DOUBLE their proficiency bonus in:", { count: owed.expertise.count, name })}
           </legend>
           <div className="flex flex-wrap gap-1.5">
             {expertiseOptions.map((id) => {
@@ -240,7 +242,7 @@ export function OwedPicksFields({
                   className={chip(picked)}
                   onClick={() => onChange({ ...draft, expertise: toggle(draft.expertise, id, owed.expertise.count) })}
                 >
-                  {skillLabel(id, locale)}
+                  {id === THIEVES_TOOLS ? t("Thieves' tools") : skillLabel(id, locale)}
                 </button>
               );
             })}

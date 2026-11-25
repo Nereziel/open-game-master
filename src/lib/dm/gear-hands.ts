@@ -20,6 +20,7 @@ import { armorOfRow, guessStands, isWorn, wearingIsExplicit } from "@/lib/srd/ar
 import { wearSlotOf } from "@/lib/srd/wear-slots";
 import { matchWeapon, type SrdWeapon } from "@/lib/srd/weapons";
 import { textKey } from "@/lib/language/text-logic";
+import { formatMessage, type MessageVars } from "@/lib/messages-logic";
 
 export type GearKind = "armor" | "shield" | "weapon" | "worn" | "carried";
 
@@ -115,9 +116,11 @@ export function guessedRehand(
 }
 
 // What the free first change did, in the result's words.
-export function rehandLine(who: string, putAway: readonly string[], taken: string): string {
-  const away = putAway.length ? `puts away ${putAway.join(" and ")} and ` : "";
-  return `${who} ${away}takes up ${taken}, free: nobody had said which weapon was out, so the first change from the game's pick costs nothing.`;
+export function rehandLine(who: string, putAway: readonly string[], taken: string, t: (key: string, vars?: MessageVars) => string = formatMessage): string {
+  return t(putAway.length
+    ? "{who} puts away {items} and takes up {item}, free: nobody had said which weapon was out, so the first change from the game's pick costs nothing."
+    : "{who} takes up {item}, free: nobody had said which weapon was out, so the first change from the game's pick costs nothing.",
+    { who, items: putAway.join(` ${t("and")} `), item: taken });
 }
 
 // The ways out of full hands, for each reader: the storyteller is told the
@@ -136,15 +139,29 @@ export function handsFullError(
   full: readonly string[],
   verb: "drawn" | "strapped on" = "drawn",
   reader: keyof typeof WAYS_OUT = "storyteller",
+  t: (key: string, vars?: MessageVars) => string = formatMessage,
 ): string {
+  if (reader === "player") {
+    const problem = t(verb === "drawn"
+      ? "{who}'s hands are full ({items}), so {item} cannot be drawn yet."
+      : "{who}'s hands are full ({items}), so {item} cannot be strapped on yet.",
+      { who, items: full.join(` ${t("and")} `), item: what });
+    return `${problem} ${t(WAYS_OUT.player)}`;
+  }
   return `${who}'s hands are full (${full.join(" and ")}), so ${what} cannot be ${verb} yet. ${WAYS_OUT[reader]}`;
 }
 
 // A tool's refusal shown to a person rather than the storyteller (a card the
 // GM's seat played resolves through the tools): the hands-full ways out in
 // a player's words.
-export function handsFullForPlayer(text: string): string {
-  return text.split(WAYS_OUT.storyteller).join(WAYS_OUT.player);
+export function handsFullForPlayer(text: string, t: (key: string, vars?: MessageVars) => string = formatMessage): string {
+  // The tool's canonical sentence is retained for the model. Match the
+  // complete player-facing refusal, including any trailing explanation.
+  const match = /^(.*?)'s hands are full \((.*?)\), so (.*?) cannot be (drawn|strapped on) yet\. Dropping one is free \(handle_item drop\); putting one away takes the object interaction\.(.*)$/.exec(text);
+  if (match) {
+    return handsFullError(match[1], match[3], [match[2]], match[4] === "drawn" ? "drawn" : "strapped on", "player", t) + match[5];
+  }
+  return text.split(WAYS_OUT.storyteller).join(t(WAYS_OUT.player));
 }
 
 // Takes a weapon in hand: the row marked equipped. A hand must be free for
@@ -209,7 +226,10 @@ export function spendInteraction(
     dualWielder?: boolean;
     fastHands?: boolean;
     withAction?: boolean;
+    // Reader-only labels; what remains canonical in the stored interaction.
+    displayWhat?: string;
   },
+  t?: (key: string, vars?: MessageVars) => string,
 ): SpendResult {
   const used = budget.interaction;
   if (!used) {
@@ -240,13 +260,13 @@ export function spendInteraction(
     }
     return {
       ok: false,
-      error: `${second}, and ${input.what} would be a second: that takes the Use an Object action, which ${input.who} has already spent. It can wait for their next turn.`,
+      error: t ? t("{name}'s free object interaction this turn already went on an object, and {what} would be a second: that takes the Use an Object action, which {name} has already spent. It can wait for their next turn.", { name: input.who, what: input.displayWhat ?? input.what }) : `${second}, and ${input.what} would be a second: that takes the Use an Object action, which ${input.who} has already spent. It can wait for their next turn.`,
       refused: "rules",
     };
   }
   return {
     ok: false,
-    error: `${second}, and ${input.what} would be a second, which takes the Use an Object action: an attack cannot draw it as well. ${input.who} attacks with what they hold, or draws it on their next turn.`,
+    error: t ? t("{name}'s free object interaction this turn already went on an object, and {what} would be a second, which takes the Use an Object action: an attack cannot draw it as well. {name} attacks with what they hold, or draws it on their next turn.", { name: input.who, what: input.displayWhat ?? input.what }) : `${second}, and ${input.what} would be a second, which takes the Use an Object action: an attack cannot draw it as well. ${input.who} attacks with what they hold, or draws it on their next turn.`,
     refused: "rules",
   };
 }

@@ -113,7 +113,7 @@ export const RESOURCE_CS_EXTRA_NAMES: Record<string, string> = {
   "sub_ghost_walk": "Přízračná chůze",
   "sub_psychic_veil": "Psychický závoj",
   "sub_rend_mind": "Rozervání mysli",
-  "sub_spell_thief": "Zloděj kouzel",
+  "sub_spell_thief": "Kouzelný zloděj",
   "sub_unerring_eye": "Neklamné oko",
   "sub_master_duelist": "Mistr šermíř",
   "sub_wholeness_of_body_mercy": "Ruka nejvyššího milosrdenství",

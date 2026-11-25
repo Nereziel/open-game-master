@@ -15,6 +15,7 @@ import { KitButton, panelField, SettingToggle } from "./PanelKit";
 import { KIND_KEYS, SIZE_KEYS } from "./MarketPanel";
 import { textKey } from "@/lib/language/text-logic";
 import { useT, useTp } from "@/lib/locale";
+import { itemDisplayName } from "@/lib/content/item-display";
 
 // The translator's shape, for the label helper below: `t` comes in first
 // (src/lib/story-window.ts).
@@ -241,6 +242,9 @@ export function MarketShopEditor({
             <KitButton tone="iconDanger" always aria-label={line.itemName ? t("Take {name} off the shelf", { name: line.itemName }) : t("Take this line off the shelf")} onClick={() => setLines((current) => current.filter((_, at) => at !== index))}>
               <X className="size-3.5" />
             </KitButton>
+            {itemDisplayName({ name: line.itemName, srdName: line.srdName }, t.locale) !== line.itemName ? (
+              <span className="basis-full text-[11px] text-stone-400">{itemDisplayName({ name: line.itemName, srdName: line.srdName }, t.locale)}</span>
+            ) : null}
             {line.srdName && textKey(line.srdName) !== textKey(withoutBonus(line.itemName)) ? (
               <span className="flex basis-full items-center gap-1 text-[11px] text-stone-400">
                 <span className="rounded border border-stone-700/80 px-1.5 py-0.5">{t("Listed as {name}", { name: line.srdName })}</span>

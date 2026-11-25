@@ -21,6 +21,8 @@ import { activePublicEncounter } from "@/lib/db/encounter-view";
 import { allyReactions } from "@/lib/battlemap/hand-react";
 import { aiTurnRefusal } from "@/lib/workshop/test-seats-logic";
 import type { ActKind } from "@/lib/dm/can-act";
+import { engineRefusalKey } from "@/lib/dm/player-refusals";
+import { castRefusalDisplay } from "@/lib/dm/cast-refusal-display";
 import { heroFell } from "@/lib/characters/fallen-logic";
 import { answerSpotlight } from "@/lib/dm/spotlight-answer";
 import { requestDmTurn } from "@/lib/dm/loop";
@@ -101,16 +103,6 @@ function fallenRefusal(t: T, name: string): string {
 // can-act.ts names the act in its sentences (KIND_WORDS there); intent-check.ts
 // kindOf judges a card as the same kinds. Mirrored, so a drift there makes the
 // match miss and the refusal falls back to the engine's English.
-const KIND_WORDS: Record<ActKind, string> = {
-  action: "take an action",
-  bonus: "take a bonus action",
-  reaction: "take a reaction",
-  attack: "attack",
-  cast: "cast a spell",
-  move: "move",
-  free: "act",
-};
-
 // intent-check.ts kindOf: the ActKind a Hand card is judged as.
 function kindOfIntent(intent: MessageIntent): ActKind {
   switch (intent.card) {
@@ -130,88 +122,6 @@ function kindOfIntent(intent: MessageIntent): ActKind {
     case "gear":
       return intent.action === "use" ? "action" : "free";
   }
-}
-
-// A card the engine refuses before anything is posted (intent-check.ts asks
-// can-act.ts, cast-guard.ts and action-budget.ts). Each mapping, refusal → key:
-//   dead (can-act)                   → table.hand.gate.dead
-//   down, 0 HP (can-act)             → table.hand.gate.down
-//   incapacitated, by a condition    → table.hand.gate.stopped
-//   incapacitated, by a spell's hold → table.hand.gate.spellHeld
-//   surprised, a reaction            → table.hand.gate.surprisedReaction
-//   surprised, the first round       → table.hand.gate.surprised
-//   no_initiative                    → table.hand.gate.noInitiative
-//   not_your_turn                    → table.hand.gate.notYourTurn
-//   the reaction spent (action-budget, what = the feature or "The reaction")
-//                                    → table.hand.gate.reactionSpent
-// The cast guard's own refusals (the spell not held, a raging or polymorphed
-// caster, untrained armor, the components, the slot and the turn's room for
-// the casting) keep the engine's English: no reader key exists for them, the
-// Hand's cards show them as written too (hand-spells.ts passes them through),
-// and they are the AI protocol's words.
-function engineRefusalKey(error: string, kind: ActKind, name: string, what: string, t: T): string {
-  const act = KIND_WORDS[kind] ?? KIND_WORDS.free;
-  const doing = ({ "action": t("take an action"), "bonus": t("take a bonus action"), "reaction": t("take a reaction"), "attack": t("attack"), "cast": t("cast a spell"), "move": t("move"), "free": t("act") } as Record<string, string>)[kind] ?? String(kind);
-  if (error === `${name} is dead and cannot ${act}. Only magic that raises the dead brings them back.`) {
-    return t("{name} is dead and cannot {what}. Only magic that raises the dead brings them back.", { name, what: doing });
-  }
-  if (error === `${name} is at 0 HP and cannot ${act}. They act again once they are healed above 0.`) {
-    return t("{name} is at 0 HP and cannot {what}. They act again once they are healed above 0.", { name, what: doing });
-  }
-  const heldPrefix = `${name} is `;
-  const stoppedTail = ` and cannot ${act} until the condition ends.`;
-  if (error.startsWith(heldPrefix) && error.endsWith(stoppedTail)) {
-    const condition = error.slice(heldPrefix.length, error.length - stoppedTail.length);
-    if (condition) {
-      return t("{name} is {condition} and cannot {what} until the condition ends.", { name, condition, what: doing });
-    }
-  }
-  const spellHeldTail = ` and cannot ${act} while it lasts.`;
-  if (error.startsWith(heldPrefix) && error.endsWith(spellHeldTail)) {
-    const held = error.slice(heldPrefix.length, error.length - spellHeldTail.length);
-    if (held) {
-      return t("{name} is {held} and cannot {what} while it lasts.", { name, held, what: doing });
-    }
-  }
-  if (error === `${name} is surprised and has no reaction until their first turn has passed.`) {
-    return t("{name} is surprised and has no reaction until their first turn has passed.", { name });
-  }
-  if (error === `${name} is surprised and cannot ${act} in the first round. They act from round 2.`) {
-    return t("{name} is surprised and cannot {what} in the first round. They act from round 2.", { name, what: doing });
-  }
-  if (error === `Initiative is still being rolled, so ${name} cannot ${act} yet. Roll initiative for every character first.`) {
-    return t("Initiative is still being rolled, so {name} cannot {what} yet. Roll initiative for every character first.", { name, what: doing });
-  }
-  const turnTail = `'s turn, not ${name}'s. Off their own turn a character can only use their reaction. What they declared waits for their turn.`;
-  if (error.startsWith("It is ") && error.endsWith(turnTail)) {
-    // The sentence is "It is {who}" + this tail; the tail already opens with
-    // "'s turn", so the who is everything between the prefix and the tail.
-    const who = error.slice("It is ".length, error.length - turnTail.length);
-    if (who) {
-      return t("It is {who}'s turn, not {name}'s. Off their own turn a character can only use their reaction. What they declared waits for their turn.", { who: who === "someone else" ? t("someone else") : who, name });
-    }
-  }
-  const reactionSpent = `${name} has already used their reaction; it comes back at the start of their next turn. ${what} does not happen.`;
-  if (error === reactionSpent) {
-    return t("{name} has already used their reaction; it comes back at the start of their next turn. {what} does not happen.", { name, what: intentFeature(what, t) });
-  }
-  return error;
-}
-
-// The spend the reaction refusal names: a feature's own name, else the word.
-function intentFeature(what: string, t: T): string {
-  return what === "The reaction" ? t("The reaction") : what;
-}
-
-// A character dominated by the other side (companion-command.ts). Mapping:
-//   "{name} is dominated: the GM plays {name} until the charm ends. Use OOC
-//    for table talk." → board.side.dominated + refusal.oocTail
-// (the sentence's first half is already keyed for the board's own line).
-function dominatedKey(error: string, name: string, t: T): string {
-  if (error === `${name} is dominated: the GM plays ${name} until the charm ends. Use OOC for table talk.`) {
-    return `${t("{name} is dominated: the GM plays {name} until the charm ends.", { name })} ${t("Use OOC for table talk.")}`;
-  }
-  return error;
 }
 
 // Which of the player's characters acts (resolveActionCharacter,
@@ -326,9 +236,9 @@ export async function POST(
   // its turn (gmCompanionTurn), which this used to refuse as the player's.
   const named = parsed.data.characterId ? getSheetById(parsed.data.characterId) : null;
   const acting = playsCompanion ?? (named && named.campaignId === campaignId && named.userId === user.id ? named : selected);
-  const held = kind === "ooc" || playsCompanion ? null : dominatedRefusal(campaignId, acting);
+  const held = kind === "ooc" || playsCompanion ? null : dominatedRefusal(campaignId, acting, t);
   if (held) {
-    return Response.json({ error: dominatedKey(held, acting.name, t), dominated: true }, { status: 409 });
+    return Response.json({ error: held, dominated: true }, { status: 409 });
   }
   const played = kind === "do" ? parseMessageIntent(parsed.data.intent) : null;
   // Words typed as a reaction carry the reaction mark a card carries, and a
@@ -336,7 +246,7 @@ export async function POST(
   const typedReaction = kind === "do" && (isTypedReaction(played) || (!played && parsed.data.reaction === true));
   const intent = typedReaction ? TYPED_REACTION : played;
   if (companionReactor && intent?.card !== "reaction") {
-    return Response.json({ error: `${companionReactor.name} acts on their own turn; between turns only their reaction cards are played.` }, { status: 409 });
+    return Response.json({ error: t("{name} acts on their own turn; between turns only their reaction cards are played.", { name: companionReactor.name }) }, { status: 409 });
   }
   // Floor control: during a spotlight only the named players may act (ooc is
   // always allowed); the floor releases once ALL of them have answered.
@@ -365,13 +275,13 @@ export async function POST(
         (activePublicEncounter(campaignId)?.lastHits ?? []).some((hit) => hit.characterId !== reactor.id && allyReactions(reactor, hit).length > 0));
     if (!reactor || !encounterNow || !hitOpen) {
       return Response.json(
-        { error: `No hit is open for ${reactor?.name ?? "that character"} to answer now. Send it as the hero whose turn it is, or as table talk.` },
+        { error: t("No hit is open for {name} to answer now. Send it as the hero whose turn it is, or as table talk.", { name: reactor?.name ?? t("that character") }) },
         { status: 409 },
       );
     }
     if (encounterNow.reactionsUsed.includes(reactor.id)) {
       return Response.json(
-        { error: `${reactor.name} has already used their reaction; it comes back at the start of their next turn.` },
+        { error: t("{name} has already used their reaction; it comes back at the start of their next turn.", { name: reactor.name }) },
         { status: 409 },
       );
     }
@@ -452,7 +362,7 @@ export async function POST(
   // commands it (a commander who left, or a companion turned on the party,
   // commands nobody), not the sheet's field the screen read.
   if (sheet.isCompanion && !playsCompanion && !commandedSheet(campaign, user.id, sheet.id)) {
-    return Response.json({ error: `${sheet.name} is not under your command; the GM plays them.`, floor }, { status: 409 });
+    return Response.json({ error: t("{name} is not under your command; the GM plays them.", { name: sheet.name }), floor }, { status: 409 });
   }
   // A hero who fell acts no more (issue 655): the composer says so, and a
   // connected agent or an older screen posting for them is told the same,
@@ -469,7 +379,7 @@ export async function POST(
     const refusal = intentRefusal(campaign, sheet, intent);
     if (refusal) {
       return Response.json(
-        { error: engineRefusalKey(refusal, kindOfIntent(intent), sheet.name, intent.feature ?? "The reaction", t) },
+        { error: castRefusalDisplay(engineRefusalKey(refusal, kindOfIntent(intent), sheet.name, intent.feature ?? "The reaction", t), t, sheet.name) },
         { status: 409 },
       );
     }
@@ -529,16 +439,18 @@ export async function POST(
           takeBackItemCast(campaign, sheet.id, intent.spell ?? "");
         }
         // The tool's words are the storyteller's: a person reads them here.
-        return Response.json({ error: handsFullForPlayer(resolved.error) }, { status: 409 });
+        const error = handsFullForPlayer(resolved.error, t);
+        const display = intent ? engineRefusalKey(error, kindOfIntent(intent), sheet.name, intent.feature ?? "The reaction", t) : error;
+        return Response.json({ error: castRefusalDisplay(display, t, sheet.name) }, { status: 409 });
       }
       const line = refusedPartsLine(resolved.result);
       if (line) {
-        refused.push(line);
+        refused.push(castRefusalDisplay(line, t));
       }
       // A scroll misread: the item's use failed, and no spell's tool follows it.
       const stop = drawStopsCast(call.name, resolved.result);
       if (stop) {
-        refused.push(stop.error);
+        refused.push(castRefusalDisplay(stop.error, t, sheet.name));
         break;
       }
     }

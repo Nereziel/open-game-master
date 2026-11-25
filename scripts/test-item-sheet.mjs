@@ -177,6 +177,24 @@ test("homebrew armour reads its own block", () => {
   assert.match(sheet.description, /wyrmling/);
 });
 
+await import("../src/lib/i18n/server-catalogs.ts");
+
+test("item cards localize presentation without modifying source rows or numeric stats", () => {
+  const original = structuredClone(longsword);
+  const row = { ...longsword, cost: "1.55", desc: "Original item prose.", localized_desc: "Localized display prose." };
+  for (const [locale, price] of [["en", "1 gp 5 sp 5 cp"], ["fr", "1 po 5 pa 5 pc"], ["cs", "1 zl 5 st 5 md"]]) {
+    const sheet = buildItemSheet("Longsword +2", [row], { locale });
+    assert.equal(sheet.cost, price);
+    assert.equal(sheet.bonus, 2);
+    assert.equal(sheet.weapon.damage, "1d8 + 2");
+    assert.equal(sheet.description, "Localized display prose.");
+    assert.equal(buildItemSheet("Plate", [plate], { locale }).armor.ac, "18");
+  }
+  assert.deepEqual(longsword, original);
+  assert.equal(row.cost, "1.55");
+  assert.equal(row.desc, "Original item prose.");
+});
+
 test("nothing known is null", () => {
   assert.equal(buildItemSheet("Mysterious Trinket", [undefined, null]), null);
 });

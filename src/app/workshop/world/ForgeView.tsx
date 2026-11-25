@@ -1,5 +1,7 @@
 "use client";
 
+import { worldTypeLabel, worldLinkLabel } from "@/lib/worldforge/display";
+
 import { Check, Sparkles } from "lucide-react";
 import { useState } from "react";
 import { cn } from "@/lib/cn";
@@ -101,7 +103,7 @@ export function ForgeView({ api, world, onOpen }: { api: WorldApi; world: WorldS
                     <button type="button" onClick={() => onOpen(row.existing)} className="pk-chip text-[11px] text-stone-400">already in the world</button>
                   ) : (
                     <div className="w-44">
-                      <Select label="Type" size="sm" value={row.typeId} onChange={(typeId) => set(row.key, { typeId })} options={doc.types.map((type) => ({ value: type.id, label: type.name }))} />
+                      <Select label={t("Type")} size="sm" value={row.typeId} onChange={(typeId) => set(row.key, { typeId })} options={doc.types.map((type) => ({ value: type.id, label: worldTypeLabel(t, type) }))} />
                     </div>
                   )}
                   {row.existing ? <TypeChip type={typeOf(doc, entities.find((entity) => entity.ref === row.existing)!)} /> : null}
@@ -119,8 +121,8 @@ export function ForgeView({ api, world, onOpen }: { api: WorldApi; world: WorldS
               <ul className="flex flex-col gap-1">
                 {links.map((link, index) => (
                   <li key={`${link.from}-${link.to}-${link.label}`} className="wf-rise flex items-center gap-2 text-sm text-stone-300" style={{ "--i": index } as React.CSSProperties}>
-                    <input type="checkbox" className="accent-amber-400" aria-label={`Keep ${nameOf(link.from)} ${link.label} ${nameOf(link.to)}`} checked={link.keep} onChange={(event) => setLinks((current) => current.map((entry, at) => (at === index ? { ...entry, keep: event.target.checked } : entry)))} />
-                    {nameOf(link.from)} <span className="text-stone-500">{link.label}</span> {nameOf(link.to)}
+                    <input type="checkbox" className="accent-amber-400" aria-label={t("Keep {from} {label} {to}", { from: nameOf(link.from), label: worldLinkLabel(t, link.label), to: nameOf(link.to) })} checked={link.keep} onChange={(event) => setLinks((current) => current.map((entry, at) => (at === index ? { ...entry, keep: event.target.checked } : entry)))} />
+                    {nameOf(link.from)} <span className="text-stone-500">{worldLinkLabel(t, link.label)}</span> {nameOf(link.to)}
                   </li>
                 ))}
               </ul>

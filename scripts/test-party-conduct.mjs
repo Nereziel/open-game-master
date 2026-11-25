@@ -5,6 +5,7 @@
 // companion's blow taken once a fight; and the record.
 import assert from "node:assert/strict";
 import { register } from "node:module";
+import { readFileSync } from "node:fs";
 
 register("./lib/register-alias.mjs", import.meta.url);
 
@@ -105,6 +106,37 @@ test("a wary companion will not walk into an area laid on the board on its comma
   assert.equal(logic.riskyOrderRefusal({ ...order, approval: 40 }), null, "a friendly one goes");
   assert.equal(logic.riskyOrderRefusal({ ...order, areas: [] }), null, "nothing in the way");
   assert.match(logic.riskyOrderRefusal({ ...order, provokers: ["the ogre"] }), /reach/, "a foe's reach is named first");
+});
+
+const { installCatalog, translate } = await import("../src/lib/i18n/translate.ts");
+const { planLongJump } = await import("../src/lib/srd/jump.ts");
+for (const locale of ["cs", "fr"]) {
+  installCatalog(locale, JSON.parse(readFileSync(new URL(`../src/lib/i18n/${locale}.json`, import.meta.url), "utf8")));
+}
+test("reader translations preserve companion refusal decisions and jump mechanics", () => {
+  const order = { companion: "Brakka", commander: "Tobin", approval: -10, provokers: ["Ogre"], areas: ["Wall of Fire"] };
+  const original = structuredClone(order);
+  const jump = { terrain: ".".repeat(25), width: 5, height: 5, occupied: new Set(), from: { x: 0, y: 0 }, to: { x: 3, y: 0 }, strength: 10, runningStart: true, budgetTiles: 5, name: "Brakka" };
+  const failure = planLongJump(jump);
+  assert.equal(failure.ok, false);
+  const success = planLongJump({ ...jump, strength: 20 });
+  assert.equal(success.ok, true);
+  for (const locale of ["en", "cs", "fr"]) {
+    const t = (key, vars) => translate(locale, key, vars);
+    const refusal = logic.riskyOrderRefusal(order, t);
+    assert.match(refusal, /Brakka/);
+    assert.match(refusal, /Ogre/);
+    assert.equal(refusal === logic.riskyOrderRefusal(order), locale === "en");
+    assert.equal(logic.riskyOrderRefusal({ ...order, approval: 40 }, t), null);
+    const translated = planLongJump(jump, t);
+    assert.equal(translated.ok, false);
+    assert.match(translated.error, /Brakka/);
+    assert.match(translated.error, /10/);
+    assert.match(translated.error, /15/);
+    assert.equal(translated.error === failure.error, locale === "en");
+    assert.deepEqual(planLongJump({ ...jump, strength: 20 }, t), success);
+  }
+  assert.deepEqual(order, original);
 });
 
 console.log(`test-party-conduct: ${passed} passed`);

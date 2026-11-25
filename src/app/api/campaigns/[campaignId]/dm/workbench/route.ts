@@ -10,7 +10,7 @@ import {
   TEMPLATE_MAX_ENEMIES,
 } from "@/lib/dm/encounter-template-logic";
 import { encounterCeiling, thresholdsForParty } from "@/lib/srd/encounter-math";
-import { translate } from "@/lib/messages-logic";
+import { tableTranslator } from "@/lib/messages-logic";
 
 export const runtime = "nodejs";
 export const dynamic = "force-dynamic";
@@ -86,7 +86,7 @@ export async function POST(
   // The readout's words follow the table's language: the panel renders them
   // as they arrive.
   const language = campaign.gameSettings.tableLanguage ?? "english";
-  const t = (key: string, vars?: Record<string, string | number>) => translate(language === "french" ? "fr" : "en", key, vars);
+  const t = tableTranslator(language);
   const readout = workbench(
     {
       partyLevels: levels,
