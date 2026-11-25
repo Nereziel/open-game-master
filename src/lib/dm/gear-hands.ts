@@ -20,6 +20,7 @@ import { armorOfRow, guessStands, isWorn, wearingIsExplicit } from "@/lib/srd/ar
 import { wearSlotOf } from "@/lib/srd/wear-slots";
 import { matchWeapon, type SrdWeapon } from "@/lib/srd/weapons";
 import { textKey } from "@/lib/language/text-logic";
+import { formatMessage, type MessageVars } from "@/lib/messages-logic";
 
 export type GearKind = "armor" | "shield" | "weapon" | "worn" | "carried";
 
@@ -115,9 +116,11 @@ export function guessedRehand(
 }
 
 // What the free first change did, in the result's words.
-export function rehandLine(who: string, putAway: readonly string[], taken: string): string {
-  const away = putAway.length ? `puts away ${putAway.join(" and ")} and ` : "";
-  return `${who} ${away}takes up ${taken}, free: nobody had said which weapon was out, so the first change from the game's pick costs nothing.`;
+export function rehandLine(who: string, putAway: readonly string[], taken: string, t: (key: string, vars?: MessageVars) => string = formatMessage): string {
+  return t(putAway.length
+    ? "{who} puts away {items} and takes up {item}, free: nobody had said which weapon was out, so the first change from the game's pick costs nothing."
+    : "{who} takes up {item}, free: nobody had said which weapon was out, so the first change from the game's pick costs nothing.",
+    { who, items: putAway.join(` ${t("and")} `), item: taken });
 }
 
 // The ways out of full hands, for each reader: the storyteller is told the
@@ -136,7 +139,15 @@ export function handsFullError(
   full: readonly string[],
   verb: "drawn" | "strapped on" = "drawn",
   reader: keyof typeof WAYS_OUT = "storyteller",
+  t: (key: string, vars?: MessageVars) => string = formatMessage,
 ): string {
+  if (reader === "player") {
+    const problem = t(verb === "drawn"
+      ? "{who}'s hands are full ({items}), so {item} cannot be drawn yet."
+      : "{who}'s hands are full ({items}), so {item} cannot be strapped on yet.",
+      { who, items: full.join(` ${t("and")} `), item: what });
+    return `${problem} ${t(WAYS_OUT.player)}`;
+  }
   return `${who}'s hands are full (${full.join(" and ")}), so ${what} cannot be ${verb} yet. ${WAYS_OUT[reader]}`;
 }
 

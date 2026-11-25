@@ -1,5 +1,10 @@
 {
   "messages": {
+    "{who}'s hands are full ({items}), so {item} cannot be drawn yet.": "Postava {who} má plné ruce ({items}), takže zatím nemůže vytáhnout {item}.",
+    "{who}'s hands are full ({items}), so {item} cannot be strapped on yet.": "Postava {who} má plné ruce ({items}), takže zatím nemůže nasadit {item}.",
+    "Dropping one is free; putting one away takes your object interaction this turn.": "Upuštění předmětu nic nestojí; jeho schování spotřebuje interakci s předmětem v tomto tahu.",
+    "{who} puts away {items} and takes up {item}, free: nobody had said which weapon was out, so the first change from the game's pick costs nothing.": "Postava {who} schová {items} a vezme do ruky {item} zdarma: dosud nebylo určeno, kterou zbraň drží, takže první změna oproti volbě hry nic nestojí.",
+    "{who} takes up {item}, free: nobody had said which weapon was out, so the first change from the game's pick costs nothing.": "Postava {who} vezme do ruky {item} zdarma: dosud nebylo určeno, kterou zbraň drží, takže první změna oproti volbě hry nic nestojí.",
     "Wearing two of a kind at once is the GM's exception to make: the GM or the party lead can let {name} wear both.": "Nošení dvou předmětů stejného druhu současně je výjimka, kterou může povolit PJ nebo vůdce družiny postavě {name}.",
     "{who} already wears {items}, and a character wears {kind} at a time: take it off first, or the GM may allow both.": "Postava {who} již nosí {items}. Současně může nosit jen {kind}: nejprve předmět sundej, nebo požádej PJ o výjimku.",
     "{who} already wears {items}, and a character wears {kind} at a time: take them off first, or the GM may allow both.": "Postava {who} již nosí {items}. Současně může nosit jen {kind}: nejprve tyto předměty sundej, nebo požádej PJ o výjimku.",

@@ -215,7 +215,7 @@ export async function POST(
       }
       const full = handsFullFor(after, row);
       if (full.length) {
-        return refuse(handsFullError(sheet.name, name, full, kind === "shield" ? "strapped on" : "drawn", "player"));
+        return refuse(handsFullError(sheet.name, name, full, kind === "shield" ? "strapped on" : "drawn", "player", t));
       }
     }
   }
@@ -365,7 +365,7 @@ export async function POST(
   // Out of a fight armor takes minutes to put on or take off, and ending an
   // attunement a short rest spent with the item; the clock moves by them
   // (SRD 5.1, Getting Into and Out of Armor; Attunement).
-  const dressing = parsed.data.gear && !encounter ? armorChangeMinutes(sheet.equipment, parsed.data.gear) : null;
+  const dressing = parsed.data.gear && !encounter ? armorChangeMinutes(sheet.equipment, parsed.data.gear, { locale: t.locale }) : null;
   if (dressing?.minutes) {
     advanceClock(campaignId, dressing.minutes, "minutes");
     // A companion's ultimatum whose deadline those minutes passed is the
@@ -398,6 +398,6 @@ export async function POST(
   publishPersisted(campaignId, "sheet_updated", { sheet: updated });
 
   // What the free first change did, said plainly (gear-hands.ts rehandLine).
-  const note = rehand && askedRow ? rehandLine(sheet.name, rehand.putAway, askedRow.name) : null;
+  const note = rehand && askedRow ? rehandLine(sheet.name, rehand.putAway, askedRow.name, t) : null;
   return Response.json({ sheet: updated, ...(dressing?.minutes ? { timePassed: dressing.lines.join(" ") } : {}), ...(note ? { note } : {}) });
 }

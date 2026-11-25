@@ -1,5 +1,10 @@
 {
   "messages": {
+    "{who}'s hands are full ({items}), so {item} cannot be drawn yet.": "{who} a les mains pleines ({items}) et ne peut pas encore dégainer {item}.",
+    "{who}'s hands are full ({items}), so {item} cannot be strapped on yet.": "{who} a les mains pleines ({items}) et ne peut pas encore mettre {item}.",
+    "Dropping one is free; putting one away takes your object interaction this turn.": "Lâcher un objet est gratuit ; le ranger utilise votre interaction avec un objet pour ce tour.",
+    "{who} puts away {items} and takes up {item}, free: nobody had said which weapon was out, so the first change from the game's pick costs nothing.": "{who} range {items} et prend {item} en main gratuitement : personne n’avait précisé quelle arme était sortie, donc le premier changement par rapport au choix du jeu ne coûte rien.",
+    "{who} takes up {item}, free: nobody had said which weapon was out, so the first change from the game's pick costs nothing.": "{who} prend {item} en main gratuitement : personne n’avait précisé quelle arme était sortie, donc le premier changement par rapport au choix du jeu ne coûte rien.",
     "Wearing two of a kind at once is the GM's exception to make: the GM or the party lead can let {name} wear both.": "Porter deux objets du même type à la fois est une exception que le MJ ou le chef du groupe peut accorder à {name}.",
     "{who} already wears {items}, and a character wears {kind} at a time: take it off first, or the GM may allow both.": "{who} porte déjà {items}, et un personnage ne peut porter que {kind} à la fois : retirez d’abord l’objet, ou demandez une exception au MJ.",
     "{who} already wears {items}, and a character wears {kind} at a time: take them off first, or the GM may allow both.": "{who} porte déjà {items}, et un personnage ne peut porter que {kind} à la fois : retirez d’abord ces objets, ou demandez une exception au MJ.",
