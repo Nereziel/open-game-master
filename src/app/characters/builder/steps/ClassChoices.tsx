@@ -13,6 +13,7 @@ import { PickPill, StepPanel } from "./shared";
 import { textKey } from "@/lib/language/text-logic";
 import { splitToolGrants, toolLabel } from "@/lib/srd/tool-choices";
 import { contentName } from "@/lib/content/names";
+import { optionDisplayName } from "@/lib/content/option-labels";
 import { optionFeatureName, optionKindRule, optionPicksSpells } from "@/lib/srd/options";
 import { contentSlug } from "@/lib/help";
 import { useLocale, useT, useTp } from "@/lib/locale";
@@ -200,7 +201,7 @@ export function ClassChoices({
               // still be let go.
               const notYet = selected ? undefined : derived.optionUnmet?.[optionFeatureName(slot.kind, option.n)];
               // These spell lists come from the bundled class checklist, not a workshop name.
-              const label = spells ? contentName("spells", option.n, locale) : option.n;
+              const label = spells ? contentName("spells", option.n, locale) : optionDisplayName(option, locale);
               return (
                 <div key={option.n} className={cn(optionCard(selected), "flex items-start gap-1", splitCard, notYet && "opacity-60")}>
                   <button
@@ -216,7 +217,7 @@ export function ClassChoices({
                     {notYet || option.req || !spells ? (
                       <span className="block text-sm text-stone-500">
                         {notYet ? t("Not yet: {reason} ", { reason: notYet }) : option.req ? t("Requires {req}. ", { req: option.req }) : ""}
-                        {spells ? "" : option.d}
+                        {spells ? "" : t(option.d)}
                       </span>
                     ) : null}
                   </button>
@@ -224,9 +225,9 @@ export function ClassChoices({
                     <InfoButton label={label} note={t(option.d)} reference={{ kind: "spells", slug: contentSlug(option.n), name: option.n }} />
                   ) : (
                     <InfoButton
-                      label={option.n}
+                      label={label}
                       meta={option.req ? t("Requires {req}", { req: option.req }) : undefined}
-                      text={option.d}
+                      text={t(option.d)}
                     />
                   )}
                 </div>

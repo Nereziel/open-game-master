@@ -432,6 +432,11 @@ const GRANTS: Grant[] = [
   },
 ];
 
+// The published class owning this pick list, even when another class or a feat grants a pick.
+export function optionSourceClassId(kind: OptionKind): string {
+  return GRANTS.find((grant) => grant.kind === kind)?.classId ?? "";
+}
+
 // The subclass a grant belongs to, named by the sheet: exactly, by an alias,
 // or with the titles off both sides (src/lib/srd/subclass-name.ts, the rule
 // features.ts grants by). A fragment ("Master", "Elements") opens nothing.
