@@ -1,5 +1,13 @@
 {
   "messages": {
+    "Spell Mastery: while it is prepared, cast it at 1st level without spending a spell slot, as often as you like.": "Mistr kouzel: dokud máš kouzlo připravené, můžeš je sesílat na 1. stupni bez utracení pozice kouzel, jak často chceš.",
+    "Spell Mastery: while it is prepared, cast it at 2nd level without spending a spell slot, as often as you like.": "Mistr kouzel: dokud máš kouzlo připravené, můžeš je sesílat na 2. stupni bez utracení pozice kouzel, jak často chceš.",
+    "Signature Spell: always prepared and not counted against your prepared spells; once between short or long rests, cast it at 3rd level without a slot.": "Typické kouzlo: je vždy připravené a nezapočítává se do počtu připravených kouzel. Jednou mezi krátkými či důkladnými odpočinky je můžeš seslat na 3. stupni bez utracení pozice kouzel.",
+    "Smuggler's Legerdemain: a cantrip you cast at will, with Intelligence.": "Pašerákovy kejkle: trik, který sesíláš dle libosti pomocí Inteligence.",
+    "Smuggler's Legerdemain: cast it once without a slot, back after a long rest, or with a slot of its level or higher; Intelligence is its ability. It may be swapped for another when you gain a rogue level.": "Pašerákovy kejkle: kouzlo můžeš seslat jednou bez utracení pozice kouzel; tuto možnost obnovíš po důkladném odpočinku. Můžeš je také seslat s pozicí kouzel jeho stupně či vyšší. Jeho sesílací vlastností je Inteligence. Když získáš úroveň tuláka, můžeš je vyměnit za jiné.",
+    "Improved Smuggler's Legerdemain: cast it once without a slot, back after a long rest, or with a slot of 2nd level or higher; Intelligence is its ability.": "Vylepšené pašerákovy kejkle: kouzlo můžeš seslat jednou bez utracení pozice kouzel; tuto možnost obnovíš po důkladném odpočinku. Můžeš je také seslat s pozicí kouzel 2. či vyššího stupně. Jeho sesílací vlastností je Inteligence.",
+    "Not yet: {reason} ": "Zatím ne: {reason} ",
+    "{subclass} asks for this. Each option gives your character what its card says.": "Tuto volbu vyžaduje archetyp {subclass}. Každá možnost postavě poskytne to, co uvádí její karta.",
     "{count} {class} skill": "Dovednosti povolání {class} – zbývá vybrat: {count}",
     "{count} {class} skills": "Dovednosti povolání {class} – zbývá vybrat: {count}",
     "{count} Ability Score Improvement (two points, or a feat)": "Zvýšení hodnot vlastností (dva body nebo odbornost) – zbývá: {count}",

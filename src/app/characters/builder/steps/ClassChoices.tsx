@@ -183,7 +183,7 @@ export function ClassChoices({
                   .{" "}
                 </span>
               ) : null}
-              {rule ? `${rule} ` : null}
+              {rule ? `${t(rule)} ` : null}
               {spells
                 ? t("Tap the info button on any one to read the spell.")
                 : t(" These are real abilities your character gets. Tap the info button on any one to read what it does.")}
@@ -215,13 +215,13 @@ export function ClassChoices({
                     <span className="block text-xs">{label}</span>
                     {notYet || option.req || !spells ? (
                       <span className="block text-sm text-stone-500">
-                        {notYet ? `Not yet: ${notYet} ` : option.req ? t("Requires {req}. ", { req: option.req }) : ""}
+                        {notYet ? t("Not yet: {reason} ", { reason: notYet }) : option.req ? t("Requires {req}. ", { req: option.req }) : ""}
                         {spells ? "" : option.d}
                       </span>
                     ) : null}
                   </button>
                   {spells ? (
-                    <InfoButton label={label} note={option.d} reference={{ kind: "spells", slug: contentSlug(option.n), name: option.n }} />
+                    <InfoButton label={label} note={t(option.d)} reference={{ kind: "spells", slug: contentSlug(option.n), name: option.n }} />
                   ) : (
                     <InfoButton
                       label={option.n}
@@ -248,7 +248,7 @@ export function ClassChoices({
           help={
             <>
               {slot.chosen ? null : <span className="text-amber-300">{t("1 still to choose. ")}</span>}
-              {slot.subclass} asks for this. Each option gives your character what its card says.
+              {t("{subclass} asks for this. Each option gives your character what its card says.", { subclass: slot.subclass })}
             </>
           }
         >

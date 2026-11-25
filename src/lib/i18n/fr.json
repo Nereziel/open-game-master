@@ -1,5 +1,14 @@
 {
   "messages": {
+    "Spell Mastery: while it is prepared, cast it at 1st level without spending a spell slot, as often as you like.": "Maîtrise des sorts : tant que ce sort est préparé, tu peux le lancer au niveau 1 sans dépenser d’emplacement de sort, aussi souvent que tu le souhaites.",
+    "Spell Mastery: while it is prepared, cast it at 2nd level without spending a spell slot, as often as you like.": "Maîtrise des sorts : tant que ce sort est préparé, tu peux le lancer au niveau 2 sans dépenser d’emplacement de sort, aussi souvent que tu le souhaites.",
+    "Signature Spell: always prepared and not counted against your prepared spells; once between short or long rests, cast it at 3rd level without a slot.": "Sort de prédilection : toujours préparé, il ne compte pas parmi tes sorts préparés. Une fois entre deux repos courts ou longs, tu peux le lancer au niveau 3 sans dépenser d’emplacement de sort.",
+    "Smuggler's Legerdemain: a cantrip you cast at will, with Intelligence.": "Prestidigitation du contrebandier : un sort mineur que tu peux lancer à volonté, avec l’Intelligence.",
+    "Smuggler's Legerdemain: cast it once without a slot, back after a long rest, or with a slot of its level or higher; Intelligence is its ability. It may be swapped for another when you gain a rogue level.": "Prestidigitation du contrebandier : tu peux le lancer une fois sans emplacement de sort et retrouves cette possibilité après un repos long, ou le lancer avec un emplacement de son niveau ou supérieur. L’Intelligence est sa caractéristique d’incantation. Tu peux le remplacer par un autre sort lorsque tu gagnes un niveau de roublard.",
+    "Improved Smuggler's Legerdemain: cast it once without a slot, back after a long rest, or with a slot of 2nd level or higher; Intelligence is its ability.": "Prestidigitation améliorée du contrebandier : tu peux le lancer une fois sans emplacement de sort et retrouves cette possibilité après un repos long, ou le lancer avec un emplacement de niveau 2 ou supérieur. L’Intelligence est sa caractéristique d’incantation.",
+    "Not yet: {reason} ": "Pas encore : {reason} ",
+    "{subclass} asks for this. Each option gives your character what its card says.": "L’archétype {subclass} demande ce choix. Chaque option confère à ton personnage ce qu’indique sa fiche.",
+    "Tap the info button on any one to read the spell.": "Touche le bouton info de n’importe quel sort pour lire sa description.",
     "{count} {class} skill": "Compétences de {class} – à choisir : {count}",
     "{count} {class} skills": "Compétences de {class} – à choisir : {count}",
     "{count} Ability Score Improvement (two points, or a feat)": "{count} amélioration de caractéristique (deux points ou un don)",
