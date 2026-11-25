@@ -95,13 +95,13 @@ jobs:
   # preferences that no static render can exercise (scripts/browser). Each
   # runner builds, seeds and serves its own share of the scenarios.
   browser:
-    name: browser (${{ matrix.shard }}/8)
+    name: browser (${{ matrix.shard }}/6)
     runs-on: ubuntu-latest
     timeout-minutes: 40
     strategy:
       fail-fast: false
       matrix:
-        shard: [1, 2, 3, 4, 5, 6, 7, 8]
+        shard: [1, 2, 3, 4, 5, 6]
     steps:
       - name: Check out repository
         uses: actions/checkout@v6
@@ -140,7 +140,7 @@ jobs:
         run: npx playwright-core install-deps chromium
 
       - name: Browser scenarios
-        run: npm run test:browser -- --shard ${{ matrix.shard }}/8 --balance --out "$RUNNER_TEMP/odm-browser-${{ matrix.shard }}"
+        run: npm run test:browser -- --shard ${{ matrix.shard }}/6 --balance --out "$RUNNER_TEMP/odm-browser-${{ matrix.shard }}"
 
       # Store only timings, not the seeded database, credentials or server log.
       - name: Browser timing report
