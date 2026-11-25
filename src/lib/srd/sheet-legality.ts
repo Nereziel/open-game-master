@@ -30,7 +30,7 @@ import { legacyAsiTaken, readAsiLedger, withAsiLedger } from "@/lib/srd/asi-ledg
 import { backgroundFeatureFor } from "@/lib/backgrounds";
 import { attunementSlotsFor, matchArmor } from "@/lib/srd/armor";
 import { racialTraitsFor, subclassLevelFor } from "@/lib/srd/features";
-import { chosenFightingStyles, fightingStyleChoices, fightingStyleSlots, newStyleFits } from "@/lib/srd/feature-effects";
+import { FIGHTING_STYLES, chosenFightingStyles, fightingStyleChoices, fightingStyleSlots, newStyleFits } from "@/lib/srd/feature-effects";
 import { styleSlotFeatures } from "@/lib/srd/style-slots";
 import {
   derivedMaxHp,
@@ -69,7 +69,7 @@ import { abilityProblems, baseSpans } from "@/lib/srd/legality/abilities";
 import { applyHalfFeats, halfFeatPicks, halfFeatPoints } from "@/lib/srd/legality/half-feats";
 import { judgeFeats, judgeFeatures } from "@/lib/srd/legality/features";
 import { findOptionByFeatureName, openOptionSlots, pickInSpellbook } from "@/lib/srd/options";
-import { localizedOptionReqProblem, localizedRequiredPickProblem } from "@/lib/content/option-labels";
+import { fightingStyleDisplayName, localizedOptionReqProblem, localizedRequiredPickProblem } from "@/lib/content/option-labels";
 import { sheetCantrips, sheetSpellbook } from "@/lib/srd/owed-picks-logic";
 import { subclassChoicePickProblems, withHeldPickIds } from "@/lib/srd/subclass-choice-picks";
 import { SUBCLASS_CHOICE_RECORD } from "@/lib/content/subclass-choices";
@@ -88,7 +88,8 @@ import {
   type Legalized,
 } from "@/lib/srd/legality/types";
 import { textKey } from "@/lib/language/text-logic";
-import { translate, type Locale } from "@/lib/messages-logic";
+import { translate, translatePlural, type Locale } from "@/lib/messages-logic";
+import { classFeatureName, contentName } from "@/lib/content/names";
 import { featChoice } from "@/lib/schemas/sheet";
 
 export type { LegalityContext, Legalized } from "@/lib/srd/legality/types";
@@ -235,6 +236,7 @@ function racialIncrease(
   input: CreateSheetInput,
   race: NonNullable<LegalityContext["race"]>,
   problems: string[],
+  locale: Locale = "en",
 ): { racial: Partial<Record<Ability, number>>; picks: Ability[] } {
   const racial: Partial<Record<Ability, number>> = { ...race.asi };
   const sent = input.racialChoices?.asi ?? [];
@@ -243,12 +245,14 @@ function racialIncrease(
     return { racial, picks: [] };
   }
   const picks: Ability[] = [];
+  const abilityNames = { str: "Strength", dex: "Dexterity", con: "Constitution", int: "Intelligence", wis: "Wisdom", cha: "Charisma" };
+  const shownAbility = (ability: Ability) => locale === "en" ? ability : translate(locale, abilityNames[ability]);
   for (const ability of sent) {
     const fixed = (race.asi[ability] ?? 0) !== 0;
     const offered = !choice.from || choice.from.includes(ability);
     if (picks.includes(ability) || fixed || !offered || picks.length >= choice.count) {
       problems.push(
-        `The ${race.name}'s increase of the player's choice goes to ${choice.count} different ${choice.count === 1 ? "ability" : "abilities"}${choice.from ? ` among ${choice.from.join(", ")}` : ""} the race does not already raise; ${ability} cannot take it.`,
+        translatePlural(locale, "The {race}'s increase of the player's choice goes to {count} different ability{choices} the race does not already raise; {ability} cannot take it.", "The {race}'s increase of the player's choice goes to {count} different abilities{choices} the race does not already raise; {ability} cannot take it.", { count: choice.count, race: contentName("species", race.name, locale), choices: choice.from ? translate(locale, " among {choices}", { choices: choice.from.map(shownAbility).join(", ") }) : "", ability: shownAbility(ability) }),
       );
       continue;
     }
@@ -379,7 +383,7 @@ export function legalizeSheet(input: CreateSheetInput, context: LegalityContext)
   const recorded: AsiChoice[] = (input.asiChoices ?? []).slice();
   if (recorded.length > earned) {
     problems.push(
-      `This character has earned ${earned} Ability Score Improvement${earned === 1 ? "" : "s"} at its level; ${recorded.length} are recorded.`,
+      translatePlural(context.locale ?? "en", "This character has earned {count} Ability Score Improvement at its level; {actual} are recorded.", "This character has earned {count} Ability Score Improvements at its level; {actual} are recorded.", { count: earned, actual: recorded.length }),
     );
   }
   const unrecorded = Math.max(0, earned - recorded.length);
@@ -421,7 +425,7 @@ export function legalizeSheet(input: CreateSheetInput, context: LegalityContext)
     const racial = feats.feats.filter((name) => !recordedFeats.has(textKey(name)));
     if (racial.length < race.feats) {
       problems.push(
-        `A ${race.name} starts with ${race.feats === 1 ? "a feat" : `${race.feats} feats`} of their choice; pick ${race.feats === 1 ? "one" : "them"} from the feat list.`,
+        translatePlural(context.locale ?? "en", "A {race} starts with a feat of their choice; pick one from the feat list.", "A {race} starts with {count} feats of their choice; pick them from the feat list.", { count: race.feats, race: contentName("species", race.name, context.locale ?? "en") }),
       );
     }
   }
@@ -432,7 +436,7 @@ export function legalizeSheet(input: CreateSheetInput, context: LegalityContext)
   const takesHalfFeats = policy.made || policy.edit;
   const featText = (feat: string) => context.featOf(feat)?.desc ?? "";
   const halfFeats = halfFeatPicks({ ...input, feats: feats.feats }, race.feats, featText);
-  const increase = racialIncrease(input, race, problems);
+  const increase = racialIncrease(input, race, problems, context.locale);
   // On an edit the stored scores are a pool too: they may be moved about,
   // as the builder lets them be, and not raised. They carry what the stored
   // character's option gave it (which an edit may swap for another, and the
@@ -768,7 +772,7 @@ export function legalizeSheet(input: CreateSheetInput, context: LegalityContext)
     for (const feature of featured.features) {
       const option = feature.source === "choice" ? findOptionByFeatureName(feature.name) : null;
       if (option && !pickInSpellbook(option, book)) {
-        problems.push(`${option.n} is not in the spellbook; ${feature.name.split(":")[0]} names a spell written there.`);
+        problems.push(translate(context.locale ?? "en", "{spell} is not in the spellbook; {feature} names a spell written there.", { spell: contentName("spells", option.n, context.locale ?? "en"), feature: classFeatureName("wizard", feature.name.split(":")[0], context.locale ?? "en") }));
       }
       // A new pick's prerequisite (a class level, a pact boon, a cantrip), as
       // the level-up and the owed picks hold it: a 3rd-level Four Elements
@@ -791,7 +795,9 @@ export function legalizeSheet(input: CreateSheetInput, context: LegalityContext)
       // take a free slot its class does not offer is refused.
       if (style !== undefined && !heldNames.has(textKey(feature.name)) && placedStyles.length < styleSlots) {
         if (!newStyleFits(placedStyles, style, classFeatures)) {
-          problems.push(`${style} is not a fighting style this character's classes offer; pick one of ${classStyles.map((entry) => entry.name).join(", ")}.`);
+          const locale = context.locale ?? "en";
+          const known = FIGHTING_STYLES.find((entry) => textKey(entry.name) === textKey(style));
+          problems.push(translate(locale, "{style} is not a fighting style this character's classes offer; pick one of {choices}.", { style: locale === "en" || !known ? style : fightingStyleDisplayName(known, locale), choices: classStyles.map((entry) => fightingStyleDisplayName(entry, locale)).join(", ") }));
         } else {
           placedStyles.push(style);
         }
