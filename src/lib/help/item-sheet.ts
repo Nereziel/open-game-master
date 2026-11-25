@@ -1,4 +1,4 @@
-import { contentInfoDirectMatches, describeContentEntry, type ContentInfoIdentity } from "@/lib/help";
+import { contentInfoAllowsNameFallback, contentInfoDirectMatches, describeContentEntry, type ContentInfoIdentity } from "@/lib/help";
 import { textKey } from "@/lib/language/text-logic";
 import { DAMAGE_TYPE_BLURBS, WEAPON_PROPERTY_BLURBS } from "@/lib/help/terms";
 import { translate, type Locale } from "@/lib/messages-logic";
@@ -248,7 +248,6 @@ function compatibleItem(primary: ItemCardEntry, entry: ItemCardEntry): boolean {
     && entry.documentSlug === primary.documentSlug;
 }
 
-type ItemCardReference = ContentInfoIdentity & { exactSlug?: boolean };
 type ItemCardSelection = { rows: Array<Row | undefined>; allowBundledFallback: boolean };
 
 // A legacy name-only search may combine complementary SRD rows, but it
@@ -259,10 +258,10 @@ export function itemCardRows(
   name: string,
   direct: ItemCardEntry | null | undefined,
   results: ItemCardEntry[],
-  reference?: ItemCardReference,
+  reference?: ContentInfoIdentity,
   limit = 20,
 ): ItemCardSelection | null {
-  const strict = Boolean(reference?.exactSlug || reference?.source || reference?.documentSlug);
+  const strict = !contentInfoAllowsNameFallback(reference);
   if (direct && reference && !contentInfoDirectMatches(
     { slug: direct.slug ?? "", source: direct.source, documentSlug: direct.documentSlug }, reference,
   )) return null;

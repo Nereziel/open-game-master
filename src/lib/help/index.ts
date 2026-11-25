@@ -170,12 +170,12 @@ export function backgroundFeatureReference(
   background: string | null | undefined,
   classId = "",
   subclass = "",
-): { kind: "backgrounds"; slug: string; name: string } | null {
+): { kind: "backgrounds"; slug: string; name: string; exactSlug: true } | null {
   const slug = (background ?? "").trim();
   if (feature.source !== "background" || !slug || describeFeature(classId, subclass, feature.name)) {
     return null;
   }
-  return { kind: "backgrounds", slug, name: baseName(feature.name) };
+  return { kind: "backgrounds", slug, name: baseName(feature.name), exactSlug: true };
 }
 
 // The bundled lineage lines. Racial traits are written to describe themselves
@@ -302,7 +302,13 @@ export function describeContentEntry(data: Record<string, unknown> | undefined, 
 
 // A source-backed reference is not a request to find another book's
 // same-named entry. Legacy references may have only a guessed slug.
-export type ContentInfoIdentity = { slug: string; source?: string; documentSlug?: string };
+export type ContentInfoIdentity = { slug: string; source?: string; documentSlug?: string; exactSlug?: boolean };
+
+// A stored slug may follow a deliberate server redirect, but a failed lookup
+// is not permission to find another record by its display name.
+export function contentInfoAllowsNameFallback(reference?: ContentInfoIdentity): boolean {
+  return !reference?.exactSlug && !reference?.source && !reference?.documentSlug;
+}
 
 export function contentInfoDirectMatches(entry: ContentInfoIdentity, reference: ContentInfoIdentity): boolean {
   if (!reference.source && !reference.documentSlug) return true;

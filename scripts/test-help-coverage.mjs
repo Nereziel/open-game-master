@@ -15,6 +15,8 @@ register("./lib/register-alias.mjs", import.meta.url);
 const {
   describeFeature,
   describeContentEntry,
+  backgroundFeatureReference,
+  contentInfoAllowsNameFallback,
   contentInfoDirectMatches,
   uniqueContentInfoMatch,
   describeRace,
@@ -402,6 +404,19 @@ test("info fallback never substitutes another source for a selected entry", () =
   assert.equal(uniqueContentInfoMatch([original], "fire", 20), undefined);
   assert.equal(uniqueContentInfoMatch([original], "fireball", 1), undefined);
   assert.equal(uniqueContentInfoMatch([], "fireball", 20), undefined);
+});
+
+test("stored content references cannot fall back to a different name match", () => {
+  assert.equal(contentInfoAllowsNameFallback(), true);
+  assert.equal(contentInfoAllowsNameFallback({ slug: "legacy" }), true);
+  assert.equal(contentInfoAllowsNameFallback({ slug: "legacy", exactSlug: false }), true);
+  assert.equal(contentInfoAllowsNameFallback({ slug: "known", exactSlug: true }), false);
+  assert.equal(contentInfoAllowsNameFallback({ slug: "known", source: "open5e" }), false);
+  assert.equal(contentInfoAllowsNameFallback({ slug: "known", documentSlug: "toh" }), false);
+  assert.equal(contentInfoDirectMatches({ slug: "redirected" }, { slug: "known", exactSlug: true }), true);
+  const reference = backgroundFeatureReference({ name: "Unknown Test Feature", source: "background" }, "stored-background");
+  assert.deepEqual(reference, { kind: "backgrounds", slug: "stored-background", name: "Unknown Test Feature", exactSlug: true });
+  assert.equal(contentInfoAllowsNameFallback(reference), false);
 });
 
 console.log(`\ntest-help-coverage: ${passed} passed`);

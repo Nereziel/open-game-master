@@ -114,7 +114,7 @@ function ContentBody({ reference }: { reference: ContentRef }) {
     let cancelled = false;
     async function load() {
       try {
-        const { describeContentEntry, contentInfoDirectMatches, uniqueContentInfoMatch } = await import("@/lib/help");
+        const { describeContentEntry, contentInfoAllowsNameFallback, contentInfoDirectMatches, uniqueContentInfoMatch } = await import("@/lib/help");
         const { needsNote } = await import("@/lib/content/levelup-logic");
         const headers = { "X-Odm-Locale": t.locale };
         // An entry built on rules this game does not play, or played from
@@ -143,7 +143,7 @@ function ContentBody({ reference }: { reference: ContentRef }) {
           }
         }
         // Only legacy name-only references may fall back to search.
-        if (reference.source || reference.documentSlug) {
+        if (!contentInfoAllowsNameFallback(reference)) {
           if (!cancelled) setState({ text: null, loading: false });
           return;
         }
@@ -170,7 +170,7 @@ function ContentBody({ reference }: { reference: ContentRef }) {
     return () => {
       cancelled = true;
     };
-  }, [reference.kind, reference.slug, reference.name, reference.source, reference.documentSlug, campaignId, t]);
+  }, [reference.kind, reference.slug, reference.name, reference.source, reference.documentSlug, reference.exactSlug, campaignId, t]);
 
   if (state.loading) {
     return (
