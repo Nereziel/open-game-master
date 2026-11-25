@@ -1,5 +1,15 @@
 {
   "messages": {
+    "{campaign}: {session} is planned for {when}.": "{campaign}: {session} – plánovaný termín {when}.",
+    "{campaign}: {session} moved to {when}.": "{campaign}: {session} – nový termín {when}.",
+    "{campaign}: {session} on {when} was called off.": "{campaign}: {session} v termínu {when} bylo zrušeno.",
+    "{campaign}: {session} starts soon, at {when}. See you at the table.": "{campaign}: {session} začne brzy, v {when}. Na viděnou u stolu.",
+    "{campaign}: {session} is starting now. To the table!": "{campaign}: {session} právě začíná. Ke stolu!",
+    "The table misses you: {campaign} has been quiet for a few days.": "Stůl na tebe čeká: v kampani {campaign} je už několik dní klid.",
+    "{user} can't make {session} in {campaign}.": "{user} se nemůže zúčastnit setkání {session} v kampani {campaign}.",
+    "{user} invited you to \"{campaign}\". Join with room code {code}.": "{user} tě pozval do kampaně „{campaign}“. Připoj se pomocí kódu místnosti {code}.",
+    "{user} accepted your friend request.": "{user} přijal tvou žádost o přátelství.",
+    "{user} wants to be friends.": "{user} se s tebou chce spřátelit.",
     "{spell} is from the 2024 rules, which this server does not play; pick a 2014 spell in its place. Nothing was spent.": "{spell} pochází z pravidel z roku 2024, podle kterých tento server nehraje; vyber místo něj kouzlo z pravidel z roku 2014. Nic nebylo spotřebováno.",
     "{name} is dead and cannot spend a spell slot.": "Postava {name} je mrtvá a nemůže utratit pozici kouzel.",
     "{name} is at 0 HP and cannot spend a spell slot.": "Postava {name} má 0 životů a nemůže utratit pozici kouzel.",

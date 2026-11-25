@@ -1,5 +1,15 @@
 {
   "messages": {
+    "{campaign}: {session} is planned for {when}.": "{campaign} : {session} est prévue pour le {when}.",
+    "{campaign}: {session} moved to {when}.": "{campaign} : {session} est reportée au {when}.",
+    "{campaign}: {session} on {when} was called off.": "{campaign} : {session} du {when} est annulée.",
+    "{campaign}: {session} starts soon, at {when}. See you at the table.": "{campaign} : {session} commence bientôt, à {when}. À bientôt à la table.",
+    "{campaign}: {session} is starting now. To the table!": "{campaign} : {session} commence maintenant. À table !",
+    "The table misses you: {campaign} has been quiet for a few days.": "La table vous attend : {campaign} est calme depuis quelques jours.",
+    "{user} can't make {session} in {campaign}.": "{user} ne peut pas participer à {session} dans {campaign}.",
+    "{user} invited you to \"{campaign}\". Join with room code {code}.": "{user} vous invite dans « {campaign} ». Rejoignez la partie avec le code {code}.",
+    "{user} accepted your friend request.": "{user} a accepté votre demande d’amitié.",
+    "{user} wants to be friends.": "{user} souhaite devenir votre ami.",
     "{spell} is from the 2024 rules, which this server does not play; pick a 2014 spell in its place. Nothing was spent.": "{spell} provient des règles de 2024, que ce serveur n’utilise pas ; choisissez à la place un sort des règles de 2014. Rien n’a été dépensé.",
     "{name} is dead and cannot spend a spell slot.": "{name} est mort et ne peut pas dépenser d’emplacement de sort.",
     "{name} is at 0 HP and cannot spend a spell slot.": "{name} a 0 PV et ne peut pas dépenser d’emplacement de sort.",

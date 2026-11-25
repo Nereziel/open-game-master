@@ -7,6 +7,7 @@ import { GameIcon } from "@/components/ui/GameIcon";
 import { cn } from "@/lib/cn";
 import { useT } from "@/lib/locale";
 import { agoLabel } from "@/app/home/types";
+import { notificationDisplay } from "@/lib/notification-display";
 
 // The bell: out-of-game news (sessions planned, moved, called off; someone
 // can't make it; reminders and the idle-table nudge). Live over the
@@ -81,12 +82,12 @@ export function NotificationBell() {
     }
     for (const item of fresh.slice(0, 3)) {
       try {
-        new Notification("Open Game Master", { body: item.body, tag: item.id });
+        new Notification("Open Game Master", { body: notificationDisplay(item, t), tag: item.id });
       } catch {
         // No notification daemon on this platform; the badge still shows.
       }
     }
-  }, []);
+  }, [t]);
 
   const load = useCallback(async () => {
     try {
@@ -220,7 +221,7 @@ export function NotificationBell() {
                 >
                   <GameIcon icon={{ kind: "glyph", key: glyphFor(item.kind) }} size="size-8" className="shrink-0" />
                   <span className="min-w-0">
-                    <span className="block">{item.body}</span>
+                    <span className="block">{notificationDisplay(item, t)}</span>
                     <span className="block text-xs text-stone-600">{agoLabel(t, item.createdAt)}</span>
                   </span>
                 </li>
