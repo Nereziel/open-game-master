@@ -15,6 +15,13 @@ const FLAGS: Record<string, React.ReactNode> = {
       <path d="M15 0V20M0 10H30" stroke="#C8102E" strokeWidth="3.4" />
     </>
   ),
+  cz: (
+    <>
+      <rect width="30" height="20" fill="#fff" />
+      <rect y="10" width="30" height="10" fill="#D7141A" />
+      <path d="M0 0L15 10L0 20Z" fill="#11457E" />
+    </>
+  ),
   dk: (
     <>
       <rect width="30" height="20" fill="#C8102E" />
