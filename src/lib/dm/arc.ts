@@ -1,3 +1,5 @@
+import { dmDebug, dmDebugArcReply } from "@/lib/dm/debug";
+import { currentDmJob, currentJobSignal } from "@/lib/dm/job-control";
 import { withLanguage } from "@/lib/dm/table-language-logic";
 import { campaignSeats, getCampaignById, latestSeq, setStoryArc } from "@/lib/db/campaigns";
 import { listChapters } from "@/lib/db/chapters";
@@ -326,8 +328,10 @@ async function sagaFromPlan(
   planRaw: string,
   opening = "",
 ): Promise<{ arc: StoryArc; raw: string } | null> {
+  const trace = { campaignId, jobId: currentDmJob()?.id };
   let raw = planRaw;
   let plan = parseSagaPlanJson(raw, profile);
+  dmDebug("arc.plan.parse", { ...trace, attempt: 1, chars: raw.length, ok: Boolean(plan), acts: plan?.sketches.length });
   if (!plan) {
     // A model that ignored the plan's shape and answered with a whole arc,
     // beats and all (nested acts, a flat list of beats), still yields a
@@ -339,14 +343,13 @@ async function sagaFromPlan(
     // A plan that cannot be read at all (cut short, or prose) is asked for
     // once more before the campaign goes without a spine until its first
     // chapter closes.
-    if (process.env.DM_DEBUG) {
-      console.log("[dm-debug] saga plan: unreadable reply, asking once more:", raw.slice(0, 200));
-    }
+    dmDebug("arc.plan.retry", { ...trace, reason: "unreadable_plan" });
     const again = await arcModelCall(campaignId, planSystem, context, "saga plan retry");
     if (again === null) {
       return null;
     }
     plan = parseSagaPlanJson(again, profile);
+    dmDebug("arc.plan.parse", { ...trace, attempt: 2, chars: again.length, ok: Boolean(plan), acts: plan?.sketches.length });
     if (!plan) {
       const wholeAgain = parseSagaJson(again, profile);
       return wholeAgain ? { arc: wholeAgain, raw: again } : null;
@@ -356,12 +359,14 @@ async function sagaFromPlan(
   const feedback = (problems: string[], what: string) =>
     `Your last ${what} had these problems. Write it again, whole, without them:\n${problems.map((line) => `- ${line}`).join("\n")}`;
   const planProblems = sagaPlanProblems(plan);
+  dmDebug("arc.plan.validate", { ...trace, problems: planProblems.length });
   if (planProblems.length) {
     if (process.env.DM_DEBUG) {
       console.log(`[dm-debug] saga plan: plotting again (${planProblems.join(" | ")})`);
     }
     const again = await arcModelCall(campaignId, planSystem, `${context}\n\n${feedback(planProblems, "plan")}`, "saga replan");
     const second = again === null ? null : parseSagaPlanJson(again, profile);
+    dmDebug("arc.plan.replan_result", { ...trace, parsed: Boolean(second), beforeProblems: planProblems.length, afterProblems: second ? sagaPlanProblems(second).length : undefined, stopped: currentJobSignal()?.aborted });
     if (again !== null && second && sagaPlanProblems(second).length < planProblems.length) {
       plan = second;
       raw = again;
@@ -370,10 +375,13 @@ async function sagaFromPlan(
   const user = [context, `The saga's plan:\n${renderSagaPlan(plan)}`, opening].filter(Boolean).join("\n\n");
   const write = async (extra: string) => {
     const reply = await arcModelCall(campaignId, OPENING_ACT_SYSTEM, extra ? `${user}\n\n${extra}` : user, "opening act");
-    return reply === null ? null : parseOpeningActJson(reply);
+    const parsed = reply === null ? null : parseOpeningActJson(reply);
+    dmDebug("arc.opening.parse", { ...trace, retry: Boolean(extra), chars: reply?.length, ok: Boolean(parsed), beats: parsed?.beats.length, stopped: currentJobSignal()?.aborted });
+    return parsed;
   };
   let act = await write("");
   const actProblems = act ? openingActProblems(plan, act.beats) : [];
+  dmDebug("arc.opening.validate", { ...trace, problems: actProblems.length, parsed: Boolean(act) });
   if (!act || actProblems.length) {
     if (process.env.DM_DEBUG) {
       console.log(`[dm-debug] opening act: writing again (${act ? actProblems.join(" | ") : "unreadable reply"})`);
@@ -387,6 +395,7 @@ async function sagaFromPlan(
     return null;
   }
   const arc = sagaWithOpeningAct(plan, act, profile);
+  dmDebug("arc.assemble", { ...trace, ok: Boolean(arc), beats: arc?.beats.length });
   return arc ? { arc, raw } : null;
 }
 
@@ -397,6 +406,9 @@ export async function generateStoryArc(
   campaignId: string,
   opts?: { force?: boolean },
 ) {
+  const trace = { campaignId, jobId: currentDmJob()?.id };
+  const started = Date.now();
+  dmDebug("arc.generate.start", { ...trace, force: Boolean(opts?.force) });
   try {
     const campaign = getCampaignById(campaignId);
     if (!campaign || (campaign.storyArc && !opts?.force)) {
@@ -421,7 +433,7 @@ export async function generateStoryArc(
       .filter(Boolean)
       .join("\n\n");
 
-    const { message, error } = await requestDmMessage(
+    const { message, error, finishReason, usage, durationMs } = await requestDmMessage(
       campaign.settings,
       [
         { role: "system", content: withLanguage(sagaGenerateSystem(profile), campaign.gameSettings.tableLanguage) },
@@ -429,6 +441,7 @@ export async function generateStoryArc(
       ],
       { meta: { task: "arc_generate" }, timeoutMs: arcTextTimeoutMs() },
     );
+    dmDebug("arc.generate.model_result", { ...trace, status: error?.status, finishReason, durationMs, outputTokens: usage?.outputTokens, stopped: currentJobSignal()?.aborted });
     if (error) {
       const payload = (await error
         .clone()
@@ -438,12 +451,11 @@ export async function generateStoryArc(
       return;
     }
     const raw = typeof message?.content === "string" ? message.content : "";
+    dmDebugArcReply("initial saga plan", raw, { ...trace, finishReason });
     const plotted = await sagaFromPlan(campaignId, sagaGenerateSystem(profile), context, profile, raw);
     if (!plotted) {
       console.warn(`[arc] campaign ${campaignId}: the story arc was not planned; the model's reply was not a readable plan`);
-      if (process.env.DM_DEBUG) {
-        console.log("[dm-debug] arc generation: unparseable reply:", raw.slice(0, 500));
-      }
+      dmDebug("arc.generate.failed", { ...trace, stopped: currentJobSignal()?.aborted, elapsedMs: Date.now() - started });
       return;
     }
     const arc = plotted.arc;
@@ -454,7 +466,9 @@ export async function generateStoryArc(
     }
     // The off-screen clocks orbit the fresh arc; a failure here simply
     // retries at the next chapter close (ensureWorldArcs is self-healing).
+    dmDebug("arc.world.start", trace);
     const withWorld = await ensureWorldArcs(campaignId, arc);
+    dmDebug("arc.world.end", { ...trace, changed: withWorld !== arc });
     if (withWorld !== arc) {
       storeArc(campaignId, withWorld, arc);
     }
@@ -463,6 +477,7 @@ export async function generateStoryArc(
     // reading the server log needs to see (issue #383).
     console.error(`[arc] campaign ${campaignId}: the story arc could not be planned`, error);
   } finally {
+    dmDebug("arc.generate.end", { ...trace, elapsedMs: Date.now() - started, stopped: currentJobSignal()?.aborted });
     setDmStatus(campaignId, "idle");
   }
 }
@@ -790,7 +805,9 @@ async function arcModelCall(
   if (!campaign) {
     return null;
   }
-  const { message, error } = await requestDmMessage(
+  const trace = { campaignId, jobId: currentDmJob()?.id, label };
+  dmDebug("arc.call.start", { ...trace, timeoutMs: arcTextTimeoutMs(), userChars: user.length, stopped: currentJobSignal()?.aborted });
+  const { message, error, finishReason, usage, durationMs } = await requestDmMessage(
     campaign.settings,
     [
       { role: "system", content: withLanguage(system, campaign.gameSettings.tableLanguage) },
@@ -798,13 +815,11 @@ async function arcModelCall(
     ],
     { meta: { task: "arc_plan" }, timeoutMs: arcTextTimeoutMs() },
   );
-  if (error) {
-    if (process.env.DM_DEBUG) {
-      console.log(`[dm-debug] ${label}: model call failed`);
-    }
-    return null;
-  }
-  return typeof message?.content === "string" ? message.content : "";
+  dmDebug("arc.call.end", { ...trace, status: error?.status, finishReason, outputTokens: usage?.outputTokens, durationMs, stopped: currentJobSignal()?.aborted });
+  if (error) return null;
+  const raw = typeof message?.content === "string" ? message.content : "";
+  dmDebugArcReply(label, raw, { ...trace, finishReason });
+  return raw;
 }
 
 // One-time v1 -> v2 upgrade for a campaign already in progress: fills in the

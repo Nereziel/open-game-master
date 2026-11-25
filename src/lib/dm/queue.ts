@@ -16,6 +16,7 @@
 // turn halted with a Retry, and the queue moves on. And whatever a job left
 // on the status line, the last job out of a campaign's queue sets it right.
 
+import { dmDebug, dmDebugEnabled } from "@/lib/dm/debug";
 import { bindUsageScope } from "@/lib/usage/scope";
 import { publishEphemeral } from "@/lib/events";
 import { knownDmStatus, setDmStatus } from "@/lib/dm/status";
@@ -198,6 +199,7 @@ export function enqueueDmJob(campaignId: string, job: () => Promise<void>, optio
   const scoped = bindUsageScope(job, { campaignId });
   depths().set(campaignId, dmQueueDepth(campaignId) + 1);
   const kind = options.kind ?? "work";
+  dmDebug("queue.enqueue", { campaignId, kind, depth: dmQueueDepth(campaignId), paused: pauses().has(campaignId) });
   // The check and the start are one synchronous step: a job put first while
   // this one waited between two promise callbacks is seen, never overtaken.
   const startWhenClear = (): Promise<void> | undefined => {
@@ -237,6 +239,7 @@ export function enqueueDmJobFirst(campaignId: string, job: () => Promise<void>, 
   const scoped = bindUsageScope(job, { campaignId });
   depths().set(campaignId, dmQueueDepth(campaignId) + 1);
   const kind = options.kind ?? "work";
+  dmDebug("queue.enqueue", { campaignId, kind, depth: dmQueueDepth(campaignId), paused: pauses().has(campaignId) });
   const startWhenFree = (): Promise<void> | undefined => {
     const busy = running().get(campaignId);
     if (busy && !busy.settled) {
@@ -266,6 +269,7 @@ export function enqueueDmJobFirst(campaignId: string, job: () => Promise<void>, 
 // and says the queue is dry. A job the listener queues joins behind this one.
 function leaveQueue(campaignId: string) {
   const left = dmQueueDepth(campaignId) - 1;
+  dmDebug("queue.leave", { campaignId, depth: Math.max(0, left) });
   if (left > 0) {
     depths().set(campaignId, left);
   } else {
@@ -296,10 +300,12 @@ async function runJob(campaignId: string, job: () => Promise<void>, kind: DmJobK
   runningDone().set(campaignId, settled);
   publishJob(campaignId);
   ensureWatchdog();
+  dmDebug("job.start", { campaignId, jobId: control.id, kind, depth: dmQueueDepth(campaignId) });
   try {
     await Promise.race([runInDmJob(control, job), abandoned]);
   } finally {
     control.settled = true;
+    dmDebug("job.end", { campaignId, jobId: control.id, turnId: control.turnId, kind, stage: jobStage(control), elapsedMs: Date.now() - control.startedAt, stopped: Boolean(control.stopReason), abandoned: control.abandoned });
     // The turn the job drove is done: what it changed is read as it left it.
     if (control.turnId) {
       detachFromTurn(() => turnWorkDone(control.turnId as string));
@@ -354,6 +360,7 @@ export function stopDmJob(campaignId: string, reason: string, options: { graceMs
   console.warn(
     `[dm] campaign ${campaignId}: stopping the ${control.kind} job while ${describeStage(jobStage(control)).toLowerCase()} (${Math.round((Date.now() - control.startedAt) / 1000)}s in): ${reason}`,
   );
+  dmDebug("job.stop", { campaignId, jobId: control.id, turnId: control.turnId, stage: jobStage(control), elapsedMs: Date.now() - control.startedAt });
   control.controller.abort();
   publishJob(campaignId);
   // Started from whatever asked for the stop (a turn's own rewind, the
@@ -368,6 +375,7 @@ function abandonIfStuck(control: DmJobControl) {
     return;
   }
   control.abandoned = true;
+  dmDebug("job.abandon", { campaignId: control.campaignId, jobId: control.id, stage: jobStage(control), elapsedMs: Date.now() - control.startedAt });
   console.error(
     `[dm] campaign ${control.campaignId}: the ${control.kind} job did not stop while ${describeStage(jobStage(control)).toLowerCase()}; it was abandoned and the queue moves on.`,
   );
@@ -392,6 +400,8 @@ function ensureWatchdog() {
   dog.timer.unref?.();
 }
 
+const debugHeartbeat = new WeakMap<DmJobControl, number>();
+
 function checkJobs() {
   const now = Date.now();
   const { scale } = watchdog();
@@ -400,7 +410,12 @@ function checkJobs() {
       continue;
     }
     const quiet = now - control.lastProgressAt;
-    if (quiet > jobDeadlineMs(control, scale)) {
+    const deadlineMs = jobDeadlineMs(control, scale);
+    if (dmDebugEnabled() && now - (debugHeartbeat.get(control) ?? control.startedAt) >= 30_000) {
+      debugHeartbeat.set(control, now);
+      dmDebug("job.heartbeat", { campaignId: control.campaignId, jobId: control.id, turnId: control.turnId, stage: jobStage(control), elapsedMs: now - control.startedAt, quietMs: quiet, deadlineMs, depth: dmQueueDepth(control.campaignId) });
+    }
+    if (quiet > deadlineMs) {
       stopDmJob(control.campaignId, stalledReason(jobStage(control), quiet));
     }
   }
