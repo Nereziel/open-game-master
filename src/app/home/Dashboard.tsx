@@ -18,7 +18,7 @@ const CreateCampaignDialog = lazy(() =>
 import { AccountMenu, AppBrand, AppHomeButton } from "@/components/AccountMenu";
 import { DeletionBanner } from "@/components/DeletionBanner";
 import { NotificationBell } from "@/components/NotificationBell";
-import { HowToPlayDialog } from "@/components/HowToPlayDialog";
+const HowToPlayDialog = lazy(() => import("@/components/HowToPlayDialog").then((module) => ({ default: module.HowToPlayDialog })));
 import { Tooltip } from "@/components/ui/Tooltip";
 import type { WorkshopSummary } from "@/app/workshop/types";
 import { YourTables } from "@/app/home/CampaignList";
@@ -88,6 +88,8 @@ export function Dashboard({ user, onLogout }: { user: SessionUser; onLogout: () 
     appReturn.current = window.setTimeout(() => shellHost()?.showServers(), 0);
   };
   const [howToOpen, setHowToOpen] = useState(false);
+  const [howToMounted, setHowToMounted] = useState(false);
+  if (howToOpen && !howToMounted) setHowToMounted(true);
   const joinInputRef = useRef<HTMLInputElement | null>(null);
   const capabilities = useCapabilities();
 
@@ -310,7 +312,9 @@ export function Dashboard({ user, onLogout }: { user: SessionUser; onLogout: () 
           {soloSeen ? <CreateCampaignDialog solo open={soloOpen} onOpenChange={closesToApp(setSoloOpen)} onCreated={onCreated} /> : null}
         </Suspense>
         <StarterDialog open={starterOpen} onOpenChange={closesToApp(setStarterOpen)} onCreated={onCreated} />
-        <HowToPlayDialog open={howToOpen} onOpenChange={setHowToOpen} />
+        <Suspense fallback={null}>
+          {howToMounted ? <HowToPlayDialog open={howToOpen} onOpenChange={setHowToOpen} /> : null}
+        </Suspense>
       </div>
     </main>
   );
