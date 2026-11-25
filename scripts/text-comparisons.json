@@ -18252,13 +18252,6 @@
         "a language name title-cased"
       ]
     ],
-    "lib/srd/feat-grants.ts#str-eq": [
-      [
-        "english-source",
-        1,
-        "the grant line ODM writes"
-      ]
-    ],
     "lib/srd/feat-spells.ts#[a-z]": [
       [
         "key",
