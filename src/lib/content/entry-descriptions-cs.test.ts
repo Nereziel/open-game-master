@@ -5,6 +5,8 @@ import { buildItemSheet, itemCardRows } from "../help/item-sheet";
 import { czechGearDescription } from "./entry-descriptions-cs";
 import { localizeEntry } from "./entry-descriptions";
 import { bundledItemRows, bundledSpellRows } from "@/lib/rulebook/catalog-rows";
+import { SRD_GEAR, SRD_GOODS } from "@/lib/srd/adventuring-gear";
+import { SRD_ARMOR } from "@/lib/srd/armor";
 import { czechFullTranslation } from "@/lib/rulebook/czech-companion";
 import { rulebookPages } from "@/lib/rulebook/book";
 import { SRD_BACKGROUNDS, SRD_RACES } from "@/lib/srd";
@@ -77,6 +79,22 @@ describe("Archetype and feat display is separate from mechanics", () => {
 });
 
 describe("Shared localized content descriptions", () => {
+  it("covers the bundled mundane equipment, goods and thirteen SRD armor rows", () => {
+    const armor = SRD_ARMOR.filter((row) => !row.genres?.length && row.name !== "Spiked Armor");
+    expect(armor).toHaveLength(13);
+    for (const row of [...SRD_GEAR, ...SRD_GOODS, ...armor]) {
+      expect(czechGearDescription(row.name), row.name).toBeTruthy();
+    }
+    expect(czechGearDescription("An unknown custom item")).toBeUndefined();
+  });
+
+  it("distinguishes magic item rarity from the Common language", () => {
+    const row = { name: "Example charm", rarity: "common", type: "Wondrous item", desc: "A charm." };
+    expect(buildItemSheet(row.name, [row], { locale: "cs" })?.rarity).toBe("Běžný");
+    expect(buildItemSheet(row.name, [row], { locale: "en" })?.rarity).toBe("Common");
+    expect(translate("cs", "Common")).toBe("Obecná řeč");
+  });
+
   it("carries Czech core shield prose through the item info card without changing mechanics", () => {
     const row = {
       slug: "shield", name: "Shield", source: "open5e", documentSlug: "wotc-srd",
