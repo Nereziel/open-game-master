@@ -47,7 +47,7 @@ import { subclassOwed } from "@/lib/srd/owed-choices";
 import { applySubclassTraining, grantsForHeldTraining, subclassGrants } from "@/lib/srd/subclass-training";
 import type { SubclassExtras } from "@/lib/srd/subclass-tables";
 import { textKey } from "@/lib/language/text-logic";
-import { translate, type Locale } from "@/lib/messages-logic";
+import { translate, translatePlural, type Locale } from "@/lib/messages-logic";
 
 // What the confirm sheet sends beside the hero. Every field may be left
 // out: what is not picked stays owed.
@@ -208,6 +208,7 @@ export function applySeatPicks(
   context: SeatPicksContext,
 ): PicksApplied {
   const t = (key: string, vars: Record<string, string | number>) => translate(context.locale ?? "en", key, vars);
+  const p = (one: string, other: string, vars: Record<string, string | number> & { count: number }) => translatePlural(context.locale ?? "en", one, other, vars);
   const problems: string[] = [];
   const name = seated.name;
   const before = classesOf(seated, level);
@@ -256,9 +257,9 @@ export function applySeatPicks(
     const left = skillsLeft({ ...seated, proficiencies }, classes);
     const off = skillPicks.filter((skill) => !left.options.includes(skill));
     if (off.length) {
-      problems.push(`${off.join(", ")} ${off.length === 1 ? "is not a skill" : "are not skills"} ${name}'s class still offers.`);
+      problems.push(p("{skills} is not a skill {name}'s class still offers.", "{skills} are not skills {name}'s class still offers.", { name, skills: off.join(", "), count: off.length }));
     } else if (skillPicks.length > left.count) {
-      problems.push(`${name}'s class offers ${left.count} more skill${left.count === 1 ? "" : "s"}; ${skillPicks.length} were picked.`);
+      problems.push(p("{name}'s class offers {count} more skill; {picked} were picked.", "{name}'s class offers {count} more skills; {picked} were picked.", { name, count: left.count, picked: skillPicks.length }));
     } else {
       proficiencies = { ...proficiencies, skills: [...proficiencies.skills, ...skillPicks] };
     }
@@ -278,8 +279,8 @@ export function applySeatPicks(
   if (asked.length > owed) {
     problems.push(
       owed
-        ? `${name} is owed ${owed} Ability Score Improvement${owed === 1 ? "" : "s"}: two points, or one feat, each. ${asked.length} were picked.`
-        : `${name} is owed no Ability Score Improvement at this table's level.`,
+        ? p("{name} is owed {count} Ability Score Improvement: two points, or one feat, each. {picked} were picked.", "{name} is owed {count} Ability Score Improvements: two points, or one feat, each. {picked} were picked.", { name, count: owed, picked: asked.length })
+        : t("{name} is owed no Ability Score Improvement at this table's level.", { name }),
     );
   } else if (asked.length) {
     abilities = applyChoices(abilities, asked);
@@ -358,10 +359,10 @@ export function applySeatPicks(
     const off = expertisePicks.filter((pick) => !left.options.includes(pick));
     if (off.length) {
       problems.push(
-        `Expertise doubles a proficiency the character has; ${off.join(", ")} ${off.length === 1 ? "is" : "are"} not among ${name}'s skills.`,
+        p("Expertise doubles a proficiency the character has; {skills} is not among {name}'s skills.", "Expertise doubles a proficiency the character has; {skills} are not among {name}'s skills.", { name, skills: off.join(", "), count: off.length }),
       );
     } else if (expertisePicks.length > left.count) {
-      problems.push(`${name} has expertise in ${left.count} more proficienc${left.count === 1 ? "y" : "ies"} to pick; ${expertisePicks.length} were picked.`);
+      problems.push(p("{name} has expertise in {count} more proficiency to pick; {picked} were picked.", "{name} has expertise in {count} more proficiencies to pick; {picked} were picked.", { name, count: left.count, picked: expertisePicks.length }));
     } else {
       proficiencies = { ...proficiencies, expertise: [...held, ...expertisePicks] };
     }

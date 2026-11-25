@@ -1,5 +1,6 @@
 {
   "messages": {
+    "{name} is owed no Ability Score Improvement at this table's level.": "Postavě {name} na úrovni tohoto stolu nezbývá žádné zvýšení vlastností.",
     "{name} has no {className} levels to choose a subclass for.": "{name} nemá žádnou úroveň povolání {className}, pro které by mohl zvolit archetyp.",
     "{name} is a {subclass}; a subclass is chosen once and later levels build on it.": "{name} má archetyp {subclass}; archetyp se volí jednou a další úrovně na něj navazují.",
     "A {className} chooses a subclass at {className} level {required}; {name} plays {className} {level} here.": "Archetyp povolání {className} se volí na {required}. úrovni tohoto povolání; {name} zde má povolání {className} na {level}. úrovni.",
@@ -15427,6 +15428,31 @@
     }
   },
   "plurals": {
+    "{skills} is not a skill {name}'s class still offers.\u0000{skills} are not skills {name}'s class still offers.": [
+      "Dovednost {skills} už povolání postavy {name} nenabízí.",
+      "Dovednosti {skills} už povolání postavy {name} nenabízí.",
+      "Dovednosti {skills} už povolání postavy {name} nenabízí."
+    ],
+    "{name}'s class offers {count} more skill; {picked} were picked.\u0000{name}'s class offers {count} more skills; {picked} were picked.": [
+      "Povolání postavy {name} nabízí ještě {count} dovednost; počet vybraných: {picked}.",
+      "Povolání postavy {name} nabízí ještě {count} dovednosti; počet vybraných: {picked}.",
+      "Povolání postavy {name} nabízí ještě {count} dovedností; počet vybraných: {picked}."
+    ],
+    "{name} is owed {count} Ability Score Improvement: two points, or one feat, each. {picked} were picked.\u0000{name} is owed {count} Ability Score Improvements: two points, or one feat, each. {picked} were picked.": [
+      "Postavě {name} zbývá {count} zvýšení vlastností: za každé dva body nebo jedna odbornost. Počet voleb: {picked}.",
+      "Postavě {name} zbývají {count} zvýšení vlastností: za každé dva body nebo jedna odbornost. Počet voleb: {picked}.",
+      "Postavě {name} zbývá {count} zvýšení vlastností: za každé dva body nebo jedna odbornost. Počet voleb: {picked}."
+    ],
+    "Expertise doubles a proficiency the character has; {skills} is not among {name}'s skills.\u0000Expertise doubles a proficiency the character has; {skills} are not among {name}'s skills.": [
+      "Kvalifikace zdvojnásobuje zdatnostní bonus; dovednost {skills} není mezi dovednostmi postavy {name}.",
+      "Kvalifikace zdvojnásobuje zdatnostní bonus; dovednosti {skills} nejsou mezi dovednostmi postavy {name}.",
+      "Kvalifikace zdvojnásobuje zdatnostní bonus; dovednosti {skills} nejsou mezi dovednostmi postavy {name}."
+    ],
+    "{name} has expertise in {count} more proficiency to pick; {picked} were picked.\u0000{name} has expertise in {count} more proficiencies to pick; {picked} were picked.": [
+      "Postava {name} může získat kvalifikaci ještě v {count} zdatnosti; počet voleb: {picked}.",
+      "Postava {name} může získat kvalifikaci ještě ve {count} zdatnostech; počet voleb: {picked}.",
+      "Postava {name} může získat kvalifikaci ještě v {count} zdatnostech; počet voleb: {picked}."
+    ],
     "language\u0000languages": [
       "jazyk",
       "jazyky",

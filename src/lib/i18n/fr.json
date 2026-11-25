@@ -1,5 +1,6 @@
 {
   "messages": {
+    "{name} is owed no Ability Score Improvement at this table's level.": "{name} n’a plus d’amélioration de caractéristiques à choisir au niveau de cette table.",
     "{name} has no {className} levels to choose a subclass for.": "{name} n’a aucun niveau de {className} pour lequel choisir un archétype.",
     "{name} is a {subclass}; a subclass is chosen once and later levels build on it.": "{name} a choisi l’archétype {subclass} ; un archétype se choisit une fois et les niveaux suivants s’appuient sur lui.",
     "A {className} chooses a subclass at {className} level {required}; {name} plays {className} {level} here.": "L’archétype de {className} se choisit au niveau {required} de cette classe ; {name} joue ici au niveau {level} de {className}.",
@@ -13547,6 +13548,26 @@
     }
   },
   "plurals": {
+    "{skills} is not a skill {name}'s class still offers.\u0000{skills} are not skills {name}'s class still offers.": [
+      "La classe de {name} ne propose plus la compétence {skills}.",
+      "La classe de {name} ne propose plus les compétences {skills}."
+    ],
+    "{name}'s class offers {count} more skill; {picked} were picked.\u0000{name}'s class offers {count} more skills; {picked} were picked.": [
+      "La classe de {name} propose encore {count} compétence ; {picked} choisie(s).",
+      "La classe de {name} propose encore {count} compétences ; {picked} choisie(s)."
+    ],
+    "{name} is owed {count} Ability Score Improvement: two points, or one feat, each. {picked} were picked.\u0000{name} is owed {count} Ability Score Improvements: two points, or one feat, each. {picked} were picked.": [
+      "{name} doit encore choisir {count} amélioration de caractéristiques : deux points ou un don par amélioration. Nombre de choix : {picked}.",
+      "{name} doit encore choisir {count} améliorations de caractéristiques : deux points ou un don par amélioration. Nombre de choix : {picked}."
+    ],
+    "Expertise doubles a proficiency the character has; {skills} is not among {name}'s skills.\u0000Expertise doubles a proficiency the character has; {skills} are not among {name}'s skills.": [
+      "L’expertise double le bonus de maîtrise d’une compétence maîtrisée ; {skills} ne fait pas partie des compétences de {name}.",
+      "L’expertise double le bonus de maîtrise d’une compétence maîtrisée ; {skills} ne font pas partie des compétences de {name}."
+    ],
+    "{name} has expertise in {count} more proficiency to pick; {picked} were picked.\u0000{name} has expertise in {count} more proficiencies to pick; {picked} were picked.": [
+      "{name} peut encore choisir {count} maîtrise à laquelle appliquer son expertise ; nombre de choix : {picked}.",
+      "{name} peut encore choisir {count} maîtrises auxquelles appliquer son expertise ; nombre de choix : {picked}."
+    ],
     "language\u0000languages": [
       "langue",
       "langues"
