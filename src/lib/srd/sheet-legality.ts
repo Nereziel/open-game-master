@@ -144,37 +144,37 @@ function classListOf(
   const keepsHeld = held.size > 1 && sent.every((entry) => held.has(textKey(entry.id)));
   const makesHere = context.door === "table" || context.door === "library";
   if (makesHere && context.multiclassAllowed === false && !keepsHeld) {
-    problems.push("This table turns multiclassing off; a character made here holds one class.");
+    problems.push(translate(context.locale ?? "en", "This table turns multiclassing off; a character made here holds one class."));
     return single;
   }
   const ids = new Set(sent.map((entry) => textKey(entry.id)));
   if (ids.size !== sent.length) {
-    problems.push("A character holds each class once; the class list names one twice.");
+    problems.push(translate(context.locale ?? "en", "A character holds each class once; the class list names one twice."));
     return single;
   }
   if (sent.length > MULTICLASS_CAP) {
-    problems.push(`A character has at most ${MULTICLASS_CAP} classes here; that list has ${sent.length}.`);
+    problems.push(translate(context.locale ?? "en", "A character has at most {cap} classes here; that list has {count}.", { cap: MULTICLASS_CAP, count: sent.length }));
     return single;
   }
   if (textKey(sent[0].id) !== textKey(input.class)) {
-    problems.push(`The first class on the list (${sent[0].id}) must be the character's class (${input.class}).`);
+    problems.push(translate(context.locale ?? "en", "The first class on the list ({first}) must be the character's class ({primary}).", { first: sent[0].id, primary: input.class }));
     return single;
   }
   const total = sent.reduce((sum, entry) => sum + entry.level, 0);
   if (total !== context.level) {
     problems.push(
-      `The class levels add up to ${total} and the character is level ${context.level}; they must be equal.`,
+      translate(context.locale ?? "en", "The class levels add up to {total} and the character is level {level}; they must be equal.", { total, level: context.level }),
     );
     return single;
   }
   for (const entry of sent) {
     if (!context.classOf(entry.id)) {
-      problems.push(`"${entry.id}" is not a class this server knows.`);
+      problems.push(translate(context.locale ?? "en", "\"{name}\" is not a class this server knows.", { name: entry.id }));
       continue;
     }
     if (!meetsPrereq(input.abilities, entry.id)) {
       problems.push(
-        `Holding levels in ${context.classOf(entry.id)?.name ?? entry.id} beside another class requires ${describePrereq(entry.id)}.`,
+        translate(context.locale ?? "en", "Holding levels in {name} beside another class requires {requirements}.", { name: context.classOf(entry.id)?.name ?? entry.id, requirements: describePrereq(entry.id) }),
       );
     }
   }
@@ -222,7 +222,7 @@ function subclassesOf(
     }
     if (!context.subclassOffered(entry.id, name)) {
       problems.push(
-        `${name} is not a subclass of the ${context.classOf(entry.id)?.name ?? entry.id}; pick one from that class's list.`,
+        translate(context.locale ?? "en", "{name} is not a subclass of the {className}; pick one from that class's list.", { name, className: context.classOf(entry.id)?.name ?? entry.id }),
       );
     }
     return { ...entry, subclass: name };
@@ -317,15 +317,15 @@ export function legalizeSheet(input: CreateSheetInput, context: LegalityContext)
   }
   if (!klass) {
     problems.push(
-      `"${input.class}" is not a class this server knows; pick one from the builder's list.`,
+      translate(context.locale ?? "en", "\"{name}\" is not a class this server knows; pick one from the builder's list.", { name: input.class }),
     );
   }
   if (!baseRace) {
-    problems.push(`"${input.race}" is not a race this server knows; pick one from the builder's list.`);
+    problems.push(translate(context.locale ?? "en", "\"{name}\" is not a race this server knows; pick one from the builder's list.", { name: input.race }));
   }
   if (input.background.trim() && !background && context.door !== "stored") {
     problems.push(
-      `"${input.background}" is not a background this server knows; pick one from the builder's list.`,
+      translate(context.locale ?? "en", "\"{name}\" is not a background this server knows; pick one from the builder's list.", { name: input.background }),
     );
   }
   if (!klass || !baseRace) {
@@ -537,7 +537,7 @@ export function legalizeSheet(input: CreateSheetInput, context: LegalityContext)
     maxHp = same ? maxHp : derivedMaxHp("average", hpInput);
   } else if (!inRange) {
     problems.push(
-      `A level ${level} ${klass.name} with Constitution ${abilities.con} has between ${range.min} and ${range.max} hit points; the sheet says ${input.maxHp}.`,
+      translate(context.locale ?? "en", "A level {level} {name} with Constitution {constitution} has between {min} and {max} hit points; the sheet says {hp}.", { level, name: klass.name, constitution: abilities.con, min: range.min, max: range.max, hp: input.maxHp }),
     );
   }
   const hitDice = { die: dieOf(klass), total: level, spent: 0 };
@@ -904,7 +904,7 @@ export function legalizeSheet(input: CreateSheetInput, context: LegalityContext)
     const ceiling = wealthCeilingGold(level);
     if (gold > ceiling) {
       problems.push(
-        `A level ${level} character arriving from a file carries at most ${ceiling} gp; the file says ${gold}. Lower it, and let whoever runs the table award the rest.`,
+        translate(context.locale ?? "en", "A level {level} character arriving from a file carries at most {ceiling} gp; the file says {gold}. Lower it, and let whoever runs the table award the rest.", { level, ceiling, gold }),
       );
     }
   }
@@ -919,7 +919,7 @@ export function legalizeSheet(input: CreateSheetInput, context: LegalityContext)
   });
   if (context.door === "import" && attuned > attunementCap) {
     problems.push(
-      `This character is attuned to at most ${attunementCap} magic items; the file attunes ${attuned}.`,
+      translate(context.locale ?? "en", "This character is attuned to at most {cap} magic items; the file attunes {count}.", { cap: attunementCap, count: attuned }),
     );
   }
 
