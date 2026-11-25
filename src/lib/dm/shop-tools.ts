@@ -432,15 +432,15 @@ function counterRefusal(campaign: Campaign, sheet: CharacterSheet, shop: Shop, v
 export function handleBuyItem(campaign: Campaign, rawArguments: string, at: TradeAt = {}): ToolResult {
   const args = parse(buySchema, rawArguments);
   if (!args) {
-    return argumentsRefusal("Invalid arguments: a purchase at a shop needs characterId, shop and item.", buySchema, rawArguments);
+    return { ...argumentsRefusal("Invalid arguments: a purchase at a shop needs characterId, shop and item.", buySchema, rawArguments), ...counterNotice(at, "Say what you are doing at the counter.") };
   }
   const sheet = resolveSheet(campaign, args.characterId);
   if (!sheet) {
-    return unknownSheetRef("characterId", args.characterId, listSheets(campaign.id));
+    return { ...unknownSheetRef("characterId", args.characterId, listSheets(campaign.id)), ...counterNotice(at, "Character not found.") };
   }
   const shop = resolveShop(campaign, args.shop);
   if (!shop) {
-    return noShop(campaign, args.shop);
+    return { ...noShop(campaign, args.shop), ...counterNotice(at, "No such shop.") };
   }
   // At the Market's counter: before the shelf, the purse or the pack is read.
   const refused = at.atCounter ? counterRefusal(campaign, sheet, shop, "buy") : null;
@@ -487,15 +487,15 @@ const sellSchema = buySchema.extend({ priceCp: z.coerce.number().int().min(1).ma
 export function handleSellItem(campaign: Campaign, rawArguments: string, at: TradeAt = {}): ToolResult {
   const args = parse(sellSchema, rawArguments);
   if (!args) {
-    return argumentsRefusal("Invalid arguments: a sale at a shop needs characterId, shop and item, and a price of at most 100,000 gp each when one is given.", sellSchema, rawArguments);
+    return { ...argumentsRefusal("Invalid arguments: a sale at a shop needs characterId, shop and item, and a price of at most 100,000 gp each when one is given.", sellSchema, rawArguments), ...counterNotice(at, "Say what you are doing at the counter.") };
   }
   const sheet = resolveSheet(campaign, args.characterId);
   if (!sheet) {
-    return unknownSheetRef("characterId", args.characterId, listSheets(campaign.id));
+    return { ...unknownSheetRef("characterId", args.characterId, listSheets(campaign.id)), ...counterNotice(at, "Character not found.") };
   }
   const shop = resolveShop(campaign, args.shop);
   if (!shop) {
-    return noShop(campaign, args.shop);
+    return { ...noShop(campaign, args.shop), ...counterNotice(at, "No such shop.") };
   }
   // At the Market's counter: before the shelf, the purse or the pack is read.
   const refused = at.atCounter ? counterRefusal(campaign, sheet, shop, "sell") : null;
@@ -566,7 +566,7 @@ const SKILL_LABEL = { persuasion: "Persuasion", intimidation: "Intimidation", de
 export function handleHaggle(campaign: Campaign, rawArguments: string, at: TradeAt = {}): ToolResult {
   const args = parse(haggleSchema, rawArguments);
   if (!args) {
-    return argumentsRefusal("Invalid arguments: haggle needs characterId and shop, a skill of persuasion, intimidation or deception, and presentCharacterIds as a list of characters.", haggleSchema, rawArguments);
+    return { ...argumentsRefusal("Invalid arguments: haggle needs characterId and shop, a skill of persuasion, intimidation or deception, and presentCharacterIds as a list of characters.", haggleSchema, rawArguments), ...counterNotice(at, "Say what you are doing at the counter.") };
   }
   const skill = args.skill ? normalizeHaggleSkill(args.skill) : "persuasion";
   if (!skill) {
@@ -574,7 +574,7 @@ export function handleHaggle(campaign: Campaign, rawArguments: string, at: Trade
   }
   const sheet = resolveSheet(campaign, args.characterId);
   if (!sheet) {
-    return unknownSheetRef("characterId", args.characterId, listSheets(campaign.id));
+    return { ...unknownSheetRef("characterId", args.characterId, listSheets(campaign.id)), ...counterNotice(at, "Character not found.") };
   }
   const away = awayFromCounter(campaign, sheet);
   if (away) {
@@ -592,7 +592,7 @@ export function handleHaggle(campaign: Campaign, rawArguments: string, at: Trade
   }
   const shop = resolveShop(campaign, args.shop);
   if (!shop) {
-    return noShop(campaign, args.shop);
+    return { ...noShop(campaign, args.shop), ...counterNotice(at, "No such shop.") };
   }
   // At the Market's counter the shop has to be where the party stands,
   // before anything is rolled or a try is used.
