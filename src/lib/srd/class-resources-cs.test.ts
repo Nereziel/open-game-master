@@ -5,6 +5,7 @@ import { RESOURCE_CS_GUIDANCE } from "./class-resources-cs-data";
 import { resourceDisplayName, resourceGuidance } from "./class-resources-fr";
 import { RESOURCE_DEFS } from "./class-resources";
 import genreResources from "../classes/resources.json";
+import authoredResources from "./authored-resources.json";
 
 installCsTables({ names: CS_NAMES_BY_TABLE, guidance: RESOURCE_CS_GUIDANCE });
 
@@ -63,6 +64,16 @@ describe("Czech class resource display alongside French", () => {
       expect(czech, id).toBeTruthy();
       expect(czech, id).not.toBe(english);
       expect(resourceGuidance(id, "en")).toBeNull();
+    }
+  });
+
+  it("covers every authored subclass, species, feat and extra genre resource", () => {
+    expect(authoredResources.resources.length).toBeGreaterThanOrEqual(182);
+    for (const row of authoredResources.resources) {
+      expect(resourceGuidance(row.id, "cs"), row.id).toBeTruthy();
+      expect(resourceGuidance(row.id, "cs"), row.id).not.toBe(row.guidance);
+      expect(RESOURCE_DEFS.find((def) => def.id === row.id)?.guidance, row.id).toBe(row.guidance);
+      expect(resourceGuidance(row.id, "en")).toBeNull();
     }
   });
 
