@@ -216,7 +216,7 @@ export function ClassChoices({
                     <span className="block text-xs">{label}</span>
                     {notYet || option.req || !spells ? (
                       <span className="block text-sm text-stone-500">
-                        {notYet ? t("Not yet: {reason} ", { reason: notYet }) : option.req ? t("Requires {req}. ", { req: option.req }) : ""}
+                        {notYet ? t("Not yet: {reason} ", { reason: notYet }) : option.req ? t("Requires {req}. ", { req: t(option.req) }) : ""}
                         {spells ? "" : t(option.d)}
                       </span>
                     ) : null}
@@ -226,7 +226,7 @@ export function ClassChoices({
                   ) : (
                     <InfoButton
                       label={label}
-                      meta={option.req ? t("Requires {req}", { req: option.req }) : undefined}
+                      meta={option.req ? t("Requires {req}", { req: t(option.req) }) : undefined}
                       text={t(option.d)}
                     />
                   )}

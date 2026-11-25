@@ -15,12 +15,18 @@ describe("published option presentation", () => {
     installLocalizedTables("fr", { names: FR_NAMES_BY_TABLE });
     installCatalog("cs", cs);
     installCatalog("fr", fr);
-    for (const kind of ["pact_boon", "metamagic", "maneuver"] as const) {
+    for (const kind of ["pact_boon", "metamagic", "maneuver", "invocation"] as const) {
       for (const option of optionsOfKind(kind)) {
         const original = JSON.stringify(option);
         expect(optionDisplayName(option, "en")).toBe(option.n);
         for (const locale of ["cs", "fr"] as const) {
-          expect(optionDisplayName(option, locale), option.n).not.toBe(option.n);
+          const feature = optionFeatureName(option.k, option.n);
+          const source = classFeatureName(optionSourceClassId(option.k), feature, locale);
+          const catalog = locale === "cs" ? cs : fr;
+          const messages: Record<string, string> = catalog.messages;
+          expect(source !== feature || Object.hasOwn(messages, feature), option.n).toBe(true);
+          expect(optionDisplayName(option, locale), option.n).toBe(source !== feature ? source : messages[feature]);
+          if (option.req) expect(messages[option.req], option.req).toBeTruthy();
           expect(translate(locale, option.d), option.n).not.toBe(option.d);
         }
         expect(JSON.stringify(option)).toBe(original);
