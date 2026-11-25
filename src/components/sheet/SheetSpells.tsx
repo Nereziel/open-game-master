@@ -201,7 +201,7 @@ function CasterBook({
     try {
       const response = await fetch(`/api/campaigns/${sheet.campaignId}/sheet/spells`, {
         method: "POST",
-        headers: { "Content-Type": "application/json" },
+        headers: { "Content-Type": "application/json", "X-Odm-Locale": locale },
         body: JSON.stringify({ action, spell: tile.name, classId: view.classId, sheetId: sheet.id }),
       });
       const data = (await response.json().catch(() => ({}))) as { error?: string; note?: string };

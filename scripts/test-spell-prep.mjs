@@ -328,4 +328,38 @@ test("creation and preview pass locale through the delegated spell validators", 
   }
   assert.deepEqual({ view, rogue }, snapshot);
 });
+test("preparation messages use locale but notes for audits and stored spell names remain canonical", () => {
+  const [view] = casterViewsOf(cleric({ prepared: ["Bless"], pending: ["Command"] }));
+  const [book] = casterViewsOf(wizard({ spellbook: ["Fireball"] }));
+  const before = structuredClone({ view, book });
+  const cases = [
+    [view, "prepare", "", true, "Name a spell."],
+    [view, "prepare", "Sacred Flame", true, "Sacred Flame is a cantrip: always ready, never prepared."],
+    [view, "cancel", "Bless", true, "Bless is not waiting to be prepared."],
+    [view, "unprepare", "Sleep", true, "Sleep is not prepared."],
+    [view, "prepare", "Bless", true, "Bless is already prepared."],
+    [view, "prepare", "Command", true, "Command is already waiting for the next long rest."],
+    [view, "prepare", "Magic Missile", false, "Magic Missile is not on the list this class can prepare at its level."],
+    [book, "prepare", "Fly", true, "Fly is not in the spellbook. A wizard prepares only spells written in it."],
+    [book, "prepare", "Fireball", true, "Fireball is a level 3 spell; a level 1 wizard prepares spells up to level 1."],
+    [view, "cancel", "Command", true, "Command will not be prepared."],
+    [view, "unprepare", "Bless", true, "Bless is no longer prepared. Preparing it again takes a long rest."],
+    [view, "prepare", "Shield of Faith", true, "Shield of Faith will be prepared after the next long rest."],
+  ];
+  for (const [caster, action, name, inClassList, english] of cases) {
+    const run = locale => changePreparation(caster, action, name, { abilities: ABILITIES, inClassList, locale });
+    const en = run(undefined);
+    assert.equal(en.error ?? en.note, english);
+    const results = ["en", "cs", "fr"].map(run);
+    assert.deepEqual(results[0], en);
+    assert.equal(new Set(results.map(result => result.error ?? result.note)).size, 3);
+    for (const result of results) {
+      assert.equal("error" in result, "error" in en);
+      assert.deepEqual(result.view, en.view);
+      assert.ok(!/\{\w+\}/.test(result.error ?? result.note));
+      if (!("error" in result)) assert.equal(result.auditNote ?? result.note, english);
+    }
+  }
+  assert.deepEqual({ view, book }, before);
+});
 console.log(`test-spell-prep: ${passed} tests passed.`);

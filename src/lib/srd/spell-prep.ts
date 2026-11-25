@@ -323,7 +323,7 @@ export function preparedCount(view: CasterView): number {
 
 export type PrepAction = "prepare" | "unprepare" | "cancel";
 
-export type PrepResult = { view: CasterView; note: string } | { error: string };
+export type PrepResult = { view: CasterView; note: string; auditNote?: string } | { error: string };
 
 // One change a player makes to what is prepared. `inClassList` is the
 // caller's answer to "is this spell on the class list at a level they can
@@ -337,62 +337,65 @@ export function changePreparation(
   view: CasterView,
   action: PrepAction,
   spell: string,
-  context: { abilities: CharacterSheet["abilities"]; inClassList: boolean; onList?: (name: string) => boolean },
+  context: { abilities: CharacterSheet["abilities"]; inClassList: boolean; onList?: (name: string) => boolean; locale?: Locale },
 ): PrepResult {
   const name = spell.trim();
+  const locale = context.locale ?? "en";
+  const success = (next: CasterView, key: string): PrepResult => ({
+    view: next,
+    note: translate(locale, key, { name }),
+    ...(locale !== "en" ? { auditNote: translate("en", key, { name }) } : {}),
+  });
   if (!name) {
-    return { error: "Name a spell." };
+    return { error: translate(locale, "Name a spell.") };
   }
   if (view.style === "known") {
     return {
       error:
-        "A caster who knows their spells always has them ready. They swap one for another when they gain a level, not at a rest.",
+        translate(locale, "A caster who knows their spells always has them ready. They swap one for another when they gain a level, not at a rest."),
     };
   }
   if (isCantripName(name) || has(view.cantrips, name)) {
-    return { error: `${name} is a cantrip: always ready, never prepared.` };
+    return { error: translate(locale, "{name} is a cantrip: always ready, never prepared.", { name }) };
   }
   const granted = grantedSpellsOf(view);
   if (action === "cancel") {
     if (!has(view.pending, name)) {
-      return { error: `${name} is not waiting to be prepared.` };
+      return { error: translate(locale, "{name} is not waiting to be prepared.", { name }) };
     }
-    return { view: { ...view, pending: without(view.pending, name) }, note: `${name} will not be prepared.` };
+    return success({ ...view, pending: without(view.pending, name) }, "{name} will not be prepared.");
   }
   // Learned off the list, and held on top of what is prepared.
   const grants = classSpellGrants(view);
   if (action === "unprepare") {
     if (has(granted, name)) {
-      return { error: `${name} comes with the subclass and is always prepared.` };
+      return { error: translate(locale, "{name} comes with the subclass and is always prepared.", { name }) };
     }
     if (view.style === "prepared" && grants.anyListSpells && has(view.prepared, name) && context.onList && !context.onList(name)) {
-      return { error: `${name} was learned through ${grants.feature} and is always ready; it is not prepared or unprepared at a rest.` };
+      return { error: translate(locale, "{name} was learned through {feature} and is always ready; it is not prepared or unprepared at a rest.", { name, feature: translate(locale, grants.feature) }) };
     }
     if (has(view.pending, name)) {
-      return { view: { ...view, pending: without(view.pending, name) }, note: `${name} will not be prepared.` };
+      return success({ ...view, pending: without(view.pending, name) }, "{name} will not be prepared.");
     }
     if (!has(view.prepared, name)) {
-      return { error: `${name} is not prepared.` };
+      return { error: translate(locale, "{name} is not prepared.", { name }) };
     }
-    return {
-      view: {
-        ...view,
-        prepared: without(view.prepared, name),
-        // A wizard's spell stays written in the book.
-        spellbook: view.style === "spellbook" ? spellbookOf(view) : view.spellbook,
-      },
-      note: `${name} is no longer prepared. Preparing it again takes a long rest.`,
-    };
+    return success({
+      ...view,
+      prepared: without(view.prepared, name),
+      // A wizard's spell stays written in the book.
+      spellbook: view.style === "spellbook" ? spellbookOf(view) : view.spellbook,
+    }, "{name} is no longer prepared. Preparing it again takes a long rest.");
   }
   // prepare
   if (has(view.prepared, name) || has(granted, name)) {
-    return { error: `${name} is already prepared.` };
+    return { error: translate(locale, "{name} is already prepared.", { name }) };
   }
   if (has(view.pending, name)) {
-    return { error: `${name} is already waiting for the next long rest.` };
+    return { error: translate(locale, "{name} is already waiting for the next long rest.", { name }) };
   }
   if (view.style === "spellbook" && !has(spellbookOf(view), name)) {
-    return { error: `${name} is not in the spellbook. A wizard prepares only spells written in it.` };
+    return { error: translate(locale, "{name} is not in the spellbook. A wizard prepares only spells written in it.", { name }) };
   }
   if (view.style === "spellbook") {
     // A book can hold a spell the wizard cannot yet cast (a scroll copied
@@ -401,23 +404,20 @@ export function changePreparation(
     const top = maxSpellLevelOf(view);
     if (spellLevel !== null && spellLevel > top) {
       return {
-        error: `${name} is a level ${spellLevel} spell; a level ${view.level} wizard prepares spells up to level ${top}.`,
+        error: translate(locale, "{name} is a level {level} spell; a level {classLevel} wizard prepares spells up to level {top}.", { name, level: spellLevel, classLevel: view.level, top }),
       };
     }
   }
   if (view.style === "prepared" && !context.inClassList) {
-    return { error: `${name} is not on the list this class can prepare at its level.` };
+    return { error: translate(locale, "{name} is not on the list this class can prepare at its level.", { name }) };
   }
   const cap = spellCapWithGrantsOf(view, context.abilities);
   if (cap && preparedCount(view) >= cap.count) {
     return {
-      error: `Already ${cap.count} ${cap.label}, counting the ones waiting for the long rest. Unprepare one first.`,
+      error: translate(locale, "Already {count} {label}, counting the ones waiting for the long rest. Unprepare one first.", { count: cap.count, label: translate(locale, cap.label) }),
     };
   }
-  return {
-    view: { ...view, pending: [...view.pending, name] },
-    note: `${name} will be prepared after the next long rest.`,
-  };
+  return success({ ...view, pending: [...view.pending, name] }, "{name} will be prepared after the next long rest.");
 }
 
 // Long rest: everything waiting is now prepared.
