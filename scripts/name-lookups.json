@@ -483,13 +483,6 @@
         "an SRD weapon row's own name read in the Weapons table's weight column of the same file (which rows are SRD 5.1's): the table's own names, no record a person named"
       ]
     ],
-    "app/campaigns/[campaignId]/LevelUpChangePick.tsx#keyed": [
-      [
-        "identity",
-        1,
-        "a pick's printed label, keyed by the held name the offer itself wrote"
-      ]
-    ],
     "lib/srd/level-up-changes.ts#partial": [
       [
         "identity",
@@ -3634,7 +3627,12 @@
       [
         "identity",
         5,
-        "owed picks by their option's whole name"
+        "Match picks by their option's whole canonical name within the already resolved slot."
+      ],
+      [
+        "key",
+        2,
+        "Resolve the displayed fighting style and the saved confirmation from the exact offered canonical name; never compare translated labels."
       ]
     ],
     "components/sheet/OwedPicks.tsx#partial": [
@@ -23005,9 +23003,9 @@
     ],
     "lib/srd/options.ts#number": [
       [
-        "key",
-        1,
-        "digits a regex already captured, ids, headers, stored and form numbers (number inputs), dice parts, the pack's English text (\"1,000 feet\", a purse); src/: every site read"
+        "parse",
+        2,
+        "Convert the same captured canonical prerequisite level digits into a number for the decision and its structured presentation reason."
       ]
     ],
     "lib/srd/owed-choices.ts#first": [
@@ -28370,6 +28368,34 @@
         "parse",
         4,
         "Numeric spell levels for ordering expected fixture rows."
+      ]
+    ],
+    "lib/content/option-labels.ts#whole-single": [
+      [
+        "key",
+        3,
+        "Compare the exact source feature key against the result of the name map or gettext to recognize a presentation fallback; not a search for an arbitrary record."
+      ]
+    ],
+    "lib/content/option-labels.ts#keyed": [
+      [
+        "key",
+        1,
+        "Look up the shown name under the exact key written by the same change offer."
+      ]
+    ],
+    "lib/content/option-labels.test.ts#whole": [
+      [
+        "key",
+        2,
+        "Compare source and translated fixture values for exact fallback and preservation assertions."
+      ]
+    ],
+    "lib/content/option-labels.test.ts#keyed": [
+      [
+        "key",
+        1,
+        "Read the fixture catalog by its exact published feature key."
       ]
     ]
   }

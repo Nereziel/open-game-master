@@ -26015,6 +26015,27 @@
         1,
         "Generated exact reverse index from localized SRD item names to canonical English rows."
       ]
+    ],
+    "lib/content/option-labels.test.ts#\\w": [
+      [
+        "key",
+        1,
+        "Assert that no ASCII gettext variable placeholder remains in the rendered prerequisite fixture."
+      ]
+    ],
+    "lib/content/option-labels.test.ts#str-list": [
+      [
+        "key",
+        7,
+        "Fixed locale lists and exact Czech fighting style label fixture; includes the additional list introduced by fa05c96."
+      ]
+    ],
+    "lib/content/option-labels.test.ts#str-eq": [
+      [
+        "english-source",
+        1,
+        "Select the published Agonizing Blast invocation fixture by its exact source name."
+      ]
     ]
   }
 }
