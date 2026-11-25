@@ -18965,13 +18965,6 @@
         "skill ids"
       ]
     ],
-    "lib/srd/owed-picks-logic.ts#str-replace": [
-      [
-        "key",
-        1,
-        "an option kind id said in words (engine vocabulary)"
-      ]
-    ],
     "lib/srd/race-id.ts#[a-z]": [
       [
         "key",

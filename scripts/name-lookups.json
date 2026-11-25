@@ -23013,8 +23013,8 @@
     "lib/srd/owed-choices.ts#first": [
       [
         "key",
-        2,
-        "a class by position (the primary class)"
+        3,
+        "a class by position (the primary class; skill lookup and localized label)"
       ]
     ],
     "lib/srd/owed-choices.ts#partial": [
