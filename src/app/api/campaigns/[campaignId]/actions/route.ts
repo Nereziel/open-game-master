@@ -22,6 +22,7 @@ import { allyReactions } from "@/lib/battlemap/hand-react";
 import { aiTurnRefusal } from "@/lib/workshop/test-seats-logic";
 import type { ActKind } from "@/lib/dm/can-act";
 import { engineRefusalKey } from "@/lib/dm/player-refusals";
+import { castRefusalDisplay } from "@/lib/dm/cast-refusal-display";
 import { heroFell } from "@/lib/characters/fallen-logic";
 import { answerSpotlight } from "@/lib/dm/spotlight-answer";
 import { requestDmTurn } from "@/lib/dm/loop";
@@ -378,7 +379,7 @@ export async function POST(
     const refusal = intentRefusal(campaign, sheet, intent);
     if (refusal) {
       return Response.json(
-        { error: engineRefusalKey(refusal, kindOfIntent(intent), sheet.name, intent.feature ?? "The reaction", t) },
+        { error: castRefusalDisplay(engineRefusalKey(refusal, kindOfIntent(intent), sheet.name, intent.feature ?? "The reaction", t), t, sheet.name) },
         { status: 409 },
       );
     }
@@ -438,16 +439,18 @@ export async function POST(
           takeBackItemCast(campaign, sheet.id, intent.spell ?? "");
         }
         // The tool's words are the storyteller's: a person reads them here.
-        return Response.json({ error: handsFullForPlayer(resolved.error) }, { status: 409 });
+        const error = handsFullForPlayer(resolved.error, t);
+        const display = intent ? engineRefusalKey(error, kindOfIntent(intent), sheet.name, intent.feature ?? "The reaction", t) : error;
+        return Response.json({ error: castRefusalDisplay(display, t, sheet.name) }, { status: 409 });
       }
       const line = refusedPartsLine(resolved.result);
       if (line) {
-        refused.push(line);
+        refused.push(castRefusalDisplay(line, t));
       }
       // A scroll misread: the item's use failed, and no spell's tool follows it.
       const stop = drawStopsCast(call.name, resolved.result);
       if (stop) {
-        refused.push(stop.error);
+        refused.push(castRefusalDisplay(stop.error, t, sheet.name));
         break;
       }
     }

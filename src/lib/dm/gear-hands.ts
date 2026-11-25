@@ -154,8 +154,14 @@ export function handsFullError(
 // A tool's refusal shown to a person rather than the storyteller (a card the
 // GM's seat played resolves through the tools): the hands-full ways out in
 // a player's words.
-export function handsFullForPlayer(text: string): string {
-  return text.split(WAYS_OUT.storyteller).join(WAYS_OUT.player);
+export function handsFullForPlayer(text: string, t: (key: string, vars?: MessageVars) => string = formatMessage): string {
+  // The tool's canonical sentence is retained for the model. Match the
+  // complete player-facing refusal, including any trailing explanation.
+  const match = /^(.*?)'s hands are full \((.*?)\), so (.*?) cannot be (drawn|strapped on) yet\. Dropping one is free \(handle_item drop\); putting one away takes the object interaction\.(.*)$/.exec(text);
+  if (match) {
+    return handsFullError(match[1], match[3], [match[2]], match[4] === "drawn" ? "drawn" : "strapped on", "player", t) + match[5];
+  }
+  return text.split(WAYS_OUT.storyteller).join(t(WAYS_OUT.player));
 }
 
 // Takes a weapon in hand: the row marked equipped. A hand must be free for
