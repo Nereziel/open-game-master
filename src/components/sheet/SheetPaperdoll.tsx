@@ -55,7 +55,10 @@ export function SheetPaperdoll({
 }) {
   const t = useT();
   const locale = useLocale();
-  const itemLabel = (name: string) => itemDisplayName(sheet.equipment.find((item) => item.name === name) ?? { name }, locale, false);
+  const itemLabel = (name: string) => {
+    const item = sheet.equipment.find((row) => row.name === name);
+    return item ? itemDisplayName(item, locale) : name;
+  };
   const view = dollView(sheet.equipment, armor);
   const [picked, setPicked] = useState<DollPlaceId | null>(null);
   // The swap question is asked on a row, so the place it sits in opens for
