@@ -41,8 +41,10 @@ const kib = (bytes) => Math.round(bytes / 102.4) / 10;
 const write = process.argv.includes("--write");
 const problems = [];
 const current = {};
+const jsByRoute = new Map();
 for (const [page, budget] of Object.entries(budgets.routes)) {
   const { js, css } = routeFiles(page);
+  jsByRoute.set(page, new Set(js));
   const sum = (files) => files.reduce((total, file) => total + measure(file).gzip, 0);
   const now = { jsGzipKiB: kib(sum(js)), cssGzipKiB: kib(sum(css)), scripts: js.length };
   current[page] = now;
@@ -52,6 +54,25 @@ for (const [page, budget] of Object.entries(budgets.routes)) {
 }
 if (write) console.log(JSON.stringify(current, null, 2));
 if (problems.length) {
+  // A shared first-load regression can affect every route. Report the actual
+  // built chunks, not source-file size estimates, without changing the budget.
+  const allFiles = new Map();
+  for (const [page, files] of jsByRoute) {
+    for (const file of files) {
+      if (!allFiles.has(file)) allFiles.set(file, []);
+      allFiles.get(file).push(page);
+    }
+  }
+  const bySize = (a, b) => measure(b[0]).gzip - measure(a[0]).gzip || a[0].localeCompare(b[0]);
+  const common = [...allFiles].filter(([, pages]) => pages.length === jsByRoute.size).sort(bySize);
+  console.log(`Shared JS across all measured routes: ${kib(common.reduce((sum, [file]) => sum + measure(file).gzip, 0))} KiB gzip`);
+  for (const [file] of common) console.log(`  ${kib(measure(file).gzip)} KiB ${file}`);
+  for (const [page, files] of jsByRoute) {
+    if (current[page].jsGzipKiB <= budgets.routes[page].jsGzipKiB) continue;
+    const other = [...files].map((file) => [file, allFiles.get(file)]).filter(([, pages]) => pages.length !== jsByRoute.size).sort(bySize);
+    console.log(`Largest non-common JS chunks for ${page}:`);
+    for (const [file, pages] of other.slice(0, 5)) console.log(`  ${kib(measure(file).gzip)} KiB ${file} (used by ${pages.length}/${jsByRoute.size} measured routes)`);
+  }
   for (const problem of problems) console.error(`budget: ${problem}`);
   console.error("If the growth is wanted, raise the budget in scripts/bundle-budget.json in the same change and say why.");
   process.exit(1);
