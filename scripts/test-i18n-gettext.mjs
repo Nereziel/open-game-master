@@ -428,6 +428,29 @@ for (const locale of ["en", "fr", "cs"]) {
 }
 assert.deepEqual([ABILITY_ORDER, SKILL_NAMES, SENSE_NAMES, ENVIRONMENTS, TRAIT_SECTIONS, DAMAGE_TYPES, CONDITIONS, LANGUAGES], vocabulariesBefore);
 
+// The training pickers share the existing vocabulary without translating
+// the values they send to the character sheet.
+const { STANDARD_LANGUAGES } = await import("../src/lib/content/mechanics.ts");
+const trainingLanguagesBefore = [...STANDARD_LANGUAGES];
+assert.equal(STANDARD_LANGUAGES.length, 20);
+for (const language of STANDARD_LANGUAGES) {
+  assert.ok(csCatalog.contexts[language]?.["character.language"] || csCatalog.messages[language], "Czech training language: " + language);
+  for (const locale of ["en", "fr", "cs"]) {
+    const catalog = locale === "cs" ? csCatalog : frCatalog;
+    const expected = locale === "en" ? language : catalog.contexts[language]?.["character.language"] ?? catalog.messages[language] ?? language;
+    assert.equal(translate(locale, language, { context: "character.language" }), expected);
+  }
+}
+assert.deepEqual(STANDARD_LANGUAGES, trainingLanguagesBefore);
+const owedPickerSource = fs.readFileSync(new URL("../src/components/sheet/OwedPicks.tsx", import.meta.url), "utf8");
+const featPickerSource = fs.readFileSync(new URL("../src/app/characters/builder/FeatChoicesFields.tsx", import.meta.url), "utf8");
+assert.ok(owedPickerSource.includes('<option key={entry} value={entry}>'));
+assert.ok(owedPickerSource.includes('t(entry, { context: "character.language" })'));
+assert.ok(owedPickerSource.includes('featChoices: { [grant]: { languages: [language] } }'));
+assert.ok(featPickerSource.includes('value: language as string, label: t(language, { context: "character.language" })'));
+assert.ok(featPickerSource.includes('label={skillLabel(skill.id, locale)}'));
+assert.ok(featPickerSource.includes('toggle("skills", skill.id, slots("skills"))'));
+
 // Mechanical term inputs accept exact translated words, but not fragments,
 // unknown words, compound clauses or ambiguous aliases.
 const { canonicalRuleTerm, canonicalRuleTermList, ruleTermOptions, ruleTermLabel } = await import("../src/lib/i18n/rule-term-input.ts");
