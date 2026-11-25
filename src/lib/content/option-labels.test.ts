@@ -93,6 +93,9 @@ describe("published option presentation", () => {
   });
   it("reuses canonical fighting style names and translates all six card descriptions", () => {
     expect(FIGHTING_STYLES).toHaveLength(6);
+    expect(FIGHTING_STYLES.map((style) => fightingStyleDisplayName(style, "cs"))).toEqual(["Střelba", "Obrana", "Šerm", "Boj s obouruční zbraní", "Ochrana", "Boj se dvěma zbraněmi"]);
+    expect(translate("cs", "Versatile")).toBe("Jeden a půlruční");
+    expect(translate("cs", "versatile", { context: "glossary.option" })).toBe("Jeden a půlruční");
     for (const style of FIGHTING_STYLES) {
       const original = JSON.stringify(style);
       expect(fightingStyleDisplayName(style, "en")).toBe(style.name);

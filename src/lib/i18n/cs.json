@@ -3,8 +3,8 @@
     "+2 to attack rolls with ranged weapons.": "+2 k hodům na útok zbraněmi na dálku.",
     "+1 AC while wearing armor.": "+1 k OČ, když máš na sobě zbroj.",
     "+2 damage with a one-handed melee weapon and no other weapon in hand.": "+2 ke zranění jednoruční zbraní na blízko, když nedržíš žádnou další zbraň.",
-    "Reroll 1s and 2s on damage with a two-handed or versatile melee weapon.": "Přehoď výsledky 1 a 2 na kostkách zranění obouruční nebo univerzální zbraně na blízko.",
-    "Reaction: impose disadvantage on an attack against an ally within 5 ft, using your shield.": "Reakce: pomocí svého štítu způsobíš nevýhodu k útoku proti spojenci do 5 stop.",
+    "Reroll 1s and 2s on damage with a two-handed or versatile melee weapon.": "Při útoku oběma rukama obouruční nebo jeden a půlruční zbraní na blízko přehoď výsledky 1 a 2 na kostkách zranění; nový výsledek platí.",
+    "Reaction: impose disadvantage on an attack against an ally within 5 ft, using your shield.": "Reakcí se štítem způsobíš nevýhodu k hodu na útok proti spojenci do 5 stop.",
     "Add your ability modifier to the damage of your off-hand attack.": "Přičti svou opravu vlastnosti ke zranění útoku druhou zbraní.",
     "{label}: keep {name}, or change it with this level": "{label}: ponech si {name}, nebo tuto volbu při zvýšení úrovně změň",
     "{label}: keep {name}, or give it up for another": "{label}: ponech si {name}, nebo tuto volbu vyměň za jinou",
@@ -4953,8 +4953,8 @@
     "Sneak Attack +{dice}d6 once a turn when it applies.": "Plíživý útok +{dice}k6 jednou za tah, když jsou splněny podmínky.",
     "Rage +{bonus}.": "Zuřivost +{bonus}.",
     "Not proficient.": "Bez zdatnosti.",
-    "Versatile: say two hands for the bigger die.": "Všestranná: pro vyšší kostku uveď držení oběma rukama.",
-    "Versatile: say two hands in melee for the bigger die.": "Všestranná: pro vyšší kostku při boji zblízka uveď držení oběma rukama.",
+    "Versatile: say two hands for the bigger die.": "Jeden a půlruční: pro vyšší kostku zranění uveď držení oběma rukama.",
+    "Versatile: say two hands in melee for the bigger die.": "Jeden a půlruční: pro vyšší kostku zranění při boji na blízko uveď držení oběma rukama.",
     "Off-hand {name}": "Útok druhou rukou: {name}",
     "{ammo} {count}": "{ammo}: {count}",
     "No {ammo}": "Žádné {ammo}",
@@ -12892,7 +12892,7 @@
     "Special": "Speciální",
     "Thrown": "Vrhací",
     "Two-handed": "Obouruční",
-    "Versatile": "Univerzální",
+    "Versatile": "Jeden a půlruční",
     "Needs arrows, bolts or stones to attack at range; the ammunition is spent as it is fired.": "K útoku na dálku potřebuje šípy, šipky nebo kameny; střelivo se výstřelem spotřebuje.",
     "A weapon with a striking end at each side; the second end can make the extra light-weapon attack, doing the die in brackets.": "Zbraň s údernými konci na obou stranách; druhým koncem lze provést dodatečný útok lehkou zbraní s kostkou uvedenou v závorce.",
     "Attack and damage may use Dexterity instead of Strength, whichever is better.": "Při hodu na útok i zranění lze místo Síly použít Obratnost, podle toho, která je výhodnější.",
@@ -14257,7 +14257,7 @@
       "glossary.option": "Obouruční"
     },
     "versatile": {
-      "glossary.option": "Univerzální"
+      "glossary.option": "Jeden a půlruční"
     },
     "acid": {
       "glossary.option": "Kyselinové"
