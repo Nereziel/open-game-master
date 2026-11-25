@@ -103,6 +103,7 @@ import { hostOffers, useCapabilities } from "@/lib/use-capabilities";
 import { featChoice, withFeatChoice } from "@/lib/schemas/sheet";
 import { workshopClassList } from "@/lib/classes/workshop-registry";
 import { archetypeDisplayName } from "@/lib/content/names";
+import { optionDisplayName } from "@/lib/content/option-labels";
 import { useLocale, useT, useTp } from "@/lib/locale";
 
 
@@ -1527,11 +1528,11 @@ export function LevelUpDialog({
                     .map((slot) => (
                       <div key={slot.kind}>
                         <p className="mb-1 mt-2 text-xs uppercase tracking-wide text-amber-200/80">
-                          {t("{label}: {chosen}/{total} chosen", { label: slot.label, chosen: slot.total - slot.remaining, total: slot.total })}
+                          {t("{label}: {chosen}/{total} chosen", { label: t(slot.label), chosen: slot.total - slot.remaining, total: slot.total })}
                         </p>
                         {/* A pick of spells says its rule once; each spell's
                             info opens the spell (as on the builder's class step). */}
-                        {optionKindRule(slot.kind) ? <p className="mb-1 text-[11px] text-stone-400">{optionKindRule(slot.kind)}</p> : null}
+                        {optionKindRule(slot.kind) ? <p className="mb-1 text-[11px] text-stone-400">{t(optionKindRule(slot.kind) ?? "")}</p> : null}
                         <div className="max-h-56 space-y-1.5 overflow-y-auto pr-1">
                           {slot.options.map((option) => {
                             const picked = slot.chosen.some(
@@ -1540,6 +1541,7 @@ export function LevelUpDialog({
                             const already =
                               picked &&
                               !optionPicks.includes(optionFeatureName(slot.kind, option.n));
+                            const label = optionDisplayName(option, locale);
                             return (
                               <div
                                 key={option.n}
@@ -1557,22 +1559,22 @@ export function LevelUpDialog({
                                   onClick={() => toggleOption(slot, option.n)}
                                   className="grow text-left"
                                 >
-                                  <span className="block">{option.n}</span>
+                                  <span className="block">{label}</span>
                                   {already || option.req || !optionPicksSpells(slot.kind) ? (
                                     <span className="block text-[11px] text-stone-500">
                                       {already ? t("Already known. ") : ""}
-                                      {option.req ? t("Requires {req}. ", { req: option.req }) : ""}
-                                      {optionPicksSpells(slot.kind) ? "" : option.d}
+                                      {option.req ? t("Requires {req}. ", { req: t(option.req) }) : ""}
+                                      {optionPicksSpells(slot.kind) ? "" : t(option.d)}
                                     </span>
                                   ) : null}
                                 </button>
                                 {optionPicksSpells(slot.kind) ? (
-                                  <InfoButton label={option.n} note={option.d} reference={{ kind: "spells", slug: contentSlug(option.n), name: option.n }} />
+                                  <InfoButton label={label} note={t(option.d)} reference={{ kind: "spells", slug: contentSlug(option.n), name: option.n }} />
                                 ) : (
                                   <InfoButton
-                                    label={option.n}
-                                    meta={option.req ? t("Requires {req}", { req: option.req }) : undefined}
-                                    text={option.d}
+                                    label={label}
+                                    meta={option.req ? t("Requires {req}", { req: t(option.req) }) : undefined}
+                                    text={t(option.d)}
                                   />
                                 )}
                               </div>

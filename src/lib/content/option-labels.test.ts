@@ -1,13 +1,13 @@
 import { describe, expect, it } from "vitest";
 import { optionDisplayName } from "./option-labels";
-import { classFeatureName } from "./names";
+import { classFeatureName, contentName } from "./names";
 import { CS_NAMES_BY_TABLE } from "./names-cs";
 import { FR_NAMES_BY_TABLE } from "./names-fr";
 import cs from "../i18n/cs.json";
 import fr from "../i18n/fr.json";
 import { installLocalizedTables } from "../i18n/localized-tables";
 import { installCatalog, translate } from "../i18n/translate";
-import { optionFeatureName, optionSourceClassId, optionsOfKind } from "../srd/options";
+import { optionFeatureName, optionKindRule, optionSourceClassId, optionsOfKind } from "../srd/options";
 
 describe("published option presentation", () => {
   it("reuses source class names, translates the exact prefixed key and preserves canonical picks", () => {
@@ -36,5 +36,24 @@ describe("published option presentation", () => {
     expect(optionDisplayName(invocation, "cs")).toBe(classFeatureName("warlock", optionFeatureName(invocation.k, invocation.n), "cs"));
     expect(optionSourceClassId("maneuver")).toBe("fighter");
     expect(optionDisplayName({ k: "gadget", n: "Untranslated fixture" }, "cs")).toBe("Untranslated fixture");
+  });
+  it("uses bundled spell names and the same translated rule for every dynamic spell pick", () => {
+    for (const kind of ["spell_mastery_1", "spell_mastery_2", "signature_spell", "legerdemain_cantrip", "legerdemain_spell", "legerdemain_spell_2"] as const) {
+      const rule = optionKindRule(kind)!;
+      const options = optionsOfKind(kind);
+      expect(options.length).toBeGreaterThan(0);
+      for (const locale of ["en", "cs", "fr"] as const) {
+        const catalog = locale === "cs" ? cs : fr;
+        const messages: Record<string, string> = catalog.messages;
+        if (locale !== "en") expect(messages[rule]).toBeTruthy();
+        for (const option of options) {
+          const original = JSON.stringify(option);
+          expect(option.d).toBe(rule);
+          expect(optionDisplayName(option, locale)).toBe(contentName("spells", option.n, locale));
+          expect(translate(locale, option.d)).toBe(locale === "en" ? rule : messages[rule]);
+          expect(JSON.stringify(option)).toBe(original);
+        }
+      }
+    }
   });
 });

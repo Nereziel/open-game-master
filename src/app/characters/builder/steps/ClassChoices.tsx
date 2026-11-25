@@ -201,7 +201,7 @@ export function ClassChoices({
               // still be let go.
               const notYet = selected ? undefined : derived.optionUnmet?.[optionFeatureName(slot.kind, option.n)];
               // These spell lists come from the bundled class checklist, not a workshop name.
-              const label = spells ? contentName("spells", option.n, locale) : optionDisplayName(option, locale);
+              const label = optionDisplayName(option, locale);
               return (
                 <div key={option.n} className={cn(optionCard(selected), "flex items-start gap-1", splitCard, notYet && "opacity-60")}>
                   <button
