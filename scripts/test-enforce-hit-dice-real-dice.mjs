@@ -150,6 +150,30 @@ await test("dice that do not fit the roll spend nothing: one die too many, and a
   assert.equal(world.sheet(hero.id).hitDice.spent, 0);
 });
 
+await test("hit dice refusals follow the request locale without spending or rolling", async () => {
+  await rest();
+  const { translate, translatePlural } = await import("../src/lib/messages-logic.ts");
+  const mark = rollMark();
+  const before = HEROES.map(one => world.sheet(one.id));
+  const cases = [
+    [tapper, digital, { dice: 1, faces: [10] }, 403, (locale) => translate(locale, "These hit dice are rolled by the server: typed dice count only for a player rolling real dice at a table that allows them. Spend the hit die without them.")],
+    [roller, hero, { dice: 1, faces: [11] }, 400, (locale) => translate(locale, "Die {index} is a d{sides}: enter a whole number from 1 to {sides}. No hit die was spent.", { index: 1, sides: 10 })],
+    [roller, hero, { dice: 1, faces: [7, 3] }, 409, (locale) => translatePlural(locale, "The dice for this hit die changed while you rolled: it is {expression} now, {count} die, and {actual} came in. No hit die was spent; roll what the sheet shows now.", "The dice for this hit die changed while you rolled: it is {expression} now, {count} dice, and {actual} came in. No hit die was spent; roll what the sheet shows now.", { expression: "1d10+2", count: 1, actual: 2 })],
+  ];
+  for (const [user, sheet, body, status, expected] of cases) {
+    world.signIn(user);
+    for (const locale of ["en", "cs", "fr"]) {
+      const request = new Request("http://test/", { method: "POST", headers: { "content-type": "application/json", "x-odm-locale": locale }, body: JSON.stringify({ ...body, characterId: sheet.id }) });
+      const response = await hitDice.POST(request, { params: Promise.resolve(params) });
+      assert.equal(response.status, status);
+      assert.equal((await response.json()).error, expected(locale));
+      if (locale !== "en") assert.notEqual(expected(locale), expected("en"));
+    }
+  }
+  assert.deepEqual(HEROES.map(one => world.sheet(one.id)), before);
+  assert.equal(rollsSince(mark).length, 0);
+});
+
 await test("the GM at the console spending for a player at the table waits for their dice; the server rolls for one who is away", async () => {
   hurt();
   const before = getClock(world.campaignId).instant;
