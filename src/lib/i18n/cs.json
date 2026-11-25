@@ -1,5 +1,8 @@
 {
   "messages": {
+    "{option} requires level {level} in {className}.": "Pro volbu {option} je potřeba {level}. úroveň povolání {className}.",
+    "{option} requires {pact}.": "Volba {option} vyžaduje: {pact}.",
+    "{option} requires the {spell} cantrip.": "Volba {option} vyžaduje trik {spell}.",
     "Totem Spirit: Bear": "Medvěd",
     "While you rage you resist every damage type except psychic.": "Během zuřivosti jsi odolný vůči všem typům zranění kromě psychického.",
     "Totem Spirit: Eagle": "Orel",

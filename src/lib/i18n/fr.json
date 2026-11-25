@@ -1,5 +1,8 @@
 {
   "messages": {
+    "{option} requires level {level} in {className}.": "Pour choisir {option}, il faut le niveau {level} dans la classe {className}.",
+    "{option} requires {pact}.": "Le choix {option} exige : {pact}.",
+    "{option} requires the {spell} cantrip.": "Le choix {option} exige le tour de magie {spell}.",
     "Totem Spirit: Bear": "Ours",
     "While you rage you resist every damage type except psychic.": "Pendant ta rage, tu résistes à tous les types de dégâts sauf psychiques.",
     "Totem Spirit: Eagle": "Aigle",

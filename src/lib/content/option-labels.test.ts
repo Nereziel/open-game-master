@@ -1,5 +1,5 @@
 import { describe, expect, it } from "vitest";
-import { optionDisplayName } from "./option-labels";
+import { optionDisplayName, optionReqDisplay } from "./option-labels";
 import { classFeatureName, contentName } from "./names";
 import { CS_NAMES_BY_TABLE } from "./names-cs";
 import { FR_NAMES_BY_TABLE } from "./names-fr";
@@ -7,7 +7,7 @@ import cs from "../i18n/cs.json";
 import fr from "../i18n/fr.json";
 import { installLocalizedTables } from "../i18n/localized-tables";
 import { installCatalog, translate } from "../i18n/translate";
-import { optionFeatureName, optionKindRule, optionSourceClassId, optionsOfKind } from "../srd/options";
+import { optionFeatureName, optionKindRule, optionReqProblem, optionSourceClassId, optionsOfKind } from "../srd/options";
 
 describe("published option presentation", () => {
   it("reuses source class names, translates the exact prefixed key and preserves canonical picks", () => {
@@ -55,5 +55,28 @@ describe("published option presentation", () => {
         }
       }
     }
+  });
+  it("localizes prerequisite refusals without changing their decisions or English contract", () => {
+    const cases = [
+      { option: { k: "discipline", n: "Breath of Winter", req: "level 17" } as const, english: "Breath of Winter needs monk level 17." },
+      { option: { k: "invocation", n: "Improved Pact Weapon", req: "Pact of the Blade" } as const, english: "Improved Pact Weapon needs the Pact of the Blade." },
+      { option: { k: "invocation", n: "Agonizing Blast", req: "Eldritch Blast cantrip" } as const, english: "Agonizing Blast needs the Eldritch Blast cantrip." },
+    ];
+    const missing = { classLevel: () => 1, features: [], cantrips: [] };
+    const met = { classLevel: () => 20, features: [{ name: "Pact Boon: Pact of the Blade" }], cantrips: ["Eldritch Blast"] };
+    for (const { option, english } of cases) {
+      expect(optionReqProblem(option, missing)).toBe(english);
+      expect(optionReqProblem(option, met)).toBeNull();
+      for (const locale of ["cs", "fr"] as const) {
+        const describe = (issue: Parameters<typeof optionReqDisplay>[1]) => optionReqDisplay(option, issue, locale);
+        const refusal = optionReqProblem(option, missing, { describe });
+        expect(refusal).toBeTruthy();
+        expect(refusal).not.toBe(english);
+        expect(refusal).toContain(optionDisplayName(option, locale));
+        expect(refusal).not.toMatch(/\{\w+\}/);
+        expect(optionReqProblem(option, met, { describe })).toBeNull();
+      }
+    }
+    expect(optionReqProblem(cases[2].option, missing, { cantripsLater: true })).toBeNull();
   });
 });

@@ -58,6 +58,8 @@ import type { BackgroundOption, ClassOption, RaceOption } from "./useBuilderOpti
 import type { BuilderState, EquipmentItem as BuilderItem } from "./useBuilderState";
 import { textKey } from "@/lib/language/text-logic";
 import { ALL_SKILLS } from "@/lib/content/mechanics";
+import { optionReqDisplay } from "@/lib/content/option-labels";
+import type { Locale } from "@/lib/messages-logic";
 
 // The derivation memoises each value with React's useMemo while the wizard
 // renders. Not marked "use client", so the server can run the same body
@@ -288,6 +290,7 @@ export function useBuilderDerived({
   rules,
   featDescs,
   genre,
+  optionLocale = "en",
 }: {
   state: BuilderState;
   race: RaceOption | undefined;
@@ -307,6 +310,8 @@ export function useBuilderDerived({
   // name (useFeatDescs); ODM's own feats are bundled. What a feat grants is
   // read from its text (src/lib/srd/feat-grants.ts).
   featDescs?: Record<string, string>;
+  // UI language for prerequisite notices only; the pure derivation defaults to English.
+  optionLocale?: Locale;
 }) {
   const {
     level, scores, racialAsi, asiChoices, chosenSkills, expertisePicks, bonusLanguages,
@@ -1013,12 +1018,15 @@ export function useBuilderDerived({
     const out: Record<string, string> = {};
     for (const slot of optionSlots) {
       for (const option of slot.options) {
-        const reason = optionReqProblem(option, facts, { cantripsLater: true });
+        const reason = optionReqProblem(option, facts, {
+          cantripsLater: true,
+          describe: optionLocale === "en" ? undefined : (issue) => optionReqDisplay(option, issue, optionLocale),
+        });
         if (reason) out[optionFeatureName(slot.kind, option.n)] = reason;
       }
     }
     return out;
-  }, [classList, grantedFeatures, optionPicks, optionSlots]);
+  }, [classList, grantedFeatures, optionPicks, optionSlots, optionLocale]);
   // A workshop subclass's own choices (a bloodline, an element): one pick
   // each, at the class level its author set, kept as "Bloodline (Storm)"
   // among the option picks (issue #833).

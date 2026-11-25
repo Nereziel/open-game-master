@@ -633,10 +633,15 @@ export function picksFromSpellbook(kind: OptionKind): boolean {
 // level-up both ask (issue #833 review).
 // `cantripsLater`: the builder's class step, whose cantrips are chosen on a
 // later step, leaves a cantrip prerequisite to the save.
+export type OptionReqIssue =
+  | { kind: "level"; classId: string; level: number }
+  | { kind: "pact"; name: string }
+  | { kind: "cantrip"; name: string };
+
 export function optionReqProblem(
   option: Pick<OptionDef, "k" | "n" | "req">,
   facts: { classLevel: (classId: string) => number; features: Array<{ name: string }>; cantrips: readonly string[] },
-  { cantripsLater = false }: { cantripsLater?: boolean } = {},
+  { cantripsLater = false, describe }: { cantripsLater?: boolean; describe?: (issue: OptionReqIssue) => string } = {},
 ): string | null {
   const req = (option.req ?? "").trim();
   if (!req) {
@@ -647,19 +652,19 @@ export function optionReqProblem(
     const level = /^level (\d+)$/i.exec(part);
     if (level) {
       if (facts.classLevel(classId) < Number(level[1])) {
-        return `${option.n} needs ${classId} level ${level[1]}.`;
+        return describe?.({ kind: "level", classId, level: Number(level[1]) }) ?? `${option.n} needs ${classId} level ${level[1]}.`;
       }
       continue;
     }
     if (/^pact of the /i.test(part)) {
       if (!chosenOptions(facts.features, "pact_boon").some((boon) => textKey(boon) === textKey(part))) {
-        return `${option.n} needs the ${part}.`;
+        return describe?.({ kind: "pact", name: part }) ?? `${option.n} needs the ${part}.`;
       }
       continue;
     }
     const cantrip = /^(.+) cantrip$/i.exec(part);
     if (cantrip && !cantripsLater && !facts.cantrips.some((name) => textKey(name) === textKey(cantrip[1]))) {
-      return `${option.n} needs the ${cantrip[1]} cantrip.`;
+      return describe?.({ kind: "cantrip", name: cantrip[1] }) ?? `${option.n} needs the ${cantrip[1]} cantrip.`;
     }
   }
   return null;
