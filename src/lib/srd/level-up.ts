@@ -66,7 +66,8 @@ import { casterViewsOf, countingScores, dedupeNames, withCasterViews, type Caste
 import { isThirdCaster } from "@/lib/srd/third-caster";
 import { featureHitPoints, holdsFeature, withPrimalChampion } from "@/lib/srd/trait-rules";
 import { isChoiceFeature, unmetPrerequisite } from "@/lib/srd/legality/features";
-import { findOptionByFeatureName, openOptionSlots, optionReqProblem, pickInSpellbook, requiredPickProblem } from "@/lib/srd/options";
+import { findOptionByFeatureName, openOptionSlots, pickInSpellbook } from "@/lib/srd/options";
+import { localizedOptionReqProblem, localizedRequiredPickProblem } from "@/lib/content/option-labels";
 import { sheetCantrips, sheetSpellbook } from "@/lib/srd/owed-picks-logic";
 import { subclassChoicePickProblems } from "@/lib/srd/subclass-choice-picks";
 import { castingClassesOf } from "@/lib/srd/legality/spells";
@@ -583,11 +584,11 @@ export function buildLevelUp(
     // An invocation's level, pact boon or cantrip (options.ts optionReqProblem),
     // by the class levels after this one.
     const unmet = option
-      ? optionReqProblem(option, {
+      ? localizedOptionReqProblem(option, {
           classLevel: (id) => classes.find((entry) => textKey(entry.id) === textKey(id))?.level ?? 0,
           features: featuresWithPicks,
           cantrips,
-        })
+        }, context.locale)
       : null;
     if (unmet) {
       return refuse(unmet);
@@ -609,7 +610,7 @@ export function buildLevelUp(
   // Four Elements monk's disciplines), once this level's picks are made.
   for (const entry of classes) {
     for (const slot of openOptionSlots({ classId: entry.id, subclass: entry.subclass ?? "", level: entry.level, features: featuresWithPicks })) {
-      const missing = picked.some((pick) => findOptionByFeatureName(pick.name)?.k === slot.kind) ? requiredPickProblem(slot) : null;
+      const missing = picked.some((pick) => findOptionByFeatureName(pick.name)?.k === slot.kind) ? localizedRequiredPickProblem(slot, context.locale) : null;
       if (missing) {
         return refuse(missing);
       }

@@ -1,5 +1,6 @@
 {
   "messages": {
+    "{label}: {option} is one of the picks, learned with the first; choose it in place of another.": "{label}: mezi prvními volbami musí být {option}; vyber ji místo jiné možnosti.",
     "\"{name}\" is not one of {subclass}'s {choice} options; pick one of {options}.": "„{name}“ není mezi možnostmi volby {choice} archetypu {subclass}; vyber jednu z možností: {options}.",
     "{subclass}'s {choice} is chosen at class level {required}; this character is level {level} in that class.": "Volba {choice} archetypu {subclass} je dostupná na {required}. úrovni povolání; postava má v tomto povolání úroveň {level}.",
     "{subclass}'s {choice} is one pick; {before} and {after} were both chosen.": "Volba {choice} archetypu {subclass} umožňuje vybrat jedinou možnost; byly vybrány {before} i {after}.",

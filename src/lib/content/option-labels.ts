@@ -1,7 +1,7 @@
 import { classFeatureName, contentName } from "./names";
 import { fightingStyleFeatureName, type FightingStyleId } from "@/lib/srd/feature-effects";
 import { translate, type Locale } from "@/lib/messages-logic";
-import { optionFeatureName, optionPicksSpells, optionSourceClassId, optionsOfKind, type OptionDef, type OptionReqIssue } from "@/lib/srd/options";
+import { optionFeatureName, optionPicksSpells, optionSourceClassId, optionsOfKind, optionReqProblem, requiredPickProblem, type OptionDef, type OptionReqIssue } from "@/lib/srd/options";
 
 // Only for published option rows. The stored feature's prefix and the
 // originating class disambiguate identical bare names across pick lists.
@@ -26,6 +26,25 @@ export function optionReqDisplay(option: Pick<OptionDef, "k" | "n">, issue: Opti
     case "cantrip":
       return translate(locale, "{option} requires the {spell} cantrip.", { option: label, spell: contentName("spells", issue.name, locale) });
   }
+}
+
+// Server validation uses the same display reasons as the builder, preserving
+// the exact default English refusal and the underlying decision.
+export function localizedOptionReqProblem(
+  option: Parameters<typeof optionReqProblem>[0],
+  facts: Parameters<typeof optionReqProblem>[1],
+  locale: Locale = "en",
+): string | null {
+  return optionReqProblem(option, facts, { describe: locale === "en" ? undefined : (issue) => optionReqDisplay(option, issue, locale) });
+}
+
+export function localizedRequiredPickProblem(
+  slot: Parameters<typeof requiredPickProblem>[0],
+  locale: Locale = "en",
+): string | null {
+  return requiredPickProblem(slot, locale === "en" ? undefined : (required) =>
+    translate(locale, "{label}: {option} is one of the picks, learned with the first; choose it in place of another.", { label: translate(locale, slot.label), option: optionDisplayName({ k: slot.kind, n: required }, locale) }),
+  );
 }
 
 // Only an offer from a published kind identifies the bare choice. Do not

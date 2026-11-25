@@ -1,5 +1,5 @@
 import { describe, expect, it } from "vitest";
-import { fightingStyleDisplayName, optionDisplayName, optionReqDisplay, optionOfferName } from "./option-labels";
+import { fightingStyleDisplayName, optionDisplayName, optionReqDisplay, optionOfferName, localizedOptionReqProblem, localizedRequiredPickProblem } from "./option-labels";
 import { classFeatureName, contentName } from "./names";
 import { CS_NAMES_BY_TABLE } from "./names-cs";
 import { FR_NAMES_BY_TABLE } from "./names-fr";
@@ -76,9 +76,28 @@ describe("published option presentation", () => {
         expect(refusal).toContain(optionDisplayName(option, locale));
         expect(refusal).not.toMatch(/\{\w+\}/);
         expect(optionReqProblem(option, met, { describe })).toBeNull();
+        expect(localizedOptionReqProblem(option, missing, locale)).toBe(refusal);
+        expect(localizedOptionReqProblem(option, met, locale)).toBeNull();
+        expect(localizedOptionReqProblem(option, missing, "en")).toBe(english);
       }
     }
     expect(optionReqProblem(cases[2].option, missing, { cantripsLater: true })).toBeNull();
+  });
+  it("localizes a missing mandatory discipline only when the slot is full", () => {
+    const slot = { kind: "discipline" as const, label: "Elemental Discipline", total: 2, remaining: 0, chosen: ["Water Whip", "Fist of Four Thunders"] };
+    const original = JSON.stringify(slot);
+    const english = "Elemental Discipline: Elemental Attunement is one of the picks, learned with the first; choose it in place of another.";
+    expect(localizedRequiredPickProblem(slot)).toBe(english);
+    for (const locale of ["en", "cs", "fr"] as const) {
+      const problem = localizedRequiredPickProblem(slot, locale);
+      expect(problem).toContain(optionDisplayName({ k: "discipline", n: "Elemental Attunement" }, locale));
+      if (locale !== "en") expect(problem).not.toBe(english);
+      expect(localizedRequiredPickProblem({ ...slot, remaining: 1 }, locale)).toBeNull();
+      expect(localizedRequiredPickProblem({ ...slot, total: 0 }, locale)).toBeNull();
+      expect(localizedRequiredPickProblem({ ...slot, chosen: ["Elemental Attunement", "Water Whip"] }, locale)).toBeNull();
+      expect(localizedRequiredPickProblem({ ...slot, kind: "maneuver" }, locale)).toBeNull();
+    }
+    expect(JSON.stringify(slot)).toBe(original);
   });
   it("localizes only a source-identified option offer, preserving custom names and keys", () => {
     const name = "Storm Aura (Sea)";

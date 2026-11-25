@@ -68,7 +68,8 @@ import { judgeStartingGear, wealthCeilingGold } from "@/lib/srd/starting-wealth"
 import { abilityProblems, baseSpans } from "@/lib/srd/legality/abilities";
 import { applyHalfFeats, halfFeatPicks, halfFeatPoints } from "@/lib/srd/legality/half-feats";
 import { judgeFeats, judgeFeatures } from "@/lib/srd/legality/features";
-import { findOptionByFeatureName, openOptionSlots, optionReqProblem, pickInSpellbook, requiredPickProblem } from "@/lib/srd/options";
+import { findOptionByFeatureName, openOptionSlots, pickInSpellbook } from "@/lib/srd/options";
+import { localizedOptionReqProblem, localizedRequiredPickProblem } from "@/lib/content/option-labels";
 import { sheetCantrips, sheetSpellbook } from "@/lib/srd/owed-picks-logic";
 import { subclassChoicePickProblems, withHeldPickIds } from "@/lib/srd/subclass-choice-picks";
 import { SUBCLASS_CHOICE_RECORD } from "@/lib/content/subclass-choices";
@@ -774,11 +775,11 @@ export function legalizeSheet(input: CreateSheetInput, context: LegalityContext)
       // the stored character holds stays, as the regrant keeps it.
       const unmet =
         option && !heldNames.has(textKey(feature.name))
-          ? optionReqProblem(option, {
+          ? localizedOptionReqProblem(option, {
               classLevel: (id) => classes.find((entry) => textKey(entry.id) === textKey(id))?.level ?? 0,
               features: featured.features,
               cantrips,
-            })
+            }, context.locale)
           : null;
       if (unmet) {
         problems.push(unmet);
@@ -808,7 +809,7 @@ export function legalizeSheet(input: CreateSheetInput, context: LegalityContext)
     );
     for (const entry of classes) {
       for (const slot of openOptionSlots({ classId: entry.id, subclass: entry.subclass ?? "", level: entry.level, features: featured.features })) {
-        const missing = newKinds.has(slot.kind) ? requiredPickProblem(slot) : null;
+        const missing = newKinds.has(slot.kind) ? localizedRequiredPickProblem(slot, context.locale) : null;
         if (missing) problems.push(missing);
       }
     }

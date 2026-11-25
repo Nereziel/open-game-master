@@ -590,12 +590,12 @@ export function openOptionSlots(input: {
 
 // Why a slot's picks are not legal: they fill it without the option the
 // kind requires (two disciplines, neither Elemental Attunement), or null.
-export function requiredPickProblem(slot: Pick<OptionSlot, "kind" | "label" | "chosen" | "remaining" | "total">): string | null {
+export function requiredPickProblem(slot: Pick<OptionSlot, "kind" | "label" | "chosen" | "remaining" | "total">, describe?: (required: string) => string): string | null {
   const required = KINDS[slot.kind]?.required;
   if (!required || slot.total <= 0 || slot.remaining > 0 || slot.chosen.some((name) => textKey(name) === textKey(required))) {
     return null;
   }
-  return `${slot.label}: ${required} is one of the picks, learned with the first; choose it in place of another.`;
+  return describe?.(required) ?? `${slot.label}: ${required} is one of the picks, learned with the first; choose it in place of another.`;
 }
 
 // The kinds whose picks a level of this class may trade for others of

@@ -1,5 +1,6 @@
 {
   "messages": {
+    "{label}: {option} is one of the picks, learned with the first; choose it in place of another.": "{label} : {option} fait partie des premiers choix ; choisis cette option à la place d’une autre.",
     "\"{name}\" is not one of {subclass}'s {choice} options; pick one of {options}.": "« {name} » ne fait pas partie des options de {choice} de {subclass} ; choisis parmi {options}.",
     "{subclass}'s {choice} is chosen at class level {required}; this character is level {level} in that class.": "Le choix {choice} de {subclass} se fait au niveau {required} de classe ; ce personnage est au niveau {level} dans cette classe.",
     "{subclass}'s {choice} is one pick; {before} and {after} were both chosen.": "Le choix {choice} de {subclass} ne permet qu’une option ; {before} et {after} ont tous deux été choisis.",
