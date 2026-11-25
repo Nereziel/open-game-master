@@ -10151,6 +10151,11 @@
         "key",
         1,
         "result field names"
+      ],
+      [
+        "key",
+        2,
+        "Canonical slot and slotSpent result field keys."
       ]
     ],
     "lib/dm/catalog-result.ts#str-list": [
@@ -26068,6 +26073,11 @@
         "english-source",
         5,
         "fixed canonical spell refusal fragments: available slots, number of uses and attacks, focus requirement"
+      ],
+      [
+        "english-source",
+        1,
+        "Fixed numeric slot outcome in canonical engine English."
       ]
     ],
     "lib/dm/cast-refusal-display.ts#str-eq": [

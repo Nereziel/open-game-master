@@ -15,6 +15,7 @@
 // its translator, and the pinned English below is what the tests and the
 // model-facing copies read.
 import { translate } from "@/lib/messages-logic";
+import { castSlotDisplay } from "@/lib/dm/cast-refusal-display";
 
 // The shape of a translator, as the pure sentence builders take it.
 type T = (key: string, vars?: Record<string, string | number>) => string;
@@ -288,7 +289,10 @@ export function describeAdjudicationResult(result: unknown, t: T = enT): ResultL
     }
     const text = scalar(value);
     if (text) {
-      lines.push({ text: typeof value === "string" && /\s/.test(value) ? text : `${words(key)}: ${text}`, tone: "info" });
+      const line = typeof value === "string" && /\s/.test(value) ? text : `${words(key)}: ${text}`;
+      // Slot fields are canonical engine notes, not model-written prose.
+      const displayed = key === "slot" || key === "slotSpent" ? castSlotDisplay(line, t) : line;
+      lines.push({ text: displayed, tone: "info" });
     } else if (value === true) {
       lines.push({ text: words(key), tone: "info" });
     }

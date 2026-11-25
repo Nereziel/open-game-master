@@ -149,3 +149,35 @@ export function castRefusalDisplay(error: string, t: T, actor?: string): string 
   }
   return error;
 }
+
+// Successful slot notes are separate from refusals, and only read from the
+// tool result's slot fields by the console. The engine keeps its own text.
+const SLOT_RESULT_PATTERNS = [
+  "{spell} cast as a ritual: no slot spent.",
+  "{spell} completes the casting Slow held back: no slot spent.",
+  "{spell} is a Signature Spell: cast at 3rd level with no slot, once until a short rest.",
+  "{spell} is cast without a slot (a feat's spell at will).",
+  "{spell} is cast without a slot (a feat's free cast): once until a short rest.",
+  "{spell} is cast without a slot (a feat's free cast): once until a long rest.",
+  "{spell} is cast as a Mystic Arcanum, with no spell slot: once until a long rest.",
+  "{spell} is cast through Mantle of Majesty: no slot spent.",
+  "{spell} is cast through Read Thoughts: no slot spent, and the reading ends.",
+  "{spell} is a cantrip: no spell slot is spent. Cantrips are unlimited.",
+  "{spell} is mastered (Spell Mastery): cast at its own level, no slot is spent.",
+  "{spell} is cast with no spell slot ({condition}, now spent).",
+  "{spell} is cast with no spell slot ({condition}, for the minute).",
+  "{spell} is cast through {source} with no spell slot, at will.",
+].map((key) => ({ key, pattern: patternFor(key) }));
+
+export function castSlotDisplay(raw: string, t: T): string {
+  const slot = /^(pact slot )?level (\d+): (\d+)\/(\d+) left$/.exec(raw);
+  if (slot) {
+    return t(slot[1] ? "pact slot level {level}: {left}/{max} left" : "level {level}: {left}/{max} left", { level: slot[2], left: slot[3], max: slot[4] });
+  }
+  for (const { key, pattern } of SLOT_RESULT_PATTERNS) {
+    const match = pattern.exec(raw);
+    if (!match?.groups?.spell) continue;
+    return t(key, match.groups);
+  }
+  return raw;
+}

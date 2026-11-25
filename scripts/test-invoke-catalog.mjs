@@ -1024,6 +1024,112 @@ test("what cannot be taken back asks first (U:UD8)", () => {
 
 const { describeAdjudicationResult } = await import("../src/lib/dm/catalog-result.ts");
 const said = (result) => describeAdjudicationResult(result).map((line) => line.text);
+const { translate: translateSlotResult } = await import("../src/lib/messages-logic.ts");
+
+test("the console localizes known slot outcomes without rewriting the engine result", () => {
+  const fixtures = [
+    [
+      "{spell} cast as a ritual: no slot spent.",
+      "{spell} sesláno jako rituál: žádná pozice kouzla nebyla utracena.",
+      "{spell} lancé comme rituel : aucun emplacement dépensé."
+    ],
+    [
+      "{spell} completes the casting Slow held back: no slot spent.",
+      "Sesílání kouzla {spell}, zdržené Zpomalením, je dokončeno: žádná pozice kouzla nebyla utracena.",
+      "L’incantation de {spell}, retardée par Lenteur, est terminée : aucun emplacement dépensé."
+    ],
+    [
+      "{spell} is a Signature Spell: cast at 3rd level with no slot, once until a short rest.",
+      "{spell} je typické kouzlo: sesláno na 3. stupni bez pozice, jednou do krátkého odpočinku.",
+      "{spell} est un sort de prédilection : lancé au niveau 3 sans emplacement, une fois jusqu’au prochain repos court."
+    ],
+    [
+      "{spell} is cast without a slot (a feat's spell at will).",
+      "{spell} sesláno bez pozice kouzla (neomezené sesílání díky odbornosti).",
+      "{spell} lancé sans emplacement (sort à volonté grâce à un don)."
+    ],
+    [
+      "{spell} is cast without a slot (a feat's free cast): once until a short rest.",
+      "{spell} sesláno bez pozice kouzla díky odbornosti: jednou do krátkého odpočinku.",
+      "{spell} lancé sans emplacement grâce à un don : une fois jusqu’au prochain repos court."
+    ],
+    [
+      "{spell} is cast without a slot (a feat's free cast): once until a long rest.",
+      "{spell} sesláno bez pozice kouzla díky odbornosti: jednou do důkladného odpočinku.",
+      "{spell} lancé sans emplacement grâce à un don : une fois jusqu’au prochain repos long."
+    ],
+    [
+      "{spell} is cast as a Mystic Arcanum, with no spell slot: once until a long rest.",
+      "{spell} sesláno jako mystický taj bez pozice kouzla: jednou do důkladného odpočinku.",
+      "{spell} lancé comme arcanum mystique sans emplacement : une fois jusqu’au prochain repos long."
+    ],
+    [
+      "{spell} is cast through Mantle of Majesty: no slot spent.",
+      "{spell} sesláno díky schopnosti Plášť majestátu: žádná pozice kouzla nebyla utracena.",
+      "{spell} lancé grâce au Manteau de majesté : aucun emplacement dépensé."
+    ],
+    [
+      "{spell} is cast through Read Thoughts: no slot spent, and the reading ends.",
+      "{spell} sesláno díky Čtení myšlenek: žádná pozice kouzla nebyla utracena a čtení končí.",
+      "{spell} lancé grâce à Lecture des pensées : aucun emplacement dépensé et la lecture prend fin."
+    ],
+    [
+      "{spell} is a cantrip: no spell slot is spent. Cantrips are unlimited.",
+      "{spell} je trik: žádná pozice kouzla nebyla utracena. Triky lze sesílat neomezeně.",
+      "{spell} est un sort mineur : aucun emplacement dépensé. Les sorts mineurs sont illimités."
+    ],
+    [
+      "{spell} is mastered (Spell Mastery): cast at its own level, no slot is spent.",
+      "{spell} je mistrovsky zvládnuté kouzlo (Mistr kouzel): sesláno na vlastním stupni bez utracení pozice.",
+      "{spell} est maîtrisé (Maîtrise des sorts) : lancé à son propre niveau sans dépenser d’emplacement."
+    ],
+    [
+      "{spell} is cast with no spell slot ({condition}, now spent).",
+      "{spell} sesláno bez pozice kouzla ({condition}, nyní vyčerpáno).",
+      "{spell} lancé sans emplacement ({condition}, désormais dépensé)."
+    ],
+    [
+      "{spell} is cast with no spell slot ({condition}, for the minute).",
+      "{spell} sesláno bez pozice kouzla ({condition}, po dobu jedné minuty).",
+      "{spell} lancé sans emplacement ({condition}, pendant la minute)."
+    ],
+    [
+      "{spell} is cast through {source} with no spell slot, at will.",
+      "{spell} sesláno díky {source} bez pozice kouzla, dle libosti.",
+      "{spell} lancé grâce à {source} sans emplacement, à volonté."
+    ],
+    [
+      "level {level}: {left}/{max} left",
+      "{level}. úroveň: zbývá {left}/{max}",
+      "niveau {level} : {left}/{max} restant(s)"
+    ],
+    [
+      "pact slot level {level}: {left}/{max} left",
+      "pozice paktové magie {level}. úrovně: zbývá {left}/{max}",
+      "emplacement de pacte de niveau {level} : {left}/{max} restant(s)"
+    ]
+  ];
+  const vars = { spell: "Custom [A+B]", condition: "Custom mark", source: "Custom ancestry", level: "2", left: "1", max: "3" };
+  const fill = (text) => text.replace(/\{(\w+)\}/g, (_, key) => vars[key]);
+  for (const [en, cs, fr] of fixtures) {
+    const raw = fill(en);
+    for (const [locale, expected] of [["en", en], ["cs", cs], ["fr", fr]]) {
+      for (const field of ["slot", "slotSpent"]) {
+        const result = { ok: true, [field]: raw };
+        const t = (key, vars) => translateSlotResult(locale, key, vars);
+        assert.deepEqual(describeAdjudicationResult(result, t), [{ text: fill(expected), tone: "info" }]);
+        assert.equal(result[field], raw);
+      }
+    }
+  }
+  const t = (key, vars) => translateSlotResult("cs", key, vars);
+  for (const slot of ["Custom unknown slot note.", "level two: 1/3 left", "Custom [A+B] cast as a ritual: no slot spent. Extra text."]) {
+    assert.deepEqual(describeAdjudicationResult({ slot }, t), [{ text: slot, tone: "info" }]);
+  }
+  const raw = fill(fixtures[0][0]);
+  assert.deepEqual(describeAdjudicationResult({ note: raw }, t), [{ text: raw, tone: "info" }]);
+});
+
 
 test("a result shows hit points, resistance, temp HP absorbed and broken concentration (U:UD3)", () => {
   const lines = said({

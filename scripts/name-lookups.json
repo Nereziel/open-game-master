@@ -28430,6 +28430,11 @@
         "parse",
         9,
         "known canonical spell refusal templates, slot lists, fragments and separators; display only, unknown wording is preserved"
+      ],
+      [
+        "parse",
+        2,
+        "Exact numeric slot outcome and known successful spell slot template matching at the reader."
       ]
     ],
     "lib/dm/cast-refusal-display.ts#whole": [
