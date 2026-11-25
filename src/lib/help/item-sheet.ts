@@ -110,12 +110,15 @@ function costOf(row: Row, t: T, locale: Locale): string | null {
   return copper > 0 ? localizeCoins(priceText(text), locale) : null;
 }
 
-function propertyOf(raw: string, t: T): ItemProperty {
+function propertyOf(raw: string, t: T, locale: Locale): ItemProperty {
   const trimmed = raw.trim();
   const paren = trimmed.indexOf(" (");
   const base = (paren === -1 ? trimmed : trimmed.slice(0, paren)).toLowerCase();
   const suffix = paren === -1 ? "" : trimmed.slice(paren).replace("(range ", `(${t("range")} `);
-  const label = t(capitalize(paren === -1 ? trimmed : trimmed.slice(0, paren)));
+  const rawLabel = capitalize(paren === -1 ? trimmed : trimmed.slice(0, paren));
+  const label = locale === "cs" && Object.hasOwn(WEAPON_PROPERTY_BLURBS, base)
+    ? t(base, { context: "glossary.option" })
+    : t(rawLabel);
   const rawBlurb = WEAPON_PROPERTY_BLURBS[base] ?? null;
   return { name: `${label}${suffix}`, blurb: rawBlurb ? t(rawBlurb) : null };
 }
@@ -132,16 +135,16 @@ function damageOf(dice: string, type: string, bonus: number, t: T) {
   };
 }
 
-function weaponFromSrd(weapon: SrdWeapon, bonus: number, t: T): NonNullable<ItemSheet["weapon"]> {
+function weaponFromSrd(weapon: SrdWeapon, bonus: number, t: T, locale: Locale): NonNullable<ItemSheet["weapon"]> {
   const [dice = "", ...rest] = weapon.damage.split(" ");
   return {
     ...damageOf(dice, rest.join(" "), bonus, t),
     range: weapon.rangeFt ? t("{range} ft.", { range: weapon.rangeFt }) : null,
-    properties: (weapon.properties ?? []).map((entry) => propertyOf(entry, t)),
+    properties: (weapon.properties ?? []).map((entry) => propertyOf(entry, t, locale)),
   };
 }
 
-function weaponFromPack(row: Row, bonus: number, t: T): NonNullable<ItemSheet["weapon"]> {
+function weaponFromPack(row: Row, bonus: number, t: T, locale: Locale): NonNullable<ItemSheet["weapon"]> {
   const properties = Array.isArray(row.properties)
     ? row.properties.filter((entry): entry is string => typeof entry === "string" && entry.trim() !== "")
     : [];
@@ -152,7 +155,7 @@ function weaponFromPack(row: Row, bonus: number, t: T): NonNullable<ItemSheet["w
   return {
     ...damageOf(str(row, "damage_dice"), str(row, "damage_type"), bonus, t),
     range: range ? t("{range} ft.", { range }) : null,
-    properties: properties.map((entry) => propertyOf(entry, t)),
+    properties: properties.map((entry) => propertyOf(entry, t, locale)),
   };
 }
 
@@ -274,7 +277,7 @@ export function buildItemSheet(
     armor = armorFromSrd(brewArmor, bonus, t);
     type = brewArmor.category === "shield" ? "Shield" : `${capitalize(brewArmor.category)} armor`;
   } else if (brewWeapon && typeof brewWeapon.damage === "string") {
-    weapon = weaponFromSrd(brewWeapon, bonus, t);
+    weapon = weaponFromSrd(brewWeapon, bonus, t, locale);
     type = `${capitalize(brewWeapon.category)} ${brewWeapon.kind} weapon`;
   } else if (packArmor) {
     armor = armorFromPack(packArmor, bonus, t);
@@ -285,7 +288,7 @@ export function buildItemSheet(
     // The pack's armour rows carry no weight; the bundled table does.
     srdArmor = armorNamed(str(packArmor, "name") || name);
   } else if (packWeapon) {
-    weapon = weaponFromPack(packWeapon, bonus, t);
+    weapon = weaponFromPack(packWeapon, bonus, t, locale);
     type = asType(str(packWeapon, "category")) || "Weapon";
   } else if ((srdArmor = armorNamed(name))) {
     armor = armorFromSrd(srdArmor, bonus, t);
@@ -293,7 +296,7 @@ export function buildItemSheet(
   } else {
     const srdWeapon = weaponNamed(withoutBonus(name));
     if (srdWeapon) {
-      weapon = weaponFromSrd(srdWeapon, bonus, t);
+      weapon = weaponFromSrd(srdWeapon, bonus, t, locale);
       type = `${capitalize(srdWeapon.category)} ${srdWeapon.kind} weapon`;
     }
   }
