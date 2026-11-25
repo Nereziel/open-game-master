@@ -28431,6 +28431,7 @@
       ["parse",14,"Validate numeric captures in known slot outcomes and granted/refund result templates; display only."]
     ],
     "lib/dm/cast-refusal-display.ts#partial": [
+      ["parse",3,"Reject ambiguous sentence boundaries in legacy feature, previous spell and ritual/action spell captures."],
       ["parse",1,"Match the exact canonical sorcery point refusal template; presentation only."],
       ["parse",2,"Exact known cast outcome templates and ambiguous legacy grant source punctuation; reader only."],
       [

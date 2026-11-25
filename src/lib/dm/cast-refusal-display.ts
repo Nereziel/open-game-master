@@ -259,9 +259,23 @@ const EXTRA_CAST_PATTERNS = [
   { field: "shares", key: "{spell} holds {count} darts from this one casting; {left} left this turn at no further cost, each its own entry in heal's targets." },
   { field: "shares", key: "{spell} holds {count} targets from this one casting; {left} left this turn at no further cost, each its own entry in cast_at_enemy's targets." },
   { field: "shares", key: "{spell} holds {count} targets from this one casting; {left} left this turn at no further cost, each its own entry in heal's targets." },
+  { field: "stoneChange", key: "{feature}: {name} may change its benefit now (it is {choice}): use_resource \"{feature}\" with the new one in variant, before their turn ends." },
+  { field: "droppedConcentration", key: "The earlier casting of {spell} ended when it was cast again; its effects are gone." },
+  { field: "droppedConcentration", key: "{previous} ended when {spell} was cast; its effects are gone." },
+  { field: "droppedConcentration", key: "{name}'s casting of {spell} fails ({next} took the concentration): the spell does not take effect, and no spell slot is spent." },
+  { field: "note", key: "{spell} cast as a ritual: {count} minutes of casting, no slot spent. The clock moved on." },
+  { field: "note", key: "{spell} cast as a ritual: no slot spent. Awakened Spellbook: cast at the spell's own casting time, without a ritual's 10 extra minutes (once until a long rest)." },
+  { field: "note", key: "{spell} cast as a ritual: no slot spent. Awakened Spellbook: cast at the spell's own casting time, without a ritual's 10 extra minutes (once until a long rest). 1 minutes of casting; the clock moved on." },
+  { field: "note", key: "{spell} cast as a ritual: no slot spent. Awakened Spellbook: cast at the spell's own casting time, without a ritual's 10 extra minutes (once until a long rest). {count} minutes of casting; the clock moved on." },
+  { field: "costNote", key: "Quickened Spell: {spell} took the bonus action instead of the action." },
+  { field: "costNote", key: "{feature}: {spell} took the bonus action instead of the action." },
+  { field: "costNote", key: "{name} spends their additional action (Action Surge) on casting {spell}." },
+  { field: "costNote", key: "{name} spends their extra action (Haste) on casting {spell}." },
+  { field: "metamagic", key: "Twinned Spell: {spell} takes a second creature in range, for 1 sorcery point. The second target is another creature, never the first again." },
+  { field: "metamagic", key: "Twinned Spell: {spell} takes a second creature in range, for {count} sorcery points. The second target is another creature, never the first again." },
 ].map(({ field, key }) => ({ field, key, pattern: patternFor(key) }));
 
-export function castExtraDisplay(raw: string, t: T, field: "granted" | "slotRefund" | "completed" | "debtComesDue" | "cost" | "wildMagicSurge" | "lunarBoons" | "refilled" | "castingTime" | "shares"): string {
+export function castExtraDisplay(raw: string, t: T, field: "granted" | "slotRefund" | "completed" | "debtComesDue" | "cost" | "wildMagicSurge" | "lunarBoons" | "refilled" | "castingTime" | "shares" | "stoneChange" | "droppedConcentration" | "note" | "costNote" | "metamagic"): string {
   for (const entry of EXTRA_CAST_PATTERNS) {
     if (entry.field !== field) continue;
     const match = entry.pattern.exec(raw);
@@ -269,7 +283,9 @@ export function castExtraDisplay(raw: string, t: T, field: "granted" | "slotRefu
     const groups = match.groups ?? {};
     if (Object.values(groups).some((value) => !value.trim())) continue;
     const { source, count, level, left, max } = groups;
-    if (source?.includes(".")) continue;
+    if (source?.includes(".") || groups.previous?.includes(". ") ||
+      (field === "costNote" && groups.feature?.includes(". ")) ||
+      ((field === "note" || field === "costNote") && groups.spell?.includes(". "))) continue;
     if (left !== undefined) {
       const remaining = Number(left);
       const ceiling = Number(max ?? count);

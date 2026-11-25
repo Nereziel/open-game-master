@@ -245,7 +245,7 @@ export function describeAdjudicationResult(result: unknown, t: T = enT): ResultL
   for (const key of SENTENCE_KEYS) {
     const text = scalar(take(key));
     if (text) {
-      lines.push({ text, tone: "info" });
+      lines.push({ text: key === "note" ? castExtraDisplay(text, t, key) : text, tone: "info" });
     }
   }
 
@@ -294,7 +294,8 @@ export function describeAdjudicationResult(result: unknown, t: T = enT): ResultL
       const displayed = key === "slot" || key === "slotSpent" ? castSlotDisplay(line, t)
         : key === "granted" || key === "slotRefund" || key === "completed" ||
           key === "debtComesDue" || key === "cost" || key === "wildMagicSurge" ||
-          key === "lunarBoons" || key === "refilled" || key === "castingTime" || key === "shares" ? castExtraDisplay(line, t, key)
+          key === "lunarBoons" || key === "refilled" || key === "castingTime" || key === "shares" ||
+          key === "stoneChange" || key === "droppedConcentration" || key === "costNote" || key === "metamagic" ? castExtraDisplay(line, t, key)
         : line;
       lines.push({ text: displayed, tone: "info" });
     } else if (value === true) {

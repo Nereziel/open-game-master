@@ -1024,7 +1024,10 @@ test("what cannot be taken back asks first (U:UD8)", () => {
 
 const { describeAdjudicationResult } = await import("../src/lib/dm/catalog-result.ts");
 const said = (result) => describeAdjudicationResult(result).map((line) => line.text);
-const { translate: translateSlotResult } = await import("../src/lib/messages-logic.ts");
+const { translate: translateSlotResult, installCatalog } = await import("../src/lib/i18n/translate.ts");
+for (const locale of ["cs", "fr"]) {
+  installCatalog(locale, JSON.parse(read(`src/lib/i18n/${locale}.json`)));
+}
 
 test("the console localizes known slot outcomes without rewriting the engine result", () => {
   const fixtures = [
@@ -1905,6 +1908,123 @@ test("cast timing, lunar boons, refills and shares localize known result templat
       const values = { ...vars, left };
       assert.deepEqual(describeAdjudicationResult({ [field]: fill(en, values) }, t), [{ text: fill(cs, values), tone: "info" }]);
     }
+  }
+});
+
+
+test("known ritual, stone, concentration, action and metamagic results support Czech and English fallback", () => {
+  const fixtures = [
+    [
+      "stoneChange",
+      "{feature}: {name} may change its benefit now (it is {choice}): use_resource \"{feature}\" with the new one in variant, before their turn ends.",
+      "{feature}: postava {name} nyní může změnit jeho účinek (aktuálně {choice}): použij use_resource \"{feature}\" s novou volbou v argumentu variant před koncem tahu."
+    ],
+    [
+      "droppedConcentration",
+      "The earlier casting of {spell} ended when it was cast again; its effects are gone.",
+      "Předchozí seslání kouzla {spell} skončilo jeho opětovným sesláním; jeho účinky pominuly."
+    ],
+    [
+      "droppedConcentration",
+      "{previous} ended when {spell} was cast; its effects are gone.",
+      "Sesláním kouzla {spell} skončilo kouzlo {previous}; jeho účinky pominuly."
+    ],
+    [
+      "droppedConcentration",
+      "{name}'s casting of {spell} fails ({next} took the concentration): the spell does not take effect, and no spell slot is spent.",
+      "Sesílání kouzla {spell} postavou {name} selhalo (soustředění vyžaduje kouzlo {next}): kouzlo nenabylo účinku a žádná pozice kouzla nebyla utracena."
+    ],
+    [
+      "note",
+      "{spell} cast as a ritual: {count} minutes of casting, no slot spent. The clock moved on.",
+      "{spell} sesláno jako rituál: doba sesílání {count} min, žádná pozice kouzla nebyla utracena. Herní čas se posunul."
+    ],
+    [
+      "note",
+      "{spell} cast as a ritual: no slot spent. Awakened Spellbook: cast at the spell's own casting time, without a ritual's 10 extra minutes (once until a long rest).",
+      "{spell} sesláno jako rituál: žádná pozice kouzla nebyla utracena. Awakened Spellbook: sesláno za běžnou dobu sesílání kouzla bez 10 dodatečných minut rituálu (jednou do důkladného odpočinku)."
+    ],
+    [
+      "note",
+      "{spell} cast as a ritual: no slot spent. Awakened Spellbook: cast at the spell's own casting time, without a ritual's 10 extra minutes (once until a long rest). 1 minutes of casting; the clock moved on.",
+      "{spell} sesláno jako rituál: žádná pozice kouzla nebyla utracena. Awakened Spellbook: sesláno za běžnou dobu sesílání kouzla bez 10 dodatečných minut rituálu (jednou do důkladného odpočinku). Doba sesílání: 1 minuta. Herní čas se posunul."
+    ],
+    [
+      "note",
+      "{spell} cast as a ritual: no slot spent. Awakened Spellbook: cast at the spell's own casting time, without a ritual's 10 extra minutes (once until a long rest). {count} minutes of casting; the clock moved on.",
+      "{spell} sesláno jako rituál: žádná pozice kouzla nebyla utracena. Awakened Spellbook: sesláno za běžnou dobu sesílání kouzla bez 10 dodatečných minut rituálu (jednou do důkladného odpočinku). Doba sesílání: {count} min. Herní čas se posunul."
+    ],
+    [
+      "costNote",
+      "Quickened Spell: {spell} took the bonus action instead of the action.",
+      "Quickened Spell: kouzlo {spell} spotřebovalo bonusovou akci namísto akce."
+    ],
+    [
+      "costNote",
+      "{feature}: {spell} took the bonus action instead of the action.",
+      "{feature}: kouzlo {spell} spotřebovalo bonusovou akci namísto akce."
+    ],
+    [
+      "costNote",
+      "{name} spends their additional action (Action Surge) on casting {spell}.",
+      "Postava {name} spotřebuje dodatečnou akci (Action Surge) na seslání kouzla {spell}."
+    ],
+    [
+      "costNote",
+      "{name} spends their extra action (Haste) on casting {spell}.",
+      "Postava {name} spotřebuje dodatečnou akci (Haste) na seslání kouzla {spell}."
+    ],
+    [
+      "metamagic",
+      "Twinned Spell: {spell} takes a second creature in range, for 1 sorcery point. The second target is another creature, never the first again.",
+      "Twinned Spell: kouzlo {spell} zasáhne druhého tvora v dosahu za 1 čarodějný bod. Druhým cílem musí být jiný tvor, nikoli opět první."
+    ],
+    [
+      "metamagic",
+      "Twinned Spell: {spell} takes a second creature in range, for {count} sorcery points. The second target is another creature, never the first again.",
+      "Twinned Spell: kouzlo {spell} zasáhne druhého tvora v dosahu za {count} čarodějných bodů. Druhým cílem musí být jiný tvor, nikoli opět první."
+    ]
+  ];
+  const vars = {"name":"Iris (A+B)","spell":"Custom [A+B]","feature":"Custom Feature [A+B]","choice":"Fire Resistance","previous":"Custom Previous [A+B]","next":"Custom Next [A+B]","count":"10"};
+  const fill = (text) => text.replace(/\{(\w+)\}/g, (_, key) => vars[key]);
+  for (const [field, en, cs] of fixtures) {
+    const raw = fill(en);
+    for (const [locale, expected] of [["en", en], ["cs", cs], ["fr", en]]) {
+      const t = (key, values) => translateSlotResult(locale, key, values);
+      const result = Object.freeze({ [field]: raw });
+      assert.deepEqual(describeAdjudicationResult(result, t), [{ text: fill(expected), tone: "info" }]);
+      assert.equal(result[field], raw);
+      if (field !== "note") {
+        assert.deepEqual(describeAdjudicationResult({ note: raw }, t), [{ text: raw, tone: "info" }]);
+      }
+      const unknown = raw + " Unknown tail.";
+      assert.deepEqual(describeAdjudicationResult({ [field]: unknown }, t), [{ text: unknown, tone: "info" }]);
+    }
+  }
+  const t = (key, values) => translateSlotResult("cs", key, values);
+  for (const [field, raw] of [
+    [
+      "stoneChange",
+      "Custom Feature: Iris may change its benefit now (it is fire): use_resource \"Different Feature\" with the new one in variant, before their turn ends."
+    ],
+    [
+      "costNote",
+      "Unknown sentence. Custom Feature: Custom took the bonus action instead of the action."
+    ],
+    [
+      "note",
+      "Custom cast as a ritual: 01 minutes of casting, no slot spent. The clock moved on."
+    ],
+    [
+      "metamagic",
+      "Twinned Spell: Custom takes a second creature in range, for 1 sorcery points. The second target is another creature, never the first again."
+    ],
+    [
+      "droppedConcentration",
+      "Unknown sentence. Bless ended when Bane was cast; its effects are gone."
+    ]
+  ]) {
+    assert.deepEqual(describeAdjudicationResult({ [field]: raw }, t), [{ text: raw, tone: "info" }]);
   }
 });
 

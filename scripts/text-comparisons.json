@@ -10147,6 +10147,7 @@
       ]
     ],
     "lib/dm/catalog-result.ts#str-eq": [
+      ["key",5,"Known note, stoneChange, droppedConcentration, costNote and metamagic result keys."],
       ["key",4,"Canonical lunarBoons, refilled, castingTime and shares result field keys."],
       ["key",3,"Canonical debtComesDue, cost and wildMagicSurge result field keys."],
       ["key",3,"Canonical granted, slotRefund and completed result field keys."],
