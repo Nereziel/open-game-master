@@ -401,4 +401,56 @@ test("improvements by class, and what an older sheet is owed", () => {
   assert.equal(readAsiLedger(taken(FIGHTER).features), null);
 });
 
+const { toolPickProblem, toolPicksOwed, splitToolGrants } = await import("../src/lib/srd/tool-choices.ts");
+const { applyLevelUpChanges } = await import("../src/lib/srd/level-up-changes.ts");
+const { translate: translateRefusal } = await import("../src/lib/messages-logic.ts");
+
+test("tool refusals and owed picks localize without changing the legality verdict", () => {
+  const { choices } = splitToolGrants(["two musical instruments"]);
+  const snapshot = structuredClone(choices);
+  const invalid = ["dice set"];
+  const missing = ["lute"];
+  const valid = ["lute", "flute"];
+  assert.equal(toolPickProblem(choices, invalid), "dice set is not a tool this character may choose; the choices are 2 musical instrument.");
+  assert.equal(toolPickProblem(choices, missing), "Choose 1 more musical instrument.");
+  assert.equal(toolPicksOwed(choices, []), "Choose 2 musical instruments to be proficient with.");
+  const sheet = { ...FIGHTER, proficiencies: { ...FIGHTER.proficiencies, tools: ["flute"] } };
+  const english = judge(sheet, { locale: "en" });
+  const englishLegal = judge(FIGHTER, { locale: "en" });
+  assert.ok(english.problems.some((problem) => problem.includes("is not a tool this character may choose")));
+  for (const locale of ["en", "cs", "fr"]) {
+    const localized = judge(sheet, { locale });
+    const legal = judge(FIGHTER, { locale });
+    assert.equal(localized.problems.length, english.problems.length);
+    assert.deepEqual(localized.sheet, english.sheet);
+    assert.deepEqual(legal, englishLegal);
+    assert.equal(toolPickProblem(choices, valid, locale), null);
+    assert.equal(toolPicksOwed(choices, valid, locale), null);
+    for (const [message, source] of [
+      [toolPickProblem(choices, invalid, locale), toolPickProblem(choices, invalid)],
+      [toolPickProblem(choices, missing, locale), toolPickProblem(choices, missing)],
+      [toolPicksOwed(choices, [], locale), toolPicksOwed(choices, [])],
+    ]) {
+      assert.ok(message);
+      if (locale !== "en") assert.notEqual(message, source);
+    }
+    assert.deepEqual(choices, snapshot);
+  }
+});
+
+test("invalid level-up choice replacements respect the locale and preserve held features", () => {
+  const sheet = { ...FIGHTER, level: 1 };
+  const changes = [{ from: "Fighting Style: Defense", to: "Fighting Style: Archery" }];
+  const facts = { classLevel: (id) => id === "fighter" ? 2 : 0, cantrips: [] };
+  const snapshot = structuredClone(sheet);
+  const messages = [];
+  for (const locale of ["en", "cs", "fr"]) {
+    const actual = applyLevelUpChanges(sheet, "fighter", changes, facts, locale);
+    assert.equal(actual.error, translateRefusal(locale, "{name} cannot change {from} to {to} with this level: a choice changes only at a level its rule names, to an option it offers.", { name: sheet.name, ...changes[0] }));
+    messages.push(actual.error);
+    assert.deepEqual(sheet, snapshot);
+  }
+  assert.equal(new Set(messages).size, 3);
+});
+
 console.log(`test-sheet-legality: ${passed} passed`);
