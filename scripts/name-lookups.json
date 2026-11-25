@@ -28473,6 +28473,34 @@
         2,
         "Reader-only held-turn/action refusal formatting; no record selection."
       ]
+    ],
+    "lib/notification-display.ts#partial": [
+      [
+        "parse",
+        6,
+        "Exact stored notification template delimiters, placeholder slots and UTC date format; preserve authored values and unknown bodies."
+      ]
+    ],
+    "lib/notification-display.ts#keyed": [
+      [
+        "key",
+        1,
+        "Notification kind selects a fixed canonical message template, never a game record."
+      ]
+    ],
+    "lib/notification-display.ts#helper": [
+      [
+        "parse",
+        1,
+        "Extract canonical notification template fields for reader-only translation."
+      ]
+    ],
+    "lib/dm/debug.ts#partial": [
+      [
+        "parse",
+        2,
+        "Diagnostic checks for opening and closing JSON braces; no record lookup."
+      ]
     ]
   }
 }

@@ -26116,6 +26116,27 @@
         1,
         "Six canonical ability ids mapped to gettext ability labels for reader presentation."
       ]
+    ],
+    "lib/notification-display.ts#\\w": [
+      [
+        "key",
+        1,
+        "Canonical message template placeholder identifiers."
+      ]
+    ],
+    "lib/notification-display.ts#re-word": [
+      [
+        "key",
+        1,
+        "Explicit UTC timestamp format in canonical stored notification text."
+      ]
+    ],
+    "lib/notification-display.ts#str-key": [
+      [
+        "key",
+        1,
+        "Canonical notification kind keys select display templates."
+      ]
     ]
   }
 }
