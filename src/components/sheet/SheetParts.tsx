@@ -392,7 +392,7 @@ export function EquipmentChips({
               .join(", ") || undefined,
           // The card is the row's (src/lib/srd/item-row.ts), with the bonus the
           // item's own name declares.
-          reference: { kind: "items", slug: item.slug || contentSlug(rowName(item)), name: srdNameWithBonus(item) },
+          reference: item.identified === false ? undefined : { kind: "items", slug: item.slug || contentSlug(rowName(item)), name: srdNameWithBonus(item), exactSlug: Boolean(item.slug) },
         };
       })}
     />

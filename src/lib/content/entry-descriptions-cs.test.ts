@@ -454,15 +454,41 @@ describe("Czech everyday equipment display", () => {
 });
 
 describe("Item information card source identity", () => {
+  it("does not import the bundled weapon or armor stats into a different source", () => {
+    const core = { name: "Shield", slug: "shield", source: "open5e", documentSlug: "wotc-srd", data: { desc: "Core shield" } };
+    const foreign = { ...core, slug: "shield-other", documentSlug: "other-book", data: { desc: "Different shield" } };
+    const custom = { ...core, slug: "homebrew:shield", source: "homebrew", documentSlug: "homebrew", data: { itemKind: "gear", desc: "Custom shield" } };
+    for (const row of [foreign, custom]) {
+      const selected = itemCardRows("Shield", row, [core, foreign, custom], row)!;
+      expect(selected.allowBundledFallback).toBe(false);
+      const sheet = buildItemSheet("Shield", selected.rows, { allowBundledFallback: selected.allowBundledFallback });
+      expect(sheet?.armor).toBeNull();
+      expect(sheet?.weapon).toBeNull();
+      expect(sheet?.weight).toBeNull();
+      expect(sheet?.description).toBe(row.data.desc);
+      expect(itemCardRows("Shield", core, [row], row)).toBeNull();
+      expect(itemCardRows("Shield", null, [core], row)).toBeNull();
+    }
+    const stored = { slug: "missing-slug", exactSlug: true };
+    expect(itemCardRows("Shield", null, [core], stored)).toBeNull();
+    expect(itemCardRows("Shield", null, [core], undefined, 1)).toBeNull();
+    const legacy = itemCardRows("Shield", null, [])!;
+    expect(legacy.allowBundledFallback).toBe(true);
+    expect(buildItemSheet("Shield", legacy.rows, { allowBundledFallback: legacy.allowBundledFallback })?.armor?.ac).toBe("+2");
+  });
+
   it("never borrows localized prose from a different book or homebrew with the same name", () => {
     const core = { name: "Torch", slug: "torch", source: "open5e", documentSlug: "wotc-srd", data: { desc: "Core torch", localized_desc: "Pochodeň ze SRD" } };
     const foreign = { name: "Torch", slug: "torch-toh", source: "open5e", documentSlug: "toh", data: { desc: "Different torch" } };
     const brew = { name: "Torch", slug: "homebrew:torch", source: "homebrew", documentSlug: "homebrew", data: { desc: "My torch" } };
     const otherBrew = { ...brew, slug: "homebrew:other", data: { localized_desc: "Unrelated" } };
     for (const locale of ["en", "fr", "cs"] as const) {
-      expect(buildItemSheet("Torch", itemCardRows("Torch", foreign, [core, brew]), { locale })?.description).toBe("Different torch");
-      expect(buildItemSheet("Torch", itemCardRows("Torch", brew, [core, foreign, otherBrew]), { locale })?.description).toBe("My torch");
-      expect(itemCardRows("Torch", null, [foreign, core])).toEqual([foreign.data]);
+      const selectedForeign = itemCardRows("Torch", foreign, [core, brew])!;
+      expect(buildItemSheet("Torch", selectedForeign.rows, { locale, allowBundledFallback: selectedForeign.allowBundledFallback })?.description).toBe("Different torch");
+      const selectedBrew = itemCardRows("Torch", brew, [core, foreign, otherBrew])!;
+      expect(buildItemSheet("Torch", selectedBrew.rows, { locale, allowBundledFallback: selectedBrew.allowBundledFallback })?.description).toBe("My torch");
+      expect(itemCardRows("Torch", null, [foreign, core])).toBeNull();
+      expect(itemCardRows("Torch", null, [core, foreign])).toBeNull();
     }
   });
 
@@ -470,9 +496,11 @@ describe("Item information card source identity", () => {
     const stats = { name: "Torch", slug: "torch", source: "open5e", documentSlug: "wotc-srd", data: { weight: "1 lb." } };
     const prose = { ...stats, slug: "torch-v2", documentSlug: "srd-2014", data: { desc: "English prose", localized_desc: "Český popis" } };
     const other = { ...prose, documentSlug: "srd-2024", data: { localized_desc: "Wrong edition" } };
-    const rows = itemCardRows("Torch", stats, [other, prose]);
-    expect(rows).toEqual([stats.data, prose.data]);
-    expect(buildItemSheet("Torch", rows, { locale: "cs" })?.description).toBe("Český popis");
+    const selection = itemCardRows("Torch", stats, [other, prose])!;
+    expect(selection.rows).toEqual([stats.data, prose.data]);
+    expect(selection.allowBundledFallback).toBe(true);
+    expect(buildItemSheet("Torch", selection.rows, { locale: "cs", allowBundledFallback: selection.allowBundledFallback })?.description).toBe("Český popis");
+    expect(itemCardRows("Torch", null, [stats, prose])?.rows).toEqual([stats.data, prose.data]);
   });
 });
 

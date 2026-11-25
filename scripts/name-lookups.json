@@ -21332,21 +21332,9 @@
     ],
     "lib/help/item-sheet.ts#fallback": [
       [
-        "key",
-        1,
-        "Choose the directly opened entry or first exact search result as the display source."
-      ],
-      [
         "parse",
         2,
         "Weight and description fallbacks from compatible display rows."
-      ]
-    ],
-    "lib/help/item-sheet.ts#first": [
-      [
-        "key",
-        1,
-        "First exact search result supplies the card source only when direct lookup missed."
       ]
     ],
     "lib/help/item-sheet.ts#keyed": [
@@ -21407,6 +21395,13 @@
         "key",
         1,
         "Compare a display translation against its original message key to detect a catalog hit."
+      ]
+    ],
+    "lib/help/item-sheet.ts#whole-single": [
+      [
+        "key",
+        1,
+        "Exact slug comparison for two non-core content identities."
       ]
     ],
     "lib/help/rules-text.ts#partial": [

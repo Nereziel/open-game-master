@@ -1,4 +1,4 @@
-import { describeContentEntry } from "@/lib/help";
+import { contentInfoDirectMatches, describeContentEntry, type ContentInfoIdentity } from "@/lib/help";
 import { textKey } from "@/lib/language/text-logic";
 import { DAMAGE_TYPE_BLURBS, WEAPON_PROPERTY_BLURBS } from "@/lib/help/terms";
 import { translate, type Locale } from "@/lib/messages-logic";
@@ -238,30 +238,58 @@ function isCoreItem(entry: ItemCardEntry): boolean {
     && ["wotc-srd", "srd-2014"].includes(entry.documentSlug ?? "");
 }
 
-export function itemCardRows(name: string, direct: ItemCardEntry | null | undefined, results: ItemCardEntry[]): Array<Row | undefined> {
-  const hits = results.filter((entry) => textKey(entry.name) === textKey(name));
-  const primary = direct ?? hits[0];
-  if (!primary) return [];
-  const compatible = hits.filter((entry) => {
-    if (isCoreItem(primary)) return isCoreItem(entry);
-    return Boolean(primary.slug && primary.source && primary.documentSlug)
-      && entry.slug === primary.slug
-      && entry.source === primary.source
-      && entry.documentSlug === primary.documentSlug;
-  });
-  return [primary.data, ...compatible.filter((entry) => entry !== primary).map((entry) => entry.data)];
+// Match complementary versions of a core item, or the same exact
+// non-core identity. Missing identity is never evidence of equivalence.
+function compatibleItem(primary: ItemCardEntry, entry: ItemCardEntry): boolean {
+  if (isCoreItem(primary)) return isCoreItem(entry);
+  return Boolean(primary.slug && primary.source && primary.documentSlug)
+    && entry.slug === primary.slug
+    && entry.source === primary.source
+    && entry.documentSlug === primary.documentSlug;
+}
+
+type ItemCardReference = ContentInfoIdentity & { exactSlug?: boolean };
+type ItemCardSelection = { rows: Array<Row | undefined>; allowBundledFallback: boolean };
+
+// A legacy name-only search may combine complementary SRD rows, but it
+// must not choose arbitrarily between different books or custom entries.
+// A stored slug may use the server's deliberate edition redirect; only a
+// picker with explicit source metadata requires the precise identity.
+export function itemCardRows(
+  name: string,
+  direct: ItemCardEntry | null | undefined,
+  results: ItemCardEntry[],
+  reference?: ItemCardReference,
+  limit = 20,
+): ItemCardSelection | null {
+  const strict = Boolean(reference?.exactSlug || reference?.source || reference?.documentSlug);
+  if (direct && reference && !contentInfoDirectMatches(
+    { slug: direct.slug ?? "", source: direct.source, documentSlug: direct.documentSlug }, reference,
+  )) return null;
+  if (!direct && (strict || results.length >= limit)) return null;
+  const wanted = textKey(direct?.name ?? name);
+  const hits = results.filter((entry) => textKey(entry.name) === wanted);
+  const [first, ...others] = hits;
+  if (!direct && first && others.some((entry) => !compatibleItem(first, entry))) return null;
+  const primary = direct ?? first;
+  if (!primary) return { rows: [], allowBundledFallback: true };
+  return {
+    rows: [primary.data, ...hits.filter((entry) => entry !== primary && compatibleItem(primary, entry)).map((entry) => entry.data)],
+    allowBundledFallback: isCoreItem(primary),
+  };
 }
 
 export function buildItemSheet(
   name: string,
   rows: Array<Row | undefined | null>,
-  options?: { t?: T; locale?: Locale },
+  options?: { t?: T; locale?: Locale; allowBundledFallback?: boolean },
 ): ItemSheet | null {
   const locale = options?.locale ?? "en";
   const t: T = options?.t ?? ((key, vars) => translate(locale, key, vars));
   const found = rows.filter((row): row is Row => Boolean(row) && typeof row === "object");
   const bonus = magicItemBonus(name);
   const homebrew = found.find(isHomebrew);
+  const allowBundledFallback = options?.allowBundledFallback !== false && !homebrew;
   const packWeapon = found.find(isPackWeapon);
   const packArmor = found.find(isPackArmor);
   const magic = found.find(isMagic);
@@ -286,14 +314,14 @@ export function buildItemSheet(
       type = `${type} armor`;
     }
     // The pack's armour rows carry no weight; the bundled table does.
-    srdArmor = armorNamed(str(packArmor, "name") || name);
+    if (allowBundledFallback) srdArmor = armorNamed(str(packArmor, "name") || name);
   } else if (packWeapon) {
     weapon = weaponFromPack(packWeapon, bonus, t, locale);
     type = asType(str(packWeapon, "category")) || "Weapon";
-  } else if ((srdArmor = armorNamed(name))) {
+  } else if (allowBundledFallback && (srdArmor = armorNamed(name))) {
     armor = armorFromSrd(srdArmor, bonus, t);
     type = srdArmor.category === "shield" ? "Shield" : `${capitalize(srdArmor.category)} armor`;
-  } else {
+  } else if (allowBundledFallback) {
     const srdWeapon = weaponNamed(withoutBonus(name));
     if (srdWeapon) {
       weapon = weaponFromSrd(srdWeapon, bonus, t, locale);

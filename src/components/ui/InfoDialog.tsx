@@ -26,7 +26,7 @@ import { textKey } from "@/lib/language/text-logic";
 // `name` lets the lookup recover when a row's slug is not the plain
 // slugified name (third-party documents pick their own), by falling back to
 // a search.
-export type ContentRef = { kind: string; slug: string; name?: string; source?: string; documentSlug?: string };
+export type ContentRef = { kind: string; slug: string; name?: string; source?: string; documentSlug?: string; exactSlug?: boolean };
 
 // Content-pack descriptions are markdown-ish: headings, bold, italics, tables.
 // The block structure comes from src/lib/help/rules-text.ts, which knows the
@@ -249,8 +249,9 @@ function ItemBody({ reference }: { reference: ContentRef }) {
           fetch(`/api/content/items/${encodeURIComponent(reference.slug)}${scopeQuery(campaignId)}`, { headers }).then(readJson).catch(() => null),
           fetch(`/api/content/items?q=${encodeURIComponent(wanted)}&limit=20${scopeQuery(campaignId, "&")}`, { headers }).then(readJson).catch(() => null),
         ]);
-        const rows = itemCardRows(name, direct?.entry, search?.results ?? []);
-        const sheet = buildItemSheet(name, rows, { t, locale: t.locale });
+        const results = Array.isArray(search?.results) ? search.results : [];
+        const selection = itemCardRows(name, direct?.entry, results, reference);
+        const sheet = selection ? buildItemSheet(name, selection.rows, { t, locale: t.locale, allowBundledFallback: selection.allowBundledFallback }) : null;
         if (!cancelled) {
           setState({ sheet, loading: false });
         }
@@ -264,7 +265,7 @@ function ItemBody({ reference }: { reference: ContentRef }) {
     return () => {
       cancelled = true;
     };
-  }, [reference.slug, reference.name, campaignId, t]);
+  }, [reference.slug, reference.name, reference.source, reference.documentSlug, reference.exactSlug, campaignId, t]);
 
   if (state.loading) {
     return (
