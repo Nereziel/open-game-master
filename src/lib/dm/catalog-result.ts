@@ -293,7 +293,8 @@ export function describeAdjudicationResult(result: unknown, t: T = enT): ResultL
       // Only known canonical cast result fields use the presentation helpers.
       const displayed = key === "slot" || key === "slotSpent" ? castSlotDisplay(line, t)
         : key === "granted" || key === "slotRefund" || key === "completed" ||
-          key === "debtComesDue" || key === "cost" || key === "wildMagicSurge" ? castExtraDisplay(line, t, key)
+          key === "debtComesDue" || key === "cost" || key === "wildMagicSurge" ||
+          key === "lunarBoons" || key === "refilled" || key === "castingTime" || key === "shares" ? castExtraDisplay(line, t, key)
         : line;
       lines.push({ text: displayed, tone: "info" });
     } else if (value === true) {

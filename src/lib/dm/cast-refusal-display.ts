@@ -244,17 +244,39 @@ const EXTRA_CAST_PATTERNS = [
   { field: "cost", key: "their reaction" },
   { field: "wildMagicSurge", key: "Tides of Chaos is spent: the GM may have {name} roll on the wild magic table now, and if so use_resource \"Wild Magic Surge\" rolls it and gives the use back." },
   { field: "wildMagicSurge", key: "The GM may have {name} roll a d20 for a Wild Magic Surge now: use_resource \"Wild Magic Surge\" rolls it, and on a 1 rolls on the wild magic table." },
+  { field: "refilled", key: "Benign Transposition is ready again: a conjuration spell of level 1 or higher was cast." },
+  { field: "castingTime", key: "1 minute of casting; the clock moved on." },
+  { field: "castingTime", key: "{count} minutes of casting; the clock moved on." },
+  { field: "castingTime", key: "1 hour of casting; the clock moved on." },
+  { field: "castingTime", key: "{count} hours of casting; the clock moved on." },
+  { field: "lunarBoons", key: "Lunar Boons: the spell just cast is of the {phase} phase's schools, so the Metamagic costs 1 sorcery point less. {name} has {left}/{max} boons left." },
+  { field: "lunarBoons", key: "Lunar Boons: a spell of the {phase} phase's schools, so the Metamagic costs 1 sorcery point less. {name} has {left}/{max} boons left." },
+  { field: "lunarBoons", key: "Lunar Boons: if the next spell {name} casts is of the {phase} phase's schools (abjuration or divination), 1 sorcery point comes back and a boon is spent." },
+  { field: "lunarBoons", key: "Lunar Boons: if the next spell {name} casts is of the {phase} phase's schools (enchantment or necromancy), 1 sorcery point comes back and a boon is spent." },
+  { field: "lunarBoons", key: "Lunar Boons: if the next spell {name} casts is of the {phase} phase's schools (illusion or transmutation), 1 sorcery point comes back and a boon is spent." },
+  { field: "shares", key: "{spell} holds {count} attack rolls from this one casting; {left} left this turn at no further cost, each its own entry in pc_attack's attacks." },
+  { field: "shares", key: "{spell} holds {count} darts from this one casting; {left} left this turn at no further cost, each its own entry in cast_at_enemy's targets." },
+  { field: "shares", key: "{spell} holds {count} darts from this one casting; {left} left this turn at no further cost, each its own entry in heal's targets." },
+  { field: "shares", key: "{spell} holds {count} targets from this one casting; {left} left this turn at no further cost, each its own entry in cast_at_enemy's targets." },
+  { field: "shares", key: "{spell} holds {count} targets from this one casting; {left} left this turn at no further cost, each its own entry in heal's targets." },
 ].map(({ field, key }) => ({ field, key, pattern: patternFor(key) }));
 
-export function castExtraDisplay(raw: string, t: T, field: "granted" | "slotRefund" | "completed" | "debtComesDue" | "cost" | "wildMagicSurge"): string {
+export function castExtraDisplay(raw: string, t: T, field: "granted" | "slotRefund" | "completed" | "debtComesDue" | "cost" | "wildMagicSurge" | "lunarBoons" | "refilled" | "castingTime" | "shares"): string {
   for (const entry of EXTRA_CAST_PATTERNS) {
     if (entry.field !== field) continue;
     const match = entry.pattern.exec(raw);
     if (!match) continue;
     const groups = match.groups ?? {};
     if (Object.values(groups).some((value) => !value.trim())) continue;
-    const { source, count, level } = groups;
+    const { source, count, level, left, max } = groups;
     if (source?.includes(".")) continue;
+    if (left !== undefined) {
+      const remaining = Number(left);
+      const ceiling = Number(max ?? count);
+      if (!Number.isSafeInteger(remaining) || String(remaining) !== left || remaining < 0 ||
+        !Number.isSafeInteger(ceiling) || ceiling < 1 || remaining > ceiling ||
+        (max !== undefined && String(ceiling) !== max)) continue;
+    }
     if (count !== undefined && (!Number.isSafeInteger(Number(count)) || String(Number(count)) !== count || Number(count) < 2)) continue;
     if (level !== undefined && (!Number.isSafeInteger(Number(level)) || String(Number(level)) !== level || Number(level) < 1 || Number(level) > (field === "slotRefund" ? 8 : 9))) continue;
     return t(entry.key, groups);

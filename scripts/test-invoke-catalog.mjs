@@ -1746,4 +1746,166 @@ test("cast outcome costs, last slot recovery and wild surge advice localize only
   }
 });
 
+
+test("cast timing, lunar boons, refills and shares localize known result templates", () => {
+  const fixtures = [
+    [
+      "refilled",
+      "Benign Transposition is ready again: a conjuration spell of level 1 or higher was cast.",
+      "Benign Transposition je opět připraveno: bylo sesláno kouzlo školy vyvolávání 1. nebo vyšší úrovně.",
+      "Benign Transposition est de nouveau disponible : un sort d’invocation de niveau 1 ou supérieur a été lancé."
+    ],
+    [
+      "castingTime",
+      "1 minute of casting; the clock moved on.",
+      "Doba sesílání: 1 minuta. Herní čas se posunul.",
+      "Durée d’incantation : 1 minute. Le temps de jeu a avancé."
+    ],
+    [
+      "castingTime",
+      "{count} minutes of casting; the clock moved on.",
+      "Doba sesílání: {count} min. Herní čas se posunul.",
+      "Durée d’incantation : {count} minutes. Le temps de jeu a avancé."
+    ],
+    [
+      "castingTime",
+      "1 hour of casting; the clock moved on.",
+      "Doba sesílání: 1 hodina. Herní čas se posunul.",
+      "Durée d’incantation : 1 heure. Le temps de jeu a avancé."
+    ],
+    [
+      "castingTime",
+      "{count} hours of casting; the clock moved on.",
+      "Doba sesílání: {count} h. Herní čas se posunul.",
+      "Durée d’incantation : {count} heures. Le temps de jeu a avancé."
+    ],
+    [
+      "lunarBoons",
+      "Lunar Boons: the spell just cast is of the {phase} phase's schools, so the Metamagic costs 1 sorcery point less. {name} has {left}/{max} boons left.",
+      "Lunar Boons: právě seslané kouzlo patří ke školám fáze {phase}, takže metamagie stojí o 1 čarodějný bod méně. {name}: zbývá {left}/{max} požehnání.",
+      "Lunar Boons : le sort qui vient d’être lancé appartient aux écoles de la phase {phase}, donc la métamagie coûte 1 point de sorcellerie de moins. Il reste {left}/{max} bienfaits à {name}."
+    ],
+    [
+      "lunarBoons",
+      "Lunar Boons: a spell of the {phase} phase's schools, so the Metamagic costs 1 sorcery point less. {name} has {left}/{max} boons left.",
+      "Lunar Boons: kouzlo patří ke školám fáze {phase}, takže metamagie stojí o 1 čarodějný bod méně. {name}: zbývá {left}/{max} požehnání.",
+      "Lunar Boons : le sort appartient aux écoles de la phase {phase}, donc la métamagie coûte 1 point de sorcellerie de moins. Il reste {left}/{max} bienfaits à {name}."
+    ],
+    [
+      "lunarBoons",
+      "Lunar Boons: if the next spell {name} casts is of the {phase} phase's schools (abjuration or divination), 1 sorcery point comes back and a boon is spent.",
+      "Lunar Boons: pokud další kouzlo postavy {name} patří ke školám fáze {phase} (vymítání nebo věštění), obnoví se 1 čarodějný bod a spotřebuje se jedno požehnání.",
+      "Lunar Boons : si le prochain sort lancé par {name} appartient aux écoles de la phase {phase} (abjuration ou divination), 1 point de sorcellerie est récupéré et un bienfait est dépensé."
+    ],
+    [
+      "lunarBoons",
+      "Lunar Boons: if the next spell {name} casts is of the {phase} phase's schools (enchantment or necromancy), 1 sorcery point comes back and a boon is spent.",
+      "Lunar Boons: pokud další kouzlo postavy {name} patří ke školám fáze {phase} (očarování nebo nekromancie), obnoví se 1 čarodějný bod a spotřebuje se jedno požehnání.",
+      "Lunar Boons : si le prochain sort lancé par {name} appartient aux écoles de la phase {phase} (enchantement ou nécromancie), 1 point de sorcellerie est récupéré et un bienfait est dépensé."
+    ],
+    [
+      "lunarBoons",
+      "Lunar Boons: if the next spell {name} casts is of the {phase} phase's schools (illusion or transmutation), 1 sorcery point comes back and a boon is spent.",
+      "Lunar Boons: pokud další kouzlo postavy {name} patří ke školám fáze {phase} (iluze nebo proměna), obnoví se 1 čarodějný bod a spotřebuje se jedno požehnání.",
+      "Lunar Boons : si le prochain sort lancé par {name} appartient aux écoles de la phase {phase} (illusion ou transmutation), 1 point de sorcellerie est récupéré et un bienfait est dépensé."
+    ],
+    [
+      "shares",
+      "{spell} holds {count} attack rolls from this one casting; {left} left this turn at no further cost, each its own entry in pc_attack's attacks.",
+      "Jediné seslání kouzla {spell} umožňuje {count} hodů na útok; v tomto tahu zbývá {left} bez dalších nákladů, každý jako samostatná položka attacks v pc_attack.",
+      "Cette seule incantation de {spell} permet {count} jets d’attaque ; il en reste {left} ce tour sans coût supplémentaire, chacun dans une entrée attacks de pc_attack."
+    ],
+    [
+      "shares",
+      "{spell} holds {count} darts from this one casting; {left} left this turn at no further cost, each its own entry in cast_at_enemy's targets.",
+      "Jediné seslání kouzla {spell} umožňuje {count} střel; v tomto tahu zbývá {left} bez dalších nákladů, každá jako samostatná položka targets v cast_at_enemy.",
+      "Cette seule incantation de {spell} permet {count} projectiles ; il en reste {left} ce tour sans coût supplémentaire, chacun dans une entrée targets de cast_at_enemy."
+    ],
+    [
+      "shares",
+      "{spell} holds {count} darts from this one casting; {left} left this turn at no further cost, each its own entry in heal's targets.",
+      "Jediné seslání kouzla {spell} umožňuje {count} střel; v tomto tahu zbývá {left} bez dalších nákladů, každá jako samostatná položka targets v heal.",
+      "Cette seule incantation de {spell} permet {count} projectiles ; il en reste {left} ce tour sans coût supplémentaire, chacun dans une entrée targets de heal."
+    ],
+    [
+      "shares",
+      "{spell} holds {count} targets from this one casting; {left} left this turn at no further cost, each its own entry in cast_at_enemy's targets.",
+      "Jediné seslání kouzla {spell} umožňuje zacílit na {count} cílů; v tomto tahu zbývá {left} bez dalších nákladů, každý jako samostatná položka targets v cast_at_enemy.",
+      "Cette seule incantation de {spell} permet {count} cibles ; il en reste {left} ce tour sans coût supplémentaire, chacune dans une entrée targets de cast_at_enemy."
+    ],
+    [
+      "shares",
+      "{spell} holds {count} targets from this one casting; {left} left this turn at no further cost, each its own entry in heal's targets.",
+      "Jediné seslání kouzla {spell} umožňuje zacílit na {count} cílů; v tomto tahu zbývá {left} bez dalších nákladů, každý jako samostatná položka targets v heal.",
+      "Cette seule incantation de {spell} permet {count} cibles ; il en reste {left} ce tour sans coût supplémentaire, chacune dans une entrée targets de heal."
+    ]
+  ];
+  const vars = {"name":"Iris (A+B)","spell":"Custom [A+B]","phase":"Full Moon","count":"3","left":"2","max":"4"};
+  const fill = (text, values = vars) => text.replace(/\{(\w+)\}/g, (_, key) => values[key]);
+  for (const [field, en, cs, fr] of fixtures) {
+    const raw = fill(en);
+    for (const [locale, expected] of [["en", en], ["cs", cs], ["fr", fr]]) {
+      const t = (key, values) => translateSlotResult(locale, key, values);
+      const result = { [field]: raw };
+      assert.deepEqual(describeAdjudicationResult(result, t), [{ text: fill(expected), tone: "info" }]);
+      assert.equal(result[field], raw);
+      assert.deepEqual(describeAdjudicationResult({ note: raw }, t), [{ text: raw, tone: "info" }]);
+      const unknown = raw + " Unknown tail.";
+      assert.deepEqual(describeAdjudicationResult({ [field]: unknown }, t), [{ text: unknown, tone: "info" }]);
+    }
+  }
+  const t = (key, values) => translateSlotResult("cs", key, values);
+  for (const [field, raw] of [
+    [
+      "refilled",
+      "Benign Transposition is ready again: a conjuration spell of level 1 or higher was cast. Unknown note."
+    ],
+    [
+      "castingTime",
+      "1 hours of casting; the clock moved on."
+    ],
+    [
+      "castingTime",
+      "0 minutes of casting; the clock moved on."
+    ],
+    [
+      "castingTime",
+      "1.5 hours of casting; the clock moved on."
+    ],
+    [
+      "lunarBoons",
+      "Lunar Boons: a spell of the Full Moon phase's schools, so the Metamagic costs 1 sorcery point less. Iris has 5/4 boons left."
+    ],
+    [
+      "lunarBoons",
+      "Lunar Boons: a spell of the Full Moon phase's schools, so the Metamagic costs 1 sorcery point less. Iris has 02/4 boons left."
+    ],
+    [
+      "lunarBoons",
+      "Lunar Boons: a spell of the Full Moon phase's schools, so the Metamagic costs 1 sorcery point less. Iris has 1/04 boons left."
+    ],
+    [
+      "shares",
+      "Custom holds 2 attack rolls from this one casting; 3 left this turn at no further cost, each its own entry in pc_attack's attacks."
+    ],
+    [
+      "shares",
+      "Custom holds 2 attack rolls from this one casting; -1 left this turn at no further cost, each its own entry in pc_attack's attacks."
+    ],
+    [
+      "shares",
+      "Custom holds 2 attack rolls from this one casting; 1 left this turn at no further cost, each its own entry in custom_tool's attacks."
+    ]
+  ]) {
+    assert.deepEqual(describeAdjudicationResult({ [field]: raw }, t), [{ text: raw, tone: "info" }]);
+  }
+  // Zero remaining uses and all remaining shares are both real outcomes.
+  for (const [field, en, cs] of fixtures.filter(([field, key]) => field === "shares" || field === "lunarBoons" && key.includes("{left}"))) {
+    for (const left of ["0", field === "shares" ? vars.count : vars.max]) {
+      const values = { ...vars, left };
+      assert.deepEqual(describeAdjudicationResult({ [field]: fill(en, values) }, t), [{ text: fill(cs, values), tone: "info" }]);
+    }
+  }
+});
+
 console.log(`invoke-catalog: ${passed} tests passed`);
