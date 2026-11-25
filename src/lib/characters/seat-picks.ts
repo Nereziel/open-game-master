@@ -314,7 +314,7 @@ export function applySeatPicks(
         problems.push(t("{feat} requires {prerequisite}, which {name} does not have.", { feat: facts.name, prerequisite: unmet, name }));
         continue;
       }
-      const raised = applyFeatIncrease(abilities, facts.name, choice.ability ?? null, facts.desc);
+      const raised = applyFeatIncrease(abilities, facts.name, choice.ability ?? null, facts.desc, context.locale);
       if ("error" in raised) {
         problems.push(raised.error);
         continue;

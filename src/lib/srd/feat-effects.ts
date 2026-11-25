@@ -11,6 +11,7 @@ import type { Ability } from "@/lib/schemas/sheet";
 import { textKey } from "@/lib/language/text-logic";
 import { isNamed } from "@/lib/srd/feature-names";
 import { raisedTowardCap } from "@/lib/srd/asi";
+import { translate, type Locale } from "@/lib/messages-logic";
 
 const ABILITIES: Ability[] = ["str", "dex", "con", "int", "wis", "cha"];
 const ABILITY_WORDS: Record<string, Ability> = {
@@ -244,6 +245,7 @@ export function applyFeatIncrease(
   feat: string,
   chosen?: Ability | null,
   desc?: string | null,
+  locale: Locale = "en",
 ): { abilities: Record<Ability, number>; raised: Ability | null } | { error: string } {
   const increase = featAbilityIncrease(feat, desc);
   if (!increase) {
@@ -252,7 +254,7 @@ export function applyFeatIncrease(
   const ability = increase.from.length === 1 ? increase.from[0] : chosen ?? null;
   if (!ability || !increase.from.includes(ability)) {
     return {
-      error: `${featRow(feat)?.name ?? feat} raises one of ${increase.from.map((entry) => entry.toUpperCase()).join(", ")} by 1; choose which.`,
+      error: translate(locale, "{feat} raises one of {abilities} by 1; choose which.", { feat: featRow(feat)?.name ?? feat, abilities: increase.from.map((entry) => entry.toUpperCase()).join(", ") }),
     };
   }
   return {

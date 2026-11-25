@@ -82,7 +82,7 @@ import { splitToolGrants, toolPickProblem } from "@/lib/srd/tool-choices";
 import { carrySwapRecords } from "@/lib/dm/ar-ws-spell-swap-record";
 import { petsAtLevel } from "@/lib/dm/pet-level-logic";
 import { featChoice } from "@/lib/schemas/sheet";
-import type { Locale } from "@/lib/messages-logic";
+import { translate, type Locale } from "@/lib/messages-logic";
 
 export type LevelUpContext = {
   // Optional reader locale for shared grant validation messages.
@@ -215,6 +215,7 @@ export function buildLevelUp(
   request: LevelUpRequest,
   context: LevelUpContext,
 ): LevelUpResult {
+  const t = (key: string, vars: Record<string, string | number>) => translate(context.locale ?? "en", key, vars);
   // ---- may this character level at all, and to this level ----
   if (sheet.deathSaves?.dead) {
     return refuse(`${sheet.name} is dead, and the dead gain no levels.`, 409);
@@ -247,7 +248,7 @@ export function buildLevelUp(
   const classId = (request.levelUpClass ?? "").trim().toLowerCase() || before[0].id.toLowerCase();
   const klass = context.classOf(classId);
   if (!klass) {
-    return refuse(`Unknown class "${classId}".`);
+    return refuse(t("Unknown class \"{name}\".", { name: classId }));
   }
   const classes = before.map((entry) => ({ ...entry }));
   let leveled = classes.find((entry) => entry.id.toLowerCase() === classId);
@@ -274,7 +275,7 @@ export function buildLevelUp(
   if (wantedSubclass && textKey(wantedSubclass) !== textKey(leveled.subclass)) {
     if (leveled.subclass) {
       return refuse(
-        `${sheet.name} is a ${leveled.subclass}; a subclass is chosen once and later levels build on it.`,
+        t("{name} is a {subclass}; a subclass is chosen once and later levels build on it.", { name: sheet.name, subclass: leveled.subclass }),
       );
     }
     const pickLevel = subclassLevelFor(klass.id);
@@ -284,7 +285,7 @@ export function buildLevelUp(
       );
     }
     if (!context.subclassOffered(klass.id, wantedSubclass)) {
-      return refuse(`${wantedSubclass} is not a subclass of the ${klass.name}; pick one from that class's list.`);
+      return refuse(t("{subclass} is not a subclass of the {className}; pick one from that class's list.", { subclass: wantedSubclass, className: klass.name }));
     }
     leveled.subclass = bundledSubclassName(klass.id, wantedSubclass) ?? wantedSubclass;
   }
@@ -322,7 +323,7 @@ export function buildLevelUp(
     }
     const facts = context.featOf(choice.feat);
     if (!facts) {
-      return refuse(`"${choice.feat}" is not a feat this table offers; pick one from the feat list.`);
+      return refuse(t("\"{feat}\" is not a feat this table offers; pick one from the feat list.", { feat: choice.feat }));
     }
     const unmet = unmetPrerequisite(facts.prerequisite, {
       abilities,
@@ -336,10 +337,10 @@ export function buildLevelUp(
       level: target,
     });
     if (unmet) {
-      return refuse(`${facts.name} requires ${unmet}, which ${sheet.name} does not have.`);
+      return refuse(t("{feat} requires {prerequisite}, which {name} does not have.", { feat: facts.name, prerequisite: unmet, name: sheet.name }));
     }
     feats.push(facts.name);
-    const raised = applyFeatIncrease(abilities, facts.name, choice.ability ?? null, facts.desc);
+    const raised = applyFeatIncrease(abilities, facts.name, choice.ability ?? null, facts.desc, context.locale);
     if ("error" in raised) {
       return refuse(raised.error);
     }

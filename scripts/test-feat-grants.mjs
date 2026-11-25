@@ -127,7 +127,7 @@ test("an edit starts from the training without the old picks, so re-picking repl
 
 // ---- issue #147: the Level Up and Tome of Heroes wordings, shared picks, choices ----
 
-const { featAbilityIncreaseFrom, featSaveProficiency, featTwinOf, holdsFeat } = await import("../src/lib/srd/feat-effects.ts");
+const { applyFeatIncrease, featAbilityIncreaseFrom, featSaveProficiency, featTwinOf, holdsFeat } = await import("../src/lib/srd/feat-effects.ts");
 const { packFeatText } = await import("../src/lib/srd/feat-text.ts");
 const { unmetPrerequisite } = await import("../src/lib/srd/legality/features.ts");
 const { anyPicksMade, pickSlots } = await import("../src/lib/srd/feat-grants.ts");
@@ -261,6 +261,28 @@ test("fixed skills and languages land, an armor pick is held to the list, and a 
   // An edit takes a picked armor off before the regrant, never a fixed one.
   const stripped = withoutFeatPicks({ ...base, armor: ["light", "heavy", "shields"] }, { "heraldic training": { armor: ["shields"] } });
   assert.deepEqual(stripped.armor, ["light", "heavy"]);
+});
+
+await import("../src/lib/i18n/server-catalogs.ts");
+const { applyHalfFeats } = await import("../src/lib/srd/legality/half-feats.ts");
+test("half-feat refusals follow the reader locale without changing ability scores", () => {
+  const scores = { str: 19, dex: 12, con: 14, int: 10, wis: 10, cha: 8 };
+  const original = { ...scores };
+  const feat = "Custom training";
+  const desc = "Increase your Strength or Dexterity by 1, to a maximum of 20.";
+  const expected = {
+    en: "Custom training raises one of STR, DEX by 1; choose which.",
+    cs: "Odbornost Custom training zvyšuje jednu z vlastností STR, DEX o 1; vyber kterou.",
+    fr: "Custom training augmente de 1 l’une des caractéristiques STR, DEX ; choisis laquelle.",
+  };
+  assert.equal(applyFeatIncrease(scores, feat, null, desc).error, expected.en);
+  for (const locale of ["en", "cs", "fr"]) {
+    assert.equal(applyFeatIncrease(scores, feat, null, desc, locale).error, expected[locale]);
+    assert.equal(applyFeatIncrease(scores, feat, "wis", desc, locale).error, expected[locale]);
+    assert.equal(applyHalfFeats(scores, [{ feat, ability: null, desc }], locale).error, expected[locale]);
+    assert.deepEqual(applyFeatIncrease(scores, feat, "str", desc, locale), { abilities: { ...scores, str: 20 }, raised: "str" });
+  }
+  assert.deepEqual(scores, original);
 });
 
 test("a feat's ability point is read from its text in every wording, and a pack feat's twin answers to ODM's name", () => {

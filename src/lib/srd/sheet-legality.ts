@@ -477,7 +477,7 @@ export function legalizeSheet(input: CreateSheetInput, context: LegalityContext)
   let abilities = primalHeld ? withoutPrimalChampion(input.abilities) : input.abilities;
   let featSaves = halfFeatPoints(halfFeats.filter((pick) => featSaveProficiency(pick.feat, pick.ability, pick.desc)));
   if (takesHalfFeats) {
-    const applied = applyHalfFeats(abilities, halfFeats);
+    const applied = applyHalfFeats(abilities, halfFeats, context.locale);
     if ("error" in applied) {
       problems.push(applied.error);
     } else {
