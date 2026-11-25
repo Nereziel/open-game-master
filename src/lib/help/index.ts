@@ -352,7 +352,7 @@ function spellCastingTimeLabel(value: unknown, locale: Locale): string {
       ? translatePlural(locale, "{count} minute", "{count} minutes", { count })
       : translatePlural(locale, "{count} hour", "{count} hours", { count });
   }
-  return raw;
+  return locale === "cs" ? translate(locale, raw.trim()) : raw;
 }
 
 function spellRangeLabel(value: unknown, locale: Locale): string {
@@ -363,7 +363,7 @@ function spellRangeLabel(value: unknown, locale: Locale): string {
   if (Object.hasOwn(labels, clean)) return translate(locale, labels[clean]);
   const distance = /^(\d+)\s+(?:feet|ft\.?|foot)$/.exec(clean);
   if (distance) return translate(locale, "{feet} ft", { feet: Number(distance[1]) });
-  return raw;
+  return locale === "cs" ? translate(locale, raw.trim()) : raw;
 }
 
 // The one-line summary shown under a spell's name in a picker: level, school
