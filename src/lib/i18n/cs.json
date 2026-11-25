@@ -1,5 +1,7 @@
 {
   "messages": {
+    "{bonuses} to {word} of your choice": "{bonuses} dle tvé volby (počet vlastností: {word})",
+    "{bonuses} to {word} more of your choice": "{bonuses} dle tvé volby (zbývá vlastností: {word})",
     "Acquired {item}.": "Získáno: {item}.",
     "Identified {item}.": "Identifikovaný předmět: {item}.",
     "{from} turned out to be {to}.": "Ukázalo se, že {from} je {to}.",
@@ -13162,6 +13164,24 @@
     "Unlimited": "Neomezený"
   },
   "contexts": {
+    "{count} at {ordinal} level": {
+      "builder.math.slots": "{count} na {ordinal} úrovni"
+    },
+    "{ordinal}-level slots": {
+      "builder.math.slots": "pozice {ordinal} úrovně"
+    },
+    "four": {
+      "builder.math.choiceCount": "4"
+    },
+    "three": {
+      "builder.math.choiceCount": "3"
+    },
+    "two": {
+      "builder.math.choiceCount": "2"
+    },
+    "one": {
+      "builder.math.choiceCount": "1"
+    },
     "guest": {
       "history.companionKind": "host"
     },
