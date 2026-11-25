@@ -290,9 +290,10 @@ export function describeAdjudicationResult(result: unknown, t: T = enT): ResultL
     const text = scalar(value);
     if (text) {
       const line = typeof value === "string" && /\s/.test(value) ? text : `${words(key)}: ${text}`;
-      // Slot fields are canonical engine notes, not model-written prose.
+      // Only known canonical cast result fields use the presentation helpers.
       const displayed = key === "slot" || key === "slotSpent" ? castSlotDisplay(line, t)
-        : key === "granted" || key === "slotRefund" || key === "completed" ? castExtraDisplay(line, t, key)
+        : key === "granted" || key === "slotRefund" || key === "completed" ||
+          key === "debtComesDue" || key === "cost" || key === "wildMagicSurge" ? castExtraDisplay(line, t, key)
         : line;
       lines.push({ text: displayed, tone: "info" });
     } else if (value === true) {

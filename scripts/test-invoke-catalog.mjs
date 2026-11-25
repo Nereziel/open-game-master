@@ -1685,4 +1685,65 @@ test("extra cast outcomes localize only known result fields and preserve unknown
   }
 });
 
+
+test("cast outcome costs, last slot recovery and wild surge advice localize only in their result fields", () => {
+  const fixtures = [
+    [
+      "debtComesDue",
+      "The Debt Comes Due: that was {name}'s last spell slot, and it comes straight back (level {level}). The use is spent until a long rest.",
+      "The Debt Comes Due: {name} právě utratil svou poslední pozici kouzla a ta se okamžitě obnovuje ({level}. úroveň). Použití se obnoví po důkladném odpočinku.",
+      "The Debt Comes Due : {name} vient de dépenser son dernier emplacement de sort, qui est immédiatement récupéré (niveau {level}). L’utilisation est dépensée jusqu’au prochain repos long."
+    ],
+    [
+      "cost",
+      "their action",
+      "jejich akce",
+      "son action"
+    ],
+    [
+      "cost",
+      "their bonus action",
+      "jejich bonusová akce",
+      "son action bonus"
+    ],
+    [
+      "cost",
+      "their reaction",
+      "jejich reakce",
+      "sa réaction"
+    ],
+    [
+      "wildMagicSurge",
+      "Tides of Chaos is spent: the GM may have {name} roll on the wild magic table now, and if so use_resource \"Wild Magic Surge\" rolls it and gives the use back.",
+      "Tides of Chaos je vyčerpáno: PJ nyní může nechat {name} hodit na tabulku divoké magie; v takovém případě use_resource \"Wild Magic Surge\" provede hod a obnoví použití schopnosti.",
+      "Tides of Chaos est dépensé : le MJ peut maintenant faire lancer {name} sur la table de magie sauvage ; dans ce cas, use_resource \"Wild Magic Surge\" effectue le jet et rend l’utilisation."
+    ],
+    [
+      "wildMagicSurge",
+      "The GM may have {name} roll a d20 for a Wild Magic Surge now: use_resource \"Wild Magic Surge\" rolls it, and on a 1 rolls on the wild magic table.",
+      "PJ nyní může nechat {name} hodit k20 na Wild Magic Surge: use_resource \"Wild Magic Surge\" provede hod a při výsledku 1 také hod na tabulku divoké magie.",
+      "Le MJ peut maintenant faire lancer un d20 à {name} pour Wild Magic Surge : use_resource \"Wild Magic Surge\" effectue le jet et, sur un 1, lance sur la table de magie sauvage."
+    ]
+  ];
+  const vars = {"name":"Iris (A+B)","spell":"Custom [A+B]","feature":"Custom Feature [A+B]","cost":"3","level":"9","left":"2"};
+  const fill = (text) => text.replace(/\{(\w+)\}/g, (_, key) => vars[key]);
+  for (const [field, en, cs, fr] of fixtures) {
+    const raw = fill(en);
+    for (const [locale, expected] of [["en", en], ["cs", cs], ["fr", fr]]) {
+      const t = (key, values) => translateSlotResult(locale, key, values);
+      const result = { [field]: raw };
+      assert.deepEqual(describeAdjudicationResult(result, t), [{ text: fill(expected), tone: "info" }]);
+      assert.equal(result[field], raw);
+      assert.deepEqual(describeAdjudicationResult({ note: raw }, t), [{ text: raw, tone: "info" }]);
+      const unknown = raw + " Unknown tail.";
+      assert.deepEqual(describeAdjudicationResult({ [field]: unknown }, t), [{ text: unknown, tone: "info" }]);
+    }
+  }
+  const t = (key, values) => translateSlotResult("cs", key, values);
+  for (const level of ["0", "10", "01"]) {
+    const raw = fill(fixtures[0][1]).replace("(level 9)", "(level " + level + ")");
+    assert.deepEqual(describeAdjudicationResult({ debtComesDue: raw }, t), [{ text: raw, tone: "info" }]);
+  }
+});
+
 console.log(`invoke-catalog: ${passed} tests passed`);

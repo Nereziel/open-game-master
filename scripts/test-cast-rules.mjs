@@ -554,4 +554,38 @@ test("held-spell refusal with ring advice localizes both known sentences only", 
   assert.equal(castRefusalDisplay(raw, (key, values) => translate("cs", key, values), "Different actor"), raw);
 });
 
+
+test("sorcery point refusals preserve counts, identities and unknown wording", () => {
+  const templates = [
+    [
+      "{name} has 1 sorcery point left, and {spell} through {feature} costs {cost}. Nothing was spent.",
+      "{name} má ještě 1 čarodějný bod a seslání kouzla {spell} díky {feature} stojí {cost} bodů. Nic nebylo utraceno.",
+      "Il reste 1 point de sorcellerie à {name}, et lancer {spell} grâce à {feature} coûte {cost} points. Rien n’a été dépensé."
+    ],
+    [
+      "{name} has {left} sorcery points left, and {spell} through {feature} costs {cost}. Nothing was spent.",
+      "{name}: zbývající čarodějné body: {left}. Seslání kouzla {spell} díky {feature} stojí {cost} bodů. Nic nebylo utraceno.",
+      "Il reste {left} points de sorcellerie à {name}, et lancer {spell} grâce à {feature} coûte {cost} points. Rien n’a été dépensé."
+    ]
+  ];
+  const vars = {"name":"Iris (A+B)","spell":"Custom [A+B]","feature":"Custom Feature [A+B]","cost":"3","level":"9","left":"2"};
+  for (const left of ["0", "1", "2"]) {
+    const [en, cs, fr] = templates[left === "1" ? 0 : 1];
+    const values = { ...vars, left };
+    const raw = translate("en", en, values);
+    for (const [locale, expected] of [["en", en], ["cs", cs], ["fr", fr]]) {
+      const t = (key, input) => translate(locale, key, input);
+      const filled = translate("en", expected, values);
+      assert.equal(castRefusalDisplay(raw, t, vars.name), filled);
+      assert.equal(castRefusalDisplay(raw, t, "Different actor"), raw);
+      assert.equal(castRefusalDisplay(raw + " Unknown tail.", t, vars.name), raw + " Unknown tail.");
+    }
+  }
+  const t = (key, input) => translate("cs", key, input);
+  for (const [left, cost] of [["1", "3"], ["02", "3"], ["-1", "3"], ["3", "3"], ["2", "1"], ["2", "3.5"]]) {
+    const raw = translate("en", templates[1][0], { ...vars, left, cost });
+    assert.equal(castRefusalDisplay(raw, t, vars.name), raw);
+  }
+});
+
 console.log(`test-cast-rules: ${passed} passed`);

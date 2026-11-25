@@ -1,5 +1,13 @@
 {
   "messages": {
+    "{name} has 1 sorcery point left, and {spell} through {feature} costs {cost}. Nothing was spent.": "Il reste 1 point de sorcellerie à {name}, et lancer {spell} grâce à {feature} coûte {cost} points. Rien n’a été dépensé.",
+    "{name} has {left} sorcery points left, and {spell} through {feature} costs {cost}. Nothing was spent.": "Il reste {left} points de sorcellerie à {name}, et lancer {spell} grâce à {feature} coûte {cost} points. Rien n’a été dépensé.",
+    "The Debt Comes Due: that was {name}'s last spell slot, and it comes straight back (level {level}). The use is spent until a long rest.": "The Debt Comes Due : {name} vient de dépenser son dernier emplacement de sort, qui est immédiatement récupéré (niveau {level}). L’utilisation est dépensée jusqu’au prochain repos long.",
+    "their action": "son action",
+    "their bonus action": "son action bonus",
+    "their reaction": "sa réaction",
+    "Tides of Chaos is spent: the GM may have {name} roll on the wild magic table now, and if so use_resource \"Wild Magic Surge\" rolls it and gives the use back.": "Tides of Chaos est dépensé : le MJ peut maintenant faire lancer {name} sur la table de magie sauvage ; dans ce cas, use_resource \"Wild Magic Surge\" effectue le jet et rend l’utilisation.",
+    "The GM may have {name} roll a d20 for a Wild Magic Surge now: use_resource \"Wild Magic Surge\" rolls it, and on a 1 rolls on the wild magic table.": "Le MJ peut maintenant faire lancer un d20 à {name} pour Wild Magic Surge : use_resource \"Wild Magic Surge\" effectue le jet et, sur un 1, lance sur la table de magie sauvage.",
     "{spell} is cast through Chains of Carceri. Chains of Carceri targets a celestial, fiend or elemental only, and not the same creature again until a long rest.": "{spell} lancé grâce à Chains of Carceri. Chains of Carceri ne cible qu’un céleste, un fiélon ou un élémentaire, et ne peut cibler de nouveau la même créature avant un repos long.",
     "{spell} is cast through Grasping Tentacles. Casting it gives the warlock temporary hit points equal to their warlock level, and damage cannot break their concentration on it.": "{spell} lancé grâce à Grasping Tentacles. Le lancement confère à l’occultiste des points de vie temporaires égaux à son niveau d’occultiste, et les dégâts ne peuvent pas interrompre sa concentration sur ce sort.",
     "{spell} is cast through Shapechanger. The free casting is on the wizard themselves, into a beast of challenge rating 1 or lower.": "{spell} lancé grâce à Shapechanger. Le lancement gratuit cible le magicien lui-même et le transforme en bête de facteur de puissance 1 ou moins.",

@@ -1,5 +1,13 @@
 {
   "messages": {
+    "{name} has 1 sorcery point left, and {spell} through {feature} costs {cost}. Nothing was spent.": "{name} má ještě 1 čarodějný bod a seslání kouzla {spell} díky {feature} stojí {cost} bodů. Nic nebylo utraceno.",
+    "{name} has {left} sorcery points left, and {spell} through {feature} costs {cost}. Nothing was spent.": "{name}: zbývající čarodějné body: {left}. Seslání kouzla {spell} díky {feature} stojí {cost} bodů. Nic nebylo utraceno.",
+    "The Debt Comes Due: that was {name}'s last spell slot, and it comes straight back (level {level}). The use is spent until a long rest.": "The Debt Comes Due: {name} právě utratil svou poslední pozici kouzla a ta se okamžitě obnovuje ({level}. úroveň). Použití se obnoví po důkladném odpočinku.",
+    "their action": "jejich akce",
+    "their bonus action": "jejich bonusová akce",
+    "their reaction": "jejich reakce",
+    "Tides of Chaos is spent: the GM may have {name} roll on the wild magic table now, and if so use_resource \"Wild Magic Surge\" rolls it and gives the use back.": "Tides of Chaos je vyčerpáno: PJ nyní může nechat {name} hodit na tabulku divoké magie; v takovém případě use_resource \"Wild Magic Surge\" provede hod a obnoví použití schopnosti.",
+    "The GM may have {name} roll a d20 for a Wild Magic Surge now: use_resource \"Wild Magic Surge\" rolls it, and on a 1 rolls on the wild magic table.": "PJ nyní může nechat {name} hodit k20 na Wild Magic Surge: use_resource \"Wild Magic Surge\" provede hod a při výsledku 1 také hod na tabulku divoké magie.",
     "{spell} is cast through Chains of Carceri. Chains of Carceri targets a celestial, fiend or elemental only, and not the same creature again until a long rest.": "{spell} sesláno díky Chains of Carceri. Chains of Carceri lze zacílit pouze na nebešťana, běsa nebo elementála, a na stejného tvora znovu až po důkladném odpočinku.",
     "{spell} is cast through Grasping Tentacles. Casting it gives the warlock temporary hit points equal to their warlock level, and damage cannot break their concentration on it.": "{spell} sesláno díky Grasping Tentacles. Seslání dá černokněžníkovi dočasné životy rovné jeho úrovni černokněžníka a zranění nemůže přerušit jeho soustředění na toto kouzlo.",
     "{spell} is cast through Shapechanger. The free casting is on the wizard themselves, into a beast of challenge rating 1 or lower.": "{spell} sesláno díky Shapechanger. Bezplatné seslání cílí na samotného kouzelníka a promění ho ve zvíře s nebezpečností 1 nebo nižší.",

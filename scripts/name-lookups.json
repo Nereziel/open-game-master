@@ -28426,9 +28426,11 @@
       ]
     ],
     "lib/dm/cast-refusal-display.ts#number": [
+      ["parse",2,"Validate captured available points and price before rendering a canonical refusal."],
       ["parse",14,"Validate numeric captures in known slot outcomes and granted/refund result templates; display only."]
     ],
     "lib/dm/cast-refusal-display.ts#partial": [
+      ["parse",1,"Match the exact canonical sorcery point refusal template; presentation only."],
       ["parse",2,"Exact known cast outcome templates and ambiguous legacy grant source punctuation; reader only."],
       [
         "parse",
@@ -28442,6 +28444,7 @@
       ]
     ],
     "lib/dm/cast-refusal-display.ts#whole": [
+      ["parse",1,"Require the captured caster name to match the actor for sorcery point refusals."],
       [
         "parse",
         1,

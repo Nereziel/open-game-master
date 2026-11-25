@@ -136,7 +136,24 @@ function fragment(field: string, raw: string, t: T): string {
   return raw;
 }
 
+// pointsPlan has separate singular/plural output and only refuses when the
+// points available are below the price. Reject malformed legacy values.
+const POINTS_REFUSALS = [
+  { singular: true, key: "{name} has 1 sorcery point left, and {spell} through {feature} costs {cost}. Nothing was spent." },
+  { singular: false, key: "{name} has {left} sorcery points left, and {spell} through {feature} costs {cost}. Nothing was spent." },
+].map(({ singular, key }) => ({ singular, key, pattern: patternFor(key) }));
+
 export function castRefusalDisplay(error: string, t: T, actor?: string): string {
+  for (const { key, pattern, singular } of POINTS_REFUSALS) {
+    const groups = pattern.exec(error)?.groups;
+    if (!groups || !groups.name.trim() || !groups.spell.trim() || !groups.feature.trim()) continue;
+    if (actor && groups.name !== actor) continue;
+    const left = singular ? 1 : Number(groups.left);
+    const cost = Number(groups.cost);
+    if (!Number.isSafeInteger(left) || !Number.isSafeInteger(cost) || left < 0 || left >= cost) continue;
+    if (!singular && (left === 1 || String(left) !== groups.left) || String(cost) !== groups.cost) continue;
+    return t(key, groups);
+  }
   for (const { key, pattern, ring } of PATTERNS) {
     const match = pattern.exec(error);
     if (!match) continue;
@@ -221,18 +238,26 @@ const EXTRA_CAST_PATTERNS = [
   { field: "granted", key: "{spell} is cast through {source}." },
   { field: "slotRefund", key: "{feature}: a spent level {level} slot comes back." },
   { field: "completed", key: "{spell}'s casting is complete and it takes effect now; it costs no action." },
+  { field: "debtComesDue", key: "The Debt Comes Due: that was {name}'s last spell slot, and it comes straight back (level {level}). The use is spent until a long rest." },
+  { field: "cost", key: "their action" },
+  { field: "cost", key: "their bonus action" },
+  { field: "cost", key: "their reaction" },
+  { field: "wildMagicSurge", key: "Tides of Chaos is spent: the GM may have {name} roll on the wild magic table now, and if so use_resource \"Wild Magic Surge\" rolls it and gives the use back." },
+  { field: "wildMagicSurge", key: "The GM may have {name} roll a d20 for a Wild Magic Surge now: use_resource \"Wild Magic Surge\" rolls it, and on a 1 rolls on the wild magic table." },
 ].map(({ field, key }) => ({ field, key, pattern: patternFor(key) }));
 
-export function castExtraDisplay(raw: string, t: T, field: "granted" | "slotRefund" | "completed"): string {
+export function castExtraDisplay(raw: string, t: T, field: "granted" | "slotRefund" | "completed" | "debtComesDue" | "cost" | "wildMagicSurge"): string {
   for (const entry of EXTRA_CAST_PATTERNS) {
     if (entry.field !== field) continue;
     const match = entry.pattern.exec(raw);
-    if (!match?.groups || Object.values(match.groups).some((value) => !value.trim())) continue;
-    const { source, count, level } = match.groups;
+    if (!match) continue;
+    const groups = match.groups ?? {};
+    if (Object.values(groups).some((value) => !value.trim())) continue;
+    const { source, count, level } = groups;
     if (source?.includes(".")) continue;
     if (count !== undefined && (!Number.isSafeInteger(Number(count)) || String(Number(count)) !== count || Number(count) < 2)) continue;
-    if (level !== undefined && (!Number.isSafeInteger(Number(level)) || String(Number(level)) !== level || Number(level) < 1 || Number(level) > 8)) continue;
-    return t(entry.key, match.groups);
+    if (level !== undefined && (!Number.isSafeInteger(Number(level)) || String(Number(level)) !== level || Number(level) < 1 || Number(level) > (field === "slotRefund" ? 8 : 9))) continue;
+    return t(entry.key, groups);
   }
   return raw;
 }
