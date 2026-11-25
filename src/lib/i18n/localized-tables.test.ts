@@ -16,6 +16,8 @@ import { glossaryTerm, localizedGlossaryTerm } from "../help";
 import { translate } from "./translate";
 import { pickerName, pickerMeta } from "../content/picker-display";
 import { itemDisplayName } from "../content/item-display";
+import { leadItemName, leadItemMeta, leadItemFlags, leadSpellMeta } from "@/app/campaigns/[campaignId]/lead-edit-display";
+import { SRD_SKILLS, skillLabel } from "../srd";
 import { characterEventDisplay } from "../characters/event-display";
 import { describeAuditEntry } from "@/app/campaigns/[campaignId]/event-log-logic";
 import { armorChangeMinutes } from "../dm/don-doff";
@@ -219,5 +221,47 @@ describe("History, audit and equipment reader language", () => {
       expect(itemDisplayName({ name: "Longsword", gear: {} }, locale)).toBe("Longsword");
     }
     expect(JSON.stringify(items)).toBe(before);
+  });
+});
+
+
+// The lead's correction editor displays the reader language but submits
+// the exact same item name, slug, flags and skill ID to the sheet API.
+describe("Lead correction editor labels", () => {
+  it("keeps selected and stored item identities canonical", () => {
+    const acid: EquipmentItem = { name: "Acid (vial)", slug: "srd-gear:acid-vial", qty: 1, equipped: true };
+    const pack = { ...acid, slug: "acid-vial" };
+    const reference = { name: acid.name, slug: pack.slug, source: "open5e", documentSlug: "wotc-srd" };
+    const before = JSON.stringify([acid, pack, reference]);
+    expect(leadItemName(acid, "cs")).toBe("Kyselina (lahvička)");
+    expect(leadItemName(pack, "cs", reference)).toBe("Kyselina (lahvička)");
+    expect(leadItemName(pack, "cs")).toBe("Acid (vial)");
+    expect(leadItemName(pack, "cs", { ...reference, documentSlug: "unrelated-book" })).toBe("Acid (vial)");
+    expect(leadItemName(pack, "cs", { ...reference, slug: "other-slug" })).toBe("Acid (vial)");
+    expect(leadItemName({ ...pack, name: "Custom Acid" }, "cs", reference)).toBe("Custom Acid");
+    expect(leadItemName({ ...acid, slug: "homebrew:acid" }, "cs")).toBe("Acid (vial)");
+    expect(leadItemName({ name: acid.name, qty: 1 }, "cs")).toBe("Acid (vial)");
+    expect(leadItemName({ ...acid, identified: false }, "cs")).toBe("Acid (vial)");
+    expect(leadItemName(acid, "en")).toBe(acid.name);
+    expect(JSON.stringify([acid, pack, reference])).toBe(before);
+  });
+
+  it("localizes skills, item kinds, rarity, state and spell metadata", () => {
+    expect(SRD_SKILLS.map((skill) => skillLabel(skill.id, "cs"))).not.toEqual(SRD_SKILLS.map((skill) => skill.name));
+    expect(skillLabel("insight", "cs")).toBe("Vhled");
+    expect(skillLabel("acrobatics", "cs")).toBe("Akrobacie");
+    expect(leadItemMeta({ kind: "gear", rarity: "", cost: "25 gp" }, "cs")).toBe("výbava · 25 zl");
+    expect(leadItemMeta({ kind: "magic_item", rarity: "uncommon" }, "cs")).toBe("magický předmět · neobvyklý");
+    expect(leadItemMeta({ kind: "magic_item", rarity: "rare" }, "cs")).toBe("magický předmět · vzácný");
+    expect(leadItemMeta({ kind: "gear", rarity: "", cost: "25 gp" }, "en")).toBe("gear · 25 gp");
+    const item: EquipmentItem = { name: "Acid (vial)", qty: 1, equipped: true, attuned: true, identified: false, charges: 2 };
+    const before = JSON.stringify(item);
+    expect(leadItemFlags(item, "cs").slice(0, 3)).toEqual(["nasazeno", "sladěno", "neidentifikovaný"]);
+    expect(leadItemFlags(item, "cs")[3]).toBe("2 náboje");
+    expect(leadItemFlags({ ...item, layered: true }, "cs")[0]).toBe("nasazeno vedle dalšího (rozhodnutí PJ)");
+    expect(leadItemFlags({ ...item, charges: 1 }, "en")[3]).toBe("1 charge");
+    expect(leadSpellMeta({ level: 0 }, "cs")).toBe("trik");
+    expect(leadSpellMeta({ level: 3 }, "cs")).toBe("úroveň 3");
+    expect(JSON.stringify(item)).toBe(before);
   });
 });

@@ -22,17 +22,17 @@ import {
   equipmentFrom,
   highestStoredSlot,
   itemRowsOf,
-  levelMeta,
+  useLeadItemReferences,
   spellListOf,
   syncCasterLists,
   type ItemRow,
   type SlotEdits,
 } from "./LeadEditParts";
 import { coinCorrection, coinFields, earnedExpertise, expertiseOverCap, skillLevelsOf, trainingFrom, type SkillLevel } from "./lead-edit-logic";
-import { acBreakdownFor, effectiveAcFor, SRD_SKILLS } from "@/lib/srd";
+import { acBreakdownFor, effectiveAcFor, skillLabel, SRD_SKILLS } from "@/lib/srd";
 import { isCantripName } from "@/lib/srd/spell-lists";
 import { spellStyleFor } from "@/lib/srd/spell-prep";
-import { priceText } from "@/lib/srd/currency";
+import { leadItemName, leadItemMeta, leadSpellMeta } from "./lead-edit-display";
 import MultiContentPicker from "@/app/characters/builder/MultiContentPicker";
 import { ABILITIES, type Ability, type CharacterSheet, type Proficiencies } from "@/lib/schemas/sheet";
 import { hostOffers, useCapabilities } from "@/lib/use-capabilities";
@@ -83,6 +83,8 @@ export function LeadEditDialog({
   const [xp, setXp] = useState(String(sheet.xp));
   const [conditions, setConditions] = useState(sheet.conditions.join(", "));
   const [items, setItems] = useState<ItemRow[]>(() => itemRowsOf(sheet.equipment));
+  const itemReferences = useLeadItemReferences(campaignId, items.map((row) => row.base), t.locale);
+  const displayItem = (row: ItemRow) => leadItemName({ ...row.base, name: row.name }, t.locale, row.base.slug ? itemReferences?.get(row.base.slug) : undefined);
   const [prepared, setPrepared] = useState<string[]>(sheet.spellcasting?.prepared ?? []);
   const [known, setKnown] = useState<string[]>(sheet.spellcasting?.known ?? []);
   const [cantrips, setCantrips] = useState<string[]>(sheet.spellcasting?.cantrips ?? []);
@@ -409,14 +411,14 @@ export function LeadEditDialog({
                 {SRD_SKILLS.map((skill) => (
                   <li key={skill.id} className="flex items-center justify-between gap-2 py-1">
                     <span className="min-w-0 text-stone-200">
-                      {skill.name} <span className="text-stone-500">{ABILITY_SHORT[skill.ability]}</span>
+                      {skillLabel(skill.id, t.locale)} <span className="text-stone-500">{t(ABILITY_SHORT[skill.ability])}</span>
                     </span>
                     <SegmentedControl
                       options={SKILL_LEVELS.map((level) => ({ ...level, label: t(level.label) }))}
                       value={skillLevels[skill.id] ?? "none"}
                       onChange={(level) => setSkillLevels((levels) => ({ ...levels, [skill.id]: level }))}
                       size="sm"
-                      label={skill.name}
+                      label={skillLabel(skill.id, t.locale)}
                       className="shrink-0"
                       optionClassName="pointer-coarse:min-h-10"
                     />
@@ -433,7 +435,7 @@ export function LeadEditDialog({
               <div className="flex items-center gap-2">
                 <GameIcon icon={{ kind: "item", key: row.name, family: "item-gear" }} size="size-6" className="shrink-0" />
                 {row.base.slug ? (
-                  <span className={cn(field, "truncate")}>{row.name}</span>
+                  <span className={cn(field, "truncate")} title={displayItem(row)}>{displayItem(row)}</span>
                 ) : (
                   <input
                     value={row.name}
@@ -442,11 +444,12 @@ export function LeadEditDialog({
                     className={field}
                   />
                 )}
-                <NumberStepper size="sm" min={1} value={Number(row.qty) || 1} onChange={(next) => setItem(index, { qty: String(next) })} label={t("Quantity of {name}", { name: row.name || t("item") })} className="shrink-0" />
+                <NumberStepper size="sm" min={1} value={Number(row.qty) || 1} onChange={(next) => setItem(index, { qty: String(next) })} label={t("Quantity of {name}", { name: displayItem(row) || t("item") })} className="shrink-0" />
                 <KitButton tone="iconDanger" always onClick={() => setItems((rows) => rows.filter((_, i) => i !== index))} className="shrink-0" aria-label={t("Remove item")}>
                   <Trash2 className="size-4" />
                 </KitButton>
               </div>
+              {!row.base.slug && displayItem(row) !== row.name ? <span className="block pl-8 text-stone-400">{displayItem(row)}</span> : null}
               <ItemFlags item={row.base} />
               <GiveStats name={row.base.name} gear={unknownGear} unsaved={unsaved} />
               </div>
@@ -466,9 +469,7 @@ export function LeadEditDialog({
                     })),
                   ])
                 }
-                renderMeta={(entry) =>
-                  [entry.kind, entry.rarity ?? priceText(entry.cost ?? "")].filter(Boolean).join(" · ")
-                }
+                renderMeta={(entry) => leadItemMeta(entry, t.locale)}
               />
             </div>
           </div>
@@ -511,7 +512,7 @@ export function LeadEditDialog({
                     addCantrips(entries);
                     setKnown((list) => [...list, ...spellNamesOf(entries)]);
                   }}
-                  renderMeta={levelMeta}
+                  renderMeta={(entry) => leadSpellMeta(entry, t.locale)}
                 />
               </div>
               ) : null}
@@ -535,7 +536,7 @@ export function LeadEditDialog({
                       addCantrips(entries);
                       setSpellbook((list) => [...list, ...spellNamesOf(entries)]);
                     }}
-                    renderMeta={levelMeta}
+                    renderMeta={(entry) => leadSpellMeta(entry, t.locale)}
                   />
                 </div>
               ) : null}
@@ -563,7 +564,7 @@ export function LeadEditDialog({
                       setSpellbook((list) => [...list, ...names.filter((name) => !list.includes(name))]);
                     }
                   }}
-                  renderMeta={levelMeta}
+                  renderMeta={(entry) => leadSpellMeta(entry, t.locale)}
                 />
               </div>
               ) : null}
