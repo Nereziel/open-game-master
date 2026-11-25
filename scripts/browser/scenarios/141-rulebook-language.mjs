@@ -62,13 +62,32 @@ export default {
         const body = await response.json();
         return { locale, status: response.status, packInstalled: body.packInstalled, row: body.results?.find((row) => row.name === "Champion" && row.source === "bundled") };
       }));
+      // Exercise an authored archetype, not only the core Champion.
+      // The importer may give a published row precedence over ODM's own;
+      // only the actual authored source is entitled to its reviewed prose.
+      const authoredArchetypes = await Promise.all(["en", "fr", "cs"].map(async (locale) => {
+        const headers = { "x-odm-locale": locale };
+        const read = async (mechanics) => {
+          const params = new URLSearchParams({ class: "fighter", q: "Echo Knight", limit: "100", bundled: "1", ...(mechanics ? { mechanics: "1" } : {}) });
+          const response = await fetch("/api/content/archetypes?" + params, { headers, cache: "no-store" });
+          const body = await response.json();
+          const matches = body.results?.filter((row) => row.name === "Echo Knight") ?? [];
+          const row = matches.find((entry) => body.packInstalled
+            ? entry.source === "open5e" && entry.documentSlug === "odm-expanded"
+            : entry.source === "bundled" && entry.documentSlug === "wotc-srd");
+          if (!row) return { status: response.status, packInstalled: body.packInstalled, sources: matches.map((entry) => entry.documentSlug), row: null };
+          const detail = await fetch("/api/content/archetypes/" + encodeURIComponent(row.slug), { headers, cache: "no-store" });
+          return { status: response.status, packInstalled: body.packInstalled, row, detailStatus: detail.status, entry: (await detail.json()).entry };
+        };
+        return { locale, picker: await read(false), workshop: await read(true) };
+      }));
       const localizedSearch = await Promise.all([["cs", "ohniva koule"], ["fr", "boule de feu"]].map(async ([locale, q]) => {
         const params = new URLSearchParams({ q, mechanics: "1", book: "1", limit: "50", class: "wizard", level: "3", exact: "1" });
         const response = await fetch("/api/content/spells?" + params, { headers: { "x-odm-locale": locale }, cache: "no-store" });
         const body = await response.json();
         return { locale, status: response.status, found: body.results?.some((row) => row.name === "Fireball" && row.level === 3) ?? false };
       }));
-      return { lists, authoredFeats, bundledDetails, archetypePicker, localizedSearch, fr: await ask("fr-FR,fr;q=0.9"), en: await ask("en-US,en;q=0.9"), cs, forcedCs,
+      return { lists, authoredFeats, bundledDetails, archetypePicker, authoredArchetypes, localizedSearch, fr: await ask("fr-FR,fr;q=0.9"), en: await ask("en-US,en;q=0.9"), cs, forcedCs,
         search: { status: response.status, found: results.hits?.some((hit) => hit.page === "fireball") ?? false },
         csDetail: await details("cs"), enDetail: await details("en"),
         canonical: await Promise.all(["en", "fr", "cs"].map((locale) => details(locale, "fireball"))) };
@@ -116,6 +135,41 @@ export default {
         check(result.row.data?.localized_desc?.includes("iniciativu"), "Czech authored Alert has localized rules");
         check(result.entry?.data?.localized_desc === result.row.data?.localized_desc, "Czech authored feat list and detail agree");
       } else check(!("localized_desc" in result.row.data), result.locale + " authored feat retains original rules");
+    }
+    // A pack is optional in CI. With a pack, a different published row may
+    // own the name; report that case instead of claiming authored coverage.
+    const [english, ...translated] = asked.authoredArchetypes;
+    for (const { locale, picker, workshop } of asked.authoredArchetypes) {
+      for (const result of [picker, workshop]) {
+        check(result.status === 200, locale + " authored archetype list answers");
+        if (!result.row && result.packInstalled && result.sources?.some((source) => source !== "odm-expanded")) {
+          console.log(locale + " Echo Knight authored source not selected: " + result.sources.join(", "));
+          continue;
+        }
+        check(Boolean(result.row) && result.detailStatus === 200, locale + " authored archetype list and detail");
+        check(result.entry?.slug === result.row.slug && result.entry?.name === result.row.name, locale + " authored archetype detail preserves identity");
+        check(result.entry?.data?.localized_desc === result.row.data?.localized_desc, locale + " authored archetype list and detail agree on display prose");
+        if (locale === "cs") {
+          check(result.row.data?.localized_desc?.includes("Zhmotnění ozvěny"), "Czech authored archetype includes the reviewed feature heading");
+          check(result.row.data?.localized_desc?.includes("TZ 14 + tvůj zdatnostní bonus"), "Czech authored archetype includes reviewed feature rules");
+        }
+      }
+      if (picker.row && workshop.row) {
+        check(!("table" in picker.row), locale + " authored picker omits workshop mechanics");
+        check(Boolean(workshop.row.table?.levels), locale + " authored workshop carries canonical mechanics");
+        check(picker.row.data?.localized_desc === workshop.row.data?.localized_desc, locale + " authored picker and workshop agree on display prose");
+      }
+    }
+    const canonicalRow = (row) => {
+      const { localized_desc: _display, ...data } = row.data;
+      return { ...row, data };
+    };
+    for (const { locale, picker, workshop } of translated) {
+      for (const [base, localized] of [[english.picker, picker], [english.workshop, workshop]]) {
+        if (!base.row || !localized.row) continue;
+        check(JSON.stringify(canonicalRow(localized.row)) === JSON.stringify(canonicalRow(base.row)), locale + " authored archetype list preserves all canonical fields");
+        check(JSON.stringify(canonicalRow(localized.entry)) === JSON.stringify(canonicalRow(base.entry)), locale + " authored archetype detail preserves all canonical fields");
+      }
     }
     const { csDetail, enDetail } = asked;
     check(csDetail.status === 200 && enDetail.status === 200, "the bundled spell detail works in both locales");
