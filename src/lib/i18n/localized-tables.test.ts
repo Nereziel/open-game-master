@@ -12,7 +12,7 @@ import { resourceDisplayName, resourceGuidance } from "../srd/class-resources-fr
 import { cardDisplayName, chipName } from "../battlemap/hand-display";
 import { genderLabel, storedGender } from "../gender";
 import { ATTRACTION_CHOICES, attractionLabel } from "../attraction";
-import { glossaryTerm, localizedGlossaryTerm } from "../help";
+import { describeFeature, glossaryTerm, localizedGlossaryTerm } from "../help";
 import { translate } from "./translate";
 import { pickerName, pickerMeta } from "../content/picker-display";
 import { itemDisplayName } from "../content/item-display";
@@ -29,6 +29,23 @@ import { DM_STATUS_PHRASES, DM_STATUS_PHRASES_FR, dmStatusPhrase } from "@/app/c
 import type { HandCard } from "../battlemap/hand-core";
 
 describe("Shared reader-language display tables", () => {
+  it("localizes the sheet's equipped weapon state and fighter feature help", () => {
+    expect(translate("cs", "in hand")).toBe("v ruce");
+    expect(translate("en", "in hand")).toBe("in hand");
+    expect(describeFeature("fighter", "", "Second Wind", "cs")).toBe(
+      "Bonusovou akcí si bojovník obnoví 1k10 + svou úroveň bojovníka životů.",
+    );
+    expect(describeFeature("fighter", "", "Second Wind", "en")).toBe(
+      "A bonus action that restores 1d10 + fighter level hit points to the fighter.",
+    );
+    expect(describeFeature("fighter", "", "Extra Attack", "cs")).toBe(
+      "Kdykoli provedeš akci Útok, zaútočíš dvakrát místo jednou.",
+    );
+    expect(describeFeature("fighter", "", "Extra Attack", "en")).toBe(
+      "You attack twice instead of once whenever you take the Attack action.",
+    );
+  });
+
   it("retains every original name and resource map without mixing languages", () => {
     expect(localizedTables("en")).toBeNull();
     expect(catalogReady("fr")).toBe(true);
