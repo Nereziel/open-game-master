@@ -103,7 +103,7 @@ import { hostOffers, useCapabilities } from "@/lib/use-capabilities";
 import { featChoice, withFeatChoice } from "@/lib/schemas/sheet";
 import { workshopClassList } from "@/lib/classes/workshop-registry";
 import { archetypeDisplayName } from "@/lib/content/names";
-import { optionDisplayName } from "@/lib/content/option-labels";
+import { fightingStyleDisplayName, optionDisplayName } from "@/lib/content/option-labels";
 import { useLocale, useT, useTp } from "@/lib/locale";
 
 
@@ -1614,8 +1614,8 @@ export function LevelUpDialog({
                               : "border-stone-700 hover:border-amber-800 hover:bg-stone-900",
                           )}
                         >
-                          <span className="block text-sm">{style.name}</span>
-                          <span className="block text-xs text-stone-400">{style.description}</span>
+                          <span className="block text-sm">{fightingStyleDisplayName(style, locale)}</span>
+                          <span className="block text-xs text-stone-400">{t(style.description)}</span>
                         </button>
                       );
                     })}

@@ -13,7 +13,7 @@ import { PickPill, StepPanel } from "./shared";
 import { textKey } from "@/lib/language/text-logic";
 import { splitToolGrants, toolLabel } from "@/lib/srd/tool-choices";
 import { contentName } from "@/lib/content/names";
-import { optionDisplayName } from "@/lib/content/option-labels";
+import { fightingStyleDisplayName, optionDisplayName } from "@/lib/content/option-labels";
 import { optionFeatureName, optionKindRule, optionPicksSpells } from "@/lib/srd/options";
 import { contentSlug } from "@/lib/help";
 import { useLocale, useT, useTp } from "@/lib/locale";
@@ -151,8 +151,8 @@ export function ClassChoices({
                   }
                   className={optionCard(selected)}
                 >
-                  <span className="block text-xs">{style.name}</span>
-                  <span className="block text-sm text-stone-500">{style.description}</span>
+                  <span className="block text-xs">{fightingStyleDisplayName(style, locale)}</span>
+                  <span className="block text-sm text-stone-500">{t(style.description)}</span>
                 </button>
               );
             })}

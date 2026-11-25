@@ -1,4 +1,5 @@
 import { classFeatureName, contentName } from "./names";
+import { fightingStyleFeatureName, type FightingStyleId } from "@/lib/srd/feature-effects";
 import { translate, type Locale } from "@/lib/messages-logic";
 import { optionFeatureName, optionPicksSpells, optionSourceClassId, optionsOfKind, type OptionDef, type OptionReqIssue } from "@/lib/srd/options";
 
@@ -34,4 +35,12 @@ export function optionOfferName(offer: Pick<import("@/lib/srd/level-up-changes")
   if (!offer.optionKind) return raw;
   const option = optionsOfKind(offer.optionKind).find((entry) => entry.n === raw);
   return option ? optionDisplayName(option, locale) : raw;
+}
+
+// All six published fighting styles share the fighter's canonical names;
+// the paladin and ranger maps use the same labels. Keep the pick id intact.
+export function fightingStyleDisplayName(style: { id: FightingStyleId; name: string }, locale: Locale): string {
+  const feature = fightingStyleFeatureName(style.id);
+  const label = classFeatureName("fighter", feature, locale);
+  return label === feature ? style.name : label;
 }

@@ -15,7 +15,7 @@ import { subclassChoicePickName, subclassChoiceSummary } from "@/lib/content/sub
 import { hostOffers, useCapabilities } from "@/lib/use-capabilities";
 import { textKey } from "@/lib/language/text-logic";
 import { useLocale, useT } from "@/lib/locale";
-import { optionDisplayName } from "@/lib/content/option-labels";
+import { fightingStyleDisplayName, optionDisplayName } from "@/lib/content/option-labels";
 
 // The two refusals sendOwed writes itself (the server's own error text rides
 // through as it came): matched by identity at the render site and said in
@@ -106,6 +106,10 @@ function OwedPickers({ sheet, owed }: { sheet: CharacterSheet; owed: ReturnType<
             remaining: owed.styles.count,
             options: owed.styles.choices.map((style) => ({ k: "invocation", n: style.name, d: style.description })),
           }}
+          displayName={(option, locale) => {
+            const style = owed.styles.choices.find((entry) => entry.name === option.n);
+            return style ? fightingStyleDisplayName(style, locale) : option.n;
+          }}
           featureOf={(name) => {
             const style = owed.styles.choices.find((entry) => entry.name === name);
             return style ? fightingStyleFeatureName(style.id) : name;
@@ -141,15 +145,17 @@ function SlotPicker({
   slot,
   featureOf = (name) => optionFeatureName(slot.kind, name),
   published = false,
+  displayName,
 }: {
   sheet: CharacterSheet;
   slot: OptionSlot;
   featureOf?: (name: string) => string;
   published?: boolean;
+  displayName?: (option: OptionDef, locale: ReturnType<typeof useLocale>) => string;
 }) {
   const t = useT();
-  const labelOf = (option: OptionDef) => published ? optionDisplayName(option, t.locale) : option.n;
-  const descriptionOf = (option: OptionDef) => published ? t(option.d) : option.d;
+  const labelOf = (option: OptionDef) => displayName ? displayName(option, t.locale) : published ? optionDisplayName(option, t.locale) : option.n;
+  const descriptionOf = (option: OptionDef) => published || displayName ? t(option.d) : option.d;
   const [picked, setPicked] = useState<string[]>([]);
   const [busy, setBusy] = useState(false);
   const [refusal, setRefusal] = useState<string | null>(null);

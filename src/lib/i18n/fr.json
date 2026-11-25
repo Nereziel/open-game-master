@@ -1,5 +1,11 @@
 {
   "messages": {
+    "+2 to attack rolls with ranged weapons.": "+2 aux jets d’attaque avec des armes à distance.",
+    "+1 AC while wearing armor.": "+1 à la CA lorsque tu portes une armure.",
+    "+2 damage with a one-handed melee weapon and no other weapon in hand.": "+2 aux dégâts avec une arme de corps à corps à une main, lorsque tu ne tiens aucune autre arme.",
+    "Reroll 1s and 2s on damage with a two-handed or versatile melee weapon.": "Relance les 1 et les 2 aux dés de dégâts avec une arme de corps à corps à deux mains ou polyvalente.",
+    "Reaction: impose disadvantage on an attack against an ally within 5 ft, using your shield.": "Réaction : avec ton bouclier, impose un désavantage à une attaque contre un allié situé à 5 pieds ou moins.",
+    "Add your ability modifier to the damage of your off-hand attack.": "Ajoute ton modificateur de caractéristique aux dégâts de l’attaque de ta seconde arme.",
     "{label}: keep {name}, or change it with this level": "{label} : conserve {name} ou change ce choix à ce niveau",
     "{label}: keep {name}, or give it up for another": "{label} : conserve {name} ou échange ce choix contre un autre",
     "{label}: keep them all, or give one up for another": "{label} : conserve tous les choix ou échanges-en un contre un autre",

@@ -1,5 +1,11 @@
 {
   "messages": {
+    "+2 to attack rolls with ranged weapons.": "+2 k hodům na útok zbraněmi na dálku.",
+    "+1 AC while wearing armor.": "+1 k OČ, když máš na sobě zbroj.",
+    "+2 damage with a one-handed melee weapon and no other weapon in hand.": "+2 ke zranění jednoruční zbraní na blízko, když nedržíš žádnou další zbraň.",
+    "Reroll 1s and 2s on damage with a two-handed or versatile melee weapon.": "Přehoď výsledky 1 a 2 na kostkách zranění obouruční nebo univerzální zbraně na blízko.",
+    "Reaction: impose disadvantage on an attack against an ally within 5 ft, using your shield.": "Reakce: pomocí svého štítu způsobíš nevýhodu k útoku proti spojenci do 5 stop.",
+    "Add your ability modifier to the damage of your off-hand attack.": "Přičti svou opravu vlastnosti ke zranění útoku druhou zbraní.",
     "{label}: keep {name}, or change it with this level": "{label}: ponech si {name}, nebo tuto volbu při zvýšení úrovně změň",
     "{label}: keep {name}, or give it up for another": "{label}: ponech si {name}, nebo tuto volbu vyměň za jinou",
     "{label}: keep them all, or give one up for another": "{label}: ponech si všechny volby, nebo jednu vyměň za jinou",

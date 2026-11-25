@@ -1,5 +1,5 @@
 import { describe, expect, it } from "vitest";
-import { optionDisplayName, optionReqDisplay, optionOfferName } from "./option-labels";
+import { fightingStyleDisplayName, optionDisplayName, optionReqDisplay, optionOfferName } from "./option-labels";
 import { classFeatureName, contentName } from "./names";
 import { CS_NAMES_BY_TABLE } from "./names-cs";
 import { FR_NAMES_BY_TABLE } from "./names-fr";
@@ -7,6 +7,7 @@ import cs from "../i18n/cs.json";
 import fr from "../i18n/fr.json";
 import { installLocalizedTables } from "../i18n/localized-tables";
 import { installCatalog, translate } from "../i18n/translate";
+import { FIGHTING_STYLES, fightingStyleFeatureName } from "../srd/feature-effects";
 import { optionFeatureName, optionKindRule, optionReqProblem, optionSourceClassId, optionsOfKind } from "../srd/options";
 
 describe("published option presentation", () => {
@@ -89,5 +90,21 @@ describe("published option presentation", () => {
       expect(optionOfferName(offer, "Custom option", locale)).toBe("Custom option");
     }
     expect(JSON.stringify(offer)).toBe(original);
+  });
+  it("reuses canonical fighting style names and translates all six card descriptions", () => {
+    expect(FIGHTING_STYLES).toHaveLength(6);
+    for (const style of FIGHTING_STYLES) {
+      const original = JSON.stringify(style);
+      expect(fightingStyleDisplayName(style, "en")).toBe(style.name);
+      for (const locale of ["cs", "fr"] as const) {
+        const feature = fightingStyleFeatureName(style.id);
+        const label = fightingStyleDisplayName(style, locale);
+        expect(label).toBe(classFeatureName("fighter", feature, locale));
+        expect(label).toBe(classFeatureName("paladin", feature, locale));
+        expect(label).toBe(classFeatureName("ranger", feature, locale));
+        expect(translate(locale, style.description)).not.toBe(style.description);
+      }
+      expect(JSON.stringify(style)).toBe(original);
+    }
   });
 });
