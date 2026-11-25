@@ -200,3 +200,23 @@ await test("a multiclassed sheet checks each caster class at its own level", () 
 }
 
 console.log(`\ntest-spell-list-problems: ${passed} tests passed.`);
+
+await import("../src/lib/i18n/server-catalogs.ts");
+await test("spell list count, book and level refusals localize with unchanged EN and input", () => {
+  const cases = [
+    sheet("sorcerer", 1, { ability: "cha", cantrips: ["Fire Bolt", "Light", "Mage Hand", "Prestidigitation", "Ray of Frost"] }),
+    sheet("sorcerer", 1, { ability: "cha", known: ["Magic Missile", "Shield", "Sleep"] }),
+    sheet("wizard", 1, { spellbook: ["Magic Missile", "Shield", "Sleep", "Mage Armor", "Detect Magic", "Find Familiar", "Burning Hands"] }),
+    sheet("wizard", 1, { prepared: ["Fireball"], spellbook: ["Fireball"] }),
+  ];
+  const snapshot = structuredClone(cases);
+  for (const input of cases) {
+    const en = spellListProblems(input);
+    assert.ok(en.length);
+    const results = ["en", "cs", "fr"].map(locale => spellListProblems(input, { locale }));
+    assert.deepEqual(results[0], en);
+    assert.ok(results.every(problems => problems.length === en.length && problems.every(problem => !/\{\w+\}/.test(problem))));
+    assert.equal(new Set(results.map(JSON.stringify)).size, 3);
+  }
+  assert.deepEqual(cases, snapshot);
+});

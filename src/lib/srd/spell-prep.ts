@@ -17,7 +17,8 @@ import {
 } from "@/lib/srd/third-caster";
 import type { ToolError } from "@/lib/dm/tool-errors";
 import { textKey } from "@/lib/language/text-logic";
-import type { Locale } from "@/lib/messages-logic";
+import { translate, translatePlural, type Locale } from "@/lib/messages-logic";
+import { contentName } from "@/lib/content/names";
 import { classSpellGrants } from "@/lib/srd/class-spell-grants";
 import { arcanumExtraProblem, arcanumSplit, mysticArcanumTop } from "@/lib/srd/mystic-arcanum";
 import { effectiveAbilities, type Wearer, type WornMagicItem } from "@/lib/srd/magic-items";
@@ -544,7 +545,9 @@ export function spellListProblems(
   // sit with the first caster's.
   let freeCount = options.freeCantripCount ?? 0;
   for (const view of casterViewsOf(sheet, options.extras)) {
-    const label = `level ${view.level} ${classLabelOf(view.classId)}`;
+    const locale = options.locale ?? "en";
+    const className = classLabelOf(view.classId);
+    const label = locale === "en" ? `level ${view.level} ${className}` : translate(locale, "{className} of level {level}", { className: view.classId.startsWith("homebrew-") ? className : contentName("classes", className, locale), level: view.level });
     // The Book of Shadows' three cantrips and Additional Magical Secrets' two
     // spells sit on top of the class's counts (class-spell-grants.ts).
     const grants = classSpellGrants(view);
@@ -556,7 +559,7 @@ export function spellListProblems(
     const cantrips = named.slice(0, Math.max(0, named.length - freeCount));
     freeCount = 0;
     if (cantripCap !== null && cantrips.length > cantripCap) {
-      problems.push(`A ${label} knows ${cantripCap} ${cantripCap === 1 ? "cantrip" : "cantrips"}; that list has ${cantrips.length}.`);
+      problems.push(translatePlural(locale, "A {label} knows {count} cantrip; that list has {actual}.", "A {label} knows {count} cantrips; that list has {actual}.", { label, count: cantripCap, actual: cantrips.length }));
     }
     // An Arcane Trickster's Mage Hand among them (third-caster.ts). Judged
     // on a new sheet, as the book is: one already in play keeps what it has.
@@ -580,7 +583,7 @@ export function spellListProblems(
     }
     const counted = spellsAgainstLimit(held, [...granted, ...arcana.arcanum]);
     if (cap && counted > cap.count) {
-      problems.push(`A ${label} may hold ${cap.count} ${cap.label}; that list has ${counted}.`);
+      problems.push(translate(locale, "A {label} may hold {count} {cap}; that list has {actual}.", { label, count: cap.count, cap: translate(locale, cap.label), actual: counted }));
     }
     if (view.style === "spellbook" && options.bookAllowance !== false) {
       // A spell the school itself writes into the book sits on top of the six
@@ -590,7 +593,7 @@ export function spellListProblems(
       const book = spellsAgainstLimit(spellbookOf(view), granted);
       const allowance = spellbookAllowance(view.level);
       if (book > allowance) {
-        problems.push(`A ${label} starts with ${allowance} spells in the spellbook; that book has ${book}.`);
+        problems.push(translate(locale, "A {label} starts with {count} spells in the spellbook; that book has {actual}.", { label, count: allowance, actual: book }));
       }
     }
     const top = Math.max(maxSpellLevelOf(view), mysticArcanumTop(view.classId, view.level));
@@ -599,8 +602,8 @@ export function spellListProblems(
       if (spellLevel !== null && spellLevel > top) {
         problems.push(
           top === 0
-            ? `A ${label} has no spell slots yet, so ${name} cannot be on the list.`
-            : `${name} is a level ${spellLevel} spell; a ${label} casts up to level ${top}.`,
+            ? translate(locale, "A {label} has no spell slots yet, so {name} cannot be on the list.", { label, name })
+            : translate(locale, "{name} is a level {level} spell; a {label} casts up to level {top}.", { name, level: spellLevel, label, top }),
         );
       }
     }

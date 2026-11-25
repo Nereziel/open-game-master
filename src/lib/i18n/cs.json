@@ -1,5 +1,13 @@
 {
   "messages": {
+    "{name} is not a spell this server knows; pick one from the class's spell list.": "Server kouzlo {name} nezná; vyber jiné ze seznamu kouzel povolání.",
+    "{name} is not a {list} cantrip, which is what the race's cantrip must be.": "{name} není trik ze seznamu povolání {list}, který vyžaduje rasový rys.",
+    "A {label} knows its spells and prepares none; {spells} must be among the spells known or come off the sheet.": "Povolání {label} má známá kouzla a žádná nepřipravuje; {spells} musí být mezi známými kouzly, nebo musí být z deníku odstraněna.",
+    "This subclass is not configured to use the third-caster spellcasting progression.": "Tento archetyp není nastaven pro třetinový postup sesílání kouzel.",
+    "A {className} has no Spellcasting feature, so {spells} cannot be on the sheet.": "Povolání {className} nemá schopnost Sesílání kouzel, takže {spells} nemohou být v deníku postavy.",
+    "A {label} may hold {count} {cap}; that list has {actual}.": "Povolání {label}: povolený počet ({cap}) je {count}; seznam obsahuje {actual}.",
+    "A {label} starts with {count} spells in the spellbook; that book has {actual}.": "Povolání {label} začíná s {count} kouzly v knize kouzel; kniha obsahuje {actual}.",
+    "A {label} has no spell slots yet, so {name} cannot be on the list.": "Povolání {label} zatím nemá pozice kouzel, takže {name} nemůže být na seznamu.",
     "The new spell must be {rule}, and it stays free of your spells known.": "Nové kouzlo musí být {rule} a nezapočítává se do počtu tvých známých kouzel.",
     "a level {level} spell": "kouzlo {level}. stupně",
     "it is {actual}, and the spell it replaces is {expected}": "jde o {actual}, zatímco nahrazované kouzlo je {expected}",
@@ -15517,6 +15525,7 @@
     }
   },
   "plurals": {
+    "A {label} knows {count} cantrip; that list has {actual}.\u0000A {label} knows {count} cantrips; that list has {actual}.": ["Povolání {label} zná {count} trik; seznam obsahuje {actual}.","Povolání {label} zná {count} triky; seznam obsahuje {actual}.","Povolání {label} zná {count} triků; seznam obsahuje {actual}."],
     "A {label} knows {count} cantrip; that list would have {actual}.\u0000A {label} knows {count} cantrips; that list would have {actual}.": ["Povolání {label} zná {count} trik; seznam by obsahoval {actual}.","Povolání {label} zná {count} triky; seznam by obsahoval {actual}.","Povolání {label} zná {count} triků; seznam by obsahoval {actual}."],
     "{count} {label}\u0000{count} {label}s": ["{count} × {label}","{count} × {label}","{count} × {label}"],
     "This level gives {name} {count} Ability Score Improvement: two points, or one feat, each. The request asks for {picked}.\u0000This level gives {name} {count} Ability Score Improvements: two points, or one feat, each. The request asks for {picked}.": [

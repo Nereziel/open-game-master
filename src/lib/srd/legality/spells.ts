@@ -129,12 +129,17 @@ export type NameRules = {
   free?: Set<string>;
 };
 
-const labelOf = (view: CasterView) => `level ${view.level} ${classLabelOf(view.classId)}`;
+const labelOf = (view: CasterView, locale: Locale = "en") => {
+  const className = classLabelOf(view.classId);
+  return locale === "en" ? `level ${view.level} ${className}` : translate(locale, "{className} of level {level}", { className: view.classId.startsWith("homebrew-") ? className : contentName("classes", className, locale), level: view.level });
+};
 
 // What is wrong with the names on one caster's lists: a spell nobody
 // published, a spell filed as a cantrip, a spell off the class's list or
 // above its level.
 export function spellNameProblems(view: CasterView, list: string, rules: NameRules): string[] {
+  const locale = rules.locale ?? "en";
+  const label = labelOf(view, locale);
   const problems: string[] = [];
   const granted = new Set(grantedSpellsOf(view).map(textKey));
   const racial = new Map(rules.racialCantrips.map((entry) => [textKey(entry.name), entry.list]));
@@ -167,22 +172,22 @@ export function spellNameProblems(view: CasterView, list: string, rules: NameRul
     }
     const spell = rules.spellOf(name);
     if (!spell) {
-      problems.push(`${name} is not a spell this server knows; pick one from the class's spell list.`);
+      problems.push(translate(locale, "{name} is not a spell this server knows; pick one from the class's spell list.", { name }));
       return;
     }
     if (asCantrip && spell.level !== 0) {
-      problems.push(`${spell.name} is a level ${spell.level} spell, not a cantrip; it cannot sit on the cantrip list.`);
+      problems.push(translate(locale, "{name} is a level {level} spell, not a cantrip; it cannot sit on the cantrip list.", { name: spell.name, level: spell.level }));
       return;
     }
     if (!asCantrip && spell.level === 0) {
-      problems.push(`${spell.name} is a cantrip; it belongs on the cantrip list, not among the spells.`);
+      problems.push(translate(locale, "{name} is a cantrip; it belongs on the cantrip list, not among the spells.", { name: spell.name }));
       return;
     }
     const lists = spell.classes.map((entry) => textKey(entry));
     const racialList = racial.get(key);
     if (racialList !== undefined) {
       if (spell.level !== 0 || !lists.includes(textKey(racialList))) {
-        problems.push(`${spell.name} is not a ${racialList} cantrip, which is what the race's cantrip must be.`);
+        problems.push(translate(locale, "{name} is not a {list} cantrip, which is what the race's cantrip must be.", { name: spell.name, list: contentName("classes", racialList, locale) }));
       }
       return;
     }
@@ -195,7 +200,7 @@ export function spellNameProblems(view: CasterView, list: string, rules: NameRul
     // spell the bundled checklist names; this is for the ones only the
     // content pack knows.
     if (spellLevelOf(name) === null && spell.level > top) {
-      problems.push(`${spell.name} is a level ${spell.level} spell; a ${labelOf(view)} casts up to level ${top}.`);
+      problems.push(translate(locale, "{name} is a level {level} spell; a {label} casts up to level {top}.", { name: spell.name, level: spell.level, label, top }));
     }
   };
   for (const name of dedupeNames(view.cantrips)) {
@@ -205,12 +210,8 @@ export function spellNameProblems(view: CasterView, list: string, rules: NameRul
     judge(name, false);
   }
   const grants = classSpellGrants(view);
-  const locale = rules.locale ?? "en";
-  const className = classLabelOf(view.classId);
   const listName = spellListLabel(list);
-  const displayClass = view.classId.startsWith("homebrew-") ? className : contentName("classes", className, locale);
   const displayList = list.startsWith("homebrew-") ? listName : contentName("classes", listName, locale);
-  const label = locale === "en" ? labelOf(view) : translate(locale, "{className} of level {level}", { className: displayClass, level: view.level });
   problems.push(...offListProblems({ grants, allowedBefore: grants.anyList, kept: keptOff, strays, list: displayList, label, locale }));
   return problems;
 }
@@ -218,7 +219,7 @@ export function spellNameProblems(view: CasterView, list: string, rules: NameRul
 // How one caster's lists are filed: a caster who knows spells keeps them in
 // `known` and prepares nothing. (A wizard's prepared spells are always in
 // the book: the book is written to hold them, and then counted.)
-export function spellFilingProblems(view: CasterView): string[] {
+export function spellFilingProblems(view: CasterView, locale: Locale = "en"): string[] {
   const problems: string[] = [];
   const granted = new Set(grantedSpellsOf(view).map(textKey));
   if (view.style === "known") {
@@ -228,7 +229,7 @@ export function spellFilingProblems(view: CasterView): string[] {
     );
     if (view.known.length && apart.length) {
       problems.push(
-        `A ${labelOf(view)} knows its spells and prepares none; ${apart.join(", ")} must be among the spells known or come off the sheet.`,
+        translate(locale, "A {label} knows its spells and prepares none; {spells} must be among the spells known or come off the sheet.", { label: labelOf(view, locale), spells: apart.join(", ") }),
       );
     }
   }
@@ -317,9 +318,9 @@ export function judgeSpellcasting(input: SpellcastingInput): SpellcastingVerdict
     const names = dedupeNames(namesOf(input.sent)).filter((name) => !allowed.has(textKey(name)));
     return {
       problems: [
-        ...(invalidProfile ? ["This subclass is not configured to use the third-caster spellcasting progression."] : []),
+        ...(invalidProfile ? [translate(input.locale ?? "en", "This subclass is not configured to use the third-caster spellcasting progression.")] : []),
         ...(names.length && input.judgeLists
-          ? [`A ${first.id.replace(/[_-]+/g, " ")} has no Spellcasting feature, so ${names.slice(0, 3).join(", ")} cannot be on the sheet.`]
+          ? [translate(input.locale ?? "en", "A {className} has no Spellcasting feature, so {spells} cannot be on the sheet.", { className: first.id.startsWith("homebrew-") || !input.locale || input.locale === "en" ? first.id.replace(/[_-]+/g, " ") : contentName("classes", classLabelOf(first.id), input.locale), spells: names.slice(0, 3).join(", ") })]
           : []),
       ],
       spellcasting: taught,
@@ -441,7 +442,7 @@ export function judgeSpellcasting(input: SpellcastingInput): SpellcastingVerdict
 
   const problems: string[] = [];
   if (invalidProfile) {
-    problems.push("This subclass is not configured to use the third-caster spellcasting progression.");
+    problems.push(translate(input.locale ?? "en", "This subclass is not configured to use the third-caster spellcasting progression."));
   }
   if (input.judgeLists) {
     const held = new Set([...namesOf(input.held ?? null), ...free].map(textKey));
@@ -455,7 +456,7 @@ export function judgeSpellcasting(input: SpellcastingInput): SpellcastingVerdict
           racialCantrips: racial,
           free: new Set(free.map(textKey)),
         }),
-        ...spellFilingProblems(view),
+        ...spellFilingProblems(view, input.locale),
       );
       // An Eldritch Knight or Arcane Trickster learns from two schools, a few
       // picks from any other; only adding past both is refused.

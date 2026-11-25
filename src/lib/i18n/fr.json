@@ -1,5 +1,13 @@
 {
   "messages": {
+    "{name} is not a spell this server knows; pick one from the class's spell list.": "Le serveur ne connaît pas le sort {name} ; choisissez-en un sur la liste de sorts de la classe.",
+    "{name} is not a {list} cantrip, which is what the race's cantrip must be.": "{name} n’est pas un sort mineur de la liste {list}, comme l’exige le trait d’espèce.",
+    "A {label} knows its spells and prepares none; {spells} must be among the spells known or come off the sheet.": "Un personnage {label} connaît ses sorts et n’en prépare aucun ; {spells} doivent figurer parmi les sorts connus ou être retirés de la fiche.",
+    "This subclass is not configured to use the third-caster spellcasting progression.": "Cet archétype n’est pas configuré pour utiliser la progression d’un tiers de lanceur de sorts.",
+    "A {className} has no Spellcasting feature, so {spells} cannot be on the sheet.": "La classe {className} ne possède pas l’aptitude Incantation ; {spells} ne peuvent donc pas figurer sur la fiche.",
+    "A {label} may hold {count} {cap}; that list has {actual}.": "Un personnage {label} peut avoir {count} {cap} ; la liste en contient {actual}.",
+    "A {label} starts with {count} spells in the spellbook; that book has {actual}.": "Un personnage {label} commence avec {count} sorts dans son grimoire ; il en contient {actual}.",
+    "A {label} has no spell slots yet, so {name} cannot be on the list.": "Un personnage {label} n’a pas encore d’emplacements de sorts ; {name} ne peut donc pas figurer sur la liste.",
     "The new spell must be {rule}, and it stays free of your spells known.": "Le nouveau sort doit être {rule} et ne compte pas dans le nombre de vos sorts connus.",
     "a level {level} spell": "un sort de niveau {level}",
     "it is {actual}, and the spell it replaces is {expected}": "il s’agit de {actual}, alors que le sort remplacé est {expected}",
@@ -13638,6 +13646,7 @@
     }
   },
   "plurals": {
+    "A {label} knows {count} cantrip; that list has {actual}.\u0000A {label} knows {count} cantrips; that list has {actual}.": ["Un personnage {label} connaît {count} sort mineur ; la liste en contient {actual}.","Un personnage {label} connaît {count} sorts mineurs ; la liste en contient {actual}."],
     "A {label} knows {count} cantrip; that list would have {actual}.\u0000A {label} knows {count} cantrips; that list would have {actual}.": ["Un personnage {label} connaît {count} sort mineur ; la liste en contiendrait {actual}.","Un personnage {label} connaît {count} sorts mineurs ; la liste en contiendrait {actual}."],
     "{count} {label}\u0000{count} {label}s": ["{count} × {label}","{count} × {label}"],
     "This level gives {name} {count} Ability Score Improvement: two points, or one feat, each. The request asks for {picked}.\u0000This level gives {name} {count} Ability Score Improvements: two points, or one feat, each. The request asks for {picked}.": [
