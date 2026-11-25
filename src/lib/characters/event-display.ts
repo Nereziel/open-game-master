@@ -28,7 +28,7 @@ export function characterEventDisplay(event: { kind: string; summary: string }, 
   }
   if (kind === "death" && (match = /^Died: (.+)\.$/.exec(summary))) return t("Died: {cause}.", { cause: match[1] });
   if (kind === "story") {
-    if ((match = /^(.+) joined the party as an AI companion \((guest|lasting)\)\.$/.exec(summary))) return t("{name} joined the party as an AI companion ({kind}).", { name: match[1], kind: t(match[2]) });
+    if ((match = /^(.+) joined the party as an AI companion \((guest|party)\)\.$/.exec(summary))) return t("{name} joined the party as an AI companion ({kind}).", { name: match[1], kind: translate(locale, match[2], { context: "history.companionKind" }) });
     if ((match = /^(.+) left the party\.$/.exec(summary))) return t("{name} left the party.", { name: match[1] });
     if ((match = /^(.+) left the party: (.+)$/.exec(summary))) return t("{name} left the party: {reason}", { name: match[1], reason: match[2] });
     if ((match = /^(.+) travels with the party as an ally the GM plays\.$/.exec(summary))) return t("{name} travels with the party as an ally the GM plays.", { name: match[1] });
