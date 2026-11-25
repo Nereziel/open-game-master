@@ -1,5 +1,17 @@
 {
   "messages": {
+    "Invalid adjustment.": "Modification invalide.",
+    "Ask the GM or the party lead if the count needs correcting.": "Si le compteur doit être corrigé, demandez au MJ ou au chef du groupe.",
+    "{name} is dead and spends nothing. {lead}": "{name} est mort et ne peut rien dépenser. {lead}",
+    "Spell slots, hit dice and class features come back at rests, so a player can only mark them spent. {lead}": "Les emplacements de sorts, dés de vie et aptitudes de classe se récupèrent au repos ; un joueur peut seulement les marquer comme dépensés. {lead}",
+    "Hit dice are spent at the end of a short rest, which the GM runs; ask the GM for a short rest and {name} spends them there.": "Les dés de vie se dépensent à la fin d’un repos court géré par le MJ ; demandez un repos court pour que {name} puisse les dépenser.",
+    "{name} does not carry one of those items.": "{name} ne porte pas l’un de ces objets.",
+    "Armor takes minutes to put on or take off, so {item} cannot change during a fight. A shield takes one action, and a weapon the free object interaction.": "Enfiler ou retirer une armure prend plusieurs minutes ; impossible de changer {item} pendant un combat. Un bouclier prend une action et une arme l’interaction gratuite avec un objet.",
+    "Attuning to an item, or ending it, takes a short rest, so {item} cannot change during a fight.": "S’harmoniser avec un objet ou mettre fin à cette harmonisation demande un repos court ; impossible de changer {item} pendant un combat.",
+    "Putting on or taking off a shield takes an action, so {name} can do it on their own turn.": "Mettre ou retirer un bouclier demande une action ; {name} peut le faire à son propre tour.",
+    "Drawing, stowing or putting something on happens on {name}'s own turn.": "Dégainer, ranger ou enfiler un objet se fait au propre tour de {name}.",
+    "{name} has no spell slots.": "{name} n’a aucun emplacement de sort.",
+    "None of those counters exist on this character.": "Aucun de ces compteurs n’existe pour ce personnage.",
     "Send the number of hit dice to spend, 1 or more, and with faces one whole number for each die rolled.": "Indiquez le nombre de dés de vie à dépenser (au moins un) et, si vous saisissez les résultats, un entier par dé lancé.",
     "Hit dice are spent at the end of a short rest, and a fight is going on.": "Les dés de vie se dépensent à la fin d’un repos court, mais un combat est en cours.",
     "These hit dice are rolled by the server: typed dice count only for a player rolling real dice at a table that allows them. Spend the hit die without them.": "Ces dés de vie sont lancés par le serveur : la saisie des résultats est réservée aux joueurs utilisant des dés physiques à une table qui les autorise. Dépensez le dé de vie sans saisir de résultat.",

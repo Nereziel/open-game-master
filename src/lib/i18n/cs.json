@@ -1,5 +1,17 @@
 {
   "messages": {
+    "Invalid adjustment.": "Neplatná úprava.",
+    "Ask the GM or the party lead if the count needs correcting.": "Pokud je potřeba počet opravit, požádej PJ nebo vůdce družiny.",
+    "{name} is dead and spends nothing. {lead}": "Postava {name} je mrtvá a nemůže nic utratit. {lead}",
+    "Spell slots, hit dice and class features come back at rests, so a player can only mark them spent. {lead}": "Pozice kouzel, Kostky životů a schopnosti povolání se obnovují při odpočinku; hráč je může pouze označit jako vyčerpané. {lead}",
+    "Hit dice are spent at the end of a short rest, which the GM runs; ask the GM for a short rest and {name} spends them there.": "Kostky životů se utrácejí na konci krátkého odpočinku, který řídí PJ. Požádej PJ o krátký odpočinek, při němž je postava {name} může utratit.",
+    "{name} does not carry one of those items.": "Postava {name} nemá jeden z těchto předmětů.",
+    "Armor takes minutes to put on or take off, so {item} cannot change during a fight. A shield takes one action, and a weapon the free object interaction.": "Oblékání a svlékání zbroje trvá několik minut, proto nelze během boje změnit vybavení: {item}. Nasazení nebo sejmutí štítu vyžaduje akci, tasení nebo uložení zbraně volnou interakci s předmětem.",
+    "Attuning to an item, or ending it, takes a short rest, so {item} cannot change during a fight.": "Sladění s předmětem nebo jeho ukončení vyžaduje krátký odpočinek; během boje nelze změnit sladění s předmětem {item}.",
+    "Putting on or taking off a shield takes an action, so {name} can do it on their own turn.": "Nasazení nebo sejmutí štítu vyžaduje akci, takže to postava {name} může udělat ve svém tahu.",
+    "Drawing, stowing or putting something on happens on {name}'s own turn.": "Tasení, ukládání nebo nasazování vybavení probíhá ve vlastním tahu postavy {name}.",
+    "{name} has no spell slots.": "Postava {name} nemá žádné pozice kouzel.",
+    "None of those counters exist on this character.": "Tato postava nemá žádné z uvedených počítadel.",
     "Send the number of hit dice to spend, 1 or more, and with faces one whole number for each die rolled.": "Zadej počet Kostek životů k utracení (alespoň jednu) a při zadávání hodů jedno celé číslo za každou hozenou kostku.",
     "Hit dice are spent at the end of a short rest, and a fight is going on.": "Kostky životů se utrácejí na konci krátkého odpočinku, ale právě probíhá boj.",
     "These hit dice are rolled by the server: typed dice count only for a player rolling real dice at a table that allows them. Spend the hit die without them.": "Těmito Kostkami životů hází server. Ručně zadané výsledky jsou povoleny jen hráčům používajícím skutečné kostky v kampani, která je povoluje. Utrať Kostku životů bez zadání výsledků.",
