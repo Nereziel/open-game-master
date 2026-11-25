@@ -10,6 +10,7 @@ import {
 import { portraitStatus, queueLibraryPortrait } from "@/lib/portrait";
 import { libraryCompanionsOfCampaign } from "@/lib/db/companion-npcs";
 import { admitSheet, refusal } from "@/lib/characters/admit";
+import { bookLocaleOf } from "@/lib/request-locale";
 import { olderBuilderOf } from "@/lib/srd/legality/older-builder";
 import { createSheetSchema } from "@/lib/schemas/sheet";
 import { libraryWords } from "@/lib/characters/species-rules";
@@ -74,6 +75,7 @@ export async function POST(request: Request) {
   // The library's door holds what the table's does: the sheet is checked
   // against the rules and stored with what the server derives.
   const admitted = admitSheet({
+    locale: bookLocaleOf(request),
     door: "library",
     level: parsed.data.level,
     sheet: parsed.data.sheet,

@@ -12,6 +12,7 @@ import {
 import { listEventsForLibraryCharacter } from "@/lib/db/character-events";
 import { mirrorToCampaignSheets, portraitStatus, queueLibraryPortrait } from "@/lib/portrait";
 import { admitSheet, refusal } from "@/lib/characters/admit";
+import { bookLocaleOf } from "@/lib/request-locale";
 import { olderBuilderOf } from "@/lib/srd/legality/older-builder";
 import { attachmentSchema, createSheetSchema } from "@/lib/schemas/sheet";
 import { workshopClassDefs } from "@/lib/classes/workshop-registry";
@@ -116,6 +117,7 @@ export async function PATCH(
   // An edit keeps what the stored character holds and adds only what the
   // rules give: the stored sheet is the baseline the request is read against.
   const admitted = admitSheet({
+    locale: bookLocaleOf(request),
     door: "library",
     level: parsed.data.level,
     sheet: parsed.data.sheet,

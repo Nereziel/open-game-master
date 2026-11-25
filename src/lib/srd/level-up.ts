@@ -82,8 +82,11 @@ import { splitToolGrants, toolPickProblem } from "@/lib/srd/tool-choices";
 import { carrySwapRecords } from "@/lib/dm/ar-ws-spell-swap-record";
 import { petsAtLevel } from "@/lib/dm/pet-level-logic";
 import { featChoice } from "@/lib/schemas/sheet";
+import type { Locale } from "@/lib/messages-logic";
 
 export type LevelUpContext = {
+  // Optional reader locale for shared grant validation messages.
+  locale?: Locale;
   hpMethod: HpMethod;
   // Whether the table lets a NEW class be taken.
   multiclassAllowed: boolean;
@@ -438,6 +441,7 @@ export function buildLevelUp(
         return { name: facts?.name ?? name, desc: facts?.desc ?? "" };
       }),
       choices: request.featChoices ?? {},
+      locale: context.locale,
       strict: true,
     });
     if (granted.problems.length) {
@@ -470,6 +474,7 @@ export function buildLevelUp(
       proficiencies,
       grants: freshTraining,
       choices: trainingChoices,
+      locale: context.locale,
       strict: true,
       abilities,
     });
@@ -491,6 +496,7 @@ export function buildLevelUp(
     choices: request.featChoices ?? {},
     raisedAbility: (feat) => raisedThisLevel.get(textKey(feat)) ?? null,
     spellOf: context.spellOf,
+    locale: context.locale,
     strict: true,
   });
   if (taught.problems.length) {

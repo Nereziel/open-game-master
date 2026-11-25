@@ -48,6 +48,7 @@ import type {
   SpellFacts,
 } from "@/lib/srd/legality/types";
 import type { OlderBuilder } from "@/lib/srd/legality/older-builder";
+import type { Locale } from "@/lib/messages-logic";
 import { textKey } from "@/lib/language/text-logic";
 import { PLAYED_DOCUMENTS_SQL } from "@/lib/content/edition";
 
@@ -283,6 +284,7 @@ export function offeredSubclasses(classId: string, authors?: Authors): string[] 
 // ---- the context ----
 
 export type ContextInput = {
+  locale?: Locale;
   door: Door;
   level: number;
   sheet: Pick<CreateSheetInput, "class" | "race" | "background">;
@@ -326,6 +328,7 @@ export function legalityContextFor(input: ContextInput): LegalityContext {
   const made = input.door === "table" || (input.door === "library" && !input.baseline);
   return {
     door: input.door,
+    locale: input.locale,
     level: input.level,
     hpMethod: settings ? (settings.hpMethod ?? "average") : null,
     startingWealth: settings?.startingWealth ?? "equipment",

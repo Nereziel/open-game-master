@@ -246,6 +246,7 @@ export async function POST(
   // the request claims is held to the rules, and what has one legal answer
   // is written by the server whatever the request says.
   const admitted = admitSheet({
+    locale: t.locale,
     door: "table",
     level: door.level,
     sheet: parsed.data,
@@ -401,6 +402,7 @@ export async function PUT(
       return Response.json({ error: held }, { status: 409 });
     }
     const edited = admitSheet({
+      locale: t.locale,
       door: "library",
       level: context.campaign.startingLevel,
       sheet: edit.data.sheet,
@@ -476,6 +478,7 @@ export async function PUT(
     );
   }
   const replaced = admitSheet({
+    locale: t.locale,
     door: "table",
     level: context.campaign.startingLevel,
     sheet: parsed.data,
@@ -646,6 +649,7 @@ export async function PATCH(
     // The table's homebrew, whoever of its DM seats wrote it.
     const owner = tableAuthors(context.campaign.id);
     const built = buildLevelUp(sheet, parsed.data, {
+      locale: t.locale,
       hpMethod: context.campaign.gameSettings.hpMethod ?? "average",
       multiclassAllowed: context.campaign.gameSettings.multiclassingEnabled !== false,
       // The table's workshop classes are classes here as at creation: a

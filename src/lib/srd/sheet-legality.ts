@@ -612,6 +612,7 @@ export function legalizeSheet(input: CreateSheetInput, context: LegalityContext)
     feats: feats.feats.map((name) => ({ name, desc: context.featOf(name)?.desc ?? "" })),
     choices: input.featChoices ?? {},
     strict: policy.judgesPicks && context.door !== "engine",
+    locale: context.locale,
     picksMayWait: policy.picksMayWait,
   });
   if (policy.judgesPicks) {
@@ -629,6 +630,7 @@ export function legalizeSheet(input: CreateSheetInput, context: LegalityContext)
         ? autoSubclassPicks(subclassTraining, granted.proficiencies, input.featChoices)
         : (input.featChoices ?? {}),
     strict: policy.judgesPicks && context.door !== "engine",
+    locale: context.locale,
     picksMayWait: policy.picksMayWait,
     abilities,
   });
@@ -647,6 +649,7 @@ export function legalizeSheet(input: CreateSheetInput, context: LegalityContext)
     raisedAbility: raisedByFeat,
     spellOf: context.spellOf,
     strict: policy.judgesPicks && context.door !== "engine",
+    locale: context.locale,
     picksMayWait: policy.picksMayWait,
   });
   if (policy.judgesPicks) {

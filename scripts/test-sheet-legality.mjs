@@ -20,6 +20,9 @@ const { earnedAsiCount, earnedAsiCountFor, crossedAsiLevels } = await import("..
 const { isMechanicalFeature, unmetPrerequisite } = await import("../src/lib/srd/legality/features.ts");
 const { slotTableFor } = await import("../src/lib/srd/multiclass.ts");
 const { splitPurse } = options;
+const { authoredFeatDesc } = await import("../src/lib/srd/feat-effects.ts");
+const { featPicksOwed, featGrantSpec } = await import("../src/lib/srd/feat-grants.ts");
+await import("../src/lib/i18n/server-catalogs.ts");
 
 let passed = 0;
 function test(name, fn) {
@@ -233,6 +236,25 @@ test("features and feats come from what grants them", () => {
   for (const name of ["Rage", "Extra Attack (3)", "Sneak Attack", "Fighting Style: Archery", "Second Wind"]) {
     assert.equal(isMechanicalFeature(name), true, name);
   }
+});
+
+test("shared grant validation uses the reader locale without changing the legalized sheet", () => {
+  const sheet = { ...FIGHTER, maxHp: 36, asiChoices: [{ mode: "feat", feat: "Linguist" }] };
+  const desc = authoredFeatDesc("Linguist");
+  const overrides = { level: 4, featOf: (name) => ({ name, prerequisite: "", desc }) };
+  const original = JSON.stringify(sheet);
+  const english = judge(sheet, overrides);
+  const expected = featPicksOwed("Linguist", featGrantSpec(desc), undefined);
+  assert.equal(expected, "Linguist: pick 3 languages.");
+  assert.ok(english.problems.includes(expected));
+  for (const locale of ["cs", "fr"]) {
+    const localized = judge(sheet, { ...overrides, locale });
+    const translated = featPicksOwed("Linguist", featGrantSpec(desc), undefined, locale);
+    assert.notEqual(translated, expected);
+    assert.deepEqual(localized.problems, english.problems.map((problem) => problem === expected ? translated : problem));
+    assert.deepEqual(localized.sheet, english.sheet);
+  }
+  assert.equal(JSON.stringify(sheet), original);
 });
 
 test("feat prerequisites", () => {
