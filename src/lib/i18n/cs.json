@@ -1,5 +1,14 @@
 {
   "messages": {
+    "You pick a second Fighting Style, and both apply at once.": "Vybereš si druhý bojový styl a oba platí současně.",
+    "You attack twice instead of once whenever you take the Attack action.": "Kdykoli provedeš akci Útok, zaútočíš dvakrát místo jednou.",
+    "A combat specialty you choose once, such as Archery for ranged accuracy or Defense for extra armor class. It applies automatically.": "Vybereš si bojovou specializaci, například Střelbu pro přesnější útoky na dálku nebo Obranu pro vyšší obranné číslo. Její účinky platí automaticky.",
+    "Once per long rest you can reroll a saving throw you failed.": "Jednou za dlouhý odpočinek můžeš zopakovat neúspěšný záchranný hod.",
+    "You can reroll a failed saving throw twice per long rest.": "Dvakrát za dlouhý odpočinek můžeš zopakovat neúspěšný záchranný hod.",
+    "You can reroll a failed saving throw three times per long rest.": "Třikrát za dlouhý odpočinek můžeš zopakovat neúspěšný záchranný hod.",
+    "The marker for choosing your fighter archetype. The archetype you pick supplies the actual abilities.": "Zde si vybíráš bojový archetyp. Konkrétní schopnosti získáš podle zvoleného archetypu.",
+    "Add half your proficiency bonus to Strength, Dexterity and Constitution checks that do not already use it, and your running long jump is longer.": "K ověřením Síly, Obratnosti a Odolnosti, ke kterým si už nepřičítáš zdatnostní bonus, přičti polovinu svého zdatnostního bonusu. Také se prodlouží tvůj skok do dálky s rozběhem.",
+    "At the start of each of your turns you regain hit points if you are below half your maximum and not at 0.": "Na začátku každého svého tahu si obnovíš životy, pokud máš méně než polovinu svého maxima životů a nemáš 0 životů.",
     "worn beside another (GM's call)": "nasazeno vedle dalšího (rozhodnutí PJ)",
     "{name} used/max": "{name} spotřebováno/celkem",
     "Awakened Spellbook changes the damage type of a wizard spell from {name}'s spellbook, and {spell} is not in it. Leave the damage type out for {spell}'s own ({ownDamage}). Nothing was spent.": "Awakened Spellbook mění typ zranění kouzelnického kouzla z knihy kouzel postavy {name}, ale kouzlo {spell} v ní není. Pro použití vlastního typu zranění kouzla {spell} ({ownDamage}) typ zranění nezadávej. Nic nebylo utraceno.",
