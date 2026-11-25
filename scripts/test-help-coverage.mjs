@@ -309,12 +309,33 @@ test("spell summary metadata follows locale and keeps conditional text intact", 
     assert.equal(spellSummary(undefined, locale), "");
     assert.equal(JSON.stringify(data), original);
     const conditional = spellSummary({ level: 1, school: "Custom", casting_time: "1 reaction, when an ally falls", range: "Self (15-foot cone)" }, locale);
-    assert.ok(conditional.includes("1 reaction, when an ally falls · Self (15-foot cone)"));
+    assert.ok(conditional.includes(locale === "cs"
+      ? "1 reaction, when an ally falls · Sesilatel (kužel 15 stop)"
+      : "1 reaction, when an ally falls · Self (15-foot cone)"));
     assert.ok(conditional.includes("custom"));
   }
   assert.equal(spellSummary({ level: 0, school: "evocation", casting_time: "2 minutes", range: "Touch" }, "cs"), "trik (zaklínání) · 2 minuty · Dotek");
   assert.equal(spellSummary({ level: 1, school: "divination", casting_time: "5 hours" }, "cs"), "věštění, úroveň 1 · 5 hodin");
   assert.equal(spellSummary({ level: 0, school: "evocation", casting_time: "1 minute", range: "Self" }, "fr"), "sort mineur (évocation) · 1 minute · Sur soi");
+});
+
+test("every bundled spell has Czech casting-time and range metadata", () => {
+  const { pages } = readJson("rulebook", "srd-5.1.json");
+  const spells = pages.filter((page) => page.kind === "spell");
+  assert.ok(spells.length >= 319);
+  for (const page of spells) {
+    const casting = page.md.match(/\*\*Casting Time:\*\* ([^\n]+)/)?.[1];
+    const range = page.md.match(/\*\*Range:\*\* ([^\n]+)/)?.[1];
+    assert.ok(casting && range, page.id);
+    for (const [key, value] of [["casting_time", casting], ["range", range]]) {
+      const data = { [key]: value };
+      assert.notEqual(spellSummary(data, "cs").split(" · ").at(-1), value, page.id + ": " + key);
+      assert.equal(spellSummary(data, "en").split(" · ").at(-1), value);
+    }
+  }
+  const reaction = "1 reaction, which you take when you are hit by an attack or targeted by the *magic missile* spell";
+  assert.match(spellSummary({ casting_time: reaction }, "cs"), /magická střela/);
+  assert.match(spellSummary({ range: "Self (5-mile radius)" }, "cs"), /poloměr 5 mil/);
 });
 
 const { speciesTraitName } = await import("../src/lib/content/names.ts");
