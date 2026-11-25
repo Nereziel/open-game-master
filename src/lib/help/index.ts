@@ -300,6 +300,27 @@ export function describeContentEntry(data: Record<string, unknown> | undefined, 
   return joined ? joined : null;
 }
 
+// A source-backed reference is not a request to find another book's
+// same-named entry. Legacy references may have only a guessed slug.
+export type ContentInfoIdentity = { slug: string; source?: string; documentSlug?: string };
+
+export function contentInfoDirectMatches(entry: ContentInfoIdentity, reference: ContentInfoIdentity): boolean {
+  if (!reference.source && !reference.documentSlug) return true;
+  return entry.slug === reference.slug
+    && (!reference.source || entry.source === reference.source)
+    && (!reference.documentSlug || entry.documentSlug === reference.documentSlug);
+}
+
+// A missing legacy slug can be recovered from an exact whole-name search
+// only if it returned one unambiguous hit. Do not take the first of a
+// truncated page or use a different document to fill an empty description.
+export function uniqueContentInfoMatch<T extends { name: string }>(results: readonly T[], wanted: string, limit: number): T | undefined {
+  if (results.length >= limit || !wanted) return undefined;
+  const hits = results.filter((entry) => textKey(entry.name) === wanted);
+  const [only] = hits;
+  return hits.length === 1 ? only : undefined;
+}
+
 export type StarterSpells = {
   why: string;
   cantrips: Array<{ n: string; d: string }>;

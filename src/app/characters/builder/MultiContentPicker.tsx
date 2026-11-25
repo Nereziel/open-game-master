@@ -148,7 +148,7 @@ export default function MultiContentPicker({
                   label={rowName(entry)}
                   meta={kind === "spells" ? spellSummary(entry.data, t.locale) : undefined}
                   text={describeContentEntry(entry.data, undefined, locale)}
-                  reference={entry.source === "homebrew" ? undefined : { kind, slug: entry.slug }}
+                  reference={entry.source === "homebrew" ? undefined : { kind, slug: entry.slug, source: entry.source, documentSlug: entry.documentSlug }}
                 />
               </li>
             );

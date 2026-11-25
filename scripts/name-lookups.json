@@ -5262,13 +5262,6 @@
         "a fixed pattern over text that reads no record's name: its English words are scripts/text-comparisons.json's to classify"
       ]
     ],
-    "components/ui/InfoDialog.tsx#whole": [
-      [
-        "identity",
-        1,
-        "a help card's rows by whole name"
-      ]
-    ],
     "components/ui/ListControls.tsx#partial": [
       [
         "search",
@@ -21313,6 +21306,13 @@
         "Parse printed casting times and distances for the spell card."
       ]
     ],
+    "lib/help/index.ts#whole": [
+      [
+        "identity",
+        1,
+        "Only a unique whole-name match can recover a legacy help reference."
+      ]
+    ],
     "lib/help/index.ts#whole-single": [
       [
         "identity",
@@ -21323,6 +21323,11 @@
         "key",
         1,
         "Detect a translated label for presentation."
+      ],
+      [
+        "key",
+        1,
+        "Match the explicit content slug before displaying a selected source's description."
       ]
     ],
     "lib/help/item-sheet.ts#fallback": [

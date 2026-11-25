@@ -15,6 +15,8 @@ register("./lib/register-alias.mjs", import.meta.url);
 const {
   describeFeature,
   describeContentEntry,
+  contentInfoDirectMatches,
+  uniqueContentInfoMatch,
   describeRace,
   describeRaceTrait,
   describeSkill,
@@ -382,6 +384,24 @@ test("content help localizes labels but preserves original pack prerequisites an
     assert.equal(describeContentEntry({ ...data, localized_desc: "Reviewed display text." }, undefined, locale), "Reviewed display text.");
     assert.equal(JSON.stringify(data), original);
   }
+});
+
+test("info fallback never substitutes another source for a selected entry", () => {
+  const original = { name: "Fireball", slug: "fireball", source: "open5e", documentSlug: "wotc-srd" };
+  const expansion = { ...original, slug: "other-fireball", documentSlug: "other-book" };
+  const homebrew = { ...original, slug: "homebrew:example", source: "homebrew", documentSlug: "homebrew" };
+  const sameSlug = { ...original, documentSlug: "other-book" };
+  assert.equal(contentInfoDirectMatches(original, original), true);
+  assert.equal(contentInfoDirectMatches(expansion, original), false);
+  assert.equal(contentInfoDirectMatches(sameSlug, original), false);
+  assert.equal(contentInfoDirectMatches(homebrew, original), false);
+  assert.equal(contentInfoDirectMatches(original, { slug: "legacy-slug" }), true);
+  assert.equal(uniqueContentInfoMatch([original], "fireball", 20), original);
+  assert.equal(uniqueContentInfoMatch([original, expansion], "fireball", 20), undefined);
+  assert.equal(uniqueContentInfoMatch([homebrew, original], "fireball", 20), undefined);
+  assert.equal(uniqueContentInfoMatch([original], "fire", 20), undefined);
+  assert.equal(uniqueContentInfoMatch([original], "fireball", 1), undefined);
+  assert.equal(uniqueContentInfoMatch([], "fireball", 20), undefined);
 });
 
 console.log(`\ntest-help-coverage: ${passed} passed`);
