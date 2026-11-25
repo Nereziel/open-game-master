@@ -4,7 +4,7 @@ import { GameTerm } from "@/components/ui/GameTerm";
 import { InfoButton } from "@/components/ui/InfoDialog";
 import { cn } from "@/lib/cn";
 import { describeSkill } from "@/lib/help";
-import { SRD_SKILLS } from "@/lib/srd";
+import { SRD_SKILLS, skillLabel } from "@/lib/srd";
 import { expertiseAllowed, expertiseSlotsFor, THIEVES_TOOLS } from "@/lib/srd/features";
 import type { ClassOption } from "../useBuilderOptions";
 import type { BuilderActions, BuilderDerived } from "../useBuilderDerived";
@@ -95,7 +95,7 @@ export function ClassChoices({
               return (
                 <PickPill
                   key={skillId}
-                  label={skill?.name ?? (skillId === THIEVES_TOOLS ? t("Thieves' tools") : skillId)}
+                  label={skillId === THIEVES_TOOLS ? t("Thieves' tools") : skillLabel(skillId, locale)}
                   selected={selected}
                   info={{ text: skill ? describeSkill(t, skillId, locale) : t("Your proficiency bonus is doubled for ability checks you make with thieves' tools.") }}
                   onClick={() =>
@@ -111,7 +111,7 @@ export function ClassChoices({
                     })
                   }
                 >
-                  {skill?.name ?? skillId}
+                  {skillId === THIEVES_TOOLS ? t("Thieves' tools") : skillLabel(skillId, locale)}
                 </PickPill>
               );
             })}

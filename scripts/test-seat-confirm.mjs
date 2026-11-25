@@ -191,6 +191,10 @@ await test("Help me build opens the quiz at the table's level, and its hero goes
   const pickers = read("src/app/campaigns/[campaignId]/OwedPicksFields.tsx");
   assert.match(pickers, /<AsiFeatEditor/);
   assert.match(pickers, /<FeatChoicesFields/);
+  for (const key of ["a subclass for {class} (due at {class} level {level})", "Class skills (pick {count})", "{count} Ability Score Improvement (two points, or a feat)", "{count} Ability Score Improvements (two points, or a feat)", "Expertise: pick {count} of {name}'s proficient skills to DOUBLE their proficiency bonus in:"]) {
+    assert.ok(pickers.includes(key), "the join picker uses the shared message: " + key);
+  }
+  assert.ok(pickers.includes('id === THIEVES_TOOLS ? t("Thieves\' tools") : skillLabel(id, locale)'));
 });
 
 // ---- the preview route against the join ----
