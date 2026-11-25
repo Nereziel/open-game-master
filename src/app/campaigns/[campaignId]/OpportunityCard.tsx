@@ -85,8 +85,8 @@ export function OpportunityCard({
   }
   const name = sheets.find((sheet) => sheet.id === pending.characterId)?.name ?? t("A player");
   const clock = left !== null ? (
-    <span id={clockId} className="check-dim text-xs tabular-nums" aria-live="off">
-      <span className="sr-only">{t("If nobody answers, the attack is taken in {seconds}s", { seconds: left })}</span>
+    <span className="check-dim text-xs tabular-nums" aria-live="off">
+      <span id={clockId} className="sr-only">{t("If nobody answers, the attack is taken in {seconds}s", { seconds: left })}</span>
       <span aria-hidden="true">{t("{seconds}s", { seconds: left })}</span>
     </span>
   ) : null;
