@@ -68,13 +68,13 @@ jobs:
   # 425 files passed and none failed, so the limit is 45. That still stops a
   # hung test well short of GitHub's own six hours.
   tests:
-    name: tests (${{ matrix.shard }}/3)
+    name: tests (${{ matrix.shard }}/4)
     runs-on: ubuntu-latest
     timeout-minutes: 45
     strategy:
       fail-fast: false
       matrix:
-        shard: [1, 2, 3]
+        shard: [1, 2, 3, 4]
     steps:
       - name: Check out repository
         uses: actions/checkout@v6
@@ -89,19 +89,19 @@ jobs:
         run: npm ci
 
       - name: Tests
-        run: npm test -- --shard=${{ matrix.shard }}/3
+        run: npm test -- --shard=${{ matrix.shard }}/4
 
   # The built server in a real Chromium: dialogs, scrolls, polls and
   # preferences that no static render can exercise (scripts/browser). Each
   # runner builds, seeds and serves its own share of the scenarios.
   browser:
-    name: browser (${{ matrix.shard }}/6)
+    name: browser (${{ matrix.shard }}/8)
     runs-on: ubuntu-latest
     timeout-minutes: 40
     strategy:
       fail-fast: false
       matrix:
-        shard: [1, 2, 3, 4, 5, 6]
+        shard: [1, 2, 3, 4, 5, 6, 7, 8]
     steps:
       - name: Check out repository
         uses: actions/checkout@v6
@@ -140,4 +140,14 @@ jobs:
         run: npx playwright-core install-deps chromium
 
       - name: Browser scenarios
-        run: npm run test:browser -- --shard ${{ matrix.shard }}/6
+        run: npm run test:browser -- --shard ${{ matrix.shard }}/8 --balance --out "$RUNNER_TEMP/odm-browser-${{ matrix.shard }}"
+
+      # Store only timings, not the seeded database, credentials or server log.
+      - name: Browser timing report
+        if: ${{ always() }}
+        uses: actions/upload-artifact@v4
+        with:
+          name: browser-timings-${{ matrix.shard }}-attempt-${{ github.run_attempt }}
+          path: ${{ runner.temp }}/odm-browser-${{ matrix.shard }}/timings.json
+          retention-days: 7
+          if-no-files-found: warn

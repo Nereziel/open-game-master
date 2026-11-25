@@ -14,7 +14,7 @@
 //   node scripts/browser/run.mjs --app <client>/mobile/www   (built from this tree: ODM_SERVER_DIR=<this tree> node scripts/build-www.mjs)
 //   node scripts/browser/run.mjs --base http://127.0.0.1:3005 --ids /tmp/x/ids.json
 //   node scripts/browser/run.mjs --viewports desktop,phone --keep
-//   node scripts/browser/run.mjs --shard 2/6      (CI: every 6th scenario from the 2nd)
+//   node scripts/browser/run.mjs --shard 2/8 --balance (CI: duration-balanced scenario groups)
 //
 // Needs a Chromium: `npx playwright-core install chromium` once, or
 // ODM_BROWSER=<path to a Chrome>. Writes screenshots of every failure and
@@ -26,6 +26,7 @@ import path from "node:path";
 import { parseArgs } from "node:util";
 import { pathToFileURL } from "node:url";
 import { removeTempDir } from "../lib/remove-temp-dir.mjs";
+import { planBrowserShards } from "./shards.mjs";
 import { enterApp, freePort, launchBrowser, newContext, noEnvFile, pageHarness, seeAllTours, serveFolder, signIn, startServer } from "./lib.mjs";
 
 const { values: args } = parseArgs({
@@ -38,11 +39,12 @@ const { values: args } = parseArgs({
     keep: { type: "boolean", default: false },
     out: { type: "string", default: "" },
     shard: { type: "string", default: "" },
+    balance: { type: "boolean", default: false },
   },
 });
 
-// --shard i/n runs every nth scenario from the ith, with all its viewports,
-// so n CI jobs share the suite, each on its own seed and server.
+// --shard i/n runs every nth scenario by default, or a duration-balanced
+// group with --balance. Every scenario keeps all its viewports on one server.
 let shard = null;
 if (args.shard) {
   const match = /^(\d+)\/(\d+)$/.exec(args.shard);
@@ -52,6 +54,7 @@ if (args.shard) {
   }
 }
 
+if (args.balance && !shard) throw new Error("--balance requires --shard i/n");
 const tree = path.resolve(import.meta.dirname, "../..");
 // The seed changes cwd through enforce-world, so a relative --out must be
 // anchored to the caller before it crosses into the child process.
@@ -141,11 +144,19 @@ for (const file of fs.readdirSync(scenarioDir).filter((name) => name.endsWith(".
   if (app && scenario.app === false) continue;
   scenarios.push(scenario);
 }
+const viewportFilter = args.viewports ? args.viewports.split(",") : null;
 if (shard) {
   const all = scenarios.splice(0);
-  scenarios.push(...all.filter((_, position) => position % shard.count === shard.index - 1));
+  if (args.balance) {
+    const { seconds } = JSON.parse(fs.readFileSync(new URL("./shard-timings.json", import.meta.url), "utf8"));
+    const plan = planBrowserShards(all, shard.count, seconds, viewportFilter);
+    const selected = plan[shard.index - 1];
+    console.log(`Browser shard ${shard.index}/${shard.count}: ${selected.scenarios.length} scenarios, estimated ${Math.round(selected.estimatedSeconds)}s`);
+    scenarios.push(...selected.scenarios);
+  } else {
+    scenarios.push(...all.filter((_, position) => position % shard.count === shard.index - 1));
+  }
 }
-const viewportFilter = args.viewports ? args.viewports.split(",") : null;
 // A filter that matches nothing (a typo, a web-only scenario under --app, a
 // viewport no scenario has) would print "0 of 0 passed" and exit green, so a
 // run with nothing to run fails, as npm test does (vitest.config.mts).
@@ -228,6 +239,8 @@ try {
 
 const failed = results.filter((result) => !result.ok);
 fs.writeFileSync(path.join(outDir, "report.json"), JSON.stringify({ base, app, results }, null, 2));
+// Public CI timing artifact contains no database, credentials or error text.
+fs.writeFileSync(path.join(outDir, "timings.json"), JSON.stringify({ app, shard, results: results.map(({ tag, ok, ms }) => ({ tag, ok, ms })) }, null, 2));
 if (!results.length) {
   console.error(nothingToRun());
   process.exit(1);

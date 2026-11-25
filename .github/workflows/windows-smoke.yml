@@ -56,13 +56,13 @@ jobs:
   # the first share ran 34 to 38 minutes on usual runners, and one ran out its
   # 40 with all 423 of its files passed, so the limit is 55.
   tests:
-    name: windows tests (${{ matrix.shard }}/3)
+    name: windows tests (${{ matrix.shard }}/5)
     runs-on: windows-2025-vs2026
     timeout-minutes: 55
     strategy:
       fail-fast: false
       matrix:
-        shard: [1, 2, 3]
+        shard: [1, 2, 3, 4, 5]
     steps:
       - name: Check out repository
         uses: actions/checkout@v6
@@ -77,4 +77,4 @@ jobs:
         run: npm ci
 
       - name: Tests
-        run: npm test -- --shard=${{ matrix.shard }}/3
+        run: npm test -- --shard=${{ matrix.shard }}/5
