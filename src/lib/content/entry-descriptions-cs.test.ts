@@ -77,6 +77,24 @@ describe("Archetype and feat display is separate from mechanics", () => {
 });
 
 describe("Shared localized content descriptions", () => {
+  it("carries Czech core shield prose through the item info card without changing mechanics", () => {
+    const row = {
+      slug: "shield", name: "Shield", source: "open5e", documentSlug: "wotc-srd",
+      data: { desc: "A shield is made from wood or metal and is carried in one hand. Wielding a shield increases your Armor Class by 2. You can benefit from only one shield at a time." } as Record<string, unknown>,
+    };
+    const localized = localizeEntry("items", row, "cs");
+    const description = czechGearDescription("Shield");
+    expect(description).toContain("obranné číslo o 2");
+    expect(localized.data).toEqual({ ...row.data, localized_desc: description });
+    expect(buildItemSheet("Shield", [row.data, localized.data], { locale: "cs" })?.description).toBe(description);
+    expect(localizeEntry("items", row, "en")).toBe(row);
+    for (const other of [
+      { ...row, source: "homebrew" },
+      { ...row, documentSlug: "srd-2024" },
+      { ...row, documentSlug: "other-book" },
+    ]) expect(localizeEntry("items", other, "cs")).toBe(other);
+  });
+
   it("preserves canonical spell and item data for all reader languages", () => {
     const spell = bundledSpellRows().find((row) => row.rulebook === "fireball")!;
     const item = bundledItemRows().find((row) => row.rulebook === "cloak-of-protection")!;
