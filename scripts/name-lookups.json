@@ -21397,13 +21397,6 @@
         "Compare a display translation against its original message key to detect a catalog hit."
       ]
     ],
-    "lib/help/item-sheet.ts#whole-single": [
-      [
-        "key",
-        1,
-        "Exact slug comparison for two non-core content identities."
-      ]
-    ],
     "lib/help/rules-text.ts#partial": [
       [
         "pattern",
