@@ -306,6 +306,7 @@ export default function CatalogBrowser({
                 <button
                   type="button"
                   aria-expanded={isOpen}
+                  aria-busy={isLoading}
                   onClick={() => toggleSection(section)}
                   className="flex w-full items-center gap-1.5 px-1 py-1.5 text-left text-xs text-stone-300 hover:text-amber-100"
                 >

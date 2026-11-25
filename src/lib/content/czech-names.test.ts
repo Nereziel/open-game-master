@@ -4,7 +4,7 @@ import authoredFeats from "../srd/authored-feats.json";
 import classFeatures from "../srd/class-features.json";
 import { RESOURCE_CS_FEATURE_NAME_LOOKUP } from "../srd/resource-feature-names-cs";
 import { CZECH_SPELLS, CZECH_MONSTERS, CZECH_ITEMS } from "../rulebook/czech-terms";
-import { contentName, classFeatureName, subclassName, speciesTraitName, backgroundFeatureLabel } from "./names";
+import { contentName, contentNameMatches, classFeatureName, subclassName, speciesTraitName, backgroundFeatureLabel } from "./names";
 import racesJson from "../srd/races.json";
 import backgroundsJson from "../srd/backgrounds.json";
 import classesJson from "../srd/classes.json";
@@ -83,6 +83,23 @@ describe("Czech content names through upstream helpers", () => {
       expect(contentName("feats", feat.name, "cs"), feat.name).toBeTruthy();
       expect(contentName("feats", feat.name, "cs"), feat.name).not.toBe(feat.name);
       expect(contentName("feats", feat.name, "en")).toBe(feat.name);
+    }
+  });
+
+  it("matches the exact authored feat rows from the browse API with or without Czech accents", () => {
+    for (const [slug, name, label, query] of [
+      ["skulker", "Skulker", "Mistr v plížení", "mistr v plizeni"],
+      ["defensive-duelist", "Defensive Duelist", "Obranný šermíř", "obranny sermir"],
+    ]) {
+      const row = { slug, name, documentSlug: "odm-expanded", source: "open5e" };
+      expect(contentName("feats", row, "cs")).toBe(label);
+      expect(contentNameMatches("feats", row, query, "cs")).toBe(true);
+      expect(contentNameMatches("feats", row, label, "cs")).toBe(true);
+      expect(contentNameMatches("feats", row, name, "en")).toBe(true);
+      expect(contentNameMatches("feats", row, query, "en")).toBe(false);
+      expect(contentNameMatches("feats", { ...row, source: "homebrew" }, query, "cs")).toBe(false);
+      expect(contentNameMatches("feats", { ...row, documentSlug: "other-pack" }, query, "cs")).toBe(false);
+      expect(row.name).toBe(name);
     }
   });
 

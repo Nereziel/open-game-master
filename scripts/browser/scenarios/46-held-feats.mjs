@@ -69,15 +69,40 @@ export default {
         return row;
       };
       const browsed = async (scope, query, name) => {
-        await t.tap(scope.getByRole("button", { name: words.browse }).first());
-        await scope.getByLabel(words.narrow).fill(query);
-        // The list's one section opens when pressed, as its other rows do.
+        // Observe the actual page's browse request, not just the separate API
+        // context used by the fallback diagnostic below.
+        const network = [];
+        const isBrowse = (request) => {
+          const url = new URL(request.url());
+          return url.pathname === "/api/content/feats" && url.searchParams.has("offset");
+        };
+        const requested = (request) => {
+          if (isBrowse(request)) network.push({ event: "request", url: request.url(), locale: request.headers()["x-odm-locale"] });
+        };
+        const responded = (response) => {
+          if (isBrowse(response.request())) network.push({ event: "response", url: response.url(), status: response.status() });
+        };
+        const finished = (request) => {
+          if (isBrowse(request)) network.push({ event: "finished", url: request.url() });
+        };
+        const failed = (request) => {
+          if (isBrowse(request)) network.push({ event: "failed", url: request.url(), error: request.failure()?.errorText });
+        };
+        page.on("request", requested);
+        page.on("response", responded);
+        page.on("requestfinished", finished);
+        page.on("requestfailed", failed);
         const section = scope.getByRole("button", { name: words.all }).locator("visible=true").first();
-        await eventually(() => section.count(), { label: "the All feats section" });
-        if ((await section.getAttribute("aria-expanded")) !== "true") await t.tap(section);
+        const narrow = scope.getByLabel(words.narrow);
         const row = scope.locator("li button").filter({ hasText: name }).locator("visible=true").first();
         try {
-          await eventually(() => row.count(), { label: `${name} in the browsed list` });
+          await t.tap(scope.getByRole("button", { name: words.browse }).first());
+          await eventually(() => section.count(), { label: "the All feats section" });
+          if ((await section.getAttribute("aria-expanded")) !== "true") await t.tap(section);
+          await eventually(() => row.count(), { label: `${name} in the unfiltered browsed list` });
+          await narrow.fill(query);
+          await eventually(() => row.count(), { label: `${name} in the filtered browsed list` });
+          check(await narrow.inputValue() === query, "the browse filter retains the typed query");
         } catch (error) {
           // Keep the original assertion; record the actual list and its
           // source rows so a missing translation is distinguishable from
@@ -85,7 +110,11 @@ export default {
           try {
             console.error("held-feats browse UI", JSON.stringify({
               locale: words.locale,
-              expanded: await section.getAttribute("aria-expanded"),
+              expanded: await section.count() ? await section.getAttribute("aria-expanded") : null,
+              busy: await section.count() ? await section.getAttribute("aria-busy") : null,
+              filter: await narrow.count() ? await narrow.inputValue() : null,
+              sectionText: await section.count() ? await section.innerText() : null,
+              network,
               text: (await scope.innerText()).slice(0, 2000),
             }));
             const canonical = name === words.skulker ? "Skulker" : "Defensive Duelist";
@@ -111,6 +140,11 @@ export default {
             console.error("held-feats browse diagnostic failed", String(diagnosticError));
           }
           throw error;
+        } finally {
+          page.off("request", requested);
+          page.off("response", responded);
+          page.off("requestfinished", finished);
+          page.off("requestfailed", failed);
         }
         return row;
       };
