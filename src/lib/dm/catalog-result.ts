@@ -295,7 +295,7 @@ export function describeAdjudicationResult(result: unknown, t: T = enT): ResultL
         : key === "granted" || key === "slotRefund" || key === "completed" ||
           key === "debtComesDue" || key === "cost" || key === "wildMagicSurge" ||
           key === "lunarBoons" || key === "refilled" || key === "castingTime" || key === "shares" ||
-          key === "stoneChange" || key === "droppedConcentration" || key === "costNote" || key === "metamagic" || key === "awakenedSpellbook" ? castExtraDisplay(line, t, key)
+          key === "stoneChange" || key === "droppedConcentration" || key === "costNote" || key === "metamagic" || key === "awakenedSpellbook" || key === "counterspell" ? castExtraDisplay(line, t, key)
         : line;
       lines.push({ text: displayed, tone: "info" });
     } else if (value === true) {

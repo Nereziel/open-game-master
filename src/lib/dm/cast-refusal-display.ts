@@ -143,7 +143,38 @@ const POINTS_REFUSALS = [
   { singular: false, key: "{name} has {left} sorcery points left, and {spell} through {feature} costs {cost}. Nothing was spent." },
 ].map(({ singular, key }) => ({ singular, key, pattern: patternFor(key) }));
 
+// A monster's Counterspell spends its reaction and its slot even on failure.
+// The check is only made against a spell above the slot's level (enemy-reactions.ts).
+const COUNTERSPELL_PATTERNS = [
+  {"key":"{enemy} casts Counterspell (its reaction, a level-{slot} slot): {name}'s {spell} fails. The slot and the action {name} cast it with are spent; do not resolve the spell or cast it again.","refusal":true,"checked":false},
+  {"key":"{enemy} casts Counterspell (its reaction, a level-{slot} slot) ({ability} check {rolled} against DC {dc}): {name}'s {spell} fails. The slot and the action {name} cast it with are spent; do not resolve the spell or cast it again.","refusal":true,"checked":true},
+  {"key":"{enemy} casts Counterspell (its reaction, a level-{slot} slot) ({ability} check {rolled} against DC {dc}) and fails: {name}'s {spell} goes ahead.","refusal":false,"checked":true},
+].map((entry) => ({ ...entry, pattern: patternFor(entry.key) }));
+
+function counterspellDisplay(raw: string, t: T, refusal: boolean, actor?: string): string | null {
+  for (const entry of COUNTERSPELL_PATTERNS) {
+    if (entry.refusal !== refusal) continue;
+    const groups = entry.pattern.exec(raw)?.groups;
+    if (!groups || Object.values(groups).some((value) => !value.trim() || value.includes(". "))) continue;
+    if (actor && groups.name !== actor) continue;
+    const slot = Number(groups.slot);
+    if (!Number.isSafeInteger(slot) || String(slot) !== groups.slot || slot < 3 || slot > 9) continue;
+    if (entry.checked) {
+      if (!/^(?:STR|DEX|CON|INT|WIS|CHA)$/.test(groups.ability)) continue;
+      const rolled = Number(groups.rolled);
+      const dc = Number(groups.dc);
+      if (!Number.isSafeInteger(rolled) || String(rolled) !== groups.rolled ||
+        !Number.isSafeInteger(dc) || String(dc) !== groups.dc ||
+        dc <= 10 + slot || dc > 19 || (rolled >= dc) !== refusal) continue;
+    }
+    return t(entry.key, groups);
+  }
+  return null;
+}
+
 export function castRefusalDisplay(error: string, t: T, actor?: string): string {
+  const countered = counterspellDisplay(error, t, true, actor);
+  if (countered !== null) return countered;
   for (const { key, pattern, singular } of POINTS_REFUSALS) {
     const groups = pattern.exec(error)?.groups;
     if (!groups || !groups.name.trim() || !groups.spell.trim() || !groups.feature.trim()) continue;
@@ -283,9 +314,12 @@ const EXTRA_CAST_PATTERNS = [
   { field: "metamagic", key: "Twinned Spell does not take {spell}: it can target more than one creature at this level. The {count} sorcery points paid for it are back, and the spell is cast on its one target." },
   { field: "metamagic", key: "Twinned Spell does not take {spell}: twinning it costs {price} sorcery points. The 1 sorcery point paid for it is back, and the spell is cast on its one target." },
   { field: "metamagic", key: "Twinned Spell does not take {spell}: twinning it costs {price} sorcery points. The {count} sorcery points paid for it are back, and the spell is cast on its one target." },
+  { field: "costNote", key: "Extra Attack: {spell} takes the place of one attack of the Attack action." },
+  { field: "costNote", key: "{name} spends their additional action (Action Surge) on the Attack action. Extra Attack: {spell} takes the place of one attack of the Attack action." },
 ].map(({ field, key }) => ({ field, key, pattern: patternFor(key) }));
 
-export function castExtraDisplay(raw: string, t: T, field: "granted" | "slotRefund" | "completed" | "debtComesDue" | "cost" | "wildMagicSurge" | "lunarBoons" | "refilled" | "castingTime" | "shares" | "stoneChange" | "droppedConcentration" | "note" | "costNote" | "metamagic" | "awakenedSpellbook"): string {
+export function castExtraDisplay(raw: string, t: T, field: "granted" | "slotRefund" | "completed" | "debtComesDue" | "cost" | "wildMagicSurge" | "lunarBoons" | "refilled" | "castingTime" | "shares" | "stoneChange" | "droppedConcentration" | "note" | "costNote" | "metamagic" | "awakenedSpellbook" | "counterspell"): string {
+  if (field === "counterspell") return counterspellDisplay(raw, t, false) ?? raw;
   for (const entry of EXTRA_CAST_PATTERNS) {
     if (entry.field !== field) continue;
     const match = entry.pattern.exec(raw);
@@ -294,7 +328,7 @@ export function castExtraDisplay(raw: string, t: T, field: "granted" | "slotRefu
     if (Object.values(groups).some((value) => !value.trim())) continue;
     const { source, count, level, left, max } = groups;
     if (source?.includes(".") || groups.previous?.includes(". ") ||
-      (field === "costNote" && groups.feature?.includes(". ")) ||
+      (field === "costNote" && (groups.feature?.includes(". ") || groups.name?.includes(". "))) ||
       ((field === "note" || field === "costNote" || field === "metamagic" || field === "awakenedSpellbook") && groups.spell?.includes(". "))) continue;
     // Settlement and rejection prices are canonical positive integers, not free text.
     const { delta, price, charge } = groups;

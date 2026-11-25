@@ -2130,4 +2130,44 @@ test("awakened spellbook and twinned spell settlements localize only known resul
   }
 });
 
+test("failed enemy Counterspell and cantrip attack result notes localize with English fallback", () => {
+  const fixtures = [
+    [
+      "counterspell",
+      "{enemy} casts Counterspell (its reaction, a level-{slot} slot) ({ability} check {rolled} against DC {dc}) and fails: {name}'s {spell} goes ahead.",
+      "Tvor {enemy} sesílá Counterspell (svou reakcí, z pozice {slot}. úrovně) (ověření {ability}: {rolled} proti SO {dc}) a neuspěje: kouzlo {spell} postavy {name} pokračuje."
+    ],
+    [
+      "costNote",
+      "Extra Attack: {spell} takes the place of one attack of the Attack action.",
+      "Extra Attack: kouzlo {spell} nahrazuje jeden útok v rámci akce Útok."
+    ],
+    [
+      "costNote",
+      "{name} spends their additional action (Action Surge) on the Attack action. Extra Attack: {spell} takes the place of one attack of the Attack action.",
+      "Postava {name} spotřebuje dodatečnou akci (Action Surge) na akci Útok. Extra Attack: kouzlo {spell} nahrazuje jeden útok v rámci akce Útok."
+    ]
+  ];
+  const vars = {"enemy":"Enemy [C+D]","name":"Iris (A+B)","spell":"Custom [A+B]","slot":"3","ability":"INT","rolled":"12","dc":"15"};
+  for (const [field, en, cs] of fixtures) {
+    const raw = translateSlotResult("en", en, vars);
+    for (const [locale, expected] of [["en", en], ["cs", cs], ["fr", en]]) {
+      const t = (key, values) => translateSlotResult(locale, key, values);
+      const result = Object.freeze({ [field]: raw });
+      assert.deepEqual(describeAdjudicationResult(result, t), [{ text: translateSlotResult("en", expected, vars), tone: "info" }]);
+      assert.equal(result[field], raw);
+      assert.deepEqual(describeAdjudicationResult({ note: raw }, t), [{ text: raw, tone: "info" }]);
+      const unknown = raw + " Unknown tail.";
+      assert.deepEqual(describeAdjudicationResult({ [field]: unknown }, t), [{ text: unknown, tone: "info" }]);
+    }
+  }
+  const t = (key, values) => translateSlotResult("cs", key, values);
+  for (const invalid of [{"slot":"2"},{"dc":"13"},{"rolled":"15"},{"rolled":"012"},{"ability":"XYZ"}]) {
+    const raw = translateSlotResult("en", fixtures[0][1], { ...vars, ...invalid });
+    assert.deepEqual(describeAdjudicationResult({ counterspell: raw }, t), [{ text: raw, tone: "info" }]);
+  }
+  const raw = "Unknown sentence. " + translateSlotResult("en", fixtures[2][1], vars);
+  assert.deepEqual(describeAdjudicationResult({ costNote: raw }, t), [{ text: raw, tone: "info" }]);
+});
+
 console.log(`invoke-catalog: ${passed} tests passed`);

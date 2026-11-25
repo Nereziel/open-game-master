@@ -588,4 +588,34 @@ test("sorcery point refusals preserve counts, identities and unknown wording", (
   }
 });
 
+test("known enemy Counterspell refusals preserve actor and check identity", () => {
+  const fixtures = [
+    [
+      "{enemy} casts Counterspell (its reaction, a level-{slot} slot): {name}'s {spell} fails. The slot and the action {name} cast it with are spent; do not resolve the spell or cast it again.",
+      "Tvor {enemy} sesílá Counterspell (svou reakcí, z pozice {slot}. úrovně): kouzlo {spell} postavy {name} selhalo. Pozice kouzla i akce, kterou je postava {name} seslala, byly utraceny; nevyhodnocuj kouzlo ani je znovu nesesílej."
+    ],
+    [
+      "{enemy} casts Counterspell (its reaction, a level-{slot} slot) ({ability} check {rolled} against DC {dc}): {name}'s {spell} fails. The slot and the action {name} cast it with are spent; do not resolve the spell or cast it again.",
+      "Tvor {enemy} sesílá Counterspell (svou reakcí, z pozice {slot}. úrovně) (ověření {ability}: {rolled} proti SO {dc}): kouzlo {spell} postavy {name} selhalo. Pozice kouzla i akce, kterou je postava {name} seslala, byly utraceny; nevyhodnocuj kouzlo ani je znovu nesesílej."
+    ]
+  ];
+  const vars = {"enemy":"Enemy [C+D]","name":"Iris (A+B)","spell":"Custom [A+B]","slot":"3","ability":"INT","rolled":"17","dc":"15"};
+  for (const [en, cs] of fixtures) {
+    const raw = translate("en", en, vars);
+    for (const [locale, expected] of [["en", en], ["cs", cs], ["fr", en]]) {
+      const t = (key, values) => translate(locale, key, values);
+      assert.equal(castRefusalDisplay(raw, t, vars.name), translate("en", expected, vars));
+      assert.equal(castRefusalDisplay(raw, t, "Different actor"), raw);
+      assert.equal(castRefusalDisplay(raw + " Unknown tail.", t, vars.name), raw + " Unknown tail.");
+    }
+  }
+  const t = (key, values) => translate("cs", key, values);
+  for (const invalid of [{"slot":"2"},{"slot":"04"},{"slot":"9"},{"dc":"13"},{"dc":"20"},{"rolled":"14"},{"rolled":"17.5"},{"ability":"XYZ"}]) {
+    const raw = translate("en", fixtures[1][0], { ...vars, ...invalid });
+    assert.equal(castRefusalDisplay(raw, t, vars.name), raw);
+  }
+  const different = translate("en", fixtures[0][0], vars).replace("action Iris (A+B)", "action Another actor");
+  assert.equal(castRefusalDisplay(different, t, vars.name), different);
+});
+
 console.log(`test-cast-rules: ${passed} passed`);

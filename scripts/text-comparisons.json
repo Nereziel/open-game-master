@@ -10150,6 +10150,11 @@
       [
         "key",
         1,
+        "Canonical counterspell result field key."
+      ],
+      [
+        "key",
+        1,
         "Canonical awakenedSpellbook result field key."
       ],
       ["key",5,"Known note, stoneChange, droppedConcentration, costNote and metamagic result keys."],
@@ -26078,6 +26083,11 @@
       ]
     ],
     "lib/dm/cast-refusal-display.ts#re-word": [
+      [
+        "english-source",
+        1,
+        "Canonical uppercase ability abbreviations in an enemy Counterspell check."
+      ],
       [
         "english-source",
         5,
