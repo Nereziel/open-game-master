@@ -350,4 +350,41 @@ test("a free cast that comes back on a short rest, a spell cast at will, and a n
   assert.equal(freeCastCounter(spent, "Detect Magic", { name: "Detect Magic", level: 1 }, undefined), freeCastResourceId("Detect Magic", "at will"), "at will, again and again");
 });
 
+const { installCatalog } = await import("../src/lib/i18n/translate.ts");
+const { readFileSync } = await import("node:fs");
+test("spell refusals localize without changing grants, order or the English contract", () => {
+  // The catalog is installed explicitly in this isolated rules test.
+  for (const locale of ["cs", "fr"]) installCatalog(locale, JSON.parse(readFileSync(new URL(`../src/lib/i18n/${locale}.json`, import.meta.url), "utf8")));
+  const input = {
+    feats: ["Magic Initiate", "Fey Touched", "Ritual Caster"].map((name) => ({ name, desc: authoredFeatDesc(name) })),
+    choices: {
+      "magic initiate": { list: "custom", cantrips: ["Unknown Spell", "Burning Hands"], spells: ["Bless"] },
+      "fey touched": { spells: ["Burning Hands"] },
+      "ritual caster": { list: "wizard", spells: ["Burning Hands", "Detect Magic"] },
+    },
+    raisedAbility: () => "int",
+    spellOf: (name) => SPELLS[name.toLowerCase()] ?? null,
+    strict: true,
+  };
+  const snapshot = JSON.stringify(input.choices);
+  const english = featSpellGrants(input);
+  assert(english.problems.some((problem) => problem.includes('is not one of them')));
+  assert(english.problems.some((problem) => problem.includes('"Unknown Spell" is not a spell')));
+  assert(english.problems.some((problem) => problem.includes("is a level 1 spell")));
+  assert(english.problems.some((problem) => problem.includes("is not on the custom list")));
+  assert(english.problems.some((problem) => problem.includes("is a evocation spell")));
+  assert(english.problems.some((problem) => problem.includes("has no ritual tag")));
+  for (const locale of ["cs", "fr"]) {
+    const result = featSpellGrants({ ...input, locale });
+    assert.deepEqual(result.grants, english.grants);
+    assert.equal(result.problems.length, english.problems.length);
+    result.problems.forEach((problem, i) => {
+      assert.notEqual(problem, english.problems[i]);
+      assert(!/\{\w+\}/.test(problem));
+    });
+    assert(result.problems.some((problem) => problem.includes("Unknown Spell")));
+    assert.equal(JSON.stringify(input.choices), snapshot);
+  }
+});
+
 console.log(`${passed} checks passed`);

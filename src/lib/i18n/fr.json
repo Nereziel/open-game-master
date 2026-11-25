@@ -1,5 +1,15 @@
 {
   "messages": {
+    "{feat}'s spells come from the {lists} list; \"{list}\" is not one of them.": "Les sorts du don {feat} proviennent des listes de {lists} ; « {list} » n'en fait pas partie.",
+    "\"{spell}\" is not a spell the server knows; {feat}'s {kind} is picked from the spell list.": "« {spell} » n'est pas un sort connu du serveur ; le {kind} du don {feat} se choisit dans la liste de sorts.",
+    "{spell} is a {actual}; {feat}'s {kind} is {expected}.": "{spell} : {actual} ; pour le choix ({kind}), le don {feat} exige {expected}.",
+    "{spell} is not on the {lists} list, which is where {feat}'s {kind} comes from.": "{spell} ne figure pas dans la liste de {lists}, dont provient le {kind} du don {feat}.",
+    "{spell} is a {school} spell; {feat}'s spell is picked from {schools}.": "{spell} : sort de l'école {school} ; le don {feat} exige un sort parmi les écoles {schools}.",
+    "{spell} has no ritual tag; {feat}'s book holds rituals only.": "{spell} n'a pas le marqueur rituel ; le livre du don {feat} ne contient que des rituels.",
+    "attack cantrip": "sort mineur d'attaque",
+    "ritual spell": "sort rituel",
+    "a cantrip": "un sort mineur",
+    "a {level}-level spell": "un sort de niveau {level}",
     "{feat}: pick {choices}.": "{feat} : choisis {choices}.",
     "a damage type": "un type de dégâts",
     "a class list": "une liste de classe",

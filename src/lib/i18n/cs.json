@@ -1,5 +1,15 @@
 {
   "messages": {
+    "{feat}'s spells come from the {lists} list; \"{list}\" is not one of them.": "Kouzla odbornosti {feat} pocházejí ze seznamu povolání {lists}; „{list}“ mezi ně nepatří.",
+    "\"{spell}\" is not a spell the server knows; {feat}'s {kind} is picked from the spell list.": "„{spell}“ není kouzlo, které server zná; {kind} odbornosti {feat} se vybírá ze seznamu kouzel.",
+    "{spell} is a {actual}; {feat}'s {kind} is {expected}.": "{spell}: {actual}; odbornost {feat} vyžaduje pro volbu ({kind}) {expected}.",
+    "{spell} is not on the {lists} list, which is where {feat}'s {kind} comes from.": "{spell} není na seznamu kouzel povolání {lists}, z něhož se vybírá {kind} odbornosti {feat}.",
+    "{spell} is a {school} spell; {feat}'s spell is picked from {schools}.": "{spell}: kouzlo školy {school}; odbornost {feat} vyžaduje kouzlo ze škol {schools}.",
+    "{spell} has no ritual tag; {feat}'s book holds rituals only.": "{spell} nemá označení rituálu; kniha odbornosti {feat} obsahuje jen rituály.",
+    "attack cantrip": "útočný trik",
+    "ritual spell": "rituální kouzlo",
+    "a cantrip": "trik",
+    "a {level}-level spell": "kouzlo {level}. stupně",
     "{feat}: pick {choices}.": "{feat}: vyber {choices}.",
     "a damage type": "typ zranění",
     "a class list": "seznam kouzel povolání",
