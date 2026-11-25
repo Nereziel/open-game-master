@@ -16,22 +16,8 @@
 // scripts/test-ambience.mjs loads it directly.
 import { cueById, type AmbienceLayer } from "@/lib/ambience/catalog";
 
-export type AmbienceState = {
-  // Cue ids, or null for silence on that layer.
-  bed: string | null;
-  music: string | null;
-  // Layers the table pinned. Automatic scene tracking leaves these alone
-  // until somebody names another cue outright or unpins them.
-  held: AmbienceLayer[];
-  updatedAt: string;
-};
-
-export const EMPTY_AMBIENCE: AmbienceState = {
-  bed: null,
-  music: null,
-  held: [],
-  updatedAt: "",
-};
+import { EMPTY_AMBIENCE, type AmbienceState } from "@/lib/ambience/state";
+export { EMPTY_AMBIENCE, type AmbienceState };
 
 function cueOfLayer(value: unknown, layer: AmbienceLayer): string | null {
   if (typeof value !== "string" || !value.trim()) {
