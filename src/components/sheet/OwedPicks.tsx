@@ -13,7 +13,7 @@ import { owedPickSlots } from "@/lib/srd/owed-picks-logic";
 import { subclassChoicePickName, subclassChoiceSummary } from "@/lib/content/subclass-choices";
 import { hostOffers, useCapabilities } from "@/lib/use-capabilities";
 import { textKey } from "@/lib/language/text-logic";
-import { useT } from "@/lib/locale";
+import { useLocale, useT } from "@/lib/locale";
 
 // The two refusals sendOwed writes itself (the server's own error text rides
 // through as it came): matched by identity at the render site and said in
@@ -46,10 +46,12 @@ function refusalWords(t: (key: string, vars?: Record<string, string | number> & 
 // made here, on the player's own sheet, or at a level-up that offers them
 // on a host without the route (owed-choices.ts owedChoicesSentences).
 export function OwedPicks({ sheet, mine }: { sheet: CharacterSheet; mine: boolean }) {
+  const t = useT();
+  const locale = useLocale();
   const offered = hostOffers(useCapabilities(), "owedPicks");
   const owed = owedPickSlots(sheet);
   const where = !mine ? "owner" : offered ? "here" : "level-up";
-  const sentences = owedChoicesSentences(owedChoiceGroups(sheet), where);
+  const sentences = owedChoicesSentences(owedChoiceGroups(sheet, {}, t, locale), where, t);
   const pickers = where === "here" && (owed.options.length > 0 || owed.choices.length > 0 || owed.styles.count > 0 || owed.training.length > 0);
   return (
     <>
@@ -68,7 +70,7 @@ function OwedPickers({ sheet, owed }: { sheet: CharacterSheet; owed: ReturnType<
   return (
     <div className="reveal mt-3 space-y-3">
       {owed.options.map((slot) => (
-        <SlotPicker key={slot.kind} sheet={sheet} slot={slot} />
+        <SlotPicker key={slot.kind} sheet={sheet} slot={{ ...slot, label: t(slot.label) }} />
       ))}
       {/* A workshop subclass's own choice (issue #833), saved as "Bloodline
           (Storm)" and judged by the route against the table's subclasses. */}
@@ -184,7 +186,7 @@ function SlotPicker({
     <div className="space-y-1.5 text-xs" role="group" aria-labelledby={labelId}>
       <p id={labelId} className="text-stone-300">
         <span className="font-medium text-amber-100">{slot.label}</span>{" "}
-        <span className="text-stone-400">({remainingWords(slot)})</span>
+        <span className="text-stone-400">({remainingWords(slot, t)})</span>
       </p>
       <div className="flex flex-wrap gap-1.5" data-pill-group>
         {options.map((option, index) => {

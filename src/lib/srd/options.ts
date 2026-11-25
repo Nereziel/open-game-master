@@ -13,6 +13,7 @@
 //
 // Pure data and pure functions, client-importable like the rest of srd/.
 
+import { formatMessage, type MessageVars } from "@/lib/messages-logic";
 import { featOptionSlots } from "@/lib/srd/feat-combat";
 import optionsJson from "@/lib/srd/options.json";
 import subclassesJson from "@/lib/srd/subclasses.json";
@@ -517,10 +518,10 @@ export function slotTakes(slot: Pick<OptionSlot, "remaining">, option: Pick<Opti
 }
 
 // "1 still to choose", or "one more humanoid race" when half a pick is left.
-export function remainingWords(slot: Pick<OptionSlot, "remaining">): string {
+export function remainingWords(slot: Pick<OptionSlot, "remaining">, t: (key: string, vars?: MessageVars) => string = formatMessage, still = true): string {
   const whole = Math.floor(slot.remaining);
   const half = slot.remaining - whole >= 0.5;
-  return [whole ? `${whole} still to choose` : "", half ? `${whole ? "and " : ""}one more humanoid race to pair` : ""].filter(Boolean).join(" ");
+  return [whole ? t(still ? "{count} still to choose" : "{count} to choose", { count: whole }) : "", half ? t(whole ? "and one more humanoid race to pair" : "one more humanoid race to pair") : ""].filter(Boolean).join(" ");
 }
 
 // The spells a spellbook holds, for the kinds that pick from it. Undefined:

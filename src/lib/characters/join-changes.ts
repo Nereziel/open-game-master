@@ -186,7 +186,7 @@ export function joinChanges(
     background: (seated as { background?: string }).background,
     racialChoices: (seated as { racialChoices?: { skills?: string[] } | null }).racialChoices,
     backgroundChoices: (seated as { backgroundChoices?: { skills?: string[] } | null }).backgroundChoices,
-  } as Parameters<typeof owedChoiceGroups>[0], owedContext);
+  } as Parameters<typeof owedChoiceGroups>[0], owedContext, t, locale);
 
   return { changes, owed: [...groups.levelUp, ...groups.onSheet], owedOnSheet: groups.onSheet };
 }

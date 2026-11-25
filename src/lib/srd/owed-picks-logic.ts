@@ -14,6 +14,7 @@
 //
 // Pure: the sheet comes in as a value.
 
+import { formatMessage, type MessageVars } from "@/lib/messages-logic";
 import type { CharacterSheet, Proficiencies, SheetFeature } from "@/lib/schemas/sheet";
 import { featChoice, keyedFeatChoices, withFeatChoice } from "@/lib/schemas/sheet";
 import type { FeatChoices } from "@/lib/srd/feat-grants";
@@ -152,20 +153,22 @@ export function owedPickSlots(stated: OwedSheet, context: OwedContext = {}): Owe
 
 // The owed picks in words, for the sheet's and the join's "Earned and not
 // yet made" line.
-export function owedPickLines(sheet: OwedSheet, context: OwedContext = {}): string[] {
+export function owedPickLines(sheet: OwedSheet, context: OwedContext = {}, t: (key: string, vars?: MessageVars) => string = formatMessage): string[] {
   const owed = owedPickSlots(sheet, context);
   const lines = owed.options.map((slot) => {
-    const words = remainingWords(slot);
-    return `${slot.label}: ${words.replace(" still to choose", " to choose")}`;
+    const words = remainingWords(slot, t, false);
+    return t("{label}: {choices}", { label: t(slot.label), choices: words });
   });
   for (const slot of owed.choices) {
-    lines.push(`${slot.subclass}'s ${slot.label}: 1 to choose`);
+    lines.push(t("{subclass}'s {label}: 1 to choose", { subclass: slot.subclass, label: slot.label }));
   }
   if (owed.styles.count > 0) {
-    lines.push(owed.styles.count === 1 ? "a fighting style" : `${owed.styles.count} fighting styles`);
+    lines.push(owed.styles.count === 1 ? t("a fighting style") : t("{count} fighting styles", { count: owed.styles.count }));
   }
   for (const grant of owed.training) {
-    lines.push(`${grant.name}: ${grant.spec.languages === 1 ? "a language" : `${grant.spec.languages} languages`}`);
+    const label = grant.name === LANGUAGES_TO_CHOOSE ? t("Languages to choose") : grant.name;
+    const choices = grant.spec.languages === 1 ? t("a language") : t("{count} languages", { count: grant.spec.languages });
+    lines.push(t("{label}: {choices}", { label, choices }));
   }
   return lines;
 }

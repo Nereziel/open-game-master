@@ -298,11 +298,11 @@ export function JoinConfirmDialog({
                     <li key={line}>{line}</li>
                   ))}
                 </ul>
-                <p className="text-xs text-stone-400">{joinOwedNote(name, owedLeft, shown?.owedOnSheet ?? preview?.owedOnSheet)}</p>
+                <p className="text-xs text-stone-400">{joinOwedNote(name, owedLeft, shown?.owedOnSheet ?? preview?.owedOnSheet, t)}</p>
               </section>
             ) : shown?.ok && owed && owedLeft.length ? (
               <div className="space-y-1 text-xs text-amber-100" data-join-owed-left>
-                {joinOwedLeft(owedLeft, shown?.owedOnSheet ?? preview?.owedOnSheet).map((line) => (
+                {joinOwedLeft(owedLeft, shown?.owedOnSheet ?? preview?.owedOnSheet, t).map((line) => (
                   <p key={line}>{line}</p>
                 ))}
               </div>

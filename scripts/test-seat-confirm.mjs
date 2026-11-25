@@ -105,6 +105,40 @@ await test("join confirmation uses EN/FR/CS plural forms and preserves custom na
   }
 });
 
+await test("owed choices keep the same groups and counts in EN, FR and CS", async () => {
+  const { installCatalog, translate } = await import("../src/lib/i18n/translate.ts");
+  const { owedChoiceGroups, owedChoicesSentences, joinOwedLeft, joinOwedNote } = await import("../src/lib/srd/owed-choices.ts");
+  const { remainingWords } = await import("../src/lib/srd/options.ts");
+  const hero = { ...LEGAL_FIGHTER, level: 4, subclass: "", classes: [] };
+  const before = JSON.stringify(hero);
+  const baseline = owedChoiceGroups(hero);
+  for (const [locale, subclass, half] of [
+    ["en", "subclass for fighter", "one more humanoid race to pair"],
+    ["cs", "Archetyp povolání", "ještě jeden humanoidní druh do kombinace"],
+    ["fr", "sous-classe", "encore une race humanoïde à associer"],
+  ]) {
+    if (locale !== "en") installCatalog(locale, JSON.parse(read(`src/lib/i18n/${locale}.json`)));
+    const t = (key, vars) => translate(locale, key, vars);
+    const groups = owedChoiceGroups(hero, {}, t, locale);
+    assert.equal(groups.levelUp.length, baseline.levelUp.length);
+    assert.equal(groups.onSheet.length, baseline.onSheet.length);
+    assert.ok(groups.levelUp.some(line => line.includes(subclass)), groups.levelUp.join(" | "));
+    assert.equal(remainingWords({ remaining: 0.5 }, t, false), half);
+    const preview = joinChanges(hero, 4, hero, 4, t, locale);
+    assert.deepEqual(preview.owed, [...groups.levelUp, ...groups.onSheet]);
+    assert.deepEqual(preview.owedOnSheet, groups.onSheet);
+    const own = { levelUp: ["Custom {name}"], onSheet: ["Homebrew: Storm"] };
+    for (const where of ["here", "owner", "level-up"]) {
+      const lines = owedChoicesSentences(own, where, t);
+      assert.ok(lines[0].includes(own.levelUp[0]));
+      assert.ok(lines[1].includes(own.onSheet[0]));
+    }
+    assert.ok(joinOwedNote("Custom {name}", ["A", "B"], ["B"], t).includes("Custom {name}"));
+    assert.equal(joinOwedLeft(["A", "B"], ["B"], t).length, 2);
+    assert.equal(JSON.stringify(hero), before);
+  }
+});
+
 // ---- the chooser's order ----
 
 await test("the chooser lists the player's own heroes, then an adventure's pregens, never an ally", () => {
