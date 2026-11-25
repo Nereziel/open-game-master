@@ -1,14 +1,16 @@
 name: Windows smoke
 
-# Catches Windows-specific breakage in the install, lint and build path.
-# The Python setup, the setup-windows.ps1 validation and the two check:image-*
-# steps were dropped: none of those scripts exist any more, so every run since
-# the fork has failed on them.
+# Always verify native installation and production build. Low-risk PRs run
+# a curated platform smoke suite; unknown/risky paths, integration pushes,
+# nightly and manual runs exercise the complete suite.
 
 on:
   push:
-    branches: [main]
+    branches: [main, rebuild/fresh-upstream-2026-11-23]
   pull_request:
+  schedule:
+    - cron: '23 2 * * *'
+  workflow_dispatch:
 
 permissions:
   contents: read
@@ -20,6 +22,25 @@ concurrency:
   cancel-in-progress: ${{ github.event_name == 'pull_request' }}
 
 jobs:
+  plan:
+    name: Windows test plan
+    runs-on: ubuntu-latest
+    timeout-minutes: 5
+    outputs:
+      matrix: ${{ steps.policy.outputs.matrix }}
+    steps:
+      - uses: actions/checkout@v6
+        with:
+          fetch-depth: 0
+      - uses: actions/setup-node@v6
+        with:
+          node-version: '24'
+      - name: Classify changed paths
+        id: policy
+        env:
+          PR_BASE_SHA: ${{ github.event.pull_request.base.sha }}
+        run: node scripts/ci/windows-policy.mjs plan
+
   build:
     name: windows build
     runs-on: windows-2025-vs2026
@@ -48,21 +69,17 @@ jobs:
       - name: The built server keeps its Windows code
         run: node scripts/check-built-platform.mjs
 
-  # The suite took 30 of its 45 minutes in one job by 0.30.0; the runners
-  # share its files instead, each running its share a few at a time
-  # (vitest.config.mts). A share takes 18 to 20 minutes on a usual runner; a
-  # slow one ran out its 30 on 0.35.0 with every test still passing, so the
-  # limit leaves room for a slow runner and still stops a hung test. By 0.39
-  # the first share ran 34 to 38 minutes on usual runners, and one ran out its
-  # 40 with all 423 of its files passed, so the limit is 55.
+  # Keep at most two Windows test runners occupied even in full mode.
+  # All five shards still run; other repositories retain available capacity.
   tests:
-    name: windows tests (${{ matrix.shard }}/3)
+    name: windows tests (${{ matrix.mode }} ${{ matrix.shard }})
+    needs: plan
     runs-on: windows-2025-vs2026
     timeout-minutes: 55
     strategy:
       fail-fast: false
-      matrix:
-        shard: [1, 2, 3]
+      max-parallel: 2
+      matrix: ${{ fromJSON(needs.plan.outputs.matrix) }}
     steps:
       - name: Check out repository
         uses: actions/checkout@v6
@@ -76,5 +93,10 @@ jobs:
       - name: Install npm dependencies
         run: npm ci
 
-      - name: Tests
-        run: npm test -- --shard=${{ matrix.shard }}/3
+      - name: Targeted platform tests
+        if: matrix.mode == 'smoke'
+        run: node scripts/ci/windows-policy.mjs smoke
+
+      - name: Full tests
+        if: matrix.mode == 'full'
+        run: npm test -- --shard=${{ matrix.shard }}/5
