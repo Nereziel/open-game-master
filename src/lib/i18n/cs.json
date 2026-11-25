@@ -1,5 +1,17 @@
 {
   "messages": {
+    "{label}: keep {name}, or change it with this level": "{label}: ponech si {name}, nebo tuto volbu při zvýšení úrovně změň",
+    "{label}: keep {name}, or give it up for another": "{label}: ponech si {name}, nebo tuto volbu vyměň za jinou",
+    "{label}: keep them all, or give one up for another": "{label}: ponech si všechny volby, nebo jednu vyměň za jinou",
+    "Keep all": "Ponechat vše",
+    "Give up {name}": "Vzdát se: {name}",
+    "Storm Aura": "Bouřlivá aura",
+    "Divine Magic": "Božská magie",
+    "Psionic Spells": "Psionická kouzla",
+    "Clockwork Magic": "Mechanická magie",
+    "The new spell must be a cleric spell of a level the sorcerer has spell slots for, and it stays free of your spells known.": "Nové kouzlo musí být klerické kouzlo stupně, pro který má čaroděj pozice kouzel. Nezapočítává se do počtu známých kouzel.",
+    "The new spell must be a divination or enchantment spell of the same level from the sorcerer, warlock or wizard list, and it stays free of your spells known.": "Nové kouzlo musí být věštecké či očarovací kouzlo stejného stupně ze seznamu čaroděje, černokněžníka nebo kouzelníka. Nezapočítává se do počtu známých kouzel.",
+    "The new spell must be an abjuration or transmutation spell of the same level from the sorcerer, warlock or wizard list, and it stays free of your spells known.": "Nové kouzlo musí být vymítací či proměňovací kouzlo stejného stupně ze seznamu čaroděje, černokněžníka nebo kouzelníka. Nezapočítává se do počtu známých kouzel.",
     "{option} requires level {level} in {className}.": "Pro volbu {option} je potřeba {level}. úroveň povolání {className}.",
     "{option} requires {pact}.": "Volba {option} vyžaduje: {pact}.",
     "{option} requires the {spell} cantrip.": "Volba {option} vyžaduje trik {spell}.",

@@ -1,5 +1,17 @@
 {
   "messages": {
+    "{label}: keep {name}, or change it with this level": "{label} : conserve {name} ou change ce choix à ce niveau",
+    "{label}: keep {name}, or give it up for another": "{label} : conserve {name} ou échange ce choix contre un autre",
+    "{label}: keep them all, or give one up for another": "{label} : conserve tous les choix ou échanges-en un contre un autre",
+    "Keep all": "Tout garder",
+    "Give up {name}": "Abandonner {name}",
+    "Storm Aura": "Aura de tempête",
+    "Divine Magic": "Magie divine",
+    "Psionic Spells": "Sorts psioniques",
+    "Clockwork Magic": "Magie mécanique",
+    "The new spell must be a cleric spell of a level the sorcerer has spell slots for, and it stays free of your spells known.": "Le nouveau sort doit être un sort de clerc d’un niveau pour lequel l’ensorceleur possède des emplacements. Il ne compte pas parmi tes sorts connus.",
+    "The new spell must be a divination or enchantment spell of the same level from the sorcerer, warlock or wizard list, and it stays free of your spells known.": "Le nouveau sort doit être un sort de divination ou d’enchantement du même niveau issu de la liste d’ensorceleur, d’occultiste ou de magicien. Il ne compte pas parmi tes sorts connus.",
+    "The new spell must be an abjuration or transmutation spell of the same level from the sorcerer, warlock or wizard list, and it stays free of your spells known.": "Le nouveau sort doit être un sort d’abjuration ou de transmutation du même niveau issu de la liste d’ensorceleur, d’occultiste ou de magicien. Il ne compte pas parmi tes sorts connus.",
     "{option} requires level {level} in {className}.": "Pour choisir {option}, il faut le niveau {level} dans la classe {className}.",
     "{option} requires {pact}.": "Le choix {option} exige : {pact}.",
     "{option} requires the {spell} cantrip.": "Le choix {option} exige le tour de magie {spell}.",

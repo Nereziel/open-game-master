@@ -1,6 +1,6 @@
 import { classFeatureName, contentName } from "./names";
 import { translate, type Locale } from "@/lib/messages-logic";
-import { optionFeatureName, optionPicksSpells, optionSourceClassId, type OptionDef, type OptionReqIssue } from "@/lib/srd/options";
+import { optionFeatureName, optionPicksSpells, optionSourceClassId, optionsOfKind, type OptionDef, type OptionReqIssue } from "@/lib/srd/options";
 
 // Only for published option rows. The stored feature's prefix and the
 // originating class disambiguate identical bare names across pick lists.
@@ -25,4 +25,13 @@ export function optionReqDisplay(option: Pick<OptionDef, "k" | "n">, issue: Opti
     case "cantrip":
       return translate(locale, "{option} requires the {spell} cantrip.", { option: label, spell: contentName("spells", issue.name, locale) });
   }
+}
+
+// Only an offer from a published kind identifies the bare choice. Do not
+// guess a name from a custom offer or from a previously swapped spell.
+export function optionOfferName(offer: Pick<import("@/lib/srd/level-up-changes").ChangeOffer, "shown" | "optionKind">, name: string, locale: Locale): string {
+  const raw = offer.shown[name] ?? name;
+  if (!offer.optionKind) return raw;
+  const option = optionsOfKind(offer.optionKind).find((entry) => entry.n === raw);
+  return option ? optionDisplayName(option, locale) : raw;
 }

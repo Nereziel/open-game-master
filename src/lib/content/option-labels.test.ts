@@ -1,5 +1,5 @@
 import { describe, expect, it } from "vitest";
-import { optionDisplayName, optionReqDisplay } from "./option-labels";
+import { optionDisplayName, optionReqDisplay, optionOfferName } from "./option-labels";
 import { classFeatureName, contentName } from "./names";
 import { CS_NAMES_BY_TABLE } from "./names-cs";
 import { FR_NAMES_BY_TABLE } from "./names-fr";
@@ -78,5 +78,16 @@ describe("published option presentation", () => {
       }
     }
     expect(optionReqProblem(cases[2].option, missing, { cantripsLater: true })).toBeNull();
+  });
+  it("localizes only a source-identified option offer, preserving custom names and keys", () => {
+    const name = "Storm Aura (Sea)";
+    const offer = { shown: { [name]: "Sea" }, optionKind: "storm_environment" as const };
+    const original = JSON.stringify(offer);
+    for (const locale of ["en", "cs", "fr"] as const) {
+      expect(optionOfferName(offer, name, locale)).toBe(optionDisplayName({ k: "storm_environment", n: "Sea" }, locale));
+      expect(optionOfferName({ shown: offer.shown }, name, locale)).toBe("Sea");
+      expect(optionOfferName(offer, "Custom option", locale)).toBe("Custom option");
+    }
+    expect(JSON.stringify(offer)).toBe(original);
   });
 });

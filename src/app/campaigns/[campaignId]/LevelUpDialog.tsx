@@ -1803,7 +1803,7 @@ export function LevelUpDialog({
                       </div>
                     </div>
                   ) : null}
-                  {originOffer ? <LevelUpChangePick offer={originOffer} change={originShown} onChange={pickOrigin} /> : null}
+                  {originOffer ? <LevelUpChangePick offer={originOffer} change={originShown} onChange={pickOrigin} bundledOrigin /> : null}
                   <SpellBook
                     tiles={levelUpTiles}
                     maxLevel={maxCastable ?? 0}

@@ -8,7 +8,7 @@
 
 import { heldAuthored, type AuthoredSheet } from "@/lib/srd/authored-effects";
 import { holdsFeat } from "@/lib/srd/feat-effects";
-import { chosenOptions, kindsSwappedAtLevel, optionFeatureName, optionKindOpenedBy, optionReqProblem, optionsOfKind } from "@/lib/srd/options";
+import { chosenOptions, kindsSwappedAtLevel, optionFeatureName, optionKindOpenedBy, optionReqProblem, optionsOfKind, type OptionKind } from "@/lib/srd/options";
 import { choiceIn } from "@/lib/srd/feature-names";
 import { textKey } from "@/lib/language/text-logic";
 
@@ -17,11 +17,11 @@ export type LevelUpChange = { from: string; to: string };
 // `shown`: each name as the dialog prints it ("Sea" for "Storm Aura (Sea)").
 export type ChangeOffer =
   // One held choice and the names it may become ("Storm Aura (Sea)").
-  | { kind: "choice"; label: string; from: string; options: string[]; shown: Record<string, string> }
+  | { kind: "choice"; label: string; from: string; options: string[]; shown: Record<string, string>; optionKind?: OptionKind }
   // Any one of `froms` for one of `options`, or of `optionsFor[from]` where
   // what may replace a name depends on it (a sorcerer origin's spell, by its
   // level: src/lib/dm/ar-ws-origin-swap.ts). `note` says the rule.
-  | { kind: "replace"; label: string; froms: string[]; options: string[]; optionsFor?: Record<string, string[]>; note?: string; shown: Record<string, string> };
+  | { kind: "replace"; label: string; froms: string[]; options: string[]; optionsFor?: Record<string, string[]>; note?: string; shown: Record<string, string>; optionKind?: OptionKind };
 
 type Facts = { classLevel: (classId: string) => number; cantrips: readonly string[] };
 type ChangeSheet = AuthoredSheet & { features: Array<{ name: string; source?: string; classId?: string; level?: number }>; feats?: string[] };
@@ -49,6 +49,7 @@ export function levelUpChangeOffers(sheet: ChangeSheet, classId: string, facts: 
       offers.push({
         kind: "choice",
         label: held.feature,
+        optionKind: kind ?? undefined,
         from,
         options: others.map(named),
         shown: Object.fromEntries([[from, kept], ...others.map((option) => [named(option), option])]),
@@ -63,6 +64,7 @@ export function levelUpChangeOffers(sheet: ChangeSheet, classId: string, facts: 
     offers.push({
       kind: "replace",
       label: "Eldritch Invocation",
+      optionKind: INVOCATION,
       froms: invocations.map((name) => optionFeatureName(INVOCATION, name)),
       options: open.map((option) => optionFeatureName(INVOCATION, option.n)),
       shown: Object.fromEntries(names.map((name) => [optionFeatureName(INVOCATION, name), name])),
@@ -78,6 +80,7 @@ export function levelUpChangeOffers(sheet: ChangeSheet, classId: string, facts: 
     offers.push({
       kind: "replace",
       label,
+      optionKind: kind,
       froms: held.map((name) => optionFeatureName(kind, name)),
       options: open.map((option) => optionFeatureName(kind, option.n)),
       shown: Object.fromEntries([...held, ...open.map((option) => option.n)].map((name) => [optionFeatureName(kind, name), name])),
