@@ -138,7 +138,7 @@ export function levelUpSpells(input: SpellLevelUp): SpellLevelUpResult {
     // One of a sorcerer origin's own spells given up (a Divine Soul's affinity
     // spell, a psionic or clockwork spell) is replaced under its feature's
     // rule and stays free of the count (src/lib/dm/ar-ws-origin-swap.ts).
-    const swapped = forget ? originSwap({ before, after, forget, top, spellOf: input.spellOf }) : null;
+    const swapped = forget ? originSwap({ before, after, forget, top, spellOf: input.spellOf, locale }) : null;
     if (swapped && "error" in swapped) {
       return { error: swapped.error };
     }
