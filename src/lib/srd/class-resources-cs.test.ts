@@ -10,6 +10,16 @@ import authoredResources from "./authored-resources.json";
 installCsTables({ names: CS_NAMES_BY_TABLE, guidance: RESOURCE_CS_GUIDANCE });
 
 describe("Czech class resource display alongside French", () => {
+  it("covers every statically registered resource including manually authored genre counters", () => {
+    for (const def of RESOURCE_DEFS) {
+      expect(resourceDisplayName(def.id, "cs"), def.id).toBeTruthy();
+      expect(resourceGuidance(def.id, "cs"), def.id).toBeTruthy();
+      expect(resourceGuidance(def.id, "cs"), def.id).not.toBe(def.guidance);
+      expect(resourceDisplayName(def.id, "en"), def.id).toBeNull();
+      expect(resourceGuidance(def.id, "en"), def.id).toBeNull();
+    }
+  });
+
   it("covers the core resource guidance and every generated genre counter", () => {
     const coreIds = [
       "rage",
