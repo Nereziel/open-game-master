@@ -7292,6 +7292,11 @@
         "key",
         6,
         "Select exact bundled race, background and rulebook fixture IDs."
+      ],
+      [
+        "key",
+        1,
+        "Exclude the expansion-only Spiked Armor from the thirteen core armor fixtures."
       ]
     ],
     "lib/content/entry-descriptions-cs.test.ts#str-list": [
@@ -7306,6 +7311,13 @@
         "key",
         3,
         "Normalize fixed fixture names for the expected catalog keys."
+      ]
+    ],
+    "lib/content/entry-descriptions-cs.ts#str-key": [
+      [
+        "key",
+        1,
+        "English canonical catalog keys of the Czech equipment display-only description map."
       ]
     ],
     "lib/content/entry-descriptions.ts#[a-z]": [
@@ -18177,6 +18189,11 @@
         "key",
         1,
         "Published source identifiers on item-card results."
+      ],
+      [
+        "english-source",
+        1,
+        "Closed list of canonical English magic-item rarity fields for the Czech rarity message context."
       ]
     ],
     "lib/help/item-sheet.ts#toLowerCase": [
@@ -18189,6 +18206,16 @@
         "english-source",
         3,
         "content-pack item rows (Open5e): categories, costs, AC strings, damage and attunement text"
+      ],
+      [
+        "display",
+        1,
+        "Title-case alternative for a canonical English item type label."
+      ],
+      [
+        "english-source",
+        2,
+        "Known English rarity values and the matching contextual catalog key, not free table text."
       ]
     ],
     "lib/help/item-sheet.ts#toUpperCase": [
@@ -18546,6 +18573,11 @@
         "key",
         15,
         "Test data for locales, fixed choices and expected translated labels."
+      ],
+      [
+        "key",
+        1,
+        "Expected Czech correction-editor state labels in a regression fixture."
       ]
     ],
     "lib/i18n/translate.ts#[a-z]": [
@@ -22166,6 +22198,13 @@
         "display",
         1,
         "a damage type capitalised in the feature name"
+      ]
+    ],
+    "lib/srd/class-resources-cs.test.ts#str-list": [
+      [
+        "key",
+        1,
+        "Exact resource IDs for the four reviewed subclass guidance fixtures."
       ]
     ],
     "lib/srd/class-resources-fr-data.ts#str-key": [
