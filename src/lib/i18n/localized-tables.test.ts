@@ -16,6 +16,10 @@ import { glossaryTerm, localizedGlossaryTerm } from "../help";
 import { translate } from "./translate";
 import { pickerName, pickerMeta } from "../content/picker-display";
 import { itemDisplayName } from "../content/item-display";
+import { characterEventDisplay } from "../characters/event-display";
+import { describeAuditEntry } from "@/app/campaigns/[campaignId]/event-log-logic";
+import { armorChangeMinutes } from "../dm/don-doff";
+import type { EquipmentItem } from "../schemas/sheet";
 import { localizeCoins, formatCopper, formatPrice, parseCoins } from "../srd/currency";
 
 import { localizeAcParts } from "@/app/characters/builder/derivedReasons";
@@ -153,5 +157,65 @@ describe("Catalog picker, item editor and market presentation", () => {
     expect(translate("cs", "{name} reaches level {level}", { name: "Mira", level: 5 })).toBe("Mira dosahuje úrovně 5");
     expect(translate("cs", "{hp}/{max} hit points", { hp: 5, max: 12 })).toBe("5/12 životů");
     expect(translate("fr", "{hp}/{max} hit points", { hp: 5, max: 12 })).toBe("5/12 points de vie");
+  });
+});
+
+describe("History, audit and equipment reader language", () => {
+  it("localizes only known history templates and leaves names and free prose intact", () => {
+    const samples = [
+      { kind: "item", summary: "Acquired Custom Lantern x2." },
+      { kind: "item", summary: "Bought Custom Lantern for 2 gp 5 sp at Marla's." },
+      { kind: "achievement", summary: "Copied Custom Spell into the spellbook." },
+      { kind: "level_up", summary: "Reached enough experience for level 5." },
+      { kind: "death", summary: "Died: The dragon's fire." },
+      { kind: "story", summary: "Mira joined the party as an AI companion (party)." },
+      { kind: "story", summary: "Mira left the party: a promise to her sister." },
+    ];
+    const before = JSON.stringify(samples);
+    for (const locale of ["en", "fr", "cs"] as const) {
+      for (const sample of samples) {
+        const result = characterEventDisplay(sample, locale);
+        if (locale === "en") expect(result).toBe(sample.summary);
+        else expect(result).not.toBe(sample.summary);
+      }
+      expect(characterEventDisplay({ kind: "story", summary: "Acquired Custom Lantern x2." }, locale)).toBe("Acquired Custom Lantern x2.");
+      expect(characterEventDisplay({ kind: "relationship", summary: "Mira left the party." }, locale)).toBe("Mira left the party.");
+      expect(characterEventDisplay(samples[6], locale)).toContain("a promise to her sister.");
+      expect(characterEventDisplay(samples[2], locale)).toContain("Custom Spell");
+    }
+    expect(characterEventDisplay(samples[0], "cs")).toBe("Získaná výbava: Custom Lantern x2.");
+    expect(characterEventDisplay(samples[1], "cs")).toContain("2 zl 5 st");
+    expect(JSON.stringify(samples)).toBe(before);
+  });
+
+  it("renders structured audit rows without changing rollback data", () => {
+    const row = { kind: "pact_weapon", delta: { created: "Custom Blade" } };
+    const before = JSON.stringify(row);
+    const cs = Object.assign((key: string, vars?: Record<string, string | number>) => translate("cs", key, vars), { locale: "cs" as const });
+    const fr = Object.assign((key: string, vars?: Record<string, string | number>) => translate("fr", key, vars), { locale: "fr" as const });
+    expect(describeAuditEntry(row, "Mira")).toBe("Mira creates a pact weapon: Custom Blade");
+    expect(describeAuditEntry(cs, row, "Mira")).toContain("Custom Blade");
+    expect(describeAuditEntry(cs, row, "Mira")).not.toBe(describeAuditEntry(row, "Mira"));
+    expect(describeAuditEntry(fr, row, "Mira")).not.toBe(describeAuditEntry(row, "Mira"));
+    expect(describeAuditEntry(cs, { kind: "reaction", delta: {} }, "Mira")).toBe("Mira provádí reakci");
+    expect(JSON.stringify(row)).toBe(before);
+  });
+
+  it("uses identical armor timing in all reader languages and preserves hidden item names", () => {
+    const items = [{ name: "Chain Mail", qty: 1, equipped: false }] as EquipmentItem[];
+    const gear = { "Chain Mail": { equipped: true } };
+    const before = JSON.stringify(items);
+    const en = armorChangeMinutes(items, gear);
+    expect(en.minutes).toBe(10);
+    expect(en.lines).toEqual(["Putting on Chain Mail takes 10 minutes."]);
+    for (const locale of ["cs", "fr"] as const) {
+      const display = armorChangeMinutes(items, gear, { locale });
+      expect(display.minutes).toBe(en.minutes);
+      expect(display.lines).not.toEqual(en.lines);
+      expect(itemDisplayName({ name: "Longsword", identified: false, srdName: "Longsword" }, locale)).toBe("Longsword");
+      expect(itemDisplayName({ name: "Longsword", documentSlug: "unrelated-book", source: "open5e", slug: "longsword" }, locale)).toBe("Longsword");
+      expect(itemDisplayName({ name: "Longsword", gear: {} }, locale)).toBe("Longsword");
+    }
+    expect(JSON.stringify(items)).toBe(before);
   });
 });
