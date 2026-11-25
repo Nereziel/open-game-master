@@ -651,10 +651,6 @@ export const CZECH_ITEMS: Readonly<Record<string, string>> = {
 };
 
 
-// Magic schools follow the terminology of the Czech 5e SRD. We translate
-// only recognized SRD spell metadata; unknown text is left unchanged.
-export { CZECH_SCHOOLS } from "../i18n/game-term-labels";
-
 // The stat-block subtitle is display text, not part of the rules-engine
 // record. Translate only grammar we know; keep unknown source fragments.
 const CZECH_ALIGNMENTS: Readonly<Record<string, string>> = {
