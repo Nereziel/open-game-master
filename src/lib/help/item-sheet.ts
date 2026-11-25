@@ -315,6 +315,19 @@ export function buildItemSheet(
   if (!type && homebrew) {
     type = homebrew.itemKind === "magic_item" ? "Magic item" : capitalize(String(homebrew.itemKind));
   }
+  // Some bundled rows carry a type but no separate rarity (Spell Scroll,
+  // Figurine of Wondrous Power), or use the plain "Adventuring Gear" type.
+  // Surface the translated, recognized label instead of an empty type.
+  if (!type && locale === "cs") {
+    for (const row of found) {
+      const raw = str(row, "type");
+      const label = [capitalize(raw), capitalize(raw.toLowerCase())].find((key) => key && t(key) !== key);
+      if (label) {
+        type = label;
+        break;
+      }
+    }
+  }
   if (type) {
     type = t(type);
   }
