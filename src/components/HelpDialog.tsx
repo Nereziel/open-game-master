@@ -26,9 +26,6 @@ import { HelpContents, ModeRow, Section } from "@/components/HelpParts";
 import { ui } from "@/lib/ui";
 import { useT } from "@/lib/locale";
 
-// HowToPlayDialog and WorkshopHelpDialog import these from here.
-export { ModeRow, Section };
-
 // One walkthrough of the whole app: menus, side-panel tabs, composer modes,
 // asking the DM, fixing a bad narration, what the DM remembers, dice, voice,
 // lead powers and world packs. Opened from the home account menu and the
