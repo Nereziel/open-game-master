@@ -13,6 +13,7 @@ import { cardDisplayName, chipName } from "../battlemap/hand-display";
 import { genderLabel, storedGender } from "../gender";
 import { ATTRACTION_CHOICES, attractionLabel } from "../attraction";
 import { describeFeature, glossaryTerm, localizedGlossaryTerm } from "../help";
+import srdFeatureHelp from "../help/srd-features.json";
 import { translate } from "./translate";
 import { pickerName, pickerMeta } from "../content/picker-display";
 import { itemDisplayName } from "../content/item-display";
@@ -67,6 +68,19 @@ describe("Shared reader-language display tables", () => {
       expect(resourceDisplayName("__unknown_resource__", locale)).toBeNull();
       expect(resourceGuidance("__unknown_resource__", locale)).toBeNull();
     }
+  });
+
+  it("translates every bundled SRD feature help entry by its exact source text", () => {
+    const texts = [
+      ...Object.values(srdFeatureHelp.features),
+      ...Object.values(srdFeatureHelp.byClass).flatMap((features) => Object.values(features)),
+    ];
+    expect(texts).toHaveLength(148);
+    for (const text of texts) {
+      expect(translate("cs", text), text).not.toBe(text);
+      expect(translate("en", text)).toBe(text);
+    }
+    expect(translate("cs", "An unknown custom feature description.")).toBe("An unknown custom feature description.");
   });
 
   it("uses the same render functions for English, French and Czech combat cards", () => {
