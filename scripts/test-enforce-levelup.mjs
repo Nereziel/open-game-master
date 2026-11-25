@@ -440,5 +440,39 @@ await test("Level-up refusals use the reader locale without spending experience 
   world.close();
 });
 
+await test("Multiclass prerequisites and expertise refusals share the reader locale without altering a sheet.", async () => {
+  const { world, sheet } = await table(FIGHTER, { xp: XP[2] });
+  const before = sheet();
+  const { translate } = await import("../src/lib/messages-logic.ts");
+  const { canMulticlassInto, describePrereqT } = await import("../src/lib/srd/multiclass.ts");
+  const errors = [];
+  const multiclassErrors = [];
+  world.signIn(world.owner);
+  for (const locale of ["en", "cs", "fr"]) {
+    const response = await sheetRoute.PATCH(new Request("http://test/", {
+      method: "PATCH",
+      headers: { "content-type": "application/json", "x-odm-locale": locale },
+      body: JSON.stringify({ level: 2, expertise: ["athletics"] }),
+    }), { params: Promise.resolve({ campaignId: world.campaignId }) });
+    assert.equal(response.status, 400);
+    const expected = translate(locale, "Expertise is a rogue's feature (1st and 6th level) and a bard's (3rd and 10th); this character has none to pick.");
+    assert.equal((await response.json()).error, expected);
+    errors.push(expected);
+    assert.deepEqual(sheet(), before);
+    const weak = { ...before, abilities: { ...before.abilities, int: 10 } };
+    const snapshot = structuredClone(weak);
+    const t = (key, vars) => translate(locale, key, vars);
+    const blocked = canMulticlassInto(weak, "wizard", locale);
+    assert.equal(blocked.ok, false);
+    assert.equal(blocked.error, t("Multiclassing into {className} requires {prerequisite}.", { className: "Wizard", prerequisite: describePrereqT(t, "wizard") }));
+    multiclassErrors.push(blocked.error);
+    assert.deepEqual(canMulticlassInto({ ...weak, abilities: { ...weak.abilities, int: 13 } }, "wizard", locale), { ok: true });
+    assert.deepEqual(weak, snapshot);
+  }
+  assert.equal(new Set(errors).size, 3);
+  assert.equal(new Set(multiclassErrors).size, 3);
+  world.close();
+});
+
 first.close();
 finish();
