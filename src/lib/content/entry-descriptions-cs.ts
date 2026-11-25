@@ -1,5 +1,6 @@
 import gearDescriptions from "./item-descriptions-cs.json";
 import { textKey } from "@/lib/language/text-logic";
+import { matchGear } from "@/lib/srd/adventuring-gear";
 
 const GEAR_DESCRIPTIONS: Readonly<Record<string, string>> = {
   ...gearDescriptions,
@@ -65,5 +66,10 @@ const GEAR_DESCRIPTIONS: Readonly<Record<string, string>> = {
 export function czechGearDescription(name: string): string | undefined {
   const key = textKey(name);
   // Some editions spell Thieves\' Tools without the possessive apostrophe.
-  return Object.hasOwn(GEAR_DESCRIPTIONS, key) ? GEAR_DESCRIPTIONS[key] : undefined;
+  if (Object.hasOwn(GEAR_DESCRIPTIONS, key)) return GEAR_DESCRIPTIONS[key];
+  // Published SRD gear also uses whole-name aliases (e.g. Rope, Hempen
+  // without the length in its title). Reuse the same catalog identity.
+  const canonical = matchGear(name);
+  const canonicalKey = canonical ? textKey(canonical.name) : "";
+  return Object.hasOwn(GEAR_DESCRIPTIONS, canonicalKey) ? GEAR_DESCRIPTIONS[canonicalKey] : undefined;
 }
