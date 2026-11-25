@@ -1,5 +1,57 @@
 {
   "messages": {
+    "Acquired {item}.": "Objet acquis : {item}.",
+    "Identified {item}.": "Objet identifié : {item}.",
+    "{from} turned out to be {to}.": "{from} s’est révélé être {to}.",
+    "Learned the cantrip {spell}.": "Sort mineur appris : {spell}.",
+    "Learned the spell {spell}.": "Sort appris : {spell}.",
+    "Copied {spell} into the spellbook.": "{spell} copié dans le grimoire.",
+    "Reached enough experience for level {level}.": "Expérience suffisante pour le niveau {level}.",
+    "{name} reached level {level}.": "{name} a atteint le niveau {level}.",
+    "Died: {cause}.": "Mort : {cause}.",
+    "{name} joined the party as an AI companion ({kind}).": "{name} a rejoint le groupe comme compagnon contrôlé par l’IA ({kind}).",
+    "{name} left the party.": "{name} a quitté le groupe.",
+    "{name} left the party: {reason}": "{name} a quitté le groupe : {reason}",
+    "{name} travels with the party as an ally the GM plays.": "{name} voyage avec le groupe en tant qu’allié joué par le MJ.",
+    "Bought {item} for {price} at {shop}.": "Achat de {item} pour {price} chez {shop}.",
+    "Sold {item} for {price} at {shop}.": "Vente de {item} pour {price} chez {shop}.",
+    "{name}'s hit point maximum is now {max}": "Le maximum de points de vie de {name} est désormais de {max}",
+    "{name}'s hit point maximum changes": "Le maximum de points de vie de {name} change",
+    "{name} creates a pact weapon: {item}": "{name} crée une arme de pacte : {item}",
+    "{name} bonds with {item} as a pact weapon": "{name} lie {item} comme arme de pacte",
+    "{name} breaks the pact bond with {item}": "{name} rompt le lien de pacte avec {item}",
+    "{name} dismisses {item}": "{name} renvoie {item}",
+    "the pact weapon": "l’arme de pacte",
+    "{name} makes a new Book of Shadows, and the old one is gone": "{name} crée un nouveau Livre des ombres, et l’ancien disparaît",
+    "{name} makes a Book of Shadows": "{name} crée un Livre des ombres",
+    "{name} draws on Form of Dread for this turn": "{name} puise dans la Forme d’effroi pour ce tour",
+    "{name} takes a reaction": "{name} utilise une réaction",
+    "{name}'s spirit is held by Anchor of the Living": "L’esprit de {name} est retenu par l’Ancre des vivants",
+    "{name}: {state}. {action}.": "{name} : {state}. {action}.",
+    "Pack it away": "Range-le dans ton sac",
+    "Take it in hand": "Prends-le en main",
+    "Take it off your mount": "Retire-le de ta monture",
+    "Put it on your mount": "Place-le sur ta monture",
+    "Putting something on or taking it off happens on your own turn; it is not your turn.": "Mettre ou retirer un objet se fait à ton tour ; ce n’est pas ton tour.",
+    "Putting something on or taking it off takes your free object interaction, on your own turn.": "Mettre ou retirer un objet utilise ton interaction gratuite avec un objet, à ton tour.",
+    "Ending the attunement to {item} takes a short rest spent with it (1 hour).": "Mettre fin à l’harmonisation avec {item} demande un repos court passé avec cet objet (1 heure).",
+    "Melee weapon": "Arme de corps à corps",
+    "Ranged weapon": "Arme à distance",
+    "Armor or shield": "Armure ou bouclier",
+    "Used up when used": "Consommé à l’utilisation",
+    "one suit of armor": "une armure",
+    "one shield": "un bouclier",
+    "one cloak": "une cape",
+    "one item of headwear": "un couvre-chef",
+    "one pair of footwear": "une paire de chaussures",
+    "one pair of gloves or gauntlets": "une paire de gants ou de gantelets",
+    "one pair of bracers": "une paire de brassards",
+    "one of its kind": "un objet de ce type",
+    "{name} goes where {off} are: a character wears {kind} at a time.": "{name} occupe la même place que {off} : un personnage ne peut porter que {kind} à la fois.",
+    "{name} goes where {off} is: a character wears {kind} at a time.": "{name} occupe la même place que {off} : un personnage ne peut porter que {kind} à la fois.",
+    "Drawing or stowing a weapon happens on your own turn; it is not your turn.": "Dégainer ou rengainer une arme se fait à ton tour ; ce n’est pas ton tour.",
+    "Nobody has said which weapon is out yet, so the first change is free.": "Personne n’a encore indiqué quelle arme est dégainée ; le premier changement est donc gratuit.",
+    "Drawing or stowing a weapon takes your free object interaction, on your own turn.": "Dégainer ou rengainer une arme utilise ton interaction gratuite avec un objet, à ton tour.",
     "Could not reach the server to search. Type again to retry.": "Impossible de joindre le serveur pour la recherche. Saisissez à nouveau pour réessayer.",
     "Nothing matched \"{query}\". Try fewer letters.": "Aucun résultat pour « {query} ». Essayez avec moins de lettres.",
     "fully restored": "entièrement rétabli",
@@ -11264,6 +11316,9 @@
     "Unlimited": "Illimitée"
   },
   "contexts": {
+    "guest": {
+      "history.companionKind": "invité"
+    },
     "magic_item": {
       "content.itemKind": "objet magique"
     },
@@ -12795,6 +12850,7 @@
       "workshop.import.result": "repère parent"
     },
     "party": {
+      "history.companionKind": "membre du groupe",
       "workshop.import.result": "visibilité pour le groupe"
     },
     "strife": {
@@ -12844,6 +12900,9 @@
     }
   },
   "plurals": {
+    "Putting on {item} takes {count} minute.\u0000Putting on {item} takes {count} minutes.": ["Mettre {item} prend {count} minute.","Mettre {item} prend {count} minutes."],
+    "Taking off {item} takes {count} minute.\u0000Taking off {item} takes {count} minutes.": ["Retirer {item} prend {count} minute.","Retirer {item} prend {count} minutes."],
+    "Taking off {item} with help takes {count} minute.\u0000Taking off {item} with help takes {count} minutes.": ["Retirer {item} avec de l’aide prend {count} minute.","Retirer {item} avec de l’aide prend {count} minutes."],
     "{count} place\u0000{count} places": [
       "{count} lieu",
       "{count} lieux"
