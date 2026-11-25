@@ -1,4 +1,5 @@
 import { z } from "zod";
+import { requestT } from "@/lib/request-locale";
 import { isErrorResponse, requireMember } from "@/lib/campaign-api";
 import { ownSheetFor } from "@/lib/character-seat";
 import { commandedSheet } from "@/lib/dm/companion-command";
@@ -31,6 +32,7 @@ export async function PUT(
   request: Request,
   { params }: { params: Promise<{ campaignId: string }> },
 ) {
+  const t = requestT(request);
   const { campaignId } = await params;
   const context = await requireMember(campaignId);
   if (isErrorResponse(context)) {
@@ -39,7 +41,9 @@ export async function PUT(
   const parsed = layoutSchema.safeParse(await request.json().catch(() => ({})));
   if (!parsed.success) {
     return Response.json(
-      { error: parsed.error.issues[0]?.message || "Say which cards stay in the hand." },
+      { error: parsed.error.issues[0]?.message === `A hand holds ${HAND_SEATS} chosen cards; End turn keeps the ninth seat. Move a card to More first.`
+        ? t("A hand holds {count} chosen cards; End turn keeps the ninth seat. Move a card to More first.", { count: HAND_SEATS })
+        : parsed.error.issues[0]?.message || t("Say which cards stay in the hand.") },
       { status: 400 },
     );
   }
@@ -50,12 +54,12 @@ export async function PUT(
     ownSheetFor(campaignId, context.user.id, parsed.data.characterId) ??
     commandedSheet(context.campaign, context.user.id, parsed.data.characterId);
   if (!sheet) {
-    return Response.json({ error: "That is not one of your characters." }, { status: 404 });
+    return Response.json({ error: t("That is not one of your characters.") }, { status: 404 });
   }
   const layout = parsed.data.layout ? normalizeHandLayout(parsed.data.layout) : null;
   const saved = setHandLayout(sheet.id, layout);
   if (!saved) {
-    return Response.json({ error: "Could not save the hand." }, { status: 500 });
+    return Response.json({ error: t("Could not save the hand.") }, { status: 500 });
   }
   publishPersisted(campaignId, "sheet_updated", { sheet: saved });
   return Response.json({ sheet: saved, layout: saved.handLayout ?? null });

@@ -12,6 +12,7 @@
 //
 // Pure: the route supplies the table's settings and its subclass list.
 import { splitToolGrants } from "@/lib/srd/tool-choices";
+import { translate, type Locale, type MessageVars } from "@/lib/messages-logic";
 import {
   casterPreview,
   expertiseOpen,
@@ -157,39 +158,40 @@ const STYLE_NOTE = {
   spellbook: "Name the spells to write in the spellbook in levelUpSpells; they are prepared as far as the limit has room.",
 } as const;
 
-function notReadyReason(sheet: CharacterSheet, next: number): string | undefined {
+function notReadyReason(sheet: CharacterSheet, next: number, t: (key: string, vars?: MessageVars) => string): string | undefined {
   if (sheet.deathSaves?.dead) {
-    return `${sheet.name} is dead, and the dead gain no levels.`;
+    return t("{name} is dead, and the dead gain no levels.", { name: sheet.name });
   }
   if (sheet.currentHp <= 0) {
-    return `${sheet.name} is at 0 hit points and levels up once back on their feet.`;
+    return t("{name} is at 0 hit points and levels up once back on their feet.", { name: sheet.name });
   }
   if (sheet.level >= 20) {
-    return "No character passes level 20.";
+    return t("No character passes level 20.");
   }
   if (levelForXp(sheet.xp) < next) {
-    return `Level ${next} takes ${XP_THRESHOLDS[next - 1]} experience points and ${sheet.name} has ${sheet.xp}. A level is earned in play, or granted by whoever runs the table.`;
+    return t("Level {level} takes {required} experience points and {name} has {xp}. A level is earned in play, or granted by whoever runs the table.", { level: next, required: XP_THRESHOLDS[next - 1], name: sheet.name, xp: sheet.xp });
   }
   return undefined;
 }
 
-export function levelUpOptions(sheet: CharacterSheet, context: LevelUpOptionsContext): LevelUpOptions | { error: string } {
+export function levelUpOptions(sheet: CharacterSheet, context: LevelUpOptionsContext, locale: Locale = "en"): LevelUpOptions | { error: string } {
+  const t = (key: string, vars?: MessageVars) => translate(locale, key, vars);
   const classList = classListFor(sheet).map((entry) => ({ ...entry }));
   const classId = (context.classId ?? "").trim().toLowerCase() || classList[0].id.toLowerCase();
   const klass = findClass(classId) ?? context.classOf?.(classId) ?? null;
   if (!klass) {
-    return { error: `Unknown class "${classId}".` };
+    return { error: t('Unknown class "{name}".', { name: classId }) };
   }
   const held = classList.find((entry) => entry.id.toLowerCase() === classId);
   const next = Math.min(20, sheet.level + 1);
-  let notReady = notReadyReason(sheet, next);
+  let notReady = notReadyReason(sheet, next, t);
   if (!held && !notReady) {
     if (!context.multiclassAllowed) {
-      notReady = "Multiclassing is turned off for this campaign, so the level goes to a class the character has.";
+      notReady = t("Multiclassing is turned off for this campaign, so the level goes to a class the character has.");
     } else {
-      const check = canMulticlassInto(sheet, classId);
+      const check = canMulticlassInto(sheet, classId, locale);
       if (!check.ok) {
-        notReady = check.error ?? `${sheet.name} cannot take a level in ${klass.name}.`;
+        notReady = check.error ?? t("{name} cannot take a level in {className}.", { name: sheet.name, className: klass.name });
       }
     }
   }
@@ -204,7 +206,7 @@ export function levelUpOptions(sheet: CharacterSheet, context: LevelUpOptionsCon
       (candidate) => candidate.id !== classId && !classList.some((entry) => entry.id.toLowerCase() === candidate.id),
     ).sort((a, b) => Number(offered(b.id)) - Number(offered(a.id)));
     for (const candidate of candidates) {
-      const check = canMulticlassInto(sheet, candidate.id);
+      const check = canMulticlassInto(sheet, candidate.id, locale);
       otherClasses.push({
         id: candidate.id,
         allowed: check.ok,
@@ -223,8 +225,8 @@ export function levelUpOptions(sheet: CharacterSheet, context: LevelUpOptionsCon
   if (asked && !weighed) {
     return {
       error: owesSubclass
-        ? `${asked} is not a subclass the ${klass.name} may take here; pick one from choices.subclass.options.`
-        : `The ${klass.name} has no subclass to choose with this level.`,
+        ? t("{subclass} is not a subclass the {className} may take here; pick one from choices.subclass.options.", { subclass: asked, className: klass.name })
+        : t("The {className} has no subclass to choose with this level.", { className: klass.name }),
     };
   }
   // The subclass the level's other picks are counted under.
