@@ -1,5 +1,39 @@
 {
   "messages": {
+    "No active battle map.": "Není aktivní žádná bojová mapa.",
+    "You have no token on this map.": "Na této mapě nemáš žeton.",
+    "You cannot move right now.": "Teď se nemůžeš pohybovat.",
+    "Invalid destination.": "Neplatný cíl pohybu.",
+    "A readied move is a walk up to your speed; jump on your own turn.": "Připravený pohyb je chůze do vzdálenosti odpovídající tvé rychlosti; skákej ve vlastním tahu.",
+    "You are frightened and cannot move closer to what you fear. Move away from it, or hold your ground.": "Jsi vystrašený a nemůžeš se přiblížit ke zdroji svého strachu. Vzdal se od něj, nebo zůstaň na místě.",
+    "The door there is locked.": "Tamní dveře jsou zamčené.",
+    "You are prone: standing costs half your speed and every foot crawled costs one extra. You cannot reach that tile this turn.": "Ležíš: vstávání stojí polovinu tvé rychlosti a každá stopa plazení stojí jednu stopu navíc. Na toto pole v tomto tahu nedosáhneš.",
+    "You cannot reach that tile this turn.": "Na toto pole v tomto tahu nedosáhneš.",
+    "It is {name}'s turn to move.": "Na tahu pro pohyb je {name}.",
+    "You cannot move while {cause} holds you (speed 0).": "Nemůžeš se pohybovat, dokud tě omezuje {cause} (rychlost 0).",
+    "Moving carefully at half speed doubles every square: that move costs {cost} feet and {left} are left this turn.": "Opatrný pohyb poloviční rychlostí zdvojnásobuje cenu každého pole: tento pohyb stojí {cost} stop a v tomto tahu zbývá {left} stop.",
+    "{name} is not grappling anyone on the board, so there is nothing to drag. Move without dragging.": "Postava {name} na mapě nikoho nedrží, takže nemá koho táhnout. Pohybuj se bez tažení.",
+    "{name} is prone; they stand up before dragging anyone.": "Postava {name} leží; než někoho potáhne, musí vstát.",
+    "Dragging a grappled creature halves {name}'s speed: that move costs {cost} feet and {left} are left this turn.": "Tažení uchváceného tvora snižuje rychlost postavy {name} na polovinu: tento pohyb stojí {cost} stop a v tomto tahu zbývá {left} stop.",
+    "There is no room beside ({x},{y}) to set down the creature {name} drags. Choose another square.": "Vedle pole ({x},{y}) není místo pro tvora, kterého táhne postava {name}. Zvol jiné pole.",
+    "another combatant": "jiný účastník boje",
+    "exhaustion level {level}": "vyčerpání úrovně {level}",
+    "a condition": "některý stav",
+    "{name} is surprised: Feral Instinct lets them act this turn only if they enter their rage before anything else. They cannot {what} first.": "Postava {name} je překvapená: Divoký instinkt jí dovolí v tomto tahu jednat pouze tehdy, pokud se nejprve rozzuří. Nemůže nejdříve {what}.",
+    "{name}'s action this turn goes on the spell they are casting (a spell of a minute or more takes their action on each of their turns), so {what} cannot have it. To act otherwise they stop casting first: the spell fails, no slot is spent, and the action is theirs again. They can still move{bonus}.": "Postava {name} v tomto tahu využívá akci na sesílání kouzla (kouzlo s dobou sesílání minutu či déle vyžaduje akci v každém tahu), takže ji nelze využít na {what}. Aby mohla jednat jinak, musí nejprve ukončit sesílání: kouzlo selže, pozice kouzla se nespotřebuje a akce se uvolní. Stále se může pohnout{bonus}.",
+    "{who} take their turns before {name}'s: {name} {does} once their turn begins.": "{who} odehrávají své tahy před postavou {name}: {name} {does}, až začne její tah.",
+    "{who} takes its turn before {name}'s: {name} {does} once their turn begins.": "{who} odehrává svůj tah před postavou {name}: {name} {does}, až začne její tah.",
+    "The enemies before {name} are taking their turns; {name} {does} once the GM hands the turn on.": "Nepřátelé před postavou {name} odehrávají své tahy; {name} {does}, jakmile PJ předá tah.",
+    "moves": "se pohne",
+    "acts": "jedná",
+    "Handling a shield": "Manipulace se štítem",
+    "drawing {item}": "vytažení předmětu {item}",
+    "putting away {item}": "schování předmětu {item}",
+    "{name} acts on their own turn; between turns only their reaction cards are played.": "Postava {name} jedná ve vlastním tahu; mezi tahy lze hrát jen její karty reakcí.",
+    "No hit is open for {name} to answer now. Send it as the hero whose turn it is, or as table talk.": "Postava {name} nyní nemá žádný zásah, na který může reagovat. Odešli zprávu za hrdinu, který je na tahu, nebo mimo hru.",
+    "that character": "daná postava",
+    "{name} has already used their reaction; it comes back at the start of their next turn.": "Postava {name} už spotřebovala svou reakci; obnoví se na začátku jejího dalšího tahu.",
+    "{name} is not under your command; the GM plays them.": "Postava {name} není pod tvým velením; hraje za ni PJ.",
     "{who}'s hands are full ({items}), so {item} cannot be drawn yet.": "Postava {who} má plné ruce ({items}), takže zatím nemůže vytáhnout {item}.",
     "{who}'s hands are full ({items}), so {item} cannot be strapped on yet.": "Postava {who} má plné ruce ({items}), takže zatím nemůže nasadit {item}.",
     "Dropping one is free; putting one away takes your object interaction this turn.": "Upuštění předmětu nic nestojí; jeho schování spotřebuje interakci s předmětem v tomto tahu.",
@@ -15095,9 +15129,11 @@
       "docs.ref.searchAria": "Hledat"
     },
     "attack": {
+      "table.hand.gate.verb": "zaútočit",
       "workshop.bestiary.attack.unnamed": "útok"
     },
     "move": {
+      "table.hand.gate.verb": "se pohnout",
       "board.strip.move": "pohyb"
     },
     "{ability} save DC {dc}": {

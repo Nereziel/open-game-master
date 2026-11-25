@@ -1,5 +1,39 @@
 {
   "messages": {
+    "No active battle map.": "Aucune carte de combat n’est active.",
+    "You have no token on this map.": "Tu n’as aucun pion sur cette carte.",
+    "You cannot move right now.": "Tu ne peux pas te déplacer pour le moment.",
+    "Invalid destination.": "Destination invalide.",
+    "A readied move is a walk up to your speed; jump on your own turn.": "Un déplacement préparé est une marche jusqu’à ta vitesse ; saute pendant ton propre tour.",
+    "You are frightened and cannot move closer to what you fear. Move away from it, or hold your ground.": "Tu es effrayé et ne peux pas te rapprocher de la source de ta peur. Éloigne-toi ou reste sur place.",
+    "The door there is locked.": "La porte est verrouillée.",
+    "You are prone: standing costs half your speed and every foot crawled costs one extra. You cannot reach that tile this turn.": "Tu es à terre : te relever coûte la moitié de ta vitesse et chaque pied parcouru en rampant coûte un pied supplémentaire. Tu ne peux pas atteindre cette case ce tour-ci.",
+    "You cannot reach that tile this turn.": "Tu ne peux pas atteindre cette case ce tour-ci.",
+    "It is {name}'s turn to move.": "C’est au tour de {name} de se déplacer.",
+    "You cannot move while {cause} holds you (speed 0).": "Tu ne peux pas te déplacer tant que {cause} te retient (vitesse 0).",
+    "Moving carefully at half speed doubles every square: that move costs {cost} feet and {left} are left this turn.": "Se déplacer prudemment à demi-vitesse double le coût de chaque case : ce déplacement coûte {cost} pieds et il en reste {left} ce tour-ci.",
+    "{name} is not grappling anyone on the board, so there is nothing to drag. Move without dragging.": "{name} n’agrippe personne sur la carte : il n’y a donc personne à traîner. Déplace-toi sans traîner de créature.",
+    "{name} is prone; they stand up before dragging anyone.": "{name} est à terre ; il doit se relever avant de traîner qui que ce soit.",
+    "Dragging a grappled creature halves {name}'s speed: that move costs {cost} feet and {left} are left this turn.": "Traîner une créature agrippée réduit de moitié la vitesse de {name} : ce déplacement coûte {cost} pieds et il en reste {left} ce tour-ci.",
+    "There is no room beside ({x},{y}) to set down the creature {name} drags. Choose another square.": "Il n’y a pas de place près de ({x},{y}) pour déposer la créature que {name} traîne. Choisis une autre case.",
+    "another combatant": "un autre combattant",
+    "exhaustion level {level}": "niveau d’épuisement {level}",
+    "a condition": "un état",
+    "{name} is surprised: Feral Instinct lets them act this turn only if they enter their rage before anything else. They cannot {what} first.": "{name} est surpris : Instinct sauvage lui permet d’agir ce tour-ci uniquement en entrant d’abord en rage. Il ne peut pas {what} avant cela.",
+    "{name}'s action this turn goes on the spell they are casting (a spell of a minute or more takes their action on each of their turns), so {what} cannot have it. To act otherwise they stop casting first: the spell fails, no slot is spent, and the action is theirs again. They can still move{bonus}.": "{name} consacre son action de ce tour au sort en cours d’incantation (un sort d’une minute ou plus exige une action à chacun de ses tours) : {what} ne peut pas en bénéficier. Pour agir autrement, il doit d’abord interrompre l’incantation : le sort échoue, aucun emplacement n’est dépensé et l’action redevient disponible. Il peut encore se déplacer{bonus}.",
+    "{who} take their turns before {name}'s: {name} {does} once their turn begins.": "{who} jouent leurs tours avant celui de {name} : {name} {does} au début de son tour.",
+    "{who} takes its turn before {name}'s: {name} {does} once their turn begins.": "{who} joue son tour avant celui de {name} : {name} {does} au début de son tour.",
+    "The enemies before {name} are taking their turns; {name} {does} once the GM hands the turn on.": "Les ennemis qui précèdent {name} jouent leurs tours ; {name} {does} lorsque le MJ passe la main.",
+    "moves": "se déplace",
+    "acts": "agit",
+    "Handling a shield": "Manipuler un bouclier",
+    "drawing {item}": "dégainer {item}",
+    "putting away {item}": "ranger {item}",
+    "{name} acts on their own turn; between turns only their reaction cards are played.": "{name} agit pendant son propre tour ; entre ses tours, seules ses cartes de réaction peuvent être jouées.",
+    "No hit is open for {name} to answer now. Send it as the hero whose turn it is, or as table talk.": "Aucun coup n’est en attente d’une réponse de {name}. Envoie le message en tant que héros dont c’est le tour, ou en discussion hors-jeu.",
+    "that character": "ce personnage",
+    "{name} has already used their reaction; it comes back at the start of their next turn.": "{name} a déjà utilisé sa réaction ; elle sera disponible au début de son prochain tour.",
+    "{name} is not under your command; the GM plays them.": "{name} n’est pas sous ton commandement ; le MJ joue ce personnage.",
     "{who}'s hands are full ({items}), so {item} cannot be drawn yet.": "{who} a les mains pleines ({items}) et ne peut pas encore dégainer {item}.",
     "{who}'s hands are full ({items}), so {item} cannot be strapped on yet.": "{who} a les mains pleines ({items}) et ne peut pas encore mettre {item}.",
     "Dropping one is free; putting one away takes your object interaction this turn.": "Lâcher un objet est gratuit ; le ranger utilise votre interaction avec un objet pour ce tour.",
@@ -13245,9 +13279,11 @@
       "docs.ref.searchAria": "Rechercher"
     },
     "attack": {
+      "table.hand.gate.verb": "attaquer",
       "workshop.bestiary.attack.unnamed": "attaque"
     },
     "move": {
+      "table.hand.gate.verb": "se déplacer",
       "board.strip.move": "déplacer"
     },
     "{ability} save DC {dc}": {

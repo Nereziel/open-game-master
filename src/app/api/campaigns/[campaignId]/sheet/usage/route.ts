@@ -1,5 +1,6 @@
 import { z } from "zod";
 import { requestT } from "@/lib/request-locale";
+import { engineRefusalKey, spendActionReason } from "@/lib/dm/player-refusals";
 import { capsFor, isErrorResponse, isLead, requireMember } from "@/lib/campaign-api";
 import { refuseDuringBreak } from "@/lib/dm/table-break";
 import { allocateSeq, campaignSeats, getCampaignById } from "@/lib/db/campaigns";
@@ -156,7 +157,7 @@ export async function POST(
     // In a fight, drawing a weapon or strapping on a shield is the character
     // acting, which a dominated character's player no longer does: the GM
     // plays them until the charm ends (src/lib/dm/companion-command.ts).
-    const held = encounter && !corrects ? dominatedRefusal(campaignId, sheet) : null;
+    const held = encounter && !corrects ? dominatedRefusal(campaignId, sheet, t) : null;
     if (held) {
       return Response.json({ error: held, dominated: true }, { status: 409 });
     }
@@ -234,11 +235,11 @@ export async function POST(
     if (changes.shields.length) {
       const able = canAct({ sheet, encounter, kind: "action" });
       if (!able.ok) {
-        return refuse(able.error);
+        return refuse(engineRefusalKey(able.error, "action", sheet.name, "", t));
       }
       // In the player's words: heldTurnRefusal's sentence is the model's.
       if (heldTurnRefusal(encounter, sheet)) {
-        return refuse(heldTurnLine(sheet.name, encounter ? enemiesAhead(encounter, sheet.id) : [], "acts"));
+        return refuse(heldTurnLine(sheet.name, encounter ? enemiesAhead(encounter, sheet.id) : [], "acts", t));
       }
       const budget = budgetFor(encounter, sheet.id, attacksAllowedFor(sheet));
       if (!budget) {
@@ -248,7 +249,7 @@ export async function POST(
       }
       shieldBudget = spendAction(budget, "action", "Handling a shield", sheet.name);
       if (!shieldBudget.ok) {
-        return refuse(shieldBudget.error);
+        return refuse(spendActionReason(budget, "action", "Handling a shield", sheet.name, shieldBudget.error, t, t("Handling a shield")));
       }
     }
     // A weapon drawn or stowed, a ring or a cloak put on: the turn's free
@@ -257,11 +258,11 @@ export async function POST(
     if (changes.held.length) {
       const able = canAct({ sheet, encounter, kind: "free" });
       if (!able.ok) {
-        return refuse(able.error);
+        return refuse(engineRefusalKey(able.error, "free", sheet.name, "", t));
       }
       // In the player's words: heldTurnRefusal's sentence is the model's.
       if (heldTurnRefusal(encounter, sheet)) {
-        return refuse(heldTurnLine(sheet.name, encounter ? enemiesAhead(encounter, sheet.id) : [], "acts"));
+        return refuse(heldTurnLine(sheet.name, encounter ? enemiesAhead(encounter, sheet.id) : [], "acts", t));
       }
       let budget = shieldBudget?.ok ? shieldBudget.budget : budgetFor(encounter, sheet.id, attacksAllowedFor(sheet));
       if (!budget) {
@@ -275,11 +276,12 @@ export async function POST(
         const on = parsed.data.gear[name]?.equipped === true;
         const spent = spendInteraction(budget, {
           what: `${on ? "drawing" : "putting away"} ${name}`,
+          displayWhat: t(on ? "drawing {item}" : "putting away {item}", { item: name }),
           who: sheet.name,
           oneHandedWeapon: gearKindOf(row) === "weapon" && handsFor(row) === 1,
           dualWielder: dualWields(sheet.feats, sheet.campaignId),
           fastHands: hasFastHands(sheet),
-        });
+        }, t);
         if (!spent.ok) {
           return refuse(spent.error);
         }

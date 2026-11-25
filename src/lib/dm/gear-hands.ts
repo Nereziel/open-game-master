@@ -220,7 +220,10 @@ export function spendInteraction(
     dualWielder?: boolean;
     fastHands?: boolean;
     withAction?: boolean;
+    // Reader-only labels; what remains canonical in the stored interaction.
+    displayWhat?: string;
   },
+  t?: (key: string, vars?: MessageVars) => string,
 ): SpendResult {
   const used = budget.interaction;
   if (!used) {
@@ -251,13 +254,13 @@ export function spendInteraction(
     }
     return {
       ok: false,
-      error: `${second}, and ${input.what} would be a second: that takes the Use an Object action, which ${input.who} has already spent. It can wait for their next turn.`,
+      error: t ? t("{name}'s free object interaction this turn already went on an object, and {what} would be a second: that takes the Use an Object action, which {name} has already spent. It can wait for their next turn.", { name: input.who, what: input.displayWhat ?? input.what }) : `${second}, and ${input.what} would be a second: that takes the Use an Object action, which ${input.who} has already spent. It can wait for their next turn.`,
       refused: "rules",
     };
   }
   return {
     ok: false,
-    error: `${second}, and ${input.what} would be a second, which takes the Use an Object action: an attack cannot draw it as well. ${input.who} attacks with what they hold, or draws it on their next turn.`,
+    error: t ? t("{name}'s free object interaction this turn already went on an object, and {what} would be a second, which takes the Use an Object action: an attack cannot draw it as well. {name} attacks with what they hold, or draws it on their next turn.", { name: input.who, what: input.displayWhat ?? input.what }) : `${second}, and ${input.what} would be a second, which takes the Use an Object action: an attack cannot draw it as well. ${input.who} attacks with what they hold, or draws it on their next turn.`,
     refused: "rules",
   };
 }
