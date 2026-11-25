@@ -409,7 +409,7 @@ export function buildLevelUp(
     const { fixed: fixedTools, choices: toolChoices } = splitToolGrants(grants.tools);
     const toolPicks = (request.levelUpTools ?? []).map((tool) => tool.trim()).filter(Boolean);
     if (toolPicks.length) {
-      const problem = toolChoices.length ? toolPickProblem(toolChoices, toolPicks) : t("{className} leaves no tool to choose.", { className: klass.name });
+      const problem = toolChoices.length ? toolPickProblem(toolChoices, toolPicks, context.locale) : t("{className} leaves no tool to choose.", { className: klass.name });
       if (problem) {
         return refuse(problem);
       }
@@ -530,7 +530,7 @@ export function buildLevelUp(
     const changed = applyLevelUpChanges(sheet, classId, request.levelUpChanges, {
       classLevel: (id) => classes.find((entry) => textKey(entry.id) === textKey(id))?.level ?? 0,
       cantrips: sheetCantrips(sheet),
-    });
+    }, context.locale);
     if ("error" in changed) {
       return refuse(changed.error);
     }

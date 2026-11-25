@@ -1,5 +1,11 @@
 {
   "messages": {
+    "Choose {choices} to be proficient with.": "Vyber nástroje, s nimiž získáš zdatnost: {choices}.",
+    "{pick} is not a tool this character may choose; the choices are {choices}.": "Nástroj {pick} není pro tuto postavu dostupný; možnosti: {choices}.",
+    "Choose {choices}.": "Vyber: {choices}.",
+    "{count} more {label}": "{label} (zbývá {count})",
+    "replacement tool": "náhradní nástroj",
+    "{name} cannot change {from} to {to} with this level: a choice changes only at a level its rule names, to an option it offers.": "Postava {name} nemůže na této úrovni změnit {from} na {to}: volbu lze změnit jen na úrovni stanovené pravidly a na některou z nabízených možností.",
     "They already have levels in {className}.": "Postava už má úrovně v povolání {className}.",
     "At most {count} classes per character.": "Postava může mít nejvýše {count} povolání.",
     "Multiclassing into {className} requires {prerequisite}.": "Přijetí povolání {className} vyžaduje: {prerequisite}.",
@@ -13807,6 +13813,7 @@
     "Unlimited": "Neomezený"
   },
   "contexts": {
+    "{count} {label}": {"tool-choice-count":"{count} × {label}"},
     "{count} at {ordinal} level": {
       "builder.math.slots": "{count} na {ordinal} úrovni"
     },
@@ -15447,6 +15454,7 @@
     }
   },
   "plurals": {
+    "{count} {label}\u0000{count} {label}s": ["{count} × {label}","{count} × {label}","{count} × {label}"],
     "This level gives {name} {count} Ability Score Improvement: two points, or one feat, each. The request asks for {picked}.\u0000This level gives {name} {count} Ability Score Improvements: two points, or one feat, each. The request asks for {picked}.": [
       "Tato úroveň postavě {name} poskytuje {count} zvýšení vlastností: za každé dva body nebo jednu odbornost. Počet požadovaných voleb: {picked}.",
       "Tato úroveň postavě {name} poskytuje {count} zvýšení vlastností: za každé dva body nebo jednu odbornost. Počet požadovaných voleb: {picked}.",

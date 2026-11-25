@@ -558,6 +558,7 @@ export function legalizeSheet(input: CreateSheetInput, context: LegalityContext)
       choices,
     );
   const trained = judgeProficiencies({
+    locale: context.locale,
     // The builder's preview already holds its feats' picks (Skilled's
     // thieves' tools); they come off here, since the class and background
     // never offered them, and go back on with the grants below (issue #147).

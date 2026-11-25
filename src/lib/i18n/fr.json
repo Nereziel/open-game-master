@@ -1,5 +1,11 @@
 {
   "messages": {
+    "Choose {choices} to be proficient with.": "Choisis les outils que tu maîtriseras : {choices}.",
+    "{pick} is not a tool this character may choose; the choices are {choices}.": "{pick} n’est pas un outil que ce personnage peut choisir ; possibilités : {choices}.",
+    "Choose {choices}.": "Choisis : {choices}.",
+    "{count} more {label}": "{label} (encore {count})",
+    "replacement tool": "outil de remplacement",
+    "{name} cannot change {from} to {to} with this level: a choice changes only at a level its rule names, to an option it offers.": "{name} ne peut pas remplacer {from} par {to} à ce niveau : un choix ne peut changer qu’à un niveau prévu par sa règle et pour une option proposée.",
     "Unknown class \"{name}\".": "Classe inconnue « {name} ».",
     "They already have levels in {className}.": "Ce personnage a déjà des niveaux dans la classe {className}.",
     "At most {count} classes per character.": "Au maximum {count} classes par personnage.",
@@ -11966,6 +11972,7 @@
     "Unlimited": "Illimitée"
   },
   "contexts": {
+    "{count} {label}": {"tool-choice-count":"{count} × {label}"},
     "{count} at {ordinal} level": {
       "builder.math.slots": "{count} au niveau {ordinal}"
     },
@@ -13568,6 +13575,7 @@
     }
   },
   "plurals": {
+    "{count} {label}\u0000{count} {label}s": ["{count} × {label}","{count} × {label}"],
     "This level gives {name} {count} Ability Score Improvement: two points, or one feat, each. The request asks for {picked}.\u0000This level gives {name} {count} Ability Score Improvements: two points, or one feat, each. The request asks for {picked}.": [
       "Ce niveau accorde à {name} {count} amélioration de caractéristiques : deux points ou un don par amélioration. Nombre de choix demandés : {picked}.",
       "Ce niveau accorde à {name} {count} améliorations de caractéristiques : deux points ou un don par amélioration. Nombre de choix demandés : {picked}."

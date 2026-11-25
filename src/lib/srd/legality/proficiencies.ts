@@ -27,8 +27,10 @@ import {
 } from "@/lib/srd/legality/types";
 import { textKey } from "@/lib/language/text-logic";
 import { KNOWN_TOOLS } from "@/lib/srd/feat-grant-text";
+import type { Locale } from "@/lib/messages-logic";
 
 export type ProficiencyInput = {
+  locale?: Locale;
   sent: Proficiencies;
   classes: ClassEntry[];
   classOf: (classId: string) => ClassGrants | null;
@@ -206,9 +208,11 @@ export function judgeProficiencies(input: ProficiencyInput): ProficiencyVerdict 
       ? toolPicks
       : ownPicks;
   let chosenTools: string[] = [];
+  let toolProblemIndex = -1;
   if (granted.choices.length && picked.length) {
     const problem = toolPickProblem(granted.choices, picked);
     if (problem) {
+      toolProblemIndex = problems.length;
       problems.push(problem);
     }
     chosenTools = picked;
@@ -218,8 +222,12 @@ export function judgeProficiencies(input: ProficiencyInput): ProficiencyVerdict 
     const named = (sent.tools ?? []).filter((tool) => !grantWords(tool) && !fixedToolKeys.has(toolKey(tool)));
     const owed = toolPicksOwed(granted.choices, named);
     if (owed && !problems.some((problem) => problem.startsWith("Choose "))) {
-      problems.push(owed);
+      problems.push(toolPicksOwed(granted.choices, named, input.locale) ?? owed);
     }
+  }
+  // Keep the existing English duplicate-refusal check above independent of reader locale.
+  if (toolProblemIndex >= 0) {
+    problems[toolProblemIndex] = toolPickProblem(granted.choices, picked, input.locale) ?? problems[toolProblemIndex];
   }
   // A tool an edited character already holds answers its open grant as a
   // fresh pick does: a soldier's dice set is the "one gaming set", and the

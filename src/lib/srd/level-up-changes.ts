@@ -11,6 +11,7 @@ import { holdsFeat } from "@/lib/srd/feat-effects";
 import { chosenOptions, kindsSwappedAtLevel, optionFeatureName, optionKindOpenedBy, optionReqProblem, optionsOfKind, type OptionKind } from "@/lib/srd/options";
 import { choiceIn } from "@/lib/srd/feature-names";
 import { textKey } from "@/lib/language/text-logic";
+import { translate, type Locale } from "@/lib/messages-logic";
 
 export type LevelUpChange = { from: string; to: string };
 
@@ -95,6 +96,7 @@ export function applyLevelUpChanges<F extends { name: string }>(
   classId: string,
   changes: readonly LevelUpChange[],
   facts: Facts,
+  locale: Locale = "en",
 ): { features: F[] } | { error: string } {
   const offers = levelUpChangeOffers(sheet as unknown as ChangeSheet, classId, facts);
   let features: F[] = sheet.features;
@@ -106,7 +108,7 @@ export function applyLevelUpChanges<F extends { name: string }>(
       entry.options.some((option) => textKey(option) === textKey(change.to)),
     );
     if (!offer) {
-      return { error: `${sheet.name ?? "This character"} cannot change ${change.from} to ${change.to} with this level: a choice changes only at a level its rule names, to an option it offers.` };
+      return { error: translate(locale, "{name} cannot change {from} to {to} with this level: a choice changes only at a level its rule names, to an option it offers.", { name: sheet.name ?? translate(locale, "This character"), from: change.from, to: change.to }) };
     }
     used.add(offer);
     const to = offer.options.find((option) => textKey(option) === textKey(change.to))!;
