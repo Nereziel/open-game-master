@@ -15,7 +15,7 @@ import { ui } from "@/lib/ui";
 import { useLocale, useT } from "@/lib/locale";
 import { WORKSHOP_GUIDES, localizedToolGuide } from "@/lib/tours/workshop-guide";
 import { Dialog } from "@/components/ui/Dialog";
-import { Section } from "@/components/HelpDialog";
+import { Section } from "@/components/HelpParts";
 
 // The workshop's own help. The main HelpDialog is written for a table
 // mid-session; a workshop has no table, no transcript and no AI turns, so
