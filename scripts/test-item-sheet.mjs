@@ -215,6 +215,20 @@ test("Czech compound magic item categories and rarity preserve all qualifiers", 
   assert.equal(buildItemSheet("Example ammunition", [row], { locale: "en" }).type, row.type);
 });
 
+const { bundledItemRows } = await import("../src/lib/rulebook/catalog-rows.ts");
+test("every bundled magic item category and recorded rarity has Czech display text", () => {
+  const rows = bundledItemRows();
+  assert.ok(rows.length >= 239);
+  for (const row of rows) {
+    // Test the item's declared metadata, not any coincidentally named
+    // mundane weapon or armor that would override it in the card.
+    const en = buildItemSheet("Example magic item", [row.data], { locale: "en" });
+    const cs = buildItemSheet("Example magic item", [row.data], { locale: "cs" });
+    if (en.type) assert.notEqual(cs.type, en.type, row.name + ": type");
+    if (en.rarity) assert.notEqual(cs.rarity, en.rarity, row.name + ": rarity");
+  }
+});
+
 test("nothing known is null", () => {
   assert.equal(buildItemSheet("Mysterious Trinket", [undefined, null]), null);
 });
