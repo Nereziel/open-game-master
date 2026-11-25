@@ -219,7 +219,7 @@ await test("A level 1 fighter seated at a level 5 table takes the subclass it mi
   world.close();
 });
 
-await test("The ready-made hero preview and actual join refuse the same invalid subclass pick in each reader language.", async () => {
+await test("The ready-made hero preview and actual join refuse the same invalid picks in each reader language.", async () => {
   const table = await openCreation();
   const { world, campaignId, player } = table;
   world.signIn(player);
@@ -245,6 +245,40 @@ await test("The ready-made hero preview and actual join refuse the same invalid 
     assert.equal(joined.json.error, expected);
     assert.equal(table.sheets.getSheetForUser(campaignId, player.id), null);
     errors.push(expected);
+    // Counted refusals exercise singular, Czech paucal and plural forms.
+    for (const count of [1, 2, 5]) {
+      const skills = Array.from({ length: count }, (_, i) => `invalid-skill-${i + 1}`);
+      const cases = [
+        { picks: { skills }, expected: locale === "en"
+          ? `${skills.join(", ")} ${count === 1 ? "is not a skill" : "are not skills"} ${json.preview.name}'s class still offers.`
+          : locale === "cs"
+            ? `${count === 1 ? "Dovednost" : "Dovednosti"} ${skills.join(", ")} už povolání postavy ${json.preview.name} nenabízí.`
+            : `La classe de ${json.preview.name} ne propose plus ${count === 1 ? "la compétence" : "les compétences"} ${skills.join(", ")}.` },
+        { picks: { expertise: skills }, expected: locale === "en"
+          ? `Expertise doubles a proficiency the character has; ${skills.join(", ")} ${count === 1 ? "is" : "are"} not among ${json.preview.name}'s skills.`
+          : locale === "cs"
+            ? `Kvalifikace zdvojnásobuje zdatnostní bonus; ${count === 1 ? "dovednost" : "dovednosti"} ${skills.join(", ")} ${count === 1 ? "není" : "nejsou"} mezi dovednostmi postavy ${json.preview.name}.`
+            : `L’expertise double le bonus de maîtrise d’une compétence maîtrisée ; ${skills.join(", ")} ${count === 1 ? "ne fait" : "ne font"} pas partie des compétences de ${json.preview.name}.` },
+      ];
+      for (const entry of cases) {
+        const preview = await post(previewRoute, { pregenId: "kara", picks: entry.picks });
+        const join = await post(pregenRoute, { id: "kara", picks: entry.picks });
+        assert.equal(preview.status, 200);
+        assert.equal(preview.json.preview.ok, false);
+        assert.deepEqual(preview.json.preview.problems, [entry.expected]);
+        assert.equal(join.status, 400);
+        assert.deepEqual(join.json.problems, preview.json.preview.problems);
+      }
+    }
+    const tooEarly = { asiChoices: [{ mode: "plus2", ability: "str" }] };
+    const preview = await post(previewRoute, { pregenId: "kara", picks: tooEarly });
+    const join = await post(pregenRoute, { id: "kara", picks: tooEarly });
+    assert.equal(preview.status, 200);
+    assert.equal(preview.json.preview.ok, false);
+    assert.deepEqual(preview.json.preview.problems, [translate(locale, "{name} is owed no Ability Score Improvement at this table's level.", { name: json.preview.name })]);
+    assert.equal(join.status, 400);
+    assert.deepEqual(join.json.problems, preview.json.preview.problems);
+    assert.equal(table.sheets.getSheetForUser(campaignId, player.id), null);
   }
   assert.equal(new Set(errors).size, 3);
   assert.equal(JSON.stringify(picks), original);
