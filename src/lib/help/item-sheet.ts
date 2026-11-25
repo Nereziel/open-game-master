@@ -322,7 +322,13 @@ export function buildItemSheet(
   const description = found.map((row) => str(row, "localized_desc")).find(Boolean)
     ?? found.map((row) => describeContentEntry(row, undefined, locale)).find(Boolean) ?? null;
   const rawRarity = magic ? capitalize(str(magic, "rarity").toLowerCase()) : null;
-  const rarity = rawRarity ? t(rawRarity) : null;
+  // "Common" is also the name of a language. Only the rarity context
+  // can distinguish it from a common magic item in Czech.
+  const rarity = rawRarity
+    ? locale === "cs" && ["mundane", "common", "uncommon", "rare", "very rare", "legendary", "artifact"].includes(rawRarity.toLowerCase())
+      ? capitalize(t(rawRarity.toLowerCase(), { context: "content.rarity" }))
+      : t(rawRarity)
+    : null;
   const attunement = found.some(
     (row) => row.requiresAttunement === true || /attunement/i.test(str(row, "requires_attunement")),
   );
