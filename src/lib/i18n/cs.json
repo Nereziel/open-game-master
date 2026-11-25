@@ -1,5 +1,6 @@
 {
   "messages": {
+    "The new spell must be {rule}, and it stays free of your spells known.": "Nové kouzlo musí být {rule} a nezapočítává se do počtu tvých známých kouzel.",
     "a level {level} spell": "kouzlo {level}. stupně",
     "it is {actual}, and the spell it replaces is {expected}": "jde o {actual}, zatímco nahrazované kouzlo je {expected}",
     "it is a cantrip": "jde o trik",

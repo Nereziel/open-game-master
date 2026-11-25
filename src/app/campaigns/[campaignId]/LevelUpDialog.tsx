@@ -780,6 +780,7 @@ export function LevelUpDialog({
             top: maxCastable ?? 0,
             held: [...knownList, ...pendingList, ...cantripList, ...spellPicks, ...cantripPicks],
             candidates: originCandidates,
+            locale,
             spellOf: (name) => originCandidates.find((spell) => textKey(spell.name) === textKey(name)) ?? null,
           },
         );

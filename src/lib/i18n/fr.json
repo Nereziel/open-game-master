@@ -1,5 +1,6 @@
 {
   "messages": {
+    "The new spell must be {rule}, and it stays free of your spells known.": "Le nouveau sort doit être {rule} et ne compte pas dans le nombre de vos sorts connus.",
     "a level {level} spell": "un sort de niveau {level}",
     "it is {actual}, and the spell it replaces is {expected}": "il s’agit de {actual}, alors que le sort remplacé est {expected}",
     "it is a cantrip": "il s’agit d’un sort mineur",

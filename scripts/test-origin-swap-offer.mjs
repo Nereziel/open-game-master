@@ -69,10 +69,10 @@ function door(before, body, locale = "en") {
 }
 
 // The dialog's offer, read as the dialog reads it.
-function offerFor(before) {
+function offerFor(before, locale = "en") {
   const after = { ...before, level: before.level + 1 };
   const held = [...before.known, ...before.cantrips];
-  return originSwapOffer(after, { top: maxSpellLevelOf(after), held, candidates: spells, spellOf });
+  return originSwapOffer(after, { top: maxSpellLevelOf(after), held, candidates: spells, spellOf, locale });
 }
 
 function recorded(result) {
@@ -187,5 +187,21 @@ test("origin swap refusals localize while successful swaps and inputs stay canon
   assert.deepEqual(recorded(expected), [{ from: "Calm Emotions", to: "Suggestion" }]);
   for (const locale of ["en", "cs", "fr"]) assert.deepEqual(door(before, valid, locale), expected);
   assert.deepEqual(before, snapshot);
+});
+test("origin offer notes localize without changing choices, labels or request records", () => {
+  for (const [origin, level, features] of ORIGINS) {
+    const before = sorcerer(origin, level, features);
+    const expected = offerFor(before);
+    assert.ok(expected?.note);
+    const { note: english, ...canonical } = expected;
+    const notes = ["en", "cs", "fr"].map(locale => {
+      const { note, ...choices } = offerFor(before, locale);
+      assert.deepEqual(choices, canonical);
+      assert.ok(note && !/\{\w+\}/.test(note));
+      return note;
+    });
+    assert.equal(notes[0], english);
+    assert.equal(new Set(notes).size, 3);
+  }
 });
 console.log(`${passed} origin swap offer checks passed.`);

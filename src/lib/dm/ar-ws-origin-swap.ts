@@ -153,7 +153,7 @@ function misfit(rule: SwapRule, spell: SpellFacts, level: number | null, top: nu
 // holds now, which the door would not read as new. Null when there is no swap.
 export function originSwapOffer(
   view: Origin,
-  input: { top: number; held: readonly string[]; candidates: readonly SpellFacts[]; spellOf: (name: string) => SpellFacts | null },
+  input: { top: number; held: readonly string[]; candidates: readonly SpellFacts[]; spellOf: (name: string) => SpellFacts | null; locale?: Locale },
 ): ChangeOffer | null {
   const rule = ruleFor(view.classId, view.subclass);
   const slots = swappableSpells(view);
@@ -180,7 +180,7 @@ export function originSwapOffer(
     options,
     optionsFor,
     shown: {},
-    note: `The new spell must be ${rule.say}, and it stays free of your spells known.`,
+    note: translate(input.locale ?? "en", "The new spell must be {rule}, and it stays free of your spells known.", { rule: translate(input.locale ?? "en", rule.say) }),
   };
 }
 
