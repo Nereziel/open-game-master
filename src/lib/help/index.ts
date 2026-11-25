@@ -279,7 +279,7 @@ export function describeContentEntry(data: Record<string, unknown> | undefined, 
   const effects = textOf(data.effects_desc);
   if (effects.trim()) {
     const prerequisite = typeof data.prerequisite === "string" && data.prerequisite.trim()
-      ? `*Prerequisite: ${data.prerequisite.trim()}*\n\n`
+      ? `*${translate(locale, "Requires {prereq}", { prereq: data.prerequisite.trim() })}*\n\n`
       : "";
     parts.push(
       `${prerequisite}${effects
