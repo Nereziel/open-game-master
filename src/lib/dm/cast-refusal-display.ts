@@ -4,6 +4,21 @@
 import type { MessageVars } from "@/lib/messages-logic";
 type T = (key: string, vars?: MessageVars) => string;
 
+// spellHeldProblem may be followed by this exact ring instruction (cast-guard.ts).
+const RING_SUFFIX = "{ring} holds it: use_item with spell casts it from there, then cast it with this tool.";
+const HELD_TEMPLATES = [
+  "{name} has no Spellcasting feature and cannot cast spells.",
+  "{name} cannot cast \"{spell}\": it is not among the spells they know or have prepared ({ready}).",
+  "No spell called \"{spell}\" is known. {name} knows or has prepared {ready}: send the one meant, by the name on the sheet.",
+  "{spell} is chosen but not prepared yet: it becomes ready after the next long rest.",
+  "{spell} is in the spellbook but not prepared, so it cannot be cast. Prepare it from the sheet; it is ready after the next long rest.",
+  "{name} casts {spell} through {source} as a ritual only: ten minutes longer, no slot. Send ritual true.",
+  "{name} casts {spell} through {source} for {cost} {resource}, and has {left} left. It comes back after a {rest} rest.",
+  "{name} casts {spell} through {source} {times}, and again after a {rest} rest; {uses} spent.",
+  "{name} holds {spell} as a {classId} spell, and a {classId}'s Spellcasting does not cast rituals (bards, clerics, druids, wizards and artificers do, through their own spells). It can be cast from a slot instead.",
+  "{spell} is not written in {name}'s ritual book, so it cannot be cast as a ritual. It goes in the book first (a ritual of a level they can cast, found and copied), or it is cast from a slot.",
+] as const;
+
 const TEMPLATES = [
   "{spell} is from the 2024 rules, which this server does not play; pick a 2014 spell in its place. Nothing was spent.",
   "{name} is dead and cannot spend a spell slot.",
@@ -31,16 +46,7 @@ const TEMPLATES = [
   "{spell} needs a free hand for its gestures, and both of {name}'s hands are full. They must put a weapon away or lower the shield first (unequip it on the sheet).",
   "{spell} needs a free hand for its material component{gestures}, and both of {name}'s hands are full{warcaster}. They must put a weapon away or lower the shield first (unequip it on the sheet).",
   "{name} stands inside {area}Silence, where no sound is made: {spell} has a verbal component and cannot be cast there. Step out of the silence first, or cast a spell with no verbal component. Nothing was spent.",
-  "{name} has no Spellcasting feature and cannot cast spells.",
-  "{name} cannot cast \"{spell}\": it is not among the spells they know or have prepared ({ready}).",
-  "No spell called \"{spell}\" is known. {name} knows or has prepared {ready}: send the one meant, by the name on the sheet.",
-  "{spell} is chosen but not prepared yet: it becomes ready after the next long rest.",
-  "{spell} is in the spellbook but not prepared, so it cannot be cast. Prepare it from the sheet; it is ready after the next long rest.",
-  "{name} casts {spell} through {source} as a ritual only: ten minutes longer, no slot. Send ritual true.",
-  "{name} casts {spell} through {source} for {cost} {resource}, and has {left} left. It comes back after a {rest} rest.",
-  "{name} casts {spell} through {source} {times}, and again after a {rest} rest; {uses} spent.",
-  "{name} holds {spell} as a {classId} spell, and a {classId}'s Spellcasting does not cast rituals (bards, clerics, druids, wizards and artificers do, through their own spells). It can be cast from a slot instead.",
-  "{spell} is not written in {name}'s ritual book, so it cannot be cast as a ritual. It goes in the book first (a ritual of a level they can cast, found and copied), or it is cast from a slot.",
+  ...HELD_TEMPLATES,
   "A ritual is a named spell with the ritual tag; name the spell being cast.",
   "{spell} is not a spell the server knows to be a ritual; it needs a slot.",
   "{spell} has no ritual tag; it cannot be cast as a ritual and needs a slot.",
@@ -92,7 +98,10 @@ function patternFor(template: string): RegExp {
   return new RegExp(pattern + escapePattern(template.slice(at)) + "$");
 }
 
-const PATTERNS = TEMPLATES.map((key) => ({ key, pattern: patternFor(key) }));
+const PATTERNS = [
+  ...HELD_TEMPLATES.map((key) => ({ key, pattern: patternFor(`${key} ${RING_SUFFIX}`), ring: true })),
+  ...TEMPLATES.map((key) => ({ key, pattern: patternFor(key), ring: false })),
+];
 
 function slotDisplay(raw: string, t: T): string {
   if (raw === "No slot is free.") return t("No slot is free.");
@@ -128,13 +137,15 @@ function fragment(field: string, raw: string, t: T): string {
 }
 
 export function castRefusalDisplay(error: string, t: T, actor?: string): string {
-  for (const { key, pattern } of PATTERNS) {
+  for (const { key, pattern, ring } of PATTERNS) {
     const match = pattern.exec(error);
     if (!match) continue;
     const groups = match.groups ?? {};
     if (actor && groups.name !== undefined && groups.name !== actor) continue;
     const vars = Object.fromEntries(Object.entries(groups).map(([field, raw]) => [field, fragment(field, raw, t)]));
-    return t(key, vars);
+    if (ring && !groups.ring) continue;
+    const message = t(key, vars);
+    return ring ? `${message} ${t(RING_SUFFIX, { ring: groups.ring })}` : message;
   }
   return error;
 }

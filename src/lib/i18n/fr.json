@@ -1,5 +1,6 @@
 {
   "messages": {
+    "{ring} holds it: use_item with spell casts it from there, then cast it with this tool.": "{ring} le contient : lancez-le depuis l’anneau avec use_item et le paramètre spell, puis lancez-le avec cet outil.",
     "{campaign}: {session} is planned for {when}.": "{campaign} : {session} est prévue pour le {when}.",
     "{campaign}: {session} moved to {when}.": "{campaign} : {session} est reportée au {when}.",
     "{campaign}: {session} on {when} was called off.": "{campaign} : {session} du {when} est annulée.",

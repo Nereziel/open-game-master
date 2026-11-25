@@ -1,5 +1,6 @@
 {
   "messages": {
+    "{ring} holds it: use_item with spell casts it from there, then cast it with this tool.": "{ring} ho uchovává: nejprve ho sešli z prstenu pomocí use_item s parametrem spell, potom ho sešli tímto nástrojem.",
     "{campaign}: {session} is planned for {when}.": "{campaign}: {session} – plánovaný termín {when}.",
     "{campaign}: {session} moved to {when}.": "{campaign}: {session} – nový termín {when}.",
     "{campaign}: {session} on {when} was called off.": "{campaign}: {session} v termínu {when} bylo zrušeno.",
