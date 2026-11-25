@@ -1,5 +1,7 @@
 {
   "messages": {
+    "Add \"{name}\" as custom": "Ajouter « {name} » comme entrée personnalisée",
+    "Could not reach the server to search; type again to retry, or add entries by name.": "Impossible de joindre le serveur pour la recherche ; saisis à nouveau pour réessayer, ou ajoute les entrées par leur nom.",
     "{bonuses} to {word} of your choice": "{bonuses} au choix (nombre de caractéristiques : {word})",
     "{bonuses} to {word} more of your choice": "{bonuses} au choix (caractéristiques restantes : {word})",
     "Acquired {item}.": "Objet acquis : {item}.",
