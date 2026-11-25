@@ -1,5 +1,8 @@
 {
   "messages": {
+    "{name} is already level {level}.": "{name} est déjà au niveau {level}.",
+    "A level-up names the next level, {next}.": "Une montée de niveau doit indiquer le niveau suivant, {next}.",
+    "Only portrait, notes, backstory, personality, and hopes for the story can be changed here outside of a level-up. Ask the party lead to adjust other stats.": "En dehors d’une montée de niveau, seuls le portrait, les notes, le passé, la personnalité et les souhaits pour l’histoire peuvent être modifiés ici. Demande au responsable du groupe de modifier les autres statistiques.",
     "Say which character, and open or not.": "Indique le personnage et s’il est ouvert aux pactes.",
     "Pacts never approach a player at this table.": "À cette table, les pactes ne sollicitent jamais les joueurs.",
     "{name} has fallen.": "{name} est tombé.",

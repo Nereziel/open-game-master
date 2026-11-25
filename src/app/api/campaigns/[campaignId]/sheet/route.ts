@@ -620,7 +620,7 @@ export async function PATCH(
   if (typeof parsed.data.level === "number" && !levelingUp && !companionPortrait) {
     return Response.json(
       {
-        error: `${sheet.name} is already level ${sheet.level}. ${sheet.level >= 20 ? "No character passes level 20." : `A level-up names the next level, ${sheet.level + 1}.`}`,
+        error: `${t("{name} is already level {level}.", { name: sheet.name, level: sheet.level })} ${sheet.level >= 20 ? t("No character passes level 20.") : t("A level-up names the next level, {next}.", { next: sheet.level + 1 })}`,
         level: sheet.level,
       },
       { status: 403 },
@@ -630,7 +630,7 @@ export async function PATCH(
     return Response.json(
       {
         error:
-          "Only portrait, notes, backstory, personality, and hopes for the story can be changed here outside of a level-up. Ask the party lead to adjust other stats.",
+          t("Only portrait, notes, backstory, personality, and hopes for the story can be changed here outside of a level-up. Ask the party lead to adjust other stats."),
       },
       { status: 403 },
     );
@@ -643,7 +643,7 @@ export async function PATCH(
   if (levelingUp) {
     if (companionPortrait) {
       return Response.json(
-        { error: "Only a companion's portrait can be changed from here." },
+        { error: t("Only a companion's portrait can be changed from here.") },
         { status: 403 },
       );
     }

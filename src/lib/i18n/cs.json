@@ -1,5 +1,8 @@
 {
   "messages": {
+    "{name} is already level {level}.": "Postava {name} už je na {level}. úrovni.",
+    "A level-up names the next level, {next}.": "Při postupu na vyšší úroveň zadej následující úroveň: {next}.",
+    "Only portrait, notes, backstory, personality, and hopes for the story can be changed here outside of a level-up. Ask the party lead to adjust other stats.": "Mimo postup na vyšší úroveň zde lze měnit jen portrét, poznámky, minulost, osobnost a přání ohledně příběhu. O úpravu ostatních statistik požádej vedoucího družiny.",
     "Say which character, and open or not.": "Urči postavu a zda je otevřená paktům.",
     "Pacts never approach a player at this table.": "U tohoto stolu pakty hráče nikdy neoslovují.",
     "{name} has fallen.": "Postava {name} padla.",

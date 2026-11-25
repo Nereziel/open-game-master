@@ -424,6 +424,14 @@ await test("Level-up refusals use the reader locale without spending experience 
       }), { params: Promise.resolve({ campaignId: world.campaignId }) });
       return { status: response.status, json: await response.json() };
     };
+    const repeat = await patch({ level: 1 });
+    assert.equal(repeat.status, 403);
+    assert.equal(repeat.json.level, 1);
+    assert.equal(repeat.json.error, `${translate(locale, "{name} is already level {level}.", { name: before.name, level: 1 })} ${translate(locale, "A level-up names the next level, {next}.", { next: 2 })}`);
+    const edit = await patch({ maxHp: 200 });
+    assert.equal(edit.status, 403);
+    assert.equal(edit.json.error, translate(locale, "Only portrait, notes, backstory, personality, and hopes for the story can be changed here outside of a level-up. Ask the party lead to adjust other stats."));
+    assert.deepEqual(sheet(), before);
     const xp = await patch({ level: 2 });
     assert.equal(xp.status, 403);
     const expected = translate(locale, "Level {level} takes {xp} experience points and {name} has {have}. A level is earned in play, or granted by whoever runs the table.", { level: 2, xp: 300, name: before.name, have: before.xp });
