@@ -16,6 +16,8 @@ import { armorClassLine, hitPointsLine } from "./derivedReasons";
 import { casterLevelFor } from "@/lib/srd/multiclass";
 import type { BuilderDerived } from "./useBuilderDerived";
 import { pluralOf, type Locale } from "@/lib/messages-logic";
+import { damageTypeWord } from "@/lib/dm/damage-logic";
+import { itemDisplayName } from "@/lib/content/item-display";
 
 const ABILITIES: Ability[] = ["str", "dex", "con", "int", "wis", "cha"];
 const COUNT_WORDS: Record<number, string> = { 1: "one", 2: "two", 3: "three", 4: "four" };
@@ -190,7 +192,7 @@ export function buildMathSections({ t, derived, scores, klass, atTable }: BuildM
       ].filter(Boolean);
       return {
         id: `ability-${ability}`,
-        label: ABILITY_NAMES[ability],
+        label: t(ABILITY_NAMES[ability]),
         value: `${shownAbilities[ability]} (${formatModifier(sheet.abilityMods[ability])})`,
         working: working.join(", "),
       };
@@ -246,7 +248,7 @@ export function buildMathSections({ t, derived, scores, klass, atTable }: BuildM
           value: String(desk.spellSaveDc),
           working: t("8, proficiency {prof}, {code} modifier {mod}", {
             prof: formatModifier(sheet.proficiencyBonus),
-            code: (desk.ability ?? "").toUpperCase(),
+            code: t((desk.ability ?? "").toUpperCase()),
             mod: formatModifier((desk.spellSaveDc ?? 8) - 8 - sheet.proficiencyBonus),
           }),
         },
@@ -256,7 +258,7 @@ export function buildMathSections({ t, derived, scores, klass, atTable }: BuildM
           value: formatModifier(desk.spellAttack ?? 0),
           working: t("proficiency {prof}, {code} modifier {mod}", {
             prof: formatModifier(sheet.proficiencyBonus),
-            code: (desk.ability ?? "").toUpperCase(),
+            code: t((desk.ability ?? "").toUpperCase()),
             mod: formatModifier((desk.spellAttack ?? 0) - sheet.proficiencyBonus),
           }),
         },
@@ -266,7 +268,7 @@ export function buildMathSections({ t, derived, scores, klass, atTable }: BuildM
     ...SLOT_LEVELS.flatMap(([level, ordinal]) => {
       const slot = derived.spellSlots[level];
       return slot && slot.max > 0
-        ? [{ id: `slots-${level}`, label: t("{ordinal}-level slots", { ordinal }), value: String(slot.max), working: slotTable }]
+        ? [{ id: `slots-${level}`, label: t("{ordinal}-level slots", { ordinal: t(ordinal) }), value: String(slot.max), working: slotTable }]
         : [];
     }),
     // A warlock's pact slots on a class list sit apart from the rest.
@@ -277,7 +279,7 @@ export function buildMathSections({ t, derived, scores, klass, atTable }: BuildM
             label: t("Pact magic slots"),
             value: t("{count} at {ordinal} level", {
               count: derived.pactSlots.max,
-              ordinal: SLOT_LEVELS[derived.pactSlots.level - 1]?.[1] ?? derived.pactSlots.level,
+              ordinal: t(SLOT_LEVELS[derived.pactSlots.level - 1]?.[1] ?? String(derived.pactSlots.level)),
             }),
             working: t("warlock levels, recovered on a short rest"),
           },
@@ -306,11 +308,11 @@ export function buildMathSections({ t, derived, scores, klass, atTable }: BuildM
       ? [
           {
             id: `weapon-${row.name}`,
-            label: row.name,
+            label: itemDisplayName(row, locale),
             value: t("{toHit} to hit, {damage} {type}", {
               toHit: formatModifier(row.weapon.toHit),
               damage: row.weapon.damage,
-              type: row.weapon.damageType,
+              type: damageTypeWord(row.weapon.damageType, locale),
             }),
             working: [
               t("to hit: {parts}", { parts: workingOf(t, row.weapon.toHitParts) }),
@@ -361,9 +363,16 @@ export function knownSoFarRows({
 }): BuildMathRow[] {
   const say = (key: string, vars: Record<string, string | number> = {}, english: string) =>
     typeof t === "function" ? t(key, vars) : english;
+  const locale = t?.locale ?? "en";
+  const abilityLabel = (id: string) => say(ABILITY_NAMES[id] ?? id, {}, ABILITY_NAMES[id] ?? id);
   const bonuses = ABILITIES.flatMap((ability) =>
-    racialBonus[ability] ? [`${ABILITY_NAMES[ability]} ${formatModifier(racialBonus[ability] ?? 0)}`] : [],
+    racialBonus[ability] ? [`${abilityLabel(ability)} ${formatModifier(racialBonus[ability] ?? 0)}`] : [],
   );
+  const choiceLabel = (amounts: string, count: number, more: boolean) => {
+    const word = COUNT_WORDS[count] ?? String(count);
+    const localizedWord = say(word, { context: "builder.math.choiceCount" }, word);
+    return say(more ? "{bonuses} to {word} more of your choice" : "{bonuses} to {word} of your choice", { bonuses: amounts, word: localizedWord }, `${amounts} to ${word} ${more ? "more " : ""}of your choice`);
+  };
   // The bumps the race leaves to the player (a half-elf's two +1s) that are
   // not placed yet: a placed one is in racialBonus beyond the race's own.
   const choice = race?.asiChoice;
@@ -374,25 +383,19 @@ export function knownSoFarRows({
       let left = placed;
       const open = choice.amounts.filter((amount) => (left >= amount ? ((left -= amount), false) : true));
       if (open.length) {
-        bonuses.push(`${open.map((amount) => `+${amount}`).join(" and ")} to ${COUNT_WORDS[open.length] ?? open.length} ${bonuses.length ? "more " : ""}of your choice`);
+        bonuses.push(choiceLabel(open.map((amount) => `+${amount}`).join(say(" and ", {}, " and ")), open.length, bonuses.length > 0));
       }
     } else {
       const owed = choice.count - Math.round(placed / choice.amount);
       if (owed > 0) {
-        bonuses.push(
-          say(
-            "+{amount} to {word}{more}of your choice",
-            { amount: choice.amount, word: COUNT_WORDS[owed] ?? owed, more: bonuses.length ? t?.("more ", { context: "builder.math.more" }) ?? "more " : "" },
-            `+${choice.amount} to ${COUNT_WORDS[owed] ?? owed} ${bonuses.length ? "more " : ""}of your choice`,
-          ),
-        );
+        bonuses.push(choiceLabel(`+${choice.amount}`, owed, bonuses.length > 0));
       }
     }
   }
   const variant = race?.variants ? pickedVariant(race) : null;
   const skills = proficientSkills.flatMap((id) => {
     const skill = findSkill(id);
-    return skill ? [skill.name] : [];
+    return skill ? [skillLabel(skill.id, locale)] : [];
   });
   // The level's bonus: a character being built is attuned to nothing yet
   // (attuning takes a short rest in play), so no Ioun Stone of Mastery adds.
@@ -409,7 +412,7 @@ export function knownSoFarRows({
           {
             id: "save-proficiencies",
             label: say("Proficient saves", {}, "Proficient saves"),
-            value: klass.saves.map((save) => ABILITY_NAMES[save] ?? save).join(", "),
+            value: klass.saves.map(abilityLabel).join(", "),
             working: klass.name,
           },
         ]
