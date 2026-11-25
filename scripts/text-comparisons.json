@@ -26092,11 +26092,6 @@
     "lib/dm/cast-refusal-display.ts#str-eq": [
       [
         "key",
-        2,
-        "Known result field keys restricting ambiguous spell captures."
-      ],
-      [
-        "key",
         8,
         "named placeholder fields controlling display formatting"
       ],

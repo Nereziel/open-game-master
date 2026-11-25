@@ -2037,18 +2037,13 @@ test("awakened spellbook and twinned spell settlements localize only known resul
     ],
     [
       "metamagic",
-      "Twinned Spell: {spell} takes a second creature in range, for 1 sorcery point ({delta} more charged: the price is the spell's level). The second target is another creature, never the first again.",
-      "Twinned Spell: kouzlo {spell} zasáhne druhého tvora v dosahu za 1 čarodějný bod (dodatečně utraceno bodů: {delta}; cena odpovídá úrovni kouzla). Druhým cílem musí být jiný tvor, nikoli opět první."
-    ],
-    [
-      "metamagic",
       "Twinned Spell: {spell} takes a second creature in range, for 1 sorcery point ({delta} given back: the price is the spell's level). The second target is another creature, never the first again.",
       "Twinned Spell: kouzlo {spell} zasáhne druhého tvora v dosahu za 1 čarodějný bod (vráceno bodů: {delta}; cena odpovídá úrovni kouzla). Druhým cílem musí být jiný tvor, nikoli opět první."
     ],
     [
       "metamagic",
-      "Twinned Spell: {spell} takes a second creature in range, for {count} sorcery points ({delta} more charged: the price is the spell's level). The second target is another creature, never the first again.",
-      "Twinned Spell: kouzlo {spell} zasáhne druhého tvora v dosahu za {count} čarodějných bodů (dodatečně utraceno bodů: {delta}; cena odpovídá úrovni kouzla). Druhým cílem musí být jiný tvor, nikoli opět první."
+      "Twinned Spell: {spell} takes a second creature in range, for {count} sorcery points ({charge} more charged: the price is the spell's level). The second target is another creature, never the first again.",
+      "Twinned Spell: kouzlo {spell} zasáhne druhého tvora v dosahu za {count} čarodějných bodů (dodatečně utraceno bodů: {charge}; cena odpovídá úrovni kouzla). Druhým cílem musí být jiný tvor, nikoli opět první."
     ],
     [
       "metamagic",
@@ -2086,7 +2081,7 @@ test("awakened spellbook and twinned spell settlements localize only known resul
       "Twinned Spell nelze použít na kouzlo {spell}: jeho zdvojení stojí {price} čarodějných bodů. Vrací se {count} čarodějných bodů utracených za zdvojení a kouzlo je sesláno na jediný cíl."
     ]
   ];
-  const vars = {"spell":"Custom [A+B]","type":"fire","own":"cold","from":"Other [C+D]","count":"2","delta":"3","price":"5"};
+  const vars = {"spell":"Custom [A+B]","type":"fire","own":"cold","from":"Other [C+D]","count":"2","delta":"3","charge":"1","price":"5"};
   const fill = (text) => text.replace(/\{(\w+)\}/g, (_, key) => vars[key]);
   for (const [field, en, cs] of fixtures) {
     const raw = fill(en);
@@ -2105,6 +2100,14 @@ test("awakened spellbook and twinned spell settlements localize only known resul
     [
       "metamagic",
       "Twinned Spell: Custom takes a second creature in range, for 1 sorcery point (0 given back: the price is the spell's level). The second target is another creature, never the first again."
+    ],
+    [
+      "metamagic",
+      "Twinned Spell: Custom takes a second creature in range, for 1 sorcery point (1 more charged: the price is the spell's level). The second target is another creature, never the first again."
+    ],
+    [
+      "metamagic",
+      "Twinned Spell: Custom takes a second creature in range, for 2 sorcery points (2 more charged: the price is the spell's level). The second target is another creature, never the first again."
     ],
     [
       "metamagic",

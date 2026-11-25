@@ -274,9 +274,8 @@ const EXTRA_CAST_PATTERNS = [
   { field: "metamagic", key: "Twinned Spell: {spell} takes a second creature in range, for 1 sorcery point. The second target is another creature, never the first again." },
   { field: "metamagic", key: "Twinned Spell: {spell} takes a second creature in range, for {count} sorcery points. The second target is another creature, never the first again." },
   { field: "awakenedSpellbook", key: "{spell} deals {type} damage in place of {own}: the type of {from}, a spell of the slot's level in the book." },
-  { field: "metamagic", key: "Twinned Spell: {spell} takes a second creature in range, for 1 sorcery point ({delta} more charged: the price is the spell's level). The second target is another creature, never the first again." },
   { field: "metamagic", key: "Twinned Spell: {spell} takes a second creature in range, for 1 sorcery point ({delta} given back: the price is the spell's level). The second target is another creature, never the first again." },
-  { field: "metamagic", key: "Twinned Spell: {spell} takes a second creature in range, for {count} sorcery points ({delta} more charged: the price is the spell's level). The second target is another creature, never the first again." },
+  { field: "metamagic", key: "Twinned Spell: {spell} takes a second creature in range, for {count} sorcery points ({charge} more charged: the price is the spell's level). The second target is another creature, never the first again." },
   { field: "metamagic", key: "Twinned Spell: {spell} takes a second creature in range, for {count} sorcery points ({delta} given back: the price is the spell's level). The second target is another creature, never the first again." },
   { field: "metamagic", key: "Twinned Spell does not take {spell}: it has a range of self. The 1 sorcery point paid for it is back, and the spell is cast on its one target." },
   { field: "metamagic", key: "Twinned Spell does not take {spell}: it has a range of self. The {count} sorcery points paid for it are back, and the spell is cast on its one target." },
@@ -298,14 +297,19 @@ export function castExtraDisplay(raw: string, t: T, field: "granted" | "slotRefu
       (field === "costNote" && groups.feature?.includes(". ")) ||
       ((field === "note" || field === "costNote" || field === "metamagic" || field === "awakenedSpellbook") && groups.spell?.includes(". "))) continue;
     // Settlement and rejection prices are canonical positive integers, not free text.
-    const { delta, price } = groups;
+    const { delta, price, charge } = groups;
+    const paid = count === undefined ? 1 : Number(count);
+    if (charge !== undefined) {
+      const adjustment = Number(charge);
+      if (!Number.isSafeInteger(adjustment) || String(adjustment) !== charge || adjustment < 1 || adjustment >= paid || paid > 9) continue;
+    }
     if (delta !== undefined) {
       const adjustment = Number(delta);
       if (!Number.isSafeInteger(adjustment) || String(adjustment) !== delta || adjustment < 1) continue;
     }
     if (price !== undefined) {
       const required = Number(price);
-      if (!Number.isSafeInteger(required) || String(required) !== price || required < 2 || required > 9 || required <= Number(count ?? 1)) continue;
+      if (!Number.isSafeInteger(required) || String(required) !== price || required < 2 || required > 9 || required <= paid) continue;
     }
     if (left !== undefined) {
       const remaining = Number(left);
