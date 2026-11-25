@@ -1,6 +1,8 @@
 import { RESOURCE_CS_EXTRA_GUIDANCE } from "@/lib/srd/resource-guidance-cs-extra";
 import { RESOURCE_CS_AUTHORED_GUIDANCE } from "@/lib/srd/resource-guidance-cs-authored";
 
+export { czechDynamicResourceDisplay } from "@/lib/srd/resource-dynamic-cs";
+
 // Czech player-facing help for resource counters. The English rules and
 // resource ids remain unchanged for the engine and AI tool matching.
 export const RESOURCE_CS_GUIDANCE: Record<string, string> = {

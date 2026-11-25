@@ -9,6 +9,8 @@ import { CS_NAMES_BY_TABLE } from "../content/names-cs";
 import { RESOURCE_FR } from "../srd/class-resources-fr-data";
 import { RESOURCE_CS_GUIDANCE } from "../srd/class-resources-cs-data";
 import { resourceDisplayName, resourceGuidance } from "../srd/class-resources-fr";
+import { resourceDef } from "../srd/class-resources";
+import { invocationCounters } from "../srd/granted-casts";
 import { cardDisplayName, chipName } from "../battlemap/hand-display";
 import { genderLabel, storedGender } from "../gender";
 import { ATTRACTION_CHOICES, attractionLabel } from "../attraction";
@@ -68,6 +70,63 @@ describe("Shared reader-language display tables", () => {
       expect(resourceDisplayName("__unknown_resource__", locale)).toBeNull();
       expect(resourceGuidance("__unknown_resource__", locale)).toBeNull();
     }
+  });
+
+  it("localizes dynamic spell counters without guessing the source of a name-only spell", () => {
+    const free = "free_cast_misty_step";
+    const short = "free_cast_sr_custom_bolt";
+    const racial = "racial_hellish_rebuke";
+    const racialShort = "racial_short_custom_bolt";
+    const before = JSON.stringify([resourceDef(free), resourceDef(short), resourceDef(racial), resourceDef(racialShort)]);
+    expect(resourceDisplayName(free, "cs")).toBe("Misty Step (seslání bez pozice)");
+    expect(resourceDisplayName(short, "cs")).toBe("Custom Bolt (seslání bez pozice)");
+    expect(resourceGuidance(free, "cs")).toContain("po dlouhém odpočinku");
+    expect(resourceGuidance(short, "cs")).toContain("po krátkém odpočinku");
+    expect(resourceGuidance(short, "cs")).toContain("Custom Bolt");
+    expect(resourceDisplayName(racial, "cs")).toBeNull();
+    expect(resourceGuidance(racial, "cs")).toContain("Hellish Rebuke");
+    expect(resourceGuidance(racial, "cs")).toContain("po dlouhém odpočinku");
+    expect(resourceGuidance(racialShort, "cs")).toContain("po krátkém odpočinku");
+    expect(resourceGuidance(racialShort, "cs")).toContain("Custom Bolt");
+    for (const id of [free, short, racial, racialShort]) {
+      expect(resourceGuidance(id, "cs")).not.toBe(resourceDef(id)?.guidance);
+      expect(resourceDisplayName(id, "en")).toBeNull();
+      expect(resourceGuidance(id, "en")).toBeNull();
+      expect(resourceDisplayName(id, "fr")).toBeNull();
+      expect(resourceGuidance(id, "fr")).toBeNull();
+    }
+    expect(resourceGuidance("free_cast_", "cs")).toBeNull();
+    expect(resourceGuidance("racial_", "cs")).toBeNull();
+    expect(resourceGuidance("free_cast__misty_step", "cs")).toBeNull();
+    expect(resourceGuidance("free_cast_aw_detect_magic", "cs")).toBeNull();
+    expect(resourceGuidance("invocation_unknown", "cs")).toBeNull();
+    expect(resourceGuidance("invocation_armor_of_shadows", "cs")).toBeNull();
+    expect(JSON.stringify([resourceDef(free), resourceDef(short), resourceDef(racial), resourceDef(racialShort)])).toBe(before);
+  });
+
+  it("localizes all seven source-backed once-per-rest invocation counters", () => {
+    const rows = invocationCounters([
+      { name: "Invocation: Bewitching Whispers" },
+      { name: "Invocation: Dreadful Word" },
+      { name: "Invocation: Minions of Chaos" },
+      { name: "Invocation: Mire the Mind" },
+      { name: "Invocation: Sculptor of Flesh" },
+      { name: "Invocation: Sign of Ill Omen" },
+      { name: "Invocation: Thief of Five Fates" },
+    ]);
+    expect(rows).toHaveLength(7);
+    for (const row of rows) {
+      const definition = resourceDef(row.id);
+      const before = JSON.stringify(definition);
+      expect(resourceDisplayName(row.id, "cs")).toBeTruthy();
+      expect(resourceDisplayName(row.id, "cs")).not.toBe(definition?.displayName);
+      expect(resourceGuidance(row.id, "cs")).toContain("pozici kouzla černokněžníka");
+      expect(resourceGuidance(row.id, "cs")).not.toBe(definition?.guidance);
+      expect(resourceDisplayName(row.id, "en")).toBeNull();
+      expect(resourceGuidance(row.id, "fr")).toBeNull();
+      expect(JSON.stringify(resourceDef(row.id))).toBe(before);
+    }
+    expect(resourceDisplayName("invocation_thief_of_five_fates", "cs")).toBe("Uřknutí (Zloděj pěti osudů)");
   });
 
   it("translates every bundled SRD feature help entry by its exact source text", () => {

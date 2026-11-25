@@ -26327,6 +26327,20 @@
         "ODM's own trait-name format"
       ]
     ],
+    "lib/srd/resource-dynamic-cs.ts#partial": [
+      [
+        "key",
+        2,
+        "Check the canonical racial and invocation counter ID namespaces, not names in prose."
+      ]
+    ],
+    "lib/srd/resource-dynamic-cs.ts#whole-single": [
+      [
+        "key",
+        2,
+        "Round-trip the stored spell counter ID using the canonical constructor; malformed IDs do not receive presentation text."
+      ]
+    ],
     "lib/srd/scrolls.ts#number": [
       [
         "key",
