@@ -1,4 +1,5 @@
 import { z } from "zod";
+import { diceErrorDisplay } from "@/lib/dice/error-display";
 import { isErrorResponse, requireMember, steersStory } from "@/lib/campaign-api";
 import { refuseDuringBreak } from "@/lib/dm/table-break";
 import {
@@ -95,7 +96,7 @@ export async function POST(
   // swing the clock would take (opportunity-ask-timer.ts).
   if (pending.parkedFor === "opportunity") {
     const struck = await answerOpportunityAsk(context.campaign, pending, { strike: true });
-    return struck ? Response.json(landedBody(struck)) : Response.json({ error: "That roll was already resolved." }, { status: 409 });
+    return struck ? Response.json(landedBody(struck)) : Response.json({ error: t("That roll was already resolved.") }, { status: 409 });
   }
 
   // The dice are already thrown and wait on the player's choice. A card from
@@ -155,7 +156,7 @@ export async function POST(
     }
   } catch (error) {
     return Response.json(
-      { error: error instanceof Error ? error.message : t("Invalid dice values.") },
+      { error: error instanceof Error ? diceErrorDisplay(error.message, t) : t("Invalid dice values.") },
       { status: 400 },
     );
   }

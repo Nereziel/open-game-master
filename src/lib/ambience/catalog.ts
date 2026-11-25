@@ -838,10 +838,17 @@ export function cueIds(layer: AmbienceLayer): string[] {
   return cuesForLayer(layer).map((cue) => cue.id);
 }
 
+// The catalog remains English for the engine, audio scripts and model tools.
+type CueTranslator = (key: string, vars?: Record<string, string | number>) => string;
+export function cueLabel(id: string, t?: CueTranslator): string {
+  const cue = cueById(id);
+  return cue ? (t ? t(cue.label, { context: "ambience.cue" }) : cue.label) : id;
+}
+
 // `{ value, label }` options for a console select. The empty option is the
 // caller's business: silence means different things per layer.
-export function cueOptions(layer: AmbienceLayer): Array<{ value: string; label: string }> {
-  return cuesForLayer(layer).map((cue) => ({ value: cue.id, label: cue.label }));
+export function cueOptions(layer: AmbienceLayer, t?: CueTranslator): Array<{ value: string; label: string }> {
+  return cuesForLayer(layer).map((cue) => ({ value: cue.id, label: cueLabel(cue.id, t) }));
 }
 
 // The beds that name a kind of place: what move_party, update_location and
@@ -865,6 +872,6 @@ export function sceneIds(): string[] {
   return cueIds("bed").filter((id) => !NOT_PLACES.has(id));
 }
 
-export function sceneOptions(): Array<{ value: string; label: string }> {
-  return cueOptions("bed").filter((option) => !NOT_PLACES.has(option.value));
+export function sceneOptions(t?: CueTranslator): Array<{ value: string; label: string }> {
+  return cueOptions("bed", t).filter((option) => !NOT_PLACES.has(option.value));
 }

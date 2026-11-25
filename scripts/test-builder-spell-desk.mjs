@@ -18,8 +18,9 @@ const { createElement } = await import("react");
 const { renderToStaticMarkup } = await import("react-dom/server");
 const { SpellBook } = await import("../src/components/sheet/SpellBook.tsx");
 const filters = await import("../src/components/sheet/spellFilters.ts");
+const { installCatalog } = await import("../src/lib/i18n/translate.ts");
 const desk = await import("../src/app/characters/builder/spellDesk.ts");
-const { preparedCapLine, builderSpellAdvice, builderCasting } = await import("../src/app/characters/builder/casting.ts");
+const { preparedCapLine, preparedFormulaLine, preparedFormula, builderSpellAdvice, builderCasting } = await import("../src/app/characters/builder/casting.ts");
 const { thirdCasterSchoolProblem } = await import("../src/lib/srd/third-caster.ts");
 const { bundledSpellSchool } = await import("../src/lib/srd/spell-facts.ts");
 const { escapeIsOwned, OWNS_ESCAPE } = await import("../src/lib/owned-escape.ts");
@@ -91,6 +92,28 @@ test("a school is written capitalised in code, not left to CSS a native list nev
   assert.deepEqual(lone.map((picker) => picker.key), []);
   assert.deepEqual(filters.withSpellFilterPick(filters.NO_SPELL_FILTER, "castingTime", "reaction").castingTime, "reaction");
   assert.deepEqual(filters.withSpellFilterPick({ ...filters.NO_SPELL_FILTER, school: "evocation" }, "school", "any"), filters.NO_SPELL_FILTER);
+});
+
+test("spell filter labels follow EN/FR/CS without changing choices or matches", () => {
+  const options = { schools: ["abjuration", "evocation"], castingTimes: ["action", "bonus", "reaction", "longer"], anyRitual: true, anyConcentration: true };
+  const original = JSON.stringify(options);
+  const choice = { school: "evocation", ritual: true, concentration: "no", castingTime: "bonus" };
+  const expected = {
+    en: ["School: Evocation", "Evocation, ritual, no concentration, a bonus action"],
+    fr: ["École : Évocation", "Évocation, rituel, sans concentration, une action bonus"],
+    cs: ["Škola: Zaklínání", "Zaklínání, rituál, bez soustředění, bonusová akce"],
+  };
+  const canonical = filters.spellFilterPickers(options).map((picker) => [picker.key, picker.options.map((entry) => entry.value)]);
+  for (const locale of ["en", "fr", "cs"]) {
+    if (locale !== "en") installCatalog(locale, JSON.parse(read(`src/lib/i18n/${locale}.json`)));
+    const pickers = filters.spellFilterPickers(options, locale);
+    assert.deepEqual(pickers.map((picker) => [picker.key, picker.options.map((entry) => entry.value)]), canonical);
+    assert.equal(pickers[0].options.find((entry) => entry.value === "evocation").label, expected[locale][0]);
+    assert.equal(filters.spellFilterWords(choice, locale), expected[locale][1]);
+    assert.deepEqual(filters.liveSpellFilter(choice, options), choice);
+    assert.equal(filters.matchesSpellFilter({ school: "evocation", ritual: true, concentration: false, castingTime: "bonus" }, choice), true);
+    assert.equal(JSON.stringify(options), original);
+  }
 });
 
 test("a filter value the page no longer offers is dropped, never on behind an 'any' or a missing picker", () => {
@@ -191,12 +214,65 @@ test("each cap the step holds says its working", () => {
   assert.equal(bard.at(-1).label, "Known");
 });
 
+test("spell caps and limit formulas read in EN/FR/CS without changing counts", () => {
+  const words = {
+    en: { name: "Wizard", labels: ["Cantrips", "Spellbook", "Prepared"], lines: ["3, from the Wizard table at level 3", "6 at level 1 + 2 a level after = 10", "Wizard level 3 + INT +3 = 6"], book1: "6 at level 1", known: "Known", half: "Custom Caster level 5, halved (2) + WIS -3 = 1 (never fewer than 1)", formula: "Wisdom modifier (-3) + half your level, rounded down (2), and never fewer than 1", full: "Intelligence modifier (+3) + level (3)" },
+    fr: { name: "Magicien", labels: ["Sorts mineurs", "Grimoire", "Préparés"], lines: ["3, d’après la table de la classe Magicien au niveau 3", "6 au niveau 1 + 2 par niveau supplémentaire = 10", "Magicien, niveau 3 + INT +3 = 6"], book1: "6 au niveau 1", known: "Connu", half: "Custom Caster, niveau 5, divisé par deux (2) + SAG -3 = 1 (minimum 1)", formula: "modificateur de caractéristique Sagesse (-3) + moitié du niveau, arrondie à l’inférieur (2), avec un minimum de 1", full: "modificateur de caractéristique Intelligence (+3) + niveau (3)" },
+    cs: { name: "Kouzelník", labels: ["Triky", "Kniha kouzel", "Připraveno"], lines: ["3, podle tabulky povolání Kouzelník pro 3. úroveň", "6 na 1. úrovni + 2 za každou další úroveň = 10", "Kouzelník, 3. úroveň + INT +3 = 6"], book1: "6 na 1. úrovni", known: "Známé", half: "Custom Caster, 5. úroveň, polovina (2) + MDR -3 = 1 (nejméně 1)", formula: "oprava vlastnosti Moudrost (-3) + polovina úrovně, zaokrouhlená dolů (2), nejméně však 1", full: "oprava vlastnosti Inteligence (+3) + úroveň (3)" },
+  };
+  const sum = { ability: "int", mod: 3, level: 3, levelPart: 3 };
+  const half = { ability: "wis", mod: -3, level: 5, levelPart: 2 };
+  const before = JSON.stringify([sum, half]);
+  for (const locale of ["en", "fr", "cs"]) {
+    const w = words[locale];
+    if (locale !== "en") installCatalog(locale, JSON.parse(read(`src/lib/i18n/${locale}.json`)));
+    const input = { className: w.name, level: 3, cantripCap: 3, spellbookCap: 10, spellCap: { label: "spells prepared", count: 6, sum }, known: false };
+    const snapshot = JSON.stringify(input);
+    const lines = desk.capLines(input, locale);
+    assert.deepEqual(lines.map((line) => line.id), ["cantrips", "spellbook", "list"]);
+    assert.deepEqual(lines.map((line) => line.label), w.labels);
+    assert.deepEqual(lines.map((line) => line.line), w.lines);
+    assert.equal(JSON.stringify(input), snapshot);
+    assert.equal(desk.capLines({ ...input, level: 1, spellbookCap: 6 }, locale)[1].line, w.book1);
+    const known = desk.capLines({ ...input, cantripCap: null, spellbookCap: null, spellCap: { label: "spells known", count: 3 }, known: true }, locale);
+    assert.deepEqual(known, [{ id: "list", label: w.known, line: w.lines[0] }]);
+    const preparedWithoutSum = desk.capLines({ ...input, cantripCap: null, spellbookCap: null, spellCap: { label: "spells prepared", count: 3 }, known: false }, locale);
+    assert.deepEqual(preparedWithoutSum, [{ id: "list", label: w.labels[2], line: w.lines[0] }]);
+    assert.deepEqual(desk.capLines({ ...input, cantripCap: null, spellbookCap: null, spellCap: null }, locale), []);
+    assert.equal(preparedCapLine("Custom Caster", half, 1, locale), w.half);
+    assert.equal(preparedFormulaLine(half, locale), w.formula);
+    assert.equal(preparedFormulaLine(sum, locale), w.full);
+  }
+  assert.equal(preparedFormula("int", 3, "wizard", 3), words.en.full);
+  assert.equal(JSON.stringify([sum, half]), before);
+});
+
 test("the casting numbers are the sheet's, slots in order", () => {
   const numbers = desk.castingNumbers({ spellSaveDc: 13, spellAttack: 5, spellSlots: { 2: { max: 2 }, 1: { max: 4 }, 3: { max: 0 } } });
   assert.equal(numbers.dc, "13");
   assert.equal(numbers.attack, "+5");
   assert.deepEqual(numbers.slots.map((slot) => `${slot.label} ${slot.max}`), ["1st 4", "2nd 2"]);
   assert.deepEqual(desk.castingNumbers({ spellSaveDc: null, spellAttack: undefined, spellSlots: {} }), { dc: null, attack: null, slots: [] });
+});
+
+test("spell slot ordinal labels use the reader's language without changing casting numbers", () => {
+  const expected = {
+    en: ["1st", "2nd", "3rd", "4th", "5th", "6th", "7th", "8th", "9th"],
+    fr: ["1er", "2e", "3e", "4e", "5e", "6e", "7e", "8e", "9e"],
+    cs: ["1.", "2.", "3.", "4.", "5.", "6.", "7.", "8.", "9."],
+  };
+  const input = { spellSaveDc: 15, spellAttack: 7, spellSlots: Object.fromEntries(Array.from({ length: 9 }, (_, n) => [n + 1, { max: 9 - n }])) };
+  const before = JSON.stringify(input);
+  const original = desk.castingNumbers(input);
+  for (const locale of ["en", "fr", "cs"]) {
+    const catalog = locale === "en" ? {} : JSON.parse(read(`src/lib/i18n/${locale}.json`)).messages;
+    const numbers = desk.castingNumbers(input, (key) => catalog[key] ?? key);
+    assert.deepEqual(numbers.slots.map((slot) => slot.label), expected[locale]);
+    assert.deepEqual(numbers.slots.map(({ level, max }) => ({ level, max })), original.slots.map(({ level, max }) => ({ level, max })));
+    assert.equal(numbers.dc, original.dc);
+    assert.equal(numbers.attack, original.attack);
+    assert.equal(JSON.stringify(input), before);
+  }
 });
 
 test("a swap trades one spell for another where it stood, and never a granted one", () => {

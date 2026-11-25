@@ -408,5 +408,79 @@ await test(
   },
 );
 
+await test("Level-up refusals use the reader locale without spending experience or changing the sheet.", async () => {
+  const { world, sheet } = await table(FIGHTER);
+  const before = sheet();
+  const { translate } = await import("../src/lib/messages-logic.ts");
+  const { featRepeatRefusal } = await import("../src/lib/srd/feat-repeat.ts");
+  const errors = [];
+  world.signIn(world.owner);
+  for (const locale of ["en", "cs", "fr"]) {
+    const patch = async (body) => {
+      const response = await sheetRoute.PATCH(new Request("http://test/", {
+        method: "PATCH",
+        headers: { "content-type": "application/json", "x-odm-locale": locale },
+        body: JSON.stringify(body),
+      }), { params: Promise.resolve({ campaignId: world.campaignId }) });
+      return { status: response.status, json: await response.json() };
+    };
+    const repeat = await patch({ level: 1 });
+    assert.equal(repeat.status, 403);
+    assert.equal(repeat.json.level, 1);
+    assert.equal(repeat.json.error, `${translate(locale, "{name} is already level {level}.", { name: before.name, level: 1 })} ${translate(locale, "A level-up names the next level, {next}.", { next: 2 })}`);
+    const edit = await patch({ maxHp: 200 });
+    assert.equal(edit.status, 403);
+    assert.equal(edit.json.error, translate(locale, "Only portrait, notes, backstory, personality, and hopes for the story can be changed here outside of a level-up. Ask the party lead to adjust other stats."));
+    assert.deepEqual(sheet(), before);
+    const xp = await patch({ level: 2 });
+    assert.equal(xp.status, 403);
+    const expected = translate(locale, "Level {level} takes {xp} experience points and {name} has {have}. A level is earned in play, or granted by whoever runs the table.", { level: 2, xp: 300, name: before.name, have: before.xp });
+    assert.equal(xp.json.error, expected);
+    errors.push(expected);
+    const jump = await patch({ level: 3 });
+    assert.equal(jump.status, 400);
+    assert.equal(jump.json.error, translate(locale, "A character gains one level at a time: {name} is level {level}, so the next level is {next}. Take the levels one after another.", { name: before.name, level: 1, next: 2 }));
+    assert.deepEqual(sheet(), before);
+    assert.equal(featRepeatRefusal({ name: before.name }, "Alert", undefined, locale),
+      translate(locale, "{name} already has {feat}; a feat is taken once.", { name: before.name, feat: "Alert" }));
+  }
+  assert.equal(new Set(errors).size, 3);
+  world.close();
+});
+
+await test("Multiclass prerequisites and expertise refusals share the reader locale without altering a sheet.", async () => {
+  const { world, sheet } = await table(FIGHTER, { xp: XP[2] });
+  const before = sheet();
+  const { translate } = await import("../src/lib/messages-logic.ts");
+  const { canMulticlassInto, describePrereqT } = await import("../src/lib/srd/multiclass.ts");
+  const errors = [];
+  const multiclassErrors = [];
+  world.signIn(world.owner);
+  for (const locale of ["en", "cs", "fr"]) {
+    const response = await sheetRoute.PATCH(new Request("http://test/", {
+      method: "PATCH",
+      headers: { "content-type": "application/json", "x-odm-locale": locale },
+      body: JSON.stringify({ level: 2, expertise: ["athletics"] }),
+    }), { params: Promise.resolve({ campaignId: world.campaignId }) });
+    assert.equal(response.status, 400);
+    const expected = translate(locale, "Expertise is a rogue's feature (1st and 6th level) and a bard's (3rd and 10th); this character has none to pick.");
+    assert.equal((await response.json()).error, expected);
+    errors.push(expected);
+    assert.deepEqual(sheet(), before);
+    const weak = { ...before, abilities: { ...before.abilities, int: 10 } };
+    const snapshot = structuredClone(weak);
+    const t = (key, vars) => translate(locale, key, vars);
+    const blocked = canMulticlassInto(weak, "wizard", locale);
+    assert.equal(blocked.ok, false);
+    assert.equal(blocked.error, t("Multiclassing into {className} requires {prerequisite}.", { className: "Wizard", prerequisite: describePrereqT(t, "wizard") }));
+    multiclassErrors.push(blocked.error);
+    assert.deepEqual(canMulticlassInto({ ...weak, abilities: { ...weak.abilities, int: 13 } }, "wizard", locale), { ok: true });
+    assert.deepEqual(weak, snapshot);
+  }
+  assert.equal(new Set(errors).size, 3);
+  assert.equal(new Set(multiclassErrors).size, 3);
+  world.close();
+});
+
 first.close();
 finish();

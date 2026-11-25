@@ -13,6 +13,7 @@ import type { MonsterDraft } from "@/lib/bestiary/monster-draft";
 import type { MonsterSpell, MonsterSpellcasting } from "@/lib/dm/monster-abilities";
 import { Field, OptionalStepper, rowIcon } from "@/app/workshop/kit";
 import { textKey } from "@/lib/language/text-logic";
+import { monsterSpellLabel, monsterSpellReference } from "@/lib/bestiary/spell-display";
 import { useT } from "@/lib/locale";
 
 // A monster's Spellcasting or Innate Spellcasting trait as the numbers the
@@ -35,7 +36,7 @@ export function SpellcastingEditor({ draft, onChange }: Props) {
   const t = useT();
   const abilityOptions = [
     { value: "", label: t("Unstated") },
-    ...SAVE_ABILITY_IDS.map((ability) => ({ value: ability as string, label: ability.toUpperCase() })),
+    ...SAVE_ABILITY_IDS.map((ability) => ({ value: ability as string, label: t(ability.toUpperCase()) })),
   ];
   const useOptions = [
     { value: "slot", label: t("From a slot") },
@@ -123,28 +124,28 @@ export function SpellcastingEditor({ draft, onChange }: Props) {
           <div className="flex flex-col gap-1">
             {casting.spells.map((spell, index) => (
               <div key={spell.name} className="live-in flex flex-wrap items-center gap-1.5 text-xs">
-                <span className="min-w-36 flex-1 text-stone-200">{spell.name}</span>
+                <span className="min-w-36 flex-1 text-stone-200">{monsterSpellLabel(spell, t.locale)}</span>
                 <span className="block w-28">
                   <Select
-                    label={t("How {name} is cast", { name: spell.name })}
+                    label={t("How {name} is cast", { name: monsterSpellLabel(spell, t.locale) })}
                     size="sm"
                     value={castWay(spell)}
                     onChange={(use) => {
                       const next: MonsterSpell =
                         use === "slot"
-                          ? { name: spell.name, level: spell.level && spell.level > 0 ? spell.level : 1 }
+                          ? { name: spell.name, ...(spell.reference ? { reference: spell.reference } : {}), level: spell.level && spell.level > 0 ? spell.level : 1 }
                           : use === "atwill"
-                            ? { name: spell.name, level: spell.level === 0 ? 0 : null }
-                            : { name: spell.name, level: null, perDay: Number(use.slice(3)) };
+                            ? { name: spell.name, ...(spell.reference ? { reference: spell.reference } : {}), level: spell.level === 0 ? 0 : null }
+                            : { name: spell.name, ...(spell.reference ? { reference: spell.reference } : {}), level: null, perDay: Number(use.slice(3)) };
                       set({ ...casting, spells: casting.spells.map((row, at) => (at === index ? next : row)) });
                     }}
                     options={useOptions}
                   />
                 </span>
                 {castWay(spell) === "slot" ? (
-                  <NumberStepper size="sm" label={t("{name} level", { name: spell.name })} min={1} max={9} value={spell.level ?? 1} onChange={(level) => set({ ...casting, spells: casting.spells.map((row, at) => (at === index ? { ...row, level } : row)) })} />
+                  <NumberStepper size="sm" label={t("{name} level", { name: monsterSpellLabel(spell, t.locale) })} min={1} max={9} value={spell.level ?? 1} onChange={(level) => set({ ...casting, spells: casting.spells.map((row, at) => (at === index ? { ...row, level } : row)) })} />
                 ) : null}
-                <button type="button" aria-label={t("Remove {name}", { name: spell.name })} onClick={() => set({ ...casting, spells: casting.spells.filter((_, at) => at !== index) })} className={cn(ui.iconAction, rowIcon, "hover:text-red-300")}>
+                <button type="button" aria-label={t("Remove {name}", { name: monsterSpellLabel(spell, t.locale) })} onClick={() => set({ ...casting, spells: casting.spells.filter((_, at) => at !== index) })} className={cn(ui.iconAction, rowIcon, "hover:text-red-300")}>
                   <Trash2 className="size-3.5" />
                 </button>
               </div>
@@ -157,7 +158,8 @@ export function SpellcastingEditor({ draft, onChange }: Props) {
                 onPick={(entry) => {
                   if (casting.spells.some((known) => textKey(known.name) === textKey(entry.name))) return;
                   const level = typeof entry.level === "number" ? entry.level : null;
-                  set({ ...casting, spells: [...casting.spells, { name: entry.name, level }] });
+                  const reference = monsterSpellReference(entry, entry.name);
+                  set({ ...casting, spells: [...casting.spells, { name: entry.name, level, ...(reference ? { reference } : {}) }] });
                 }}
               />
             ) : null}

@@ -27,8 +27,7 @@ const DAMAGE = ["acid", "bludgeoning", "cold", "fire", "force", "lightning", "ne
 // src/lib/dm/damage-logic.ts), conditions through the official names layer.
 // English keeps the raw term, exactly as the pickers always read it; the
 // stored values stay the ids.
-const capital = (value: string) => value.charAt(0).toUpperCase() + value.slice(1);
-const damageOptions = (locale: Locale) => DAMAGE.map((value) => ({ value, label: locale === "fr" ? capital(damageTypeWord(value, locale)) : value }));
+const damageOptions = (locale: Locale) => DAMAGE.map((value) => ({ value, label: damageTypeWord(value, locale) }));
 const conditionWord = (term: string, locale: Locale) => contentName("conditions", term, locale);
 const CONDITIONS = ["blinded", "charmed", "deafened", "frightened", "grappled", "incapacitated", "paralyzed", "petrified", "poisoned", "prone", "restrained", "stunned", "unconscious"];
 const KINDS = [

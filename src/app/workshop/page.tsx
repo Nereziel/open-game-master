@@ -11,7 +11,7 @@ import { headIcon } from "@/app/workshop/kit";
 import { PageSkeleton } from "@/components/PageSkeleton";
 import { appConfirm } from "@/components/ui/ConfirmDialog";
 import Link from "next/link";
-import { type FormEvent, useEffect, useState } from "react";
+import { Suspense, lazy, type FormEvent, useEffect, useState } from "react";
 import { cn } from "@/lib/cn";
 import { ui } from "@/lib/ui";
 import { workshopPlate } from "@/app/workshop/plates";
@@ -21,14 +21,17 @@ import { DEFAULT_TARGET_PARTY } from "@/lib/workshop/kind";
 import { ImportBundleButton } from "@/app/workshop/ImportBundleButton";
 import { PdfImportButton } from "@/app/workshop/pdf-import/PdfImportButton";
 import { AddonImportButton } from "@/app/workshop/AddonImportButton";
-import { WorkshopHelpDialog } from "@/components/WorkshopHelpDialog";
-import { GuidedTour } from "@/components/ui/GuidedTour";
 import type { TourEnd } from "@/lib/tours/account-logic";
 import { SHELF_TOUR, SHELF_TOUR_ID } from "@/lib/tours/workshop";
 import { finishTour, useTourFinished } from "@/lib/tours/tour-store";
 import type { WorkshopSummary } from "@/app/workshop/types";
 import { navigateTo } from "@/lib/navigation";
 import { useT } from "@/lib/locale";
+
+// Match the workshop hub: fetch the guide and tour only on first opening,
+// then keep them mounted so their closing animations still run.
+const WorkshopHelpDialog = lazy(() => import("@/components/WorkshopHelpDialog").then((module) => ({ default: module.WorkshopHelpDialog })));
+const GuidedTour = lazy(() => import("@/components/ui/GuidedTour").then((module) => ({ default: module.GuidedTour })));
 
 // The shelf. A workshop is a place to build maps, NPCs, monsters, story and
 // rules before any table exists, and to import them into a campaign later
@@ -57,6 +60,10 @@ export default function WorkshopListPage() {
   const [listError, setListError] = useState("");
   const [helpOpen, setHelpOpen] = useState(false);
   const [touring, setTouring] = useState(false);
+  const [helpMounted, setHelpMounted] = useState(false);
+  const [tourMounted, setTourMounted] = useState(false);
+  if (helpOpen && !helpMounted) setHelpMounted(true);
+  if (touring && !tourMounted) setTourMounted(true);
 
   // The shelf's tour runs once per account, the first time the shelf is
   // seen with its list drawn (issue #306). Help replays it.
@@ -178,18 +185,22 @@ export default function WorkshopListPage() {
           </button>
         </div>
       </header>
-      <WorkshopHelpDialog
-        open={helpOpen}
-        onOpenChange={setHelpOpen}
-        tours={[
-          {
-            label: t("Tour the shelf"),
-            detail: t("Starting a workshop, importing a bundle, and what the tiles do."),
-            onStart: () => setTouring(true),
-          },
-        ]}
-      />
-      <GuidedTour open={touring} steps={SHELF_TOUR} onClose={closeTour} />
+      <Suspense fallback={null}>
+        {helpMounted ? (
+          <WorkshopHelpDialog
+            open={helpOpen}
+            onOpenChange={setHelpOpen}
+            tours={[
+              {
+                label: t("Tour the shelf"),
+                detail: t("Starting a workshop, importing a bundle, and what the tiles do."),
+                onStart: () => setTouring(true),
+              },
+            ]}
+          />
+        ) : null}
+        {tourMounted ? <GuidedTour open={touring} steps={SHELF_TOUR} onClose={closeTour} /> : null}
+      </Suspense>
 
       <section className="mb-6">
         {creating ? (

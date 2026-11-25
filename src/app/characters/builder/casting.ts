@@ -14,6 +14,7 @@ import type { AbilityScores, ClassEntry } from "@/lib/schemas/sheet";
 import { pactSlotsFor, slotTableFor } from "@/lib/srd/multiclass";
 import { abilityMod, formatModifier, spellSlotsFor } from "@/lib/srd";
 import { ABILITY_NAMES } from "@/lib/srd/legality/types";
+import { translate, type Locale } from "@/lib/i18n/translate";
 import { cantripCapOf, spellCapOf } from "@/lib/srd/spell-prep";
 import { mysticArcanumLevels } from "@/lib/srd/mystic-arcanum";
 import { thirdCasterAbility, thirdCasterList, thirdCasterProfileOf, thirdCasterRequiredCantrip, type ThirdCasterProfile } from "@/lib/srd/third-caster";
@@ -143,22 +144,28 @@ const ABILITY_SHORT: Record<PreparedSum["ability"], string> = { int: "INT", wis:
 // The prepared cap as its sum, the way the spell desk shows it (backlog
 // F13): "Wizard level 3 + INT +3 = 6", "Paladin level 5, halved (2) + CHA
 // +3 = 5". The total is the count the save enforces.
-export function preparedCapLine(className: string, sum: PreparedSum, count: number): string {
-  const levelWords =
-    sum.levelPart === sum.level ? `${className} level ${sum.level}` : `${className} level ${sum.level}, halved (${sum.levelPart})`;
-  const line = `${levelWords} + ${ABILITY_SHORT[sum.ability]} ${formatModifier(sum.mod)} = ${count}`;
-  return sum.mod + sum.levelPart < 1 ? `${line} (never fewer than 1)` : line;
+export function preparedCapLine(className: string, sum: PreparedSum, count: number, locale: Locale = "en"): string {
+  const levelWords = sum.levelPart === sum.level
+    ? translate(locale, "{class} level {level}", { class: className, level: sum.level })
+    : translate(locale, "{class} level {level}, halved ({part})", { class: className, level: sum.level, part: sum.levelPart });
+  const line = `${levelWords} + ${translate(locale, ABILITY_SHORT[sum.ability])} ${formatModifier(sum.mod)} = ${count}`;
+  return sum.mod + sum.levelPart < 1 ? translate(locale, "{line} (never fewer than 1)", { line }) : line;
 }
 
-// How a prepared caster's count is worked out, said in the limit note so the
-// number is not a mystery: "Wisdom modifier (+2) + level (3)". The level part
-// is read back from the engine's own count with a modifier too large to hit
-// the floor of one, so the half casters' rounding is never restated here.
+// Display the same prepared sum in the limit notice, without recalculating
+// the rule or translating a previously formatted English sentence.
+export function preparedFormulaLine(sum: PreparedSum, locale: Locale = "en"): string {
+  const levelWords = sum.levelPart === sum.level
+    ? translate(locale, "level ({level})", { level: sum.level })
+    : translate(locale, "half your level, rounded down ({part})", { part: sum.levelPart });
+  const modifier = translate(locale, "{ability} modifier ({mod})", { ability: translate(locale, ABILITY_NAMES[sum.ability]), mod: formatModifier(sum.mod) });
+  const line = `${modifier} + ${levelWords}`;
+  return sum.mod + sum.levelPart < 1 ? translate(locale, "{line}, and never fewer than 1", { line }) : line;
+}
+
+// Keep the existing English-default API for callers that supply the class list.
 export function preparedFormula(ability: "int" | "wis" | "cha", mod: number, list: string, level: number): string {
-  const levelPart = preparedLevelPart(list, level);
-  const levelWords = levelPart === level ? `level (${level})` : `half your level, rounded down (${levelPart})`;
-  const sum = `${ABILITY_NAMES[ability]} modifier (${formatModifier(mod)}) + ${levelWords}`;
-  return mod + levelPart < 1 ? `${sum}, and never fewer than 1` : sum;
+  return preparedFormulaLine({ ability, mod, level, levelPart: preparedLevelPart(list, level) });
 }
 
 // The slots a class list is saved with (backlog F9), as the server works

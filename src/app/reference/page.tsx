@@ -15,6 +15,7 @@ import { SegmentedControl } from "@/components/ui/SegmentedControl";
 import {
   describeContentEntry,
   glossaryTerms,
+  localizedGlossaryTerm,
   spellSummary,
   type GlossaryTerm,
 } from "@/lib/help";
@@ -161,7 +162,6 @@ export default function ReferencePage() {
   // Glossary bodies follow the reader: the French explanation fields when
   // the locale is fr and present, the English source otherwise. The term's
   // name itself is WotC's French SRD wording, carried on the entry as `fr`.
-  const french = locale === "fr";
   const [mode, setMode] = useState<Mode>("browse");
   const [kind, setKind] = useState<Kind>("glossary");
   const [query, setQuery] = useState("");
@@ -186,14 +186,14 @@ export default function ReferencePage() {
     if (!needle) {
       return terms;
     }
-    return terms.filter(
-      (term) =>
-        textKey(term.term).includes(needle) || textKey(term.fr ?? "").includes(needle) || textKey(term.short).includes(needle),
-    );
-  }, [terms, query]);
+    return terms.filter((term) => {
+      const display = localizedGlossaryTerm(term, locale);
+      return [term.term, term.fr, term.short, display.term, display.short].some((value) => textKey(value ?? "").includes(needle));
+    });
+  }, [terms, query, locale]);
 
   useEffect(() => {
-    searchKey.current = `${kind}|${query}`;
+    searchKey.current = `${locale}|${kind}|${query}`;
     if (kind === "glossary") {
       return;
     }
@@ -222,7 +222,7 @@ export default function ReferencePage() {
         if (query.trim()) {
           params.set("q", query.trim());
         }
-        const response = await fetch(`/api/content/${kind}?${params}`);
+        const response = await fetch(`/api/content/${kind}?${params}`, { headers: { "X-Odm-Locale": locale } });
         if (cancelled) {
           return;
         }
@@ -247,21 +247,21 @@ export default function ReferencePage() {
       cancelled = true;
       clearTimeout(timer);
     };
-  }, [kind, query]);
+  }, [kind, query, locale]);
 
   // The next page of the same search, added under what is already shown.
   async function loadMore() {
     if (kind === "glossary" || kind === "rulings" || loadingMore) {
       return;
     }
-    const asked = `${kind}|${query}`;
+    const asked = `${locale}|${kind}|${query}`;
     setLoadingMore(true);
     try {
       const params = new URLSearchParams({ limit: String(PAGE), offset: String(packRows(rows)), all: "1" });
       if (query.trim()) {
         params.set("q", query.trim());
       }
-      const response = await fetch(`/api/content/${kind}?${params}`);
+      const response = await fetch(`/api/content/${kind}?${params}`, { headers: { "X-Odm-Locale": locale } });
       if (!response.ok) {
         return;
       }
@@ -282,19 +282,18 @@ export default function ReferencePage() {
   }
 
   function openTerm(term: GlossaryTerm) {
-    const short = french && term.shortFr ? term.shortFr : term.short;
-    const long = french && term.longFr ? term.longFr : term.long;
-    setOpen({ title: french && term.fr ? term.fr : term.term, text: [short, long].filter(Boolean).join("\n\n") });
+    const display = localizedGlossaryTerm(term, locale);
+    setOpen({ title: display.term, text: [display.short, display.long].filter(Boolean).join("\n\n") });
   }
 
   function openRow(row: Row) {
     // What an entry built on rules this game does not play means at the
     // table comes first (issue #570).
-    const notes = [needsNote(row.needs ?? []), row.bestEffort ? t("Best effort: the app read this entry's rules from its text, and nobody has checked that reading yet. If it plays differently from what the text says, the text and the GM win, and a workshop copy can fix it for your table.") : null].filter(Boolean);
+    const notes = [needsNote(row.needs ?? [], t), row.bestEffort ? t("Best effort: the app read this entry's rules from its text, and nobody has checked that reading yet. If it plays differently from what the text says, the text and the GM win, and a workshop copy can fix it for your table.") : null].filter(Boolean);
     const text = describeContentEntry(row.data) ?? t("No description available for this entry.");
     setOpen({
       title: contentName(kindTable(kind), row, locale),
-      meta: kind === "spells" ? spellSummary(row.data) : undefined,
+      meta: kind === "spells" ? spellSummary(row.data, t.locale) : undefined,
       text: notes.length ? `${notes.join("\n\n")}\n\n${text}` : text,
     });
   }
@@ -435,9 +434,9 @@ export default function ReferencePage() {
                     <button type="button" onClick={() => openTerm(term)} className={ROW}>
                       <GameIcon icon={{ kind: "glyph", key: "system-lore" }} size="size-8" />
                       <span className="min-w-0 flex-1">
-                        <span className="block font-display text-sm tracking-wide text-amber-100">{french && term.fr ? term.fr : term.term}</span>
+                        <span className="block font-display text-sm tracking-wide text-amber-100">{localizedGlossaryTerm(term, locale).term}</span>
                         <span className="block text-xs text-stone-400">
-                          {french && term.shortFr ? term.shortFr : term.short}
+                          {localizedGlossaryTerm(term, locale).short}
                         </span>
                       </span>
                     </button>

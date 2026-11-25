@@ -5,7 +5,7 @@ import { readLoad, useLoadStatus } from "@/lib/load-state";
 import { Link2, Loader2, Plug, Trash2 } from "lucide-react";
 import { useEffect, useState } from "react";
 import { ui } from "@/lib/ui";
-import { localeTag } from "@/lib/messages-logic";
+import { localeTag, type Locale } from "@/lib/messages-logic";
 import { useLocale, useT } from "@/lib/locale";
 import { EmptyState } from "@/components/EmptyState";
 import { PageSection } from "@/components/PageShell";
@@ -62,10 +62,10 @@ export function agentScopeHint(t: (key: string) => string, id: AgentScopeId): st
   return ({ "read": t("Your campaigns, characters, quests and lore, as you see them."), "play": t("Act, speak and roll at a table as your character."), "characters": t("Create, edit and delete your library characters."), "campaigns": t("Create campaigns and change the ones you lead."), "dm": t("Run the rules engine and narrate, only where you hold the GM seat.") } as Record<string, string>)[id] ?? String(id);
 }
 
-function makeWhen(t: (key: string) => string, locale: string): (iso: string | null) => string {
+function makeWhen(t: (key: string) => string, locale: Locale): (iso: string | null) => string {
   return (iso: string | null) => {
     if (!iso) return t("never");
-    return new Date(iso).toLocaleDateString(localeTag(locale as "en" | "fr"), { month: "short", day: "numeric", year: "numeric" });
+    return new Date(iso).toLocaleDateString(localeTag(locale), { month: "short", day: "numeric", year: "numeric" });
   };
 }
 

@@ -160,7 +160,7 @@ export async function POST(
     // bundled rulebook page it is printed on (PrintedBlockView reads it).
     const page = entry.documentSlug === "wotc-srd" ? rulebookPageIdFor("monster", entry.name) : null;
     if (stats.printed) {
-      stats.printed.source = { name: entry.name, document: documentTitle(entry.documentSlug), ...(page ? { rulebook: page } : {}) };
+      stats.printed.source = { name: entry.name, slug: entry.slug, documentSlug: entry.documentSlug, document: documentTitle(entry.documentSlug), ...(page ? { rulebook: page } : {}) };
     }
     const draft = draftFromStats(body.name ?? entry.name, stats);
     return Response.json(

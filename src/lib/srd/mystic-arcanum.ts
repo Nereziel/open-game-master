@@ -20,6 +20,7 @@ import { classFeaturesFor } from "@/lib/srd/features";
 import { isNamed } from "@/lib/srd/feature-names";
 import { spellLevelOf } from "@/lib/srd/spell-lists";
 import { textKey } from "@/lib/language/text-logic";
+import { translate, type Locale } from "@/lib/i18n/translate";
 
 // The features that teach one spell of a level past the slots, each held
 // beside the count as an arcanum is: the warlock's Mystic Arcanum (6th at
@@ -131,6 +132,7 @@ export function arcanumExtraProblem(
   split: { arcanum: string[]; extra: string[] },
   levelOf: (name: string) => number | null = spellLevelOf,
   classId = "warlock",
+  locale: Locale = "en",
 ): string | null {
   const [extra] = split.extra;
   if (!extra) {
@@ -138,5 +140,5 @@ export function arcanumExtraProblem(
   }
   const level = levelOf(extra) ?? spellLevelOf(extra);
   const held = split.arcanum.find((name) => (levelOf(name) ?? spellLevelOf(name)) === level);
-  return `${arcanumName(classId, level)} teaches one spell of level ${level}: ${held} is already that arcanum, so ${extra} cannot be learned too.`;
+  return translate(locale, "{feature} teaches one spell of level {level}: {held} is already that arcanum, so {extra} cannot be learned too.", { feature: translate(locale, arcanumName(classId, level)), level: String(level), held: String(held), extra });
 }

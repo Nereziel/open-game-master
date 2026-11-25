@@ -6,8 +6,10 @@ import { GameIcon } from "@/components/ui/GameIcon";
 import { translate } from "@/lib/messages-logic";
 import { useT } from "@/lib/locale";
 import { priceText } from "@/lib/srd/currency";
+import { gameTermWord } from "@/lib/i18n/game-term-labels";
+import type { Locale, TranslateVars } from "@/lib/messages-logic";
 
-type T = (key: string, vars?: Record<string, string | number>) => string;
+type T = ((key: string, vars?: TranslateVars) => string) & { locale?: Locale };
 const enT: T = (key, vars) => translate("en", key, vars);
 
 // What a reference result is, at a glance: its kind, its level or rarity or
@@ -44,6 +46,16 @@ const ITEM_KIND_LABEL: Record<string, string> = {
   magic_item: "Magic item",
 };
 
+const RARITY_LABELS: Record<string, string> = {
+  mundane: "mundane", common: "common", uncommon: "uncommon",
+  rare: "rare", "very rare": "very rare", legendary: "legendary", artifact: "artifact",
+};
+
+function rarityLabel(rarity: string, t: T): string {
+  const key = rarity.toLowerCase();
+  return RARITY_LABELS[key] ? t(RARITY_LABELS[key], { context: "content.rarity" }) : key;
+}
+
 function rarityTone(rarity: string): Tone {
   const value = rarity.toLowerCase();
   if (value.includes("artifact")) return "red";
@@ -62,21 +74,21 @@ export function badgesFor(category: string, row: BadgeRow, t: T = enT): Badge[] 
   const badges: Badge[] = [];
   if (category === "spells") {
     if (typeof row.level === "number") {
-      badges.push({ key: "level", text: row.level === 0 ? "cantrip" : `level ${row.level}`, tone: "gold" });
+      badges.push({ key: "level", text: row.level === 0 ? t("cantrip") : t("level {level}", { level: row.level }), tone: "gold" });
     }
     const school = text(row.school);
     if (school) {
-      badges.push({ key: "school", text: school.toLowerCase(), tone: "violet", family: `spell-${school}` });
+      badges.push({ key: "school", text: gameTermWord("spellSchool", school.toLowerCase(), t.locale ?? "en").toLowerCase(), tone: "violet", family: `spell-${school}` });
     }
-    if (row.ritual) badges.push({ key: "ritual", text: "ritual", tone: "neutral" });
-    if (row.concentration) badges.push({ key: "conc", text: "concentration", tone: "neutral" });
+    if (row.ritual) badges.push({ key: "ritual", text: t("ritual"), tone: "neutral" });
+    if (row.concentration) badges.push({ key: "conc", text: t("concentration"), tone: "neutral" });
   } else if (category === "items") {
     const kind = text(row.kind);
     if (kind) {
-      badges.push({ key: "kind", text: ITEM_KIND_LABEL[kind] ?? kind, tone: "neutral", family: `item-${kind}` });
+      badges.push({ key: "kind", text: ITEM_KIND_LABEL[kind] ? t(ITEM_KIND_LABEL[kind]) : kind, tone: "neutral", family: `item-${kind}` });
     }
     const rarity = text(row.rarity);
-    if (rarity) badges.push({ key: "rarity", text: rarity.toLowerCase(), tone: rarityTone(rarity) });
+    if (rarity) badges.push({ key: "rarity", text: rarityLabel(rarity, t), tone: rarityTone(rarity) });
     // In the notation every price takes: the pack prints "0.05 gp".
     const cost = priceText(text(row.cost));
     if (cost) badges.push({ key: "cost", text: cost, tone: "gold" });
@@ -87,9 +99,9 @@ export function badgesFor(category: string, row: BadgeRow, t: T = enT): Badge[] 
     // bestiary chips print it.
     if (cr) badges.push({ key: "cr", text: t("CR {cr}", { cr }), tone: "red" });
     const type = text(row.data.type);
-    if (type) badges.push({ key: "type", text: type.toLowerCase(), tone: "neutral" });
+    if (type) badges.push({ key: "type", text: gameTermWord("creatureType", type.toLowerCase(), t.locale ?? "en").toLowerCase(), tone: "neutral" });
   }
-  const needs = needsLabel(row.needs ?? []);
+  const needs = needsLabel(row.needs ?? [], t);
   if (needs) {
     // Orange where it is not offered for play, neutral where the GM plays
     // the part this game lacks (src/lib/content/levelup-logic.ts).
@@ -101,7 +113,7 @@ export function badgesFor(category: string, row: BadgeRow, t: T = enT): Badge[] 
     badges.push({ key: "best-effort", text: t("best effort"), tone: "blue" });
   }
   if (row.source === "homebrew") {
-    badges.push({ key: "source", text: "homebrew", tone: "gold" });
+    badges.push({ key: "source", text: t("homebrew"), tone: "gold" });
   } else if (row.documentSlug) {
     badges.push({ key: "source", text: row.documentSlug, tone: "neutral" });
   }

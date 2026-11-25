@@ -134,7 +134,7 @@ export default function FeatChoicesFields({
   } as const;
   const fixed = [
     ...spec.fixedSkills.map((skill) => (spec.fixedExpertise.includes(skill) ? `${skillLabel(skill, locale)} ${t("(expertise)")}` : skillLabel(skill, locale))),
-    ...spec.fixedLanguages,
+    ...spec.fixedLanguages.map((language) => STANDARD_LANGUAGES.includes(language) ? t(language, { context: "character.language" }) : language),
     ...spec.armor.map(armorWords),
     ...spec.fixedWeapons,
     ...spec.fixedTools,
@@ -273,7 +273,7 @@ export default function FeatChoicesFields({
                   (language) =>
                     !heldLanguages.has(textKey(language)) &&
                     (mine.languages[index] === language || !mine.languages.includes(language)),
-                ).map((language) => ({ value: language as string, label: language as string })),
+                ).map((language) => ({ value: language as string, label: t(language, { context: "character.language" }) })),
               ]}
             />
           ))}
@@ -292,12 +292,12 @@ export default function FeatChoicesFields({
             {SRD_SKILLS.filter((skill) => !heldSkills.has(textKey(skill.id)) && (!spec.skillsFrom.length || spec.skillsFrom.includes(skill.id))).map((skill) => (
               <PickPill
                 key={skill.id}
-                label={skill.name}
+                label={skillLabel(skill.id, locale)}
                 selected={mine.skills.includes(skill.id)}
                 onClick={() => toggle("skills", skill.id, slots("skills"))}
                 info={{ text: describeSkill(t, skill.id, locale) }}
               >
-                {skill.name}
+                {skillLabel(skill.id, locale)}
               </PickPill>
             ))}
           </div>

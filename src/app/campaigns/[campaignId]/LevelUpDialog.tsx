@@ -102,6 +102,8 @@ import { bundledSwapSpells, originSwapOffer, originSwapRequest } from "@/lib/dm/
 import { hostOffers, useCapabilities } from "@/lib/use-capabilities";
 import { featChoice, withFeatChoice } from "@/lib/schemas/sheet";
 import { workshopClassList } from "@/lib/classes/workshop-registry";
+import { archetypeDisplayName } from "@/lib/content/names";
+import { fightingStyleDisplayName, optionDisplayName } from "@/lib/content/option-labels";
 import { useLocale, useT, useTp } from "@/lib/locale";
 
 
@@ -778,6 +780,7 @@ export function LevelUpDialog({
             top: maxCastable ?? 0,
             held: [...knownList, ...pendingList, ...cantripList, ...spellPicks, ...cantripPicks],
             candidates: originCandidates,
+            locale,
             spellOf: (name) => originCandidates.find((spell) => textKey(spell.name) === textKey(name)) ?? null,
           },
         );
@@ -842,6 +845,7 @@ export function LevelUpDialog({
       return null;
     }
     const offSchool = thirdCasterPickRefusal({
+      locale,
       classId: classChoice,
       subclass: effectiveSubclass,
       progression,
@@ -1526,11 +1530,11 @@ export function LevelUpDialog({
                     .map((slot) => (
                       <div key={slot.kind}>
                         <p className="mb-1 mt-2 text-xs uppercase tracking-wide text-amber-200/80">
-                          {t("{label}: {chosen}/{total} chosen", { label: slot.label, chosen: slot.total - slot.remaining, total: slot.total })}
+                          {t("{label}: {chosen}/{total} chosen", { label: t(slot.label), chosen: slot.total - slot.remaining, total: slot.total })}
                         </p>
                         {/* A pick of spells says its rule once; each spell's
                             info opens the spell (as on the builder's class step). */}
-                        {optionKindRule(slot.kind) ? <p className="mb-1 text-[11px] text-stone-400">{optionKindRule(slot.kind)}</p> : null}
+                        {optionKindRule(slot.kind) ? <p className="mb-1 text-[11px] text-stone-400">{t(optionKindRule(slot.kind) ?? "")}</p> : null}
                         <div className="max-h-56 space-y-1.5 overflow-y-auto pr-1">
                           {slot.options.map((option) => {
                             const picked = slot.chosen.some(
@@ -1539,6 +1543,7 @@ export function LevelUpDialog({
                             const already =
                               picked &&
                               !optionPicks.includes(optionFeatureName(slot.kind, option.n));
+                            const label = optionDisplayName(option, locale);
                             return (
                               <div
                                 key={option.n}
@@ -1556,22 +1561,22 @@ export function LevelUpDialog({
                                   onClick={() => toggleOption(slot, option.n)}
                                   className="grow text-left"
                                 >
-                                  <span className="block">{option.n}</span>
+                                  <span className="block">{label}</span>
                                   {already || option.req || !optionPicksSpells(slot.kind) ? (
                                     <span className="block text-[11px] text-stone-500">
                                       {already ? t("Already known. ") : ""}
-                                      {option.req ? t("Requires {req}. ", { req: option.req }) : ""}
-                                      {optionPicksSpells(slot.kind) ? "" : option.d}
+                                      {option.req ? t("Requires {req}. ", { req: t(option.req) }) : ""}
+                                      {optionPicksSpells(slot.kind) ? "" : t(option.d)}
                                     </span>
                                   ) : null}
                                 </button>
                                 {optionPicksSpells(slot.kind) ? (
-                                  <InfoButton label={option.n} note={option.d} reference={{ kind: "spells", slug: contentSlug(option.n), name: option.n }} />
+                                  <InfoButton label={label} note={t(option.d)} reference={{ kind: "spells", slug: contentSlug(option.n), name: option.n }} />
                                 ) : (
                                   <InfoButton
-                                    label={option.n}
-                                    meta={option.req ? t("Requires {req}", { req: option.req }) : undefined}
-                                    text={option.d}
+                                    label={label}
+                                    meta={option.req ? t("Requires {req}", { req: t(option.req) }) : undefined}
+                                    text={t(option.d)}
                                   />
                                 )}
                               </div>
@@ -1611,8 +1616,8 @@ export function LevelUpDialog({
                               : "border-stone-700 hover:border-amber-800 hover:bg-stone-900",
                           )}
                         >
-                          <span className="block text-sm">{style.name}</span>
-                          <span className="block text-xs text-stone-400">{style.description}</span>
+                          <span className="block text-sm">{fightingStyleDisplayName(style, locale)}</span>
+                          <span className="block text-xs text-stone-400">{t(style.description)}</span>
                         </button>
                       );
                     })}
@@ -1650,7 +1655,7 @@ export function LevelUpDialog({
                             onClick={() => chooseSubclass(name)}
                             className="flex grow items-center justify-between gap-2 py-2 text-left"
                           >
-                            <span>{name}</span>
+                            <span>{archetypeDisplayName(classChoice, name, locale, archetype ? { ...archetype, slug: archetype.id } : undefined)}</span>
                             {builtInSubclasses.some(
                               (entry) => textKey(entry) === textKey(name),
                             ) ? (
@@ -1664,8 +1669,8 @@ export function LevelUpDialog({
                             )}
                           </button>
                           <InfoButton
-                            label={name}
-                            text={archetype?.desc || subclassBlurb(classChoice, name) || undefined}
+                            label={archetypeDisplayName(classChoice, name, locale, archetype ? { ...archetype, slug: archetype.id } : undefined)}
+                            text={archetype?.localizedDesc || archetype?.desc || subclassBlurb(classChoice, name) || undefined}
                             reference={
                               archetype ? { kind: "archetypes", slug: archetype.id, name } : undefined
                             }
@@ -1800,7 +1805,7 @@ export function LevelUpDialog({
                       </div>
                     </div>
                   ) : null}
-                  {originOffer ? <LevelUpChangePick offer={originOffer} change={originShown} onChange={pickOrigin} /> : null}
+                  {originOffer ? <LevelUpChangePick offer={originOffer} change={originShown} onChange={pickOrigin} bundledOrigin /> : null}
                   <SpellBook
                     tiles={levelUpTiles}
                     maxLevel={maxCastable ?? 0}

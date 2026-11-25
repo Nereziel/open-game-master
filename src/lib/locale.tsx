@@ -1,9 +1,8 @@
 "use client";
 
 import { Suspense, createContext, use, useCallback, useContext, useEffect, useMemo, useSyncExternalStore, type ReactNode } from "react";
-import { loadCatalog } from "./i18n/catalog-loader";
+import { loadCatalog, catalogReady, retryCatalog } from "./i18n/catalog-loader";
 import { LOCALE_COOKIE, parseLocale } from "./i18n/locale";
-import { catalogInstalled } from "./i18n/translate";
 import { localeTag, translate, translatePlural, type Locale, type MessageKey, type MessageVars } from "./messages-logic";
 
 // The interface's language, beside the theme and the scale (theme-mode.ts).
@@ -26,6 +25,10 @@ const ServerLocaleContext = createContext<Locale>("en");
 // installed (fr-catalog.ts), so nothing waits there.
 function CatalogGate({ locale, children }: { locale: Locale; children: ReactNode }) {
   use(loadCatalog(locale));
+  // LocaleApplier can run outside this Suspense boundary while the catalog
+  // is still loading. Reapply after the gate commits so a full navigation
+  // cannot leave <html lang> in English when the translated tree is ready.
+  useEffect(() => { applyLocale(); }, [locale]);
   return <>{children}</>;
 }
 
@@ -65,6 +68,7 @@ export function setServerLocale(locale: Locale | null) {
   }
   serverDefault = locale;
   if (typeof window !== "undefined") {
+    retryCatalog(resolveLocale(readLocaleChoice()));
     applyLocale();
     emit();
   }
@@ -93,10 +97,9 @@ export function readLocaleChoice(): LocaleChoice {
 // surfaces the app builds per request (the starter's cards, the join
 // previews, the rulebook). An explicit choice wins over the browser's
 // Accept-Language — a French reader on an English-locale desktop reads
-// French; "auto" sends nothing, leaving the browser's word as ever.
+// French. Auto sends the effective language, including the server default.
 export function odmLocaleHeaders(): Record<string, string> {
-  const choice = readLocaleChoice();
-  return choice === "auto" ? {} : { "X-Odm-Locale": choice };
+  return { "X-Odm-Locale": resolveLocale(readLocaleChoice()) };
 }
 
 // The browser's own preference order decides "auto": the first language the
@@ -127,22 +130,33 @@ export function writeLocaleChoice(choice: LocaleChoice) {
     window.localStorage.setItem(LOCALE_KEY, choice);
     document.cookie = `${LOCALE_COOKIE}=${choice}; path=/; max-age=31536000; SameSite=Lax`;
   }
+  retryCatalog(resolveLocale(choice));
   applyLocale();
   emit();
 }
+
+const observedCatalogLoads = new WeakSet<Promise<void>>();
 
 // The locale the screen shows: the reader's, once its catalog is in. Asked
 // for French before the chunk has arrived it starts the fetch and reads
 // English, then every translated string switches together when it lands.
 function shownLocale(): Locale {
   const wanted = resolveLocale(readLocaleChoice());
-  if (catalogInstalled(wanted)) {
+  if (catalogReady(wanted)) {
     return wanted;
   }
-  void loadCatalog(wanted).then(() => {
-    applyLocale();
-    emit();
-  });
+  const pending = loadCatalog(wanted);
+  if (!observedCatalogLoads.has(pending)) {
+    observedCatalogLoads.add(pending);
+    void pending.then(() => {
+      // A failure already leaves English on screen. Do not emit again or
+      // attach another callback on each snapshot read.
+      if (catalogReady(wanted) && resolveLocale(readLocaleChoice()) === wanted) {
+        applyLocale();
+        emit();
+      }
+    });
+  }
   return "en";
 }
 
@@ -153,7 +167,7 @@ export function applyLocale() {
     return;
   }
   const wanted = resolveLocale(readLocaleChoice());
-  document.documentElement.lang = localeTag(catalogInstalled(wanted) ? wanted : "en");
+  document.documentElement.lang = localeTag(catalogReady(wanted) ? wanted : "en");
 }
 
 export function useLocale(): Locale {

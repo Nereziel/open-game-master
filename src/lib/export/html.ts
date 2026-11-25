@@ -1,4 +1,4 @@
-import { escapeXml, type StoryDocument } from "@/lib/export/story-document";
+import { escapeXml, storyPresentation, type StoryDocument } from "@/lib/export/story-document";
 
 // Renders a StoryDocument as a self-contained, stylized HTML page: an indexed
 // table of contents that jumps to each chapter, chapter summaries with
@@ -18,12 +18,9 @@ function paragraphs(text: string): string {
 }
 
 export function renderStoryHtml(doc: StoryDocument): string {
-  const metaBits = [
-    doc.meta.theme,
-    `Level ${doc.meta.startingLevel} start`,
-    doc.meta.difficulty,
-    doc.meta.status,
-  ].filter(Boolean);
+  const view = storyPresentation(doc);
+  const { metaBits } = view;
+  const storyLang = escapeXml(view.storyLanguage);
 
   const toc = doc.chapters
     .map(
@@ -33,7 +30,7 @@ export function renderStoryHtml(doc: StoryDocument): string {
     .join("\n");
 
   const questLog = doc.questLog.length
-    ? `<section class="quests"><h2>Quest Log</h2><ul>${doc.questLog
+    ? `<section class="quests"><h2>${escapeXml(view.questLog)}</h2><ul>${doc.questLog
         .map((quest) => `<li>${escapeXml(quest)}</li>`)
         .join("")}</ul></section>`
     : "";
@@ -41,24 +38,24 @@ export function renderStoryHtml(doc: StoryDocument): string {
   const chapters = doc.chapters
     .map((chapter) => {
       const highlights = chapter.highlights.length
-        ? `<ul class="highlights">${chapter.highlights
+        ? `<ul class="highlights" lang="${storyLang}">${chapter.highlights
             .map((h) => `<li>${escapeXml(h)}</li>`)
             .join("")}</ul>`
         : "";
-      const summary = chapter.summary.trim() ? paragraphs(chapter.summary) : "";
+      const summary = chapter.summary.trim() ? `<div lang="${storyLang}">${paragraphs(chapter.summary)}</div>` : "";
       const transcript = chapter.transcript.length
-        ? `<div class="transcript"><h3>Transcript</h3>${chapter.transcript
+        ? `<div class="transcript"><h3>${escapeXml(view.transcript)}</h3>${chapter.transcript
             .map(
               (line) =>
                 `<p class="line ${line.kind}"><span class="speaker">${escapeXml(
                   line.speaker,
-                )}</span>${escapeXml(line.text).replace(/\n/g, "<br />")}</p>`,
+                 )}</span><span lang="${storyLang}">${escapeXml(line.text).replace(/\n/g, "<br />")}</span></p>`,
             )
             .join("\n")}</div>`
         : "";
       const act = chapter.actHeading
         ? `<section class="act"><h2 class="act-heading">${escapeXml(chapter.actHeading)}</h2>${
-            chapter.actRecap ? paragraphs(chapter.actRecap) : ""
+            chapter.actRecap ? `<div lang="${storyLang}">${paragraphs(chapter.actRecap)}</div>` : ""
           }</section>\n`
         : "";
       return `${act}<section class="chapter" id="${chapterAnchor(chapter.index)}">
@@ -70,16 +67,14 @@ export function renderStoryHtml(doc: StoryDocument): string {
     })
     .join("\n");
 
-  const exportedDate = new Date(doc.meta.exportedAt).toLocaleString();
-
   return `<!DOCTYPE html>
-<html lang="en">
+<html lang="${escapeXml(view.locale)}">
 <head>
 <meta charset="utf-8" />
 <meta name="viewport" content="width=device-width, initial-scale=1" />
 <meta name="description" content="${escapeXml(doc.premise).slice(0, 300)}" />
 <meta name="generator" content="Open Game Master" />
-<title>${escapeXml(doc.title)} — Story</title>
+<title>${escapeXml(view.title)}</title>
 <style>
   :root { color-scheme: dark; }
   * { box-sizing: border-box; }
@@ -117,18 +112,18 @@ export function renderStoryHtml(doc: StoryDocument): string {
 </head>
 <body>
 <div class="sheet">
-  <h1>${escapeXml(doc.title)}</h1>
+  <h1 lang="${storyLang}">${escapeXml(doc.title)}</h1>
   <p class="meta">${metaBits.map(escapeXml).join(" · ")}</p>
-  ${doc.premise.trim() ? `<p class="premise">${escapeXml(doc.premise)}</p>` : ""}
+  ${doc.premise.trim() ? `<p class="premise" lang="${storyLang}">${escapeXml(doc.premise)}</p>` : ""}
   <nav class="toc">
-    <h2>Contents</h2>
+    <h2>${escapeXml(view.contents)}</h2>
     <ol>
 ${toc}
     </ol>
   </nav>
   ${questLog}
   ${chapters}
-  <p class="footer">Exported from Open Game Master on ${escapeXml(exportedDate)}.</p>
+  <p class="footer">${escapeXml(view.footer)}</p>
 </div>
 </body>
 </html>`;

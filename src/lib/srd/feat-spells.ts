@@ -19,6 +19,7 @@ import type { Ability } from "@/lib/schemas/sheet";
 import { textKey } from "@/lib/language/text-logic";
 import { authoredFeatDesc, tableFeat } from "@/lib/srd/feat-effects";
 import { featChoice } from "@/lib/schemas/sheet";
+import { translate, translatePlural, type Locale, type MessageVars } from "@/lib/messages-logic";
 
 // The scores a spell is cast with.
 export type CastingAbility = "int" | "wis" | "cha";
@@ -243,31 +244,39 @@ export function featSpellSpec(desc: string): FeatSpellSpec {
   return spec;
 }
 
-const plural = (n: number, word: string) => `${n} ${word}${n === 1 ? "" : "s"}`;
-const ordinal = (level: number) => (level === 1 ? "1st" : level === 2 ? "2nd" : level === 3 ? "3rd" : `${level}th`);
+const ordinal = (level: number, locale: Locale = "en") => translate(locale, level === 1 ? "{level}st" : level === 2 ? "{level}nd" : level === 3 ? "{level}rd" : "{level}th", { level });
 
 // What the player has yet to name for the feat's spells, as the sentence
 // the gate shows, or null.
-export function featSpellsOwed(feat: string, spec: FeatSpellSpec, picks: FeatSpellPicks | undefined): string | null {
+export function featSpellsOwed(feat: string, spec: FeatSpellSpec, picks: FeatSpellPicks | undefined, locale: Locale = "en"): string | null {
   if (!featSpellsAnything(spec)) {
     return null;
   }
   const has = (list: string[] | undefined) => (list ?? []).filter((entry) => entry && entry.trim()).length;
   const owed: string[] = [];
   if (spec.listChoice && !(picks?.list ?? "").trim()) {
-    owed.push("a class list");
+    owed.push(translate(locale, "a class list"));
   }
   if (spec.ability === "choice" && !picks?.ability) {
-    owed.push("a spellcasting ability");
+    owed.push(translate(locale, "a spellcasting ability"));
   }
   if (spec.cantrips > has(picks?.cantrips)) {
-    owed.push(plural(spec.cantrips - has(picks?.cantrips), spec.attackCantrip ? "attack cantrip" : "cantrip"));
+    const count = spec.cantrips - has(picks?.cantrips);
+    owed.push(spec.attackCantrip
+      ? translatePlural(locale, "{count} attack cantrip", "{count} attack cantrips", { count })
+      : translatePlural(locale, "{count} cantrip", "{count} cantrips", { count }));
   }
   if (spec.spells > has(picks?.spells)) {
-    const kind = spec.schools.length ? `${spec.schools.join(" or ")} ` : "";
-    owed.push(plural(spec.spells - has(picks?.spells), `${ordinal(spec.spellLevel)}-level ${kind}${spec.ritualBook ? "ritual " : ""}spell`));
+    const count = spec.spells - has(picks?.spells);
+    const level = ordinal(spec.spellLevel, locale);
+    const schools = spec.schools.length ? translate(locale, "{schools} ", {
+      schools: spec.schools.map((school) => translate(locale, school, { context: "glossary.option" })).join(translate(locale, " or ")),
+    }) : "";
+    owed.push(spec.ritualBook
+      ? translatePlural(locale, "{count} {level}-level {schools}ritual spell", "{count} {level}-level {schools}ritual spells", { count, level, schools })
+      : translatePlural(locale, "{count} {level}-level {schools}spell", "{count} {level}-level {schools}spells", { count, level, schools }));
   }
-  return owed.length ? `${feat}: pick ${owed.join(", ")}.` : null;
+  return owed.length ? translate(locale, "{feat}: pick {choices}.", { feat, choices: owed.join(", ") }) : null;
 }
 
 // A spell the legality judge can see: its level, class lists, school and
@@ -304,12 +313,15 @@ export type FeatSpellInput = {
   // With strict: a pick left open is owed (in `owed`), not wrong; what is
   // named is still checked (a file from before the feat asked, #430).
   picksMayWait?: boolean;
+  locale?: Locale;
 };
 
 export type FeatSpellVerdict = { grants: FeatSpellGrant[]; problems: string[]; owed?: string[] };
 
 // The spells every feat on the sheet teaches, with the picks as recorded.
 export function featSpellGrants(input: FeatSpellInput): FeatSpellVerdict {
+  const locale = input.locale ?? "en";
+  const t = (key: string, vars?: MessageVars) => translate(locale, key, vars);
   const problems: string[] = [];
   const owedPicks: string[] = [];
   const grants: FeatSpellGrant[] = [];
@@ -320,14 +332,14 @@ export function featSpellGrants(input: FeatSpellInput): FeatSpellVerdict {
     }
     const picks = featChoice(input.choices, feat.name) ?? {};
     if (input.strict) {
-      const owed = featSpellsOwed(feat.name, spec, picks);
+      const owed = featSpellsOwed(feat.name, spec, picks, input.locale);
       if (owed) {
         (input.picksMayWait ? owedPicks : problems).push(owed);
       }
     }
     const list = spec.listChoice ? textKey(picks.list ?? "") || null : null;
     if (input.strict && list && spec.lists.length && !spec.lists.includes(list)) {
-      problems.push(`${feat.name}'s spells come from the ${spec.lists.join(", ")} list; "${picks.list}" is not one of them.`);
+      problems.push(t("{feat}'s spells come from the {lists} list; \"{list}\" is not one of them.", { feat: feat.name, lists: spec.lists.join(", "), list: picks.list ?? "" }));
     }
     const allowedLists = list ? [list] : spec.lists;
     const check = (name: string, level: number, kind: string): KnownSpell | null => {
@@ -336,14 +348,14 @@ export function featSpellGrants(input: FeatSpellInput): FeatSpellVerdict {
         return known;
       }
       if (!known) {
-        problems.push(`"${name}" is not a spell the server knows; ${feat.name}'s ${kind} is picked from the spell list.`);
+        problems.push(t("\"{spell}\" is not a spell the server knows; {feat}'s {kind} is picked from the spell list.", { spell: name, feat: feat.name, kind: t(kind) }));
         return null;
       }
       if (known.level !== level) {
-        problems.push(`${known.name} is a ${known.level === 0 ? "cantrip" : `level ${known.level} spell`}; ${feat.name}'s ${kind} is ${level === 0 ? "a cantrip" : `a ${ordinal(level)}-level spell`}.`);
+        problems.push(t("{spell} is a {actual}; {feat}'s {kind} is {expected}.", { spell: known.name, actual: known.level === 0 ? t("cantrip") : t("level {level} spell", { level: known.level }), feat: feat.name, kind: t(kind), expected: level === 0 ? t("a cantrip") : t("a {level}-level spell", { level: ordinal(level, locale) }) }));
       }
       if (allowedLists.length && !known.classes.some((entry) => allowedLists.includes(textKey(entry)))) {
-        problems.push(`${known.name} is not on the ${allowedLists.join(" or ")} list, which is where ${feat.name}'s ${kind} comes from.`);
+        problems.push(t("{spell} is not on the {lists} list, which is where {feat}'s {kind} comes from.", { spell: known.name, lists: allowedLists.join(t(" or ")), feat: feat.name, kind: t(kind) }));
       }
       return known;
     };
@@ -355,10 +367,10 @@ export function featSpellGrants(input: FeatSpellInput): FeatSpellVerdict {
     for (const name of picked) {
       const known = check(name, spec.spellLevel, spec.ritualBook ? "ritual spell" : "spell");
       if (input.strict && known && spec.schools.length && known.school && !spec.schools.includes(textKey(known.school))) {
-        problems.push(`${known.name} is a ${textKey(known.school)} spell; ${feat.name}'s spell is picked from ${spec.schools.join(" or ")}.`);
+        problems.push(t("{spell} is a {school} spell; {feat}'s spell is picked from {schools}.", { spell: known.name, school: translate(locale, textKey(known.school), { context: "glossary.option" }), feat: feat.name, schools: spec.schools.map((school) => translate(locale, school, { context: "glossary.option" })).join(t(" or ")) }));
       }
       if (input.strict && known && spec.ritualBook && known.ritual === false) {
-        problems.push(`${known.name} has no ritual tag; ${feat.name}'s book holds rituals only.`);
+        problems.push(t("{spell} has no ritual tag; {feat}'s book holds rituals only.", { spell: known.name, feat: feat.name }));
       }
     }
     const sorted = (names: string[], cantrip: boolean) =>

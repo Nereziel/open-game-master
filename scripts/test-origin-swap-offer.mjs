@@ -52,7 +52,7 @@ function sorcerer(subclass, level, features = []) {
 }
 
 // The route's spells step for the next level, with the request the dialog sends.
-function door(before, body) {
+function door(before, body, locale = "en") {
   return levelUpSpells({
     before,
     level: before.level + 1,
@@ -63,15 +63,16 @@ function door(before, body) {
     freeCantrips: 0,
     features: before.features,
     spellOf,
+    locale,
     picks: { kind: "picks", spells: body.levelUpSpells ?? [], forget: body.levelUpForget },
   });
 }
 
 // The dialog's offer, read as the dialog reads it.
-function offerFor(before) {
+function offerFor(before, locale = "en") {
   const after = { ...before, level: before.level + 1 };
   const held = [...before.known, ...before.cantrips];
-  return originSwapOffer(after, { top: maxSpellLevelOf(after), held, candidates: spells, spellOf });
+  return originSwapOffer(after, { top: maxSpellLevelOf(after), held, candidates: spells, spellOf, locale });
 }
 
 function recorded(result) {
@@ -166,4 +167,41 @@ test("a held choice the level may change is shown as its option is written", () 
   assert.deepEqual(offer.options.map((name) => offer.shown[name]), ["Sea", "Tundra"]);
 });
 
+
+await import("../src/lib/i18n/server-catalogs.ts");
+test("origin swap refusals localize while successful swaps and inputs stay canonical", () => {
+  const before = sorcerer("Aberrant Mind", 5);
+  const snapshot = structuredClone(before);
+  const cases = [
+    [{ levelUpForget: "Calm Emotions", levelUpSpells: [] }, "Calm Emotions is one of the spells of Aberrant Mind's Psionic Spells: to give it up, name the spell that takes its place in levelUpSpells (a divination or enchantment spell of the same level from the sorcerer, warlock or wizard list). Nothing was changed."],
+    [{ levelUpForget: "Calm Emotions", levelUpSpells: ["Sleep"] }, "Sleep cannot take the place of Calm Emotions: it is a level 1 spell, and the spell it replaces is a level 2 spell. Aberrant Mind's Psionic Spells replaces one of its spells with a divination or enchantment spell of the same level from the sorcerer, warlock or wizard list. Nothing was changed."],
+  ];
+  for (const [body, english] of cases) {
+    assert.deepEqual(door(before, body), { error: english });
+    const errors = ["en", "cs", "fr"].map(locale => door(before, body, locale).error);
+    assert.equal(new Set(errors).size, 3);
+    assert.ok(errors.every(error => typeof error === "string" && !/\{\w+\}/.test(error)));
+  }
+  const valid = originSwapRequest({ from: "Calm Emotions", to: "Suggestion" }, []);
+  const expected = door(before, valid);
+  assert.deepEqual(recorded(expected), [{ from: "Calm Emotions", to: "Suggestion" }]);
+  for (const locale of ["en", "cs", "fr"]) assert.deepEqual(door(before, valid, locale), expected);
+  assert.deepEqual(before, snapshot);
+});
+test("origin offer notes localize without changing choices, labels or request records", () => {
+  for (const [origin, level, features] of ORIGINS) {
+    const before = sorcerer(origin, level, features);
+    const expected = offerFor(before);
+    assert.ok(expected?.note);
+    const { note: english, ...canonical } = expected;
+    const notes = ["en", "cs", "fr"].map(locale => {
+      const { note, ...choices } = offerFor(before, locale);
+      assert.deepEqual(choices, canonical);
+      assert.ok(note && !/\{\w+\}/.test(note));
+      return note;
+    });
+    assert.equal(notes[0], english);
+    assert.equal(new Set(notes).size, 3);
+  }
+});
 console.log(`${passed} origin swap offer checks passed.`);

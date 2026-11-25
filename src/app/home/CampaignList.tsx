@@ -9,7 +9,7 @@ import { useLocale, useT } from "@/lib/locale";
 import { CampaignCover } from "@/components/CampaignCover";
 import { Tooltip } from "@/components/ui/Tooltip";
 import { ContextMenu, type ContextMenuItem } from "@/components/ui/ContextMenu";
-import { ExportMenu } from "@/app/campaigns/[campaignId]/ExportMenu";
+import { ExportMenu, downloadStory } from "@/app/campaigns/[campaignId]/ExportMenu";
 import { slotLine, statusLabel, steersStory, type HomeCampaign } from "@/app/home/types";
 
 // "Your tables": every campaign this account sits at, laid out as save
@@ -104,9 +104,9 @@ function SaveSlot({
     ...(campaign.status === "active" && steersStory(campaign, userId)
       ? [{ id: "prep", label: t("Open prep"), glyph: "tab-journal", onSelect: () => router.push(`/campaigns/${campaign.id}?view=prep`) }]
       : []),
-    { id: "export-html", label: t("Export story: HTML page"), glyph: "ui-export", separated: true, onSelect: () => downloadStory(campaign.id, "html") },
-    { id: "export-odt", label: t("Export story: OpenDocument (.odt)"), glyph: "ui-export", onSelect: () => downloadStory(campaign.id, "odt") },
-    { id: "export-docx", label: t("Export story: Word (.docx)"), glyph: "ui-export", onSelect: () => downloadStory(campaign.id, "docx") },
+    { id: "export-html", label: t("Export story: HTML page"), glyph: "ui-export", separated: true, onSelect: () => downloadStory(campaign.id, "html", locale) },
+    { id: "export-odt", label: t("Export story: OpenDocument (.odt)"), glyph: "ui-export", onSelect: () => downloadStory(campaign.id, "odt", locale) },
+    { id: "export-docx", label: t("Export story: Word (.docx)"), glyph: "ui-export", onSelect: () => downloadStory(campaign.id, "docx", locale) },
     ...(steersStory(campaign, userId)
       ? [{ id: "duplicate", label: t("Duplicate"), glyph: "ui-duplicate", separated: true, disabled: cloning, onSelect: onClone }]
       : []),
@@ -145,7 +145,7 @@ function SaveSlot({
             {campaign.maxPlayers === 1 ? t(" · solo") : ""}
           </span>
         </Link>
-        <span className="ts-slot-actions">
+        <span className="ts-slot-actions tap-row">
           <ExportMenu campaignId={campaign.id} variant="tile-icon" />
           {steersStory(campaign, userId) ? (
             <Tooltip content={t("Copy the world into a new campaign, without the transcript")}>
@@ -186,13 +186,4 @@ function SaveSlot({
   );
 }
 
-// The download ExportMenu performs for the same three formats: the server
-// sets Content-Disposition, so a bare anchor click saves the file.
-function downloadStory(campaignId: string, format: "html" | "odt" | "docx") {
-  const anchor = document.createElement("a");
-  anchor.href = `/api/campaigns/${campaignId}/export?format=${format}`;
-  anchor.download = "";
-  document.body.appendChild(anchor);
-  anchor.click();
-  anchor.remove();
-}
+

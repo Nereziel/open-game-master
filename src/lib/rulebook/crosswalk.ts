@@ -136,30 +136,29 @@ function enTitleOf(id: string): string | undefined {
 }
 
 export function crosswalkFor(page: Pick<RulebookPage, "id" | "kind" | "title">, locale: BookLocale = "en"): Crosswalk {
-  const french = locale === "fr";
-  const walk = crosswalkEn(french ? { ...page, title: enTitleOf(page.id) ?? page.title } : page);
-  if (!french) return walk;
-  const fr = WHERE_FR[page.id];
-  if (fr) return { ...walk, where: fr.where, ...(fr.template ? { template: fr.template } : {}) };
+  const walk = crosswalkEn({ ...page, title: enTitleOf(page.id) ?? page.title });
+  const labels = CROSSWALK_TEXT[locale];
+  if (!labels) return walk;
+  const specific = Object.hasOwn(labels.pages, page.id) ? labels.pages[page.id] : undefined;
+  if (specific) return { ...walk, where: specific.where, ...(specific.template ? { template: specific.template } : {}) };
   switch (page.kind) {
     case "spell":
-      return { ...walk, where: SPELL_WHERE_FR[walk.support === "engine" ? "engine" : "editable"] };
+      return { ...walk, where: labels.spell[walk.support === "engine" ? "engine" : "editable"] };
     case "item":
       return {
         ...walk,
-        where:
-          walk.support === "engine"
-            ? ITEM_WHERE_FR.engine.replace("{fields}", (walk.runs ?? []).map((key) => FIELD_LABELS_FR[key] ?? key).join(", "))
-            : ITEM_WHERE_FR.editable,
+        where: walk.support === "engine"
+          ? labels.item.engine.replace("{fields}", (walk.runs ?? []).map((key) => labels.fields[key] ?? key).join(", "))
+          : labels.item.editable,
       };
     case "monster":
-      return { ...walk, where: MONSTER_WHERE_FR };
+      return { ...walk, where: labels.monster };
     case "race":
-      return { ...walk, where: RACE_WHERE_FR };
+      return { ...walk, where: labels.race };
     case "class":
-      return { ...walk, where: CLASS_WHERE_FR };
+      return { ...walk, where: labels.class };
     default:
-      return { ...walk, where: walk.where === "Read in the book" ? READ_WHERE_FR : walk.where };
+      return { ...walk, where: walk.where === "Read in the book" ? labels.read : walk.where };
   }
 }
 
@@ -253,6 +252,178 @@ const FIELD_LABELS_FR: Record<string, string> = {
   spells: "sorts",
 };
 
+// Presentation dictionaries only; all mechanics are derived above in English.
+type CrosswalkText = {
+  pages: Record<string, { where: string; template?: string }>;
+  spell: Record<"engine" | "editable", string>;
+  item: Record<"engine" | "editable", string>;
+  monster: string;
+  race: string;
+  class: string;
+  read: string;
+  fields: Record<string, string>;
+};
+
+const CROSSWALK_TEXT: Partial<Record<BookLocale, CrosswalkText>> = {
+  fr: {
+    pages: WHERE_FR, spell: SPELL_WHERE_FR, item: ITEM_WHERE_FR,
+    monster: MONSTER_WHERE_FR, race: RACE_WHERE_FR, class: CLASS_WHERE_FR,
+    read: READ_WHERE_FR, fields: FIELD_LABELS_FR,
+  },
+  cs: {
+    "pages": {
+      "racial-traits": {
+        "where": "Dílna: Rasy; tvorba postavy přidělí všechny uvedené rasové rysy."
+      },
+      "beyond-1st-level": {
+        "where": "Postup na vyšší úroveň: životy podle metody skupiny, schopnosti a zvýšení hodnot vlastností."
+      },
+      "multiclassing": {
+        "where": "Postup na vyšší úroveň, pokud skupina dovoluje kombinování povolání: předpoklady, zdatnosti a pozice kouzel."
+      },
+      "alignment": {
+        "where": "Údaj v deníku postavy a seznamu postav; žádné pravidlo jej nevyhodnocuje."
+      },
+      "languages": {
+        "where": "Tvorba postavy: jazyky z rasy, zázemí a odborností."
+      },
+      "inspiration": {
+        "where": "PJ ji uděluje pomocí set_condition; lze ji utratit za výhodu k hodu."
+      },
+      "backgrounds": {
+        "where": "Dílna: Zázemí; tvorba postavy přidělí zdatnosti v dovednostech a s pomůckami, jazyky, vybavení a mince."
+      },
+      "coinage": {
+        "where": "Peníze: nákup, modify_gold."
+      },
+      "selling-treasure": {
+        "where": "Nákup a prodej za ceny skupiny, v obchodě i mimo něj."
+      },
+      "armor": {
+        "where": "Pravidla zbrojí (TZ, Síla, Nenápadnost, oblékání a svlékání); Dílna: Předměty."
+      },
+      "weapons": {
+        "where": "Pravidla útoků (vlastnosti, dostřel, vytříbená a všestranná zbraň); Dílna: Předměty."
+      },
+      "adventuring-gear": {
+        "where": "Předměty s hmotností a cenou; Dílna: Předměty."
+      },
+      "tools": {
+        "where": "Tvorba postavy: zdatnost s pomůckami; příslušná ověření využívají zdatnostní bonus."
+      },
+      "mounts-and-vehicles": {
+        "where": "Jízdní zvířata: mount_up a boj v sedle. Dopravní prostředky řeší vyprávění."
+      },
+      "trade-goods": {
+        "where": "Obchodní zboží si při prodeji zachovává plnou hodnotu (trade-value.ts)."
+      },
+      "expenses": {
+        "where": "set_lifestyle a mezidobí účtují náklady."
+      },
+      "feats": {
+        "where": "Dílna: Odbornosti; fungují jako odbornosti podporované herním systémem."
+      },
+      "using-ability-scores": {
+        "where": "Ověření vlastností, záchranné hody, střety a pasivní hodnoty."
+      },
+      "adventuring": {
+        "where": "Cestování, odpočinek, pád, dušení, vidění a světlo."
+      },
+      "combat": {
+        "where": "Bojový systém: iniciativa, akce, útoky, zranění a záchranné hody proti smrti."
+      },
+      "spellcasting": {
+        "where": "Kontrola sesílání: pozice kouzel, složky, soustředění a rituály."
+      },
+      "spell-lists": {
+        "where": "Seznamy kouzel při tvorbě postavy a postupu na vyšší úroveň."
+      },
+      "traps": {
+        "where": "Dílna: Nebezpečí (pasti), vyhodnocuje apply_hazard."
+      },
+      "diseases": {
+        "where": "Dílna: Nebezpečí (nemoci), vyhodnocuje afflict."
+      },
+      "madness": {
+        "where": "afflict: krátkodobé, dlouhodobé a trvalé šílenství podle tabulek."
+      },
+      "objects": {
+        "where": "damage_object: TZ podle materiálu, životy podle velikosti, práh zranění."
+      },
+      "poisons": {
+        "where": "Dílna: Nebezpečí (jedy), vyhodnocuje afflict."
+      },
+      "magic-items": {
+        "where": "Dílna: Předměty (sladění, účinky, dodatečné účinky, dávky a kouzla)."
+      },
+      "sentient-magic-items": {
+        "where": "Dílna: Předměty (vnímající předmět); konflikt řeší PJ střetem Charismatu."
+      },
+      "artifacts": {
+        "where": "Dílna: Předměty pro jejich účinky; zničení a vlastnosti řeší PJ."
+      },
+      "monster-statistics": {
+        "where": "Editor bestiáře, hodnocení podle tabulky Příručky Pána jeskyně."
+      },
+      "nonplayer-characters": {
+        "where": "Seznam postav se statistikami z bestiáře."
+      },
+      "conditions": {
+        "where": "Systém stavů."
+      },
+      "gods-of-the-multiverse": {
+        "where": "Záznamy tradic a WorldForge pro bohy daného světa."
+      },
+      "the-planes-of-existence": {
+        "where": "Tradice; kouzla pro přechod mezi sférami řeší vyprávění."
+      },
+      "legal-information": {
+        "where": "Licence, pod níž jsou pravidla vydána."
+      },
+      "half-dragon-template": {
+        "where": "Bestiář: tvorba z katalogu pomocí šablony polodraka (smysly, odolnost, drakonština a dech dračího předka)."
+      },
+      "customizing-npcs": {
+        "where": "Bestiář: tvorba z katalogu (základ rasy a povolání); identita v seznamu postav."
+      },
+      "ammunition-1-2-or-3": {
+        "where": "Dílna: Předměty; sladění a hmotnost se evidují, účinky vyhodnocuje PJ.",
+        "template": "Skupina tří předmětů (+1, +2, +3): zkopíruj požadovaný a nastav bonus."
+      },
+      "armor-1-2-or-3": {
+        "where": "Dílna: Předměty; sladění a hmotnost se evidují, účinky vyhodnocuje PJ.",
+        "template": "Skupina tří předmětů (+1, +2, +3): zkopíruj zbroj a nastav její bonus."
+      },
+      "shield-1-2-or-3": {
+        "where": "Dílna: Předměty; sladění a hmotnost se evidují, účinky vyhodnocuje PJ.",
+        "template": "Skupina tří předmětů (+1, +2, +3): zkopíruj štít a nastav jeho bonus."
+      }
+    },
+    "spell": {
+      "engine": "Nástroje sesílání vyhodnocují hody (záchranný hod nebo útok, zranění, stav, oblast); Dílna: Kouzla pro kopii se stejným fungováním.",
+      "editable": "Kontrola sesílání spotřebuje pozici kouzla a ověří složky; účinky řeší vyprávění. Dílna: Kouzla pro vytvoření kopie."
+    },
+    "item": {
+      "engine": "Dílna: Předměty; herní systém vyhodnocuje tyto údaje: {fields}.",
+      "editable": "Dílna: Předměty; sladění a hmotnost se evidují, účinky vyhodnocuje PJ."
+    },
+    "monster": "Bojový systém používá statistiky nestvůry; bestiář umožňuje zkopírovat celý záznam včetně původního textu.",
+    "race": "Tvorba postavy přidělí rasové rysy; Dílna: Rasy pro kopii nebo novou variantu.",
+    "class": "Povolání je součástí aplikace a funguje při tvorbě postavy a postupu na vyšší úroveň; Dílna: Archetypy pro nové varianty (tvorba základního povolání není podporována).",
+    "read": "K přečtení v pravidlech.",
+    "fields": {
+      "weapon": "statistiky zbraně",
+      "armor": "statistiky zbroje",
+      "effects": "účinky",
+      "weaponRiders": "dodatečné účinky zbraně",
+      "armorRiders": "dodatečné účinky zbroje",
+      "charges": "dávky",
+      "checks": "ověření vlastností",
+      "spells": "kouzla"
+    }
+  },
+};
+
 // The English lines, the book’s own.
 function crosswalkEn(page: Pick<RulebookPage, "id" | "kind" | "title">): Crosswalk {
   const base = { page: page.id, kind: page.kind };
@@ -262,21 +433,21 @@ function crosswalkEn(page: Pick<RulebookPage, "id" | "kind" | "title">): Crosswa
   }
   switch (page.kind) {
     case "spell":
-      return { ...base, editor: "spell", ...spellSupport(page.title) };
+      return { ...base, editor: "spell", catalogName: page.title, ...spellSupport(page.title) };
     case "item": {
       const name = catalogName ?? page.title;
       return {
         ...base,
         editor: "item",
-        ...(catalogName ? { catalogName } : {}),
+        catalogName: name,
         ...(FAMILIES[page.id] ? { template: FAMILIES[page.id] } : {}),
         ...itemSupport(name),
       };
     }
     case "monster":
-      return { ...base, editor: "monster", ...(catalogName ? { catalogName } : {}), support: "engine", where: "The fight engine runs its block; the Bestiary copies it whole, printed text included" };
+      return { ...base, editor: "monster", catalogName: catalogName ?? page.title, support: "engine", where: "The fight engine runs its block; the Bestiary copies it whole, printed text included" };
     case "race":
-      return { ...base, editor: "race", support: "structured", where: "The builder grants its traits; Workshop: Species for a copy or a new one" };
+      return { ...base, editor: "race", catalogName: page.title, support: "structured", where: "The builder grants its traits; Workshop: Species for a copy or a new one" };
     case "class":
       return {
         ...base,

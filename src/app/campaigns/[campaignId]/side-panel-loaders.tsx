@@ -1,6 +1,7 @@
 import { memo } from "react";
 import type { TableTabId } from "@/lib/dm/table-tabs";
 import { preloadable } from "@/lib/preloadable";
+import { useT } from "@/lib/locale";
 
 // The side panels as separate downloads (SidePanelRouter.tsx), and the one
 // call that fetches them all ahead of need: SessionView makes it once the
@@ -68,5 +69,6 @@ export function preloadSidePanels(tabs?: ReadonlyArray<TableTabId>): void {
 
 // Shown in a panel's place for the moment its download is still on the way.
 export function PanelLoading() {
-  return <div className="skeleton-block h-28 rounded-xl" aria-label="Loading" role="status" />;
+  const t = useT();
+  return <div className="skeleton-block h-28 rounded-xl" aria-label={t("Loading")} role="status" />;
 }

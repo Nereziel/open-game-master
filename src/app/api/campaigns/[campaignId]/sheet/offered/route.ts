@@ -67,7 +67,7 @@ export async function POST(
     return Response.json({ error: taken }, { status: 409 });
   }
   const level = door.level;
-  const admitted = admitLibraryForSeat(offer.character, door.campaign, context.user.id, level, parsed.data.picks);
+  const admitted = admitLibraryForSeat(offer.character, door.campaign, context.user.id, level, parsed.data.picks, t.locale);
   if (!admitted.ok) {
     return refusal(admitted.problems);
   }

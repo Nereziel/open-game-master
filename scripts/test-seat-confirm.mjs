@@ -70,6 +70,75 @@ await test("a hero going down names the improvements, feats and spells it gives 
   assert.ok(changes.includes("Spell slots: 2 × 1st."), changes.join(" | "));
 });
 
+await test("join confirmation uses EN/FR/CS plural forms and preserves custom names", async () => {
+  const { installCatalog, translate } = await import("../src/lib/i18n/translate.ts");
+  const spellWords = {
+    en: ["Gives back 1 spell this level cannot hold", "Gives back 2 spells this level cannot hold", "Gives back 5 spells this level cannot hold"],
+    fr: ["Rend 1 sort que ce niveau ne permet pas de conserver ", "Rend 2 sorts que ce niveau ne permet pas de conserver ", "Rend 5 sorts que ce niveau ne permet pas de conserver "],
+    cs: ["Vrací 1 kouzlo, které tato úroveň nemůže mít", "Vrací 2 kouzla, která tato úroveň nemůže mít", "Vrací 5 kouzel, která tato úroveň nemůže mít"],
+  };
+  const asiWords = {
+    en: ["Ability Score Improvement this", "Ability Score Improvements this", "Ability Score Improvements this"],
+    fr: ["amélioration de caractéristique", "améliorations de caractéristique", "améliorations de caractéristique"],
+    cs: ["zvýšení vlastností, které", "zvýšení vlastností, která", "zvýšení vlastností, která"],
+  };
+  for (const locale of ["en", "fr", "cs"]) {
+    if (locale !== "en") installCatalog(locale, JSON.parse(read(`src/lib/i18n/${locale}.json`)));
+    const t = (key, vars) => translate(locale, key, vars);
+    for (const [i, count] of [1, 2, 5].entries()) {
+      const names = Array.from({ length: count }, (_, n) => `Custom spell ${n + 1}`);
+      const feats = [`Custom feat ${count}`];
+      const stored = {
+        ...LEGAL_FIGHTER, class: "wizard", feats,
+        asiChoices: Array.from({ length: count }, () => ({ mode: "feat", feat: feats[0] })),
+        spellcasting: { ability: "int", slots: {}, known: names, prepared: [], cantrips: [] },
+      };
+      const seated = { ...stored, feats: [], asiChoices: [], spellcasting: { ...stored.spellcasting, known: [] } };
+      const before = JSON.stringify([stored, seated]);
+      const { changes } = joinChanges(stored, 20, seated, 1, t, locale);
+      assert.ok(changes.includes(`${spellWords[locale][i]}: ${names.join(", ")}.`), changes.join(" | "));
+      assert.ok(changes.some((line) => line.includes(asiWords[locale][i]) && line.includes(feats[0])), changes.join(" | "));
+      const noFeats = joinChanges({ ...stored, feats: [] }, 20, seated, 1, t, locale).changes;
+      assert.ok(noFeats.some((line) => line.includes(asiWords[locale][i]) && !line.includes(feats[0])), noFeats.join(" | "));
+      assert.equal(JSON.stringify([stored, seated]), before);
+    }
+  }
+});
+
+await test("owed choices keep the same groups and counts in EN, FR and CS", async () => {
+  const { installCatalog, translate } = await import("../src/lib/i18n/translate.ts");
+  const { owedChoiceGroups, owedChoicesSentences, joinOwedLeft, joinOwedNote } = await import("../src/lib/srd/owed-choices.ts");
+  const { remainingWords } = await import("../src/lib/srd/options.ts");
+  const hero = { ...LEGAL_FIGHTER, level: 4, subclass: "", classes: [] };
+  const before = JSON.stringify(hero);
+  const baseline = owedChoiceGroups(hero);
+  for (const [locale, subclass, half] of [
+    ["en", "subclass for fighter", "one more humanoid race to pair"],
+    ["cs", "Archetyp povolání", "ještě jeden humanoidní druh do kombinace"],
+    ["fr", "sous-classe", "encore une race humanoïde à associer"],
+  ]) {
+    if (locale !== "en") installCatalog(locale, JSON.parse(read(`src/lib/i18n/${locale}.json`)));
+    const t = (key, vars) => translate(locale, key, vars);
+    const groups = owedChoiceGroups(hero, {}, t, locale);
+    assert.equal(groups.levelUp.length, baseline.levelUp.length);
+    assert.equal(groups.onSheet.length, baseline.onSheet.length);
+    assert.ok(groups.levelUp.some(line => line.includes(subclass)), groups.levelUp.join(" | "));
+    assert.equal(remainingWords({ remaining: 0.5 }, t, false), half);
+    const preview = joinChanges(hero, 4, hero, 4, t, locale);
+    assert.deepEqual(preview.owed, [...groups.levelUp, ...groups.onSheet]);
+    assert.deepEqual(preview.owedOnSheet, groups.onSheet);
+    const own = { levelUp: ["Custom {name}"], onSheet: ["Homebrew: Storm"] };
+    for (const where of ["here", "owner", "level-up"]) {
+      const lines = owedChoicesSentences(own, where, t);
+      assert.ok(lines[0].includes(own.levelUp[0]));
+      assert.ok(lines[1].includes(own.onSheet[0]));
+    }
+    assert.ok(joinOwedNote("Custom {name}", ["A", "B"], ["B"], t).includes("Custom {name}"));
+    assert.equal(joinOwedLeft(["A", "B"], ["B"], t).length, 2);
+    assert.equal(JSON.stringify(hero), before);
+  }
+});
+
 // ---- the chooser's order ----
 
 await test("the chooser lists the player's own heroes, then an adventure's pregens, never an ally", () => {
@@ -122,6 +191,10 @@ await test("Help me build opens the quiz at the table's level, and its hero goes
   const pickers = read("src/app/campaigns/[campaignId]/OwedPicksFields.tsx");
   assert.match(pickers, /<AsiFeatEditor/);
   assert.match(pickers, /<FeatChoicesFields/);
+  for (const key of ["a subclass for {class} (due at {class} level {level})", "Class skills (pick {count})", "{count} Ability Score Improvement (two points, or a feat)", "{count} Ability Score Improvements (two points, or a feat)", "Expertise: pick {count} of {name}'s proficient skills to DOUBLE their proficiency bonus in:"]) {
+    assert.ok(pickers.includes(key), "the join picker uses the shared message: " + key);
+  }
+  assert.ok(pickers.includes('id === THIEVES_TOOLS ? t("Thieves\' tools") : skillLabel(id, locale)'));
 });
 
 // ---- the preview route against the join ----

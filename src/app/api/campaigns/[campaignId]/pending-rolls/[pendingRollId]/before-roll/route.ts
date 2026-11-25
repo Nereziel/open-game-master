@@ -1,4 +1,5 @@
 import { z } from "zod";
+import { requestT } from "@/lib/request-locale";
 import { isErrorResponse, requireMember } from "@/lib/campaign-api";
 import { getPendingRoll, publicPendingRoll, setPendingAdvantage, setPendingCarry, setPendingCombatNote } from "@/lib/db/dm-turns";
 import { getActiveEncounter } from "@/lib/db/encounters";
@@ -27,6 +28,7 @@ export async function POST(
   request: Request,
   { params }: { params: Promise<{ campaignId: string; pendingRollId: string }> },
 ) {
+  const t = requestT(request);
   const { campaignId, pendingRollId } = await params;
   const context = await requireMember(campaignId);
   if (isErrorResponse(context)) {
@@ -34,37 +36,37 @@ export async function POST(
   }
   const parsed = choiceSchema.safeParse(await request.json().catch(() => ({})));
   if (!parsed.success) {
-    return Response.json({ error: "Invalid choice." }, { status: 400 });
+    return Response.json({ error: t("Invalid choice.") }, { status: 400 });
   }
-  const paused = refuseDuringBreak(campaignId);
+  const paused = refuseDuringBreak(campaignId, undefined, request);
   if (paused) {
     return paused;
   }
   const pending = getPendingRoll(pendingRollId);
   if (!pending || pending.campaignId !== campaignId) {
-    return Response.json({ error: "Roll not found." }, { status: 404 });
+    return Response.json({ error: t("Roll not found.") }, { status: 404 });
   }
   if (pending.status !== "pending") {
-    return Response.json({ error: "That roll was already resolved." }, { status: 409 });
+    return Response.json({ error: t("That roll was already resolved.") }, { status: 409 });
   }
   if (pending.userId !== context.user.id) {
-    return Response.json({ error: "This is not your roll." }, { status: 403 });
+    return Response.json({ error: t("This is not your roll.") }, { status: 403 });
   }
   const { use } = parsed.data;
   const feature = BEFORE_ROLL_FEATURES[use];
   if (pending.thrown) {
-    return Response.json({ error: `The dice have already landed, and ${feature} is used before the roll.` }, { status: 409 });
+    return Response.json({ error: t("The dice have already landed, and {feature} is used before the roll.", { feature }) }, { status: 409 });
   }
   const sheet = pending.characterId ? getSheetById(pending.characterId) : null;
   if (!sheet || sheet.userId !== context.user.id) {
-    return Response.json({ error: `Only the character's own player uses their ${feature}.` }, { status: 403 });
+    return Response.json({ error: t("Only the character's own player uses their {feature}.", { feature }) }, { status: 403 });
   }
   // Asked again as the button is pressed: the use, the reaction, the omen
   // and, for Restore Balance, the disadvantage the roll is about to have.
   const used = pending.carry?.before ?? [];
   const offered = ownBeforeRollChoices(sheet, { kind: pending.kind, expression: pending.expression, reactionFree: reactionFreeFor(campaignId, sheet.id), used });
   if (pending.attack || !offered.some((choice) => choice.id === use)) {
-    return Response.json({ error: `${feature} is not on offer for this roll: it is spent, the reaction is, or the roll has nothing for it to change.` }, { status: 409 });
+    return Response.json({ error: t("{feature} is not on offer for this roll: it is spent, the reaction is, or the roll has nothing for it to change.", { feature }) }, { status: 409 });
   }
   const expression = use === "restore_balance" ? singleD20Expression(pending.expression) : `${pending.expression}+1d${OMEN_SIDES}`;
   // The roll first, so a roll resolved a moment ago never costs the use.
@@ -73,7 +75,7 @@ export async function POST(
     if (changed) {
       setPendingAdvantage(pending.id, pending.expression, pending.advantage);
     }
-    return Response.json({ error: "That roll was already resolved." }, { status: 409 });
+    return Response.json({ error: t("That roll was already resolved.") }, { status: 409 });
   }
   const encounter = getActiveEncounter(campaignId);
   if (encounter) {

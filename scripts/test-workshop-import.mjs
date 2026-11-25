@@ -287,4 +287,190 @@ test("an empty plan says nothing rather than rendering blank", () => {
   assert.equal(planSummary(scenario({ selection: [] })), "nothing");
 });
 
+
+const { importKindLabel, importWarningText, referenceImportNote, importResultNotesText } = await import("../src/lib/workshop/import-display.ts");
+const { translate, installCatalog } = await import("../src/lib/i18n/translate.ts");
+const fs = await import("node:fs");
+const { checkProse, proseWarningParts, proseWarningLine } = await import("../src/lib/workshop/prose-check.ts");
+const { summarizeCompile } = await import("../src/lib/workshop/board-compile.ts");
+const importCatalogs = Object.fromEntries(["cs", "fr"].map((locale) => {
+  const catalog = JSON.parse(fs.readFileSync(new URL(`../src/lib/i18n/${locale}.json`, import.meta.url), "utf8"));
+  installCatalog(locale, catalog);
+  return [locale, catalog];
+}));
+
+test("localized import previews preserve plan data and authored names", () => {
+  const input = {
+    selection: ["world", "shops", "tables", "houseRules", "overworld"],
+    exclude: ["locations"],
+    source: {
+      ...emptySource(),
+      world: named("WorldForge"), locations: named("Rusted Anchor Inn"),
+      lore: named("Old legend"), npcs: named("Captain"), factions: named("Guild"),
+      maps: named("Map"), encounters: named("Fight"),
+      shops: [{ id: "shop", name: "Shop", placeId: "id-0", keeperId: "missing", lines: 3 }],
+      tables: named("Table"), houseRules: named("House rules"), overworld: named("Region map"),
+    },
+    existing: { ...emptyExisting(), shops: ["Shop"], overworld: ["Region map"] },
+    targetHasHouseRules: true,
+    worldFacts: { locations: { entries: 1, links: 2, pins: 3, secrets: 4, events: 5 } },
+    worldBound: { maps: 2, encounters: 3 },
+    foreignItems: ["Rusted Anchor", "Rusted Anchor"],
+    foreignMonsters: ["Frost Wyrm"],
+    tableRowsLeft: 2,
+  };
+  const prose = "The door opens.The captain waits.The room is dark.";
+  const warnings = checkProse(prose);
+  const board = {
+    links: { npcs: ["missing"], maps: ["id-0"], encounters: ["id-0"], locations: ["id-0"] },
+    common: null, beats: ["A", "B"], moments: 3,
+    arcProblem: "",
+    beatTitles: ["A", "B"], momentTitles: ["Custom scene A", "Custom scene B", "Custom scene C"],
+    proseNotes: [{ title: "Original title", message: proseWarningLine(warnings), parts: proseWarningParts(warnings, prose) }],
+  };
+  const plans = [
+    planImport(input),
+    planImport({ ...input, selection: ["storyboard"], source: { ...input.source, storyboard: named("Board") }, board,
+      targetArc: { beats: ["A"], acts: 1, room: 1, actRoom: true, eventRoom: 0 }, arcMode: "append" }),
+    planImport({ ...input, selection: ["storyboard"], source: { ...input.source, storyboard: named("Board") },
+      board: { ...board, arcProblem: "Original refusal", arcProblemDisplay: { key: "An arc needs at least {min} things that happen; the board has {count}.", vars: { min: 2, count: 1 } } } }),
+    planImport({ ...input, selection: ["shops"], alreadyHere: { shops: ["shop"] }, again: "skip" }),
+    planImport({ ...input, selection: ["shops"], alreadyHere: { shops: ["shop"] }, again: "copy" }),
+  ];
+  for (const plan of plans) {
+    const snapshot = structuredClone(plan);
+    for (const warning of [...plan.warnings, ...plan.notes]) {
+      assert.ok(warning.display, warning.message);
+      assert.equal(importWarningText(warning, (key, vars) => translate("en", key, vars), "en"), warning.message);
+      for (const locale of ["cs", "fr"]) {
+        assert.ok(importCatalogs[locale].contexts[warning.display.key]?.["workshop.import.plan"], warning.display.key);
+        const t = (key, vars) => translate(locale, key, vars);
+        const text = importWarningText(warning, t, locale);
+        assert.notEqual(text, warning.message, warning.display.key);
+        assert.doesNotMatch(text, /\{(?:count|kind|kinds|losses|cards|detail|names|room|limit|total|act|previous|lines|title|copied|reused)\}/);
+      }
+    }
+    assert.deepEqual(plan, snapshot);
+  }
+  const cs = (key, vars) => translate("cs", key, vars);
+  const messages = plans.flatMap((plan) => [...plan.warnings, ...plan.notes]).map((warning) => importWarningText(warning, cs, "cs"));
+  assert.ok(messages.some((line) => line.includes("Rusted Anchor")));
+  assert.ok(messages.some((line) => line.includes("Frost Wyrm")));
+  assert.ok(messages.some((line) => line.includes("Original title") && line.includes("mezera po větě")));
+  assert.ok(messages.some((line) => line.includes("Custom scene A")));
+  assert.ok(messages.some((line) => line.includes("scénář jich má 1")));
+  assert.ok(messages.some((line) => line.includes("Mapové značky: 3")));
+  for (const kind of IMPORT_KINDS) {
+    assert.ok(importCatalogs.cs.contexts[IMPORT_KIND_LABELS[kind]]?.["workshop.import.kind"]);
+    assert.ok(importCatalogs.fr.contexts[IMPORT_KIND_LABELS[kind]]?.["workshop.import.kind"]);
+    assert.equal(importKindLabel(kind, cs), importCatalogs.cs.contexts[IMPORT_KIND_LABELS[kind]]["workshop.import.kind"]);
+  }
+  const legacy = { kind: "world", message: "Unknown original message" };
+  assert.equal(importWarningText(legacy, cs, "cs"), legacy.message);
+  assert.equal(importWarningText({ ...legacy, display: { key: "Unregistered message" } }, cs, "cs"), legacy.message);
+});
+
+test("storyboard refusal retains the original English and supplies structured detail", () => {
+  const compiled = { lore: [], quests: [], encounters: [], notes: [], moments: [], arcBeats: ["One"], premise: "World" };
+  const summary = summarizeCompile(compiled, false);
+  assert.equal(summary.arcRefusal, "An arc needs at least 2 things that happen; the board has 1.");
+  assert.deepEqual(summary.arcRefusalDisplay, { key: "An arc needs at least {min} things that happen; the board has {count}.", vars: { min: 2, count: 1 } });
+});
+
+
+test("post-import references preserve the old messages and localize all six outcomes", () => {
+  const table = "Table {name} (2)";
+  const name = "Original {table} – Dům";
+  const notes = [];
+  for (const [kind, noun] of [["tables", "table"], ["npcs", "NPC"], ["lore", "lore entry"]]) {
+    for (const matched of [true, false]) {
+      const note = referenceImportNote(kind, table, name, matched);
+      assert.equal(note.message, matched
+        ? `${table}: its row for the ${noun} ${name} now names this campaign's own ${name}, since the source's stayed behind.`
+        : `${table}: its row for the ${noun} ${name} names nothing here, since that ${noun} stayed behind.`);
+      notes.push(note);
+      for (const locale of ["cs", "fr"]) {
+        assert.ok(importCatalogs[locale].contexts[note.key]?.["workshop.import.result"]);
+        const [localized] = importResultNotesText([note.message], [note], (key, vars) => translate(locale, key, vars));
+        assert.notEqual(localized, note.message);
+        assert.ok(localized.includes(table));
+        assert.equal(localized.split(name).length - 1, matched ? 2 : 1);
+      }
+    }
+  }
+  const messages = [...notes.map((note) => note.message), "Legacy message"];
+  const snapshot = structuredClone(notes);
+  assert.deepEqual(importResultNotesText(messages, notes, (key, vars) => translate("en", key, vars)), messages);
+  for (const locale of ["cs", "fr"]) {
+    const t = (key, vars) => translate(locale, key, vars);
+    assert.deepEqual(importResultNotesText(messages, [], t), messages);
+    assert.equal(importResultNotesText(messages, notes, t).at(-1), "Legacy message");
+    const spellKey = "Spells copied into this table's Homebrew: {list}.";
+    assert.ok(importCatalogs[locale].messages[spellKey]);
+    assert.ok(t(spellKey, { list: name }).includes(name));
+    assert.notEqual(t(spellKey, { list: name }), translate("en", spellKey, { list: name }));
+  }
+  assert.deepEqual(notes, snapshot);
+});
+
+
+const { worldEntryConflictNote, mergeSliceRows } = await import("../src/lib/worldforge/import-merge.ts");
+const { mergeImportedLinks } = await import("../src/lib/db/world-link-merge.ts");
+const { standingUnsaid } = await import("../src/lib/workshop/import.ts");
+
+test("WorldForge conflict presentation preserves local edits, authored fields and EN identity", () => {
+  const name = "An entry {value}";
+  const field = "Custom {name}";
+  const entry = worldEntryConflictNote(name, "fields.custom", () => field);
+  assert.equal(entry.message, `${name}: kept your “${field}” field over the import's.`);
+  const ordinary = worldEntryConflictNote(name, "article");
+  const unknown = worldEntryConflictNote(name, "unregistered_custom_key");
+  const unnamed = worldEntryConflictNote(undefined, "article");
+  const doc = { folders: [], origins: {} };
+  mergeSliceRows(doc, "folders", [{ id: "f", name: "Original folder" }], ["source-f"], "source");
+  doc.folders[0] = { ...doc.folders[0], name: "Local folder {value}" };
+  const rows = mergeSliceRows(doc, "folders", [{ id: "f", name: "Imported folder" }], ["source-f"], "source");
+  assert.deepEqual(rows.conflicts, ["Folder “Local folder {value}”: kept your name over the import's."]);
+  assert.equal(doc.folders[0].name, "Local folder {value}");
+  assert.equal(rows.updated, 0);
+
+  const link = { id: "link", from: "a", to: "b", label: "member of", veracity: "known", rank: "Captain", oneway: false };
+  const first = mergeImportedLinks([], [link], "source");
+  const local = [{ ...first.links[0], rank: "Local rank" }];
+  const changed = mergeImportedLinks(local, [{ ...link, veracity: "hidden", rank: "Imported {rank}", oneway: true }], "source", (ref) => ref === "a" ? name : "Guild");
+  assert.equal(changed.links[0].rank, "Local rank");
+  assert.equal(changed.updated, 0);
+  assert.deepEqual(changed.conflicts, [`${name} member of Guild: changed here and in the import (which says hidden, Imported {rank}, one way); yours was kept.`]);
+  const removed = mergeImportedLinks(local, [], "source");
+  assert.equal(removed.links.length, 1);
+  assert.equal(removed.removed, 0);
+  assert.deepEqual(removed.conflicts, ["a member of b: gone from the import, but changed here; yours was kept."]);
+  const twoWay = mergeImportedLinks(local, [{ ...link, veracity: "believed", rank: "" }], "source");
+  assert.equal(twoWay.links[0].rank, "Local rank");
+  assert.deepEqual(twoWay.conflicts, ["a member of b: changed here and in the import (which says believed); yours was kept."]);
+  const bindings = worldEntryConflictNote(name, "bindings");
+  assert.equal(bindings.message, `${name}: kept your bindings over the import's.`);
+  const notes = [entry, ordinary, unknown, unnamed, ...rows.conflictDisplays, ...changed.conflictDisplays, ...removed.conflictDisplays, ...twoWay.conflictDisplays, bindings];
+  const messages = notes.map((note) => note.message);
+  const snapshot = structuredClone(notes);
+  for (const locale of ["en", "cs", "fr"]) {
+    const localized = importResultNotesText(messages, notes, (key, vars) => translate(locale, key, vars));
+    if (locale === "en") assert.deepEqual(localized, messages);
+    else {
+      for (const note of notes) {
+        assert.ok(importCatalogs[locale].contexts[note.key]?.["workshop.import.result"], note.key);
+        for (const part of Object.values(note.parts ?? {})) assert.ok(importCatalogs[locale].contexts[part.key]?.["workshop.import.result"], part.key);
+      }
+      for (let i = 0; i < notes.length; i++) assert.notEqual(localized[i], messages[i]);
+      assert.ok(localized[0].includes(name) && localized[0].includes(field));
+      assert.ok(localized[2].includes("unregistered_custom_key"));
+      assert.ok(localized[4].includes("Local folder {value}"));
+      assert.ok(localized[5].includes("Imported {rank}"));
+    }
+    assert.deepEqual(standingUnsaid([entry.message, ordinary.message], localized[0], [entry.message]), [ordinary.message]);
+    assert.deepEqual(standingUnsaid([entry.message, ordinary.message], localized.join(" "), []), [entry.message, ordinary.message]);
+  }
+  assert.deepEqual(notes, snapshot);
+});
+
 console.log(`workshop import: ${passed} assertions passed.`);

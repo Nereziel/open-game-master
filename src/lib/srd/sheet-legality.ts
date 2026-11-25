@@ -30,7 +30,7 @@ import { legacyAsiTaken, readAsiLedger, withAsiLedger } from "@/lib/srd/asi-ledg
 import { backgroundFeatureFor } from "@/lib/backgrounds";
 import { attunementSlotsFor, matchArmor } from "@/lib/srd/armor";
 import { racialTraitsFor, subclassLevelFor } from "@/lib/srd/features";
-import { chosenFightingStyles, fightingStyleChoices, fightingStyleSlots, newStyleFits } from "@/lib/srd/feature-effects";
+import { FIGHTING_STYLES, chosenFightingStyles, fightingStyleChoices, fightingStyleSlots, newStyleFits } from "@/lib/srd/feature-effects";
 import { styleSlotFeatures } from "@/lib/srd/style-slots";
 import {
   derivedMaxHp,
@@ -68,7 +68,8 @@ import { judgeStartingGear, wealthCeilingGold } from "@/lib/srd/starting-wealth"
 import { abilityProblems, baseSpans } from "@/lib/srd/legality/abilities";
 import { applyHalfFeats, halfFeatPicks, halfFeatPoints } from "@/lib/srd/legality/half-feats";
 import { judgeFeats, judgeFeatures } from "@/lib/srd/legality/features";
-import { findOptionByFeatureName, openOptionSlots, optionReqProblem, pickInSpellbook, requiredPickProblem } from "@/lib/srd/options";
+import { findOptionByFeatureName, openOptionSlots, pickInSpellbook } from "@/lib/srd/options";
+import { fightingStyleDisplayName, localizedOptionReqProblem, localizedRequiredPickProblem } from "@/lib/content/option-labels";
 import { sheetCantrips, sheetSpellbook } from "@/lib/srd/owed-picks-logic";
 import { subclassChoicePickProblems, withHeldPickIds } from "@/lib/srd/subclass-choice-picks";
 import { SUBCLASS_CHOICE_RECORD } from "@/lib/content/subclass-choices";
@@ -87,6 +88,8 @@ import {
   type Legalized,
 } from "@/lib/srd/legality/types";
 import { textKey } from "@/lib/language/text-logic";
+import { translate, translatePlural, type Locale } from "@/lib/messages-logic";
+import { classFeatureName, contentName } from "@/lib/content/names";
 import { featChoice } from "@/lib/schemas/sheet";
 
 export type { LegalityContext, Legalized } from "@/lib/srd/legality/types";
@@ -142,37 +145,37 @@ function classListOf(
   const keepsHeld = held.size > 1 && sent.every((entry) => held.has(textKey(entry.id)));
   const makesHere = context.door === "table" || context.door === "library";
   if (makesHere && context.multiclassAllowed === false && !keepsHeld) {
-    problems.push("This table turns multiclassing off; a character made here holds one class.");
+    problems.push(translate(context.locale ?? "en", "This table turns multiclassing off; a character made here holds one class."));
     return single;
   }
   const ids = new Set(sent.map((entry) => textKey(entry.id)));
   if (ids.size !== sent.length) {
-    problems.push("A character holds each class once; the class list names one twice.");
+    problems.push(translate(context.locale ?? "en", "A character holds each class once; the class list names one twice."));
     return single;
   }
   if (sent.length > MULTICLASS_CAP) {
-    problems.push(`A character has at most ${MULTICLASS_CAP} classes here; that list has ${sent.length}.`);
+    problems.push(translate(context.locale ?? "en", "A character has at most {cap} classes here; that list has {count}.", { cap: MULTICLASS_CAP, count: sent.length }));
     return single;
   }
   if (textKey(sent[0].id) !== textKey(input.class)) {
-    problems.push(`The first class on the list (${sent[0].id}) must be the character's class (${input.class}).`);
+    problems.push(translate(context.locale ?? "en", "The first class on the list ({first}) must be the character's class ({primary}).", { first: sent[0].id, primary: input.class }));
     return single;
   }
   const total = sent.reduce((sum, entry) => sum + entry.level, 0);
   if (total !== context.level) {
     problems.push(
-      `The class levels add up to ${total} and the character is level ${context.level}; they must be equal.`,
+      translate(context.locale ?? "en", "The class levels add up to {total} and the character is level {level}; they must be equal.", { total, level: context.level }),
     );
     return single;
   }
   for (const entry of sent) {
     if (!context.classOf(entry.id)) {
-      problems.push(`"${entry.id}" is not a class this server knows.`);
+      problems.push(translate(context.locale ?? "en", "\"{name}\" is not a class this server knows.", { name: entry.id }));
       continue;
     }
     if (!meetsPrereq(input.abilities, entry.id)) {
       problems.push(
-        `Holding levels in ${context.classOf(entry.id)?.name ?? entry.id} beside another class requires ${describePrereq(entry.id)}.`,
+        translate(context.locale ?? "en", "Holding levels in {name} beside another class requires {requirements}.", { name: context.classOf(entry.id)?.name ?? entry.id, requirements: describePrereq(entry.id) }),
       );
     }
   }
@@ -190,6 +193,7 @@ export function multiclassEntryProblem(
   classes: ReadonlyArray<{ id: string }> | null | undefined,
   multiclassAllowed: boolean,
   held: ReadonlyArray<{ id: string }> = [],
+  locale: Locale = "en",
 ): string | null {
   const list = classes ?? [];
   if (multiclassAllowed || list.length < 2) {
@@ -199,7 +203,7 @@ export function multiclassEntryProblem(
   if (list.every((entry) => seat.has(textKey(entry.id)))) {
     return null;
   }
-  return `${name} holds levels in more than one class, and this table turns multiclassing off. Bring a character with one class, or build one here.`;
+  return translate(locale, "{name} holds levels in more than one class, and this table turns multiclassing off. Bring a character with one class, or build one here.", { name });
 }
 
 function subclassesOf(
@@ -219,7 +223,7 @@ function subclassesOf(
     }
     if (!context.subclassOffered(entry.id, name)) {
       problems.push(
-        `${name} is not a subclass of the ${context.classOf(entry.id)?.name ?? entry.id}; pick one from that class's list.`,
+        translate(context.locale ?? "en", "{name} is not a subclass of the {className}; pick one from that class's list.", { name, className: context.classOf(entry.id)?.name ?? entry.id }),
       );
     }
     return { ...entry, subclass: name };
@@ -232,6 +236,7 @@ function racialIncrease(
   input: CreateSheetInput,
   race: NonNullable<LegalityContext["race"]>,
   problems: string[],
+  locale: Locale = "en",
 ): { racial: Partial<Record<Ability, number>>; picks: Ability[] } {
   const racial: Partial<Record<Ability, number>> = { ...race.asi };
   const sent = input.racialChoices?.asi ?? [];
@@ -240,12 +245,14 @@ function racialIncrease(
     return { racial, picks: [] };
   }
   const picks: Ability[] = [];
+  const abilityNames = { str: "Strength", dex: "Dexterity", con: "Constitution", int: "Intelligence", wis: "Wisdom", cha: "Charisma" };
+  const shownAbility = (ability: Ability) => locale === "en" ? ability : translate(locale, abilityNames[ability]);
   for (const ability of sent) {
     const fixed = (race.asi[ability] ?? 0) !== 0;
     const offered = !choice.from || choice.from.includes(ability);
     if (picks.includes(ability) || fixed || !offered || picks.length >= choice.count) {
       problems.push(
-        `The ${race.name}'s increase of the player's choice goes to ${choice.count} different ${choice.count === 1 ? "ability" : "abilities"}${choice.from ? ` among ${choice.from.join(", ")}` : ""} the race does not already raise; ${ability} cannot take it.`,
+        translatePlural(locale, "The {race}'s increase of the player's choice goes to {count} different ability{choices} the race does not already raise; {ability} cannot take it.", "The {race}'s increase of the player's choice goes to {count} different abilities{choices} the race does not already raise; {ability} cannot take it.", { count: choice.count, race: contentName("species", race.name, locale), choices: choice.from ? translate(locale, " among {choices}", { choices: choice.from.map(shownAbility).join(", ") }) : "", ability: shownAbility(ability) }),
       );
       continue;
     }
@@ -314,15 +321,15 @@ export function legalizeSheet(input: CreateSheetInput, context: LegalityContext)
   }
   if (!klass) {
     problems.push(
-      `"${input.class}" is not a class this server knows; pick one from the builder's list.`,
+      translate(context.locale ?? "en", "\"{name}\" is not a class this server knows; pick one from the builder's list.", { name: input.class }),
     );
   }
   if (!baseRace) {
-    problems.push(`"${input.race}" is not a race this server knows; pick one from the builder's list.`);
+    problems.push(translate(context.locale ?? "en", "\"{name}\" is not a race this server knows; pick one from the builder's list.", { name: input.race }));
   }
   if (input.background.trim() && !background && context.door !== "stored") {
     problems.push(
-      `"${input.background}" is not a background this server knows; pick one from the builder's list.`,
+      translate(context.locale ?? "en", "\"{name}\" is not a background this server knows; pick one from the builder's list.", { name: input.background }),
     );
   }
   if (!klass || !baseRace) {
@@ -376,7 +383,7 @@ export function legalizeSheet(input: CreateSheetInput, context: LegalityContext)
   const recorded: AsiChoice[] = (input.asiChoices ?? []).slice();
   if (recorded.length > earned) {
     problems.push(
-      `This character has earned ${earned} Ability Score Improvement${earned === 1 ? "" : "s"} at its level; ${recorded.length} are recorded.`,
+      translatePlural(context.locale ?? "en", "This character has earned {count} Ability Score Improvement at its level; {actual} are recorded.", "This character has earned {count} Ability Score Improvements at its level; {actual} are recorded.", { count: earned, actual: recorded.length }),
     );
   }
   const unrecorded = Math.max(0, earned - recorded.length);
@@ -418,7 +425,7 @@ export function legalizeSheet(input: CreateSheetInput, context: LegalityContext)
     const racial = feats.feats.filter((name) => !recordedFeats.has(textKey(name)));
     if (racial.length < race.feats) {
       problems.push(
-        `A ${race.name} starts with ${race.feats === 1 ? "a feat" : `${race.feats} feats`} of their choice; pick ${race.feats === 1 ? "one" : "them"} from the feat list.`,
+        translatePlural(context.locale ?? "en", "A {race} starts with a feat of their choice; pick one from the feat list.", "A {race} starts with {count} feats of their choice; pick them from the feat list.", { count: race.feats, race: contentName("species", race.name, context.locale ?? "en") }),
       );
     }
   }
@@ -429,7 +436,7 @@ export function legalizeSheet(input: CreateSheetInput, context: LegalityContext)
   const takesHalfFeats = policy.made || policy.edit;
   const featText = (feat: string) => context.featOf(feat)?.desc ?? "";
   const halfFeats = halfFeatPicks({ ...input, feats: feats.feats }, race.feats, featText);
-  const increase = racialIncrease(input, race, problems);
+  const increase = racialIncrease(input, race, problems, context.locale);
   // On an edit the stored scores are a pool too: they may be moved about,
   // as the builder lets them be, and not raised. They carry what the stored
   // character's option gave it (which an edit may swap for another, and the
@@ -475,7 +482,7 @@ export function legalizeSheet(input: CreateSheetInput, context: LegalityContext)
   let abilities = primalHeld ? withoutPrimalChampion(input.abilities) : input.abilities;
   let featSaves = halfFeatPoints(halfFeats.filter((pick) => featSaveProficiency(pick.feat, pick.ability, pick.desc)));
   if (takesHalfFeats) {
-    const applied = applyHalfFeats(abilities, halfFeats);
+    const applied = applyHalfFeats(abilities, halfFeats, context.locale);
     if ("error" in applied) {
       problems.push(applied.error);
     } else {
@@ -534,7 +541,7 @@ export function legalizeSheet(input: CreateSheetInput, context: LegalityContext)
     maxHp = same ? maxHp : derivedMaxHp("average", hpInput);
   } else if (!inRange) {
     problems.push(
-      `A level ${level} ${klass.name} with Constitution ${abilities.con} has between ${range.min} and ${range.max} hit points; the sheet says ${input.maxHp}.`,
+      translate(context.locale ?? "en", "A level {level} {name} with Constitution {constitution} has between {min} and {max} hit points; the sheet says {hp}.", { level, name: klass.name, constitution: abilities.con, min: range.min, max: range.max, hp: input.maxHp }),
     );
   }
   const hitDice = { die: dieOf(klass), total: level, spent: 0 };
@@ -556,6 +563,7 @@ export function legalizeSheet(input: CreateSheetInput, context: LegalityContext)
       choices,
     );
   const trained = judgeProficiencies({
+    locale: context.locale,
     // The builder's preview already holds its feats' picks (Skilled's
     // thieves' tools); they come off here, since the class and background
     // never offered them, and go back on with the grants below (issue #147).
@@ -612,6 +620,7 @@ export function legalizeSheet(input: CreateSheetInput, context: LegalityContext)
     feats: feats.feats.map((name) => ({ name, desc: context.featOf(name)?.desc ?? "" })),
     choices: input.featChoices ?? {},
     strict: policy.judgesPicks && context.door !== "engine",
+    locale: context.locale,
     picksMayWait: policy.picksMayWait,
   });
   if (policy.judgesPicks) {
@@ -629,6 +638,7 @@ export function legalizeSheet(input: CreateSheetInput, context: LegalityContext)
         ? autoSubclassPicks(subclassTraining, granted.proficiencies, input.featChoices)
         : (input.featChoices ?? {}),
     strict: policy.judgesPicks && context.door !== "engine",
+    locale: context.locale,
     picksMayWait: policy.picksMayWait,
     abilities,
   });
@@ -647,6 +657,7 @@ export function legalizeSheet(input: CreateSheetInput, context: LegalityContext)
     raisedAbility: raisedByFeat,
     spellOf: context.spellOf,
     strict: policy.judgesPicks && context.door !== "engine",
+    locale: context.locale,
     picksMayWait: policy.picksMayWait,
   });
   if (policy.judgesPicks) {
@@ -675,6 +686,7 @@ export function legalizeSheet(input: CreateSheetInput, context: LegalityContext)
   owed.push(...racialCantrips.owed);
   const racialPicks = racialCantrips.picks.map((pick) => pick.name);
   const spells = judgeSpellcasting({
+    locale: context.locale,
     sent: input.spellcasting ?? null,
     classes,
     classOf: context.classOf,
@@ -741,6 +753,7 @@ export function legalizeSheet(input: CreateSheetInput, context: LegalityContext)
         sentFeatures.filter((feature) => feature.source === "choice"),
         classes,
         context.subclassExtras,
+        context.locale,
       ),
     );
   }
@@ -759,7 +772,7 @@ export function legalizeSheet(input: CreateSheetInput, context: LegalityContext)
     for (const feature of featured.features) {
       const option = feature.source === "choice" ? findOptionByFeatureName(feature.name) : null;
       if (option && !pickInSpellbook(option, book)) {
-        problems.push(`${option.n} is not in the spellbook; ${feature.name.split(":")[0]} names a spell written there.`);
+        problems.push(translate(context.locale ?? "en", "{spell} is not in the spellbook; {feature} names a spell written there.", { spell: contentName("spells", option.n, context.locale ?? "en"), feature: classFeatureName("wizard", feature.name.split(":")[0], context.locale ?? "en") }));
       }
       // A new pick's prerequisite (a class level, a pact boon, a cantrip), as
       // the level-up and the owed picks hold it: a 3rd-level Four Elements
@@ -767,11 +780,11 @@ export function legalizeSheet(input: CreateSheetInput, context: LegalityContext)
       // the stored character holds stays, as the regrant keeps it.
       const unmet =
         option && !heldNames.has(textKey(feature.name))
-          ? optionReqProblem(option, {
+          ? localizedOptionReqProblem(option, {
               classLevel: (id) => classes.find((entry) => textKey(entry.id) === textKey(id))?.level ?? 0,
               features: featured.features,
               cantrips,
-            })
+            }, context.locale)
           : null;
       if (unmet) {
         problems.push(unmet);
@@ -782,7 +795,9 @@ export function legalizeSheet(input: CreateSheetInput, context: LegalityContext)
       // take a free slot its class does not offer is refused.
       if (style !== undefined && !heldNames.has(textKey(feature.name)) && placedStyles.length < styleSlots) {
         if (!newStyleFits(placedStyles, style, classFeatures)) {
-          problems.push(`${style} is not a fighting style this character's classes offer; pick one of ${classStyles.map((entry) => entry.name).join(", ")}.`);
+          const locale = context.locale ?? "en";
+          const known = FIGHTING_STYLES.find((entry) => textKey(entry.name) === textKey(style));
+          problems.push(translate(locale, "{style} is not a fighting style this character's classes offer; pick one of {choices}.", { style: locale === "en" || !known ? style : fightingStyleDisplayName(known, locale), choices: classStyles.map((entry) => fightingStyleDisplayName(entry, locale)).join(", ") }));
         } else {
           placedStyles.push(style);
         }
@@ -801,7 +816,7 @@ export function legalizeSheet(input: CreateSheetInput, context: LegalityContext)
     );
     for (const entry of classes) {
       for (const slot of openOptionSlots({ classId: entry.id, subclass: entry.subclass ?? "", level: entry.level, features: featured.features })) {
-        const missing = newKinds.has(slot.kind) ? requiredPickProblem(slot) : null;
+        const missing = newKinds.has(slot.kind) ? localizedRequiredPickProblem(slot, context.locale) : null;
         if (missing) problems.push(missing);
       }
     }
@@ -895,7 +910,7 @@ export function legalizeSheet(input: CreateSheetInput, context: LegalityContext)
     const ceiling = wealthCeilingGold(level);
     if (gold > ceiling) {
       problems.push(
-        `A level ${level} character arriving from a file carries at most ${ceiling} gp; the file says ${gold}. Lower it, and let whoever runs the table award the rest.`,
+        translate(context.locale ?? "en", "A level {level} character arriving from a file carries at most {ceiling} gp; the file says {gold}. Lower it, and let whoever runs the table award the rest.", { level, ceiling, gold }),
       );
     }
   }
@@ -910,7 +925,7 @@ export function legalizeSheet(input: CreateSheetInput, context: LegalityContext)
   });
   if (context.door === "import" && attuned > attunementCap) {
     problems.push(
-      `This character is attuned to at most ${attunementCap} magic items; the file attunes ${attuned}.`,
+      translate(context.locale ?? "en", "This character is attuned to at most {cap} magic items; the file attunes {count}.", { cap: attunementCap, count: attuned }),
     );
   }
 

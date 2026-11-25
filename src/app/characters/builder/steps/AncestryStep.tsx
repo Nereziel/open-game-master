@@ -13,6 +13,7 @@ import { flattenGroups, lineageArt, srdRaceFor } from "../lineage";
 import { lineageFits } from "../lineageFits";
 import { SRD_CLASSES } from "@/lib/srd";
 import { useLocale, useT, useTp } from "@/lib/locale";
+import type { Locale } from "@/lib/messages-logic";
 import { textKey } from "@/lib/language/text-logic";
 import type { CardFacet } from "../OptionCardGrid";
 import type { Ability } from "@/lib/schemas/sheet";
@@ -27,26 +28,28 @@ import type { BuilderState } from "../useBuilderState";
 import { bonusLanguageCount } from "../submit";
 import { StepPanel, inputClass } from "./shared";
 
-function languageHelp(t: (key: string, vars?: Record<string, string | number>) => string, race: RaceOption, background: BackgroundOption | undefined, locale: "en" | "fr" | "cs" = "en"): string {
-  const langs = race.languages.join(locale === "fr" ? " et " : " and ");
+function languageHelp(t: (key: string, vars?: Record<string, string | number>) => string, race: RaceOption, background: BackgroundOption | undefined, locale: Locale = "en"): string {
+  const languageName = (name: string) => t(name, { context: "character.language" });
+  const joinLanguages = (names: string[]) => names.map(languageName).join(` ${t("and")} `);
+  const langs = joinLanguages(race.languages);
   const parts = [t("{race} speaks {langs}", { race: contentName("species", race.name, locale), langs })];
   const choice = race.languageChoice;
   const open = race.bonusLanguages - (choice?.count ?? 0);
   if (choice) {
-    parts.push(t(choice.count === 1 ? "plus one of {from}" : "plus {count} of {from}", { count: choice.count, from: choice.from.join(", ") }));
+    parts.push(t(choice.count === 1 ? "plus one of {from}" : "plus {count} of {from}", { count: choice.count, from: choice.from.map(languageName).join(", ") }));
   }
   if (open > 0) {
     parts.push(t("{join} {count} of your choice", { join: choice ? t("and") : t("plus"), count: open }));
   }
   if (background?.knownLanguages?.length) {
-    parts.push(t("and {langs} from your {background} background", { langs: background.knownLanguages.join(" and "), background: background.name }));
+    parts.push(t("and {langs} from your {background} background", { langs: joinLanguages(background.knownLanguages), background: contentName("backgrounds", background.name, locale) }));
   }
   if (background?.languages) {
     parts.push(
       t("{join} {count} more from your {background} background", {
         join: race.bonusLanguages > 0 ? t("and") : t("plus"),
         count: background.languages,
-        background: background.name,
+        background: contentName("backgrounds", background.name, locale),
       }),
     );
   }
@@ -139,7 +142,7 @@ export function AncestryStep({
             </span>
             <InfoButton
               label={contentName("species", race.name, locale)}
-              text={describeRace(race.id) ?? race.note}
+              text={describeRace(race.id, locale) ?? race.note}
               reference={{ kind: "races", slug: race.slug ?? race.id }}
             />
           </span>
@@ -205,7 +208,7 @@ export function AncestryStep({
                       !race.languages.includes(language) &&
                       !(background?.knownLanguages ?? []).includes(language) &&
                       (state.bonusLanguages[index] === language || !state.bonusLanguages.includes(language)),
-                  ).map((language) => ({ value: language as string, label: language as string })),
+                  ).map((language) => ({ value: language as string, label: t(language, { context: "character.language" }) })),
                 ]}
               />
             ))}

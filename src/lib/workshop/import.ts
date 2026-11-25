@@ -139,7 +139,7 @@ export function planImport(input: PlanInput): ImportPlan {
       if (input.targetHasHouseRules) {
         warnings.push({
           kind,
-          message:
+          display: { key: "This campaign already has house rules. Importing replaces them unless you choose to add." }, message:
             "This campaign already has house rules. Importing replaces them unless you choose to add.",
         });
       }
@@ -159,7 +159,7 @@ export function planImport(input: PlanInput): ImportPlan {
       } else if (input.targetHasArc || input.targetArc) {
         warnings.push({
           kind,
-          message:
+          display: { key: "This campaign already has a story arc. The board's places, quests, fights and notes still land; its beats do not overwrite the spine the table has been playing." }, message:
             "This campaign already has a story arc. The board's places, quests, fights and notes still land; its beats do not overwrite the spine the table has been playing.",
         });
       }
@@ -182,13 +182,13 @@ export function planImport(input: PlanInput): ImportPlan {
       if (brought.length) {
         notes.push({
           kind,
-          message: `WorldForge brings what it describes: ${brought.map((other) => IMPORT_KIND_LABELS[other].toLowerCase()).join(", ")} come with it.`,
+          display: { key: "WorldForge also brings these related records: {kinds}.", kinds: { kinds: brought } }, message: `WorldForge brings what it describes: ${brought.map((other) => IMPORT_KIND_LABELS[other].toLowerCase()).join(", ")} come with it.`,
         });
       }
       for (const other of WORLD_RECORD_KINDS) {
         if (selected.has(other) || !(input.source[other] ?? []).length) continue;
         const facts = input.worldFacts?.[other];
-        warnings.push({ kind, message: facts ? leftOut(IMPORT_KIND_LABELS[other], facts) : `WorldForge's links, secrets and pins for ${IMPORT_KIND_LABELS[other].toLowerCase()} stay behind with them.` });
+        warnings.push({ kind, display: facts ? { key: "Leaving out {kind}: WorldForge drops these related records: {losses}.", kinds: { kind: [other] }, facts } : { key: "WorldForge's links, secrets and pins for {kind} stay behind.", kinds: { kind: [other] } }, message: facts ? leftOut(IMPORT_KIND_LABELS[other], facts) : `WorldForge's links, secrets and pins for ${IMPORT_KIND_LABELS[other].toLowerCase()} stay behind with them.` });
       }
       // A place's battle maps and encounters are rows of their own kinds,
       // chosen or not like any other: a link to one left behind is dropped,
@@ -198,7 +198,7 @@ export function planImport(input: PlanInput): ImportPlan {
         ["encounters", input.worldBound?.encounters ?? 0, "prepared encounter", "prepared encounters"],
       ] as const) {
         if (!count || selected.has(other) || !(input.source[other] ?? []).length) continue;
-        warnings.push({ kind, message: `World places link to ${count} ${count === 1 ? one : many}. Without ${IMPORT_KIND_LABELS[other].toLowerCase()}, those links stay behind unless an earlier import brought them.` });
+        warnings.push({ kind, display: { key: "World places have links to omitted records ({kind}): {count}. These links stay behind unless already imported.", vars: { count }, kinds: { kind: [other] } }, message: `World places link to ${count} ${count === 1 ? one : many}. Without ${IMPORT_KIND_LABELS[other].toLowerCase()}, those links stay behind unless an earlier import brought them.` });
       }
       items.push({ kind, sourceId: rows[0].id, name: rows[0].name, finalName: rows[0].name, renamed: false });
       continue;
@@ -208,7 +208,7 @@ export function planImport(input: PlanInput): ImportPlan {
       if (input.existing.overworld.length) {
         warnings.push({
           kind,
-          message: "This campaign already has a region map. Importing replaces it.",
+          display: { key: "This campaign already has a region map. Importing replaces it." }, message: "This campaign already has a region map. Importing replaces it.",
         });
       }
       items.push({
@@ -242,19 +242,19 @@ export function planImport(input: PlanInput): ImportPlan {
     if (renamedCount) {
       warnings.push({
         kind,
-        message: `${renamedCount} ${IMPORT_KIND_LABELS[kind].toLowerCase()} entr${renamedCount === 1 ? "y already exists" : "ies already exist"} here by name and will be numbered.`,
+        display: { key: "{kind}: {count} entries conflict by name and will be numbered.", vars: { count: renamedCount }, kinds: { kind: [kind] } }, message: `${renamedCount} ${IMPORT_KIND_LABELS[kind].toLowerCase()} entr${renamedCount === 1 ? "y already exists" : "ies already exist"} here by name and will be numbered.`,
       });
     }
     if (keptCount) {
       kept += keptCount;
       notes.push({
         kind,
-        message: `${keptCount} ${IMPORT_KIND_LABELS[kind].toLowerCase()} entr${keptCount === 1 ? "y" : "ies"} came in from here before and stay${keptCount === 1 ? "s" : ""} as this campaign has ${keptCount === 1 ? "it" : "them"}.`,
+        display: { key: "{kind}: {count} previously imported entries are kept with this campaign's edits.", vars: { count: keptCount }, kinds: { kind: [kind] } }, message: `${keptCount} ${IMPORT_KIND_LABELS[kind].toLowerCase()} entr${keptCount === 1 ? "y" : "ies"} came in from here before and stay${keptCount === 1 ? "s" : ""} as this campaign has ${keptCount === 1 ? "it" : "them"}.`,
       });
     } else if (again === "copy" && rows.some((row) => here(kind, row.id))) {
       notes.push({
         kind,
-        message: `${IMPORT_KIND_LABELS[kind]} that came in from here before arrive again as second copies.`,
+        display: { key: "{kind}: previously imported entries arrive again as second copies.", kinds: { kind: [kind] } }, message: `${IMPORT_KIND_LABELS[kind]} that came in from here before arrive again as second copies.`,
       });
     }
 
@@ -267,7 +267,7 @@ export function planImport(input: PlanInput): ImportPlan {
       if (unbound) {
         warnings.push({
           kind,
-          message:
+          display: { key: kind === "encounters" ? "Prepared encounters without their battle map: {count}. They deploy on generated maps using their own settings. Select Battle maps to keep the links." : "Places without their battle map: {count}. Select Battle maps to keep the links.", vars: { count: unbound } }, message:
             kind === "encounters"
               ? `${unbound} prepared encounter${unbound === 1 ? " is" : "s are"} drawn on a battle map that is not coming along. ${unbound === 1 ? "It arrives" : "They arrive"} without it and deploy${unbound === 1 ? "s" : ""} on a map made from ${unbound === 1 ? "its" : "their"} own settings; tick Battle maps to keep ${unbound === 1 ? "it" : "them"} bound.`
               : `${unbound} place${unbound === 1 ? " stands" : "s stand"} on a battle map that is not coming along, and arrive${unbound === 1 ? "s" : ""} without it; tick Battle maps to keep ${unbound === 1 ? "it" : "them"}.`,
@@ -286,7 +286,7 @@ export function planImport(input: PlanInput): ImportPlan {
       if (homebrewCount) {
         warnings.push({
           kind,
-          message: `${homebrewCount} prepared encounter${homebrewCount === 1 ? "" : "s"} name${homebrewCount === 1 ? "s" : ""} hand-built monsters. Those live in their builder's bestiary rather than travelling, so the roster only resolves where the campaign owner is the same builder.`,
+          display: { key: "Prepared encounters referencing hand-built monsters: {count}. The monsters stay in their creator's bestiary; the roster resolves only if the campaign owner is that creator.", vars: { count: homebrewCount } }, message: `${homebrewCount} prepared encounter${homebrewCount === 1 ? "" : "s"} name${homebrewCount === 1 ? "s" : ""} hand-built monsters. Those live in their builder's bestiary rather than travelling, so the roster only resolves where the campaign owner is the same builder.`,
         });
       }
     }
@@ -303,7 +303,7 @@ export function planImport(input: PlanInput): ImportPlan {
   ) {
     warnings.push({
       kind: "overworld",
-      message:
+      display: { key: "Places are not included, so the region map arrives without its markers. It will place them again as the party travels." }, message:
         "Places are not included, so the region map arrives without its markers. It will place them again as the party travels.",
     });
   }
@@ -315,7 +315,7 @@ export function planImport(input: PlanInput): ImportPlan {
     const names = [...new Set(input.foreignItems)];
     notes.push({
       kind: "world",
-      message: `${names.length} hand-built item${names.length === 1 ? "" : "s"} (${names.join(", ")}) ${names.length === 1 ? "is" : "are"} copied into this table's Homebrew, so the World entries, shops and roll tables that name ${names.length === 1 ? "it" : "them"} keep ${names.length === 1 ? "it" : "them"}.`,
+      display: { key: "Hand-built items copied into this table's Homebrew: {count} ({names}). World entries, shops and roll tables keep their references.", vars: { count: names.length, names: names.join(", ") } }, message: `${names.length} hand-built item${names.length === 1 ? "" : "s"} (${names.join(", ")}) ${names.length === 1 ? "is" : "are"} copied into this table's Homebrew, so the World entries, shops and roll tables that name ${names.length === 1 ? "it" : "them"} keep ${names.length === 1 ? "it" : "them"}.`,
     });
   }
   // A roll-table row that is an NPC, a lore entry or another table that is
@@ -324,14 +324,14 @@ export function planImport(input: PlanInput): ImportPlan {
     const left = input.tableRowsLeft;
     warnings.push({
       kind: "tables",
-      message: `${left} roll-table row${left === 1 ? " names" : "s name"} an NPC, lore entry or table that is not coming along. ${left === 1 ? "It names" : "They name"} this campaign's own of that name, or nothing; tick ${left === 1 ? "its" : "their"} kind to bring ${left === 1 ? "it" : "them"}.`,
+      display: { key: "Roll-table rows referencing omitted NPCs, lore or tables: {count}. They refer to a matching record here, or nothing. Select the relevant kinds to bring the records.", vars: { count: left } }, message: `${left} roll-table row${left === 1 ? " names" : "s name"} an NPC, lore entry or table that is not coming along. ${left === 1 ? "It names" : "They name"} this campaign's own of that name, or nothing; tick ${left === 1 ? "its" : "their"} kind to bring ${left === 1 ? "it" : "them"}.`,
     });
   }
   if (input.foreignMonsters?.length) {
     const names = [...new Set(input.foreignMonsters)];
     notes.push({
       kind: selected.has("encounters") ? "encounters" : "npcs",
-      message: `${names.length} hand-built monster${names.length === 1 ? "" : "s"} (${names.join(", ")}) ${names.length === 1 ? "is" : "are"} copied into this table's bestiary, so the NPCs, fights and roll tables that name ${names.length === 1 ? "it" : "them"} fight here as they did there.`,
+      display: { key: "Hand-built monsters copied into this table's bestiary: {count} ({names}). NPCs, fights and roll tables keep their original combat behavior.", vars: { count: names.length, names: names.join(", ") } }, message: `${names.length} hand-built monster${names.length === 1 ? "" : "s"} (${names.join(", ")}) ${names.length === 1 ? "is" : "are"} copied into this table's bestiary, so the NPCs, fights and roll tables that name ${names.length === 1 ? "it" : "them"} fight here as they did there.`,
     });
   }
 
@@ -364,20 +364,20 @@ function planShops(
   if (unplaced) {
     warnings.push({
       kind: "shops",
-      message: `${unplaced} shop${plural(unplaced, " stands", "s stand")} at a place that is not coming along. ${plural(unplaced, "It arrives", "They arrive")} unplaced and open${plural(unplaced, "s", "")} wherever a place of that name is; tick Places to keep ${plural(unplaced, "it", "them")} where ${plural(unplaced, "it stands", "they stand")}.`,
+      display: { key: "Shops without their place: {count}. They arrive unplaced and open wherever a place of that name exists. Select Places to keep their location.", vars: { count: unplaced } }, message: `${unplaced} shop${plural(unplaced, " stands", "s stand")} at a place that is not coming along. ${plural(unplaced, "It arrives", "They arrive")} unplaced and open${plural(unplaced, "s", "")} wherever a place of that name is; tick Places to keep ${plural(unplaced, "it", "them")} where ${plural(unplaced, "it stands", "they stand")}.`,
     });
   }
   if (unkept) {
     warnings.push({
       kind: "shops",
-      message: `${unkept} shop${plural(unkept, "'s keeper is", "s' keepers are")} not coming along, so ${plural(unkept, "it arrives", "they arrive")} with nobody behind the counter; tick NPCs to bring ${plural(unkept, "the keeper", "them")}.`,
+      display: { key: "Shops without their keeper: {count}. They arrive without a keeper. Select NPCs to bring the keepers.", vars: { count: unkept } }, message: `${unkept} shop${plural(unkept, "'s keeper is", "s' keepers are")} not coming along, so ${plural(unkept, "it arrives", "they arrive")} with nobody behind the counter; tick NPCs to bring ${plural(unkept, "the keeper", "them")}.`,
     });
   }
   const lines = copied.reduce((sum, row) => sum + (row.lines ?? 0), 0);
   if (copied.length) {
     notes.push({
       kind: "shops",
-      message: `${copied.length} shop${plural(copied.length, "", "s")} with ${lines} stock line${plural(lines, "", "s")} arrive${plural(copied.length, "s", "")} as authored. Purchases, sales and haggles at a shop already here are never reset by an import.`,
+      display: { key: "Shops imported as authored: {count}; stock lines: {lines}. Existing purchases, sales and haggles are not reset.", vars: { count: copied.length, lines } }, message: `${copied.length} shop${plural(copied.length, "", "s")} with ${lines} stock line${plural(lines, "", "s")} arrive${plural(copied.length, "s", "")} as authored. Purchases, sales and haggles at a shop already here are never reset by an import.`,
     });
   }
 }
@@ -393,7 +393,11 @@ export function keepsOverworldAnchors(selection: readonly ImportKind[]): boolean
 // (src/lib/worldforge/import-kept.ts), less what the import's note on
 // screen already says: a note says only its own source's, and only when
 // the World came with it, so the rest is still said beside it.
-export function standingUnsaid(standing: readonly string[], note: string | undefined): string[] {
+export function standingUnsaid(standing: readonly string[], note: string | undefined, reported?: readonly string[]): string[] {
+  if (reported !== undefined) {
+    const seen = new Set(reported);
+    return standing.filter((line) => !seen.has(line));
+  }
   return note ? standing.filter((line) => !note.includes(line)) : [...standing];
 }
 

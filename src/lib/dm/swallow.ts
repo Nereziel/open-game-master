@@ -52,6 +52,7 @@ import { publishEphemeral, publishPersisted } from "@/lib/events";
 import { activePublicEncounter } from "@/lib/db/encounter-view";
 import type { CharacterSheet } from "@/lib/schemas/sheet";
 import type { ToolError, ToolResult } from "@/lib/dm/tool-errors";
+import { formatMessage, type MessageVars } from "@/lib/messages-logic";
 
 export const SWALLOWED = "swallowed";
 
@@ -623,18 +624,18 @@ export function swallowFightEnd(campaign: Campaign, encounterId: string): string
 
 // The way out of a living swallower, for the refusal that says why there is
 // no walking.
-function wayOut(swallower: EncounterEnemy): string {
+function wayOut(swallower: EncounterEnemy, t: (key: string, vars?: MessageVars) => string = formatMessage): string {
   const rule = swallowRuleOf(swallower.stats);
-  const corpse = `once it dies, ${rule?.escapeFeet ?? 5} feet of movement climbs out of its corpse`;
+  const feet = rule?.escapeFeet ?? 5;
   return rule?.regurgitate
-    ? `${rule.regurgitate.damage} damage dealt it from inside in one turn makes it save or regurgitate them, and ${corpse}`
-    : `${corpse[0].toUpperCase()}${corpse.slice(1)}`;
+    ? t("{damage} damage dealt it from inside in one turn makes it save or regurgitate them, and once it dies, {feet} feet of movement climbs out of its corpse", { damage: rule.regurgitate.damage, feet })
+    : t("Once it dies, {feet} feet of movement climbs out of its corpse", { feet });
 }
 
 // A swallowed creature's walk: none while the swallower lives, and once it
 // is dead the walk is the climb out (its feet of movement, exiting prone).
 // Null for one nothing holds inside.
-function walkOut(campaign: Campaign, encounter: Encounter, party: Party, tilesLeft: () => number): ToolResult | null {
+function walkOut(campaign: Campaign, encounter: Encounter, party: Party, tilesLeft: () => number, t: (key: string, vars?: MessageVars) => string = formatMessage): ToolResult | null {
   const live = read(party);
   const id = live ? swallowerOf(live) : null;
   const swallower = id ? getEnemy(id) : null;
@@ -642,25 +643,25 @@ function walkOut(campaign: Campaign, encounter: Encounter, party: Party, tilesLe
     return null;
   }
   if (swallower.status === "alive") {
-    return { error: `${live.name} is swallowed inside ${swallower.displayName}, restrained there: no walking. ${wayOut(swallower)}.`, refused: "rules" };
+    return { error: t("{name} is swallowed inside {swallower}, restrained there: no walking. {way}.", { name: live.name, swallower: swallower.displayName, way: wayOut(swallower, t) }), refused: "rules" };
   }
   const name = held(live, SWALLOWED) ?? SWALLOWED;
   const feet = live.meta[name]?.swallow?.escapeFeet ?? swallowRuleOf(swallower.stats)?.escapeFeet ?? 5;
   const left = tilesLeft();
   const tiles = Math.ceil(feet / 5);
   if (left < tiles) {
-    return { error: `${live.name} needs ${feet} feet of movement to climb out of ${swallower.displayName}'s corpse and has ${left * 5} left this turn.`, refused: "rules" };
+    return { error: t("{name} needs {feet} feet of movement to climb out of {swallower}'s corpse and has {left} left this turn.", { name: live.name, feet, swallower: swallower.displayName, left: left * 5 }), refused: "rules" };
   }
   const at = outProne(campaign, encounter.id, party, swallower, [SWALLOWED, "blinded"], `climbs out of ${swallower.displayName}'s corpse`, tiles);
   return {
     ok: true,
     name: live.name,
-    escaped: `${live.name} climbs out of ${swallower.displayName}'s corpse with ${feet} feet of movement and lands prone${at ? ` at ${at}` : ""}.`,
+    escaped: t("{name} climbs out of {swallower}'s corpse with {feet} feet of movement and lands prone{at}.", { name: live.name, swallower: swallower.displayName, feet, at: at ? t(" at {position}", { position: String(at) }) : "" }),
   };
 }
 
-export function swallowWalk(campaign: Campaign, encounter: Encounter, map: BattleMap, sheet: CharacterSheet, token: BattleToken): ToolResult | null {
-  return walkOut(campaign, encounter, { kind: "sheet", id: sheet.id }, () => pcMoveBudget(campaign.id, encounter, map, sheet, token).fullTiles);
+export function swallowWalk(campaign: Campaign, encounter: Encounter, map: BattleMap, sheet: CharacterSheet, token: BattleToken, t: (key: string, vars?: MessageVars) => string = formatMessage): ToolResult | null {
+  return walkOut(campaign, encounter, { kind: "sheet", id: sheet.id }, () => pcMoveBudget(campaign.id, encounter, map, sheet, token).fullTiles, t);
 }
 
 // A creature's row (one fighting on the party's side), with the squares its

@@ -28,7 +28,7 @@ import {
   type ForgeSettings,
 } from "@/app/workshop/maps/forge";
 import type { LibraryState, PreparedMap } from "@/app/workshop/maps/types";
-import { cueById, sceneOptions } from "@/lib/ambience/catalog";
+import { cueLabel, sceneOptions } from "@/lib/ambience/catalog";
 import { useT } from "@/lib/locale";
 
 // The Map Forge (docs/visual-overhaul-plan.md 4.1): one component for both
@@ -162,7 +162,7 @@ export function MapForge({
   const named = name.trim().length > 0;
   const canRoll = !busy && !rolling && (!library || named);
   const { theme, ambient } = forgeOutcome(settings);
-  const sentences = explainForgeT(t, settings, (value) => themeWord(value, t), (scene) => cueById(scene)?.label ?? scene);
+  const sentences = explainForgeT(t, settings, (value) => themeWord(value, t), (scene) => cueLabel(scene, t));
   const skinGroups = useMemo(() => skinChoices(genre, t), [genre, t]);
 
   async function show(roll: ForgeRoll, stretch: number) {
@@ -242,7 +242,7 @@ export function MapForge({
               onChange={(scene) => setSettings({ ...settings, scene })}
               label={t("Kind of place")}
               className="w-full"
-              options={[{ value: "", label: t("Not set: open ground") }, ...sceneOptions()]}
+              options={[{ value: "", label: t("Not set: open ground") }, ...sceneOptions(t)]}
             />
           </div>
 

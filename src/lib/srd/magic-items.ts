@@ -19,6 +19,7 @@
 //     its text lets attune (a Staff of Power: a sorcerer, warlock or wizard);
 //   - a second copy of the same item adds nothing.
 
+import { formatMessage, type MessageVars } from "@/lib/messages-logic";
 import { drainedScores } from "@/lib/srd/ability-drain-logic";
 import { ignoresItemRequirements } from "@/lib/srd/mt-srd-artificer";
 import { genreWornRiders } from "@/lib/srd/genre-b-combat";
@@ -505,8 +506,9 @@ export function attunementProblem(
   item: WornMagicItem,
   equipment: WornMagicItem[],
   wearer: (Wearer & { name?: string }) | null,
+  t: (key: string, vars?: MessageVars) => string = formatMessage,
 ): string | null {
-  const who = wearer?.name ?? "This character";
+  const who = wearer?.name ?? t("This character");
   const def = defOf(item);
   const cap = attunementSlotsFor(wearer);
   // An item whose magic rides checks alone (Gloves of Thievery, Boots of
@@ -515,18 +517,20 @@ export function attunementProblem(
   // places though SRD 5.1 asks no attunement of it.
   const checks = def ? null : checkRidersOf(item);
   if ((def && !def.requiresAttunement) || (checks && !checks.requiresAttunement)) {
-    return `${item.name} needs no attunement: it works for whoever wears it, and takes none of the ${cap} attunements.`;
+    return t("{item} needs no attunement: it works for whoever wears it, and takes none of the {cap} attunements.", { item: item.name, cap });
   }
   if (def && wearer && !mayAttune(def, wearer)) {
-    return `${item.name} can be attuned only by ${def.attunedBy?.text ?? "someone else"}, and ${who} is not one.`;
+    return t("{item} can be attuned only by {requirement}, and {who} is not one.", { item: item.name, requirement: t(def.attunedBy?.text ?? "someone else"), who });
   }
   // An attunement still waiting on its short rest holds its place too.
   const others = equipment.filter((entry) => entry !== item && (entry.attuned || entry.attuning));
   if (def && others.some((entry) => defOf(entry)?.match === def.match)) {
-    return `${who} is already attuned to a ${def.name}, and a creature attunes to one copy of an item at most.`;
+    return t("{who} is already attuned to a {item}, and a creature attunes to one copy of an item at most.", { who, item: def.name });
   }
   if (others.length >= cap) {
-    return `${who} is attuned to ${cap} items already, which is the most ${cap > ATTUNEMENT_SLOTS ? "they" : "a creature"} can hold; end one attunement first.`;
+    return t(cap > ATTUNEMENT_SLOTS
+      ? "{who} is attuned to {cap} items already, which is the most they can hold; end one attunement first."
+      : "{who} is attuned to {cap} items already, which is the most a creature can hold; end one attunement first.", { who, cap });
   }
   return null;
 }

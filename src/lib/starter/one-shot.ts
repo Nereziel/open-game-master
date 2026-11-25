@@ -1,6 +1,7 @@
 import { createCampaign, getCampaignForUser, setDmOutline, type Campaign } from "@/lib/db/campaigns";
 import { getClock, setClockInstant } from "@/lib/db/clock";
-type Locale = "en" | "fr" | "cs";
+import type { Locale } from "@/lib/i18n/translate";
+import { serverLanguageOfLocale } from "@/lib/i18n/locale";
 import { MINUTES_PER_DAY, MINUTES_PER_HOUR } from "@/lib/dm/calendar";
 
 // The starter one-shot: a table that opens in ten minutes for people who
@@ -71,15 +72,21 @@ const STARTER_ONE_SHOT_CS = {
 
 // The seed the creator reads: the request’s language, English by default,
 // so an English table’s stored premise and spine stay English.
+const STARTER_ONE_SHOT_BY_LOCALE: Partial<Record<Locale, Omit<typeof STARTER_ONE_SHOT, "id">>> = {
+  fr: STARTER_ONE_SHOT_FR,
+  cs: STARTER_ONE_SHOT_CS,
+};
+
 export function starterSeedFor(locale: Locale) {
-  if (locale === "cs") return { ...STARTER_ONE_SHOT, ...STARTER_ONE_SHOT_CS };
-  return locale === "fr" ? { ...STARTER_ONE_SHOT, ...STARTER_ONE_SHOT_FR } : STARTER_ONE_SHOT;
+  const localized = STARTER_ONE_SHOT_BY_LOCALE[locale];
+  return localized ? { ...STARTER_ONE_SHOT, ...localized } : STARTER_ONE_SHOT;
 }
 
 // narration: whether the server can read aloud (narrationAvailable in
 // src/lib/capabilities.ts); unsaid, the table's switch starts on.
 export function createStarterCampaign(userId: string, options: { solo: boolean; narration?: boolean; locale?: Locale }): Campaign {
-  const seed = starterSeedFor(options.locale ?? "en");
+  const locale = options.locale ?? "en";
+  const seed = starterSeedFor(locale);
   const campaign = createCampaign(userId, {
     title: seed.title,
     description: seed.description,
@@ -90,12 +97,13 @@ export function createStarterCampaign(userId: string, options: { solo: boolean; 
     gameSettings: {
       dmMode: "ai",
       genre: "high_fantasy",
+      tableLanguage: serverLanguageOfLocale(locale),
       campaignLength: "short",
       ttsEnabled: options.narration ?? true,
       // The outline is written below, before anyone presses Begin, so the
       // setup pass stands aside (src/lib/dm/setup.ts runs only for a table
       // with no outline yet) and the arc planner builds from the outline.
-      // The setting stays at its default; it has nothing to do here.
+      // Keep the table language aligned with the localized premise and outline.
       aiStorySetup: true,
     },
   });

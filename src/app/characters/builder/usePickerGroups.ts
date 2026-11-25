@@ -12,8 +12,7 @@ import { subclassBlurb, subclassGate, subclassNamesFor } from "@/lib/srd/feature
 import { packRecommends, type Reskinned } from "@/lib/worlds/reskin-logic";
 import type { WorldPack } from "@/lib/worlds/types";
 import type { PickerGroup, PickerOption } from "./OptionPicker";
-import { backgroundFeatureLabel, contentName, subclassName } from "@/lib/content/names";
-import { expansionNameCs } from "@/lib/content/expansion-descriptions-cs";
+import { backgroundFeatureLabel, contentName, archetypeDisplayName } from "@/lib/content/names";
 import { useLocale, useT } from "@/lib/locale";
 import type { Locale } from "@/lib/messages-logic";
 import type {
@@ -176,9 +175,9 @@ function tier<T extends { id: string }>(
 // blurb, then the bundled line, then the content pack's full entry, and for
 // a background what its feature does. Joined so a short line and a long
 // rules text both show rather than one hiding the other.
-export function classInfoText(entry: { packBlurb?: string; blurb?: string; desc?: string }, t?: (key: string) => string): string | undefined {
+export function classInfoText(entry: { packBlurb?: string; blurb?: string; desc?: string; localizedDesc?: string }, t?: (key: string) => string): string | undefined {
   const blurb = entry.packBlurb || (entry.blurb && t ? t(entry.blurb) : entry.blurb);
-  const parts = [blurb, entry.desc].filter(Boolean);
+  const parts = [blurb, entry.localizedDesc || entry.desc].filter(Boolean);
   return parts.length ? parts.join("\n\n") : undefined;
 }
 
@@ -186,33 +185,30 @@ export function backgroundInfoText(entry: {
   packBlurb?: string;
   blurb?: string;
   desc?: string;
+  localizedDesc?: string;
   feature?: string;
   featureDesc?: string;
   name?: string;
 }, locale: Locale = "en"): string | undefined {
-  const local = (value: string | undefined) => value && locale === "cs" ? translate(locale, value) : value;
+  const local = (value: string | undefined) => value ? translate(locale, value) : value;
+  if (entry.localizedDesc) return [entry.packBlurb || local(entry.blurb), entry.localizedDesc].filter(Boolean).join("\n\n");
   const feature = entry.feature
-    ? `**${locale === "cs" ? "Schopnost" : "Feature"}: ${locale === "cs" && entry.name ? backgroundFeatureLabel(entry.name, entry.feature, locale) : entry.feature}.**${entry.featureDesc ? ` ${localizeBackgroundFeatureText(entry.featureDesc, locale)}` : ""}`
+    ? `**${translate(locale, "Feature")}: ${entry.name ? backgroundFeatureLabel(entry.name, entry.feature, locale) : entry.feature}.**${entry.featureDesc ? ` ${localizeBackgroundFeatureText(entry.featureDesc, locale)}` : ""}`
     : "";
-  const parts = [local(entry.packBlurb || entry.blurb), feature, local(entry.desc)].filter(Boolean);
+  const parts = [entry.packBlurb || local(entry.blurb), feature, local(entry.desc)].filter(Boolean);
   return parts.length ? parts.join("\n\n") : undefined;
 }
 
 // An option's own name reads in the reader's language when the official
 // maps carry it; a pack's reskin (packName) is its author's words and
 // stays. The id picked stays whatever it always was.
-function shownOption<T extends { id: string; name: string; packName?: string; documentSlug?: string }>(
+function shownOption<T extends { id: string; name: string; packName?: string; documentSlug?: string; slug?: string }>(
   entry: T,
   table: "species" | "classes" | "backgrounds",
   locale: Locale,
 ): string {
   if (entry.packName) return entry.name;
-  if (locale === "cs" && entry.documentSlug && entry.documentSlug !== "homebrew") {
-    const row = { name: entry.name, slug: entry.id, documentSlug: entry.documentSlug, source: "open5e" };
-    const translated = expansionNameCs(table, row);
-    if (translated) return translated;
-  }
-  return contentName(table, entry.name, locale);
+  return contentName(table, { name: entry.name, slug: entry.slug ?? entry.id, documentSlug: entry.documentSlug, source: entry.documentSlug === "homebrew" ? "homebrew" : "open5e" }, locale);
 }
 
 export function usePickerGroups({
@@ -318,7 +314,7 @@ export function usePickerGroups({
       // A pack-only lineage has no bundled lines; leaving the text empty
       // lets the dialog fetch the row's full trait write-up instead of
       // showing the card's clipped summary.
-      infoText: entry.packBlurb || describeRace(entry.id, locale) || undefined,
+      infoText: entry.packBlurb || entry.localizedDesc || describeRace(entry.id, locale) || undefined,
       // The pack row behind the option, which is not always the id
       // (src/lib/content/race-options.ts optionIdFor).
       reference: { kind: "races", slug: entry.slug ?? entry.id, name: entry.name },
@@ -431,10 +427,10 @@ export function usePickerGroups({
             // by; the label reads in the reader's language where the maps
             // carry it (the identity line reads the same way).
             id: name,
-            name: subclassName(klass?.id ?? "", name, locale),
+            name: archetypeDisplayName(klass?.id ?? "", name, locale, match ? { ...match, slug: match.id } : undefined),
             // The pack's full write-up when it has the row, else the
             // bundled line, so no subclass is a bare name.
-            infoText: match?.desc || subclassBlurb(klass?.id ?? "", name) || undefined,
+            infoText: match?.localizedDesc || match?.desc || subclassBlurb(klass?.id ?? "", name) || undefined,
             reference: match
               ? { kind: "archetypes", slug: match.id, name }
               : undefined,
@@ -459,8 +455,8 @@ export function usePickerGroups({
         label: t("From the content pack"),
         options: packArchetypes.map((entry) => ({
           id: entry.name,
-          name: entry.name,
-          infoText: entry.desc,
+          name: archetypeDisplayName(klass?.id ?? "", entry.name, locale, { ...entry, slug: entry.id }),
+          infoText: entry.localizedDesc || entry.desc,
           reference: { kind: "archetypes", slug: entry.id, name: entry.name },
         })),
       });

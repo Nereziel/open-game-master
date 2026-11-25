@@ -1,12 +1,13 @@
 "use client";
 
-import { useEffect, useRef, useState } from "react";
+import { useEffect, useMemo, useRef, useState } from "react";
 import { Loader2, Search } from "lucide-react";
 import { cn } from "@/lib/cn";
 import { ui } from "@/lib/ui";
 import { InfoButton } from "@/components/ui/InfoDialog";
 import { FieldLabel } from "@/app/workshop/kit";
-import { heldTraitNames, publishedTraits, withTrait, type PublishedTrait } from "@/lib/workshop/species-traits";
+import { heldTraitNames, withTrait } from "@/lib/workshop/species-traits";
+import { publishedTraitChoices, publishedTraitMatches, type PublishedSpeciesRow } from "@/lib/workshop/species-trait-display";
 import { textKey } from "@/lib/language/text-logic";
 import { useT } from "@/lib/locale";
 
@@ -15,10 +16,10 @@ import { useT } from "@/lib/locale";
 // own). A pick lands in the Traits text in the book's words, where it stays
 // editable; named as published, the engine runs it at the table.
 
-type Row = { name?: string; data?: { traits?: unknown }; table?: { traits?: unknown } };
+type Row = { slug?: string; source?: string; documentSlug?: string; name?: string; data?: { traits?: unknown }; table?: { traits?: unknown } };
 
 export function SpeciesTraitPicker({ traits, onChange }: { traits: string; onChange: (traits: string) => void }) {
-  const [catalog, setCatalog] = useState<PublishedTrait[] | null>(null);
+  const [catalog, setCatalog] = useState<PublishedSpeciesRow[] | null>(null);
   const [loading, setLoading] = useState(false);
   const [failed, setFailed] = useState(false);
   const [query, setQuery] = useState("");
@@ -35,22 +36,24 @@ export function SpeciesTraitPicker({ traits, onChange }: { traits: string; onCha
     return () => document.removeEventListener("mousedown", onClickOutside);
   }, []);
 
-  // Read once, the first time the search is used.
+  // Cache only canonical rules and source identity; display labels are
+  // derived again when the reader changes language.
   function load() {
     setOpen(true);
     if (catalog || loading) return;
     setLoading(true);
     setFailed(false);
-    fetch("/api/content/races?mechanics=1&limit=500")
+    fetch("/api/content/races?mechanics=1&limit=500", { headers: { "X-Odm-Locale": "en" } })
       .then((response) => (response.ok ? response.json() : Promise.reject(new Error(String(response.status)))))
       .then((data: { results?: Row[] }) =>
         setCatalog(
-          publishedTraits(
-            (data.results ?? []).map((row) => ({
-              name: String(row.name ?? ""),
-              traits: String(row.table?.traits ?? row.data?.traits ?? ""),
-            })),
-          ),
+          (data.results ?? []).map((row) => ({
+            slug: row.slug,
+            source: row.source,
+            documentSlug: row.documentSlug,
+            name: String(row.name ?? ""),
+            traits: String(row.table?.traits ?? row.data?.traits ?? ""),
+          })),
         ),
       )
       .catch(() => setFailed(true))
@@ -58,11 +61,9 @@ export function SpeciesTraitPicker({ traits, onChange }: { traits: string; onCha
   }
 
   const held = new Set(heldTraitNames(traits).map(textKey));
-  const words = textKey(query);
-  const shown = (catalog ?? []).filter(
-    (trait) => !words || textKey(trait.name).includes(words) || trait.from.some((name) => textKey(name).includes(words)),
-  );
   const t = useT();
+  const choices = useMemo(() => publishedTraitChoices(catalog ?? [], t.locale), [catalog, t.locale]);
+  const shown = choices.filter((choice) => publishedTraitMatches(choice, query));
 
   return (
     <div ref={container} className="space-y-1" data-species-trait-picker>
@@ -91,7 +92,7 @@ export function SpeciesTraitPicker({ traits, onChange }: { traits: string; onCha
           would cover the Traits text it writes into. */}
       {open && shown.length ? (
         <ul className="reveal max-h-64 overflow-y-auto panel panel-smoke rounded-lg text-sm">
-          {shown.slice(0, 60).map((trait) => {
+          {shown.slice(0, 60).map(({ trait, label, fromLabels }) => {
             const has = held.has(textKey(trait.name));
             return (
               <li key={trait.name} className="flex items-center gap-1 pr-2 hover:bg-stone-800">
@@ -101,12 +102,12 @@ export function SpeciesTraitPicker({ traits, onChange }: { traits: string; onCha
                   onClick={() => onChange(withTrait(traits, trait))}
                   className={cn(ui.btnSmall, "min-h-10 grow justify-between gap-2 border-transparent bg-transparent text-left shadow-none disabled:opacity-60")}
                 >
-                  <span className="truncate">{trait.name}</span>
+                  <span className="truncate">{label}</span>
                   <span className="shrink-0 text-[11px] text-stone-500">
-                    {has ? t("Already here") : `${trait.from.slice(0, 2).join(", ")}${trait.from.length > 2 ? ` +${trait.from.length - 2}` : ""}`}
+                    {has ? t("Already here") : `${fromLabels.slice(0, 2).join(", ")}${trait.from.length > 2 ? ` +${trait.from.length - 2}` : ""}`}
                   </span>
                 </button>
-                <InfoButton label={trait.name} text={trait.text || t("{name}, as {from} has it.", { name: trait.name, from: trait.from[0] })} />
+                <InfoButton label={label} text={trait.text || t("{name}, as {from} has it.", { name: label, from: fromLabels[0] })} />
               </li>
             );
           })}

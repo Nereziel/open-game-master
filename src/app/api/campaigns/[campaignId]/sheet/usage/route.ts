@@ -1,4 +1,6 @@
 import { z } from "zod";
+import { requestT } from "@/lib/request-locale";
+import { engineRefusalKey, spendActionReason } from "@/lib/dm/player-refusals";
 import { capsFor, isErrorResponse, isLead, requireMember } from "@/lib/campaign-api";
 import { refuseDuringBreak } from "@/lib/dm/table-break";
 import { allocateSeq, campaignSeats, getCampaignById } from "@/lib/db/campaigns";
@@ -86,6 +88,7 @@ export async function POST(
     return context;
   }
 
+  const t = requestT(request);
   const raw = await request.json().catch(() => ({}));
   // The DM seats hold no character of their own, so the sheet has to be
   // found before the body is judged: a correction names it.
@@ -95,17 +98,17 @@ export async function POST(
       ? getSheetById(raw.characterId)
       : null;
   if (raw?.characterId && (!named || named.campaignId !== campaignId || (!corrects && (named.userId !== context.user.id || named.isCompanion)))) {
-    return Response.json({ error: "Character not found." }, { status: 404 });
+    return Response.json({ error: t("Character not found.") }, { status: 404 });
   }
   const sheet = named ?? getSheetForUser(campaignId, context.user.id);
   if (!sheet) {
-    return Response.json({ error: "You have no character in this campaign." }, { status: 404 });
+    return Response.json({ error: t("You have no character in this campaign.") }, { status: 404 });
   }
 
   const parsed = usageSchema.safeParse(raw);
   if (!parsed.success) {
     return Response.json(
-      { error: parsed.error.issues[0]?.message || "Invalid adjustment." },
+      { error: parsed.error.issues[0]?.message || t("Invalid adjustment.") },
       { status: 400 },
     );
   }
@@ -113,23 +116,23 @@ export async function POST(
   // minutes out of one: play, which waits out a break. Marking a counter
   // spent, or a correction, is record keeping and goes on.
   if (parsed.data.gear) {
-    const paused = refuseDuringBreak(campaignId);
+    const paused = refuseDuringBreak(campaignId, undefined, request);
     if (paused) {
       return paused;
     }
   }
 
   const encounter = getActiveEncounter(campaignId);
-  const lead = "Ask the GM or the party lead if the count needs correcting.";
+  const lead = t("Ask the GM or the party lead if the count needs correcting.");
 
   if (!corrects) {
     if (sheet.deathSaves?.dead) {
-      return refuse(`${sheet.name} is dead and spends nothing. ${lead}`);
+      return refuse(t("{name} is dead and spends nothing. {lead}", { name: sheet.name, lead }));
     }
     const pact = sheet.spellcasting?.pact;
     if (usageLowers(sheet, parsed.data) || (pact && (parsed.data.pactUsed ?? pact.used) < pact.used)) {
       return refuse(
-        `Spell slots, hit dice and class features come back at rests, so a player can only mark them spent. ${lead}`,
+        t("Spell slots, hit dice and class features come back at rests, so a player can only mark them spent. {lead}", { lead }),
       );
     }
     // SRD 5.1: hit dice are spent at the end of a short rest, and the rest
@@ -138,7 +141,7 @@ export async function POST(
     // or a rest that never happened.
     if (usageSpendsHitDice(sheet, parsed.data)) {
       return refuse(
-        `Hit dice are spent at the end of a short rest, which the GM runs; ask the GM for a short rest and ${sheet.name} spends them there.`,
+        t("Hit dice are spent at the end of a short rest, which the GM runs; ask the GM for a short rest and {name} spends them there.", { name: sheet.name }),
       );
     }
   }
@@ -154,20 +157,20 @@ export async function POST(
     // In a fight, drawing a weapon or strapping on a shield is the character
     // acting, which a dominated character's player no longer does: the GM
     // plays them until the charm ends (src/lib/dm/companion-command.ts).
-    const held = encounter && !corrects ? dominatedRefusal(campaignId, sheet) : null;
+    const held = encounter && !corrects ? dominatedRefusal(campaignId, sheet, t) : null;
     if (held) {
       return Response.json({ error: held, dominated: true }, { status: 409 });
     }
     if (Object.keys(parsed.data.gear).some((name) => !sheet.equipment.some((item) => item.name === name))) {
       return Response.json(
-        { error: `${sheet.name} does not carry one of those items.` },
+        { error: t("{name} does not carry one of those items.", { name: sheet.name }) },
         { status: 400 },
       );
     }
     if (sheet.deathSaves?.dead && (changes.armor.length || changes.shields.length || changes.attunement.length)) {
-      return refuse(`${sheet.name} is dead and cannot change what they wear or are attuned to.`);
+      return refuse(t("{name} is dead and cannot change what they wear or are attuned to.", { name: sheet.name }));
     }
-    const attuneProblem = attunementRefusal(sheet, parsed.data.gear);
+    const attuneProblem = attunementRefusal(sheet, parsed.data.gear, t);
     if (attuneProblem) {
       return refuse(attuneProblem);
     }
@@ -178,7 +181,7 @@ export async function POST(
     const worn = gearPatch(sheet, parsed.data.gear, {
       corrects,
       armor: { armorName: armor.armorName, shieldName: armor.shieldName },
-    });
+    }, t);
     if ("error" in worn) {
       return Response.json(
         { error: worn.error, ...("conflict" in worn ? { wearConflict: worn.conflict } : {}) },
@@ -213,7 +216,7 @@ export async function POST(
       }
       const full = handsFullFor(after, row);
       if (full.length) {
-        return refuse(handsFullError(sheet.name, name, full, kind === "shield" ? "strapped on" : "drawn", "player"));
+        return refuse(handsFullError(sheet.name, name, full, kind === "shield" ? "strapped on" : "drawn", "player", t));
       }
     }
   }
@@ -221,32 +224,32 @@ export async function POST(
   if (encounter && parsed.data.gear) {
     if (changes.armor.length) {
       return refuse(
-        `Armor takes minutes to put on or take off, so ${changes.armor[0]} cannot change during a fight. A shield takes one action, and a weapon the free object interaction.`,
+        t("Armor takes minutes to put on or take off, so {item} cannot change during a fight. A shield takes one action, and a weapon the free object interaction.", { item: changes.armor[0] }),
       );
     }
     if (changes.attunement.length) {
       return refuse(
-        `Attuning to an item, or ending it, takes a short rest, so ${changes.attunement[0]} cannot change during a fight.`,
+        t("Attuning to an item, or ending it, takes a short rest, so {item} cannot change during a fight.", { item: changes.attunement[0] }),
       );
     }
     if (changes.shields.length) {
       const able = canAct({ sheet, encounter, kind: "action" });
       if (!able.ok) {
-        return refuse(able.error);
+        return refuse(engineRefusalKey(able.error, "action", sheet.name, "", t));
       }
       // In the player's words: heldTurnRefusal's sentence is the model's.
       if (heldTurnRefusal(encounter, sheet)) {
-        return refuse(heldTurnLine(sheet.name, encounter ? enemiesAhead(encounter, sheet.id) : [], "acts"));
+        return refuse(heldTurnLine(sheet.name, encounter ? enemiesAhead(encounter, sheet.id) : [], "acts", t));
       }
       const budget = budgetFor(encounter, sheet.id, attacksAllowedFor(sheet));
       if (!budget) {
         return refuse(
-          `Putting on or taking off a shield takes an action, so ${sheet.name} can do it on their own turn.`,
+          t("Putting on or taking off a shield takes an action, so {name} can do it on their own turn.", { name: sheet.name }),
         );
       }
       shieldBudget = spendAction(budget, "action", "Handling a shield", sheet.name);
       if (!shieldBudget.ok) {
-        return refuse(shieldBudget.error);
+        return refuse(spendActionReason(budget, "action", "Handling a shield", sheet.name, shieldBudget.error, t, t("Handling a shield")));
       }
     }
     // A weapon drawn or stowed, a ring or a cloak put on: the turn's free
@@ -255,15 +258,15 @@ export async function POST(
     if (changes.held.length) {
       const able = canAct({ sheet, encounter, kind: "free" });
       if (!able.ok) {
-        return refuse(able.error);
+        return refuse(engineRefusalKey(able.error, "free", sheet.name, "", t));
       }
       // In the player's words: heldTurnRefusal's sentence is the model's.
       if (heldTurnRefusal(encounter, sheet)) {
-        return refuse(heldTurnLine(sheet.name, encounter ? enemiesAhead(encounter, sheet.id) : [], "acts"));
+        return refuse(heldTurnLine(sheet.name, encounter ? enemiesAhead(encounter, sheet.id) : [], "acts", t));
       }
       let budget = shieldBudget?.ok ? shieldBudget.budget : budgetFor(encounter, sheet.id, attacksAllowedFor(sheet));
       if (!budget) {
-        return refuse(`Drawing, stowing or putting something on happens on ${sheet.name}'s own turn.`);
+        return refuse(t("Drawing, stowing or putting something on happens on {name}'s own turn.", { name: sheet.name }));
       }
       for (const name of changes.held) {
         const row = sheet.equipment.find((item) => item.name === name);
@@ -273,11 +276,12 @@ export async function POST(
         const on = parsed.data.gear[name]?.equipped === true;
         const spent = spendInteraction(budget, {
           what: `${on ? "drawing" : "putting away"} ${name}`,
+          displayWhat: t(on ? "drawing {item}" : "putting away {item}", { item: name }),
           who: sheet.name,
           oneHandedWeapon: gearKindOf(row) === "weapon" && handsFor(row) === 1,
           dualWielder: dualWields(sheet.feats, sheet.campaignId),
           fastHands: hasFastHands(sheet),
-        });
+        }, t);
         if (!spent.ok) {
           return refuse(spent.error);
         }
@@ -291,7 +295,7 @@ export async function POST(
 
   if (parsed.data.slots) {
     if (!sheet.spellcasting) {
-      return Response.json({ error: `${sheet.name} has no spell slots.` }, { status: 403 });
+      return Response.json({ error: t("{name} has no spell slots.", { name: sheet.name }) }, { status: 403 });
     }
     const slots = { ...sheet.spellcasting.slots };
     let changed = false;
@@ -347,14 +351,14 @@ export async function POST(
 
   if (!Object.keys(patch).length) {
     return Response.json(
-      { error: "None of those counters exist on this character." },
+      { error: t("None of those counters exist on this character.") },
       { status: 400 },
     );
   }
 
   const updated = patchSheet(sheet.id, patch);
   if (!updated) {
-    return Response.json({ error: "Character not found." }, { status: 404 });
+    return Response.json({ error: t("Character not found.") }, { status: 404 });
   }
   // Charged only once the write is in, so a refusal never costs the action.
   if (encounter && shieldBudget?.ok) {
@@ -363,7 +367,7 @@ export async function POST(
   // Out of a fight armor takes minutes to put on or take off, and ending an
   // attunement a short rest spent with the item; the clock moves by them
   // (SRD 5.1, Getting Into and Out of Armor; Attunement).
-  const dressing = parsed.data.gear && !encounter ? armorChangeMinutes(sheet.equipment, parsed.data.gear) : null;
+  const dressing = parsed.data.gear && !encounter ? armorChangeMinutes(sheet.equipment, parsed.data.gear, { locale: t.locale }) : null;
   if (dressing?.minutes) {
     advanceClock(campaignId, dressing.minutes, "minutes");
     // A companion's ultimatum whose deadline those minutes passed is the
@@ -396,6 +400,6 @@ export async function POST(
   publishPersisted(campaignId, "sheet_updated", { sheet: updated });
 
   // What the free first change did, said plainly (gear-hands.ts rehandLine).
-  const note = rehand && askedRow ? rehandLine(sheet.name, rehand.putAway, askedRow.name) : null;
+  const note = rehand && askedRow ? rehandLine(sheet.name, rehand.putAway, askedRow.name, t) : null;
   return Response.json({ sheet: updated, ...(dressing?.minutes ? { timePassed: dressing.lines.join(" ") } : {}), ...(note ? { note } : {}) });
 }

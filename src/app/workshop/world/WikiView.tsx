@@ -1,5 +1,7 @@
 "use client";
 
+import { worldTypeLabel } from "@/lib/worldforge/display";
+
 import { FolderOpen, FolderPlus, Plus, Search, Trash2, Wand2, X } from "lucide-react";
 import { useDeferredValue, useMemo, useState } from "react";
 import { cn } from "@/lib/cn";
@@ -145,13 +147,13 @@ export function WikiView({
             <div className="flex flex-wrap gap-1" role="radiogroup" aria-label={t("Type name")}>
               {doc.types.map((type) => (
                 <button key={type.id} type="button" role="radio" aria-checked={newType === type.id} onClick={() => setNewType(type.id)} className={cn("rounded-md border px-1.5 py-0.5 text-[11px] motion-press", newType === type.id ? "text-stone-950" : "text-stone-300")} style={newType === type.id ? { background: type.color, borderColor: type.color } : { borderColor: tint(type.color, 0.4) }}>
-                  {type.name}
+                  {worldTypeLabel(t, type)}
                 </button>
               ))}
             </div>
             <p className="text-[11px] text-stone-500">{t("Lands in {shelf}{category}.", { shelf: SHELF_LABELS[chosenType.shelf], category: chosenType.shelf === "lore" ? ` (${chosenType.loreCategory})` : "" })}</p>
             {/* eslint-disable-next-line jsx-a11y/no-autofocus -- the form opens because the author just pressed New entry */}
-            <input className={cn(ui.input, "text-sm")} placeholder={t("A {type}'s name", { type: chosenType.name.toLowerCase() })} aria-label={t("Name")} maxLength={80} value={newName} onChange={(event) => setNewName(event.target.value)} autoFocus />
+            <input className={cn(ui.input, "text-sm")} placeholder={t("A {type}'s name", { type: worldTypeLabel(t, chosenType).toLowerCase() })} aria-label={t("Name")} maxLength={80} value={newName} onChange={(event) => setNewName(event.target.value)} autoFocus />
             {api.error ? <PanelError>{api.error}</PanelError> : null}
             <div className="flex justify-end gap-1.5">
               <KitButton tone="small" onClick={() => setMaking(false)}>
@@ -188,7 +190,7 @@ export function WikiView({
             const count = typeCounts.get(type.id) ?? 0;
             return count ? (
               <button key={type.id} type="button" onClick={() => setTypeFilter(typeFilter === type.id ? "" : type.id)} className="rounded-md border px-1.5 py-0.5 text-[11px] motion-press" style={typeFilter === type.id ? { background: tint(type.color, 0.25), borderColor: type.color, color: "#f5f0e6" } : { borderColor: tint(type.color, 0.35), color: type.color }}>
-                {type.name} {count}
+                {worldTypeLabel(t, type)} {count}
               </button>
             ) : null;
           })}

@@ -65,7 +65,8 @@ export async function GET(
     if (!steersStory(context)) {
       return Response.json({ error: "Only the person steering the story reads this." }, { status: 403 });
     }
-    return Response.json({ kept: keptNotes(campaignId) });
+    const keptDisplays = keptNotes(campaignId, true);
+    return Response.json({ kept: keptDisplays.map((note) => note.message), keptDisplays });
   }
   const parsed = previewSchema.safeParse({
     sourceId: url.searchParams.get("sourceId") ?? "",
@@ -168,12 +169,14 @@ export async function POST(
     // What the picker reports after an import: a reimport's kept edits,
     // monsters nothing here answers to, and the hand-built monsters brought
     // into this table's bestiary. These were computed and then dropped here.
-    ...(result.worldConflicts?.length ? { worldConflicts: result.worldConflicts } : {}),
+    ...(result.worldConflicts?.length ? { worldConflicts: result.worldConflicts, worldConflictDisplays: result.worldConflictDisplays } : {}),
     ...(result.unresolved?.length ? { unresolved: result.unresolved } : {}),
     ...(result.monstersBrought?.length ? { monstersBrought: result.monstersBrought } : {}),
     ...(result.monstersReused?.length ? { monstersReused: result.monstersReused } : {}),
     ...(result.itemsBrought?.length ? { itemsBrought: result.itemsBrought } : {}),
     ...(result.itemsReused?.length ? { itemsReused: result.itemsReused } : {}),
+    ...(result.spellsBrought?.length ? { spellsBrought: result.spellsBrought } : {}),
+    ...(result.referenceNotes?.length ? { referenceNotes: result.referenceNotes, referenceNoteDisplays: result.referenceNoteDisplays } : {}),
     ...(pregensOffered.length ? { pregensOffered } : {}),
   });
 }

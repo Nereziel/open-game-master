@@ -43,6 +43,7 @@ import {
 } from "@/app/workshop/homebrew/ItemMagicFields";
 import { DAMAGE_TYPE_BLURBS, WEAPON_PROPERTY_BLURBS, glossaryFor } from "@/lib/help/terms";
 import { useT } from "@/lib/locale";
+import { damageTypeWord } from "@/lib/dm/damage-logic";
 
 // "1d8 slashing" as the two things a DM actually decides. A type the list
 // does not know (a homebrew "1d6 chitin-shredding") stays in the dice box
@@ -122,7 +123,7 @@ function WeaponBlock({ weapon, onChange }: { weapon: Weapon; onChange: (next: We
         <SelectField
           label="Category"
           value={String(weapon.category ?? "simple")}
-          options={WEAPON_CATEGORIES.map((value) => ({ value, label: value }))}
+          options={WEAPON_CATEGORIES.map((value) => ({ value, label: t(value, { context: "item.weaponCategory" }) }))}
           onChange={(category) => set({ category })}
         />
         <SelectField
@@ -152,7 +153,7 @@ function WeaponBlock({ weapon, onChange }: { weapon: Weapon; onChange: (next: We
           value={splitDamage(String(weapon.damage ?? "")).type}
           options={[
             { value: "", label: t("Pick a type...") },
-            ...DAMAGE_TYPES.map((value) => ({ value, label: value })),
+            ...DAMAGE_TYPES.map((value) => ({ value, label: damageTypeWord(value, t.locale) })),
           ]}
           onChange={(type) => set({ damage: joinDamage(splitDamage(String(weapon.damage ?? "")).dice, type) })}
           hint={t("Slashing, piercing and bludgeoning are the weapon types; the rest are for enchanted blades.")}
@@ -217,7 +218,7 @@ function ArmorBlock({ armor, onChange }: { armor: Armor; onChange: (next: Armor)
         <SelectField
           label="Category"
           value={category}
-          options={ARMOR_CATEGORIES.map((value) => ({ value, label: value }))}
+          options={ARMOR_CATEGORIES.map((value) => ({ value, label: t(value, { context: "item.armorCategory" }) }))}
           onChange={(next) => set({ category: next })}
         />
         <NumberField
@@ -379,7 +380,7 @@ export function ItemFields({ data, onChange }: { data: Data; onChange: (next: Da
         <SelectField
           label={t("Rarity")}
           value={String(data.rarity ?? "")}
-          options={[{ value: "", label: t("mundane") }, ...RARITIES.map((value) => ({ value, label: value }))]}
+          options={[{ value: "", label: t("mundane") }, ...RARITIES.map((value) => ({ value, label: t(value, { context: "content.rarity" }) }))]}
           onChange={(rarity) => set({ rarity })}
         />
         <TextField label={t("Cost", { context: "workshop.homebrew.item.cost" })} value={String(data.cost ?? "")} onChange={(cost) => set({ cost })} placeholder="15 gp" maxLength={40} />

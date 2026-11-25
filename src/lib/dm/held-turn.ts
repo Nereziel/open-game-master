@@ -36,6 +36,7 @@ import { PET_REACTION_PREFIX, VIGILANT_PREFIX } from "@/lib/srd/authored-effects
 import { canEnemyAct } from "@/lib/dm/can-act";
 import { readiedHeld } from "@/lib/dm/readied-kinds";
 import type { ToolError } from "@/lib/dm/tool-errors";
+import { formatMessage, type MessageVars } from "@/lib/messages-logic";
 
 // The reactions a character's turn gives back: their own, Vigilant
 // Defender's per-turn ones ("vigilant:<id>:<mover>") and their pet's
@@ -205,11 +206,11 @@ function heldActionLine(name: string, ahead: string[]): string {
 // The refusal of a walk on a turn that has not begun, in a player's words
 // (the board's walk; `does` the act, "acts" for the sheet's gear toggle, whose
 // route relayed heldActionLine's sentence for the model, tool names and all).
-export function heldTurnLine(name: string, ahead: string[], does = "moves"): string {
-  const who = ahead.length > 1 ? `${ahead.slice(0, -1).join(", ")} and ${ahead[ahead.length - 1]}` : ahead[0];
+export function heldTurnLine(name: string, ahead: string[], does = "moves", t: (key: string, vars?: MessageVars) => string = formatMessage): string {
+  const who = ahead.length > 1 ? `${ahead.slice(0, -1).join(", ")} ${t("and")} ${ahead[ahead.length - 1]}` : ahead[0];
   return who
-    ? `${who} ${ahead.length > 1 ? "take their turns" : "takes its turn"} before ${name}'s: ${name} ${does} once their turn begins.`
-    : `The enemies before ${name} are taking their turns; ${name} ${does} once the GM hands the turn on.`;
+    ? t(ahead.length > 1 ? "{who} take their turns before {name}'s: {name} {does} once their turn begins." : "{who} takes its turn before {name}'s: {name} {does} once their turn begins.", { who, name, does: t(does) })
+    : t("The enemies before {name} are taking their turns; {name} {does} once the GM hands the turn on.", { name, does: t(does) });
 }
 
 // The enemies before the held character have acted: their turn begins.

@@ -5,6 +5,8 @@ import { renderStoryHtml } from "@/lib/export/html";
 import { renderStoryOdt } from "@/lib/export/odt";
 import { renderStoryDocx } from "@/lib/export/docx";
 import { attachmentDisposition } from "@/lib/serve-file";
+import { parseLocale } from "@/lib/i18n/locale";
+import { bookLocaleOf } from "@/lib/request-locale";
 
 export const runtime = "nodejs";
 export const dynamic = "force-dynamic";
@@ -30,9 +32,13 @@ export async function GET(
     return context;
   }
 
-  const format = formatSchema.parse(new URL(request.url).searchParams.get("format") ?? "html");
+  const query = new URL(request.url).searchParams;
+  const format = formatSchema.parse(query.get("format") ?? "html");
+  // Anchor downloads cannot attach X-Odm-Locale. A supported explicit query
+  // carries the effective UI locale; other callers use the shared resolver.
+  const locale = parseLocale(query.get("locale")) ?? bookLocaleOf(request);
 
-  const doc = buildStoryDocument(campaignId);
+  const doc = buildStoryDocument(campaignId, locale);
   if (!doc) {
     return Response.json({ error: "Campaign not found." }, { status: 404 });
   }
@@ -48,6 +54,8 @@ export async function GET(
     headers: {
       "Content-Type": CONTENT_TYPES[format],
       "Content-Disposition": attachmentDisposition(exportFilename(doc, format)),
+      "Cache-Control": "private, no-store",
+      "Vary": "X-Odm-Locale, Cookie, Accept-Language",
     },
   });
 }

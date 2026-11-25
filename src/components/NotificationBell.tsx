@@ -6,6 +6,7 @@ import { EmptyState } from "@/components/EmptyState";
 import { GameIcon } from "@/components/ui/GameIcon";
 import { cn } from "@/lib/cn";
 import { useT } from "@/lib/locale";
+import { agoLabel } from "@/app/home/types";
 
 // The bell: out-of-game news (sessions planned, moved, called off; someone
 // can't make it; reminders and the idle-table nudge). Live over the
@@ -32,15 +33,6 @@ function glyphFor(kind: string): string {
   if (/session|schedule|moved|planned/.test(kind)) return "tab-session";
   if (/idle|nudge|turn/.test(kind)) return "cue-turn";
   return "tab-journal";
-}
-
-function ago(iso: string): string {
-  const minutes = Math.max(0, Math.round((Date.now() - Date.parse(iso)) / 60_000));
-  if (minutes < 1) return "just now";
-  if (minutes < 60) return `${minutes}m ago`;
-  const hours = Math.round(minutes / 60);
-  if (hours < 48) return `${hours}h ago`;
-  return `${Math.round(hours / 24)}d ago`;
 }
 
 export function NotificationBell() {
@@ -196,7 +188,7 @@ export function NotificationBell() {
         onClick={toggle}
         aria-label={unread > 0 ? t("Notifications, {count} unread", { count: unread }) : t("Notifications")}
         aria-expanded={open}
-        className="motion-nudge relative rounded-lg border border-stone-800 bg-stone-900/60 p-2 text-stone-300 transition-colors hover:border-amber-500/40 hover:text-amber-200"
+        className="motion-nudge tap-reach relative inline-flex items-center justify-center rounded-lg border border-stone-800 bg-stone-900/60 p-2 text-stone-300 transition-colors hover:border-amber-500/40 hover:text-amber-200"
       >
         {/* The bell swings once each time the unread count changes. */}
         <Bell key={unread} className={cn("size-4 origin-top", unread > 0 && "bell-ring")} />
@@ -229,7 +221,7 @@ export function NotificationBell() {
                   <GameIcon icon={{ kind: "glyph", key: glyphFor(item.kind) }} size="size-8" className="shrink-0" />
                   <span className="min-w-0">
                     <span className="block">{item.body}</span>
-                    <span className="block text-xs text-stone-600">{ago(item.createdAt)}</span>
+                    <span className="block text-xs text-stone-600">{agoLabel(t, item.createdAt)}</span>
                   </span>
                 </li>
               ))}

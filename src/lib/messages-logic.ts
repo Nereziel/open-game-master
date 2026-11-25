@@ -1,17 +1,20 @@
 // Pure translation helpers re-exported from the gettext-style runtime in
 // src/lib/i18n/translate.ts so existing callers and tests keep working.
 import { translate, translatePlural, type Locale, type TranslateVars } from "./i18n/translate.ts";
+import { localeOfServerLanguage } from "./i18n/locale.ts";
 
 export { translate, translatePlural, type Locale, type TranslateVars };
 export type MessageKey = string;
 export type MessageVars = TranslateVars;
 
-export function pluralCategory(locale: Locale, count: number): "one" | "other" {
-  if (!Number.isFinite(count)) {
-    return "other";
-  }
-  return locale === "fr" ? (count <= 1 ? "one" : "other") : count === 1 ? "one" : "other";
+// Stored and shared table messages follow the campaign language, not the reader UI.
+// Unsupported table languages use the English source, just like an English table.
+export function tableTranslator(language: string | null | undefined): (key: string, vars?: TranslateVars) => string {
+  const locale = localeOfServerLanguage(language) ?? "en";
+  return (key, vars) => translate(locale, key, vars);
 }
+
+export { pluralCategory } from "./i18n/translate.ts";
 
 export function formatMessage(template: string, vars?: MessageVars): string {
   if (!vars) {
@@ -22,10 +25,8 @@ export function formatMessage(template: string, vars?: MessageVars): string {
   );
 }
 
-// The BCP 47 tag a locale resolves to, for toLocaleDateString and friends.
-export function localeTag(locale: Locale): string {
-  return locale === "fr" ? "fr-FR" : locale === "cs" ? "cs-CZ" : "en-US";
-}
+// Keep the existing public entry point for formatters.
+export { localeTag } from "./i18n/locale.ts";
 
 export type PluralTranslator = (
   englishOne: string,

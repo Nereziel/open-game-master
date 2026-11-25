@@ -6,7 +6,7 @@ import {
   TableOfContents,
   TextRun,
 } from "docx";
-import type { StoryDocument } from "@/lib/export/story-document";
+import { storyPresentation, type StoryDocument } from "@/lib/export/story-document";
 
 // Renders a StoryDocument as a .docx (OOXML). Chapter headings use the
 // Heading 1 style, which docx turns into bookmarks that the TableOfContents
@@ -44,12 +44,8 @@ function transcriptParagraph(speaker: string, text: string): Paragraph {
 }
 
 export async function renderStoryDocx(doc: StoryDocument): Promise<Uint8Array> {
-  const metaBits = [
-    doc.meta.theme,
-    `Level ${doc.meta.startingLevel} start`,
-    doc.meta.difficulty,
-    doc.meta.status,
-  ].filter(Boolean);
+  const view = storyPresentation(doc);
+  const { metaBits } = view;
 
   const children: (Paragraph | TableOfContents)[] = [];
 
@@ -67,8 +63,8 @@ export async function renderStoryDocx(doc: StoryDocument): Promise<Uint8Array> {
   }
 
   children.push(
-    new Paragraph({ heading: HeadingLevel.HEADING_1, children: [new TextRun("Contents")] }),
-    new TableOfContents("Contents", {
+    new Paragraph({ heading: HeadingLevel.HEADING_1, children: [new TextRun(view.contents)] }),
+    new TableOfContents(view.contents, {
       hyperlink: true,
       headingStyleRange: "1-1",
     }),
@@ -77,7 +73,7 @@ export async function renderStoryDocx(doc: StoryDocument): Promise<Uint8Array> {
 
   if (doc.questLog.length) {
     children.push(
-      new Paragraph({ heading: HeadingLevel.HEADING_1, children: [new TextRun("Quest Log")] }),
+      new Paragraph({ heading: HeadingLevel.HEADING_1, children: [new TextRun(view.questLog)] }),
     );
     for (const quest of doc.questLog) {
       children.push(new Paragraph({ text: quest, bullet: { level: 0 } }));
@@ -106,7 +102,7 @@ export async function renderStoryDocx(doc: StoryDocument): Promise<Uint8Array> {
       children.push(
         new Paragraph({
           heading: HeadingLevel.HEADING_2,
-          children: [new TextRun("Transcript")],
+          children: [new TextRun(view.transcript)],
         }),
       );
       for (const line of chapter.transcript) {
@@ -117,7 +113,7 @@ export async function renderStoryDocx(doc: StoryDocument): Promise<Uint8Array> {
 
   const document = new Document({
     creator: "Open Game Master",
-    title: `${doc.title} — Story`,
+    title: view.title,
     description: doc.premise.slice(0, 500),
     features: { updateFields: true },
     sections: [{ properties: {}, children }],

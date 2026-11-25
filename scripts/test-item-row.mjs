@@ -10,6 +10,7 @@ import { createRequire } from "node:module";
 import { join } from "node:path";
 import { fileURLToPath } from "node:url";
 import { register } from "node:module";
+import { collectItemAliases, sortedItemAliases } from "./lib/localized-item-index.mjs";
 
 register("./lib/register-alias.mjs", import.meta.url);
 
@@ -31,8 +32,9 @@ const { wearSlotOf } = await import("../src/lib/srd/wear-slots.ts");
 const { itemTags } = await import("../src/lib/srd/item-tags.ts");
 const { armorOfRow } = await import("../src/lib/srd/armor.ts");
 const { gearDefFor } = await import("../src/lib/srd/magic-gear.ts");
-const { magicItemBonus, withoutBonus } = await import("../src/lib/srd/item-row.ts");
+const { magicItemBonus, rowName, withoutBonus } = await import("../src/lib/srd/item-row.ts");
 const { ITEM_EN_BY_LOCALIZED_NAME } = await import("../src/lib/srd/item-names-localized.ts");
+const { ITEM_EN_BY_FR } = await import("../src/lib/srd/item-names-fr.ts");
 const { textKey } = await import("../src/lib/language/text-logic.ts");
 const require = createRequire(import.meta.url);
 
@@ -322,11 +324,32 @@ test("an item whose own name and srdName both name rows reads the srdName row; E
 // The official French SRD names (src/lib/srd/item-names-localized.ts) are rows by
 // themselves: a French table's "Cotte de mailles" is worn as Chain Mail with
 // no srdName, a bonus in the name kept, and no English name changes meaning.
-test("an official French SRD item name is its row without srdName, and every English item name reads as before", () => {
+test("localized SRD item names resolve without srdName and English names retain their identity", () => {
+  for (const [name, english] of [
+    ["Dlouhý meč", "Longsword"],
+    ["Épée longue", "Longsword"],
+    ["Drátěná zbroj", "Chain Mail"],
+    ["Cotte de mailles", "Chain Mail"],
+    ["Ochranný plášť", "Cloak of Protection"],
+    ["Cape de protection", "Cloak of Protection"],
+    ["Lance", "Lance"],
+  ]) {
+    // The catalog row's printed casing can differ from the mechanics table
+    // (Chain mail vs Chain Mail). A localized grant must store exactly the
+    // same row as its English grant, not impose a new spelling on either.
+    const canonical = srdNameFor(english, "grant_item");
+    assert.ok(canonical.srdName, `English row exists: ${english}`);
+    assert.equal(textKey(canonical.srdName), textKey(english), english);
+    assert.deepEqual(srdNameFor(name, "grant_item"), canonical, name);
+    assert.match(srdNameFor(name + " +1", "grant_item").error ?? "", /carries a bonus, which belongs in name/, name);
+  }
+  assert.match(srdNameFor("Neznámý meč", "grant_item").error ?? "", /no SRD or pack item is called/);
   assert.equal(matchWeapon({ name: "Dlouhý meč" })?.name, "Longsword");
   assert.equal(matchWeapon({ name: "Dlouhý meč +1" })?.name, "Longsword");
   assert.equal(matchArmor({ name: "Drátěná zbroj" })?.name, "Chain Mail");
-  assert.equal(matchMagicItem({ name: "Pytel beztíže" })?.name, "Bag of Holding");
+  // Bag of Holding has a canonical name but no bundled magic-item mechanics row.
+  assert.equal(rowName({ name: "Pytel beztíže" }), "Bag of Holding");
+  assert.equal(matchMagicItem({ name: "Ochranný plášť" })?.name, "Cloak of Protection");
   assert.equal(matchWeapon({ name: "Épée longue" })?.name, "Longsword");
   assert.equal(matchWeapon({ name: "Épée longue +1" })?.name, "Longsword");
   assert.equal(magicItemBonus("Épée longue +1"), 1);
@@ -341,11 +364,58 @@ test("an official French SRD item name is its row without srdName, and every Eng
   const table = JSON.parse(readFileSync(new URL("../src/lib/classes/item-tags.json", import.meta.url), "utf8"));
   for (const [name] of table.items) {
     const key = textKey(withoutBonus(name));
-    const french = ITEM_EN_BY_LOCALIZED_NAME[key];
-    assert.ok(!french || textKey(french) === key, `the English "${name}" would read as "${french}"`);
+    const localized = ITEM_EN_BY_LOCALIZED_NAME[key];
+    assert.ok(!localized || textKey(localized) === key, `the English "${name}" would read as "${localized}"`);
   }
+  // Retain the upstream FR generation artifact for compatibility; every
+  // surviving shared alias must agree with it, never pick a different row.
+  for (const [key, english] of Object.entries(ITEM_EN_BY_FR)) {
+    const shared = ITEM_EN_BY_LOCALIZED_NAME[key];
+    assert.ok(shared === undefined || textKey(shared) === textKey(english), key);
+  }
+  const generator = fileURLToPath(new URL("./build-names-fr.mjs", import.meta.url));
+  const refused = spawnSync(process.execPath, [generator, "--check", "--from", "unused"], { encoding: "utf8" });
+  assert.notEqual(refused.status, 0);
+  assert.match(refused.stderr, /--check is read-only/);
   const built = spawnSync(process.execPath, [fileURLToPath(new URL("./build-names-fr.mjs", import.meta.url)), "--check"], { encoding: "utf8" });
   assert.equal(built.status, 0, `build-names-fr --check: ${built.stderr}`);
+});
+
+test("SRD magic-item families resolve consistently without becoming concrete item grants", () => {
+  const families = [
+    ["Ammunition, +1, +2, or +3", "Munitions +1, +2 ou +3", "Střelivo +1, +2 nebo +3"],
+    ["Armor, +1, +2, or +3", "Armure +1, +2 ou +3", "Zbroj +1, +2 nebo +3"],
+    ["Shield, +1, +2, or +3", "Bouclier +1, +2 ou +3", "Štít +1, +2 nebo +3"],
+  ];
+  for (const [english, ...localized] of families) {
+    for (const name of [english, ...localized]) {
+      assert.equal(withoutBonus(name), name, "a family is not a single bonus");
+      assert.equal(rowName({ name }), english);
+      assert.ok(srdNameFor(name, "test").error, "a family cannot be granted as a concrete srdName");
+    }
+  }
+  assert.equal(matchArmor({ name: "Štít +2" })?.name, "Shield");
+  assert.equal(magicItemBonus("Štít +2"), 2);
+  assert.equal(rowName({ name: "Štít +2" }), "Shield");
+});
+
+test("shared alias generation rejects collisions across any number of locale sources", () => {
+  const englishOf = { weapons: (key) => ({ a: "Spear", b: "Lance", c: "Longsword" })[key] };
+  const englishByKey = new Map(["Spear", "Lance", "Longsword"].map((name) => [textKey(name), name]));
+  const sources = [
+    { weapons: { a: "Alias", c: "Alias" } },
+    { weapons: { a: "Alias", b: "Bident" } },
+    { weapons: { b: "Bident", a: "Lance" } },
+  ];
+  for (const order of [sources, [...sources].reverse(), [sources[1], sources[0], sources[2]]]) {
+    const aliases = new Map();
+    for (const tables of order) {
+      collectItemAliases({ tables, englishOf, englishByKey, textKey, aliases });
+    }
+    assert.equal(aliases.get(textKey("Alias")), null);
+    assert.deepEqual(sortedItemAliases(aliases), { [textKey("Bident")]: "Lance" });
+    assert.ok(!aliases.has(textKey("Lance")), "canonical English names are protected");
+  }
 });
 
 test("rowName is the one place an item's srdName is read before its own name", () => {

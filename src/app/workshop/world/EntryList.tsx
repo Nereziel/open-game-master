@@ -2,6 +2,8 @@
 
 import { Lock } from "lucide-react";
 import { useLayoutEffect, useRef, useState, type KeyboardEvent, type ReactNode } from "react";
+import { worldTypeLabel } from "@/lib/worldforge/display";
+import { useT } from "@/lib/locale";
 import { cn } from "@/lib/cn";
 import type { WorldDoc } from "@/lib/worldforge/model";
 import type { WorldEntity } from "@/lib/db/world-forge";
@@ -45,6 +47,7 @@ export function EntryList({
   // Raised by the search box's Down arrow: the first row takes the focus.
   toList?: number;
 }) {
+  const t = useT();
   const box = useRef<HTMLDivElement>(null);
   const [top, setTop] = useState(0);
   const [height, setHeight] = useState(600);
@@ -158,7 +161,7 @@ export function EntryList({
             <span className="min-w-0 flex-1">
               <span className={cn("block truncate text-sm", entity.ref === focus ? "text-amber-100" : "text-stone-200")}>{entity.name}</span>
               <span className="block truncate text-[11px]">
-                <span style={{ color: type.color }}>{type.name}</span>
+                <span style={{ color: type.color }}>{worldTypeLabel(t, type)}</span>
                 {excerpt ? <span className="text-stone-400"> · {excerpt}</span> : null}
               </span>
             </span>

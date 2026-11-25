@@ -1,3 +1,4 @@
+import { monsterSpellReference } from "@/lib/bestiary/spell-display";
 import { ROUND_CEILING } from "@/lib/schemas/condition-meta";
 import { isValidExpression } from "@/lib/dice";
 import type { OnHitRider, TypedDice } from "@/lib/bestiary/attack-text";
@@ -450,7 +451,8 @@ export function checkSpellcasting(raw: unknown): MonsterSpellcasting | null {
     seen.add(key);
     const level = row.level === null ? null : (clamp(row.level, 0, 9) ?? null);
     const perDay = clamp(row.perDay, 1, 9);
-    spells.push({ name, level, ...(perDay !== null ? { perDay } : {}) });
+    const reference = monsterSpellReference(row.reference, name);
+    spells.push({ name, level, ...(perDay !== null ? { perDay } : {}), ...(reference ? { reference } : {}) });
   }
   const dc = clamp(source.dc, 1, 30);
   const attack = clamp(source.attack, -5, 20);

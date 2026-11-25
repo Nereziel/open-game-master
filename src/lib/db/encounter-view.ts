@@ -16,7 +16,7 @@ import { dmPlaysTurn } from "@/lib/dm/companion-command";
 import { aiRunsTestTable } from "@/lib/workshop/test-seats-logic";
 import { answerLabel, critTurnsNormal, heaviestHit, hitIdOf, openHits, reactedLate, type LastHit } from "@/lib/dm/last-hit";
 import { conditionNote, conditionNoteLine, namesLookup } from "@/lib/battlemap/condition-notes";
-import { translate } from "@/lib/messages-logic";
+import { tableTranslator } from "@/lib/messages-logic";
 import { healthState, type HealthState } from "@/lib/bestiary/health";
 import { creatureTypeOf } from "@/lib/bestiary/creature-type";
 import { isRegeneratingDown } from "@/lib/dm/regeneration";
@@ -97,6 +97,10 @@ export type PublicEncounter = {
     // when unrecorded, and nothing a player could not already see.
     race?: string;
     gender?: string;
+    // The enemy this one rides (issue 1055): the two stand on one token, the
+    // rider's, so a tap on it has to ask which of them is meant. Absent on
+    // foot, and when the mount is not in this viewer's list.
+    ridesEnemyId?: string;
     // Kept off the players' board and tracker by the DM. Only ever true in
     // the DM's own projection: a hidden enemy is absent from a player's.
     hidden: boolean;
@@ -392,7 +396,7 @@ export function publicEncounter(
   const hidden = new Set(options.hiddenRefIds ?? []);
   const cast = castLookup(encounter.campaignId);
   const language = getCampaignById(encounter.campaignId)?.gameSettings.tableLanguage ?? "english";
-  const t = (key: string, vars?: Record<string, string | number>) => translate(language === "french" ? "fr" : "en", key, vars);
+  const t = tableTranslator(language);
   // Names a condition's "until X's turn" or "from X" may show: the order as
   // this viewer sees it.
   const nameOf = namesLookup(
@@ -437,6 +441,7 @@ export function publicEncounter(
       type: creatureTypeOf(enemy.stats),
       slug: enemy.slug,
       ...lookOf(cast, enemy),
+      ...(enemy.ridesEnemyId && (showNumbers || !hidden.has(enemy.ridesEnemyId)) ? { ridesEnemyId: enemy.ridesEnemyId } : {}),
       groupKey: enemy.slug,
       // Knocked out by a nonlethal blow (src/lib/dm/knockout.ts): alive at
       // 0 hit points, out of the fight, not dying.

@@ -1,4 +1,5 @@
 import { z } from "zod";
+import { requestT } from "@/lib/request-locale";
 import { isErrorResponse, requireMember } from "@/lib/campaign-api";
 import { classGrantsFor, offeredSubclasses, raceGrantsFor, spellFactsFor } from "@/lib/characters/catalog";
 import { settingClassIds } from "@/lib/classes";
@@ -24,6 +25,7 @@ export async function GET(
   request: Request,
   { params }: { params: Promise<{ campaignId: string }> },
 ) {
+  const t = requestT(request);
   const { campaignId } = await params;
   const context = await requireMember(campaignId);
   if (isErrorResponse(context)) {
@@ -36,23 +38,23 @@ export async function GET(
   // (issue 654), so it reads the level it is about to take.
   const named = characterIdQuery.safeParse(query.get("characterId") ?? undefined);
   if (!named.success) {
-    return Response.json({ error: "That character id is not valid." }, { status: 400 });
+    return Response.json({ error: t("That character id is not valid.") }, { status: 400 });
   }
   const sheet = named.data ? ownLivingSheet(campaignId, context.user.id, named.data) : getSheetForUser(campaignId, context.user.id);
   if (named.data && !sheet) {
-    return Response.json({ error: "That is not one of your characters at this table." }, { status: 404 });
+    return Response.json({ error: t("That is not one of your characters at this table.") }, { status: 404 });
   }
   if (!sheet) {
-    return Response.json({ error: "You have no character in this campaign." }, { status: 404 });
+    return Response.json({ error: t("You have no character in this campaign.") }, { status: 404 });
   }
   const classId = query.get("class") ?? undefined;
   // An id no class has is refused as an unknown class below.
   if (classId !== undefined && classId.length > 60) {
-    return Response.json({ error: "That class id is too long." }, { status: 400 });
+    return Response.json({ error: t("That class id is too long.") }, { status: 400 });
   }
   const subclass = query.get("subclass") ?? undefined;
   if (subclass !== undefined && subclass.length > 80) {
-    return Response.json({ error: "That subclass name is too long." }, { status: 400 });
+    return Response.json({ error: t("That subclass name is too long.") }, { status: 400 });
   }
   // The table's homebrew, whoever of its DM seats wrote it, as the level-up.
   const owner = tableAuthors(context.campaign.id);
@@ -75,7 +77,7 @@ export async function GET(
     freeCantrips: freeCantripCount(sheet, racialCantripChoice),
     subclassExtras: subclassExtrasFor(owner),
     settingClassIds: settingClassIds(context.campaign.gameSettings.genre, packClassIds(context.campaign.gameSettings)),
-  });
+  }, t.locale);
   if ("error" in options) {
     return Response.json({ error: options.error }, { status: 400 });
   }

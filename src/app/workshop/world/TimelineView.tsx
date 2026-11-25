@@ -41,7 +41,7 @@ export function TimelineView({ api, world, onOpen }: { api: WorldApi; world: Wor
     setCalendar(null);
   }
   async function dropCalendar(entry: Calendar) {
-    if (await appConfirm("Years written in it keep their numbers and read on the shared line.", { title: `Remove ${entry.name}?`, actionLabel: "Remove" })) {
+    if (await appConfirm(t("Years written in it keep their numbers and read on the shared line."), { title: t("Remove {name}?", { name: entry.name }), actionLabel: t("Remove") })) {
       await api.patch({ calendars: doc.calendars.filter((other) => other.id !== entry.id) });
     }
   }
@@ -93,7 +93,7 @@ export function TimelineView({ api, world, onOpen }: { api: WorldApi; world: Wor
           const issues = event.refs
             .map((ref) => byRef.get(ref))
             .filter((entity) => entity !== undefined)
-            .map((entity) => ({ entity, issue: lifespanIssue(lifespan(typeOf(doc, entity), entity.entry, doc.calendars), at) }))
+            .map((entity) => ({ entity, issue: lifespanIssue(lifespan(typeOf(doc, entity), entity.entry, doc.calendars), at, t.locale) }))
             .filter((entry) => entry.issue);
           if (editing?.id === event.id) {
             return (
@@ -108,14 +108,14 @@ export function TimelineView({ api, world, onOpen }: { api: WorldApi; world: Wor
               <span className={cn("absolute -left-[1.62rem] size-2.5 rounded-full border border-amber-400 bg-stone-950", header ? "top-9" : "top-3.5")} aria-hidden="true" />
               <div className="panel rounded-lg p-2.5">
                 <div className="flex flex-wrap items-baseline gap-2">
-                  <span className="font-display text-sm text-amber-200">{year.primary || "Undated"}</span>
+                  <span className="font-display text-sm text-amber-200">{year.primary || t("Undated")}</span>
                   <span className="text-sm text-stone-100">{event.title}</span>
-                  {event.canon !== "canon" ? <span className="text-[10px] uppercase tracking-[0.12em] text-stone-500">{event.canon}</span> : null}
+                  {event.canon !== "canon" ? <span className="text-[10px] uppercase tracking-[0.12em] text-stone-500">{t(event.canon, { context: "world.canon" })}</span> : null}
                   <span className="ml-auto flex gap-1">
-                    <KitButton tone="icon" aria-label={`Edit ${event.title}`} onClick={() => setEditing(event)}>
+                    <KitButton tone="icon" aria-label={t("Edit {name}", { name: event.title })} onClick={() => setEditing(event)}>
                       <Pencil className="size-3.5" />
                     </KitButton>
-                    <KitButton tone="iconDanger" aria-label={`Delete ${event.title}`} onClick={() => api.patch({ events: doc.events.filter((entry) => entry.id !== event.id) })}>
+                    <KitButton tone="iconDanger" aria-label={t("Delete {name}", { name: event.title })} onClick={() => api.patch({ events: doc.events.filter((entry) => entry.id !== event.id) })}>
                       <Trash2 className="size-3.5" />
                     </KitButton>
                   </span>
@@ -149,17 +149,18 @@ export function TimelineView({ api, world, onOpen }: { api: WorldApi; world: Wor
 }
 
 function CalendarForm({ calendar, onSave, onCancel }: { calendar: Calendar; onSave: (calendar: Calendar) => void; onCancel: () => void }) {
+  const t = useT();
   const [draft, setDraft] = useState(calendar);
   return (
     <form className="panel motion-pop grid gap-2 rounded-lg p-3 @lg:grid-cols-[1fr_6rem_8rem]" onSubmit={(event) => { event.preventDefault(); if (draft.name.trim()) onSave(draft); }}>
       {/* eslint-disable-next-line jsx-a11y/no-autofocus -- the form opens because the author just asked to add or edit a calendar */}
-      <input className={ui.input} placeholder="Reckoning of Tides" aria-label="Calendar name" maxLength={80} value={draft.name} onChange={(event) => setDraft({ ...draft, name: event.target.value })} autoFocus />
-      <input className={ui.input} placeholder="RT" aria-label="Abbreviation" maxLength={12} value={draft.abbrev} onChange={(event) => setDraft({ ...draft, abbrev: event.target.value })} />
-      <input className={ui.input} type="number" aria-label="Where its year 0 falls" value={draft.epochOffset} onChange={(event) => setDraft({ ...draft, epochOffset: Math.round(Number(event.target.value) || 0) })} />
-      <p className="text-[11px] text-stone-500 @lg:col-span-3">The last box places this calendar&apos;s year 0 on the shared line: give the first calendar 0, and a later reckoning that began 1240 years after it 1240.</p>
+      <input className={ui.input} placeholder={t("Reckoning of Tides")} aria-label={t("Calendar name")} maxLength={80} value={draft.name} onChange={(event) => setDraft({ ...draft, name: event.target.value })} autoFocus />
+      <input className={ui.input} placeholder={t("RT")} aria-label={t("Abbreviation")} maxLength={12} value={draft.abbrev} onChange={(event) => setDraft({ ...draft, abbrev: event.target.value })} />
+      <input className={ui.input} type="number" aria-label={t("Where its year 0 falls")} value={draft.epochOffset} onChange={(event) => setDraft({ ...draft, epochOffset: Math.round(Number(event.target.value) || 0) })} />
+      <p className="text-[11px] text-stone-500 @lg:col-span-3">{t("The last box places this calendar's year 0 on the shared line: give the first calendar 0, and a later reckoning that began 1240 years after it 1240.")}</p>
       <div className="flex justify-end gap-1.5 @lg:col-span-3">
-        <KitButton tone="small" onClick={onCancel}><X className="size-3.5" /> Cancel</KitButton>
-        <KitButton tone="primary" type="submit" disabled={!draft.name.trim()}><Check className="size-3.5" /> Save</KitButton>
+        <KitButton tone="small" onClick={onCancel}><X className="size-3.5" /> {t("Cancel")}</KitButton>
+        <KitButton tone="primary" type="submit" disabled={!draft.name.trim()}><Check className="size-3.5" /> {t("Save")}</KitButton>
       </div>
     </form>
   );
@@ -167,6 +168,7 @@ function CalendarForm({ calendar, onSave, onCancel }: { calendar: Calendar; onSa
 
 function EventForm({ event, world, eras, onSave, onCancel }: { event: WorldEvent; world: WorldState; eras: string[]; onSave: (event: WorldEvent) => void; onCancel: () => void }) {
   const { doc, entities } = world;
+  const t = useT();
   const [draft, setDraft] = useState(event);
   const [picking, setPicking] = useState(false);
   const toggle = (ref: string) => setDraft((current) => ({ ...current, refs: current.refs.includes(ref) ? current.refs.filter((entry) => entry !== ref) : [...current.refs, ref] }));
@@ -174,42 +176,42 @@ function EventForm({ event, world, eras, onSave, onCancel }: { event: WorldEvent
     <form className="panel motion-pop flex flex-col gap-2 rounded-lg p-3" onSubmit={(submit) => { submit.preventDefault(); if (draft.title.trim()) onSave(draft); }}>
       <div className="grid gap-2 @lg:grid-cols-[1fr_7rem_9rem]">
         {/* eslint-disable-next-line jsx-a11y/no-autofocus -- the form opens because the author just asked to add or edit an event */}
-        <input className={ui.input} placeholder="The Wall Breaks" aria-label="What happened" maxLength={120} value={draft.title} onChange={(change) => setDraft({ ...draft, title: change.target.value })} autoFocus />
-        <input className={ui.input} type="number" aria-label="Year" placeholder="Year" value={draft.when.yearNum ?? ""} onChange={(change) => setDraft({ ...draft, when: { ...draft.when, yearNum: change.target.value === "" ? null : Math.round(Number(change.target.value)) } })} />
+        <input className={ui.input} placeholder={t("The Wall Breaks")} aria-label={t("What happened")} maxLength={120} value={draft.title} onChange={(change) => setDraft({ ...draft, title: change.target.value })} autoFocus />
+        <input className={ui.input} type="number" aria-label={t("Year")} placeholder={t("Year")} value={draft.when.yearNum ?? ""} onChange={(change) => setDraft({ ...draft, when: { ...draft.when, yearNum: change.target.value === "" ? null : Math.round(Number(change.target.value)) } })} />
         {doc.calendars.length ? (
-          <Select label="Calendar" value={draft.when.calendarId} onChange={(calendarId) => setDraft({ ...draft, when: { ...draft.when, calendarId } })} options={doc.calendars.map((entry) => ({ value: entry.id, label: entry.abbrev || entry.name, hint: entry.name }))} />
+          <Select label={t("Calendar")} value={draft.when.calendarId} onChange={(calendarId) => setDraft({ ...draft, when: { ...draft.when, calendarId } })} options={doc.calendars.map((entry) => ({ value: entry.id, label: entry.abbrev || entry.name, hint: entry.name }))} />
         ) : (
-          <span className="self-center text-[11px] text-stone-500">No calendar: the year stands alone.</span>
+          <span className="self-center text-[11px] text-stone-500">{t("No calendar: the year stands alone.")}</span>
         )}
       </div>
       <div className="flex flex-wrap items-center gap-1.5">
-        <input className={cn(ui.input, "max-w-48 text-xs")} placeholder="Era (Second Tide)" aria-label="Era" maxLength={60} value={draft.era} onChange={(change) => setDraft({ ...draft, era: change.target.value })} />
+        <input className={cn(ui.input, "max-w-48 text-xs")} placeholder={t("Era (Second Tide)")} aria-label={t("Era")} maxLength={60} value={draft.era} onChange={(change) => setDraft({ ...draft, era: change.target.value })} />
         {eras.filter((era) => era !== draft.era).map((era) => (
           <button key={era} type="button" onClick={() => setDraft({ ...draft, era })} className="rounded-md border border-stone-700 px-1.5 py-0.5 text-[11px] text-stone-400 hover:text-amber-100 motion-press">{era}</button>
         ))}
-        <div className="ml-auto flex gap-1" role="radiogroup" aria-label="Canon">
+        <div className="ml-auto flex gap-1" role="radiogroup" aria-label={t("Canon")}>
           {CANON_STATES.map((state) => (
-            <button key={state} type="button" role="radio" aria-checked={draft.canon === state} onClick={() => setDraft({ ...draft, canon: state })} className={cn("rounded-md border border-stone-700 px-1.5 py-0.5 text-[11px] motion-press", draft.canon === state ? "bg-amber-400/10 text-amber-100" : "text-stone-500")}>{state}</button>
+            <button key={state} type="button" role="radio" aria-checked={draft.canon === state} onClick={() => setDraft({ ...draft, canon: state })} className={cn("rounded-md border border-stone-700 px-1.5 py-0.5 text-[11px] motion-press", draft.canon === state ? "bg-amber-400/10 text-amber-100" : "text-stone-500")}>{t(state, { context: "world.canon" })}</button>
           ))}
         </div>
       </div>
-      <textarea className={cn(ui.input, "min-h-16")} placeholder="What happened, in a few lines" aria-label="What happened, in full" maxLength={4_000} value={draft.body} onChange={(change) => setDraft({ ...draft, body: change.target.value })} />
+      <textarea className={cn(ui.input, "min-h-16")} placeholder={t("What happened, in a few lines")} aria-label={t("What happened, in full")} maxLength={4_000} value={draft.body} onChange={(change) => setDraft({ ...draft, body: change.target.value })} />
       <div className="flex flex-wrap items-center gap-1">
-        <span className="eyebrow text-[10px] text-stone-500">Who and where</span>
+        <span className="eyebrow text-[10px] text-stone-500">{t("Who and where")}</span>
         {draft.refs.map((ref) => {
           const entity = entities.find((entry) => entry.ref === ref);
           return entity ? (
-            <button key={ref} type="button" onClick={() => toggle(ref)} className="pk-chip motion-pop text-[11px]" aria-label={`Take ${entity.name} off`}>
+            <button key={ref} type="button" onClick={() => toggle(ref)} className="pk-chip motion-pop text-[11px]" aria-label={t("Take {name} off", { name: entity.name })}>
               <EntityAvatar entity={entity} type={typeOf(doc, entity)} size="size-4" /> {entity.name} <X className="size-3" />
             </button>
           ) : null;
         })}
-        <KitButton tone="link" onClick={() => setPicking((value) => !value)}><Plus className="size-3.5" /> Add</KitButton>
+        <KitButton tone="link" onClick={() => setPicking((value) => !value)}><Plus className="size-3.5" /> {t("Add")}</KitButton>
       </div>
-      {picking ? <EntityPicker doc={doc} entities={entities} chosen={draft.refs} label="who or where" onPick={(entity) => toggle(entity.ref)} /> : null}
+      {picking ? <EntityPicker doc={doc} entities={entities} chosen={draft.refs} label={t("who or where")} onPick={(entity) => toggle(entity.ref)} /> : null}
       <div className="flex justify-end gap-1.5">
-        <KitButton tone="small" onClick={onCancel}><X className="size-3.5" /> Cancel</KitButton>
-        <KitButton tone="primary" type="submit" disabled={!draft.title.trim()}><Check className="size-3.5" /> Save event</KitButton>
+        <KitButton tone="small" onClick={onCancel}><X className="size-3.5" /> {t("Cancel")}</KitButton>
+        <KitButton tone="primary" type="submit" disabled={!draft.title.trim()}><Check className="size-3.5" /> {t("Save event")}</KitButton>
       </div>
     </form>
   );

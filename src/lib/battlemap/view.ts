@@ -70,7 +70,7 @@ import { undoableMove, undoOffer } from "@/lib/battlemap/move-undo";
 import type { AuraTone, PlayerMapView } from "@/lib/battlemap/view-types";
 import { ENEMY_TURN_NAME, turnOwner } from "@/lib/dm/turn-owner";
 import { holdsFeature } from "@/lib/srd/feature-names";
-import { translate } from "@/lib/messages-logic";
+import { tableTranslator } from "@/lib/messages-logic";
 import { foeLook, pickedGender, storedSex, type Sex } from "@/lib/actor-sex-logic";
 import { castLookup, npcFace } from "@/lib/db/npc-faces";
 import { enemiesAhead, ownTurnOf } from "@/lib/dm/held-turn";
@@ -82,7 +82,7 @@ export type { PlayerMapView } from "@/lib/battlemap/view-types";
 // notes ride to every seat, so they are written where they are built.
 function tableT(campaignId: string): (key: string, vars?: Record<string, string | number>) => string {
   const language = getCampaignById(campaignId)?.gameSettings.tableLanguage ?? "english";
-  return (key, vars) => translate(language === "french" ? "fr" : "en", key, vars);
+  return tableTranslator(language);
 }
 
 // A token's side when it is not its kind's: the rim the board draws.

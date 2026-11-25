@@ -12,7 +12,7 @@ import { register } from "node:module";
 register("./lib/register-alias.mjs", import.meta.url);
 
 const { GENRE_PRESETS } = await import("../src/lib/genres.ts");
-const { arrivalTypeIn, dmFlavorText, portalCards, presetTheme, typeInPlan, worldFacts, TYPE_MS_PER_CHAR } =
+const { arrivalTypeIn, dmFlavorText, portalCards, presetTheme, settingList, typeInPlan, worldFacts, TYPE_MS_PER_CHAR } =
   await import("../src/app/create-campaign/portals.ts");
 const { countableRows, featuresOn, flipRow, tableSheet } = await import(
   "../src/app/create-campaign/table-sheet.ts"
@@ -85,6 +85,13 @@ test("every preset is a portal, in preset order, custom included", () => {
     assert.equal(card.climate, preset.climate);
     assert.equal(card.delayMs, index * 40);
   }
+});
+
+test("setting help shares localized portal names and blurbs", () => {
+  const t = (key, vars) => vars?.context ? "[" + vars.context + "] " + key : "[" + key + "]";
+  const cards = portalCards("custom", t);
+  assert.equal(cards.find((card) => card.id === "custom").name, "[creator.genre.custom] Custom");
+  assert.equal(settingList("custom", t), cards.map((card) => "**" + card.name + "**: " + card.blurb).join("\n\n"));
 });
 
 test("exactly one portal is chosen, and it is the draft's genre", () => {

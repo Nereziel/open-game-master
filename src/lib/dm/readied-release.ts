@@ -18,6 +18,8 @@ import { markReactionUsed } from "@/lib/dm/turn-budget";
 import { conditionBlocksReactions } from "@/lib/srd/condition-effects";
 import type { CharacterSheet } from "@/lib/schemas/sheet";
 import { toolError, type ToolError } from "@/lib/dm/tool-errors";
+import type { MessageVars } from "@/lib/messages-logic";
+import { engineRefusalKey } from "@/lib/dm/player-refusals";
 
 export { READIED, readiedHeld };
 
@@ -31,6 +33,7 @@ export function readiedReleaseFor(
   sheet: CharacterSheet,
   encounter: Encounter | null,
   door: Readiable,
+  t?: (key: string, vars?: MessageVars) => string,
 ): ReadiedRelease | ToolError | null {
   const held = readiedHeld(sheet);
   if (!held || !encounter || (encounter.kind ?? "fight") !== "fight" || !encounter.orderReady) {
@@ -41,21 +44,21 @@ export function readiedReleaseFor(
   }
   if (held.holds !== door) {
     return {
-      error: `It is not ${sheet.name}'s turn, and what they readied is ${READIED_WORDS[held.holds]} (${held.trigger}), not ${READIED_WORDS[door]}: a readied action is released only as the action that was readied (SRD 5.1, Ready). Nothing was spent. ${RELEASE_TOOLS[held.holds]} releases it; unreleased, it is lost when their turn starts.`,
+      error: t ? t("It is not {name}'s turn. They readied {held} ({trigger}), not {requested}. Only the readied action can be released. Nothing was spent; an unreleased action is lost when their turn starts.", { name: sheet.name, held: t(READIED_WORDS[held.holds]), trigger: held.trigger, requested: t(READIED_WORDS[door]) }) : `It is not ${sheet.name}'s turn, and what they readied is ${READIED_WORDS[held.holds]} (${held.trigger}), not ${READIED_WORDS[door]}: a readied action is released only as the action that was readied (SRD 5.1, Ready). Nothing was spent. ${RELEASE_TOOLS[held.holds]} releases it; unreleased, it is lost when their turn starts.`,
       refused: "rules",
     };
   }
   const able = canAct({ sheet, encounter, kind: "reaction" });
   if (!able.ok) {
-    return toolError(able);
+    return toolError(t ? { ...able, error: engineRefusalKey(able.error, "reaction", sheet.name, "", t) } : able);
   }
   const blocked = conditionBlocksReactions(sheet.conditions);
   if (blocked) {
-    return { error: `${sheet.name} is ${blocked} and cannot take reactions, so the readied ${READIED_WORDS[held.holds]} cannot be released. Nothing was spent.`, refused: "rules" };
+    return { error: t ? t("{name} is {condition} and cannot take reactions, so the readied action ({held}) cannot be released. Nothing was spent.", { name: sheet.name, condition: t(blocked), held: t(READIED_WORDS[held.holds]) }) : `${sheet.name} is ${blocked} and cannot take reactions, so the readied ${READIED_WORDS[held.holds]} cannot be released. Nothing was spent.`, refused: "rules" };
   }
   if (encounter.reactionsUsed.includes(sheet.id)) {
     return {
-      error: `${sheet.name} has already used their reaction, so the readied ${READIED_WORDS[held.holds]} cannot be released; it is lost when their turn starts. Nothing was spent.`,
+      error: t ? t("{name} has already used their reaction, so the readied action ({held}) cannot be released; it is lost when their turn starts. Nothing was spent.", { name: sheet.name, held: t(READIED_WORDS[held.holds]) }) : `${sheet.name} has already used their reaction, so the readied ${READIED_WORDS[held.holds]} cannot be released; it is lost when their turn starts. Nothing was spent.`,
       refused: "rules",
     };
   }

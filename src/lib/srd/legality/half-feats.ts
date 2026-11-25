@@ -15,6 +15,7 @@ import {
   featSaveProficiency,
 } from "@/lib/srd/feat-effects";
 import { textKey } from "@/lib/language/text-logic";
+import type { Locale } from "@/lib/messages-logic";
 
 // The feat's text rides with the pick, for a content pack's feat whose
 // increase is read from it (src/lib/srd/feat-effects.ts).
@@ -82,11 +83,12 @@ export function halfFeatPoints(picks: HalfFeatPick[]): Ability[] {
 export function applyHalfFeats(
   abilities: AbilityScores,
   picks: HalfFeatPick[],
+  locale: Locale = "en",
 ): { abilities: AbilityScores; saves: Ability[] } | { error: string } {
   let next = { ...abilities };
   const saves: Ability[] = [];
   for (const pick of picks) {
-    const raised = applyFeatIncrease(next, pick.feat, pick.ability, pick.desc);
+    const raised = applyFeatIncrease(next, pick.feat, pick.ability, pick.desc, locale);
     if ("error" in raised) {
       return { error: raised.error };
     }

@@ -117,6 +117,20 @@ export const DM_STATUS_PHRASES_FR: Record<Exclude<DmStatus, "idle">, string[]> =
   ],
 };
 
+// Czech variants mirror the source pools and retain their deterministic order.
+const DM_STATUS_PHRASES_CS: typeof DM_STATUS_PHRASES = {
+  thinking: ["PJ zvažuje výsledek…", "PJ se radí s rozmary osudu…", "Kdesi jedna k20 zadržuje dech…", "PJ si hladí pomyslný vous…", "PJ přemýšlí nad tvým osudem…", "Načítá se atmosféra…", "Hod na Moudrost, aby rozhodnutí stálo za to…"],
+  rolling: ["Kostky rachotí po stole…", "Kostky se kutálejí do tmy…", "Kostky jsou vrženy…", "Osud chrastí v pohárku…", "Kostky odskakují od krabice od pizzy…", "Kostky letí…", "Modlitba k bohům náhody…"],
+  awaiting_rolls: ["Stůl čeká na hod…", "Připrav si kostky, stůl čeká…", "PJ poklepává prsty, čeká na hod…", "Družina zadržuje dech před hodem…", "Hod visí ve vzduchu…", "Najděte někdo tu k20 pod gaučem…"],
+  narrating: ["Rodí se další část příběhu…", "Příběh se znovu nadechuje…", "Příběh se dál odvíjí…", "Na okraji stránky se scházejí slova…", "PJ hledá další slova…", "Scéna nabývá jasných obrysů…"],
+  writing_chapter: ["PJ zapisuje kapitolu do kroniky…", "Inkoust se dotýká pergamenu…", "Kronika získává další stránku…", "Písař namáčí brk…", "PJ pečetí kapitolu voskem…", "Příběh vstupuje do letopisů…"],
+  plotting_arc: ["PJ plánuje cestu vpřed…", "PJ rozbaluje podezřele velkou mapu…", "Vlákna osudu se splétají…", "Na obzoru se kupí bouřkové mraky…", "PJ přidává další červenou nit na detektivní nástěnku…", "PJ chystá něco, čeho budeš litovat…"],
+};
+const STATUS_POOLS: Partial<Record<Locale, typeof DM_STATUS_PHRASES>> = {
+  fr: DM_STATUS_PHRASES_FR,
+  cs: DM_STATUS_PHRASES_CS,
+};
+
 // FNV-1a plus a murmur-style finalizer. The avalanche matters: a weaker mix
 // leaves the six-entry pools reachable only at half their entries.
 function hashString(value: string): number {
@@ -144,6 +158,6 @@ export function dmStatusPhrase(locale: Locale, status: DmStatus, turnKey: string
   if (status === "idle") {
     return "";
   }
-  const pool = (locale === "fr" ? DM_STATUS_PHRASES_FR : DM_STATUS_PHRASES)[status];
+  const pool = (STATUS_POOLS[locale] ?? DM_STATUS_PHRASES)[status];
   return pool[hashString(turnKey + status) % pool.length];
 }

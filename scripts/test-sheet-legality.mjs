@@ -10,6 +10,7 @@ register("./lib/register-alias.mjs", import.meta.url);
 
 const { legalizeSheet } = await import("../src/lib/srd/sheet-legality.ts");
 const { judgeSpellcasting } = await import("../src/lib/srd/legality/spells.ts");
+const { judgeProficiencies } = await import("../src/lib/srd/legality/proficiencies.ts");
 const options = await import("../src/lib/characters/options.ts");
 const { bundledPrices } = await import("../src/lib/srd/starting-wealth.ts");
 const { checklistSpell } = await import("../src/lib/srd/spell-lists.ts");
@@ -20,6 +21,9 @@ const { earnedAsiCount, earnedAsiCountFor, crossedAsiLevels } = await import("..
 const { isMechanicalFeature, unmetPrerequisite } = await import("../src/lib/srd/legality/features.ts");
 const { slotTableFor } = await import("../src/lib/srd/multiclass.ts");
 const { splitPurse } = options;
+const { authoredFeatDesc } = await import("../src/lib/srd/feat-effects.ts");
+const { featPicksOwed, featGrantSpec } = await import("../src/lib/srd/feat-grants.ts");
+await import("../src/lib/i18n/server-catalogs.ts");
 
 let passed = 0;
 function test(name, fn) {
@@ -179,6 +183,29 @@ test("hit points follow the table's method", () => {
   assert.equal(derivedMaxHp("average", { classes: [{ die: 10, level: 3 }, { die: 6, level: 2 }], con: 10 }), 30);
 });
 
+test("proficiency refusals use the reader locale without changing grants", () => {
+  const ctx = context(FIGHTER);
+  const input = {
+    sent: { ...FIGHTER.proficiencies, skills: ["lockpicking", "arcana"], expertise: ["stealth"], languages: ["Common", "Dwarvish", "Elvish"] },
+    classes: [{ id: "fighter", level: 1, subclass: "" }],
+    classOf: ctx.classOf, race: ctx.race, background: ctx.background,
+    racialTool: "unknown tool", racialWeapons: ["unknown weapon"],
+    requireToolPicks: false,
+  };
+  const before = structuredClone(input.sent);
+  const en = judgeProficiencies(input);
+  assert.ok(en.problems.includes('"lockpicking" is not one of the eighteen skills.'));
+  assert.ok(en.problems.some(problem => problem.includes("Expertise is a rogue's feature")));
+  const results = ["en", "cs", "fr"].map(locale => judgeProficiencies({ ...input, locale }));
+  assert.deepEqual(results[0], en);
+  for (const result of results) {
+    assert.deepEqual(result.proficiencies, en.proficiencies);
+    assert.equal(result.problems.length, en.problems.length);
+    assert.ok(result.problems.every(problem => !/\{\w+\}/.test(problem)));
+  }
+  assert.equal(new Set(results.map(result => JSON.stringify(result.problems))).size, 3);
+  assert.deepEqual(input.sent, before);
+});
 test("skills, expertise and languages need a grant that offers them", () => {
   const profs = (overrides) => ({ ...FIGHTER, proficiencies: { ...FIGHTER.proficiencies, ...overrides } });
   refused(profs({ skills: ["arcana", "stealth", "athletics", "intimidation"] }), {}, "arcana on a fighter");
@@ -233,6 +260,25 @@ test("features and feats come from what grants them", () => {
   for (const name of ["Rage", "Extra Attack (3)", "Sneak Attack", "Fighting Style: Archery", "Second Wind"]) {
     assert.equal(isMechanicalFeature(name), true, name);
   }
+});
+
+test("shared grant validation uses the reader locale without changing the legalized sheet", () => {
+  const sheet = { ...FIGHTER, maxHp: 36, asiChoices: [{ mode: "feat", feat: "Linguist" }] };
+  const desc = authoredFeatDesc("Linguist");
+  const overrides = { level: 4, featOf: (name) => ({ name, prerequisite: "", desc }) };
+  const original = JSON.stringify(sheet);
+  const english = judge(sheet, overrides);
+  const expected = featPicksOwed("Linguist", featGrantSpec(desc), undefined);
+  assert.equal(expected, "Linguist: pick 3 languages.");
+  assert.ok(english.problems.includes(expected));
+  for (const locale of ["cs", "fr"]) {
+    const localized = judge(sheet, { ...overrides, locale });
+    const translated = featPicksOwed("Linguist", featGrantSpec(desc), undefined, locale);
+    assert.notEqual(translated, expected);
+    assert.deepEqual(localized.problems, english.problems.map((problem) => problem === expected ? translated : problem));
+    assert.deepEqual(localized.sheet, english.sheet);
+  }
+  assert.equal(JSON.stringify(sheet), original);
 });
 
 test("feat prerequisites", () => {
@@ -377,6 +423,78 @@ test("improvements by class, and what an older sheet is owed", () => {
   const made = taken({ ...FIGHTER, subclass: "Champion" }, { level: 6 });
   assert.equal(readAsiLedger(made.features), 2);
   assert.equal(readAsiLedger(taken(FIGHTER).features), null);
+});
+
+const { toolPickProblem, toolPicksOwed, splitToolGrants } = await import("../src/lib/srd/tool-choices.ts");
+const { applyLevelUpChanges } = await import("../src/lib/srd/level-up-changes.ts");
+const { translate: translateRefusal } = await import("../src/lib/messages-logic.ts");
+
+test("tool refusals and owed picks localize without changing the legality verdict", () => {
+  const { choices } = splitToolGrants(["two musical instruments"]);
+  const snapshot = structuredClone(choices);
+  const invalid = ["dice set"];
+  const missing = ["lute"];
+  const valid = ["lute", "flute"];
+  assert.equal(toolPickProblem(choices, invalid), "dice set is not a tool this character may choose; the choices are 2 musical instrument.");
+  assert.equal(toolPickProblem(choices, missing), "Choose 1 more musical instrument.");
+  assert.equal(toolPicksOwed(choices, []), "Choose 2 musical instruments to be proficient with.");
+  const sheet = { ...FIGHTER, proficiencies: { ...FIGHTER.proficiencies, tools: ["flute"] } };
+  const english = judge(sheet, { locale: "en" });
+  const englishLegal = judge(FIGHTER, { locale: "en" });
+  assert.ok(english.problems.some((problem) => problem.includes("is not a tool this character may choose")));
+  for (const locale of ["en", "cs", "fr"]) {
+    const localized = judge(sheet, { locale });
+    const legal = judge(FIGHTER, { locale });
+    assert.equal(localized.problems.length, english.problems.length);
+    assert.deepEqual(localized.sheet, english.sheet);
+    assert.deepEqual(legal, englishLegal);
+    assert.equal(toolPickProblem(choices, valid, locale), null);
+    assert.equal(toolPicksOwed(choices, valid, locale), null);
+    for (const [message, source] of [
+      [toolPickProblem(choices, invalid, locale), toolPickProblem(choices, invalid)],
+      [toolPickProblem(choices, missing, locale), toolPickProblem(choices, missing)],
+      [toolPicksOwed(choices, [], locale), toolPicksOwed(choices, [])],
+    ]) {
+      assert.ok(message);
+      if (locale !== "en") assert.notEqual(message, source);
+    }
+    assert.deepEqual(choices, snapshot);
+  }
+});
+
+test("invalid level-up choice replacements respect the locale and preserve held features", () => {
+  const sheet = { ...FIGHTER, level: 1 };
+  const changes = [{ from: "Fighting Style: Defense", to: "Fighting Style: Archery" }];
+  const facts = { classLevel: (id) => id === "fighter" ? 2 : 0, cantrips: [] };
+  const snapshot = structuredClone(sheet);
+  const messages = [];
+  for (const locale of ["en", "cs", "fr"]) {
+    const actual = applyLevelUpChanges(sheet, "fighter", changes, facts, locale);
+    assert.equal(actual.error, translateRefusal(locale, "{name} cannot change {from} to {to} with this level: a choice changes only at a level its rule names, to an option it offers.", { name: sheet.name, ...changes[0] }));
+    messages.push(actual.error);
+    assert.deepEqual(sheet, snapshot);
+  }
+  assert.equal(new Set(messages).size, 3);
+});
+
+test("direct sheet refusals localize without changing the normalized sheet", () => {
+  const split = { ...FIGHTER, classes: [{ id: "fighter", subclass: "", level: 3 }, { id: "wizard", subclass: "", level: 2 }] };
+  const cases = [
+    [split, { level: 5, multiclassAllowed: false }, "This table turns multiclassing off; a character made here holds one class.", undefined],
+    [{ ...FIGHTER, class: "unknown-class" }, {}, '"{name}" is not a class this server knows; pick one from the builder\'s list.', { name: "unknown-class" }],
+  ];
+  for (const [sheet, overrides, key, vars] of cases) {
+    const snapshot = structuredClone(sheet);
+    const english = judge(sheet, { ...overrides, locale: "en" });
+    for (const locale of ["en", "cs", "fr"]) {
+      const actual = judge(sheet, { ...overrides, locale });
+      const expected = translateRefusal(locale, key, vars);
+      assert.ok(actual.problems.includes(expected), expected);
+      if (locale !== "en") assert.notEqual(expected, translateRefusal("en", key, vars));
+      assert.deepEqual(actual.sheet, english.sheet);
+      assert.deepEqual(sheet, snapshot);
+    }
+  }
 });
 
 console.log(`test-sheet-legality: ${passed} passed`);

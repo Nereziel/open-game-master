@@ -30,6 +30,7 @@ import { getActiveEncounter } from "@/lib/db/encounters";
 import { sideOf } from "@/lib/dm/combatant";
 import { dominatorOf } from "@/lib/dm/combat-sides-logic";
 import { isPlaytest } from "@/lib/workshop/kind";
+import { formatMessage, type MessageVars } from "@/lib/messages-logic";
 
 type CommandFields = Pick<CharacterSheet, "isCompanion" | "commandedBy" | "summon">;
 type HeldFields = Pick<CharacterSheet, "isCompanion" | "conditions" | "conditionMeta"> & { id: string };
@@ -49,9 +50,9 @@ export function dominatedByFoe(campaignId: string, sheet: HeldFields): boolean {
 }
 
 // The player's refusal while their character is dominated, or null.
-export function dominatedRefusal(campaignId: string, sheet: HeldFields & { name: string }): string | null {
+export function dominatedRefusal(campaignId: string, sheet: HeldFields & { name: string }, t: (key: string, vars?: MessageVars) => string = formatMessage): string | null {
   return dominatedByFoe(campaignId, sheet)
-    ? `${sheet.name} is dominated: the GM plays ${sheet.name} until the charm ends. Use OOC for table talk.`
+    ? `${t("{name} is dominated: the GM plays {name} until the charm ends.", { name: sheet.name })} ${t("Use OOC for table talk.")}`
     : null;
 }
 

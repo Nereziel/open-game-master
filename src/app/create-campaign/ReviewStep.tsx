@@ -92,7 +92,7 @@ export function ReviewStep({
             {row(t("Dice"), sheet.dice, { step: "essentials", group: "character" })}
             {row(
               t("Narration", { context: "creator.review.row.narration" }),
-              narrationSummary(t, draft, gates, voiceLabel(voices, draft.ttsVoice)),
+              narrationSummary(t, draft, gates, voiceLabel(voices, draft.ttsVoice, t)),
               { step: "experience" },
               { wrap: true },
             )}

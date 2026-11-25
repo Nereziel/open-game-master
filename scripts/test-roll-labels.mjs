@@ -243,6 +243,16 @@ await test("The two sources that are never given a name are read in the table's 
   // The GM's own dice for a trap nothing named: a sentence calls it "a trap", and its roll is the GM's.
   assert.ok(rollCardLabel(enT, { ...sourced[3], attacker: source("gm", "a trap") }, "Aria").startsWith("The GM · "));
   assert.ok(rollCardLabel(frT, { ...sourced[3], attacker: source("gm", "a trap") }, "Aria").startsWith("Le MJ · "));
+  await import("../src/lib/i18n/cs-catalog.ts");
+  const csT = Object.assign((key, vars) => translate("cs", key, vars), { locale: "cs" });
+  assert.ok(rollCardLabel(csT, sourced[1], "Aria").startsWith("Pád · "));
+  assert.ok(rollToastLead(csT, sourced[3], "Aria").startsWith("PJ · "));
+  assert.ok(rollChronicleLead(csT, sourced[1], "Aria").startsWith("Pád · "));
+  assert.ok(rollCardLabel(csT, sourced[0], "Aria").startsWith("Spiked Pit · "));
+  assert.ok(rollCardLabel(csT, { ...sourced[1], attacker: { kind: "enemy", id: "e", name: "The fall" } }, "Aria").startsWith("The fall · "));
+  assert.ok(rollCardLabel(csT, { ...sourced[1], attacker: source("named", "The fall") }, "Aria").startsWith("The fall · "));
+  assert.ok(rollCardLabel(csT, { ...sourced[1], attacker: source("fall", "the fall") }, "Aria").startsWith("Pád · "));
+  assert.ok(rollCardLabel(csT, { ...sourced[3], attacker: source("gm", "a trap") }, "Aria").startsWith("PJ · "));
 });
 
 await test("The post-fight summary does not give a character a trap's natural 20 against them.", () => {

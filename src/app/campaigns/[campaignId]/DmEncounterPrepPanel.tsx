@@ -89,7 +89,7 @@ function DifficultyLine({ readout, cue }: { readout: TemplateReadout; cue: boole
     );
   }
   const band = readout.verdict.replace(/ for this party$/, "");
-  const verdict = locale === "fr" ? t(VERDICT_KEYS[band] ?? "medium") : readout.verdict;
+  const verdict = locale !== "en" && VERDICT_KEYS[band] ? t(VERDICT_KEYS[band]) : readout.verdict;
   return (
     <p
       className={cn(

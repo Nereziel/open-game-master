@@ -90,12 +90,12 @@ export function assertInBounds(world, id, label = "") {
 
 // POST /api/campaigns/[campaignId]/sheet/usage as the player who owns the
 // sheet: the route the character sheet's own plus and minus buttons call.
-export async function postUsage(world, sheetId, body) {
+export async function postUsage(world, sheetId, body, locale) {
   const route = await world.route("campaigns/[campaignId]/sheet/usage");
   world.signIn({ id: world.sheet(sheetId).userId });
   const request = new Request("http://test/", {
     method: "POST",
-    headers: { "content-type": "application/json" },
+    headers: { "content-type": "application/json", ...(locale ? { "x-odm-locale": locale } : {}) },
     body: JSON.stringify(body),
   });
   const response = await route.POST(request, {

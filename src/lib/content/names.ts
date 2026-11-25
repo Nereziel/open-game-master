@@ -10,12 +10,11 @@
 // stays English: only the words on screen change, the way skillLabel
 // (src/lib/srd/index.ts) already works for skills.
 
-import { textKey } from "@/lib/language/text-logic";
+import { textKey, searchKey } from "@/lib/language/text-logic";
 import type { Locale } from "@/lib/i18n/translate";
 import { srdRaceId } from "@/lib/srd/race-id";
-import { frTables } from "@/lib/i18n/fr-tables";
-import { expansionNameCs } from "./expansion-descriptions-cs";
-import { csTables } from "@/lib/i18n/cs-tables";
+import { localizedTables } from "@/lib/i18n/localized-tables";
+import { expansionTranslation } from "./expansion-identity";
 
 // The tables the maps carry, as the helper's callers name them.
 export type LocalizedNamesTable =
@@ -37,9 +36,6 @@ export type LocalizedNamesTable =
 
 // A content row as the API routes and the library send it, narrowed to the
 // fields a name lookup reads.
-/** @deprecated Use LocalizedNamesTable. */
-export type FrNamesTable = LocalizedNamesTable;
-
 export type NamedRow = {
   slug?: string;
   name: string;
@@ -104,12 +100,12 @@ const ITEM_TABLES: readonly LocalizedNamesTable[] = ["gear", "weapons", "armor",
 // The tables arrive with the French catalog (src/lib/i18n/fr-tables.ts);
 // before they do, every name reads as its English row.
 const NONE: Record<string, Record<string, string>> = {};
-const frNames = () => frTables()?.names ?? NONE;
-const frTranslated = () => frTables()?.translated ?? NONE;
-const NAME_TABLES: Partial<Record<Locale, () => Record<string, Record<string, string>>>> = { fr: frNames, cs: () => csTables()?.names ?? NONE };
-const EXTRA_NAME_TABLES: Partial<Record<Locale, () => Record<string, Record<string, string>>>> = { fr: frTranslated };
-const namesFor = (locale: Locale) => NAME_TABLES[locale]?.() ?? NONE;
-const translatedFor = (locale: Locale) => EXTRA_NAME_TABLES[locale]?.() ?? NONE;
+const namesFor = (locale: Locale) => localizedTables(locale)?.names ?? NONE;
+const translatedFor = (locale: Locale) => localizedTables(locale)?.translated ?? NONE;
+
+export function localizedExpansionName(table: string, row: NamedRow, locale: Locale): string | undefined {
+  return expansionTranslation(localizedTables(locale)?.expansionNames, table, row)?.name;
+}
 
 function lookup(table: LocalizedNamesTable, key: string, locale: Locale): string | null {
   if (!key) {
@@ -140,10 +136,18 @@ function keysFor(table: LocalizedNamesTable, row: NamedRow): string[] {
     // its hyphens as spaces, so both spellings are tried.
     return [
       gearKey(row.name),
-      ...(row.slug ? [slugKey(row.slug).replace(/-/g, " ")] : []),
+      ...(row.slug ? [slugKey(row.slug.replace(/^srd(?:-gear)?:/, "")).replace(/-/g, " ")] : []),
     ];
   }
-  return [...(row.slug ? [slugKey(row.slug)] : []), slugKey(row.name)];
+  return [...(row.slug ? [slugKey(row.slug.replace(/^srd(?:-gear)?:/, ""))] : []), slugKey(row.name)];
+}
+
+// Common maps cover the core and ODM's own authored content. A known
+// foreign document needs an exact source-specific translation instead.
+const COMMON_DOCUMENTS = new Set(["wotc-srd", "srd-2014", "odm-expanded", "odm"]);
+function canUseCommonNames(row: NamedRow): boolean {
+  return (!row.source || ["open5e", "srd", "bundled"].includes(row.source)) &&
+    (!row.documentSlug || COMMON_DOCUMENTS.has(row.documentSlug));
 }
 
 // An official name beside its English one. `ref` is a content row (matched
@@ -158,13 +162,10 @@ export function contentName(
   locale: Locale,
 ): string {
   const row: NamedRow = typeof ref === "string" ? { name: ref } : ref;
-  if (!NAME_TABLES[locale] || !row.name || (row.source && row.source !== "open5e")) {
-    return row.name;
-  }
-  if (locale === "cs") {
-    const translated = expansionNameCs(table, row);
-    if (translated) return translated;
-  }
+  if (!localizedTables(locale) || !row.name || (row.source && !["open5e", "srd", "bundled"].includes(row.source))) return row.name;
+  const translated = localizedExpansionName(table, row, locale);
+  if (translated) return translated;
+  if (!canUseCommonNames(row)) return row.name;
   const tables: readonly LocalizedNamesTable[] = table === "items" ? ITEM_TABLES : [table];
   for (const each of tables) {
     for (const key of keysFor(each, row)) {
@@ -177,6 +178,20 @@ export function contentName(
   return row.name;
 }
 
+// Display search only: never use accent-folded matches as a stored identity.
+export function contentNameMatches(table: string, row: NamedRow, query: string, locale: Locale, classId = ""): boolean {
+  const needle = textKey(query);
+  if (!needle || textKey(row.name).includes(needle)) return true;
+  if (locale === "en") return false;
+  const kind = table === "races" ? "species" : table === "archetypes" ? "subclasses" : table;
+  const exact = localizedExpansionName(kind, row, locale);
+  const label = exact ?? (kind === "subclasses" && classId && canUseCommonNames(row)
+    ? subclassName(classId, row.name, locale)
+    : contentName(kind as LocalizedNamesTable | "items", row, locale));
+  const folded = searchKey(query);
+  return label !== row.name && Boolean(folded) && searchKey(label).includes(folded);
+}
+
 // A class feature's name ("Channel Divinity: Turn Undead", "Bonus
 // Proficiency (heavy armor)") in the reader's language: the maps key a
 // feature by its class and the feature's display name in the canonical form
@@ -184,7 +199,7 @@ export function contentName(
 // not carry (an artificer's, as the French SRD does not print the class, or a
 // workshop class's) stays English.
 export function classFeatureName(classId: string, featureName: string, locale: Locale): string {
-  if (!NAME_TABLES[locale] || !featureName) {
+  if (!localizedTables(locale) || !featureName) {
     return featureName;
   }
   const key = `${classId.trim().toLowerCase()}:${canonicalKey(featureName)}`;
@@ -201,31 +216,19 @@ export function classFeatureName(classId: string, featureName: string, locale: L
 // name is translated. A trait the species's map does not carry (the French
 // SRD prints the subraces' own traits for some peoples only) stays English.
 function localizeTraitTail(tail: string, locale: Locale): string {
-  if (locale === "cs") {
-    return tail
-      .replace(/\badv\. vs poison\b/gi, "výhoda proti jedu")
-      .replace(/\b(\d+)\s*ft\b/gi, "$1 stop")
-      .replace(/\blight and medium armor\b/gi, "lehká a střední zbroj")
-      .replace(/\b(battleaxe|handaxe|light hammer|warhammer|longsword|shortsword|longbow|shortbow|rapier)\b/gi, (weapon) => contentName("weapons", weapon, locale))
-      .replace(/\bHP per level\b/gi, "život za úroveň");
-  }
-  return tail
-    .replace(/\badv\. vs poison\b/gi, "avant. c/ poison")
-    .replace(/\b(\d+)\s*ft\b/gi, "$1 pi")
-    .replace(/\blight and medium armor\b/gi, "armures légères et intermédiaires")
-    .replace(/\bbattleaxe\b/gi, "hache d’armes")
-    .replace(/\bhandaxe\b/gi, "hachette")
-    .replace(/\blight hammer\b/gi, "marteau léger")
-    .replace(/\bwarhammer\b/gi, "marteau de guerre")
-    .replace(/\blongsword\b/gi, "épée longue")
-    .replace(/\bshortsword\b/gi, "épée courte")
-    .replace(/\blongbow\b/gi, "arc long")
-    .replace(/\bshortbow\b/gi, "arc court")
-    .replace(/\brapier\b/gi, "rapière");
+  const rules = localizedTables(locale)?.traitText;
+  if (!rules) return tail;
+  const localized = tail
+    .replace(/\badv\. vs poison\b/gi, rules.poisonAdvantage)
+    .replace(/\b(\d+)\s*ft\b/gi, (_, distance: string) => `${distance} ${rules.feet}`)
+    .replace(/\blight and medium armor\b/gi, rules.lightMediumArmor)
+    .replace(/\b(battleaxe|handaxe|light hammer|warhammer|longsword|shortsword|longbow|shortbow|rapier)\b/gi,
+      (weapon) => rules.weaponNames?.[weapon.toLowerCase()] ?? contentName("weapons", weapon, locale));
+  return rules.hpPerLevel ? localized.replace(/\bHP per level\b/gi, rules.hpPerLevel) : localized;
 }
 
 export function speciesTraitName(raceId: string, traitLine: string, locale: Locale): string {
-  if (!NAME_TABLES[locale] || !traitLine) {
+  if (!localizedTables(locale) || !traitLine) {
     return traitLine;
   }
   const traits = (namesFor(locale).speciesTraits ?? {});
@@ -249,7 +252,7 @@ export function speciesTraitName(raceId: string, traitLine: string, locale: Loca
     }
     const noted = carries(bracketed[1]);
     if (noted) {
-      return `${locale === "cs" ? localizeTraitTail(head, locale) : head} (${noted})`;
+      return `${localizedTables(locale)?.traitText?.localizeNotedHead ? localizeTraitTail(head, locale) : head} (${noted})`;
     }
   }
   // A trailing measurement the trait's name does not carry
@@ -264,6 +267,15 @@ export function speciesTraitName(raceId: string, traitLine: string, locale: Loca
   return localizeTraitTail(traitLine, locale);
 }
 
+// Catalog traits must not borrow a core race's name by coincidence. A
+// published row supplies the actual species id and source; custom and
+// external species keep their own trait headings unless a reviewed map
+// for that source is available.
+export function publishedSpeciesTraitName(row: NamedRow, trait: string, locale: Locale): string {
+  if (!row.slug || !row.source || !row.documentSlug || !canUseCommonNames(row)) return trait;
+  return speciesTraitName(row.slug.replace(/^srd:/, ""), trait, locale);
+}
+
 // A background's granted feature as the sheet carries it ("Shelter of the
 // Faithful (Acolyte)") in the reader's language: the maps key a feature by
 // its background and the feature's name ("acolyte:shelter-of-the-faithful"),
@@ -271,7 +283,7 @@ export function speciesTraitName(raceId: string, traitLine: string, locale: Loca
 // feature the map does not carry (the French SRD prints one background as an
 // example) stays English.
 export function backgroundFeatureName(featureName: string, locale: Locale): string {
-  if (!NAME_TABLES[locale] || !featureName) {
+  if (!localizedTables(locale) || !featureName) {
     return featureName;
   }
   const bracketed = /\s*\(([^()]*)\)\s*$/.exec(featureName);
@@ -293,7 +305,7 @@ export function backgroundFeatureName(featureName: string, locale: Locale): stri
 // A background feature's translated name when the background is already known
 // from surrounding context (e.g. BackgroundPanel).
 export function backgroundFeatureLabel(backgroundName: string, feature: string, locale: Locale): string {
-  if (!NAME_TABLES[locale] || !feature) {
+  if (!localizedTables(locale) || !feature) {
     return feature;
   }
   const bgKey = `${canonicalKey(backgroundName)}:${canonicalKey(feature)}`;
@@ -308,8 +320,15 @@ export function backgroundFeatureLabel(backgroundName: string, feature: string, 
 // in the reader's language: the maps key a subclass by its class and its
 // name, whole or bare ("cleric:life-domain", "cleric:life"). A subclass the
 // map does not carry (a workshop or pack archetype) stays as it was stored.
+// A catalog subclass uses its full source identity, unlike a stored name.
+export function archetypeDisplayName(classId: string, name: string, locale: Locale, row?: NamedRow): string {
+  if (!row) return subclassName(classId, name, locale);
+  return localizedExpansionName("subclasses", row, locale) ??
+    (canUseCommonNames(row) ? subclassName(classId, name, locale) : name);
+}
+
 export function subclassName(classId: string, subclass: string, locale: Locale): string {
-  if (!NAME_TABLES[locale] || !subclass) {
+  if (!localizedTables(locale) || !subclass) {
     return subclass;
   }
   const key = `${classId.trim().toLowerCase()}:${canonicalKey(subclass)}`;

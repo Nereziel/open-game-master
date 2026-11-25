@@ -1,12 +1,10 @@
-import { textKey } from "@/lib/language/text-logic";
 import type { EquipmentItem } from "@/lib/schemas/sheet";
 import { matchArmor } from "@/lib/srd/armor";
 import { matchWeapon } from "@/lib/srd/weapons";
-import { ITEM_EN_BY_FR } from "@/lib/srd/item-names-fr";
 import type { ToolError } from "@/lib/dm/tool-errors";
 import { hasItemTag, itemRow, itemTags, type TaggedItem } from "@/lib/srd/item-tags";
 import { magicItemNamed, matchMagicItem } from "@/lib/srd/magic-items";
-import { lineNamed, linesNamed, magicItemBonus } from "@/lib/srd/item-row";
+import { lineNamed, linesNamed, magicItemBonus, canonicalLocalizedItemName } from "@/lib/srd/item-row";
 import type { ItemTag } from "@/lib/schemas/item-tags";
 import { compositeGearNamed } from "@/lib/srd/magic-gear";
 import { gearWeaponFor } from "@/lib/srd/gear-weapons";
@@ -154,7 +152,7 @@ export function srdNameFor(srdName: string | undefined, what: string): { srdName
   if (bonus) {
     return { error: `${what}: srdName "${listed}" carries a bonus, which belongs in name. Keep "+${bonus}" in name and send srdName as the item without it ("Longsword" for a +1 longsword). Nothing changed.`, retry: true };
   }
-  const canonical = ITEM_EN_BY_FR[textKey(listed)] ?? listed;
+  const canonical = canonicalLocalizedItemName(listed);
   const row = compositeGearNamed(canonical)?.name ?? magicItemNamed(canonical)?.name ?? itemRow({ name: canonical })?.name;
   if (!row) {
     return { error: `${what}: no SRD or pack item is called "${listed}". Send srdName exactly as the item lists name it in English, or leave it out and name what it is in tags. Nothing changed.`, retry: true };

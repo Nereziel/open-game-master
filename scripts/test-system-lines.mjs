@@ -90,4 +90,18 @@ test("a French table reads the clock, a death save, a split party and a fall fro
   assert.equal(said(lines[12]), "Riding Horse s’effondre et Bram tombe avec sa monture.");
 });
 
+await import("../src/lib/i18n/cs-catalog.ts");
+const cs = (key, vars) => translate("cs", key, vars);
+test("Czech system notes translate fixed templates and preserve character and place names", () => {
+  const said = (line) => translateSystemNote(cs, line);
+  for (const line of lines) assert.notEqual(said(line), line, line);
+  assert.equal(said(lines[5]), "Mezitím u The Docks: Bram, Mira a Tovin.");
+  assert.equal(said(lines[7]), "The goblin boss je sražen ze sedla; Wolf zůstává na místě.");
+  assert.equal(said(lines[8]), "Bram je sražen na zem a padá z Riding Horse.");
+  assert.equal(said(lines[9]), "Bram je shozen z Riding Horse.");
+  assert.equal(said(lines[10]), "Wolf padá; The goblin boss seskočí a dopadne na nohy.");
+  assert.equal(said(lines[12]), "Riding Horse padá a Bram padá s ním.");
+  assert.equal(said("Mira writes an original story."), "Mira writes an original story.");
+});
+
 console.log(`system lines: ${passed} checks passed`);

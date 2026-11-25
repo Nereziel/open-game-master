@@ -19,7 +19,7 @@
 import { writtenWholeNumber } from "../language/text-logic.ts";
 // Pure still (no request), but the unread-coins words are the dictionaries',
 // so the translate comes along for the enT default.
-import { translate } from "../messages-logic.ts";
+import { translate, type Locale } from "../messages-logic.ts";
 
 export const DENOMINATIONS = ["cp", "sp", "ep", "gp", "pp"] as const;
 export type Denomination = (typeof DENOMINATIONS)[number];
@@ -249,3 +249,19 @@ export function splitCopper(total: number, shares: number): number[] {
   const remainder = value - each * count;
   return Array.from({ length: count }, (_, index) => (index === 0 ? each + remainder : each));
 }
+
+// Display-only currency conventions: parsing and arithmetic remain SRD
+// coin codes. Preserve the existing boundaries and French platinum spelling.
+const COIN_DISPLAY_BY_LOCALE: Partial<Record<Locale, {
+  pattern: RegExp;
+  words: Record<string, string>;
+}>> = {
+  cs: { pattern: /\b(gp|sp|cp|ep|pp)\b/g, words: { gp: "zl", sp: "st", cp: "md", ep: "el", pp: "pl" } },
+  fr: { pattern: / (gp|sp|cp|ep)/g, words: { gp: " po", sp: " pa", cp: " pc", ep: " pe" } },
+};
+
+export function localizeCoins(text: string, locale: Locale): string {
+  const display = COIN_DISPLAY_BY_LOCALE[locale];
+  return display ? text.replace(display.pattern, (match, coin: string) => display.words[coin] ?? match) : text;
+}
+

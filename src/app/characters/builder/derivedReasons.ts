@@ -77,19 +77,14 @@ export function hitPointsLine(t: Translator, input: {
   };
 }
 
-const ABILITY_ABBR_FR: Record<string, string> = { STR: "FOR", WIS: "SAG" };
+const ABILITY_ABBR = new Set(["STR", "DEX", "CON", "INT", "WIS", "CHA"]);
 
 export function localizeAcPart(part: string, t: Translator, locale: Locale): string {
-  if (locale !== "fr") return part;
-  const match = /^(.+?)\s+(\+?\d+)$/.exec(part);
+  if (locale === "en") return part;
+  const match = /^(.+?)\s+([+-]?\d+)$/.exec(part);
   if (!match) return part;
   const [, rawName, num] = match;
-  if (rawName === "STR" || rawName === "WIS") {
-    return `${ABILITY_ABBR_FR[rawName] ?? rawName} ${num}`;
-  }
-  if (rawName === "DEX" || rawName === "CON" || rawName === "INT" || rawName === "CHA") {
-    return part;
-  }
+  if (ABILITY_ABBR.has(rawName)) return `${t(rawName)} ${num}`;
   const translated = t(rawName);
   const name = translated !== rawName ? translated : contentName("items", rawName, locale);
   return `${name} ${num}`;

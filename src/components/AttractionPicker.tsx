@@ -2,7 +2,7 @@
 
 import { useId } from "react";
 import { InfoButton } from "@/components/ui/InfoDialog";
-import { ATTRACTION_CHOICES, ATTRACTION_NOTE_MAX, openToMore, type Attraction } from "@/lib/attraction";
+import { ATTRACTION_CHOICES, ATTRACTION_NOTE_MAX, attractionLabel, openToMore, type Attraction } from "@/lib/attraction";
 import { cn } from "@/lib/cn";
 import { ui } from "@/lib/ui";
 import { hostOffers, useCapabilities } from "@/lib/use-capabilities";
@@ -10,15 +10,6 @@ import { useLocale, useT } from "@/lib/locale";
 
 const CHIP =
   "inline-flex h-10 items-center rounded-full border border-stone-700/70 bg-stone-950/60 px-3 text-xs text-stone-300 transition-colors duration-150 hover:border-amber-500/40 hover:text-amber-100 focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-amber-400/50 aria-pressed:border-rose-400/60 aria-pressed:bg-rose-500/10 aria-pressed:text-rose-100 motion-press";
-
-// The chip labels, in the reader's language (the MonsterFields
-// SIZE_WORDS_FR pattern): the words the DM reads and the values the note
-// matching compares stay the English attraction.ts carries.
-const CHOICE_LABELS_FR: Record<string, string> = {
-  Women: "Femmes",
-  Men: "Hommes",
-  "Nonbinary people": "Personnes non binaires",
-};
 
 // "Drawn to" (issue 501): who a character or an NPC could fall for, as
 // chips beside their gender and a short note. One tap picks or drops a
@@ -72,7 +63,7 @@ export function AttractionPicker({
               }
               className={CHIP}
             >
-              {locale === "fr" ? (CHOICE_LABELS_FR[choice.label] ?? choice.label) : choice.label}
+              {attractionLabel(choice.label, locale)}
             </button>
           );
         })}

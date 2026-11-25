@@ -5,6 +5,7 @@ import { CalendarDays, ChevronLeft, ChevronRight } from "lucide-react";
 import { useState } from "react";
 import { NumberStepper } from "@/components/ui/NumberStepper";
 import { useT } from "@/lib/locale";
+import { localeTag } from "@/lib/messages-logic";
 import { cn } from "@/lib/cn";
 
 // The kit's date and time picker (docs/visual-overhaul-plan.md 8c.4), a
@@ -13,7 +14,7 @@ import { cn } from "@/lib/cn";
 // month (arrows step the month, today is ringed, the chosen day wears the
 // gold foil) over an hour and minute pair. With `dateOnly` it is a date
 // picker and the string is "YYYY-MM-DD".
-const WEEKDAYS = ["Mo", "Tu", "We", "Th", "Fr", "Sa", "Su"];
+// 1 Jan 2024 is a Monday. UTC keeps these labels independent of local DST.
 const pad = (value: number) => String(value).padStart(2, "0");
 
 function parse(value: string): Date | null {
@@ -49,6 +50,9 @@ export function DateTimePicker({
   className?: string;
 }) {
   const t = useT();
+  const tag = localeTag(t.locale);
+  const weekdayFormat = new Intl.DateTimeFormat(tag, { weekday: "short", timeZone: "UTC" });
+  const weekdays = Array.from({ length: 7 }, (_, i) => weekdayFormat.format(new Date(Date.UTC(2024, 0, i + 1))));
   const chosen = parse(value);
   const earliest = min ? parse(min) : null;
   const [shown, setShown] = useState(() => {
@@ -76,7 +80,7 @@ export function DateTimePicker({
     !!a && a.getFullYear() === year && a.getMonth() === month && a.getDate() === day;
 
   const reads = chosen
-    ? chosen.toLocaleString(undefined, dateOnly ? { dateStyle: "medium" } : { dateStyle: "medium", timeStyle: "short" })
+    ? chosen.toLocaleString(tag, dateOnly ? { dateStyle: "medium" } : { dateStyle: "medium", timeStyle: "short" })
     : (placeholder ?? t("Pick a date"));
 
   return (
@@ -101,7 +105,7 @@ export function DateTimePicker({
             >
               <ChevronLeft className="size-4" aria-hidden="true" />
             </button>
-            <span className="kit-date-month">{shown.toLocaleString(undefined, { month: "long", year: "numeric" })}</span>
+            <span className="kit-date-month">{shown.toLocaleString(tag, { month: "long", year: "numeric" })}</span>
             <button
               type="button"
               aria-label={t("Later month")}
@@ -115,8 +119,8 @@ export function DateTimePicker({
             </button>
           </div>
           <div className="kit-date-week" aria-hidden="true">
-            {WEEKDAYS.map((day) => (
-              <span key={day}>{day}</span>
+            {weekdays.map((day, index) => (
+              <span key={index}>{day}</span>
             ))}
           </div>
           <div key={`${shown.getFullYear()}-${shown.getMonth()}`} className="kit-date-grid" data-turn={turn ?? undefined}>
@@ -140,7 +144,7 @@ export function DateTimePicker({
           </div>
           {dateOnly ? null : (
             <div className="kit-date-time">
-              <NumberStepper label="Hour" size="sm" min={0} max={23} value={chosen?.getHours() ?? 19} onChange={(hours) => setTime(hours, chosen?.getMinutes() ?? 0)} />
+              <NumberStepper label={t("Hour")} size="sm" min={0} max={23} value={chosen?.getHours() ?? 19} onChange={(hours) => setTime(hours, chosen?.getMinutes() ?? 0)} />
               <span className="text-stone-500">:</span>
               <NumberStepper label={t("Minute")} size="sm" min={0} max={55} step={5} value={chosen?.getMinutes() ?? 0} onChange={(minutes) => setTime(chosen?.getHours() ?? 19, minutes)} />
             </div>

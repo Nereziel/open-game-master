@@ -32,6 +32,7 @@ import {
   type Spend,
 } from "@/lib/dm/party-conduct-logic";
 import type { ToolError } from "@/lib/dm/tool-errors";
+import type { MessageVars } from "@/lib/messages-logic";
 import { publishEphemeral, publishWithSeq } from "@/lib/events";
 import { textKey } from "@/lib/language/text-logic";
 import { hasItemTag } from "@/lib/srd/item-tags";
@@ -287,7 +288,7 @@ export function harmfulAreas(campaignId: string, walkerId: string, steps: readon
 // A player's order to the companion they command: one that walks it out of
 // a foe's reach, or into an area that would strike it, is refused when it is
 // wary of that player's character, or worse. Null when the order stands.
-export function riskyOrderGate(campaign: Campaign, companion: CharacterSheet, commanderId: string, steps: readonly Xy[], disengaged: boolean): string | null {
+export function riskyOrderGate(campaign: Campaign, companion: CharacterSheet, commanderId: string, steps: readonly Xy[], disengaged: boolean, t?: (key: string, vars?: MessageVars) => string): string | null {
   const actor = !disengaged && companion.commandedBy === commanderId ? conscientious(campaign, companion.id) : null;
   if (!actor) {
     return null;
@@ -296,14 +297,17 @@ export function riskyOrderGate(campaign: Campaign, companion: CharacterSheet, co
   const standings = theirs.map((sheet) => standingWith(campaign.id, companion.name, sheet.id)).filter((value): value is number => value !== null);
   const approval = standings.length ? Math.min(...standings) : null;
   const commander = theirs.find((sheet) => standingWith(campaign.id, companion.name, sheet.id) === approval)?.name ?? "their commander";
-  const refused = riskyOrderRefusal({
+  const input = {
     companion: companion.name,
     commander,
     approval,
     provokers: provokers(campaign.id, companion.id, steps),
     areas: harmfulAreas(campaign.id, companion.id, steps),
-  });
-  return refused ? refuse(campaign, actor.npcId, companion.name, `an order from ${commander}`, refused).error : null;
+  };
+  const refused = riskyOrderRefusal(input);
+  if (!refused) return null;
+  const canonical = refuse(campaign, actor.npcId, companion.name, `an order from ${commander}`, refused).error;
+  return t ? riskyOrderRefusal(input, t) ?? canonical : canonical;
 }
 
 // ---- what the Bonds row shows ----

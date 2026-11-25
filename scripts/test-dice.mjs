@@ -1,5 +1,9 @@
 // Assert-based tests for the dice engine. Run with: npm run test:dice
 import assert from "node:assert/strict";
+import { readFileSync } from "node:fs";
+import { diceErrorDisplay } from "../src/lib/dice/error-display.ts";
+import { trayExpressionProblem } from "../src/lib/dice/tray-rules.ts";
+import { installCatalog, translate } from "../src/lib/i18n/translate.ts";
 import { rollExpression, rollD20, d20Expression, diceExpression, isValidExpression } from "../src/lib/dice.ts";
 
 // Deterministic RNG: returns values from a fixed queue.
@@ -216,6 +220,31 @@ test("reroll then floor stack (Lucky halfling with Reliable Talent)", () => {
 
 test("a reroll threshold at or above the die size is rejected", () => {
   assert.throws(() => rollExpression("1d20r20", queueRng([1])));
+});
+
+for (const locale of ["cs", "fr"]) {
+  installCatalog(locale, JSON.parse(readFileSync(new URL(`../src/lib/i18n/${locale}.json`, import.meta.url), "utf8")));
+}
+
+test("dice refusal display keeps parser output and raw dice values canonical", () => {
+  const invalid = ["", "1d20r20", "1d0", "2d6kh3", "123", "1d20+99999"];
+  const originals = invalid.map((expression) => trayExpressionProblem(expression));
+  for (const locale of ["en", "cs", "fr"]) {
+    const t = (key, vars) => translate(locale, key, vars);
+    for (const [index, expression] of invalid.entries()) {
+      const display = trayExpressionProblem(expression, t);
+      assert.equal(typeof originals[index], "string", expression);
+      assert.equal(typeof display, "string");
+      assert.equal(display === originals[index], locale === "en", expression);
+      assert.doesNotMatch(display, /\{\w+\}/);
+    }
+    assert.equal(trayExpressionProblem("1d20+3", t), null);
+    assert.equal(diceErrorDisplay("Unexpected RNG failure.", t), "Unexpected RNG failure.");
+    assert.match(diceErrorDisplay("Die 3 must be a whole number from 1 to 20.", t), /3.*20/);
+    assert.ok(diceErrorDisplay("Invalid dice term: 1d20+{custom}", t).includes("1d20+{custom}"));
+  }
+  assert.deepEqual(invalid.map((expression) => trayExpressionProblem(expression)), originals);
+  assert.equal(rollExpression("1d20+3", queueRng([10])).total, 13);
 });
 
 console.log(`\n${passed} dice tests passed`);

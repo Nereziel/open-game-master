@@ -27,6 +27,8 @@ const Database = (await import("better-sqlite3-multiple-ciphers")).default;
 const { writeReadings } = await import("./lib/pack-readings.mjs");
 const { PACK_REVISION } = await import("../src/lib/content/edition.ts");
 const logic = await import("../src/lib/content/levelup-logic.ts");
+const { installCatalog, translate } = await import("../src/lib/i18n/translate.ts");
+const { gameTermWord } = await import("../src/lib/i18n/game-term-labels.ts");
 
 const block = (name, extra = {}) => ({
   name,
@@ -123,6 +125,30 @@ await test("The label says what an entry uses and what that means at this table.
   assert.equal(logic.offeredInPlay(["bloodied", "rattled"]), false);
   assert.equal(logic.isLevelUpTwin({ documentSlug: "menagerie", name: "Goblin" }, new Set(["goblin"])), true);
   assert.equal(logic.isLevelUpTwin({ documentSlug: "tob", name: "Goblin" }, new Set(["goblin"])), false, "only Level Up's books rewrite the SRD's entries");
+});
+
+await test("Compatibility labels follow EN/FR/CS without changing eligibility.", () => {
+  const expected = {
+    en: ["Uses fatigue, expertise dice and ley lines", "Uses strife"],
+    fr: ["Utilise : fatigue, dés d'expertise et lignes telluriques", "Utilise : conflit"],
+    cs: ["Využívá: únava, kostky odbornosti a magické linie", "Využívá: svár"],
+  };
+  for (const locale of ["en", "fr", "cs"]) {
+    if (locale !== "en") installCatalog(locale, JSON.parse(fs.readFileSync(new URL(`../src/lib/i18n/${locale}.json`, import.meta.url), "utf8")));
+    const t = (key, vars) => translate(locale, key, vars);
+    const needs = ["fatigue", "expertise dice", "ley lines"];
+    assert.equal(logic.needsLabel(needs, t), expected[locale][0]);
+    assert.equal(logic.needsLabel(["strife"], t), expected[locale][1]);
+    assert.equal(logic.needsNote([], t), null);
+    assert.equal(logic.needsLabel([], t), null);
+    assert.ok(logic.needsNote(needs, t).includes("Level Up Advanced 5e"));
+    assert.ok(logic.needsNote(needs, t).includes("Deep Magic"));
+    assert.equal(logic.offeredInPlay(needs), false);
+    assert.equal(logic.offeredInPlay(["bloodied", "ley lines"]), true);
+    assert.deepEqual(needs, ["fatigue", "expertise dice", "ley lines"]);
+    assert.equal(gameTermWord("spellSchool", "evocation", locale), { en: "evocation", fr: "Évocation", cs: "Zaklínání" }[locale]);
+    assert.equal(gameTermWord("spellSchool", "custom", locale), "custom");
+  }
 });
 
 // The content module still holds the scratch pack open, and Windows will

@@ -362,5 +362,35 @@ await test("out of a fight gear changes freely", async () => {
   assert.equal(gear["Ring of Protection"].attuned, true);
 });
 
+await test("gear refusal and dressing time use request locale without changing rules", async () => {
+  const table = await openTable();
+  fighterOf(table);
+  for (const [locale, fullText, timeText] of [
+    ["en", /hands are full/, /takes 10 minutes/],
+    ["cs", /má plné ruce/, /10 minut/],
+    ["fr", /a les mains pleines/, /10 minutes/],
+  ]) {
+    const fighter = fighterOf(table, {
+      equipment: [
+        { name: "Longsword", qty: 1, equipped: true },
+        { name: "Shield", qty: 1, equipped: true },
+        { name: "Dagger", qty: 1, equipped: false },
+        { name: "Plate", qty: 1, equipped: false },
+      ],
+    });
+    const before = stored(table, fighter.id);
+    const refused = await postUsage(table, fighter.id, { gear: { Dagger: { equipped: true } } }, locale);
+    assert.equal(refused.status, 409);
+    assert.match(refused.json.error, fullText);
+    assert.doesNotMatch(refused.json.error, /handle_item/);
+    assert.deepEqual(stored(table, fighter.id), before);
+    const dressed = await postUsage(table, fighter.id, { gear: { Plate: { equipped: true } } }, locale);
+    assert.equal(dressed.status, 200, dressed.json.error);
+    assert.match(dressed.json.timePassed, timeText);
+    assert.equal(table.sheet(fighter.id).equipment.find((item) => item.name === "Plate").equipped, true);
+  }
+  table.close();
+});
+
 world.close();
 finish();

@@ -1,5 +1,7 @@
 "use client";
 
+import { worldLinkLabel, worldFieldLabel, worldFieldOption } from "@/lib/worldforge/display";
+
 import { ArrowLeft, Brush, ExternalLink, EyeOff, Lock, Pencil, Plus, Theater, Trash2, X } from "lucide-react";
 import { useMemo, useState } from "react";
 import { cn } from "@/lib/cn";
@@ -92,7 +94,7 @@ export function EntityPage({
   const events = sortEvents(doc.events.filter((event) => event.refs.includes(entity.ref)), doc.calendars);
   const secrets = doc.secrets.filter((secret) => secret.subject === entity.ref || secret.knownBy.includes(entity.ref));
   const span = lifespan(type, entity.entry, doc.calendars);
-  const lifeLine = formatLifespan(type, entity.entry, doc.calendars);
+  const lifeLine = formatLifespan(type, entity.entry, doc.calendars, t.locale);
   // One account, and each other text under its own name
   // (src/lib/worldforge/account.ts): a place's arrival text beside its
   // article, a lore entry's older article waiting for the author's choice.
@@ -173,11 +175,11 @@ export function EntityPage({
       reverse ? (
         <div key={label} className="flex flex-wrap items-center gap-1.5">
           {group.map((link) => chip(link, byRef.get(link.from)!, true))}
-          <span className="text-xs text-stone-500">{label} {entity.name}</span>
+          <span className="text-xs text-stone-500">{worldLinkLabel(t, label)} {entity.name}</span>
         </div>
       ) : (
         <div key={label} className="flex flex-wrap items-center gap-1.5">
-          <span className="w-28 shrink-0 text-xs text-stone-500">{label}</span>
+          <span className="w-28 shrink-0 text-xs text-stone-500">{worldLinkLabel(t, label)}</span>
           {group.map((link) => chip(link, byRef.get(link.to)!, false))}
         </div>
       ),
@@ -283,8 +285,8 @@ export function EntityPage({
         <dl className="grid gap-x-4 gap-y-1 text-sm @lg:grid-cols-2">
           {fieldLines(type, entity.entry, doc.calendars, true).map(({ def, text }) => (
             <div key={def.id} className={cn("flex gap-2", def.authorOnly && "text-red-300")}>
-              <dt className="text-stone-500">{def.name}</dt>
-              <dd>{text}</dd>
+              <dt className="text-stone-500">{worldFieldLabel(t, type, def)}</dt>
+              <dd>{def.kind === "select" ? worldFieldOption(t, type, def, text) : text}</dd>
               {def.authorOnly ? <EyeOff className="size-3.5 self-center" aria-label={t("Author only")} /> : null}
             </div>
           ))}
@@ -322,7 +324,7 @@ export function EntityPage({
           <h4 className="eyebrow text-[10px] text-amber-400/80">{t("On the timeline")}</h4>
           {events.map((event) => {
             const when = formatYear(event.when, doc.calendars).primary;
-            const issue = lifespanIssue(span, absoluteYear(event.when, doc.calendars));
+            const issue = lifespanIssue(span, absoluteYear(event.when, doc.calendars), t.locale);
             return (
               <p key={event.id} className="text-sm text-stone-300">
                 <span className="text-stone-500">{when || t("Undated")}</span> {event.title}

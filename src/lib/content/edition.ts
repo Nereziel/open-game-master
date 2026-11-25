@@ -8,6 +8,7 @@
 //
 // No "@/" imports: the importer loads this file directly.
 import { textKey } from "../language/text-logic.ts";
+import { translate, type Locale } from "../i18n/translate.ts";
 
 export const EDITION_2024_DOCUMENTS: ReadonlySet<string> = new Set(["srd-2024", "open5e-2024"]);
 
@@ -54,9 +55,11 @@ export function revisedOnlySpell(name: string): string | null {
 
 // What a player or the DM is told about one: the same words wherever a
 // 2024-only spell is met.
-export function revisedOnlySpellProblem(name: string, kind: "cantrip" | "spell" = "spell"): string | null {
+export function revisedOnlySpellProblem(name: string, kind: "cantrip" | "spell" = "spell", locale: Locale = "en"): string | null {
   const printed = revisedOnlySpell(name);
   return printed
-    ? `${printed} is from the 2024 rules, which this server does not play; pick a 2014 ${kind} in its place.`
+    ? (kind === "cantrip"
+      ? translate(locale, "{printed} is from the 2024 rules, which this server does not play; pick a 2014 cantrip in its place.", { printed })
+      : translate(locale, "{printed} is from the 2024 rules, which this server does not play; pick a 2014 spell in its place.", { printed }))
     : null;
 }

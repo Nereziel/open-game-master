@@ -37,7 +37,8 @@ import { textKey } from "@/lib/language/text-logic";
 import { useLocale, useT } from "@/lib/locale";
 import { contentName } from "@/lib/content/names";
 import { damageWords } from "@/lib/dm/damage-logic";
-import type { Locale } from "@/lib/messages-logic";
+import { canonicalRuleTermList } from "@/lib/i18n/rule-term-input";
+import { gameTermWord } from "@/lib/i18n/game-term-labels";
 
 // The half of the monster editor that picks rather than types.
 //
@@ -78,6 +79,8 @@ export function TermPicker({
   wordFor?: (term: string) => string;
 }) {
   const t = useT();
+  const [editing, setEditing] = useState<string | null>(null);
+  const options = known.map((term) => ({ value: term, label: wordFor?.(term) ?? term }));
   const extras = parseTerms(value).filter(
     (term) => !known.some((entry) => textKey(entry) === textKey(term)),
   );
@@ -121,31 +124,18 @@ export function TermPicker({
         ))}
       </div>
       <input
-        value={value}
-        onChange={(event) => onChange(event.target.value)}
+        value={editing ?? value}
+        onChange={(event) => {
+          const input = event.target.value;
+          setEditing(input);
+          onChange(canonicalRuleTermList(input, options));
+        }}
+        onBlur={() => setEditing(null)}
         placeholder={t("or type your own, comma separated")}
         className={cn(input, "w-full")}
       />
     </div>
   );
-}
-
-// The movement words the French SRD's own stat blocks print (« marche »,
-// « fouissement », « escalade », « vol », « nage »). English keeps the raw
-// mode, exactly as the picker always read it.
-const MOVEMENT_WORDS_FR: Record<string, string> = {
-  walk: "marche",
-  burrow: "fouissement",
-  climb: "escalade",
-  fly: "vol",
-  swim: "nage",
-};
-
-function movementModeWord(mode: string, locale: Locale): string {
-  if (locale !== "fr") {
-    return mode;
-  }
-  return MOVEMENT_WORDS_FR[mode] ?? mode;
 }
 
 // Speed is one printed string ("30, fly 60") because that is what a stat
@@ -169,14 +159,14 @@ export function SpeedPicker({
       <div className="flex flex-wrap gap-2">
         {(["walk", ...MOVEMENT_MODES] as const).map((mode) => (
           <div key={mode} className="flex flex-col gap-0.5">
-            <span className="text-[10px] capitalize text-stone-600">{movementModeWord(mode, locale)}</span>
+            <span className="text-[10px] capitalize text-stone-600">{gameTermWord("movement", mode, locale)}</span>
             <NumberStepper
               min={0}
               max={999}
               step={5}
               value={speeds[mode] ?? 0}
               onChange={(feet) => set(mode, feet)}
-              label={t("{mode} speed in feet", { mode: movementModeWord(mode, locale) })}
+              label={t("{mode} speed in feet", { mode: gameTermWord("movement", mode, locale) })}
               size="sm"
             />
           </div>
@@ -213,31 +203,6 @@ function Select({
 // The catalogue, aimed at the block. Four independent moves: what it is,
 // what it trained as, what it is holding, and which of that class's
 // abilities it actually brought.
-
-// The dragon colors the French SRD prints ("dragon rouge", "dragon
-// d'airain"...). The stored value stays the English color id; the option
-// label reads the reader's language, capitalized (English keeps the raw id).
-const DRAGON_COLOR_WORDS_FR: Record<string, string> = {
-  black: "noir",
-  blue: "bleu",
-  brass: "airain",
-  bronze: "bronze",
-  copper: "cuivre",
-  gold: "or",
-  green: "vert",
-  red: "rouge",
-  silver: "argent",
-  white: "blanc",
-};
-
-const capital = (value: string) => value.replace(/(^|\s)([a-z])/g, (_, before, letter) => `${before}${letter.toUpperCase()}`);
-
-function dragonColorWord(color: string, locale: Locale): string {
-  if (locale !== "fr") {
-    return color;
-  }
-  return DRAGON_COLOR_WORDS_FR[color] ?? color;
-}
 
 export function MonsterKitPanel({
   draft,
@@ -368,7 +333,7 @@ export function MonsterKitPanel({
           label={t("Half-dragon template")}
           value={dragon}
           onChange={(value) => setDragon(value as DragonColor | "")}
-          options={[{ value: "", label: t("Dragon half") }, ...DRAGON_COLORS.map((color) => ({ value: color as string, label: locale === "fr" ? capital(dragonColorWord(color, locale)) : dragonColorWord(color, locale) }))]}
+          options={[{ value: "", label: t("Dragon half") }, ...DRAGON_COLORS.map((color) => ({ value: color as string, label: gameTermWord("dragonColor", color, locale) }))]}
         />
         <button
           type="button"

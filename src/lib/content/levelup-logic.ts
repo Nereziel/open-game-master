@@ -19,6 +19,10 @@
 
 import { LEVEL_UP_DOCUMENTS, NEED_LABELS, type Need } from "@/lib/content/needs-logic";
 import { textKey } from "@/lib/language/text-logic";
+import { translate, type TranslateVars } from "@/lib/messages-logic";
+
+type T = (key: string, vars?: TranslateVars) => string;
+const enT: T = (key, vars) => translate("en", key, vars);
 
 export { LEVEL_UP_DOCUMENTS };
 
@@ -41,20 +45,20 @@ export function offeredInPlay(needs: readonly Need[]): boolean {
 
 // The words a table reads beside such an entry: what it uses, whose rules
 // they are, and what that means at this table.
-export function needsLabel(needs: readonly Need[]): string | null {
+export function needsLabel(needs: readonly Need[], t: T = enT): string | null {
   if (!needs.length) {
     return null;
   }
-  return `Uses ${listOf(needs)}`;
+  return t("Uses {needs}", { needs: listOf(needs, t) });
 }
 
 // "strife", "strife and fatigue", "strife, fatigue and rattled".
-function listOf(needs: readonly Need[]): string {
-  const names = needs.map((need) => NEED_LABELS[need]);
-  return names.length > 1 ? `${names.slice(0, -1).join(", ")} and ${names.at(-1)}` : names[0];
+function listOf(needs: readonly Need[], t: T): string {
+  const names = needs.map((need) => t(NEED_LABELS[need], { context: "content.need" }));
+  return names.length > 1 ? t("{first} and {last}", { first: names.slice(0, -1).join(", "), last: names.at(-1)! }) : names[0];
 }
 
-export function needsNote(needs: readonly Need[]): string | null {
+export function needsNote(needs: readonly Need[], t: T = enT): string | null {
   if (!needs.length) {
     return null;
   }
@@ -62,15 +66,15 @@ export function needsNote(needs: readonly Need[]): string | null {
   const levelUp = needs.filter((need) => need !== "ley lines");
   const parts: string[] = [];
   if (levelUp.length) {
-    parts.push(`Level Up Advanced 5e's ${listOf(levelUp)} ${levelUp.length > 1 ? "are rules" : "is a rule"} this game does not play.`);
+    parts.push(t(levelUp.length > 1 ? "Level Up Advanced 5e's {needs} are rules this game does not play." : "Level Up Advanced 5e's {needs} is a rule this game does not play.", { needs: listOf(levelUp, t) }));
   }
   if (needs.includes("ley lines")) {
-    parts.push("Ley lines are from Deep Magic: the GM decides where they run.");
+    parts.push(t("Ley lines are from Deep Magic: the GM decides where they run."));
   }
   parts.push(
     unplayed.length
-      ? "It is not offered for play here; the GM can still read it, or copy it into the workshop and change it."
-      : "The GM plays that part.",
+      ? t("It is not offered for play here; the GM can still read it, or copy it into the workshop and change it.")
+      : t("The GM plays that part."),
   );
   return parts.join(" ");
 }

@@ -117,10 +117,10 @@ export function joinChanges(
   localeOrOwed?: Locale | OwedContext,
   owedArg?: OwedContext,
 ): JoinChanges {
-  const tp = pluralOf(enT);
   const withT = typeof tOrOwed === "function";
   const t = (withT ? tOrOwed : enT) as T;
   const locale = (withT ? (localeOrOwed ?? "en") : "en") as Locale;
+  const tp = pluralOf({ locale });
   const owedContext = (withT ? owedArg : localeOrOwed ?? tOrOwed ?? {}) as OwedContext;
   const changes: string[] = [];
   if (storedLevel === tableLevel) {
@@ -186,7 +186,7 @@ export function joinChanges(
     background: (seated as { background?: string }).background,
     racialChoices: (seated as { racialChoices?: { skills?: string[] } | null }).racialChoices,
     backgroundChoices: (seated as { backgroundChoices?: { skills?: string[] } | null }).backgroundChoices,
-  } as Parameters<typeof owedChoiceGroups>[0], owedContext);
+  } as Parameters<typeof owedChoiceGroups>[0], owedContext, t, locale);
 
   return { changes, owed: [...groups.levelUp, ...groups.onSheet], owedOnSheet: groups.onSheet };
 }

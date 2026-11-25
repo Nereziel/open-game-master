@@ -1,6 +1,10 @@
 "use client";
 
 import { X } from "lucide-react";
+import { useLocale, useT } from "@/lib/locale";
+import { contentName } from "@/lib/content/names";
+import { contentSlug } from "@/lib/help";
+import { InfoButton } from "@/components/ui/InfoDialog";
 import { cn } from "@/lib/cn";
 import { NumberStepper } from "@/components/ui/NumberStepper";
 import { KitButton } from "./PanelKit";
@@ -45,7 +49,10 @@ export function ItemFlags({ item }: { item: EquipmentItem }) {
 
 // Removable name chips backing the spell and feat lists; adding goes
 // through the searchable multi-select pickers below each list.
-export function ChipList({ values, onRemove }: { values: string[]; onRemove: (value: string) => void }) {
+export function ChipList({ values, onRemove, kind }: { values: string[]; onRemove: (value: string) => void; kind?: "spells" | "feats" }) {
+  const locale = useLocale();
+  const t = useT();
+  const label = (value: string) => kind ? contentName(kind, value, locale) : value;
   if (!values.length) {
     return null;
   }
@@ -53,8 +60,9 @@ export function ChipList({ values, onRemove }: { values: string[]; onRemove: (va
     <div className="stagger-pop flex flex-wrap gap-1.5">
       {values.map((value) => (
         <span key={value} className={cn("pk-chip gap-0.5 py-0 pl-2 pr-0.5 text-xs text-stone-200")}>
-          {value}
-          <KitButton tone="iconDanger" always onClick={() => onRemove(value)} aria-label={`Remove ${value}`} className="p-1">
+          {label(value)}
+          {kind ? <InfoButton label={label(value)} reference={{ kind, slug: contentSlug(value), name: value }} /> : null}
+          <KitButton tone="iconDanger" always onClick={() => onRemove(value)} aria-label={t("Remove {name}", { name: label(value) })} className="p-1">
             <X className="size-3" />
           </KitButton>
         </span>

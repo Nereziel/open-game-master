@@ -7,6 +7,7 @@ import type { CreateSheetInput } from "@/lib/schemas/sheet";
 import type { HpMethod } from "@/lib/srd/hit-points";
 import type { PriceLookup, StartingWealthMethod } from "@/lib/srd/starting-wealth";
 import type { OlderBuilder } from "@/lib/srd/legality/older-builder";
+import type { Locale } from "@/lib/messages-logic";
 
 export type ClassGrants = ClassOption;
 export type RaceGrants = RaceOption & {
@@ -41,6 +42,8 @@ export type SpellFacts = {
 export type FeatFacts = { name: string; prerequisite: string; desc: string; runsAs?: string };
 
 export type LegalityContext = {
+  // Reader locale for validation messages, never for rule decisions.
+  locale?: Locale;
   door: Door;
   // The level the sheet is judged at: the table's starting level, or the
   // library character's own.

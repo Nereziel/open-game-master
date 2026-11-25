@@ -1,11 +1,11 @@
 import { describe, expect, it } from "vitest";
 import csCatalog from "./cs.json";
 import frCatalog from "./fr.json";
-import { catalogInstalled, installCatalog, translate, translatePlural } from "./translate";
-import { localeFromAcceptLanguage, parseLocale, resolveLocale } from "./locale";
+import { catalogInstalled, installCatalog, translate, translatePlural, type TranslateVars } from "./translate";
+import { localeFromAcceptLanguage, localeOfServerLanguage, parseLocale, resolveLocale, serverLanguageOfLocale } from "./locale";
 import { localeTag } from "../messages-logic";
 import { GENRE_PRESETS, genrePresetFor } from "../genres";
-import { presetTheme, typeInPlan } from "../../app/create-campaign/portals";
+import { portalCards, presetTheme, settingList, typeInPlan } from "../../app/create-campaign/portals";
 
 installCatalog("cs", csCatalog);
 installCatalog("fr", frCatalog);
@@ -16,6 +16,22 @@ describe("Czech locale following the upstream French catalog", () => {
     expect(localeFromAcceptLanguage("cs-CZ,cs;q=0.9,en;q=0.5")).toBe("cs");
     expect(resolveLocale({ cookieHeader: "odm_locale=cs", acceptLanguage: "fr-FR" })).toBe("cs");
     expect(localeTag("cs")).toBe("cs-CZ");
+  });
+
+  it("keeps UI tags and server-language names in the same registry", () => {
+    for (const [locale, server, tag] of [["en", "english", "en-US"], ["fr", "french", "fr-FR"], ["cs", "czech", "cs-CZ"]] as const) {
+      expect(localeTag(locale)).toBe(tag);
+      expect(serverLanguageOfLocale(locale)).toBe(server);
+      expect(localeOfServerLanguage(server)).toBe(locale === "en" ? null : locale);
+    }
+    expect(localeOfServerLanguage("italian")).toBeNull();
+  });
+
+  it("explains automatic language selection in both translated interfaces", () => {
+    const help = "The language of the menus and screens. Automatic uses the server language when a matching non-English interface is available, otherwise the browser language. The Game Master narrates in the table's own language.";
+    expect(translate("en", help)).toBe(help);
+    expect(translate("cs", help)).toContain("jazyk serveru");
+    expect(translate("fr", help)).toContain("langue du serveur");
   });
 
   it("installs the original Czech gettext catalog", () => {
@@ -61,10 +77,26 @@ describe("Czech campaign theme presets", () => {
         expect(genrePresetFor(preset.id, "cs")).toBe(preset);
         continue;
       }
-      expect(preset.defaultThemeCs).toBeTruthy();
-      expect(genrePresetFor(preset.id, "cs")).toEqual({ ...preset, defaultTheme: preset.defaultThemeCs });
-      expect(genrePresetFor(preset.id, "fr")).toEqual({ ...preset, defaultTheme: preset.defaultThemeFr });
+      expect(preset.defaultThemeByLocale?.cs).toBeTruthy();
+      expect(genrePresetFor(preset.id, "cs")).toEqual({ ...preset, defaultTheme: preset.defaultThemeByLocale?.cs });
+      expect(genrePresetFor(preset.id, "fr")).toEqual({ ...preset, defaultTheme: preset.defaultThemeByLocale?.fr });
       expect(genrePresetFor(preset.id, "cs").defaultTheme).not.toBe(preset.defaultTheme);
+    }
+  });
+
+  it("uses the same catalog text for all eight genre cards and their help, without overwriting pack text", () => {
+    const packDraft = { genre: "high_fantasy" as const, theme: "A world pack's own text", themeTouched: false, worldPack: "custom-pack" };
+    for (const locale of ["en", "fr", "cs"] as const) {
+      const t = (key: string, vars?: TranslateVars) => translate(locale, key, vars);
+      const cards = portalCards("custom", t);
+      expect(cards).toHaveLength(8);
+      expect(settingList("custom", t)).toBe(cards.map((card) => `**${card.name}**: ${card.blurb}`).join("\n\n"));
+      for (const [index, card] of cards.entries()) {
+        const preset = GENRE_PRESETS[index];
+        expect(card.name).toBe(t(preset.name, preset.id === "custom" ? { context: "creator.genre.custom" } : undefined));
+        expect(card.blurb).toBe(t(preset.blurb));
+      }
+      expect(presetTheme(packDraft, locale)).toBe(packDraft);
     }
   });
 

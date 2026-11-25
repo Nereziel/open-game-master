@@ -6,6 +6,7 @@ import { ROLL_REF_KINDS, type RollRefKind } from "@/lib/dm/roll-table-logic";
 import type { RollTable } from "@/lib/db/roll-tables";
 import { AddFromList } from "@/components/ui/AddFromList";
 import { ContentPick } from "@/components/ui/ContentPick";
+import { pickerName } from "@/lib/content/picker-display";
 import { GameIcon } from "@/components/ui/GameIcon";
 import { Select } from "@/components/ui/Select";
 import { LoadFailed } from "@/app/campaigns/[campaignId]/PanelKit";
@@ -125,7 +126,7 @@ export function RefPicker({
         <ContentPick
           kind="items"
           label={t("Find an item to add as a row")}
-          placeholder="Potion of Healing"
+          placeholder={pickerName("items", { name: "Potion of Healing", source: "srd" }, t.locale)}
           onPick={(entry) => insert(entry.name)}
           className="min-w-44 flex-1"
         />

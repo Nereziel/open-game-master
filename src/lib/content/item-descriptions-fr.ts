@@ -23,24 +23,10 @@ export function frenchItemDescription(name: string): string | null {
   const pageId = rulebookPageIdFor("item", name);
   if (pageId) {
     const fr = rulebookPage(pageId, "fr");
-    if (fr?.page.md) {
+    if (fr?.page.md && fr.page.md !== rulebookPage(pageId, "en")?.page.md) {
       return stripLeadingMeta(fr.page.md);
     }
   }
   const id = textKey(name.replace(/['‘’ʼ´]/g, ""));
   return GEAR_DESC_FR[id] ?? null;
-}
-
-export function localizeItemEntryFr<T extends { name: string; source?: "open5e" | "srd" | "homebrew"; data?: unknown }>(entry: T): T {
-  if (entry.source === "homebrew" || !entry.data || typeof entry.data !== "object") {
-    return entry;
-  }
-  const desc = frenchItemDescription(entry.name);
-  if (!desc) {
-    return entry;
-  }
-  return {
-    ...entry,
-    data: { ...(entry.data as Record<string, unknown>), desc },
-  };
 }

@@ -9,6 +9,7 @@
 // Workstream ui-play of the second rules-enforcement repair
 // (/tmp/odm-enf2/fixes/ui-play.md). Pure: no database, no server.
 import assert from "node:assert/strict";
+import fs from "node:fs";
 import { register } from "node:module";
 import { staticImports } from "./lib/static-imports.mjs";
 
@@ -23,9 +24,10 @@ const { hudGates } = await import("../src/lib/battlemap/hand-hud.ts");
 const { conditionNote, conditionNoteLine, namesLookup } = await import("../src/lib/battlemap/condition-notes.ts");
 const { characterStageRows, enemyStageRows } = await import("../src/lib/battlemap/view-stage.ts");
 const { messageIntentSchema, describeIntent, intentAnswered, intentCorrection, intentTools } = await import("../src/lib/dm/intent-logic.ts");
-const { translate } = await import("../src/lib/messages-logic.ts");
+const { translate, tableTranslator } = await import("../src/lib/messages-logic.ts");
+const { installCatalog } = await import("../src/lib/i18n/translate.ts");
 const t = (key, vars) => translate("en", key, vars);
-const { maxHpView, speedView, hitDiceRows, hitDiceLine, itemStatus, stateTags } = await import(
+const { maxHpView, speedView, hitDiceRows, hitDiceLine, itemStatus, stateTags, petAwayNote, petConditionDetail } = await import(
   "../src/components/sheet/sheet-state.ts"
 );
 
@@ -474,6 +476,33 @@ test("a condition's note says until whose turn, the save that ends it, and who l
   assert.equal(conditionNoteLine(conditionNote("unconscious", { source: "knocked out" }, nameOf)), "knocked out");
 });
 
+test("familiar condition notes and pocket dimension follow the reader's locale without changing stored metadata", () => {
+  const owner = sheet();
+  const pet = { pocketed: true, conditionMeta: { paralyzed: {
+    untilTurnOf: owner.id, saveEnds: { ability: "wis", or: "str", dc: 13 },
+    source: "e1", spell: "Custom Spell",
+  } } };
+  const before = JSON.stringify(pet);
+  const nameOf = namesLookup([{ id: "e1", name: "Kael {name}" }]);
+  const expected = {
+    en: ["In its pocket dimension", "until their next turn", "save ends (WIS or STR 13)", "from Kael {name} (Custom Spell)"],
+    fr: ["Dans sa dimension de poche", "jusqu’à son prochain tour", "fin sur sauvegarde (SAG ou FOR 13)", "de Kael {name} (Custom Spell)"],
+    cs: ["Ve své kapesní dimenzi", "do jejich dalšího tahu", "záchranný hod ukončí (MDR nebo SÍL 13)", "od Kael {name} (Custom Spell)"],
+  };
+  for (const locale of ["en", "fr", "cs"]) {
+    if (locale !== "en") installCatalog(locale, JSON.parse(fs.readFileSync(new URL(`../src/lib/i18n/${locale}.json`, import.meta.url), "utf8")));
+    const tr = (key, vars) => translate(locale, key, vars);
+    const [away, ...detail] = expected[locale];
+    assert.equal(petAwayNote(pet, tr), away);
+    assert.equal(petAwayNote({ pocketed: false }, tr), null);
+    assert.equal(petConditionDetail(owner, pet, "paralyzed", nameOf, tr), detail.join(", "));
+    assert.equal(petConditionDetail(owner, pet, "blinded", nameOf, tr), "");
+    assert.equal(JSON.stringify(pet), before);
+  }
+  assert.equal(petAwayNote(pet), expected.en[0]);
+  assert.equal(petConditionDetail(owner, pet, "paralyzed", nameOf), expected.en.slice(1).join(", "));
+});
+
 test("a character's token rows carry concentration, exhaustion and the death track; a knocked-out enemy says so", () => {
   const rows = characterStageRows(
     { id: "s1", conditions: ["unconscious"], conditionMeta: {}, concentratingOn: "Bless", exhaustion: 2, deathSaves: { successes: 1, failures: 2 }, currentHp: 0 },
@@ -539,6 +568,41 @@ test("a charged item shows its count, a pending attunement shows, and a cursed o
   const status = itemStatus(t, sheet({ equipment: [axe] }), axe);
   assert.equal(status.cursed, true);
   assert.match(status.attuneRefusal, /is cursed/);
+});
+
+test("stored spells and attunement reasons follow the reader without changing decisions or stored names", () => {
+  const empty = item("Ring of Spell Storing");
+  const ring = item("Ring of Spell Storing", { storedSpells: [{ spell: "My own {level} spell", level: 2 }] });
+  const axe = item("Berserker Axe", { equipped: true, attuned: true });
+  const wand = item("Wand of Magic Missiles");
+  const staff = item("Staff of Power");
+  const copy = item("Ring of Protection");
+  const worn = item("Ring of Protection", { attuned: true });
+  const cases = [
+    [empty, [empty]], [ring, [ring]], [axe, [axe]], [wand, [wand]],
+    [staff, [staff]], [copy, [worn, copy]],
+    [copy, [item("A", { attuned: true }), item("B", { attuned: true }), item("C", { attuning: true }), copy]],
+  ];
+  for (const [locale, expected] of [
+    ["en", ["Holds no spells", "Holds My own {level} spell (level 2)", "is cursed", "needs no attunement", "a sorcerer, warlock, or wizard", "already attuned", "3 items already"]],
+    ["cs", ["Neobsahuje žádná kouzla", "Obsahuje: My own {level} spell (úroveň 2)", "prokletý předmět", "nevyžaduje sladění", "čaroděj, černokněžník nebo kouzelník", "už má sladění", "3 předměty"]],
+    ["fr", ["Ne contient aucun sort", "Contient : My own {level} spell (niveau 2)", "objet maudit", "ne nécessite aucune harmonisation", "un ensorceleur, un occultiste ou un magicien", "déjà en harmonie", "3 objets"]],
+  ]) {
+    if (locale !== "en") installCatalog(locale, JSON.parse(fs.readFileSync(new URL(`../src/lib/i18n/${locale}.json`, import.meta.url), "utf8")));
+    const tr = (key, vars) => translate(locale, key, vars);
+    for (const [index, [row, equipment]] of cases.entries()) {
+      const hero = sheet({ equipment });
+      const before = JSON.stringify(hero);
+      const en = itemStatus(t, hero, row);
+      const localized = itemStatus(tr, hero, row);
+      assert.equal(Boolean(localized.attuneRefusal), Boolean(en.attuneRefusal));
+      assert.equal(localized.cursed, en.cursed);
+      assert.equal(localized.attuning, en.attuning);
+      if (index < 2) assert.equal(localized.stored, expected[index]);
+      else assert.ok(localized.attuneRefusal?.includes(expected[index]), localized.attuneRefusal ?? "missing refusal");
+      assert.equal(JSON.stringify(hero), before);
+    }
+  }
 });
 
 // The engine swings a versatile weapon one-handed while a shield is on the
@@ -651,17 +715,40 @@ test("the End turn refusal lapses when the round or the turn moves on", () => {
   assert.equal(liveNotice(entry, floorNoticeKey({ mode: "open" })), "");
 });
 
-// The table display page (the board on a television) draws the board and
-// deals no hand, so the Hand's card builders stay out of its first load:
-// the token menu's gates (hand-hud.ts) and the board's aim events
-// (hand-play.ts) read light modules, never hand-spells.ts or hand.ts, which
-// pull every spell, item and subclass card behind them (about 60 KiB gzip).
+// The spectator page loads its chosen map renderer on demand. The board
+// itself still deals no Hand: its HUD and aim helpers must remain reachable
+// without pulling the Hand's card builders into either import graph.
 test("the board reaches no card builder of the Hand", () => {
-  const reached = staticImports("app/campaigns/[campaignId]/table/page.tsx");
-  assert.ok(reached.has("lib/battlemap/hand-hud.ts") && reached.has("lib/battlemap/hand-play.ts"), "the walk reaches the board's Hand helpers");
+  const page = staticImports("app/campaigns/[campaignId]/table/page.tsx");
+  const boardPath = "app/campaigns/[campaignId]/BattleMapPanel.tsx";
+  const board = staticImports(boardPath);
+  assert.ok(!page.has(boardPath), "the board is not in the table page's first load");
+  assert.ok(board.has("lib/battlemap/hand-hud.ts") && board.has("lib/battlemap/hand-play.ts"), "the board walk reaches its Hand helpers");
   for (const heavy of ["lib/battlemap/hand.ts", "lib/battlemap/hand-spells.ts", "lib/battlemap/hand-granted.ts"]) {
-    assert.ok(!reached.has(heavy), `the table page's first load imports ${heavy}`);
+    assert.ok(!page.has(heavy), `the table page's first load imports ${heavy}`);
+    assert.ok(!board.has(heavy), `the board's static imports reach ${heavy}`);
   }
+});
+
+test("player and enemy stage rows use the same table translator without changing IDs", () => {
+  const pc = { id: "pc", conditions: [], currentHp: 5, concentratingOn: "Bless" };
+  const enemy = { id: "enemy", conditions: ["unconscious"], conditionMeta: { unconscious: { source: "knocked out" } }, currentHp: 0 };
+  const original = structuredClone({ pc, enemy });
+  const enPc = characterStageRows(pc, () => null);
+  const enEnemy = enemyStageRows(enemy, () => null);
+  for (const [language, locale] of [["french", "fr"], ["czech", "cs"]]) {
+    installCatalog(locale, JSON.parse(fs.readFileSync(new URL(`../src/lib/i18n/${locale}.json`, import.meta.url), "utf8")));
+    const t = tableTranslator(language);
+    const pcRows = characterStageRows(pc, () => null, t);
+    const enemyRows = enemyStageRows(enemy, () => null, t);
+    assert.deepEqual(pcRows.map((row) => row.id), enPc.map((row) => row.id));
+    assert.deepEqual(enemyRows.map((row) => row.id), enEnemy.map((row) => row.id));
+    assert.equal(pcRows[0].label, t("Concentrating: {spell}", { spell: "Bless" }));
+    assert.equal(enemyRows[0].label, t("Knocked out"));
+    assert.notEqual(pcRows[0].label, enPc[0].label);
+    assert.notEqual(enemyRows[0].label, enEnemy[0].label);
+  }
+  assert.deepEqual({ pc, enemy }, original);
 });
 
 console.log(`test-hand-engine: ${passed} passed`);

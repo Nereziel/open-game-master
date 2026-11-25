@@ -1,6 +1,7 @@
 "use client";
 
 import { InfoButton } from "@/components/ui/InfoDialog";
+import { useLocale } from "@/lib/locale";
 import { glossaryText, type GlossaryEntry } from "@/lib/help/terms";
 
 // The ⓘ beside a pick list whose options are single words a new DM may not
@@ -16,6 +17,7 @@ export function OptionGlossary({
   entries: readonly GlossaryEntry[];
   className?: string;
 }) {
+  const locale = useLocale();
   if (!entries.length) return null;
-  return <InfoButton label={title} text={glossaryText(entries)} className={className} />;
+  return <InfoButton label={title} text={glossaryText(entries, locale)} className={className} />;
 }

@@ -22,8 +22,10 @@ export function useFeatTexts(names: string[]): { descs: Record<string, string>; 
   // The table the character is built for: its DMs' workshop feats, read the
   // way that table reads them (src/lib/content/scope.ts).
   const campaignId = useContentCampaign();
-  const [fetched, setFetched] = useState<Record<string, string>>({});
-  const [prerequisites, setPrerequisites] = useState<Record<string, string>>({});
+  const [cache, setCache] = useState<Record<string, { descs: Record<string, string>; prerequisites: Record<string, string> }>>({});
+  const scope = campaignId ?? "";
+  const fetched = cache[scope]?.descs ?? {};
+  const prerequisites = cache[scope]?.prerequisites ?? {};
   const wanted = names
     .map((name) => name.trim())
     .filter((name) => name && !authoredFeatDesc(name) && fetched[textKey(name)] === undefined);
@@ -53,7 +55,8 @@ export function useFeatTexts(names: string[]): { descs: Record<string, string>; 
       // An answer for a table the builder has since left, or after it
       // closed, is dropped.
       const stale = () => !live.current.mounted || live.current.campaignId !== campaignId;
-      fetch(`/api/content/feats/${encodeURIComponent(contentSlug(name))}${scopeQuery(campaignId)}`)
+      // This hook feeds mechanics only. InfoButton and catalog rows fetch display prose separately.
+      fetch(`/api/content/feats/${encodeURIComponent(contentSlug(name))}${scopeQuery(campaignId)}`, { headers: { "X-Odm-Locale": "en" } })
         // An unknown feat (404) is an answer; any other refusal is not, and
         // is neither remembered nor taken to mean the table has no such feat.
         .then((response) => (response.ok ? response.json() : response.status === 404 ? null : Promise.reject(new Error(String(response.status)))))
@@ -81,8 +84,10 @@ export function useFeatTexts(names: string[]): { descs: Record<string, string>; 
               registerFeatRules(name, desc);
             }
           }
-          setFetched((current) => ({ ...current, [textKey(name)]: desc }));
-          setPrerequisites((current) => ({ ...current, [textKey(name)]: text.prerequisite }));
+          setCache((current) => ({ ...current, [scope]: {
+            descs: { ...current[scope]?.descs, [textKey(name)]: desc },
+            prerequisites: { ...current[scope]?.prerequisites, [textKey(name)]: text.prerequisite },
+          } }));
         })
         .catch(() => {
           // Unreachable now: nothing is remembered, so the next change of
@@ -90,6 +95,6 @@ export function useFeatTexts(names: string[]): { descs: Record<string, string>; 
         })
         .finally(() => inFlight.current.delete(flight));
     }
-  }, [key, campaignId]);
+  }, [key, campaignId, scope]);
   return { descs: fetched, prerequisites };
 }

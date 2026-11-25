@@ -51,7 +51,7 @@ its contents page and ends with the SRD's legal notice as its last page.
 `src/lib/rulebook/srd-5.1-fr.json` is the same book in Wizards of the Coast's
 official French translation, the Document de Référence du Système 5.1
 (`SRD_CC_v5.1_FR.pdf`, https://dnd.wizards.com/fr/resources/systems-reference-document),
-which a reader whose browser asks for French reads instead. It is built by
+which the rulebook uses when French is the effective interface language. It is built by
 `scripts/import-srd-rulebook-fr.mjs`, which binds the print's pages under the
 English book's page ids and quotes its text as printed. It is licensed under
 CC-BY-4.0 (https://creativecommons.org/licenses/by/4.0/legalcode.fr) and
@@ -66,6 +66,23 @@ carries the French attribution statement Wizards asks for:
 
 The French rulebook shows the attribution on its contents page and ends with
 the print's own legal notice (« Informations juridiques ») as its last page.
+
+### Czech SRD adaptation
+
+This fork provides an unofficial Czech adaptation of the English SRD 5.1.
+`src/lib/rulebook/czech-companion.ts` and the adjacent Czech rulebook data
+modules apply translated titles, rules, summaries and presentation changes
+to the English book, retaining the original page IDs and source metadata.
+Untranslated passages fall back to English. This is an adaptation by the
+fork, not an official Wizards of the Coast translation. The underlying SRD
+material remains subject to CC-BY-4.0 and the original attribution above.
+The Czech rulebook's legal-information page retains the original attribution
+and links. The Czech review uses d20.cz as a terminology reference; see
+[the review record](localization-review/04-srd-rules-review.md).
+
+The rulebook follows the effective interface language (EN/FR/CS); explicit
+language selection takes precedence over automatic resolution. This does
+not change the language of the campaign's narration.
 
 ### The SRD 5.1 goods in the content pack
 

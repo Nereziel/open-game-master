@@ -20,7 +20,6 @@ import { workshopCommands } from "@/app/workshop/[workshopId]/palette-commands";
 import { CommandPalette } from "@/components/CommandPalette";
 import type { TourEnd } from "@/lib/tours/account-logic";
 import { finishTour, useTourFinished } from "@/lib/tours/tour-store";
-import { draftCount, worldPackDraftSchema } from "@/lib/worlds/draft";
 import { requestTourPrepare } from "@/lib/tours/prepare";
 import { HUB_TOUR, HUB_TOUR_ID, SYSTEM_TOURS, systemTourId } from "@/lib/tours/workshop";
 import type { HelpTour } from "@/components/WorkshopHelpDialog";
@@ -153,7 +152,11 @@ function WorkshopPageInner({ workshopId }: { workshopId: string }) {
     () =>
       fetch(`/api/workshops/${workshopId}/plugin`)
         .then((response) => (response.ok ? response.json() : null))
-        .then((data: { draft?: unknown } | null) => {
+        .then(async (data: { draft?: unknown } | null) => {
+          // The hub only needs validation to count a fetched draft. Keep
+          // the editor's schemas out of the first paint, but validate with
+          // exactly the same schema before reporting a count.
+          const { draftCount, worldPackDraftSchema } = await import("@/lib/worlds/draft");
           const parsed = worldPackDraftSchema.safeParse(data?.draft);
           if (parsed.success) {
             setPlugin(draftCount(parsed.data));

@@ -7,6 +7,8 @@
 // Pure, so the storyboard editor, the lore editor, the bundle preview and the
 // import planner all read the same heuristic, and so it is testable.
 
+import type { ImportMessagePart } from "./import-kinds.ts";
+
 export type ProseWarning = {
   kind: "joined-sentences" | "long-run" | "few-spaces";
   message: string;
@@ -69,16 +71,30 @@ export function checkProse(text: string): ProseWarning[] {
 type T = (key: string, vars?: Record<string, string | number>) => string;
 
 // The same check, worded in the reader's language (workshop.prose.*).
+function prosePart(warning: ProseWarning, text: string): ImportMessagePart {
+  return warning.kind === "joined-sentences"
+    ? { key: "{count} places read as a missing space after a sentence.", vars: { count: JOINED_COUNT(text) } }
+    : warning.kind === "long-run"
+      ? { key: "{count} stretches of 28 or more letters with no space.", vars: { count: LONG_RUN_COUNT(text) } }
+      : { key: "Unusually few spaces for prose of this length." };
+}
+
 export function checkProseT(t: T, text: string): ProseWarning[] {
-  return checkProse(text).map((warning) => ({
-    ...warning,
-    message:
-      warning.kind === "joined-sentences"
-        ? t("{count} places read as a missing space after a sentence.", { count: JOINED_COUNT(text) })
-        : warning.kind === "long-run"
-          ? t("{count} stretches of 28 or more letters with no space.", { count: LONG_RUN_COUNT(text) })
-          : t("Unusually few spaces for prose of this length."),
-  }));
+  return checkProse(text).map((warning) => {
+    const part = prosePart(warning, text);
+    return { ...warning, message: t(part.key, part.vars) };
+  });
+}
+
+// The import preview needs only the existing warning counts and first
+// sample, not the whole authored card or an English sentence to parse.
+export function proseWarningParts(warnings: ProseWarning[], text: string): ImportMessagePart[] {
+  if (!warnings.length) return [];
+  const parts = warnings.map((warning) => prosePart(warning, text));
+  const sample = warnings[0].samples[0];
+  if (sample) parts.push({ key: "({sample})", vars: { sample } });
+  parts.push({ key: "It may have been written this way; the text is kept as it is." });
+  return parts;
 }
 
 // The counts the English messages embed, re-derived for the translated ones.

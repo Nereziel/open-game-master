@@ -13,6 +13,7 @@ const catalog = JSON.parse(readFileSync(new URL("../src/lib/i18n/fr.json", impor
 const { translate, translatePlural, formatMessage, pluralCategory, localeTag } = await import("../src/lib/messages-logic.ts");
 // The catalog as a server process installs it (src/lib/i18n/fr-catalog.ts).
 await import("../src/lib/i18n/fr-catalog.ts");
+await import("../src/lib/i18n/cs-catalog.ts");
 
 let passed = 0;
 function test(name, fn) {
@@ -58,6 +59,17 @@ test("translatePlural picks its form by the locale's rule and fills the count", 
   assert.match(translatePlural("fr", one, other, { count: 0 }), /\b0 jour\b/);
 });
 
+test("Czech plural forms and English fallback use the shared grammar", () => {
+  const one = "{count} item", other = "{count} items";
+  for (const [count, expected] of [[0, "0 předmětů"], [1, "1 předmět"], [2, "2 předměty"], [4, "4 předměty"], [5, "5 předmětů"], [2.5, "2.5 předmětů"]]) {
+    assert.equal(translatePlural("cs", one, other, { count }), expected);
+    assert.equal(pluralCategory("cs", count), count === 1 ? "one" : "other");
+  }
+  for (const locale of ["en", "fr", "cs"]) {
+    assert.equal(translatePlural(locale, "{count} unknown test unit", "{count} unknown test units", { count: 0 }), "0 unknown test units");
+  }
+});
+
 test("placeholders fill, and a missing variable stays visible", () => {
   assert.equal(formatMessage("Signed in as {name}", { name: "Kael" }), "Signed in as Kael");
   assert.equal(formatMessage("Signed in as {name}", {}), "Signed in as {name}");
@@ -67,6 +79,7 @@ test("placeholders fill, and a missing variable stays visible", () => {
 test("the locale's tag formats a date the locale's way", () => {
   assert.equal(localeTag("en"), "en-US");
   assert.equal(localeTag("fr"), "fr-FR");
+  assert.equal(localeTag("cs"), "cs-CZ");
   const iso = "2026-03-07T12:00:00Z";
   const english = new Date(iso).toLocaleDateString(localeTag("en"), { month: "long", day: "numeric" });
   const french = new Date(iso).toLocaleDateString(localeTag("fr"), { month: "long", day: "numeric" });

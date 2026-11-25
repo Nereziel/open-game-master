@@ -4,7 +4,7 @@ import { registerBrowserSubclassExtras, subclassLevelFor } from "@/lib/srd/featu
 import { extraSubclassOf } from "@/lib/srd/subclass-tables";
 import { useCallback, useEffect, useMemo, useState } from "react";
 import { scopeQuery, useContentCampaign } from "@/lib/content-scope";
-import { odmLocaleHeaders } from "@/lib/locale";
+import { useLocale } from "@/lib/locale";
 import { packRaceOptions, speciesRulesOf } from "@/lib/content/race-options";
 import { registerBrowserSpecies } from "@/lib/srd/race-id";
 import {
@@ -44,7 +44,7 @@ export {
 // oath actually does before committing to it.
 // `workshop`: a subclass from the table's (or your own) workshop, with its
 // features listed by level; the rest are the content pack's.
-export type ArchetypeOption = { id: string; name: string; desc: string; workshop?: boolean; features?: string };
+export type ArchetypeOption = { id: string; name: string; desc: string; localizedDesc?: string; documentSlug?: string; source?: string; workshop?: boolean; features?: string };
 
 // Loads race/class/background options from the Open5e content pack with the
 // bundled SRD data as fallback (and as the shape contract). `keepRaceId` is
@@ -66,6 +66,7 @@ const NO_UNADMITTED: Record<OptionListKind, string[]> = { races: [], classes: []
 // bundled options alone, and says so, without taking the others with it.
 export function useBuilderOptions(keepRaceId?: string) {
   const campaignId = useContentCampaign();
+  const locale = useLocale();
   const [races, setRaces] = useState<RaceOption[]>(srdRaceOptions);
   const [classes, setClasses] = useState<ClassOption[]>(srdClassOptions);
   const [backgrounds, setBackgrounds] = useState<BackgroundOption[]>(srdBackgroundOptions);
@@ -84,7 +85,7 @@ export function useBuilderOptions(keepRaceId?: string) {
     let cancelled = false;
     async function list(kind: OptionListKind, limit: number): Promise<{ results?: ContentRow[]; packInstalled?: boolean; unadmitted?: string[] }> {
       const response = await fetch(`/api/content/${kind}?limit=${limit}${scopeQuery(campaignId, "&")}`, {
-        headers: odmLocaleHeaders(),
+        headers: { "X-Odm-Locale": locale },
       });
       if (!response.ok) {
         throw new Error(String(response.status));
@@ -156,7 +157,7 @@ export function useBuilderOptions(keepRaceId?: string) {
     return () => {
       cancelled = true;
     };
-  }, [keepRaceId, campaignId, attempt]);
+  }, [keepRaceId, campaignId, attempt, locale]);
 
   const retry = useCallback(() => setAttempt((value) => value + 1), []);
   return useMemo(
@@ -201,6 +202,7 @@ export function useWorldPack(packId?: string): WorldPack | null {
 // subclass is missing rather than leaving the list short.
 export function useArchetypeOptions(classId: string): { archetypes: ArchetypeOption[]; unadmitted: string[]; failed: boolean; retry: () => void } {
   const campaignId = useContentCampaign();
+  const locale = useLocale();
   const [archetypes, setArchetypes] = useState<ArchetypeOption[]>([]);
   const [unadmitted, setUnadmitted] = useState<string[]>([]);
   const [failed, setFailed] = useState(false);
@@ -217,7 +219,7 @@ export function useArchetypeOptions(classId: string): { archetypes: ArchetypeOpt
     if (!classId) {
       return;
     }
-    fetch(`/api/content/archetypes?class=${encodeURIComponent(classId)}&limit=100${scopeQuery(campaignId, "&")}`)
+    fetch(`/api/content/archetypes?class=${encodeURIComponent(classId)}&limit=100&bundled=1${scopeQuery(campaignId, "&")}`, { headers: { "X-Odm-Locale": locale } })
       .then((response) => (response.ok ? response.json() : Promise.reject(new Error(String(response.status)))))
       .then((data) => {
         if (cancelled) {
@@ -231,6 +233,7 @@ export function useArchetypeOptions(classId: string): { archetypes: ArchetypeOpt
         registerBrowserSubclassExtras(
           classId,
           rows
+            .filter((row) => row.source !== "bundled")
             .map((row) =>
               extraSubclassOf(
                 { name: row.name, source: String((row as { source?: string }).source ?? "open5e"), data: (row.data ?? {}) as Record<string, unknown> },
@@ -249,6 +252,9 @@ export function useArchetypeOptions(classId: string): { archetypes: ArchetypeOpt
               id: row.slug,
               name: row.name,
               desc: String(row.data?.desc ?? ""),
+              localizedDesc: typeof row.data?.localized_desc === "string" ? row.data.localized_desc : undefined,
+              documentSlug: row.documentSlug,
+              source: row.source,
               ...(workshop ? { workshop: true } : {}),
               ...(table
                 ? {
@@ -270,7 +276,7 @@ export function useArchetypeOptions(classId: string): { archetypes: ArchetypeOpt
     return () => {
       cancelled = true;
     };
-  }, [classId, campaignId, attempt]);
+  }, [classId, campaignId, attempt, locale]);
   const retry = useCallback(() => setAttempt((value) => value + 1), []);
   return { archetypes, unadmitted, failed, retry };
 }

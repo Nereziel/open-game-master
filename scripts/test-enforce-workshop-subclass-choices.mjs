@@ -130,6 +130,36 @@ await test("The workshop keeps a subclass's choice, ids made from the options' n
   assert.equal(bracket.status, 400, "a label with brackets would read as a pick of its own");
 });
 
+await test("Workshop choice refusals follow the reader locale without translating author names or changing picks.", async () => {
+  await import("../src/lib/i18n/server-catalogs.ts");
+  const { subclassChoicePickProblems } = await import("../src/lib/srd/subclass-choice-picks.ts");
+  const tables = extras();
+  const classes = [{ id: "sorcerer", subclass: "Storm-Blooded", level: 1 }];
+  const pick = (name) => ({ name: "Bloodline (" + name + ")", source: "choice" });
+  const cases = [
+    { sent: [pick("Thunder")], entries: classes, names: ["Thunder", "Storm", "Frost"], english: "\"Thunder\" is not one of Storm-Blooded's Bloodline options; pick one of Storm, Frost." },
+    { sent: [pick("Storm")], entries: [{ ...classes[0], level: 0 }], names: ["Storm-Blooded", "Bloodline", "0", "1"], english: "Storm-Blooded's Bloodline is chosen at class level 1; this character is level 0 in that class." },
+    { sent: [pick("Storm"), pick("Frost")], entries: classes, names: ["Storm", "Frost"], english: "Storm-Blooded's Bloodline is one pick; Storm and Frost were both chosen." },
+  ];
+  const snapshot = structuredClone({ tables, cases });
+  for (const example of cases) {
+    assert.deepEqual(subclassChoicePickProblems(example.sent, example.entries, tables), [example.english]);
+    const messages = [];
+    for (const locale of ["en", "cs", "fr"]) {
+      const problems = subclassChoicePickProblems(example.sent, example.entries, tables, locale);
+      assert.equal(problems.length, 1);
+      assert.ok(problems[0].includes("Storm-Blooded"));
+      assert.ok(problems[0].includes("Bloodline"));
+      for (const name of example.names) assert.ok(problems[0].includes(name));
+      assert.doesNotMatch(problems[0], /\{\w+\}/);
+      messages.push(problems[0]);
+      assert.deepEqual(subclassChoicePickProblems([pick("Storm")], classes, tables, locale), []);
+    }
+    assert.equal(new Set(messages).size, 3);
+  }
+  assert.deepEqual({ tables, cases }, snapshot);
+});
+
 await test("A subclass without choices is as it was: no choices kept, its features granted as before.", async () => {
   const plain = await brew("Ember-Touched", { ...stormBlooded(undefined), choices: undefined });
   assert.equal(plain.status, 201, JSON.stringify(plain.json));

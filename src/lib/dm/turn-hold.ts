@@ -25,6 +25,7 @@ import { openWatchStop, runWithForetold, watchFor } from "@/lib/dm/foresight";
 import { beforeChoiceOf } from "@/lib/dm/foresight-before";
 import { moveSavesAbout } from "@/lib/dm/foresight-more";
 import { publishPersisted } from "@/lib/events";
+import { formatMessage, type MessageVars } from "@/lib/messages-logic";
 
 // The one call a held move's stop holds: the move, for this character.
 export const HELD_MOVE = "pass_turn";
@@ -57,9 +58,9 @@ export function holdMoveForWatch(campaign: Campaign, encounter: Encounter, chara
 }
 
 // The held character's own words for a refusal while the move waits.
-export function heldMoveLine(encounter: Encounter | null, characterId: string): string | null {
+export function heldMoveLine(encounter: Encounter | null, characterId: string, t: (key: string, vars?: MessageVars) => string = formatMessage): string | null {
   const held = encounter?.legendary.heldMove;
-  return held && held.characterId === characterId ? `The turn is ending: it passes once ${held.watcher || "the watcher"} has answered the roll it brings, in a moment.` : null;
+  return held && held.characterId === characterId ? t("The turn is ending: it passes once {watcher} has answered the roll it brings, in a moment.", { watcher: held.watcher || t("the watcher") }) : null;
 }
 
 // The stop is closed: the move runs with what the watcher chose armed on its

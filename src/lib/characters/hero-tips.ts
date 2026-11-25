@@ -254,7 +254,7 @@ function spellEffect(card: HandCard, t: T = enT): string {
 // ("1st-level slot"), the level itself where it counts plainly ("emplacement
 // de niveau 1").
 function slotLevelWord(level: number, locale: Locale): string {
-  return locale === "fr" ? String(level) : (ORDINAL[level] ?? `level ${level}`);
+  return locale === "en" ? (ORDINAL[level] ?? `level ${level}`) : String(level);
 }
 
 function spellTip(card: HandCard, sheet: CharacterSheet, t: T = enT, locale: Locale = "en"): HeroTip {

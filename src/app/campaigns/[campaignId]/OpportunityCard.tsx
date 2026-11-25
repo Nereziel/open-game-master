@@ -4,7 +4,9 @@ import { useEffect, useId, useState } from "react";
 import type { CharacterSheet } from "@/lib/schemas/sheet";
 import type { PendingRoll } from "@/app/campaigns/[campaignId]/useCampaignStream";
 import { CheckFrame } from "@/app/campaigns/[campaignId]/SkillCheckCard";
+import { TokenFace } from "@/app/campaigns/[campaignId]/BoardChrome";
 import { askLine, smiteChoiceLine, waitLine } from "@/lib/dm/opportunity-ask-logic";
+import { useT } from "@/lib/locale";
 
 // A finger-sized target (40px, the kit's own) with a ring for the keyboard.
 const RING = "focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-amber-400/70";
@@ -19,6 +21,10 @@ const PLAIN = `motion-press inline-flex min-h-10 items-center px-1 text-xs font-
 // and so may anyone once its time is up, as the clock would: the swing is
 // taken. A paladin's card also offers Divine Smite on the swing, at the slot
 // the Hand's smite card would spend, paid only if it hits.
+//
+// A mount walking out of reach with a rider on its back (issue 1055, ruling
+// 5): "the attacker can target you or the mount". The card then has no plain
+// Strike: it offers the two by face and name, and the player picks one.
 export function OpportunityCard({
   campaignId,
   pending,
@@ -26,6 +32,7 @@ export function OpportunityCard({
   meUserId,
   steersStory,
   smiteOffered = false,
+  faceOf,
 }: {
   campaignId: string;
   pending: PendingRoll;
@@ -34,7 +41,10 @@ export function OpportunityCard({
   steersStory: boolean;
   // The host takes `smite` on the answer (capabilities.ts opportunitySmite).
   smiteOffered?: boolean;
+  // An enemy's face by its id, for the two of a mounted pair.
+  faceOf?: (enemyId: string) => Array<string | null | undefined>;
 }) {
+  const t = useT();
   const [busy, setBusy] = useState(false);
   const [error, setError] = useState("");
   const ask = pending.carry?.ask ?? null;
@@ -50,18 +60,18 @@ export function OpportunityCard({
   const clockId = useId();
   const lineId = useId();
 
-  async function answer(strike: boolean, smite = false) {
+  async function answer(strike: boolean, smite = false, target?: string) {
     setBusy(true);
     setError("");
     try {
       const response = await fetch(`/api/campaigns/${campaignId}/pending-rolls/${pending.id}/opportunity`, {
         method: "POST",
         headers: { "Content-Type": "application/json" },
-        body: JSON.stringify(smite ? { strike, smite } : { strike }),
+        body: JSON.stringify({ strike, ...(smite ? { smite } : {}), ...(target ? { target } : {}) }),
       });
       if (!response.ok) {
         const data = await response.json().catch(() => ({}));
-        setError(data.error || "Could not send your answer.");
+        setError(typeof data.error === "string" && data.error ? data.error : "Could not send your answer.");
       }
     } catch {
       setError("Could not reach the server.");
@@ -73,18 +83,18 @@ export function OpportunityCard({
   if (!ask) {
     return null;
   }
-  const name = sheets.find((sheet) => sheet.id === pending.characterId)?.name ?? "A player";
+  const name = sheets.find((sheet) => sheet.id === pending.characterId)?.name ?? t("A player");
   const clock = left !== null ? (
-    <span id={clockId} className="check-dim text-xs tabular-nums" aria-live="off">
-      <span className="sr-only">If nobody answers, the attack is taken in </span>
-      {left}s
+    <span className="check-dim text-xs tabular-nums" aria-live="off">
+      <span id={clockId} className="sr-only">{t("If nobody answers, the attack is taken in {seconds}s", { seconds: left })}</span>
+      <span aria-hidden="true">{t("{seconds}s", { seconds: left })}</span>
     </span>
   ) : null;
 
   if (pending.userId !== meUserId) {
     return (
       <CheckFrame className="mb-2 flex animate-fade-up flex-wrap items-center justify-between gap-2 px-3 py-2 text-xs">
-        <span className="min-w-0">{waitLine(ask, name)}</span>
+        <span className="min-w-0">{waitLine(ask, name, t)}</span>
         <span className="flex items-center gap-2">
           {clock}
           {steersStory || left === 0 ? (
@@ -92,57 +102,62 @@ export function OpportunityCard({
               type="button"
               disabled={busy}
               onClick={() => void answer(true)}
-              title={`Take ${name}'s opportunity attack for them, as the clock would.`}
+              title={t("Take {name}'s opportunity attack for them, as the clock would.", { name })}
               className={`${PLAIN} shrink-0`}
             >
-              Take it for them
+              {t("Take it for them")}
             </button>
           ) : null}
         </span>
-        {error ? <span role="alert" className="w-full text-red-400">{error}</span> : null}
+        {error ? <span role="alert" className="w-full text-red-400">{t(error)}</span> : null}
       </CheckFrame>
     );
   }
 
   return (
     <CheckFrame className="opportunity-ask mb-2 animate-fade-up px-3 py-2.5">
-      <p id={lineId} className="text-sm">{askLine(ask)}</p>
+      <p id={lineId} className="text-sm">{askLine(ask, t)}</p>
       <div role="group" aria-labelledby={lineId} className="mt-2 flex flex-wrap items-center gap-2">
-        <button
-          type="button"
-          disabled={busy}
-          aria-describedby={left !== null ? clockId : undefined}
-          onClick={() => void answer(true)}
-          title={`Swing your ${ask.weapon} at ${ask.walker}. Your reaction is spent until your next turn.`}
-          className={STRIKE}
-        >
-          Strike
-        </button>
-        {smiteOffered && ask.smiteSlot ? (
-          <button
-            type="button"
-            disabled={busy}
-            aria-describedby={left !== null ? clockId : undefined}
-            onClick={() => void answer(true, true)}
-            title={`Swing your ${ask.weapon} at ${ask.walker} and, if it hits, spend a level ${ask.smiteSlot} spell slot on Divine Smite for extra radiant damage. A miss keeps the slot.`}
-            className={STRIKE}
-          >
-            {smiteChoiceLine(ask.smiteSlot)}
-          </button>
-        ) : null}
+        {(ask.rider ? [ask.rider, { id: ask.walkerId, name: ask.walker }] : [{ id: "", name: ask.walker }]).map((foe) => (
+          <span key={foe.id} className="contents">
+            <button
+              type="button"
+              disabled={busy}
+              aria-describedby={left !== null ? clockId : undefined}
+              onClick={() => void answer(true, false, foe.id || undefined)}
+              title={t("Swing your {weapon} at {target}. Your reaction is spent until your next turn.", { weapon: ask.weapon, target: foe.name })}
+              className={`${STRIKE} ${foe.id ? "gap-1.5 pl-1" : ""}`}
+            >
+              {foe.id ? <TokenFace candidates={faceOf?.(foe.id) ?? []} name={foe.name} enemy className="size-8 rounded-full border border-amber-400/60" /> : null}
+              {foe.id ? t("Strike {target}", { target: foe.name }) : t("Strike")}
+            </button>
+            {smiteOffered && ask.smiteSlot ? (
+              <button
+                type="button"
+                disabled={busy}
+                aria-describedby={left !== null ? clockId : undefined}
+                onClick={() => void answer(true, true, foe.id || undefined)}
+                title={t("Swing your {weapon} at {target} and, if it hits, spend a level {slot} spell slot on Divine Smite for extra radiant damage. A miss keeps the slot.", { weapon: ask.weapon, target: foe.name, slot: ask.smiteSlot })}
+                className={STRIKE}
+              >
+                {smiteChoiceLine(ask.smiteSlot, foe.id ? foe.name : undefined, t)}
+              </button>
+            ) : null}
+          </span>
+        ))}
         <button
           type="button"
           disabled={busy}
           aria-describedby={left !== null ? clockId : undefined}
           onClick={() => void answer(false)}
-          title="No attack, and you keep your reaction for something else."
+          title={t("No attack, and you keep your reaction for something else.")}
           className={LET_GO}
         >
-          Let it go
+          {t("Let it go")}
         </button>
         {clock}
       </div>
-      {error ? <p role="alert" className="mt-1.5 text-xs text-red-400">{error}</p> : null}
+      {error ? <p role="alert" className="mt-1.5 text-xs text-red-400">{t(error)}</p> : null}
     </CheckFrame>
   );
 }

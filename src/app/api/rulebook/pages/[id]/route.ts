@@ -1,5 +1,7 @@
 import { currentUser, unauthorized } from "@/lib/auth";
-import { BOOK_LOCALE_VARY, bookLocaleOf, rulebookPage } from "@/lib/rulebook/book";
+import { bookLocaleOf } from "@/lib/request-locale";
+import { parseLocale } from "@/lib/i18n/locale";
+import { BOOK_LOCALE_VARY, rulebookPage } from "@/lib/rulebook/book";
 import { crosswalkFor } from "@/lib/rulebook/crosswalk";
 
 export const runtime = "nodejs";
@@ -26,6 +28,6 @@ export async function GET(request: Request, { params }: { params: Promise<{ id: 
   const crosswalk = crosswalkFor(found.page, locale);
   return Response.json(
     crosswalk ? { ...found, crosswalk: { editor: crosswalk.editor, ...(crosswalk.catalogName ? { catalogName: crosswalk.catalogName } : {}), ...(crosswalk.classId ? { classId: crosswalk.classId } : {}), ...(crosswalk.template ? { template: crosswalk.template } : {}), support: crosswalk.support, where: crosswalk.where } } : found,
-    { headers: { "Cache-Control": "private, max-age=300", Vary: BOOK_LOCALE_VARY } },
+    { headers: { "Cache-Control": parseLocale(request.headers.get("x-odm-locale")) ? "private, max-age=300" : "private, no-cache", Vary: BOOK_LOCALE_VARY } },
   );
 }

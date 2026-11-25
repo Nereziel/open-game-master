@@ -15,6 +15,7 @@ import { walkPathWithBudget } from "@/lib/battlemap/movement";
 import { chebyshev, type BattleToken, type MoveTraits } from "@/lib/battlemap/types";
 import { towardSteps } from "@/lib/dm/enemy-turn-logic";
 import { isConditionNamed } from "@/lib/srd/feature-names";
+import { formatMessage, type MessageVars } from "@/lib/messages-logic";
 
 export const AGGRESSIVE_DASH = "aggressive:dash";
 
@@ -35,7 +36,7 @@ export function aggressiveRefusal(input: {
   speedTiles: number;
   marks: readonly string[];
   traits: MoveTraits;
-}): string | null {
+}, t: (key: string, vars?: MessageVars) => string = formatMessage): string | null {
   const { map, token, path } = input;
   if (!input.marks.includes(AGGRESSIVE_DASH) || !path.length) {
     return null;
@@ -60,6 +61,6 @@ export function aggressiveRefusal(input: {
     return null;
   }
   return seen.length
-    ? `Aggressive carries ${input.sheet.name} only toward a hostile creature they can see: past their own ${own * 5} feet of movement, every step must close on one. Move toward a foe, or stop within your own movement.`
-    : `Aggressive carries ${input.sheet.name} only toward a hostile creature they can see, and they see none: only their own ${own * 5} feet of movement is left to walk.`;
+    ? t("Aggressive carries {name} only toward a hostile creature they can see: past their own {feet} feet of movement, every step must close on one. Move toward a foe, or stop within your own movement.", { name: input.sheet.name, feet: own * 5 })
+    : t("Aggressive carries {name} only toward a hostile creature they can see, and they see none: only their own {feet} feet of movement is left to walk.", { name: input.sheet.name, feet: own * 5 });
 }

@@ -1,4 +1,5 @@
 import { z } from "zod";
+import { requestT } from "@/lib/request-locale";
 import { isErrorResponse, requireMember } from "@/lib/campaign-api";
 import { ownSheetFor } from "@/lib/character-seat";
 import { heroFell } from "@/lib/characters/fallen-logic";
@@ -25,6 +26,7 @@ const bodySchema = z.object({
 });
 
 export async function PUT(request: Request, { params }: { params: Promise<{ campaignId: string }> }) {
+  const t = requestT(request);
   const { campaignId } = await params;
   const context = await requireMember(campaignId);
   if (isErrorResponse(context)) {
@@ -32,25 +34,25 @@ export async function PUT(request: Request, { params }: { params: Promise<{ camp
   }
   const parsed = bodySchema.safeParse(await request.json().catch(() => ({})));
   if (!parsed.success) {
-    return Response.json({ error: "Say which character, and open or not." }, { status: 400 });
+    return Response.json({ error: t("Say which character, and open or not.") }, { status: 400 });
   }
   const sheet = ownSheetFor(campaignId, context.user.id, parsed.data.characterId);
   if (!sheet || sheet.isCompanion) {
-    return Response.json({ error: "That is not one of your characters." }, { status: 404 });
+    return Response.json({ error: t("That is not one of your characters.") }, { status: 404 });
   }
   // Turning it on needs a table where a pact could approach anyone;
   // turning it off is always allowed, so nobody is ever stuck opted in.
   if (parsed.data.open && !playerPactsPossible(context.campaign, listSheets(campaignId))) {
-    return Response.json({ error: "Pacts never approach a player at this table." }, { status: 409 });
+    return Response.json({ error: t("Pacts never approach a player at this table.") }, { status: 409 });
   }
   // Nobody approaches the dead (issue 657): the switch is gone from a fallen
   // hero's Bonds tab, and an older screen that still shows it is told why.
   if (parsed.data.open && heroFell(sheet)) {
-    return Response.json({ error: `${sheet.name} has fallen.` }, { status: 409 });
+    return Response.json({ error: t("{name} has fallen.", { name: sheet.name }) }, { status: 409 });
   }
   const saved = setOpenToPacts(sheet.id, parsed.data.open);
   if (!saved) {
-    return Response.json({ error: "Could not save that." }, { status: 500 });
+    return Response.json({ error: t("Could not save that.") }, { status: 500 });
   }
   const withdrawn = parsed.data.open ? 0 : closeApproachesToward(context.campaign, saved.id);
   publishPersisted(campaignId, "sheet_updated", { sheet: saved });

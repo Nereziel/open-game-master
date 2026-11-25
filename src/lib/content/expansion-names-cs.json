@@ -1,0 +1,2636 @@
+{
+  "dmag": {
+    "spells": {
+      "accelerate": {
+        "englishName": "Accelerate",
+        "name": "Zrychlení"
+      },
+      "blood-armor": {
+        "englishName": "Blood Armor",
+        "name": "Krvavá zbroj"
+      },
+      "black-sunshine": {
+        "englishName": "Black Sunshine",
+        "name": "Černá sluneční záře"
+      },
+      "steal-warmth": {
+        "englishName": "Steal Warmth",
+        "name": "Krádež tepla"
+      },
+      "tree-heal": {
+        "englishName": "Tree Heal",
+        "name": "Léčení stromů"
+      },
+      "clash-of-glaciers": {
+        "englishName": "Clash of Glaciers",
+        "name": "Střet ledovců"
+      },
+      "biting-arrow": {
+        "englishName": "Biting Arrow",
+        "name": "Mrazivý šíp"
+      },
+      "abhorrent-apparition": {
+        "englishName": "Abhorrent Apparition",
+        "name": "Odpudivý přízrak"
+      },
+      "acid-gate": {
+        "englishName": "Acid Gate",
+        "name": "Kyselinová brána"
+      },
+      "acid-rain": {
+        "englishName": "Acid Rain",
+        "name": "Kyselý déšť"
+      },
+      "adjust-position": {
+        "englishName": "Adjust Position",
+        "name": "Úprava polohy"
+      },
+      "afflict-line": {
+        "englishName": "Afflict Line",
+        "name": "Prokletí linie"
+      },
+      "agonizing-mark": {
+        "englishName": "Agonizing Mark",
+        "name": "Trýznivá značka"
+      },
+      "alchemical-form": {
+        "englishName": "Alchemical Form",
+        "name": "Alchymická podoba"
+      },
+      "ally-aegis": {
+        "englishName": "Ally Aegis",
+        "name": "Ochrana spojence"
+      },
+      "alone": {
+        "englishName": "Alone",
+        "name": "Osamění"
+      },
+      "alter-arrows-fortune": {
+        "englishName": "Alter Arrow’s Fortune",
+        "name": "Změň osud šípu"
+      },
+      "altheas-travel-tent": {
+        "englishName": "Althea’s Travel Tent",
+        "name": "Althein cestovní stan"
+      },
+      "amplify-gravity": {
+        "englishName": "Amplify Gravity",
+        "name": "Zesil gravitaci"
+      },
+      "analyze-device": {
+        "englishName": "Analyze Device",
+        "name": "Analyzuj zařízení"
+      },
+      "ancestors-strength": {
+        "englishName": "Ancestor’s Strength",
+        "name": "Síla předků"
+      },
+      "anchoring-rope": {
+        "englishName": "Anchoring Rope",
+        "name": "Kotvicí lano"
+      },
+      "ancient-shade": {
+        "englishName": "Ancient Shade",
+        "name": "Prastarý stín"
+      },
+      "angelic-guardian": {
+        "englishName": "Angelic Guardian",
+        "name": "Andělský strážce"
+      },
+      "animate-ghoul": {
+        "englishName": "Animate Ghoul",
+        "name": "Oživ ghúla"
+      },
+      "animate-greater-undead": {
+        "englishName": "Animate Greater Undead",
+        "name": "Oživ mocnějšího nemrtvého"
+      },
+      "animated-scroll": {
+        "englishName": "Animated Scroll",
+        "name": "Oživený svitek"
+      },
+      "anticipate-arcana": {
+        "englishName": "Anticipate Arcana",
+        "name": "Předvídej magii"
+      },
+      "anticipate-attack": {
+        "englishName": "Anticipate Attack",
+        "name": "Předvídej útok"
+      },
+      "anticipate-weakness": {
+        "englishName": "Anticipate Weakness",
+        "name": "Předvídej slabinu"
+      },
+      "arcane-sight": {
+        "englishName": "Arcane Sight",
+        "name": "Arkánní zrak"
+      },
+      "as-you-were": {
+        "englishName": "As You Were",
+        "name": "Jako předtím"
+      },
+      "ashen-memories": {
+        "englishName": "Ashen Memories",
+        "name": "Popelavé vzpomínky"
+      },
+      "aspect-of-the-dragon": {
+        "englishName": "Aspect of the Dragon",
+        "name": "Dračí aspekt"
+      },
+      "aspect-of-the-serpent": {
+        "englishName": "Aspect of the Serpent",
+        "name": "Hadí aspekt"
+      },
+      "auspicious-warning": {
+        "englishName": "Auspicious Warning",
+        "name": "Příznivé varování"
+      },
+      "avoid-grievous-injury": {
+        "englishName": "Avoid Grievous Injury",
+        "name": "Odvrať těžké zranění"
+      },
+      "blizzard": {
+        "englishName": "Blizzard",
+        "name": "Sněhová bouře"
+      },
+      "caustic-torrent": {
+        "englishName": "Caustic Torrent",
+        "name": "Žíravý proud"
+      },
+      "conjure-minor-voidborn": {
+        "englishName": "Conjure Minor Voidborn",
+        "name": "Vyvolej menšího tvora prázdnoty"
+      },
+      "conjure-voidborn": {
+        "englishName": "Conjure Voidborn",
+        "name": "Vyvolej tvora prázdnoty"
+      },
+      "crushing-curse": {
+        "englishName": "Crushing Curse",
+        "name": "Drtivá kletba"
+      },
+      "destructive-resonance": {
+        "englishName": "Destructive Resonance",
+        "name": "Ničivá rezonance"
+      },
+      "earthskimmer": {
+        "englishName": "Earthskimmer",
+        "name": "Klouzání po zemi"
+      },
+      "entomb": {
+        "englishName": "Entomb",
+        "name": "Pohřbení"
+      },
+      "flame-wave": {
+        "englishName": "Flame Wave",
+        "name": "Vlna plamenů"
+      },
+      "frozen-razors": {
+        "englishName": "Frozen Razors",
+        "name": "Ledové břitvy"
+      },
+      "glimpse-of-the-void": {
+        "englishName": "Glimpse of the Void",
+        "name": "Záblesk prázdnoty"
+      },
+      "life-drain": {
+        "englishName": "Life Drain",
+        "name": "Vysátí života"
+      },
+      "living-shadows": {
+        "englishName": "Living Shadows",
+        "name": "Živé stíny"
+      },
+      "maddening-whispers": {
+        "englishName": "Maddening Whispers",
+        "name": "Šílenství vyvolávající šepoty"
+      },
+      "nether-weapon": {
+        "englishName": "Nether Weapon",
+        "name": "Zbraň podsvětí"
+      },
+      "pummelstone": {
+        "englishName": "Pummelstone",
+        "name": "Bičující kámen"
+      },
+      "pyroclasm": {
+        "englishName": "Pyroclasm",
+        "name": "Pyroklasma"
+      },
+      "riptide": {
+        "englishName": "Riptide",
+        "name": "Zpětný proud"
+      },
+      "rolling-thunder": {
+        "englishName": "Rolling Thunder",
+        "name": "Valící se hrom"
+      },
+      "tidal-barrier": {
+        "englishName": "Tidal Barrier",
+        "name": "Přílivová bariéra"
+      },
+      "void-rift": {
+        "englishName": "Void Rift",
+        "name": "Trhlina prázdnoty"
+      },
+      "void-strike": {
+        "englishName": "Void Strike",
+        "name": "Úder prázdnoty"
+      },
+      "wind-lash": {
+        "englishName": "Wind Lash",
+        "name": "Větrný bič"
+      },
+      "wind-tunnel": {
+        "englishName": "Wind Tunnel",
+        "name": "Větrný tunel"
+      },
+      "word-of-misfortune": {
+        "englishName": "Word of Misfortune",
+        "name": "Slovo neštěstí"
+      }
+    }
+  },
+  "warlock": {
+    "spells": {
+      "rive": {
+        "englishName": "Rive",
+        "name": "Rozervání"
+      }
+    }
+  },
+  "a5e": {
+    "spells": {
+      "air-wave-a5e": {
+        "englishName": "Air Wave",
+        "name": "Vzdušná vlna"
+      }
+    },
+    "feats": {
+      "attentive": {
+        "englishName": "Attentive",
+        "name": "Pozorný"
+      },
+      "covert-training": {
+        "englishName": "Covert Training",
+        "name": "Výcvik ve skrytu"
+      },
+      "ace-driver": {
+        "englishName": "Ace Driver",
+        "name": "Mistr řízení"
+      }
+    },
+    "backgrounds": {
+      "artisan": {
+        "englishName": "Artisan",
+        "name": "Řemeslník"
+      },
+      "guildmember": {
+        "englishName": "Guildmember",
+        "name": "Člen cechu"
+      }
+    }
+  },
+  "spells-that-dont-suck": {
+    "spells": {
+      "cone-of-flame": {
+        "englishName": "Cone of Flame",
+        "name": "Kužel plamenů"
+      }
+    }
+  },
+  "toh": {
+    "feats": {
+      "floriographer": {
+        "englishName": "Floriographer",
+        "name": "Znalec květomluvy"
+      },
+      "rimecaster": {
+        "englishName": "Rimecaster",
+        "name": "Mrazivý sesilatel"
+      },
+      "boundless-reserves": {
+        "englishName": "Boundless Reserves",
+        "name": "Nevyčerpatelné zásoby"
+      },
+      "diehard": {
+        "englishName": "Diehard",
+        "name": "Nezdolný"
+      },
+      "forest-denizen": {
+        "englishName": "Forest Denizen",
+        "name": "Obyvatel lesa"
+      },
+      "friend-of-the-forest": {
+        "englishName": "Friend of the Forest",
+        "name": "Přítel lesa"
+      },
+      "giant-foe": {
+        "englishName": "Giant Foe",
+        "name": "Nepřítel obrů"
+      },
+      "harrier": {
+        "englishName": "Harrier",
+        "name": "Pronásledovatel"
+      },
+      "inner-resilience": {
+        "englishName": "Inner Resilience",
+        "name": "Vnitřní odolnost"
+      },
+      "part-of-the-pack": {
+        "englishName": "Part of the Pack",
+        "name": "Člen smečky"
+      },
+      "sorcerous-vigor": {
+        "englishName": "Sorcerous Vigor",
+        "name": "Čarodějná životní síla"
+      },
+      "stalker": {
+        "englishName": "Stalker",
+        "name": "Stopař"
+      },
+      "stunning-sniper": {
+        "englishName": "Stunning Sniper",
+        "name": "Omračující ostřelovač"
+      }
+    },
+    "backgrounds": {
+      "destined": {
+        "englishName": "Destined",
+        "name": "Vyvolený osudem"
+      },
+      "diplomat": {
+        "englishName": "Diplomat",
+        "name": "Diplomat"
+      },
+      "forest-dweller": {
+        "englishName": "Forest Dweller",
+        "name": "Obyvatel lesa"
+      },
+      "freebooter": {
+        "englishName": "Freebooter",
+        "name": "Korzár"
+      },
+      "occultist": {
+        "englishName": "Occultist",
+        "name": "Okultista"
+      },
+      "court-servant": {
+        "englishName": "Court Servant",
+        "name": "Dvorní sluha"
+      },
+      "desert-runner": {
+        "englishName": "Desert Runner",
+        "name": "Běžec pouští"
+      },
+      "former-adventurer": {
+        "englishName": "Former Adventurer",
+        "name": "Bývalý dobrodruh"
+      },
+      "gamekeeper": {
+        "englishName": "Gamekeeper",
+        "name": "Hajný"
+      },
+      "innkeeper": {
+        "englishName": "Innkeeper",
+        "name": "Hostinský"
+      },
+      "mercenary-company-scion": {
+        "englishName": "Mercenary Company Scion",
+        "name": "Potomek žoldnéřské družiny"
+      },
+      "mercenary-recruit": {
+        "englishName": "Mercenary Recruit",
+        "name": "Žoldnéřský nováček"
+      },
+      "monstrous-adoptee": {
+        "englishName": "Monstrous Adoptee",
+        "name": "Vychovanec nestvůr"
+      },
+      "mysterious-origins": {
+        "englishName": "Mysterious Origins",
+        "name": "Tajemný původ"
+      },
+      "northern-minstrel": {
+        "englishName": "Northern Minstrel",
+        "name": "Severský pěvec"
+      },
+      "parfumier": {
+        "englishName": "Parfumier",
+        "name": "Výrobce parfémů"
+      },
+      "sentry": {
+        "englishName": "Sentry",
+        "name": "Strážný"
+      },
+      "trophy-hunter": {
+        "englishName": "Trophy Hunter",
+        "name": "Lovec trofejí"
+      }
+    },
+    "species": {
+      "acid-cap": {
+        "englishName": "Acid Cap",
+        "name": "Kyselinový klobouk"
+      },
+      "bhain-kwai": {
+        "englishName": "Bhain Kwai",
+        "name": "Bhain Kwai"
+      },
+      "catfolk": {
+        "englishName": "Catfolk",
+        "name": "Kočkolidé"
+      },
+      "darakhul": {
+        "englishName": "Darakhul",
+        "name": "Darakhul"
+      },
+      "delver": {
+        "englishName": "Delver",
+        "name": "Hlubinný průzkumník"
+      },
+      "erina": {
+        "englishName": "Erina",
+        "name": "Erina"
+      },
+      "derro": {
+        "englishName": "Derro",
+        "name": "Derro"
+      },
+      "drow": {
+        "englishName": "Drow",
+        "name": "Drow"
+      },
+      "dwarf-chassis": {
+        "englishName": "Dwarf Chassis",
+        "name": "Trpasličí tělo"
+      },
+      "gearforged": {
+        "englishName": "Gearforged",
+        "name": "Strojotvor"
+      },
+      "human-chassis": {
+        "englishName": "Human Chassis",
+        "name": "Lidské tělo"
+      },
+      "humanhalf-elf-heritage": {
+        "englishName": "Human/Half-Elf Heritage",
+        "name": "Dědictví lidí či půlelfů"
+      },
+      "malkin": {
+        "englishName": "Malkin",
+        "name": "Malkin"
+      },
+      "minotaur": {
+        "englishName": "Minotaur",
+        "name": "Minotaur"
+      },
+      "mushroomfolk": {
+        "englishName": "Mushroomfolk",
+        "name": "Houboví lidé"
+      },
+      "mutated": {
+        "englishName": "Mutated",
+        "name": "Zmutovaný"
+      },
+      "shade": {
+        "englishName": "Shade",
+        "name": "Stín"
+      },
+      "alseid": {
+        "englishName": "Alseid",
+        "name": "Alseid"
+      },
+      "boghaid": {
+        "englishName": "Boghaid",
+        "name": "Boghaid"
+      },
+      "derro-heritage": {
+        "englishName": "Derro Heritage",
+        "name": "Dědictví derrů"
+      },
+      "dragonborn-heritage": {
+        "englishName": "Dragonborn Heritage",
+        "name": "Dědictví drakorozených"
+      },
+      "drow-heritage": {
+        "englishName": "Drow Heritage",
+        "name": "Drowí dědictví"
+      },
+      "dwarf-heritage": {
+        "englishName": "Dwarf Heritage",
+        "name": "Trpasličí dědictví"
+      },
+      "elfshadow-fey-heritage": {
+        "englishName": "Elf/Shadow Fey Heritage",
+        "name": "Dědictví elfů či stínových víl"
+      },
+      "far-touched": {
+        "englishName": "Far-Touched",
+        "name": "Dotčený dálavami"
+      },
+      "favored": {
+        "englishName": "Favored",
+        "name": "Obdařený"
+      },
+      "fever-bit": {
+        "englishName": "Fever-Bit",
+        "name": "Poznamenaný horečkou"
+      },
+      "gnome-chassis": {
+        "englishName": "Gnome Chassis",
+        "name": "Gnómí tělo"
+      },
+      "gnome-heritage": {
+        "englishName": "Gnome Heritage",
+        "name": "Gnómí dědictví"
+      },
+      "halfling-heritage": {
+        "englishName": "Halfling Heritage",
+        "name": "Hobití dědictví"
+      },
+      "kobold-chassis": {
+        "englishName": "Kobold Chassis",
+        "name": "Koboldí tělo"
+      },
+      "kobold-heritage": {
+        "englishName": "Kobold Heritage",
+        "name": "Koboldí dědictví"
+      },
+      "morel": {
+        "englishName": "Morel",
+        "name": "Smrž"
+      },
+      "pantheran": {
+        "englishName": "Pantheran",
+        "name": "Pantheran"
+      },
+      "purified": {
+        "englishName": "Purified",
+        "name": "Očištěný"
+      },
+      "ravenfolk": {
+        "englishName": "Ravenfolk",
+        "name": "Havraní lidé"
+      },
+      "satarre": {
+        "englishName": "Satarre",
+        "name": "Satarre"
+      },
+      "tiefling-heritage": {
+        "englishName": "Tiefling Heritage",
+        "name": "Tieflingské dědictví"
+      },
+      "trollkin-heritage": {
+        "englishName": "Trollkin Heritage",
+        "name": "Dědictví trollích potomků"
+      },
+      "uncorrupted": {
+        "englishName": "Uncorrupted",
+        "name": "Nezkorumpovaný"
+      }
+    },
+    "subclasses": {
+      "soulspy": {
+        "englishName": "Soulspy",
+        "name": "Špeh duší"
+      },
+      "ancient-dragons": {
+        "englishName": "Ancient Dragons",
+        "name": "Prastaří draci"
+      },
+      "animal-lords": {
+        "englishName": "Animal Lords",
+        "name": "Vládci zvířat"
+      },
+      "beast-trainer": {
+        "englishName": "Beast Trainer",
+        "name": "Cvičitel zvířat"
+      },
+      "cantrip-adept": {
+        "englishName": "Cantrip Adept",
+        "name": "Znalec triků"
+      },
+      "cat-burglar": {
+        "englishName": "Cat Burglar",
+        "name": "Akrobatický zloděj"
+      },
+      "chaplain": {
+        "englishName": "Chaplain",
+        "name": "Kaplan"
+      },
+      "circle-of-ash": {
+        "englishName": "Circle of Ash",
+        "name": "Kruh popela"
+      },
+      "circle-of-bees": {
+        "englishName": "Circle of Bees",
+        "name": "Kruh včel"
+      },
+      "circle-of-crystals": {
+        "englishName": "Circle of Crystals",
+        "name": "Kruh krystalů"
+      },
+      "circle-of-sand": {
+        "englishName": "Circle of Sand",
+        "name": "Kruh písku"
+      },
+      "circle-of-the-green": {
+        "englishName": "Circle of the Green",
+        "name": "Kruh zeleně"
+      },
+      "circle-of-the-shapeless": {
+        "englishName": "Circle of the Shapeless",
+        "name": "Kruh beztvarých"
+      },
+      "circle-of-wind": {
+        "englishName": "Circle of Wind",
+        "name": "Kruh větru"
+      },
+      "cold-blooded": {
+        "englishName": "Cold-Blooded",
+        "name": "Chladnokrevný"
+      },
+      "college-of-echoes": {
+        "englishName": "College of Echoes",
+        "name": "Kolej ozvěn"
+      },
+      "college-of-investigation": {
+        "englishName": "College of Investigation",
+        "name": "Kolej vyšetřování"
+      },
+      "college-of-shadows": {
+        "englishName": "College of Shadows",
+        "name": "Kolej stínů"
+      },
+      "college-of-sincerity": {
+        "englishName": "College of Sincerity",
+        "name": "Kolej upřímnosti"
+      },
+      "college-of-tactics": {
+        "englishName": "College of Tactics",
+        "name": "Kolej taktiky"
+      },
+      "college-of-the-cat": {
+        "englishName": "College of the Cat",
+        "name": "Kolej kočky"
+      },
+      "courser-mage": {
+        "englishName": "Courser Mage",
+        "name": "Mág stopař"
+      },
+      "dawn-blade": {
+        "englishName": "Dawn Blade",
+        "name": "Čepel úsvitu"
+      },
+      "familiar-master": {
+        "englishName": "Familiar Master",
+        "name": "Mistr přítelíčků"
+      },
+      "gravebinding": {
+        "englishName": "Gravebinding",
+        "name": "Hrobní pouta"
+      },
+      "grove-warden": {
+        "englishName": "Grove Warden",
+        "name": "Strážce háje"
+      },
+      "haunted-warden": {
+        "englishName": "Haunted Warden",
+        "name": "Strážce pronásledovaný přízraky"
+      },
+      "hungering": {
+        "englishName": "Hungering",
+        "name": "Hladovění"
+      },
+      "hunt-domain": {
+        "englishName": "Hunt Domain",
+        "name": "Doména lovu"
+      },
+      "hunter-in-darkness": {
+        "englishName": "Hunter in Darkness",
+        "name": "Lovec v temnotě"
+      },
+      "legionary": {
+        "englishName": "Legionary",
+        "name": "Legionář"
+      },
+      "mercy-domain": {
+        "englishName": "Mercy Domain",
+        "name": "Doména milosrdenství"
+      },
+      "oath-of-justice": {
+        "englishName": "Oath of Justice",
+        "name": "Přísaha spravedlnosti"
+      },
+      "oath-of-safeguarding": {
+        "englishName": "Oath of Safeguarding",
+        "name": "Přísaha ochrany"
+      },
+      "oath-of-the-elements": {
+        "englishName": "Oath of the Elements",
+        "name": "Přísaha živlů"
+      },
+      "oath-of-the-guardian": {
+        "englishName": "Oath of the Guardian",
+        "name": "Přísaha strážce"
+      },
+      "oath-of-the-hearth": {
+        "englishName": "Oath of the Hearth",
+        "name": "Přísaha krbu"
+      },
+      "oath-of-the-plaguetouched": {
+        "englishName": "Oath of the Plaguetouched",
+        "name": "Přísaha morem dotčených"
+      },
+      "old-wood": {
+        "englishName": "Old Wood",
+        "name": "Prastarý hvozd"
+      },
+      "path-of-booming-magnificence": {
+        "englishName": "Path of Booming Magnificence",
+        "name": "Cesta hřmotné velkoleposti"
+      },
+      "path-of-hellfire": {
+        "englishName": "Path of Hellfire",
+        "name": "Cesta pekelného ohně"
+      },
+      "path-of-mistwood": {
+        "englishName": "Path of Mistwood",
+        "name": "Cesta mlžného lesa"
+      },
+      "path-of-the-dragon": {
+        "englishName": "Path of the Dragon",
+        "name": "Cesta draka"
+      },
+      "path-of-the-herald": {
+        "englishName": "Path of the Herald",
+        "name": "Cesta herolda"
+      },
+      "path-of-the-inner-eye": {
+        "englishName": "Path of the Inner Eye",
+        "name": "Cesta vnitřního oka"
+      },
+      "path-of-thorns": {
+        "englishName": "Path of Thorns",
+        "name": "Cesta trnů"
+      },
+      "portal-domain": {
+        "englishName": "Portal Domain",
+        "name": "Doména portálů"
+      },
+      "primordial": {
+        "englishName": "Primordial",
+        "name": "Prvotní"
+      },
+      "pugilist": {
+        "englishName": "Pugilist",
+        "name": "Pěstní bojovník"
+      },
+      "radiant-pikeman": {
+        "englishName": "Radiant Pikeman",
+        "name": "Zářivý pikenýr"
+      },
+      "resonant-body": {
+        "englishName": "Resonant Body",
+        "name": "Rezonující tělo"
+      },
+      "rifthopper": {
+        "englishName": "Rifthopper",
+        "name": "Skokan trhlinami"
+      },
+      "sapper": {
+        "englishName": "Sapper",
+        "name": "Sapér"
+      },
+      "school-of-liminality": {
+        "englishName": "School of Liminality",
+        "name": "Škola prahů"
+      },
+      "serpent-domain": {
+        "englishName": "Serpent Domain",
+        "name": "Doména hadů"
+      },
+      "shadow-domain": {
+        "englishName": "Shadow Domain",
+        "name": "Doména stínů"
+      },
+      "smuggler": {
+        "englishName": "Smuggler",
+        "name": "Pašerák"
+      },
+      "snake-speaker": {
+        "englishName": "Snake Speaker",
+        "name": "Hadí mluvčí"
+      },
+      "spear-of-the-weald": {
+        "englishName": "Spear of the Weald",
+        "name": "Kopí hvozdu"
+      },
+      "spellsmith": {
+        "englishName": "Spellsmith",
+        "name": "Kovář kouzel"
+      },
+      "spore-sorcery": {
+        "englishName": "Spore Sorcery",
+        "name": "Spórová magie"
+      },
+      "timeblade": {
+        "englishName": "Timeblade",
+        "name": "Čepel času"
+      },
+      "tunnel-watcher": {
+        "englishName": "Tunnel Watcher",
+        "name": "Strážce tunelů"
+      },
+      "underfoot": {
+        "englishName": "Underfoot",
+        "name": "Pod nohama"
+      },
+      "vermin-domain": {
+        "englishName": "Vermin Domain",
+        "name": "Doména havěti"
+      },
+      "wasteland-strider": {
+        "englishName": "Wasteland Strider",
+        "name": "Poutník pustinou"
+      },
+      "wastelander": {
+        "englishName": "Wastelander",
+        "name": "Obyvatel pustiny"
+      },
+      "way-of-concordant-motion": {
+        "englishName": "Way of Concordant Motion",
+        "name": "Cesta souladného pohybu"
+      },
+      "way-of-the-dragon": {
+        "englishName": "Way of the Dragon",
+        "name": "Cesta draka"
+      },
+      "way-of-the-humble-elephant": {
+        "englishName": "Way of the Humble Elephant",
+        "name": "Cesta pokorného slona"
+      },
+      "way-of-the-still-waters": {
+        "englishName": "Way of the Still Waters",
+        "name": "Cesta tichých vod"
+      },
+      "way-of-the-tipsy-monkey": {
+        "englishName": "Way of the Tipsy Monkey",
+        "name": "Cesta podnapilé opice"
+      },
+      "way-of-the-unerring-arrow": {
+        "englishName": "Way of the Unerring Arrow",
+        "name": "Cesta neomylného šípu"
+      },
+      "way-of-the-wildcat": {
+        "englishName": "Way of the Wildcat",
+        "name": "Cesta divoké kočky"
+      },
+      "wind-domain": {
+        "englishName": "Wind Domain",
+        "name": "Doména větru"
+      },
+      "wyrdweaver": {
+        "englishName": "Wyrdweaver",
+        "name": "Tkadlec osudu"
+      }
+    },
+    "items": {
+      "brigandine": {
+        "englishName": "Brigandine",
+        "name": "Brigantina"
+      },
+      "kite-shield": {
+        "englishName": "Kite shield",
+        "name": "Kapkovitý štít"
+      },
+      "manica": {
+        "englishName": "Manica",
+        "name": "Manika"
+      },
+      "silk-backed-coin-mail": {
+        "englishName": "Silk-Backed Coin Mail",
+        "name": "Mincová zbroj na hedvábí"
+      },
+      "stonesteel": {
+        "englishName": "Stonesteel",
+        "name": "Kamenoocelová zbroj"
+      },
+      "axespear": {
+        "englishName": "Axespear",
+        "name": "Sekerokopí"
+      },
+      "barge-pole": {
+        "englishName": "Barge Pole",
+        "name": "Lodní bidlo"
+      },
+      "bladed-scarf": {
+        "englishName": "Bladed Scarf",
+        "name": "Čepelová šála"
+      },
+      "blunderbuss": {
+        "englishName": "Blunderbuss",
+        "name": "Trombónová puška"
+      },
+      "bolas": {
+        "englishName": "Bolas",
+        "name": "Bola"
+      },
+      "chain-hook": {
+        "englishName": "Chain Hook",
+        "name": "Řetězový hák"
+      },
+      "chakram": {
+        "englishName": "Chakram",
+        "name": "Čakram"
+      },
+      "climbing-adze": {
+        "englishName": "Climbing Adze",
+        "name": "Horolezecká teslice"
+      },
+      "clockwork-crossbow": {
+        "englishName": "Clockwork Crossbow",
+        "name": "Mechanická kuše"
+      },
+      "club-shield": {
+        "englishName": "Club Shield",
+        "name": "Kyjový štít"
+      },
+      "double-axe": {
+        "englishName": "Double Axe",
+        "name": "Dvojitá sekera"
+      },
+      "dwarven-arquebus": {
+        "englishName": "Dwarven Arquebus",
+        "name": "Trpasličí arkebuza"
+      },
+      "dwarven-axe": {
+        "englishName": "Dwarven Axe",
+        "name": "Trpasličí sekera"
+      },
+      "dwarven-revolving-musket": {
+        "englishName": "Dwarven Revolving Musket",
+        "name": "Trpasličí otočná mušketa"
+      },
+      "elven-dueling-blade": {
+        "englishName": "Elven Dueling Blade",
+        "name": "Elfská soubojová čepel"
+      },
+      "granite-fist": {
+        "englishName": "Granite Fist",
+        "name": "Žulová pěst"
+      },
+      "hand-trebuchet": {
+        "englishName": "Hand Trebuchet",
+        "name": "Ruční trebuchet"
+      },
+      "joining-dirks": {
+        "englishName": "Joining Dirks",
+        "name": "Spojitelné dýky"
+      },
+      "khopesh": {
+        "englishName": "Khopesh",
+        "name": "Chopéš"
+      },
+      "light-pick": {
+        "englishName": "Light Pick",
+        "name": "Lehký krumpáč"
+      },
+      "musket": {
+        "englishName": "Musket",
+        "name": "Mušketa"
+      },
+      "pistol": {
+        "englishName": "Pistol",
+        "name": "Pistole"
+      },
+      "pneumatic-war-pick": {
+        "englishName": "Pneumatic War Pick",
+        "name": "Pneumatický válečný krumpáč"
+      },
+      "shashka": {
+        "englishName": "Shashka",
+        "name": "Šaška"
+      },
+      "shotel": {
+        "englishName": "Shotel",
+        "name": "Šotel"
+      },
+      "stone-rake": {
+        "englishName": "Stone Rake",
+        "name": "Kamenné hrábě"
+      },
+      "temple-sword": {
+        "englishName": "Temple Sword",
+        "name": "Chrámový meč"
+      },
+      "whipsaw": {
+        "englishName": "Whipsaw",
+        "name": "Bičová pila"
+      },
+      "wormsilk-net": {
+        "englishName": "Wormsilk Net",
+        "name": "Síť z červího hedvábí"
+      },
+      "wormsilk-whip": {
+        "englishName": "Wormsilk Whip",
+        "name": "Bič z červího hedvábí"
+      },
+      "wrist-knife": {
+        "englishName": "Wrist Knife",
+        "name": "Zápěstní nůž"
+      },
+      "argent-mantle": {
+        "englishName": "Argent Mantle",
+        "name": "Stříbrný plášť"
+      },
+      "axe-of-many-strikes": {
+        "englishName": "Axe of Many Strikes",
+        "name": "Sekera mnoha úderů"
+      },
+      "beads-of-contemplation": {
+        "englishName": "Beads of Contemplation",
+        "name": "Korálky rozjímání"
+      },
+      "bloodspeed-elixir": {
+        "englishName": "Bloodspeed Elixir",
+        "name": "Elixír krvavé rychlosti"
+      },
+      "campaign-field-tent": {
+        "englishName": "Campaign Field Tent",
+        "name": "Polní táborový stan"
+      },
+      "cestus": {
+        "englishName": "Cestus",
+        "name": "Cestus"
+      },
+      "chain-cilice": {
+        "englishName": "Chain Cilice",
+        "name": "Řetězová žíněná košile"
+      },
+      "cloak-of-tentacles": {
+        "englishName": "Cloak of Tentacles",
+        "name": "Plášť chapadel"
+      },
+      "deepstone-cestus": {
+        "englishName": "Deepstone Cestus",
+        "name": "Cestus z hlubinného kamene"
+      },
+      "esquires-rowels": {
+        "englishName": "Esquire's Rowels",
+        "name": "Panošské ostruhy"
+      },
+      "fletchers-retort-gloves": {
+        "englishName": "Fletcher's Retort Gloves",
+        "name": "Rukavice lučištníkovy odplaty"
+      },
+      "giantstrike-cestus": {
+        "englishName": "Giantstrike Cestus",
+        "name": "Cestus obřího úderu"
+      },
+      "heartglow-lantern": {
+        "englishName": "Heartglow Lantern",
+        "name": "Lucerna srdeční záře"
+      },
+      "javelin-of-teleportation": {
+        "englishName": "Javelin of Teleportation",
+        "name": "Oštěp teleportace"
+      },
+      "knight-sergeants-surcoat": {
+        "englishName": "Knight-Sergeant's Surcoat",
+        "name": "Varkoč rytířského seržanta"
+      },
+      "medics-sash": {
+        "englishName": "Medic's Sash",
+        "name": "Medikova šerpa"
+      },
+      "momentblade": {
+        "englishName": "Momentblade",
+        "name": "Čepel okamžiku"
+      },
+      "ninefold-swarmdagger": {
+        "englishName": "Ninefold Swarmdagger",
+        "name": "Devaterá rojová dýka"
+      },
+      "paired-gauntlets-of-striking": {
+        "englishName": "Paired Gauntlets of Striking",
+        "name": "Párové úderné rukavice"
+      },
+      "phase-arrow": {
+        "englishName": "Phase Arrow",
+        "name": "Fázový šíp"
+      },
+      "potion-belt": {
+        "englishName": "Potion Belt",
+        "name": "Opasek na lektvary"
+      },
+      "potion-of-infinite-possibilities": {
+        "englishName": "Potion of Infinite Possibilities",
+        "name": "Lektvar nekonečných možností"
+      },
+      "pouch-of-runestones": {
+        "englishName": "Pouch of Runestones",
+        "name": "Váček runových kamenů"
+      },
+      "serpentine-sandals": {
+        "englishName": "Serpentine Sandals",
+        "name": "Hadí sandály"
+      },
+      "shattershot-arrow": {
+        "englishName": "Shattershot Arrow",
+        "name": "Tříštivý šíp"
+      },
+      "soulbound-wraps": {
+        "englishName": "Soulbound Wraps",
+        "name": "Bandáže spoutané duší"
+      },
+      "stasis-stone": {
+        "englishName": "Stasis Stone",
+        "name": "Kámen stáze"
+      },
+      "stormheart-bow": {
+        "englishName": "Stormheart Bow",
+        "name": "Luk bouřného srdce"
+      },
+      "victory-banner": {
+        "englishName": "Victory Banner",
+        "name": "Prapor vítězství"
+      }
+    },
+    "spells": {
+      "ambush-chute": {
+        "englishName": "Ambush Chute",
+        "name": "Přepadová šachta"
+      },
+      "armored-formation": {
+        "englishName": "Armored Formation",
+        "name": "Obrněná formace"
+      },
+      "babble": {
+        "englishName": "Babble",
+        "name": "Blábolení"
+      },
+      "battle-mind": {
+        "englishName": "Battle Mind",
+        "name": "Bojová mysl"
+      },
+      "beast-within": {
+        "englishName": "Beast Within",
+        "name": "Vnitřní bestie"
+      },
+      "betraying-bauble": {
+        "englishName": "Betraying Bauble",
+        "name": "Zrádná cetka"
+      },
+      "bloodlust": {
+        "englishName": "Bloodlust",
+        "name": "Krvežíznivost"
+      },
+      "blunted-edge": {
+        "englishName": "Blunted Edge",
+        "name": "Otupené ostří"
+      },
+      "bolster-fortifications": {
+        "englishName": "Bolster Fortifications",
+        "name": "Posílení opevnění"
+      },
+      "bound-haze": {
+        "englishName": "Bound Haze",
+        "name": "Spoutaný opar"
+      },
+      "burst-stone": {
+        "englishName": "Burst Stone",
+        "name": "Tříštivý kámen"
+      },
+      "butterfly-effect": {
+        "englishName": "Butterfly Effect",
+        "name": "Motýlí efekt"
+      },
+      "calm-beasts": {
+        "englishName": "Calm Beasts",
+        "name": "Uklidni zvířata"
+      },
+      "clear-the-board": {
+        "englishName": "Clear the Board",
+        "name": "Rozdělení bojiště"
+      },
+      "conjure-construct": {
+        "englishName": "Conjure Construct",
+        "name": "Vyvolej konstrukt"
+      },
+      "conjure-spectral-allies": {
+        "englishName": "Conjure Spectral Allies",
+        "name": "Vyvolej přízračné spojence"
+      },
+      "convey-inner-peace": {
+        "englishName": "Convey Inner Peace",
+        "name": "Předej vnitřní klid"
+      },
+      "crown-of-thorns": {
+        "englishName": "Crown of Thorns",
+        "name": "Trnová koruna"
+      },
+      "damaging-intel": {
+        "englishName": "Damaging Intel",
+        "name": "Škodlivé informace"
+      },
+      "deadly-salvo": {
+        "englishName": "Deadly Salvo",
+        "name": "Smrtící salva"
+      },
+      "divine-retribution": {
+        "englishName": "Divine Retribution",
+        "name": "Božská odplata"
+      },
+      "dreamwine": {
+        "englishName": "Dreamwine",
+        "name": "Snové víno"
+      },
+      "emerald-eyes": {
+        "englishName": "Emerald Eyes",
+        "name": "Smaragdové oči"
+      },
+      "enchanted-bloom": {
+        "englishName": "Enchanted Bloom",
+        "name": "Očarovaný květ"
+      },
+      "eruption": {
+        "englishName": "Eruption",
+        "name": "Erupce"
+      },
+      "feint": {
+        "englishName": "Feint",
+        "name": "Finta"
+      },
+      "fey-food": {
+        "englishName": "Fey Food",
+        "name": "Vílí pokrm"
+      },
+      "fey-touched-blade": {
+        "englishName": "Fey-Touched Blade",
+        "name": "Čepel dotčená vílami"
+      },
+      "forced-reposition": {
+        "englishName": "Forced Reposition",
+        "name": "Nucený přesun"
+      },
+      "furious-wail": {
+        "englishName": "Furious Wail",
+        "name": "Zuřivý nářek"
+      },
+      "fuse-armor": {
+        "englishName": "Fuse Armor",
+        "name": "Znehybnění kovu"
+      },
+      "gale": {
+        "englishName": "Gale",
+        "name": "Vichřice"
+      },
+      "glare": {
+        "englishName": "Glare",
+        "name": "Výhružný pohled"
+      },
+      "high-ground": {
+        "englishName": "High Ground",
+        "name": "Výšková převaha"
+      },
+      "immolating-gibbet": {
+        "englishName": "Immolating Gibbet",
+        "name": "Hořící šibenice"
+      },
+      "inexorable-summons": {
+        "englishName": "Inexorable Summons",
+        "name": "Neodvratné povolání"
+      },
+      "instant-armored-vehicle": {
+        "englishName": "Instant Armored Vehicle",
+        "name": "Okamžité obrněné vozidlo"
+      },
+      "invested-champion": {
+        "englishName": "Invested Champion",
+        "name": "Zasvěcený ochránce"
+      },
+      "iron-gut": {
+        "englishName": "Iron Gut",
+        "name": "Železný žaludek"
+      },
+      "jagged-forcelance": {
+        "englishName": "Jagged Forcelance",
+        "name": "Zubaté silové kopí"
+      },
+      "jarring-growl": {
+        "englishName": "Jarring Growl",
+        "name": "Otřesné zavrčení"
+      },
+      "lance": {
+        "englishName": "Lance",
+        "name": "Silové kopí"
+      },
+      "less-fool-i": {
+        "englishName": "Less Fool, I",
+        "name": "Mě neobelstíš"
+      },
+      "life-burst": {
+        "englishName": "Life Burst",
+        "name": "Výbuch života"
+      },
+      "lightless-torch": {
+        "englishName": "Lightless Torch",
+        "name": "Pochodeň temnovidu"
+      },
+      "long-game": {
+        "englishName": "Long Game",
+        "name": "Odložená odplata"
+      },
+      "magma-spray": {
+        "englishName": "Magma Spray",
+        "name": "Sprška magmatu"
+      },
+      "mantle-of-the-brave": {
+        "englishName": "Mantle of the Brave",
+        "name": "Plášť statečných"
+      },
+      "martyrs-rally": {
+        "englishName": "Martyr's Rally",
+        "name": "Mučedníkovo povzbuzení"
+      },
+      "mass-faerie-fire": {
+        "englishName": "Mass Faerie Fire",
+        "name": "Hromadný vílí oheň"
+      },
+      "misdirection": {
+        "englishName": "Misdirection",
+        "name": "Odvedení pozornosti"
+      },
+      "mud": {
+        "englishName": "Mud",
+        "name": "Vazké bahno"
+      },
+      "muted-foe": {
+        "englishName": "Muted Foe",
+        "name": "Umlčený nepřítel"
+      },
+      "never-surrender": {
+        "englishName": "Never Surrender",
+        "name": "Nikdy se nevzdávej"
+      },
+      "oathbound-implement": {
+        "englishName": "Oathbound Implement",
+        "name": "Přísahou vázaný nástroj"
+      },
+      "outmaneuver": {
+        "englishName": "Outmaneuver",
+        "name": "Přemanévrování"
+      },
+      "oversized-paws": {
+        "englishName": "Oversized Paws",
+        "name": "Obří tlapy"
+      },
+      "pincer": {
+        "englishName": "Pincer",
+        "name": "Klešťový úder"
+      },
+      "pipers-lure": {
+        "englishName": "Piper's Lure",
+        "name": "Vábivá píšťala"
+      },
+      "portal-jaunt": {
+        "englishName": "Portal Jaunt",
+        "name": "Skok portálem"
+      },
+      "portal-trap": {
+        "englishName": "Portal Trap",
+        "name": "Portálová past"
+      },
+      "power-word-fling": {
+        "englishName": "Power Word Fling",
+        "name": "Mocné slovo: Odhození"
+      },
+      "power-word-rend": {
+        "englishName": "Power Word Rend",
+        "name": "Mocné slovo: Rozervání"
+      },
+      "reapers-knell": {
+        "englishName": "Reaper's Knell",
+        "name": "Umíráček žence"
+      },
+      "rebounding-bolt": {
+        "englishName": "Rebounding Bolt",
+        "name": "Odrazová střela"
+      },
+      "repulsing-wall": {
+        "englishName": "Repulsing Wall",
+        "name": "Odpuzující zeď"
+      },
+      "retribution": {
+        "englishName": "Retribution",
+        "name": "Odplata"
+      },
+      "rockfall-ward": {
+        "englishName": "Rockfall Ward",
+        "name": "Ochrana před sesuvem kamení"
+      },
+      "sacrifice-pawn": {
+        "englishName": "Sacrifice Pawn",
+        "name": "Obětuj pěšce"
+      },
+      "sacrificial-healing": {
+        "englishName": "Sacrificial Healing",
+        "name": "Obětní léčení"
+      },
+      "safe-transposition": {
+        "englishName": "Safe Transposition",
+        "name": "Bezpečná záměna"
+      },
+      "secret-blind": {
+        "englishName": "Secret Blind",
+        "name": "Skrytý úkryt"
+      },
+      "shared-frenzy": {
+        "englishName": "Shared Frenzy",
+        "name": "Sdílené běsnění"
+      },
+      "shocking-volley": {
+        "englishName": "Shocking Volley",
+        "name": "Blesková salva"
+      },
+      "sightburst": {
+        "englishName": "Sightburst",
+        "name": "Záblesk zraku"
+      },
+      "silvershout": {
+        "englishName": "Silvershout",
+        "name": "Stříbrný výkřik"
+      },
+      "smelting-blast": {
+        "englishName": "Smelting Blast",
+        "name": "Výšleh roztaveného kovu"
+      },
+      "sneer": {
+        "englishName": "Sneer",
+        "name": "Pohrdavý úšklebek"
+      },
+      "spiked-barricade": {
+        "englishName": "Spiked Barricade",
+        "name": "Kůlová barikáda"
+      },
+      "spite": {
+        "englishName": "Spite",
+        "name": "Zášť"
+      },
+      "steam-gout": {
+        "englishName": "Steam Gout",
+        "name": "Gejzír páry"
+      },
+      "stone-aegis": {
+        "englishName": "Stone Aegis",
+        "name": "Kamenná záštita"
+      },
+      "stone-fetch": {
+        "englishName": "Stone Fetch",
+        "name": "Kamenný dvojník"
+      },
+      "sudden-slue": {
+        "englishName": "Sudden Slue",
+        "name": "Medvědí příval"
+      },
+      "sudden-stampede": {
+        "englishName": "Sudden Stampede",
+        "name": "Přízračné stádo"
+      },
+      "toadstool-ring": {
+        "englishName": "Toadstool Ring",
+        "name": "Věštecký kruh hub"
+      },
+      "toothless-beast": {
+        "englishName": "Toothless Beast",
+        "name": "Bezzubá šelma"
+      },
+      "trollish-charge": {
+        "englishName": "Trollish Charge",
+        "name": "Děsivý nápor"
+      },
+      "vine-carpet": {
+        "englishName": "Vine Carpet",
+        "name": "Liánový koberec"
+      },
+      "war-horn": {
+        "englishName": "War Horn",
+        "name": "Válečný roh"
+      },
+      "wild-hunt": {
+        "englishName": "Wild Hunt",
+        "name": "Divoký hon"
+      }
+    }
+  },
+  "a5e-ag": {
+    "classes": {
+      "marshal": {
+        "englishName": "Marshal",
+        "name": "Maršál"
+      }
+    },
+    "backgrounds": {
+      "cultist": {
+        "englishName": "Cultist",
+        "name": "Kultista"
+      }
+    },
+    "subclasses": {
+      "gambling-general": {
+        "englishName": "Gambling General",
+        "name": "Hazardující generál"
+      }
+    }
+  },
+  "bfrd": {
+    "classes": {
+      "mechanist": {
+        "englishName": "Mechanist",
+        "name": "Mechanik"
+      }
+    }
+  },
+  "o5e": {
+    "backgrounds": {
+      "con-artist": {
+        "englishName": "Con Artist",
+        "name": "Podvodník"
+      },
+      "scoundrel": {
+        "englishName": "Scoundrel",
+        "name": "Darebák"
+      }
+    },
+    "species": {
+      "stoor-halfling": {
+        "englishName": "Stoor Halfling",
+        "name": "Hobit statného rodu"
+      }
+    },
+    "subclasses": {
+      "college-of-skalds": {
+        "englishName": "College of Skalds",
+        "name": "Kolej skaldů"
+      }
+    }
+  },
+  "taldorei": {
+    "backgrounds": {
+      "crime-syndicate-member": {
+        "englishName": "Crime Syndicate Member",
+        "name": "Člen zločineckého syndikátu"
+      },
+      "lyceum-student": {
+        "englishName": "Lyceum Student",
+        "name": "Student lycea"
+      }
+    }
+  },
+  "a5e-ddg": {
+    "backgrounds": {
+      "deep-hunter": {
+        "englishName": "Deep Hunter",
+        "name": "Lovec hlubin"
+      },
+      "dungeon-robber": {
+        "englishName": "Dungeon Robber",
+        "name": "Vykradač podzemí"
+      }
+    }
+  },
+  "a5e-gpg": {
+    "backgrounds": {
+      "haunted": {
+        "englishName": "Haunted",
+        "name": "Pronásledovaný přízraky"
+      }
+    }
+  },
+  "open5e": {
+    "subclasses": {
+      "abjurationist": {
+        "englishName": "Abjurationist",
+        "name": "Ochranný mág"
+      }
+    }
+  },
+  "tob": {
+    "monsters": {
+      "deathwisp": {
+        "englishName": "Deathwisp",
+        "name": "Smrtná bludička"
+      }
+    }
+  },
+  "blackflag": {
+    "monsters": {
+      "balor_bf": {
+        "englishName": "Balor",
+        "name": "Balor"
+      }
+    }
+  },
+  "vom": {
+    "items": {
+      "aberrant-agreement": {
+        "englishName": "Aberrant Agreement",
+        "name": "Aberantní úmluva"
+      },
+      "accursed-idol": {
+        "englishName": "Accursed Idol",
+        "name": "Prokletá modla"
+      },
+      "agile-armor": {
+        "englishName": "Agile Armor",
+        "name": "Hbitá zbroj"
+      },
+      "air-seed": {
+        "englishName": "Air Seed",
+        "name": "Vzdušné semínko"
+      },
+      "akaasit-blade": {
+        "englishName": "Akaasit Blade",
+        "name": "Akaasitská čepel"
+      },
+      "alabaster-salt-shaker": {
+        "englishName": "Alabaster Salt Shaker",
+        "name": "Alabastrová solnička"
+      },
+      "alchemical-lantern": {
+        "englishName": "Alchemical Lantern",
+        "name": "Alchymistická lucerna"
+      },
+      "alembic-of-unmaking": {
+        "englishName": "Alembic of Unmaking",
+        "name": "Alembik rozložení"
+      },
+      "almanac-of-common-wisdom": {
+        "englishName": "Almanac of Common Wisdom",
+        "name": "Almanach lidové moudrosti"
+      },
+      "amulet-of-memory": {
+        "englishName": "Amulet of Memory",
+        "name": "Amulet paměti"
+      },
+      "amulet-of-sustaining-health": {
+        "englishName": "Amulet of Sustaining Health",
+        "name": "Amulet zachování zdraví"
+      },
+      "amulet-of-the-oracle": {
+        "englishName": "Amulet of the Oracle",
+        "name": "Amulet věštce"
+      },
+      "amulet-of-whirlwinds": {
+        "englishName": "Amulet of Whirlwinds",
+        "name": "Amulet vírů"
+      },
+      "anchor-of-striking": {
+        "englishName": "Anchor of Striking",
+        "name": "Úderná kotva"
+      },
+      "angelic-earrings": {
+        "englishName": "Angelic Earrings",
+        "name": "Andělské náušnice"
+      },
+      "angry-hornet": {
+        "englishName": "Angry Hornet",
+        "name": "Rozzuřený sršeň"
+      },
+      "animated-abacus": {
+        "englishName": "Animated Abacus",
+        "name": "Oživené počitadlo"
+      },
+      "animated-chain-mail": {
+        "englishName": "Animated Chain Mail",
+        "name": "Oživená kroužková zbroj"
+      },
+      "ankh-of-aten": {
+        "englishName": "Ankh of Aten",
+        "name": "Atenův anch"
+      },
+      "anointing-mace": {
+        "englishName": "Anointing Mace",
+        "name": "Pomazávací palcát"
+      },
+      "apron-of-the-eager-artisan": {
+        "englishName": "Apron of the Eager Artisan",
+        "name": "Zástěra horlivého řemeslníka"
+      },
+      "arcanaphage-stone": {
+        "englishName": "Arcanaphage Stone",
+        "name": "Kámen požírače magie"
+      },
+      "armor-of-cushioning": {
+        "englishName": "Armor of Cushioning",
+        "name": "Tlumená zbroj"
+      },
+      "armor-of-spite": {
+        "englishName": "Armor of Spite",
+        "name": "Zbroj zášti"
+      },
+      "armor-of-the-leaf": {
+        "englishName": "Armor of the Leaf",
+        "name": "Listová zbroj"
+      },
+      "armor-of-the-ngobou": {
+        "englishName": "Armor of the Ngobou",
+        "name": "Zbroj z ngobou"
+      },
+      "armor-of-warding": {
+        "englishName": "Armor of Warding",
+        "name": "Ochranná zbroj"
+      },
+      "arrow-of-grabbing": {
+        "englishName": "Arrow of Grabbing",
+        "name": "Uchvacující šíp"
+      },
+      "arrow-of-unpleasant-herbs": {
+        "englishName": "Arrow of Unpleasant Herbs",
+        "name": "Šíp nepříjemných bylin"
+      },
+      "ash-of-the-ebon-birch": {
+        "englishName": "Ash of the Ebon Birch",
+        "name": "Popel ebenové břízy"
+      },
+      "ashes-of-the-fallen": {
+        "englishName": "Ashes of the Fallen",
+        "name": "Popel padlých"
+      },
+      "ashwood-wand": {
+        "englishName": "Ashwood Wand",
+        "name": "Hůlka z jasanového dřeva"
+      },
+      "asps-kiss": {
+        "englishName": "Asp's Kiss",
+        "name": "Polibek zmije"
+      },
+      "aurochs-bracers": {
+        "englishName": "Aurochs Bracers",
+        "name": "Nátepníky pratura"
+      },
+      "axe-of-the-ancients": {
+        "englishName": "Axe of the Ancients",
+        "name": "Sekera pradávných"
+      },
+      "baba-yagas-cinderskull": {
+        "englishName": "Baba Yaga's Cinderskull",
+        "name": "Popelavá lebka Baby Jagy"
+      },
+      "badger-hide": {
+        "englishName": "Badger Hide",
+        "name": "Jezevčí kůže"
+      },
+      "bag-of-bramble-beasts": {
+        "englishName": "Bag of Bramble Beasts",
+        "name": "Vak trnitých šelem"
+      },
+      "bag-of-traps": {
+        "englishName": "Bag of Traps",
+        "name": "Vak pastí"
+      },
+      "bagpipes-of-battle": {
+        "englishName": "Bagpipes of Battle",
+        "name": "Bojové dudy"
+      },
+      "baleful-wardrums": {
+        "englishName": "Baleful Wardrums",
+        "name": "Zlověstné válečné bubny"
+      },
+      "band-of-iron-thorns": {
+        "englishName": "Band of Iron Thorns",
+        "name": "Obruč železných trnů"
+      },
+      "band-of-restraint": {
+        "englishName": "Band of Restraint",
+        "name": "Poutací obruč"
+      },
+      "bandana-of-brachiation": {
+        "englishName": "Bandana of Brachiation",
+        "name": "Šátek šplhání"
+      },
+      "bandana-of-bravado": {
+        "englishName": "Bandana of Bravado",
+        "name": "Šátek chvástavosti"
+      },
+      "banner-of-the-fortunate": {
+        "englishName": "Banner of the Fortunate",
+        "name": "Prapor šťastlivců"
+      },
+      "battle-standard-of-passage": {
+        "englishName": "Battle Standard of Passage",
+        "name": "Bitevní standarta průchodu"
+      },
+      "bead-of-exsanguination": {
+        "englishName": "Bead of Exsanguination",
+        "name": "Korálek vykrvácení"
+      },
+      "bear-paws": {
+        "englishName": "Bear Paws",
+        "name": "Medvědí tlapy"
+      },
+      "bed-of-spikes": {
+        "englishName": "Bed of Spikes",
+        "name": "Lože hrotů"
+      },
+      "belt-of-the-wilds": {
+        "englishName": "Belt of the Wilds",
+        "name": "Opasek divočiny"
+      },
+      "berserkers-kilt": {
+        "englishName": "Berserker's Kilt",
+        "name": "Berserkův kilt"
+      },
+      "big-dipper": {
+        "englishName": "Big Dipper",
+        "name": "Velká medová naběračka"
+      },
+      "binding-oath": {
+        "englishName": "Binding Oath",
+        "name": "Zavazující přísaha"
+      },
+      "bituminous-orb": {
+        "englishName": "Bituminous Orb",
+        "name": "Živičná koule"
+      },
+      "black-and-white-daggers": {
+        "englishName": "Black and White Daggers",
+        "name": "Černá a bílá dýka"
+      },
+      "black-dragon-oil": {
+        "englishName": "Black Dragon Oil",
+        "name": "Olej černého draka"
+      },
+      "black-phial": {
+        "englishName": "Black Phial",
+        "name": "Černá lahvička"
+      },
+      "blackguards-blade": {
+        "englishName": "Blackguard's Blade",
+        "name": "Čepel černého rytíře"
+      },
+      "blacktooth": {
+        "englishName": "Blacktooth",
+        "name": "Černozub"
+      },
+      "blade-of-petals": {
+        "englishName": "Blade of Petals",
+        "name": "Čepel okvětních lístků"
+      },
+      "blade-of-the-dervish": {
+        "englishName": "Blade of the Dervish",
+        "name": "Dervišova čepel"
+      },
+      "blade-of-the-temple-guardian": {
+        "englishName": "Blade of the Temple Guardian",
+        "name": "Čepel chrámového strážce"
+      },
+      "blasphemous-writ": {
+        "englishName": "Blasphemous Writ",
+        "name": "Rouhavý spis"
+      },
+      "blessed-paupers-purse": {
+        "englishName": "Blessed Pauper's Purse",
+        "name": "Požehnaný měšec chudáka"
+      },
+      "blinding-lantern": {
+        "englishName": "Blinding Lantern",
+        "name": "Oslepující lucerna"
+      },
+      "blood-mark": {
+        "englishName": "Blood Mark",
+        "name": "Krvavé znamení"
+      },
+      "blood-pearl": {
+        "englishName": "Blood Pearl",
+        "name": "Krvavá perla"
+      },
+      "blood-soaked-hide": {
+        "englishName": "Blood-Soaked Hide",
+        "name": "Krvavá kožešina"
+      },
+      "bloodbow": {
+        "englishName": "Bloodbow",
+        "name": "Krvavý luk"
+      },
+      "blooddrinker-spear": {
+        "englishName": "Blooddrinker Spear",
+        "name": "Kopí pijáka krve"
+      },
+      "bloodfuel-weapon": {
+        "englishName": "Bloodfuel Weapon",
+        "name": "Krvavá palivová zbraň"
+      },
+      "bloodlink-potion": {
+        "englishName": "Bloodlink Potion",
+        "name": "Lektvar krevního pouta"
+      },
+      "bloodpearl-bracelet": {
+        "englishName": "Bloodpearl Bracelet",
+        "name": "Náramek krvavých perel"
+      },
+      "bloodprice-armor": {
+        "englishName": "Bloodprice Armor",
+        "name": "Zbroj krvavé ceny"
+      },
+      "bloodthirsty-weapon": {
+        "englishName": "Bloodthirsty Weapon",
+        "name": "Krvežíznivá zbraň"
+      },
+      "bloodwhisper-cauldron": {
+        "englishName": "Bloodwhisper Cauldron",
+        "name": "Kotel krvavého šepotu"
+      },
+      "bludgeon-of-nightmares": {
+        "englishName": "Bludgeon of Nightmares",
+        "name": "Kyj nočních můr"
+      },
+      "blue-rose": {
+        "englishName": "Blue Rose",
+        "name": "Modrá růže"
+      },
+      "blue-willow-cloak": {
+        "englishName": "Blue Willow Cloak",
+        "name": "Plášť modré vrby"
+      },
+      "bone-whip": {
+        "englishName": "Bone Whip",
+        "name": "Kostěný bič"
+      },
+      "bonebreaker-mace": {
+        "englishName": "Bonebreaker Mace",
+        "name": "Palcát kostilam"
+      },
+      "book-of-ebon-tides": {
+        "englishName": "Book of Ebon Tides",
+        "name": "Kniha temných přílivů"
+      },
+      "book-of-eibon": {
+        "englishName": "Book of Eibon",
+        "name": "Kniha Eibona"
+      },
+      "book-shroud": {
+        "englishName": "Book Shroud",
+        "name": "Knižní rubáš"
+      },
+      "bookkeeper-inkpot": {
+        "englishName": "Bookkeeper Inkpot",
+        "name": "Kalamář účetního"
+      },
+      "bookmark-of-eldritch-insight": {
+        "englishName": "Bookmark of Eldritch Insight",
+        "name": "Záložka okultního poznání"
+      },
+      "boots-of-pouncing": {
+        "englishName": "Boots of Pouncing",
+        "name": "Boty výpadu"
+      },
+      "boots-of-quaking": {
+        "englishName": "Boots of Quaking",
+        "name": "Boty zemětřesení"
+      },
+      "boots-of-solid-footing": {
+        "englishName": "Boots of Solid Footing",
+        "name": "Boty pevného kroku"
+      },
+      "boots-of-the-grandmother": {
+        "englishName": "Boots of the Grandmother",
+        "name": "Babiččiny boty"
+      },
+      "boots-of-the-swift-striker": {
+        "englishName": "Boots of the Swift Striker",
+        "name": "Boty rychlého útočníka"
+      },
+      "bottled-boat": {
+        "englishName": "Bottled Boat",
+        "name": "Loď v lahvi"
+      },
+      "bountiful-cauldron": {
+        "englishName": "Bountiful Cauldron",
+        "name": "Štědrý kotlík"
+      },
+      "bow-of-accuracy": {
+        "englishName": "Bow of Accuracy",
+        "name": "Luk přesnosti"
+      },
+      "box-of-secrets": {
+        "englishName": "Box of Secrets",
+        "name": "Skříňka tajemství"
+      },
+      "bracelet-of-the-fire-tender": {
+        "englishName": "Bracelet of the Fire Tender",
+        "name": "Náramek strážce ohně"
+      },
+      "braid-whip-clasp": {
+        "englishName": "Braid Whip Clasp",
+        "name": "Spona na copový bič"
+      },
+      "brain-juice": {
+        "englishName": "Brain Juice",
+        "name": "Mozková šťáva"
+      },
+      "brass-clockwork-staff": {
+        "englishName": "Brass Clockwork Staff",
+        "name": "Mosazná mechanická hůl"
+      },
+      "brass-snake-ball": {
+        "englishName": "Brass Snake Ball",
+        "name": "Mosazná hadí koule"
+      },
+      "brawlers-leather": {
+        "englishName": "Brawler's Leather",
+        "name": "Kůže rváče"
+      },
+      "brawn-armor": {
+        "englishName": "Brawn Armor",
+        "name": "Zbroj medvědí síly"
+      },
+      "brazen-band": {
+        "englishName": "Brazen Band",
+        "name": "Mosazný prsten"
+      },
+      "brazen-bulwark": {
+        "englishName": "Brazen Bulwark",
+        "name": "Mosazný val"
+      },
+      "breaker-lance": {
+        "englishName": "Breaker Lance",
+        "name": "Průrazné kopí"
+      },
+      "breathing-reed": {
+        "englishName": "Breathing Reed",
+        "name": "Dýchací rákos"
+      },
+      "briarthorn-bracers": {
+        "englishName": "Briarthorn Bracers",
+        "name": "Trnité nátepníky"
+      },
+      "broken-fang-talisman": {
+        "englishName": "Broken Fang Talisman",
+        "name": "Talisman zlomeného tesáku"
+      },
+      "broom-of-sweeping": {
+        "englishName": "Broom of Sweeping",
+        "name": "Smetací koště"
+      },
+      "brotherhood-of-fezzes": {
+        "englishName": "Brotherhood of Fezzes",
+        "name": "Bratrstvo fezů"
+      },
+      "bubbling-retort": {
+        "englishName": "Bubbling Retort",
+        "name": "Bublající křivule"
+      },
+      "buckle-of-blasting": {
+        "englishName": "Buckle of Blasting",
+        "name": "Přezka výbuchu"
+      },
+      "bullseye-arrow": {
+        "englishName": "Bullseye Arrow",
+        "name": "Šíp do černého"
+      },
+      "burglars-lock-and-key": {
+        "englishName": "Burglar's Lock and Key",
+        "name": "Zlodějský zámek a klíč"
+      },
+      "burning-skull": {
+        "englishName": "Burning Skull",
+        "name": "Hořící lebka"
+      },
+      "butter-of-disbelief": {
+        "englishName": "Butter of Disbelief",
+        "name": "Máslo nevíry"
+      },
+      "buzzing-blade": {
+        "englishName": "Buzzing Blade",
+        "name": "Bzučící čepel"
+      },
+      "candied-axe": {
+        "englishName": "Candied Axe",
+        "name": "Medová sekera"
+      },
+      "candle-of-communion": {
+        "englishName": "Candle of Communion",
+        "name": "Svíce spojení"
+      },
+      "candle-of-summoning": {
+        "englishName": "Candle of Summoning",
+        "name": "Svíce vyvolání"
+      },
+      "candle-of-visions": {
+        "englishName": "Candle of Visions",
+        "name": "Svíce vidění"
+      },
+      "cap-of-thorns": {
+        "englishName": "Cap of Thorns",
+        "name": "Čepice z trní"
+      },
+      "cape-of-targeting": {
+        "englishName": "Cape of Targeting",
+        "name": "Plášť zaměřování"
+      },
+      "captains-flag": {
+        "englishName": "Captain's Flag",
+        "name": "Kapitánská vlajka"
+      },
+      "captains-goggles": {
+        "englishName": "Captain's Goggles",
+        "name": "Kapitánské brýle"
+      },
+      "case-of-preservation": {
+        "englishName": "Case of Preservation",
+        "name": "Schránka uchování"
+      },
+      "cataloguing-book": {
+        "englishName": "Cataloguing Book",
+        "name": "Katalogizační kniha"
+      },
+      "catalyst-oil": {
+        "englishName": "Catalyst Oil",
+        "name": "Katalytický olej"
+      },
+      "celestial-charter": {
+        "englishName": "Celestial Charter",
+        "name": "Nebeská smlouva"
+      },
+      "celestial-sextant": {
+        "englishName": "Celestial Sextant",
+        "name": "Nebeský sextant"
+      },
+      "censer-of-dark-shadows": {
+        "englishName": "Censer of Dark Shadows",
+        "name": "Kadidelnice temných stínů"
+      },
+      "centaur-wrist-wraps": {
+        "englishName": "Centaur Wrist-Wraps",
+        "name": "Kentauří nátepníky"
+      },
+      "cephalopod-breastplate": {
+        "englishName": "Cephalopod Breastplate",
+        "name": "Hlavonožčí kyrys"
+      },
+      "chainbreaker-blade": {
+        "englishName": "Chainbreaker Blade",
+        "name": "Čepel lamač řetězů"
+      },
+      "chalice-of-forbidden-ecstasies": {
+        "englishName": "Chalice of Forbidden Ecstasies",
+        "name": "Kalich zakázaných rozkoší"
+      },
+      "chalk-of-exodus": {
+        "englishName": "Chalk of Exodus",
+        "name": "Křída exodu"
+      },
+      "chamrosh-salve": {
+        "englishName": "Chamrosh Salve",
+        "name": "Mast z čamroše"
+      },
+      "charlatans-veneer": {
+        "englishName": "Charlatan's Veneer",
+        "name": "Šarlatánův šátek"
+      },
+      "charm-of-restoration": {
+        "englishName": "Charm of Restoration",
+        "name": "Talisman obnovy"
+      },
+      "chieftains-axe": {
+        "englishName": "Chieftain's Axe",
+        "name": "Náčelníkova sekera"
+      },
+      "chillblain-armor": {
+        "englishName": "Chillblain Armor",
+        "name": "Omrzlá zbroj"
+      },
+      "chronomancers-pocket-clock": {
+        "englishName": "Chronomancer's Pocket Clock",
+        "name": "Kapesní hodiny chronomanta"
+      },
+      "cinch-of-the-wolfmother": {
+        "englishName": "Cinch of the Wolfmother",
+        "name": "Opasek vlčí matky"
+      },
+      "circlet-of-holly": {
+        "englishName": "Circlet of Holly",
+        "name": "Cesmínový věneček"
+      },
+      "circlet-of-persuasion": {
+        "englishName": "Circlet of Persuasion",
+        "name": "Čelenka přesvědčování"
+      },
+      "clacking-teeth": {
+        "englishName": "Clacking Teeth",
+        "name": "Cvakačka zubů"
+      },
+      "clamor-bell": {
+        "englishName": "Clamor Bell",
+        "name": "Poplašný zvon"
+      },
+      "clarifying-goggles": {
+        "englishName": "Clarifying Goggles",
+        "name": "Brýle jasného vidění"
+      },
+      "cleaning-concoction": {
+        "englishName": "Cleaning Concoction",
+        "name": "Čisticí směs"
+      },
+      "cloak-of-coagulation": {
+        "englishName": "Cloak of Coagulation",
+        "name": "Plášť srážení krve"
+      },
+      "cloak-of-petals": {
+        "englishName": "Cloak of Petals",
+        "name": "Plášť okvětních lístků"
+      },
+      "cloak-of-sails": {
+        "englishName": "Cloak of Sails",
+        "name": "Plášť plachet"
+      },
+      "cloak-of-squirrels": {
+        "englishName": "Cloak of Squirrels",
+        "name": "Veverčí plášť"
+      },
+      "cloak-of-the-bearfolk": {
+        "englishName": "Cloak of the Bearfolk",
+        "name": "Plášť medvědího lidu"
+      },
+      "cloak-of-the-eel": {
+        "englishName": "Cloak of the Eel",
+        "name": "Úhoří plášť"
+      },
+      "cloak-of-the-empire": {
+        "englishName": "Cloak of the Empire",
+        "name": "Plášť říše"
+      },
+      "cloak-of-the-inconspicuous-rake": {
+        "englishName": "Cloak of the Inconspicuous Rake",
+        "name": "Plášť nenápadného světáka"
+      },
+      "cloak-of-the-ram": {
+        "englishName": "Cloak of the Ram",
+        "name": "Beraní plášť"
+      },
+      "cloak-of-the-rat": {
+        "englishName": "Cloak of the Rat",
+        "name": "Krysí plášť"
+      },
+      "cloak-of-wicked-wings": {
+        "englishName": "Cloak of Wicked Wings",
+        "name": "Plášť zlověstných křídel"
+      },
+      "clockwork-gauntlet": {
+        "englishName": "Clockwork Gauntlet",
+        "name": "Mechanická rukavice"
+      },
+      "clockwork-hand": {
+        "englishName": "Clockwork Hand",
+        "name": "Mechanická ruka"
+      },
+      "clockwork-hare": {
+        "englishName": "Clockwork Hare",
+        "name": "Mechanický zajíc"
+      },
+      "clockwork-mace-of-divinity": {
+        "englishName": "Clockwork Mace of Divinity",
+        "name": "Mechanický palcát božství"
+      },
+      "clockwork-mynah-bird": {
+        "englishName": "Clockwork Mynah Bird",
+        "name": "Mechanický loskuták"
+      },
+      "clockwork-pendant": {
+        "englishName": "Clockwork Pendant",
+        "name": "Mechanický přívěsek"
+      },
+      "clockwork-rogue-ring": {
+        "englishName": "Clockwork Rogue Ring",
+        "name": "Mechanický zlodějský prsten"
+      },
+      "clockwork-spider-cloak": {
+        "englishName": "Clockwork Spider Cloak",
+        "name": "Plášť mechanického pavouka"
+      },
+      "coffer-of-memory": {
+        "englishName": "Coffer of Memory",
+        "name": "Schránka paměti"
+      },
+      "collar-of-beast-armor": {
+        "englishName": "Collar of Beast Armor",
+        "name": "Obojek zvířecí zbroje"
+      },
+      "comfy-slippers": {
+        "englishName": "Comfy Slippers",
+        "name": "Pohodlné pantofle"
+      },
+      "commanders-helm": {
+        "englishName": "Commander's Helm",
+        "name": "Velitelská přilba"
+      },
+      "commanders-plate": {
+        "englishName": "Commander's Plate",
+        "name": "Velitelská plátová zbroj"
+      },
+      "commanders-visage": {
+        "englishName": "Commander's Visage",
+        "name": "Velitelova tvář"
+      },
+      "commoners-veneer": {
+        "englishName": "Commoner's Veneer",
+        "name": "Šátek prostého lidu"
+      },
+      "communal-flute": {
+        "englishName": "Communal Flute",
+        "name": "Flétna společenství"
+      },
+      "companions-broth": {
+        "englishName": "Companion's Broth",
+        "name": "Vývar pro společníka"
+      },
+      "constant-dagger": {
+        "englishName": "Constant Dagger",
+        "name": "Stálá dýka"
+      },
+      "consuming-rod": {
+        "englishName": "Consuming Rod",
+        "name": "Pohlcující hůl"
+      },
+      "coral-of-enchanted-colors": {
+        "englishName": "Coral of Enchanted Colors",
+        "name": "Korál očarovaných barev"
+      },
+      "cordial-of-understanding": {
+        "englishName": "Cordial of Understanding",
+        "name": "Srdečný nápoj porozumění"
+      },
+      "corpsehunters-medallion": {
+        "englishName": "Corpsehunter's Medallion",
+        "name": "Medailon lovce mrtvol"
+      },
+      "countermelody-crystals": {
+        "englishName": "Countermelody Crystals",
+        "name": "Krystaly protipísně"
+      },
+      "courtesans-allure": {
+        "englishName": "Courtesan's Allure",
+        "name": "Kurtizánino kouzlo"
+      },
+      "crab-gloves": {
+        "englishName": "Crab Gloves",
+        "name": "Krabí rukavice"
+      },
+      "cravens-heart": {
+        "englishName": "Craven's Heart",
+        "name": "Zbabělcovo srdce"
+      },
+      "crawling-cloak": {
+        "englishName": "Crawling Cloak",
+        "name": "Plazivý plášť"
+      },
+      "crimson-carpet": {
+        "englishName": "Crimson Carpet",
+        "name": "Karmínový koberec"
+      },
+      "crimson-starfall-arrow": {
+        "englishName": "Crimson Starfall Arrow",
+        "name": "Šíp karmínové padající hvězdy"
+      },
+      "crocodile-armor": {
+        "englishName": "Crocodile Armor",
+        "name": "Krokodýlí zbroj"
+      },
+      "crook-of-the-flock": {
+        "englishName": "Crook of the Flock",
+        "name": "Pastýřská berla"
+      },
+      "crown-of-the-pharaoh": {
+        "englishName": "Crown of the Pharaoh",
+        "name": "Faraonova koruna"
+      },
+      "crusaders-shield": {
+        "englishName": "Crusader's Shield",
+        "name": "Křižácký štít"
+      },
+      "crystal-staff": {
+        "englishName": "Crystal Staff",
+        "name": "Křišťálová hůl"
+      },
+      "dagger-of-the-barbed-devil": {
+        "englishName": "Dagger of the Barbed Devil",
+        "name": "Dýka ostnatého ďábla"
+      },
+      "dancing-caltrops": {
+        "englishName": "Dancing Caltrops",
+        "name": "Tančící kotvice"
+      },
+      "dancing-floret": {
+        "englishName": "Dancing Floret",
+        "name": "Tančící květinka"
+      },
+      "dancing-ink": {
+        "englishName": "Dancing Ink",
+        "name": "Tančící inkoust"
+      },
+      "dastardly-quill-and-parchment": {
+        "englishName": "Dastardly Quill and Parchment",
+        "name": "Špehovo brko a pergamen"
+      },
+      "dawn-shard": {
+        "englishName": "Dawn Shard",
+        "name": "Střep úsvitu"
+      },
+      "deadfall-arrow": {
+        "englishName": "Deadfall Arrow",
+        "name": "Šíp padající pasti"
+      },
+      "deaths-mirror": {
+        "englishName": "Death's Mirror",
+        "name": "Zrcadlo smrti"
+      },
+      "decoy-card": {
+        "englishName": "Decoy Card",
+        "name": "Návnadová karta"
+      },
+      "deepchill-orb": {
+        "englishName": "Deepchill Orb",
+        "name": "Koule hlubokého mrazu"
+      },
+      "deserters-boots": {
+        "englishName": "Deserter's Boots",
+        "name": "Boty zběha"
+      },
+      "devil-shark-mask": {
+        "englishName": "Devil Shark Mask",
+        "name": "Maska ďábelského žraloka"
+      },
+      "devilish-doubloon": {
+        "englishName": "Devilish Doubloon",
+        "name": "Ďábelský dublon"
+      },
+      "devils-barb": {
+        "englishName": "Devil's Barb",
+        "name": "Ďáblův osten"
+      },
+      "dimensional-net": {
+        "englishName": "Dimensional Net",
+        "name": "Dimenzionální síť"
+      },
+      "dirgeblade": {
+        "englishName": "Dirgeblade",
+        "name": "Smuteční čepel"
+      },
+      "dirk-of-daring": {
+        "englishName": "Dirk of Daring",
+        "name": "Dýka odvahy"
+      },
+      "distracting-doubloon": {
+        "englishName": "Distracting Doubloon",
+        "name": "Rozptylující dublon"
+      },
+      "djinn-vessel": {
+        "englishName": "Djinn Vessel",
+        "name": "Džinova nádoba"
+      },
+      "doppelganger-ointment": {
+        "englishName": "Doppelganger Ointment",
+        "name": "Mast dvojníka"
+      },
+      "dragonstooth-blade": {
+        "englishName": "Dragonstooth Blade",
+        "name": "Čepel dračího zubu"
+      },
+      "draught-of-ambrosia": {
+        "englishName": "Draught of Ambrosia",
+        "name": "Nápoj ambrózie"
+      },
+      "draught-of-the-black-owl": {
+        "englishName": "Draught of the Black Owl",
+        "name": "Nápoj černé sovy"
+      },
+      "dread-scarab": {
+        "englishName": "Dread Scarab",
+        "name": "Děsivý skarabeus"
+      },
+      "dust-of-desiccation": {
+        "englishName": "Dust of Desiccation",
+        "name": "Prach vysušení"
+      },
+      "dust-of-muffling": {
+        "englishName": "Dust of Muffling",
+        "name": "Prach utišení"
+      },
+      "dust-of-the-dead": {
+        "englishName": "Dust of the Dead",
+        "name": "Prach mrtvých"
+      },
+      "eagle-cape": {
+        "englishName": "Eagle Cape",
+        "name": "Orlí plášť"
+      },
+      "earrings-of-the-agent": {
+        "englishName": "Earrings of the Agent",
+        "name": "Náušnice agenta"
+      },
+      "earrings-of-the-eclipse": {
+        "englishName": "Earrings of the Eclipse",
+        "name": "Náušnice zatmění"
+      },
+      "earrings-of-the-storm-oyster": {
+        "englishName": "Earrings of the Storm Oyster",
+        "name": "Náušnice bouřkové ústřice"
+      },
+      "ebon-shards": {
+        "englishName": "Ebon Shards",
+        "name": "Ebenové střepy"
+      },
+      "efficacious-eyewash": {
+        "englishName": "Efficacious Eyewash",
+        "name": "Účinné oční kapky"
+      },
+      "eldritch-rod": {
+        "englishName": "Eldritch Rod",
+        "name": "Okultní hůl"
+      },
+      "elemental-wraps": {
+        "englishName": "Elemental Wraps",
+        "name": "Živelné oviny"
+      },
+      "elixir-of-corruption": {
+        "englishName": "Elixir of Corruption",
+        "name": "Elixír zkaženosti"
+      },
+      "elixir-of-deep-slumber": {
+        "englishName": "Elixir of Deep Slumber",
+        "name": "Elixír hlubokého spánku"
+      },
+      "elixir-of-focus": {
+        "englishName": "Elixir of Focus",
+        "name": "Elixír soustředění"
+      },
+      "elixir-of-mimicry": {
+        "englishName": "Elixir of Mimicry",
+        "name": "Elixír napodobení"
+      },
+      "elixir-of-oracular-delirium": {
+        "englishName": "Elixir of Oracular Delirium",
+        "name": "Elixír věšteckého blouznění"
+      },
+      "elixir-of-spike-skin": {
+        "englishName": "Elixir of Spike Skin",
+        "name": "Elixír ostnité kůže"
+      },
+      "elixir-of-the-clear-mind": {
+        "englishName": "Elixir of the Clear Mind",
+        "name": "Elixír jasné mysli"
+      },
+      "elixir-of-the-deep": {
+        "englishName": "Elixir of the Deep",
+        "name": "Elixír hlubin"
+      },
+      "elixir-of-wakefulness": {
+        "englishName": "Elixir of Wakefulness",
+        "name": "Elixír bdělosti"
+      },
+      "elk-horn-rod": {
+        "englishName": "Elk Horn Rod",
+        "name": "Hůl z losího parohu"
+      },
+      "encouraging-armor": {
+        "englishName": "Encouraging Armor",
+        "name": "Povzbuzující zbroj"
+      },
+      "enraging-ammunition": {
+        "englishName": "Enraging Ammunition",
+        "name": "Rozzuřená munice"
+      },
+      "ensnaring-ammunition": {
+        "englishName": "Ensnaring Ammunition",
+        "name": "Spoutávající munice"
+      },
+      "entrenching-mattock": {
+        "englishName": "Entrenching Mattock",
+        "name": "Zákopový krumpáč"
+      },
+      "everflowing-bowl": {
+        "englishName": "Everflowing Bowl",
+        "name": "Nevyčerpatelná mísa"
+      },
+      "exsanguinating-blade": {
+        "englishName": "Exsanguinating Blade",
+        "name": "Čepel vykrvácení"
+      },
+      "extract-of-dual-mindedness": {
+        "englishName": "Extract of Dual-Mindedness",
+        "name": "Extrakt dvojí mysli"
+      },
+      "eye-of-horus": {
+        "englishName": "Eye of Horus",
+        "name": "Horovo oko"
+      },
+      "eye-of-the-golden-god": {
+        "englishName": "Eye of the Golden God",
+        "name": "Oko zlatého boha"
+      }
+    }
+  }
+}
