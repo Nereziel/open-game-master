@@ -15,7 +15,7 @@ describe("published option presentation", () => {
     installLocalizedTables("fr", { names: FR_NAMES_BY_TABLE });
     installCatalog("cs", cs);
     installCatalog("fr", fr);
-    for (const kind of ["pact_boon", "metamagic"] as const) {
+    for (const kind of ["pact_boon", "metamagic", "maneuver"] as const) {
       for (const option of optionsOfKind(kind)) {
         const original = JSON.stringify(option);
         expect(optionDisplayName(option, "en")).toBe(option.n);
