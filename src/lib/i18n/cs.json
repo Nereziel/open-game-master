@@ -1,6 +1,6 @@
 {
   "messages": {
-    "Acquired {item}.": "Získaná výbava: {item}.",
+    "Acquired {item}.": "Získáno: {item}.",
     "Identified {item}.": "Identifikovaný předmět: {item}.",
     "{from} turned out to be {to}.": "Ukázalo se, že {from} je {to}.",
     "Learned the cantrip {spell}.": "Naučený trik: {spell}.",
