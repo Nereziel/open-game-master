@@ -22568,8 +22568,8 @@
       ],
       [
         "key",
-        1,
-        "a workshop class id's \"homebrew-\" prefix"
+        4,
+        "Homebrew class/list id prefix checks, including presentation fallback that preserves custom names."
       ]
     ],
     "lib/srd/legality/spells.ts#whole": [
@@ -22646,6 +22646,11 @@
         "identity",
         2,
         "spells by whole name; a subclass's added spells by whole name"
+      ],
+      [
+        "key",
+        2,
+        "Homebrew class/list id prefixes preserve custom names in display."
       ]
     ],
     "lib/srd/level-up-spells.ts#whole": [
@@ -23257,8 +23262,8 @@
     "lib/srd/sheet-legality.ts#whole": [
       [
         "identity",
-        1,
-        "feats and features by whole name"
+        2,
+        "feats, features and fighting style by whole name"
       ],
       [
         "key",
@@ -27611,9 +27616,9 @@
     ],
     "lib/battlemap/hand-core.ts#whole-single": [
       [
-        "key",
-        10,
-        "engine/card kind or id equality checks"
+        "pattern",
+        4,
+        "Exact engine refusal sentence comparisons for display; no rule or record selected."
       ]
     ],
     "lib/dm/damage-logic.ts#keyed": [
@@ -27712,25 +27717,18 @@
         "secret action request parsing"
       ]
     ],
-    "app/api/campaigns/[campaignId]/actions/route.ts#whole-single": [
-      [
-        "key",
-        6,
-        "action route kind/field comparisons"
-      ]
-    ],
     "app/api/campaigns/[campaignId]/actions/route.ts#partial": [
       [
         "parse",
-        7,
-        "action route payload/text parsing"
+        1,
+        "Fixed engine refusal suffix, extracted only to format the reader's message."
       ]
     ],
     "app/api/campaigns/[campaignId]/actions/route.ts#helper": [
       [
-        "search",
-        1,
-        "action route named lookup helper"
+        "pattern",
+        2,
+        "Reader-only refusal formatters; no mechanical name lookup."
       ]
     ],
     "app/api/campaigns/[campaignId]/encounter/end-turn/route.ts#partial": [
@@ -28446,6 +28444,34 @@
         "parse",
         2,
         "canonical dice parser diagnostic prefix and numeric-value format; no record lookup"
+      ]
+    ],
+    "lib/battlemap/hand-core.ts#helper": [
+      [
+        "pattern",
+        2,
+        "Reader-only spendActionReason maps known engine refusal text to localized messages; no record lookup."
+      ]
+    ],
+    "lib/dm/readied-release.ts#helper": [
+      [
+        "pattern",
+        1,
+        "Reader-only engineRefusalKey maps existing refusal without changing the verdict."
+      ]
+    ],
+    "app/api/campaigns/[campaignId]/battle-map/move/route.ts#helper": [
+      [
+        "pattern",
+        1,
+        "Reader-only engine refusal formatting; no record selection."
+      ]
+    ],
+    "app/api/campaigns/[campaignId]/sheet/usage/route.ts#helper": [
+      [
+        "pattern",
+        2,
+        "Reader-only held-turn/action refusal formatting; no record selection."
       ]
     ]
   }

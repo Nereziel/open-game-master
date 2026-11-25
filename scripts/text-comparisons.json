@@ -1779,7 +1779,7 @@
     "app/api/campaigns/[campaignId]/actions/route.ts#str-eq": [
       [
         "key",
-        3,
+        1,
         "the action body's kind, a fixed choice (table talk)"
       ]
     ],
@@ -6505,13 +6505,6 @@
         "english-source",
         1,
         "display: an English range shortened to \"ft\"; any other text is shown as written, nothing is inferred"
-      ]
-    ],
-    "lib/battlemap/hand-core.ts#str-eq": [
-      [
-        "english-source",
-        1,
-        "engine's fixed placeholder name \"the enemy\" in can-act turn verdict"
       ]
     ],
     "lib/battlemap/hand-core.ts#str-key": [
@@ -24825,13 +24818,6 @@
         "SRD ability gain text pattern"
       ]
     ],
-    "app/api/campaigns/[campaignId]/actions/route.ts#str-startsWith": [
-      [
-        "key",
-        1,
-        "action route prefix check"
-      ]
-    ],
     "app/campaigns/[campaignId]/AfterRollCard.tsx#str-case": [
       [
         "key",
@@ -25982,7 +25968,7 @@
     "lib/content/czech-names.test.ts#str-list": [
       [
         "key",
-        13,
+        15,
         "Published slug and expected EN/CS name fixtures."
       ]
     ],
@@ -26017,8 +26003,8 @@
     "lib/content/option-labels.test.ts#str-list": [
       [
         "key",
-        7,
-        "Fixed locale lists and exact Czech fighting style label fixture; includes the additional list introduced by fa05c96."
+        10,
+        "Fixed locale lists and exact localized option labels in regression fixtures."
       ]
     ],
     "lib/content/option-labels.test.ts#str-eq": [
@@ -26115,6 +26101,20 @@
         "english-source",
         1,
         "canonical numeric die validation diagnostic"
+      ]
+    ],
+    "lib/srd/level-up-spells.ts#str-startsWith": [
+      [
+        "key",
+        2,
+        "Homebrew class/list id prefixes preserve custom names in display."
+      ]
+    ],
+    "lib/srd/sheet-legality.ts#str-key": [
+      [
+        "key",
+        1,
+        "Six canonical ability ids mapped to gettext ability labels for reader presentation."
       ]
     ]
   }
