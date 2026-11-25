@@ -76,7 +76,42 @@ export default {
         await eventually(() => section.count(), { label: "the All feats section" });
         if ((await section.getAttribute("aria-expanded")) !== "true") await t.tap(section);
         const row = scope.locator("li button").filter({ hasText: name }).locator("visible=true").first();
-        await eventually(() => row.count(), { label: `${name} in the browsed list` });
+        try {
+          await eventually(() => row.count(), { label: `${name} in the browsed list` });
+        } catch (error) {
+          // Keep the original assertion; record the actual list and its
+          // source rows so a missing translation is distinguishable from
+          // a collapsed section, a failed fetch or a missing pack entry.
+          try {
+            console.error("held-feats browse UI", JSON.stringify({
+              locale: words.locale,
+              expanded: await section.getAttribute("aria-expanded"),
+              text: (await scope.innerText()).slice(0, 2000),
+            }));
+            const canonical = name === words.skulker ? "Skulker" : "Defensive Duelist";
+            const headers = { "X-Odm-Locale": words.locale };
+            for (const q of ["", query]) {
+              for (let offset = 0; offset < 1600; offset += 200) {
+                const params = new URLSearchParams({ q, offset: String(offset), limit: "200" });
+                const response = await api.get(`${base}/api/content/feats?${params}`, { headers });
+                if (!response.ok()) {
+                  console.error("held-feats browse HTTP", response.status());
+                  break;
+                }
+                const body = await response.json();
+                const rows = body.results ?? [];
+                console.error("held-feats browse page", JSON.stringify({
+                  q, offset, count: rows.length, packInstalled: body.packInstalled,
+                  matches: rows.filter((entry) => entry.name === canonical).map(({ name, slug, documentSlug, source }) => ({ name, slug, documentSlug, source })),
+                }));
+                if (rows.length < 200) break;
+              }
+            }
+          } catch (diagnosticError) {
+            console.error("held-feats browse diagnostic failed", String(diagnosticError));
+          }
+          throw error;
+        }
         return row;
       };
       // Off its card (where a feat never held is still refused), back from
