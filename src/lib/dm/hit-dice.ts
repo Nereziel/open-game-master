@@ -37,6 +37,7 @@ import type { ToolError } from "@/lib/dm/tool-errors";
 import { sanctuaryDieBonus } from "@/lib/dm/genie-vessel";
 import { WOUND_CLOSURE, wearsWorkingItem } from "@/lib/srd/magic-items";
 import { textKey } from "@/lib/language/text-logic";
+import { translate, type Locale } from "@/lib/messages-logic";
 
 // The day after a Potion of Vitality (src/lib/dm/consumables.ts): "For the
 // next 24 hours, you regain the maximum number of hit points for any Hit
@@ -83,6 +84,7 @@ export function spendHitDice(input: {
   chefDie?: string | null;
   reason: string;
   requestedBy: "dm" | "player";
+  locale?: Locale;
   // The player's own dice, one entry for each die of the roll (hitDiceRoll):
   // a face they rolled, or null for a die the server draws. Left out, the
   // server rolls them all.
@@ -93,22 +95,23 @@ export function spendHitDice(input: {
   mayWait?: boolean;
 }): HitDiceOutcome {
   const { campaign } = input;
+  const locale = input.locale ?? "en";
   const sheet = getSheetById(input.sheetId);
   if (!sheet) {
-    return { error: "Character not found.", retry: true };
+    return { error: translate(locale, "Character not found."), retry: true };
   }
   if (sheet.deathSaves?.dead) {
-    return { error: `${sheet.name} is dead and spends no hit dice.`, refused: "rules" };
+    return { error: translate(locale, "{name} is dead and spends no hit dice.", { name: sheet.name }), refused: "rules" };
   }
   if (sheet.currentHp <= 0) {
     return {
-      error: `${sheet.name} is unconscious at 0 hit points; hit dice cannot be spent until they are healed or stable and awake.`,
+      error: translate(locale, "{name} is unconscious at 0 hit points; hit dice cannot be spent until they are healed or stable and awake.", { name: sheet.name }),
       refused: "rules",
     };
   }
   const ask = hitDiceRoll(sheet, input.requested, input);
   if (!ask) {
-    return { error: `${sheet.name} has no hit dice left; they come back with a long rest.`, refused: "rules" };
+    return { error: translate(locale, "{name} has no hit dice left; they come back with a long rest.", { name: sheet.name }), refused: "rules" };
   }
   const { count, conMod, expression } = ask;
   // Inside a Genie's Sanctuary Vessel each die restores the warlock's
