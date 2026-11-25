@@ -275,4 +275,39 @@ test("level-up spell refusals localize without altering canonical choices or dec
   for (const locale of ["en", "cs", "fr"]) assert.deepEqual(levelUpSpells({ ...valid, locale }), expected);
   assert.deepEqual(before, snapshot);
 });
+
+const { revisedOnlySpellProblem } = await import("../src/lib/content/edition.ts");
+const { thirdCasterSchoolProblem, thirdCasterCantripProblem } = await import("../src/lib/srd/third-caster.ts");
+const { arcanumExtraProblem } = await import("../src/lib/srd/mystic-arcanum.ts");
+const { classSpellGrants, offListProblems } = await import("../src/lib/srd/class-spell-grants.ts");
+test("delegated spell refusals preserve the English contract and localize presentation", () => {
+  const schools = { classId: "fighter", subclass: "Eldritch Knight", level: 3, spells: [{ name: "Sleep", school: "enchantment" }, { name: "Charm Person", school: "enchantment" }] };
+  const cantrips = { classId: "rogue", subclass: "Arcane Trickster", level: 3, cantrips: ["Fire Bolt", "Light", "Ray of Frost"], cap: 3 };
+  const split = { arcanum: ["Circle of Death"], extra: ["Eyebite"] };
+  const levelOf = () => 6;
+  const off = { grants: classSpellGrants({ classId: "bard", level: 10 }), allowedBefore: 2, kept: 2, strays: [{ name: "Fireball", cantrip: false }], list: "bard", label: "bard of level 10" };
+  const snapshot = structuredClone({ schools, cantrips, split, off });
+  const refusals = [
+    [locale => revisedOnlySpellProblem("Sorcerous Burst", "cantrip", locale), "Sorcerous Burst is from the 2024 rules, which this server does not play; pick a 2014 cantrip in its place."],
+    [locale => revisedOnlySpellProblem("Summon Dragon", "spell", locale), "Summon Dragon is from the 2024 rules, which this server does not play; pick a 2014 spell in its place."],
+    [locale => thirdCasterSchoolProblem({ ...schools, locale }), "An Eldritch Knight of level 3 learns abjuration and evocation spells, and 1 from any other school; this would make 2. Pick an abjuration or evocation spell instead."],
+    [locale => thirdCasterCantripProblem({ ...cantrips, locale }), "An Arcane Trickster knows Mage Hand as one of its cantrips; take Mage Hand in place of one of the others."],
+    [locale => arcanumExtraProblem(split, levelOf, "warlock", locale), "Mystic Arcanum teaches one spell of level 6: Circle of Death is already that arcanum, so Eyebite cannot be learned too."],
+    [locale => offListProblems({ ...off, locale })[0], "Fireball is not on the bard spell list, so a bard of level 10 cannot learn or prepare it: through Magical Secrets a bard of level 10 holds 2 spells from other classes' lists, and this would make 3."],
+  ];
+  for (const [run, english] of refusals) {
+    assert.equal(run(undefined), english);
+    const results = ["en", "cs", "fr"].map(run);
+    assert.equal(new Set(results).size, 3);
+    assert.ok(results.every(value => typeof value === "string" && !/\{\w+\}/.test(value)));
+  }
+  for (const locale of ["en", "cs", "fr"]) {
+    assert.equal(revisedOnlySpellProblem("Fireball", "spell", locale), null);
+    assert.equal(thirdCasterSchoolProblem({ ...schools, spells: schools.spells.slice(0, 1), locale }), null);
+    assert.equal(thirdCasterCantripProblem({ ...cantrips, cantrips: ["Mage Hand", "Light", "Fire Bolt"], locale }), null);
+    assert.equal(arcanumExtraProblem({ ...split, extra: [] }, levelOf, "warlock", locale), null);
+    assert.deepEqual(offListProblems({ ...off, kept: 1, locale }), []);
+  }
+  assert.deepEqual({ schools, cantrips, split, off }, snapshot);
+});
 console.log(`test-spell-prep: ${passed} tests passed.`);

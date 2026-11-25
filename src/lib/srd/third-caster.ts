@@ -12,6 +12,8 @@
 // pack's copies of the two) cast by theirs.
 
 import { textKey } from "@/lib/language/text-logic";
+import { translate, type Locale } from "@/lib/i18n/translate";
+import { gameTermWord } from "@/lib/i18n/game-term-labels";
 
 export type ThirdCasterProfile = "eldritch-knight" | "arcane-trickster" | "soulspy" | "underfoot";
 // What a sheet or a workshop subclass may store: a profile, or
@@ -226,6 +228,7 @@ export function thirdCasterCantripProblem(input: {
   level: number;
   cantrips: string[];
   cap: number | null;
+  locale?: Locale;
 }): string | null {
   const needed = thirdCasterRequiredCantrip(input.classId, input.subclass, input.profile, input.level);
   if (!needed || input.cap === null || input.cantrips.some((name) => textKey(name) === textKey(needed))) {
@@ -236,7 +239,7 @@ export function thirdCasterCantripProblem(input: {
   }
   const profile = thirdCasterProfileOf(input.classId, input.subclass, input.profile);
   const who = profile ? PROFILES[profile].who : "This caster";
-  return `${who} knows ${needed} as one of its cantrips; take ${needed} in place of one of the others.`;
+  return translate(input.locale ?? "en", "{who} knows {needed} as one of its cantrips; take {needed} in place of one of the others.", { who: translate(input.locale ?? "en", who), needed });
 }
 
 // The two schools each third caster learns its levelled spells from; any
@@ -293,6 +296,7 @@ export function thirdCasterSchoolProblem(input: {
   level: number;
   spells: Array<{ name: string; school: unknown }>;
   heldOutside?: number;
+  locale?: Locale;
 }): string | null {
   const profile = thirdCasterProfileOf(input.classId, input.subclass, input.profile);
   if (!profile) {
@@ -305,5 +309,6 @@ export function thirdCasterSchoolProblem(input: {
     return null;
   }
   const any = thirdCasterAnySchoolPicks(input.level);
-  return `${who} of level ${input.level} learns ${schools[0]} and ${schools[1]} spells, and ${any} from any other school; this would make ${outside}. Pick an ${schools[0]} or ${schools[1]} spell instead.`;
+  const locale = input.locale ?? "en";
+  return translate(locale, "{who} of level {level} learns {first} and {second} spells, and {any} from any other school; this would make {outside}. Pick an {first} or {second} spell instead.", { who: translate(locale, who), level: input.level, first: gameTermWord("spellSchool", schools[0], locale), second: gameTermWord("spellSchool", schools[1], locale), any, outside });
 }

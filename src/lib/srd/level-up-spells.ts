@@ -39,7 +39,7 @@ import { contentName } from "@/lib/content/names";
 
 // A name no list carries: a 2024-only spell says so, anything else is unknown.
 function unknownSpell(name: string, list: string, locale: Locale): string {
-  return revisedOnlySpellProblem(name) ?? translate(locale, "{name} is not a spell this server knows; pick one from the {list} spell list.", { name, list });
+  return revisedOnlySpellProblem(name, "spell", locale) ?? translate(locale, "{name} is not a spell this server knows; pick one from the {list} spell list.", { name, list });
 }
 
 const has = (list: string[], name: string) => list.some((entry) => textKey(entry) === textKey(name));
@@ -281,8 +281,9 @@ export function levelUpSpells(input: SpellLevelUp): SpellLevelUpResult {
       allowedBefore: classSpellGrants({ ...before, features: after.features }).anyList,
       kept,
       strays,
-      list: listName,
-      label: `${className} of level ${input.level}`,
+      list: displayList,
+      label,
+      locale,
     });
     if (refusal) {
       return { error: refusal };
@@ -302,6 +303,7 @@ export function levelUpSpells(input: SpellLevelUp): SpellLevelUpResult {
       profile: after.progression,
       level: input.level,
       spells: levelled(after.known.length ? after.known : after.prepared),
+      locale,
       heldOutside: thirdCasterOutside(
         before.classId,
         levelled(before.known.length ? before.known : before.prepared),
@@ -319,7 +321,7 @@ export function levelUpSpells(input: SpellLevelUp): SpellLevelUpResult {
   const levelOf = (name: string) => input.spellOf(name)?.level ?? null;
   const arcanaAfter = arcanumSplit(after, after.known.length ? after.known : after.prepared, levelOf);
   const arcanaBefore = arcanumSplit(before, before.known.length ? before.known : before.prepared, levelOf);
-  const extraArcanum = arcanumExtraProblem(arcanaAfter, levelOf, after.classId);
+  const extraArcanum = arcanumExtraProblem(arcanaAfter, levelOf, after.classId, locale);
   if (extraArcanum && arcanaAfter.extra.some((name) => !has(arcanaBefore.extra, name))) {
     return { error: extraArcanum };
   }
@@ -347,6 +349,7 @@ export function levelUpSpells(input: SpellLevelUp): SpellLevelUpResult {
         // A race's cantrips sit on top of the class's, so the list is full at
         // the class's count plus theirs.
         cantrips,
+        locale,
         cap: cantripCap === null ? null : cantripCap + input.freeCantrips,
       })
     : null;
