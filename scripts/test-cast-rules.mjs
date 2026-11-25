@@ -476,4 +476,43 @@ test("casting refusals use the reader's locale and preserve the rules and identi
   assert.equal(castRefusalDisplay(custom + " Unrecognized tail.", t, iris.name), custom + " Unrecognized tail.");
 });
 
+
+test("delegated cast refusals translate complete producer templates without changing their payload", () => {
+  const vars = {"name":"Iris (A+B)","spell":"Custom [A+B]","condition":"stunned","source":"Custom Grant","limit":"on yourself","feature":"Custom Drone","owner":"Other (A+B)","time":"1 minute","ring":"Ring [A+B]","level":"6","free":"1","total":"5","range":"30","x":"4","y":"8","distance":"40"};
+  const templates = [
+    "{spell} is from the 2024 rules, which this server does not play; pick a 2014 spell in its place. Nothing was spent.",
+    "{name} is dead and cannot spend a spell slot.",
+    "{name} is at 0 HP and cannot spend a spell slot.",
+    "{name} is {condition} and cannot spend a spell slot until the condition ends.",
+    "{spell} brings its creatures in with their stat blocks: cast it with cast_buff, the creature in variant (and count for fewer). Nothing was spent.",
+    "{name} casts {spell} through {source} only {limit}; this casting is not, and no spell slot of theirs casts it. Nothing was spent.",
+    "{spell} has a material component: {name}'s focus is their drone ({feature}), and no drone of theirs stands (Drone Companion builds them out of a fight; a component pouch serves too). Nothing was spent.",
+    "{name} stands inside Antimagic Field, where no spell can be cast. Step out of it first. Nothing was spent.",
+    "{name} stands inside {owner}'s Antimagic Field, where no spell can be cast. Step out of it first. Nothing was spent.",
+    "{spell} came to {name} through Marginalia, which casts it as a ritual only: cast it with ritual true (ten minutes longer, no slot). Nothing was spent.",
+    "{spell} takes {time} to cast. In a fight it is begun with use_spell_slot: the server holds the casting across {name}'s turns (their action on each, their concentration throughout) and spends the slot when it is complete, and then this tool resolves its effect. Nothing was spent.",
+    "{name} used Arcane Deflection and casts only cantrips until the end of their next turn, so {spell} is not cast. Nothing was spent.",
+    "No Ring of Spell Storing named \"{ring}\" is there to hold {spell}. Nothing was spent.",
+    "{ring} stores spells of 1st through 5th level, not level {level}. Nothing was spent.",
+    "{ring} has {free} of {total} levels free, and {spell} at level {level} does not fit. Nothing was spent.",
+    "{spell} is laid within {range} feet of {name}, and ({x},{y}) is {distance} feet away. Name a square within range. Nothing was spent.",
+    "A wall stands between {name} and ({x},{y}): {spell} needs a clear path to where it is laid. Name a square {name} can see. Nothing was spent.",
+    "Slow holds {spell} back (the d20 came up 11 or higher): the slot and this turn's action are spent and the spell does not take effect yet. On {name}'s next turn, cast it again with its tool to complete it: that spends their action and no slot. If they do not, the spell is wasted. Do not resolve it now.",
+    "{spell} is cast as a reaction: use_reaction with feature \"{spell}\" when its trigger happens; the server checks the trigger and applies it. Nothing was spent."
+  ];
+  for (const key of templates) {
+    const raw = translate("en", key, vars);
+    for (const locale of ["en", "cs", "fr"]) {
+      const t = (message, values) => translate(locale, message, values);
+      const result = castRefusalDisplay(raw, t, vars.name);
+      assert.equal(result, t(key, { ...vars, condition: t(vars.condition) }), key);
+      assert.equal(result === raw, locale === "en", key);
+      assert.doesNotMatch(result, /\\{\\w+\\}/);
+      assert.equal(castRefusalDisplay(raw + " Unknown suffix.", t, vars.name), raw + " Unknown suffix.");
+    }
+  }
+  const raw = translate("en", templates[3], vars);
+  assert.equal(castRefusalDisplay(raw, (key, values) => translate("cs", key, values), "Different actor"), raw);
+});
+
 console.log(`test-cast-rules: ${passed} passed`);
