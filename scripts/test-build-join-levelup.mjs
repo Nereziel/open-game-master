@@ -219,4 +219,36 @@ await test("A level 1 fighter seated at a level 5 table takes the subclass it mi
   world.close();
 });
 
+await test("The ready-made hero preview and actual join refuse the same invalid subclass pick in each reader language.", async () => {
+  const table = await openCreation();
+  const { world, campaignId, player } = table;
+  world.signIn(player);
+  const previewRoute = await world.route("campaigns/[campaignId]/sheet/preview");
+  const pregenRoute = await world.route("campaigns/[campaignId]/sheet/pregen");
+  const { translate } = await import("../src/lib/messages-logic.ts");
+  const picks = { subclasses: { wizard: "School of Evocation" } };
+  const original = JSON.stringify(picks);
+  const errors = [];
+  for (const locale of ["en", "cs", "fr"]) {
+    const post = async (route, body) => {
+      const response = await route.POST(new Request("http://test/", { method: "POST", headers: { "content-type": "application/json", "x-odm-locale": locale }, body: JSON.stringify(body) }), { params: Promise.resolve({ campaignId }) });
+      return { status: response.status, json: await response.json() };
+    };
+    const { status, json } = await post(previewRoute, { pregenId: "kara", picks });
+    assert.equal(status, 200);
+    assert.equal(json.preview.ok, false);
+    const expected = translate(locale, "{name} has no {className} levels to choose a subclass for.", { name: json.preview.name, className: "Wizard" });
+    assert.deepEqual(json.preview.problems, [expected]);
+    const joined = await post(pregenRoute, { id: "kara", picks });
+    assert.equal(joined.status, 400);
+    assert.deepEqual(joined.json.problems, json.preview.problems);
+    assert.equal(joined.json.error, expected);
+    assert.equal(table.sheets.getSheetForUser(campaignId, player.id), null);
+    errors.push(expected);
+  }
+  assert.equal(new Set(errors).size, 3);
+  assert.equal(JSON.stringify(picks), original);
+  world.close();
+});
+
 finish();

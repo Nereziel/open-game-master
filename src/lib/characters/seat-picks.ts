@@ -47,7 +47,7 @@ import { subclassOwed } from "@/lib/srd/owed-choices";
 import { applySubclassTraining, grantsForHeldTraining, subclassGrants } from "@/lib/srd/subclass-training";
 import type { SubclassExtras } from "@/lib/srd/subclass-tables";
 import { textKey } from "@/lib/language/text-logic";
-import type { Locale } from "@/lib/messages-logic";
+import { translate, type Locale } from "@/lib/messages-logic";
 
 // What the confirm sheet sends beside the hero. Every field may be left
 // out: what is not picked stays owed.
@@ -207,6 +207,7 @@ export function applySeatPicks(
   picks: SeatPicks,
   context: SeatPicksContext,
 ): PicksApplied {
+  const t = (key: string, vars: Record<string, string | number>) => translate(context.locale ?? "en", key, vars);
   const problems: string[] = [];
   const name = seated.name;
   const before = classesOf(seated, level);
@@ -218,19 +219,19 @@ export function applySeatPicks(
     const entry = classes.find((held) => textKey(held.id) === textKey(classId));
     const className = context.classOf(classId)?.name ?? findClass(classId)?.name ?? classId;
     if (!entry) {
-      problems.push(`${name} has no ${className} levels to choose a subclass for.`);
+      problems.push(t("{name} has no {className} levels to choose a subclass for.", { name, className }));
       continue;
     }
     if (!subclassOwed(entry, entry.level)) {
       problems.push(
         entry.subclass
-          ? `${name} is a ${entry.subclass}; a subclass is chosen once and later levels build on it.`
-          : `A ${className} chooses a subclass at ${className} level ${subclassLevelFor(entry.id)}; ${name} plays ${className} ${entry.level} here.`,
+          ? t("{name} is a {subclass}; a subclass is chosen once and later levels build on it.", { name, subclass: entry.subclass })
+          : t("A {className} chooses a subclass at {className} level {required}; {name} plays {className} {level} here.", { className, required: subclassLevelFor(entry.id), name, level: entry.level }),
       );
       continue;
     }
     if (!context.subclassOffered(entry.id, wanted)) {
-      problems.push(`${wanted} is not a subclass of the ${className}; pick one from that class's list.`);
+      problems.push(t("{subclass} is not a subclass of the {className}; pick one from that class's list.", { subclass: wanted, className }));
       continue;
     }
     entry.subclass = bundledSubclassName(entry.id, wanted) ?? wanted;
@@ -289,12 +290,12 @@ export function applySeatPicks(
         continue;
       }
       if (feats.some((feat) => textKey(feat) === textKey(choice.feat))) {
-        problems.push(`${name} already has ${choice.feat}; a feat is taken once.`);
+        problems.push(t("{name} already has {feat}; a feat is taken once.", { name, feat: choice.feat }));
         continue;
       }
       const facts = context.featOf(choice.feat);
       if (!facts) {
-        problems.push(`"${choice.feat}" is not a feat this table offers; pick one from the feat list.`);
+        problems.push(t("\"{feat}\" is not a feat this table offers; pick one from the feat list.", { feat: choice.feat }));
         continue;
       }
       const unmet = unmetPrerequisite(facts.prerequisite, {
@@ -309,7 +310,7 @@ export function applySeatPicks(
         level,
       });
       if (unmet) {
-        problems.push(`${facts.name} requires ${unmet}, which ${name} does not have.`);
+        problems.push(t("{feat} requires {prerequisite}, which {name} does not have.", { feat: facts.name, prerequisite: unmet, name }));
         continue;
       }
       const raised = applyFeatIncrease(abilities, facts.name, choice.ability ?? null, facts.desc);

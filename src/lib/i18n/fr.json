@@ -1,5 +1,14 @@
 {
   "messages": {
+    "{name} has no {className} levels to choose a subclass for.": "{name} n’a aucun niveau de {className} pour lequel choisir un archétype.",
+    "{name} is a {subclass}; a subclass is chosen once and later levels build on it.": "{name} a choisi l’archétype {subclass} ; un archétype se choisit une fois et les niveaux suivants s’appuient sur lui.",
+    "A {className} chooses a subclass at {className} level {required}; {name} plays {className} {level} here.": "L’archétype de {className} se choisit au niveau {required} de cette classe ; {name} joue ici au niveau {level} de {className}.",
+    "{subclass} is not a subclass of the {className}; pick one from that class's list.": "{subclass} n’est pas un archétype de {className} ; choisis-en un dans la liste de cette classe.",
+    "{name} already has {feat}; a feat is taken once.": "{name} possède déjà {feat} ; un don ne se choisit qu’une fois.",
+    "\"{feat}\" is not a feat this table offers; pick one from the feat list.": "« {feat} » n’est pas un don proposé à cette table ; choisis-en un dans la liste des dons.",
+    "{feat} requires {prerequisite}, which {name} does not have.": "Le don {feat} exige {prerequisite}, une condition que {name} ne remplit pas.",
+    "{name} holds levels in more than one class, and this table turns multiclassing off. Bring a character with one class, or build one here.": "{name} possède des niveaux dans plusieurs classes et cette table désactive le multiclassement. Amène un personnage d’une seule classe ou crée-en un ici.",
+    "{name} cannot enter play as stored. {problem} Edit the character in your library, then try again.": "{name} ne peut pas entrer en jeu tel quel. {problem} Modifie le personnage dans ta bibliothèque, puis réessaie.",
     "{feat}'s spells come from the {lists} list; \"{list}\" is not one of them.": "Les sorts du don {feat} proviennent des listes de {lists} ; « {list} » n'en fait pas partie.",
     "\"{spell}\" is not a spell the server knows; {feat}'s {kind} is picked from the spell list.": "« {spell} » n'est pas un sort connu du serveur ; le {kind} du don {feat} se choisit dans la liste de sorts.",
     "{spell} is a {actual}; {feat}'s {kind} is {expected}.": "{spell} : {actual} ; pour le choix ({kind}), le don {feat} exige {expected}.",

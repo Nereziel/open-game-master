@@ -1,5 +1,14 @@
 {
   "messages": {
+    "{name} has no {className} levels to choose a subclass for.": "{name} nemá žádnou úroveň povolání {className}, pro které by mohl zvolit archetyp.",
+    "{name} is a {subclass}; a subclass is chosen once and later levels build on it.": "{name} má archetyp {subclass}; archetyp se volí jednou a další úrovně na něj navazují.",
+    "A {className} chooses a subclass at {className} level {required}; {name} plays {className} {level} here.": "Archetyp povolání {className} se volí na {required}. úrovni tohoto povolání; {name} zde má povolání {className} na {level}. úrovni.",
+    "{subclass} is not a subclass of the {className}; pick one from that class's list.": "{subclass} není archetyp povolání {className}; vyber jeden ze seznamu tohoto povolání.",
+    "{name} already has {feat}; a feat is taken once.": "{name} už má odbornost {feat}; odbornost lze zvolit jen jednou.",
+    "\"{feat}\" is not a feat this table offers; pick one from the feat list.": "„{feat}“ není odbornost, kterou tento stůl nabízí; vyber jednu ze seznamu odborností.",
+    "{feat} requires {prerequisite}, which {name} does not have.": "Odbornost {feat} má předpoklad {prerequisite}, který {name} nesplňuje.",
+    "{name} holds levels in more than one class, and this table turns multiclassing off. Bring a character with one class, or build one here.": "{name} má úrovně ve více povoláních a tento stůl zakazuje kombinování povolání. Přiveď postavu s jedním povoláním nebo ji vytvoř zde.",
+    "{name} cannot enter play as stored. {problem} Edit the character in your library, then try again.": "{name} nemůže vstoupit do hry v uložené podobě. {problem} Uprav postavu ve své knihovně a zkus to znovu.",
     "{feat}'s spells come from the {lists} list; \"{list}\" is not one of them.": "Kouzla odbornosti {feat} pocházejí ze seznamu povolání {lists}; „{list}“ mezi ně nepatří.",
     "\"{spell}\" is not a spell the server knows; {feat}'s {kind} is picked from the spell list.": "„{spell}“ není kouzlo, které server zná; {kind} odbornosti {feat} se vybírá ze seznamu kouzel.",
     "{spell} is a {actual}; {feat}'s {kind} is {expected}.": "{spell}: {actual}; odbornost {feat} vyžaduje pro volbu ({kind}) {expected}.",

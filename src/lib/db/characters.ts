@@ -464,6 +464,7 @@ export function admitLibraryCharacter(
     adapted.classes,
     campaign?.gameSettings?.multiclassingEnabled !== false,
     held,
+    locale,
   );
   if (split) {
     return { ok: false, error: split, problems: [split] };
@@ -479,7 +480,7 @@ export function admitLibraryCharacter(
   if (!admitted.ok) {
     return {
       ok: false,
-      error: `${character.name} cannot enter play as stored. ${admitted.problems[0]} Edit the character in your library, then try again.`,
+      error: translate(locale, "{name} cannot enter play as stored. {problem} Edit the character in your library, then try again.", { name: character.name, problem: admitted.problems[0] }),
       problems: admitted.problems,
     };
   }

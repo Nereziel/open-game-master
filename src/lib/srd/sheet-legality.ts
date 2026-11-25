@@ -87,6 +87,7 @@ import {
   type Legalized,
 } from "@/lib/srd/legality/types";
 import { textKey } from "@/lib/language/text-logic";
+import { translate, type Locale } from "@/lib/messages-logic";
 import { featChoice } from "@/lib/schemas/sheet";
 
 export type { LegalityContext, Legalized } from "@/lib/srd/legality/types";
@@ -190,6 +191,7 @@ export function multiclassEntryProblem(
   classes: ReadonlyArray<{ id: string }> | null | undefined,
   multiclassAllowed: boolean,
   held: ReadonlyArray<{ id: string }> = [],
+  locale: Locale = "en",
 ): string | null {
   const list = classes ?? [];
   if (multiclassAllowed || list.length < 2) {
@@ -199,7 +201,7 @@ export function multiclassEntryProblem(
   if (list.every((entry) => seat.has(textKey(entry.id)))) {
     return null;
   }
-  return `${name} holds levels in more than one class, and this table turns multiclassing off. Bring a character with one class, or build one here.`;
+  return translate(locale, "{name} holds levels in more than one class, and this table turns multiclassing off. Bring a character with one class, or build one here.", { name });
 }
 
 function subclassesOf(
