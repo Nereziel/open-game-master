@@ -224,7 +224,8 @@ test("every bundled magic item category and recorded rarity has Czech display te
     // mundane weapon or armor that would override it in the card.
     const en = buildItemSheet("Example magic item", [row.data], { locale: "en" });
     const cs = buildItemSheet("Example magic item", [row.data], { locale: "cs" });
-    if (en.type) assert.notEqual(cs.type, en.type, row.name + ": type");
+    assert.ok(cs.type, row.name + ": type must be visible");
+    assert.notEqual(cs.type, en.type ?? row.data.type, row.name + ": type");
     if (en.rarity) assert.notEqual(cs.rarity, en.rarity, row.name + ": rarity");
   }
 });
