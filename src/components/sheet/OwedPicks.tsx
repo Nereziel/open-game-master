@@ -10,6 +10,7 @@ import { fightingStyleFeatureName } from "@/lib/srd/feature-effects";
 import { optionCost, optionFeatureName, remainingWords, slotTakes, type OptionSlot } from "@/lib/srd/options";
 import { owedChoiceGroups, owedChoicesSentences } from "@/lib/srd/owed-choices";
 import { owedPickSlots } from "@/lib/srd/owed-picks-logic";
+import { LANGUAGES_TO_CHOOSE } from "@/lib/srd/owed-languages";
 import { subclassChoicePickName, subclassChoiceSummary } from "@/lib/content/subclass-choices";
 import { hostOffers, useCapabilities } from "@/lib/use-capabilities";
 import { textKey } from "@/lib/language/text-logic";
@@ -261,7 +262,7 @@ function LanguagePicker({ sheet, grant }: { sheet: CharacterSheet; grant: string
   return (
     <div className="flex flex-wrap items-center gap-2 text-xs">
       <label htmlFor={selectId} className="text-stone-300">
-        {t("{grant}: a language they speak", { grant })}
+        {t("{grant}: a language they speak", { grant: grant === LANGUAGES_TO_CHOOSE ? t("Languages to choose") : grant })}
       </label>
       <select
         id={selectId}
@@ -273,7 +274,7 @@ function LanguagePicker({ sheet, grant }: { sheet: CharacterSheet; grant: string
         <option value="">{t("Choose a language")}</option>
         {options.map((entry) => (
           <option key={entry} value={entry}>
-            {entry}
+            {t(entry, { context: "character.language" })}
           </option>
         ))}
       </select>
@@ -285,7 +286,7 @@ function LanguagePicker({ sheet, grant }: { sheet: CharacterSheet; grant: string
           className="motion-press inline-flex min-h-[40px] items-center gap-1.5 rounded-lg border border-amber-500/60 bg-amber-500/15 px-3 text-amber-100 hover:bg-amber-500/25 focus-visible:outline focus-visible:outline-2 focus-visible:outline-amber-400 sm:min-h-[32px]"
         >
           {busy ? <Loader2 className="size-3 animate-spin" aria-hidden /> : <Check className="size-3" aria-hidden />}
-          {t("Keep {names}", { names: language })}
+          {t("Keep {names}", { names: t(language, { context: "character.language" }) })}
         </button>
       ) : null}
       {refusal ? (
