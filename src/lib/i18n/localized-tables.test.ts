@@ -183,7 +183,7 @@ describe("History, audit and equipment reader language", () => {
       expect(characterEventDisplay(samples[6], locale)).toContain("a promise to her sister.");
       expect(characterEventDisplay(samples[2], locale)).toContain("Custom Spell");
     }
-    expect(characterEventDisplay(samples[0], "cs")).toBe("Získaná výbava: Custom Lantern x2.");
+    expect(characterEventDisplay(samples[0], "cs")).toBe("Získáno: Custom Lantern x2.");
     expect(characterEventDisplay(samples[1], "cs")).toContain("2 zl 5 st");
     expect(JSON.stringify(samples)).toBe(before);
   });
