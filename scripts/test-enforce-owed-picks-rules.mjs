@@ -144,6 +144,31 @@ await test("Shared training refusals follow the reader locale without changing t
   assert.deepEqual(input, before);
 });
 
+await test("Missing feat choices retain counts, order and canonical picks in EN, CS and FR.", async () => {
+  const { featPicksOwed, featOwed, featGrantSpec, applyFeatGrants } = await import("../src/lib/srd/feat-grants.ts");
+  const { featSpellsOwed } = await import("../src/lib/srd/feat-spells.ts");
+  const base = featGrantSpec("");
+  const spec = { ...base, languages: 1, skills: 2, expertise: 1, any: 5, anyKinds: ["skills", "tools"], damageTypes: ["fire"] };
+  const picks = {};
+  const before = structuredClone({ spec, picks });
+  assert.equal(featPicksOwed("Custom", spec, picks), "Custom: pick 1 language, 2 skills, expertise in 1 skill, 5 skills or tools, a damage type.");
+  assert.equal(featPicksOwed("Custom", spec, picks, "cs"), "Custom: vyber 1 jazyk, 2 dovednosti, kvalifikaci v 1 dovednosti, 5 dovedností nebo nástrojů, typ zranění.");
+  assert.equal(featPicksOwed("Custom", spec, picks, "fr"), "Custom : choisis 1 langue, 2 compétences, l’expertise dans 1 compétence, 5 compétences ou outils, un type de dégâts.");
+  const spellSpec = { ...base.taught, cantrips: 2, attackCantrip: true, spells: 1, spellLevel: 1, schools: ["divination", "enchantment"], ritualBook: true, listChoice: true, ability: "choice" };
+  assert.equal(featSpellsOwed("Custom", spellSpec, picks), "Custom: pick a class list, a spellcasting ability, 2 attack cantrips, 1 1st-level divination or enchantment ritual spell.");
+  assert.equal(featSpellsOwed("Custom", spellSpec, picks, "cs"), "Custom: vyber seznam kouzel povolání, sesílací vlastnost, 2 útočné triky, 1 rituální kouzlo 1. stupně (Věštění nebo Očarování).");
+  assert.equal(featSpellsOwed("Custom", spellSpec, picks, "fr"), "Custom : choisis une liste de classe, une caractéristique d’incantation, 2 sorts mineurs d’attaque, 1 sort rituel de niveau 1 (Divination ou Enchantement).");
+  const complete = { cantrips: ["A", "B"], spells: ["C"], list: "wizard", ability: "int" };
+  for (const locale of ["en", "cs", "fr"]) {
+    assert.equal(featSpellsOwed("Custom", spellSpec, complete, locale), null);
+    assert.equal(featOwed("Custom", { ...base, taught: spellSpec }, picks, locale), featSpellsOwed("Custom", spellSpec, picks, locale));
+    const applied = applyFeatGrants({ proficiencies: PROF, feats: [{ name: "Custom", desc: "", spec }], choices: {}, strict: true, locale });
+    assert.equal(applied.problems[0], featPicksOwed("Custom", spec, picks, locale));
+    assert.deepEqual(applied.proficiencies, PROF);
+  }
+  assert.deepEqual({ spec, picks }, before);
+});
+
 // ---- fighting styles ----
 
 await test("A paladin's saved Archery stays through a level-up; a new Archery at the level-up is refused.", async () => {

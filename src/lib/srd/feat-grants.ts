@@ -19,7 +19,7 @@ import { featSpellsOwed, type CastingAbility } from "@/lib/srd/feat-spells";
 import { featGrantSpec, featGrantsAnything, lowerText as lower, type FeatGrantSpec, type PickKind } from "@/lib/srd/feat-grant-text";
 import { SRD_WEAPONS } from "@/lib/srd/weapons";
 import { featChoice } from "@/lib/schemas/sheet";
-import { translate, type Locale, type MessageVars } from "@/lib/messages-logic";
+import { translate, translatePlural, type Locale, type MessageVars } from "@/lib/messages-logic";
 
 export { featGrantSpec, featGrantsAnything, KNOWN_TOOLS, type FeatGrantSpec, type PickKind } from "@/lib/srd/feat-grant-text";
 
@@ -45,7 +45,10 @@ export type FeatPicks = {
 export type FeatChoices = Record<string, FeatPicks>;
 
 const SINGULAR: Record<PickKind, string> = { skills: "skill", languages: "language", tools: "tool", weapons: "weapon", armor: "armor" };
-const plural = (n: number, word: string) => `${n} ${word}${n === 1 || word === "armor" ? "" : "s"}`;
+const pickKindWord = (locale: Locale, kind: PickKind, count: number) =>
+  translatePlural(locale, SINGULAR[kind], kind === "armor" ? "armor" : kind, { count });
+const countedPick = (locale: Locale, kind: PickKind, count: number) =>
+  `${count} ${pickKindWord(locale, kind, count)}`;
 const named = (list: string[] | undefined) => (list ?? []).filter((entry) => entry && entry.trim());
 const dedicated = (spec: FeatGrantSpec, kind: PickKind) => (kind === "armor" ? 0 : spec[kind]);
 
@@ -65,39 +68,39 @@ export function pickSlots(spec: FeatGrantSpec, picks: FeatPicks | undefined, kin
 }
 
 // What the feat still waits for, as the sentence the gate shows, or null.
-export function featPicksOwed(feat: string, spec: FeatGrantSpec, picks: FeatPicks | undefined): string | null {
+export function featPicksOwed(feat: string, spec: FeatGrantSpec, picks: FeatPicks | undefined, locale: Locale = "en"): string | null {
   const has = (list: string[] | undefined) => named(list).length;
   const owed: string[] = [];
   if (spec.languages > has(picks?.languages)) {
-    owed.push(plural(spec.languages - has(picks?.languages), "language"));
+    owed.push(countedPick(locale, "languages", spec.languages - has(picks?.languages)));
   }
   if (spec.skills > has(picks?.skills)) {
-    owed.push(plural(spec.skills - has(picks?.skills), "skill"));
+    owed.push(countedPick(locale, "skills", spec.skills - has(picks?.skills)));
   }
   if (spec.expertise > has(picks?.expertise)) {
-    owed.push(`expertise in ${plural(spec.expertise - has(picks?.expertise), "skill")}`);
+    owed.push(translatePlural(locale, "expertise in {count} skill", "expertise in {count} skills", { count: spec.expertise - has(picks?.expertise) }));
   }
   if (spec.weapons > has(picks?.weapons)) {
-    owed.push(plural(spec.weapons - has(picks?.weapons), "weapon"));
+    owed.push(countedPick(locale, "weapons", spec.weapons - has(picks?.weapons)));
   }
   if (spec.tools > has(picks?.tools)) {
-    owed.push(plural(spec.tools - has(picks?.tools), "tool"));
+    owed.push(countedPick(locale, "tools", spec.tools - has(picks?.tools)));
   }
   const shared = spec.any - anyPicksMade(spec, picks);
   if (shared > 0) {
-    const kinds = spec.anyKinds.map((kind) => (shared === 1 ? SINGULAR[kind] : kind === "armor" ? "armor" : kind));
-    owed.push(`${shared} ${kinds.join(" or ")}`);
+    const kinds = spec.anyKinds.map((kind) => pickKindWord(locale, kind, shared));
+    owed.push(`${shared} ${kinds.join(translate(locale, " or "))}`);
   }
   if (spec.damageTypes.length && !(picks?.damageType ?? "").trim()) {
-    owed.push("a damage type");
+    owed.push(translate(locale, "a damage type"));
   }
-  return owed.length ? `${feat}: pick ${owed.join(", ")}.` : null;
+  return owed.length ? translate(locale, "{feat}: pick {choices}.", { feat, choices: owed.join(", ") }) : null;
 }
 
 // Everything a feat still waits for, training and spells alike: the one
 // sentence the builder's gate and the level-up dialog show.
-export function featOwed(feat: string, spec: FeatGrantSpec, picks: FeatPicks | undefined): string | null {
-  return featPicksOwed(feat, spec, picks) ?? featSpellsOwed(feat, spec.taught, picks);
+export function featOwed(feat: string, spec: FeatGrantSpec, picks: FeatPicks | undefined, locale: Locale = "en"): string | null {
+  return featPicksOwed(feat, spec, picks, locale) ?? featSpellsOwed(feat, spec.taught, picks, locale);
 }
 
 export type FeatGrantInput = {
@@ -177,7 +180,7 @@ export function applyFeatGrants(input: FeatGrantInput): FeatGrantVerdict {
       }
     }
     if (input.strict) {
-      const owed = featPicksOwed(feat.name, spec, picks);
+      const owed = featPicksOwed(feat.name, spec, picks, input.locale);
       if (owed) {
         (input.picksMayWait ? owedPicks : problems).push(owed);
       }

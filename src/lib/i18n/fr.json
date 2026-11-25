@@ -1,5 +1,14 @@
 {
   "messages": {
+    "{feat}: pick {choices}.": "{feat} : choisis {choices}.",
+    "a damage type": "un type de dégâts",
+    "a class list": "une liste de classe",
+    "a spellcasting ability": "une caractéristique d’incantation",
+    "{schools} ": " ({schools})",
+    "{level}st": "{level}",
+    "{level}nd": "{level}",
+    "{level}rd": "{level}",
+    "{level}th": "{level}",
     "\"{value}\" is not a damage type {feat} offers; pick one of {choices}.": "« {value} » n’est pas un type de dégâts proposé par {feat} ; choisis parmi {choices}.",
     "\"{skill}\" is not a skill; {feat}'s skill is picked from the skill list.": "« {skill} » n’est pas une compétence ; choisis celle de {feat} dans la liste des compétences.",
     "{skill} is not a skill {feat} offers; pick from {choices}.": "{skill} n’est pas une compétence proposée par {feat} ; choisis parmi {choices}.",
@@ -13519,6 +13528,42 @@
     }
   },
   "plurals": {
+    "language\u0000languages": [
+      "langue",
+      "langues"
+    ],
+    "weapon\u0000weapons": [
+      "arme",
+      "armes"
+    ],
+    "tool\u0000tools": [
+      "outil",
+      "outils"
+    ],
+    "armor\u0000armor": [
+      "armure",
+      "armures"
+    ],
+    "expertise in {count} skill\u0000expertise in {count} skills": [
+      "l’expertise dans {count} compétence",
+      "l’expertise dans {count} compétences"
+    ],
+    "{count} cantrip\u0000{count} cantrips": [
+      "{count} sort mineur",
+      "{count} sorts mineurs"
+    ],
+    "{count} attack cantrip\u0000{count} attack cantrips": [
+      "{count} sort mineur d’attaque",
+      "{count} sorts mineurs d’attaque"
+    ],
+    "{count} {level}-level {schools}spell\u0000{count} {level}-level {schools}spells": [
+      "{count} sort de niveau {level}{schools}",
+      "{count} sorts de niveau {level}{schools}"
+    ],
+    "{count} {level}-level {schools}ritual spell\u0000{count} {level}-level {schools}ritual spells": [
+      "{count} sort rituel de niveau {level}{schools}",
+      "{count} sorts rituels de niveau {level}{schools}"
+    ],
     "Putting on {item} takes {count} minute.\u0000Putting on {item} takes {count} minutes.": ["Mettre {item} prend {count} minute.","Mettre {item} prend {count} minutes."],
     "Taking off {item} takes {count} minute.\u0000Taking off {item} takes {count} minutes.": ["Retirer {item} prend {count} minute.","Retirer {item} prend {count} minutes."],
     "Taking off {item} with help takes {count} minute.\u0000Taking off {item} with help takes {count} minutes.": ["Retirer {item} avec de l’aide prend {count} minute.","Retirer {item} avec de l’aide prend {count} minutes."],

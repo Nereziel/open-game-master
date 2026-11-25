@@ -1,5 +1,14 @@
 {
   "messages": {
+    "{feat}: pick {choices}.": "{feat}: vyber {choices}.",
+    "a damage type": "typ zranění",
+    "a class list": "seznam kouzel povolání",
+    "a spellcasting ability": "sesílací vlastnost",
+    "{schools} ": " ({schools})",
+    "{level}st": "{level}",
+    "{level}nd": "{level}",
+    "{level}rd": "{level}",
+    "{level}th": "{level}",
     "\"{value}\" is not a damage type {feat} offers; pick one of {choices}.": "„{value}“ není typ zranění nabízený volbou {feat}. Vyber z: {choices}.",
     "\"{skill}\" is not a skill; {feat}'s skill is picked from the skill list.": "„{skill}“ není dovednost. Dovednost pro {feat} vyber ze seznamu dovedností.",
     "{skill} is not a skill {feat} offers; pick from {choices}.": "Dovednost {skill} není pro {feat} dostupná. Vyber z: {choices}.",
@@ -15399,6 +15408,51 @@
     }
   },
   "plurals": {
+    "language\u0000languages": [
+      "jazyk",
+      "jazyky",
+      "jazyků"
+    ],
+    "weapon\u0000weapons": [
+      "zbraň",
+      "zbraně",
+      "zbraní"
+    ],
+    "tool\u0000tools": [
+      "nástroj",
+      "nástroje",
+      "nástrojů"
+    ],
+    "armor\u0000armor": [
+      "zbroj",
+      "zbroje",
+      "zbrojí"
+    ],
+    "expertise in {count} skill\u0000expertise in {count} skills": [
+      "kvalifikaci v {count} dovednosti",
+      "kvalifikaci v {count} dovednostech",
+      "kvalifikaci v {count} dovednostech"
+    ],
+    "{count} cantrip\u0000{count} cantrips": [
+      "{count} trik",
+      "{count} triky",
+      "{count} triků"
+    ],
+    "{count} attack cantrip\u0000{count} attack cantrips": [
+      "{count} útočný trik",
+      "{count} útočné triky",
+      "{count} útočných triků"
+    ],
+    "{count} {level}-level {schools}spell\u0000{count} {level}-level {schools}spells": [
+      "{count} kouzlo {level}. stupně{schools}",
+      "{count} kouzla {level}. stupně{schools}",
+      "{count} kouzel {level}. stupně{schools}"
+    ],
+    "{count} {level}-level {schools}ritual spell\u0000{count} {level}-level {schools}ritual spells": [
+      "{count} rituální kouzlo {level}. stupně{schools}",
+      "{count} rituální kouzla {level}. stupně{schools}",
+      "{count} rituálních kouzel {level}. stupně{schools}"
+    ],
     "Putting on {item} takes {count} minute.\u0000Putting on {item} takes {count} minutes.": ["Nasazení předmětu {item} trvá {count} minutu.","Nasazení předmětu {item} trvá {count} minuty.","Nasazení předmětu {item} trvá {count} minut."],
     "Taking off {item} takes {count} minute.\u0000Taking off {item} takes {count} minutes.": ["Sejmutí předmětu {item} trvá {count} minutu.","Sejmutí předmětu {item} trvá {count} minuty.","Sejmutí předmětu {item} trvá {count} minut."],
     "Taking off {item} with help takes {count} minute.\u0000Taking off {item} with help takes {count} minutes.": ["Sejmutí předmětu {item} s pomocí trvá {count} minutu.","Sejmutí předmětu {item} s pomocí trvá {count} minuty.","Sejmutí předmětu {item} s pomocí trvá {count} minut."],

@@ -19,6 +19,7 @@ import type { Ability } from "@/lib/schemas/sheet";
 import { textKey } from "@/lib/language/text-logic";
 import { authoredFeatDesc, tableFeat } from "@/lib/srd/feat-effects";
 import { featChoice } from "@/lib/schemas/sheet";
+import { translate, translatePlural, type Locale } from "@/lib/messages-logic";
 
 // The scores a spell is cast with.
 export type CastingAbility = "int" | "wis" | "cha";
@@ -243,31 +244,39 @@ export function featSpellSpec(desc: string): FeatSpellSpec {
   return spec;
 }
 
-const plural = (n: number, word: string) => `${n} ${word}${n === 1 ? "" : "s"}`;
 const ordinal = (level: number) => (level === 1 ? "1st" : level === 2 ? "2nd" : level === 3 ? "3rd" : `${level}th`);
 
 // What the player has yet to name for the feat's spells, as the sentence
 // the gate shows, or null.
-export function featSpellsOwed(feat: string, spec: FeatSpellSpec, picks: FeatSpellPicks | undefined): string | null {
+export function featSpellsOwed(feat: string, spec: FeatSpellSpec, picks: FeatSpellPicks | undefined, locale: Locale = "en"): string | null {
   if (!featSpellsAnything(spec)) {
     return null;
   }
   const has = (list: string[] | undefined) => (list ?? []).filter((entry) => entry && entry.trim()).length;
   const owed: string[] = [];
   if (spec.listChoice && !(picks?.list ?? "").trim()) {
-    owed.push("a class list");
+    owed.push(translate(locale, "a class list"));
   }
   if (spec.ability === "choice" && !picks?.ability) {
-    owed.push("a spellcasting ability");
+    owed.push(translate(locale, "a spellcasting ability"));
   }
   if (spec.cantrips > has(picks?.cantrips)) {
-    owed.push(plural(spec.cantrips - has(picks?.cantrips), spec.attackCantrip ? "attack cantrip" : "cantrip"));
+    const count = spec.cantrips - has(picks?.cantrips);
+    owed.push(spec.attackCantrip
+      ? translatePlural(locale, "{count} attack cantrip", "{count} attack cantrips", { count })
+      : translatePlural(locale, "{count} cantrip", "{count} cantrips", { count }));
   }
   if (spec.spells > has(picks?.spells)) {
-    const kind = spec.schools.length ? `${spec.schools.join(" or ")} ` : "";
-    owed.push(plural(spec.spells - has(picks?.spells), `${ordinal(spec.spellLevel)}-level ${kind}${spec.ritualBook ? "ritual " : ""}spell`));
+    const count = spec.spells - has(picks?.spells);
+    const level = translate(locale, spec.spellLevel === 1 ? "{level}st" : spec.spellLevel === 2 ? "{level}nd" : spec.spellLevel === 3 ? "{level}rd" : "{level}th", { level: spec.spellLevel });
+    const schools = spec.schools.length ? translate(locale, "{schools} ", {
+      schools: spec.schools.map((school) => translate(locale, school, { context: "glossary.option" })).join(translate(locale, " or ")),
+    }) : "";
+    owed.push(spec.ritualBook
+      ? translatePlural(locale, "{count} {level}-level {schools}ritual spell", "{count} {level}-level {schools}ritual spells", { count, level, schools })
+      : translatePlural(locale, "{count} {level}-level {schools}spell", "{count} {level}-level {schools}spells", { count, level, schools }));
   }
-  return owed.length ? `${feat}: pick ${owed.join(", ")}.` : null;
+  return owed.length ? translate(locale, "{feat}: pick {choices}.", { feat, choices: owed.join(", ") }) : null;
 }
 
 // A spell the legality judge can see: its level, class lists, school and
@@ -304,6 +313,7 @@ export type FeatSpellInput = {
   // With strict: a pick left open is owed (in `owed`), not wrong; what is
   // named is still checked (a file from before the feat asked, #430).
   picksMayWait?: boolean;
+  locale?: Locale;
 };
 
 export type FeatSpellVerdict = { grants: FeatSpellGrant[]; problems: string[]; owed?: string[] };
@@ -320,7 +330,7 @@ export function featSpellGrants(input: FeatSpellInput): FeatSpellVerdict {
     }
     const picks = featChoice(input.choices, feat.name) ?? {};
     if (input.strict) {
-      const owed = featSpellsOwed(feat.name, spec, picks);
+      const owed = featSpellsOwed(feat.name, spec, picks, input.locale);
       if (owed) {
         (input.picksMayWait ? owedPicks : problems).push(owed);
       }
