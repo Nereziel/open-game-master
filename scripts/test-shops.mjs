@@ -320,6 +320,28 @@ test("the Market receives structured refusal notices without changing model erro
   assert.equal(JSON.stringify({ sheet: getSheetById(marla.id), shop: getShop(shop.id) }), before);
 });
 
+test("market lookup and argument refusals preserve the model response and state", () => {
+  const before = JSON.stringify({ sheet: getSheetById(marla.id), shop: getShop(shop.id) });
+  for (const handler of [handleBuyItem, handleSellItem, handleHaggle]) {
+    const valid = { characterId: marla.id, shop: shop.id, item: "Longsword" };
+    for (const [args, key] of [
+      [{}, "Say what you are doing at the counter."],
+      [{ ...valid, characterId: "missing-character-925" }, "Character not found."],
+      [{ ...valid, shop: "missing-shop-925" }, "No such shop."],
+    ]) {
+      const raw = JSON.stringify(args);
+      const model = handler(campaign, raw);
+      const market = handler(campaign, raw, { atCounter: true });
+      assert.ok(model.error, JSON.stringify(model));
+      assert.equal(model.notice, undefined);
+      assert.equal(market.notice?.key, key, JSON.stringify(market));
+      const { notice, ...unchanged } = market;
+      assert.deepEqual(unchanged, model);
+    }
+  }
+  assert.equal(JSON.stringify({ sheet: getSheetById(marla.id), shop: getShop(shop.id) }), before);
+});
+
 test("selling pays half list for a known item and restocks the shelf", () => {
   // priceCp is the fallback for a runner without the content pack; with the pack the list price wins.
   const result = handleSellItem(campaign, JSON.stringify({ characterId: marla.id, shop: shop.id, item: "Longsword", priceCp: 750 }));
