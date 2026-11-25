@@ -3,7 +3,7 @@
 import { useEffect, useId, useRef, useState } from "react";
 import { GameIcon } from "@/components/ui/GameIcon";
 import { cn } from "@/lib/cn";
-import { contentName } from "@/lib/content/names";
+import { itemDisplayName } from "@/lib/content/item-display";
 import { useLocale, useT } from "@/lib/locale";
 import { SheetGearRows, type PendingWear } from "@/components/sheet/SheetGearRow";
 import { DOLL_PLACES, dollPlaceOf, dollTileLabel, dollTileLine, dollTileNames, dollView, type DollPlaceId, type DollTile } from "@/components/sheet/paperdoll-logic";
@@ -55,7 +55,7 @@ export function SheetPaperdoll({
 }) {
   const t = useT();
   const locale = useLocale();
-  const itemLabel = (name: string) => contentName("items", name, locale);
+  const itemLabel = (name: string) => itemDisplayName(sheet.equipment.find((item) => item.name === name) ?? { name }, locale, false);
   const view = dollView(sheet.equipment, armor);
   const [picked, setPicked] = useState<DollPlaceId | null>(null);
   // The swap question is asked on a row, so the place it sits in opens for
