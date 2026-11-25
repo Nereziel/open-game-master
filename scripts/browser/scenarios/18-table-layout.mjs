@@ -478,11 +478,11 @@ export default {
       // transitions and the projected status update). Keep the same spatial
       // assertion, but measure after motion and allow the layout to settle.
       await untilStill(page);
-      const chronicle = page.locator(`${root}.cine-fight > .cine-chronicle`);
+      const liveChronicleNode = page.locator(`${root}.cine-fight > .cine-chronicle`);
       let geometry;
       try {
         await eventually(async () => {
-          const [statusBox, liveChronicle] = await Promise.all([boxOf(status), boxOf(chronicle)]);
+          const [statusBox, liveChronicle] = await Promise.all([boxOf(status), boxOf(liveChronicleNode)]);
           geometry = { statusBox, liveChronicle };
           return statusBox && liveChronicle && Math.abs(statusBox.x - liveChronicle.x) < 2 && statusBox.y + statusBox.height <= liveChronicle.y + 1;
         }, { label: "native DM activity is pinned above Chronicle" });
