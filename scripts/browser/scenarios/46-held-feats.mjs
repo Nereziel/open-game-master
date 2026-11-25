@@ -37,6 +37,8 @@ export default {
         await eventually(() => button.isVisible(), { label: "the Czech language setting" });
         await t.tap(button);
         await eventually(() => page.evaluate(() => document.documentElement.lang === "cs-CZ"), { label: "Czech catalog loaded" });
+        check(await page.evaluate(() => localStorage.getItem("odm.locale") === "cs"), "the Czech choice is stored");
+        check((await page.context().cookies()).some((cookie) => cookie.name === "odm_locale" && cookie.value === "cs"), "the Czech choice is in the server cookie");
       }
       await exercise(words);
     }
@@ -44,6 +46,7 @@ export default {
     async function exercise(words) {
       await t.open(`/characters/${ids.heldFeats}`);
       if (words.locale === "cs") {
+        check(await page.evaluate(() => localStorage.getItem("odm.locale") === "cs"), "the character page retains the Czech choice");
         await eventually(() => page.evaluate(() => document.documentElement.lang === "cs-CZ"), { label: "the character editor retains Czech" });
       }
       await t.tap(await eventually(async () => {

@@ -25,6 +25,10 @@ const ServerLocaleContext = createContext<Locale>("en");
 // installed (fr-catalog.ts), so nothing waits there.
 function CatalogGate({ locale, children }: { locale: Locale; children: ReactNode }) {
   use(loadCatalog(locale));
+  // LocaleApplier can run outside this Suspense boundary while the catalog
+  // is still loading. Reapply after the gate commits so a full navigation
+  // cannot leave <html lang> in English when the translated tree is ready.
+  useEffect(() => { applyLocale(); }, [locale]);
   return <>{children}</>;
 }
 
