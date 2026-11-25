@@ -1,5 +1,9 @@
 {
   "messages": {
+    "Wearing two of a kind at once is the GM's exception to make: the GM or the party lead can let {name} wear both.": "Nošení dvou předmětů stejného druhu současně je výjimka, kterou může povolit PJ nebo vůdce družiny postavě {name}.",
+    "{who} already wears {items}, and a character wears {kind} at a time: take it off first, or the GM may allow both.": "Postava {who} již nosí {items}. Současně může nosit jen {kind}: nejprve předmět sundej, nebo požádej PJ o výjimku.",
+    "{who} already wears {items}, and a character wears {kind} at a time: take them off first, or the GM may allow both.": "Postava {who} již nosí {items}. Současně může nosit jen {kind}: nejprve tyto předměty sundej, nebo požádej PJ o výjimku.",
+    "one of those": "jeden takový předmět",
     "Invalid adjustment.": "Neplatná úprava.",
     "Ask the GM or the party lead if the count needs correcting.": "Pokud je potřeba počet opravit, požádej PJ nebo vůdce družiny.",
     "{name} is dead and spends nothing. {lead}": "Postava {name} je mrtvá a nemůže nic utratit. {lead}",

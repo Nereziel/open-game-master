@@ -169,7 +169,7 @@ export async function POST(
     if (sheet.deathSaves?.dead && (changes.armor.length || changes.shields.length || changes.attunement.length)) {
       return refuse(t("{name} is dead and cannot change what they wear or are attuned to.", { name: sheet.name }));
     }
-    const attuneProblem = attunementRefusal(sheet, parsed.data.gear);
+    const attuneProblem = attunementRefusal(sheet, parsed.data.gear, t);
     if (attuneProblem) {
       return refuse(attuneProblem);
     }
@@ -180,7 +180,7 @@ export async function POST(
     const worn = gearPatch(sheet, parsed.data.gear, {
       corrects,
       armor: { armorName: armor.armorName, shieldName: armor.shieldName },
-    });
+    }, t);
     if ("error" in worn) {
       return Response.json(
         { error: worn.error, ...("conflict" in worn ? { wearConflict: worn.conflict } : {}) },

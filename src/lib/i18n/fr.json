@@ -1,5 +1,9 @@
 {
   "messages": {
+    "Wearing two of a kind at once is the GM's exception to make: the GM or the party lead can let {name} wear both.": "Porter deux objets du même type à la fois est une exception que le MJ ou le chef du groupe peut accorder à {name}.",
+    "{who} already wears {items}, and a character wears {kind} at a time: take it off first, or the GM may allow both.": "{who} porte déjà {items}, et un personnage ne peut porter que {kind} à la fois : retirez d’abord l’objet, ou demandez une exception au MJ.",
+    "{who} already wears {items}, and a character wears {kind} at a time: take them off first, or the GM may allow both.": "{who} porte déjà {items}, et un personnage ne peut porter que {kind} à la fois : retirez d’abord ces objets, ou demandez une exception au MJ.",
+    "one of those": "un objet de ce type",
     "Invalid adjustment.": "Modification invalide.",
     "Ask the GM or the party lead if the count needs correcting.": "Si le compteur doit être corrigé, demandez au MJ ou au chef du groupe.",
     "{name} is dead and spends nothing. {lead}": "{name} est mort et ne peut rien dépenser. {lead}",

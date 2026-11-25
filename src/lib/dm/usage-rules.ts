@@ -186,11 +186,12 @@ export function gearPatch(
   sheet: Pick<CharacterSheet, "name" | "equipment">,
   gear: NonNullable<UsageAsk["gear"]>,
   options: { corrects: boolean; armor: { armorName: string | null; shieldName: string | null } },
+  t: (key: string, vars?: MessageVars) => string = formatMessage,
 ): GearPatch {
   if (!options.corrects && Object.values(gear).some((entry) => entry.layered)) {
     return {
       status: 403,
-      error: `Wearing two of a kind at once is the GM's exception to make: the GM or the party lead can let ${sheet.name} wear both.`,
+      error: t("Wearing two of a kind at once is the GM's exception to make: the GM or the party lead can let {name} wear both.", { name: sheet.name }),
     };
   }
   const wasExplicit = wearingIsExplicit(sheet.equipment);
@@ -229,7 +230,7 @@ export function gearPatch(
   const before = stillWorn ? sheet.equipment.map((item) => ({ ...item, equipped: stillWorn.has(item) })) : sheet.equipment;
   const conflict = firstWearConflict(before, equipment);
   if (conflict) {
-    return { status: 409, error: wearConflictText(conflict, sheet.name), conflict };
+    return { status: 409, error: wearConflictText(conflict, sheet.name, t), conflict };
   }
   return { equipment };
 }
