@@ -84,7 +84,7 @@ export function LeadEditDialog({
   const [conditions, setConditions] = useState(sheet.conditions.join(", "));
   const [items, setItems] = useState<ItemRow[]>(() => itemRowsOf(sheet.equipment));
   const itemReferences = useLeadItemReferences(campaignId, items.map((row) => row.base), t.locale);
-  const displayItem = (row: ItemRow) => leadItemName({ ...row.base, name: row.name }, t.locale, row.base.slug ? itemReferences?.get(row.base.slug) : undefined);
+  const displayItem = (row: ItemRow) => leadItemName({ ...row.base, name: row.name }, t.locale, itemReferences && row.base.slug ? itemReferences.get(row.base.slug) : undefined);
   const [prepared, setPrepared] = useState<string[]>(sheet.spellcasting?.prepared ?? []);
   const [known, setKnown] = useState<string[]>(sheet.spellcasting?.known ?? []);
   const [cantrips, setCantrips] = useState<string[]>(sheet.spellcasting?.cantrips ?? []);

@@ -47,7 +47,7 @@ export function useLeadItemReferences(campaignId: string, items: readonly Equipm
         });
         if (!response.ok) return null;
         const { entry } = (await response.json()) as { entry?: NamedRow };
-        return entry?.slug === slug ? [slug, entry] : null;
+        return entry?.slug && entry.slug === slug ? [slug, entry] : null;
       } catch {
         return null;
       }

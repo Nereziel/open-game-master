@@ -15,7 +15,7 @@ export function needsLeadItemReference(item: EquipmentItem): boolean {
 // The draft remains canonical. A matching detail response supplies only
 // display metadata, never a replacement for the item's stored identity.
 export function leadItemName(item: EquipmentItem, locale: Locale, reference?: NamedRow): string {
-  if (reference && reference.slug === item.slug && reference.name === rowName(item) &&
+  if (reference?.slug && item.slug && reference.slug === item.slug && reference.name === rowName(item) &&
       reference.source && reference.documentSlug) {
     return itemDisplayName({ ...item, source: reference.source, documentSlug: reference.documentSlug }, locale, false);
   }
