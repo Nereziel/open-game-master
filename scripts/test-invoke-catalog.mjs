@@ -1131,6 +1131,118 @@ test("the console localizes known slot outcomes without rewriting the engine res
 });
 
 
+test("slot outcomes cover points, genre casts and counted grants", () => {
+  const fixtures = [
+    [
+      "{spell} is cast through {source}, with no spell slot.",
+      "{spell} sesláno díky {source} bez pozice kouzla.",
+      "{spell} lancé grâce à {source}, sans emplacement de sort."
+    ],
+    [
+      "{spell} is cast through {source}, with no spell slot: once until a long rest.",
+      "{spell} sesláno díky {source} bez pozice kouzla: jednou do důkladného odpočinku.",
+      "{spell} lancé grâce à {source}, sans emplacement de sort : une fois jusqu’au prochain repos long."
+    ],
+    [
+      "{spell} is cast through {source} with no spell slot: once, and again after a short rest, as a level {level} spell.",
+      "{spell} sesláno díky {source} bez pozice kouzla na {level}. úrovni: jednou, znovu po krátkém odpočinku.",
+      "{spell} lancé grâce à {source} sans emplacement au niveau {level} : une fois, puis de nouveau après un repos court."
+    ],
+    [
+      "{spell} is cast through {source} with no spell slot: once, and again after a short rest.",
+      "{spell} sesláno díky {source} bez pozice kouzla: jednou, znovu po krátkém odpočinku.",
+      "{spell} lancé grâce à {source} sans emplacement : une fois, puis de nouveau après un repos court."
+    ],
+    [
+      "{spell} is cast through {source} with no spell slot: {count} times, and again after a short rest, as a level {level} spell.",
+      "{spell} sesláno díky {source} bez pozice kouzla na {level}. úrovni: {count}krát, znovu po krátkém odpočinku.",
+      "{spell} lancé grâce à {source} sans emplacement au niveau {level} : {count} fois, puis de nouveau après un repos court."
+    ],
+    [
+      "{spell} is cast through {source} with no spell slot: {count} times, and again after a short rest.",
+      "{spell} sesláno díky {source} bez pozice kouzla: {count}krát, znovu po krátkém odpočinku.",
+      "{spell} lancé grâce à {source} sans emplacement : {count} fois, puis de nouveau après un repos court."
+    ],
+    [
+      "{spell} is cast through {source} with no spell slot: once, and again after a long rest, as a level {level} spell.",
+      "{spell} sesláno díky {source} bez pozice kouzla na {level}. úrovni: jednou, znovu po důkladném odpočinku.",
+      "{spell} lancé grâce à {source} sans emplacement au niveau {level} : une fois, puis de nouveau après un repos long."
+    ],
+    [
+      "{spell} is cast through {source} with no spell slot: once, and again after a long rest.",
+      "{spell} sesláno díky {source} bez pozice kouzla: jednou, znovu po důkladném odpočinku.",
+      "{spell} lancé grâce à {source} sans emplacement : une fois, puis de nouveau après un repos long."
+    ],
+    [
+      "{spell} is cast through {source} with no spell slot: {count} times, and again after a long rest, as a level {level} spell.",
+      "{spell} sesláno díky {source} bez pozice kouzla na {level}. úrovni: {count}krát, znovu po důkladném odpočinku.",
+      "{spell} lancé grâce à {source} sans emplacement au niveau {level} : {count} fois, puis de nouveau après un repos long."
+    ],
+    [
+      "{spell} is cast through {source} with no spell slot: {count} times, and again after a long rest.",
+      "{spell} sesláno díky {source} bez pozice kouzla: {count}krát, znovu po důkladném odpočinku.",
+      "{spell} lancé grâce à {source} sans emplacement : {count} fois, puis de nouveau après un repos long."
+    ],
+    [
+      "{spell} is cast through {source} with no spell slot, at will, as a level {level} spell.",
+      "{spell} sesláno díky {source} bez pozice kouzla na {level}. úrovni, dle libosti.",
+      "{spell} lancé grâce à {source} sans emplacement, à volonté, au niveau {level}."
+    ],
+    [
+      "{spell} is cast with 1 sorcery point in place of a spell slot ({source}). {left} left.",
+      "{spell} sesláno za 1 čarodějný bod místo pozice kouzla ({source}). Zbývá: {left}.",
+      "{spell} lancé avec 1 point de sorcellerie au lieu d’un emplacement de sort ({source}). Il en reste {left}."
+    ],
+    [
+      "{spell} is cast with 1 sorcery point in place of a spell slot ({source}), with no verbal, somatic or material component. {left} left.",
+      "{spell} sesláno za 1 čarodějný bod místo pozice kouzla ({source}), bez verbální, pohybové či surovinové složky. Zbývá: {left}.",
+      "{spell} lancé avec 1 point de sorcellerie au lieu d’un emplacement de sort ({source}), sans composante verbale, somatique ni matérielle. Il en reste {left}."
+    ],
+    [
+      "{spell} is cast with 1 sorcery point in place of a spell slot ({source}); {name} sees through it. {left} left.",
+      "{spell} sesláno za 1 čarodějný bod místo pozice kouzla ({source}); postava {name} skrze něj vidí. Zbývá: {left}.",
+      "{spell} lancé avec 1 point de sorcellerie au lieu d’un emplacement de sort ({source}) ; {name} voit à travers. Il en reste {left}."
+    ],
+    [
+      "{spell} is cast with {cost} sorcery points in place of a spell slot ({source}). {left} left.",
+      "{spell} sesláno za čarodějné body (počet: {cost}) místo pozice kouzla ({source}). Zbývá: {left}.",
+      "{spell} lancé avec {cost} points de sorcellerie au lieu d’un emplacement de sort ({source}). Il en reste {left}."
+    ],
+    [
+      "{spell} is cast with {cost} sorcery points in place of a spell slot ({source}), with no verbal, somatic or material component. {left} left.",
+      "{spell} sesláno za čarodějné body (počet: {cost}) místo pozice kouzla ({source}), bez verbální, pohybové či surovinové složky. Zbývá: {left}.",
+      "{spell} lancé avec {cost} points de sorcellerie au lieu d’un emplacement de sort ({source}), sans composante verbale, somatique ni matérielle. Il en reste {left}."
+    ],
+    [
+      "{spell} is cast with {cost} sorcery points in place of a spell slot ({source}); {name} sees through it. {left} left.",
+      "{spell} sesláno za čarodějné body (počet: {cost}) místo pozice kouzla ({source}); postava {name} skrze něj vidí. Zbývá: {left}.",
+      "{spell} lancé avec {cost} points de sorcellerie au lieu d’un emplacement de sort ({source}) ; {name} voit à travers. Il en reste {left}."
+    ]
+  ];
+  const vars = {"spell":"Custom [A+B]","source":"Custom (A+B)","name":"Iris [A+B]","count":"3","cost":"5","level":"2","left":"0"};
+  const fill = (text) => text.replace(/\{(\w+)\}/g, (_, key) => vars[key]);
+  for (const [en, cs, fr] of fixtures) {
+    const raw = fill(en);
+    for (const [locale, expected] of [["en", en], ["cs", cs], ["fr", fr]]) {
+      const t = (key, values) => translateSlotResult(locale, key, values);
+      for (const field of ["slot", "slotSpent"]) {
+        const result = Object.freeze({ [field]: raw });
+        assert.deepEqual(describeAdjudicationResult(result, t), [{ text: fill(expected), tone: "info" }]);
+        assert.equal(result[field], raw);
+      }
+      assert.deepEqual(describeAdjudicationResult({ slot: raw + " Extra." }, t), [{ text: raw + " Extra.", tone: "info" }]);
+    }
+  }
+  const t = (key, values) => translateSlotResult("cs", key, values);
+  for (const raw of [
+    "Custom is cast through Source with no spell slot: 1 times, and again after a long rest.",
+    "Custom is cast through Source with no spell slot, at will, as a level ten spell.",
+    "Custom is cast with many sorcery points in place of a spell slot (Source). 0 left.",
+    "Custom is cast with 2 sorcery points in place of a spell slot (Source). -1 left.",
+    "Custom is cast through Source with no spell slot: once, and again after a daily rest.",
+  ]) assert.deepEqual(describeAdjudicationResult({ slot: raw }, t), [{ text: raw, tone: "info" }]);
+});
+
 test("a result shows hit points, resistance, temp HP absorbed and broken concentration (U:UD3)", () => {
   const lines = said({
     ok: true,

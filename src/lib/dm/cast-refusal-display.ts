@@ -167,6 +167,23 @@ const SLOT_RESULT_PATTERNS = [
   "{spell} is cast with no spell slot ({condition}, now spent).",
   "{spell} is cast with no spell slot ({condition}, for the minute).",
   "{spell} is cast through {source} with no spell slot, at will.",
+  "{spell} is cast through {source}, with no spell slot.",
+  "{spell} is cast through {source}, with no spell slot: once until a long rest.",
+  "{spell} is cast through {source} with no spell slot: once, and again after a short rest, as a level {level} spell.",
+  "{spell} is cast through {source} with no spell slot: once, and again after a short rest.",
+  "{spell} is cast through {source} with no spell slot: {count} times, and again after a short rest, as a level {level} spell.",
+  "{spell} is cast through {source} with no spell slot: {count} times, and again after a short rest.",
+  "{spell} is cast through {source} with no spell slot: once, and again after a long rest, as a level {level} spell.",
+  "{spell} is cast through {source} with no spell slot: once, and again after a long rest.",
+  "{spell} is cast through {source} with no spell slot: {count} times, and again after a long rest, as a level {level} spell.",
+  "{spell} is cast through {source} with no spell slot: {count} times, and again after a long rest.",
+  "{spell} is cast through {source} with no spell slot, at will, as a level {level} spell.",
+  "{spell} is cast with 1 sorcery point in place of a spell slot ({source}). {left} left.",
+  "{spell} is cast with 1 sorcery point in place of a spell slot ({source}), with no verbal, somatic or material component. {left} left.",
+  "{spell} is cast with 1 sorcery point in place of a spell slot ({source}); {name} sees through it. {left} left.",
+  "{spell} is cast with {cost} sorcery points in place of a spell slot ({source}). {left} left.",
+  "{spell} is cast with {cost} sorcery points in place of a spell slot ({source}), with no verbal, somatic or material component. {left} left.",
+  "{spell} is cast with {cost} sorcery points in place of a spell slot ({source}); {name} sees through it. {left} left.",
 ].map((key) => ({ key, pattern: patternFor(key) }));
 
 export function castSlotDisplay(raw: string, t: T): string {
@@ -177,6 +194,12 @@ export function castSlotDisplay(raw: string, t: T): string {
   for (const { key, pattern } of SLOT_RESULT_PATTERNS) {
     const match = pattern.exec(raw);
     if (!match?.groups?.spell) continue;
+    const { source, name, count, cost, level, left } = match.groups;
+    if (source !== undefined && !source.trim() || name !== undefined && !name.trim()) continue;
+    if ([count, cost, level, left].some((value) => value !== undefined &&
+      (!Number.isSafeInteger(Number(value)) || String(Number(value)) !== value || Number(value) < 0))) continue;
+    if (count !== undefined && Number(count) < 2 || cost !== undefined && Number(cost) < 2 ||
+      level !== undefined && (Number(level) < 1 || Number(level) > 9)) continue;
     return t(key, match.groups);
   }
   return raw;
