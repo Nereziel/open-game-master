@@ -747,6 +747,7 @@ export function legalizeSheet(input: CreateSheetInput, context: LegalityContext)
         sentFeatures.filter((feature) => feature.source === "choice"),
         classes,
         context.subclassExtras,
+        context.locale,
       ),
     );
   }

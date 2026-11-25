@@ -1,5 +1,8 @@
 {
   "messages": {
+    "\"{name}\" is not one of {subclass}'s {choice} options; pick one of {options}.": "« {name} » ne fait pas partie des options de {choice} de {subclass} ; choisis parmi {options}.",
+    "{subclass}'s {choice} is chosen at class level {required}; this character is level {level} in that class.": "Le choix {choice} de {subclass} se fait au niveau {required} de classe ; ce personnage est au niveau {level} dans cette classe.",
+    "{subclass}'s {choice} is one pick; {before} and {after} were both chosen.": "Le choix {choice} de {subclass} ne permet qu’une option ; {before} et {after} ont tous deux été choisis.",
     "Choose {choices} to be proficient with.": "Choisis les outils que tu maîtriseras : {choices}.",
     "{pick} is not a tool this character may choose; the choices are {choices}.": "{pick} n’est pas un outil que ce personnage peut choisir ; possibilités : {choices}.",
     "Choose {choices}.": "Choisis : {choices}.",

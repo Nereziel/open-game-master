@@ -559,6 +559,7 @@ export function buildLevelUp(
     (request.features ?? []).filter((feature) => feature.source === "choice" && !heldPickNames.has(textKey(feature.name))),
     classes,
     context.subclassExtras,
+    context.locale,
   )[0];
   if (choiceProblem) {
     return refuse(choiceProblem);

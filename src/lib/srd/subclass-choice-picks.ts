@@ -19,6 +19,7 @@
 
 import type { SheetFeature } from "@/lib/schemas/sheet";
 import { textKey } from "@/lib/language/text-logic";
+import { translate, type Locale } from "@/lib/messages-logic";
 import {
   parsePickOptionId,
   parseSubclassChoicePick,
@@ -185,7 +186,7 @@ export function subclassChoicePickKept<T extends PickFeature>(
 // choice. Empty when they can. Only what the request makes is judged: a
 // stored pick gone stale (its option deleted) is the regrant's to drop and
 // never blocks a save or a level.
-export function subclassChoicePickProblems(sent: Picks, classes: Entry[], extras?: SubclassExtras): string[] {
+export function subclassChoicePickProblems(sent: Picks, classes: Entry[], extras?: SubclassExtras, locale: Locale = "en"): string[] {
   const problems: string[] = [];
   const made = new Map<string, string>();
   for (const feature of sent) {
@@ -202,14 +203,14 @@ export function subclassChoicePickProblems(sent: Picks, classes: Entry[], extras
       const option = optionOfPick(choice, feature);
       if (!option) {
         const named = parseSubclassChoicePick(feature.name)?.option ?? feature.name;
-        problems.push(`"${named}" is not one of ${extra.name}'s ${choice.label} options; pick one of ${choice.options.map((entry) => entry.name).join(", ")}.`);
+        problems.push(translate(locale, "\"{name}\" is not one of {subclass}'s {choice} options; pick one of {options}.", { name: named, subclass: extra.name, choice: choice.label, options: choice.options.map((entry) => entry.name).join(", ") }));
       } else if (choice.level > entry.level) {
-        problems.push(`${extra.name}'s ${choice.label} is chosen at class level ${choice.level}; this character is level ${entry.level} in that class.`);
+        problems.push(translate(locale, "{subclass}'s {choice} is chosen at class level {required}; this character is level {level} in that class.", { subclass: extra.name, choice: choice.label, required: choice.level, level: entry.level }));
       } else {
         const key = `${entry.id}|${choice.id}`;
         const before = made.get(key);
         if (before && before !== option.name) {
-          problems.push(`${extra.name}'s ${choice.label} is one pick; ${before} and ${option.name} were both chosen.`);
+          problems.push(translate(locale, "{subclass}'s {choice} is one pick; {before} and {after} were both chosen.", { subclass: extra.name, choice: choice.label, before, after: option.name }));
         }
         made.set(key, before ?? option.name);
       }

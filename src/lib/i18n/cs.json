@@ -1,5 +1,8 @@
 {
   "messages": {
+    "\"{name}\" is not one of {subclass}'s {choice} options; pick one of {options}.": "„{name}“ není mezi možnostmi volby {choice} archetypu {subclass}; vyber jednu z možností: {options}.",
+    "{subclass}'s {choice} is chosen at class level {required}; this character is level {level} in that class.": "Volba {choice} archetypu {subclass} je dostupná na {required}. úrovni povolání; postava má v tomto povolání úroveň {level}.",
+    "{subclass}'s {choice} is one pick; {before} and {after} were both chosen.": "Volba {choice} archetypu {subclass} umožňuje vybrat jedinou možnost; byly vybrány {before} i {after}.",
     "Choose {choices} to be proficient with.": "Vyber nástroje, s nimiž získáš zdatnost: {choices}.",
     "{pick} is not a tool this character may choose; the choices are {choices}.": "Nástroj {pick} není pro tuto postavu dostupný; možnosti: {choices}.",
     "Choose {choices}.": "Vyber: {choices}.",
