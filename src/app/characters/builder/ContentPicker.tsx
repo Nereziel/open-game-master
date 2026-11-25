@@ -87,12 +87,11 @@ export default function ContentPicker({
       {failed ? (
         // A refused request or a dropped connection is not a missing pack.
         <p role="alert" className="mt-1 rounded-lg border border-amber-900/50 bg-amber-950/20 px-3 py-2 text-xs text-amber-200/80">
-          Could not reach the server to search. Type again to retry.
+          {t("Could not reach the server to search. Type again to retry.")}
         </p>
       ) : unavailable ? (
         <p className="mt-1 rounded-lg border border-amber-900/50 bg-amber-950/20 px-3 py-2 text-xs text-amber-200/80">
-          The content pack is not installed on this server, so there is nothing to search or
-          browse. Whoever runs it can install it with: node scripts/import-open5e.mjs
+          {t("The content pack is not installed on this server, so there is nothing to list. Whoever runs it can install it with: node scripts/import-open5e.mjs")}
         </p>
       ) : open && !results.length && query.trim() && !loading ? (
         <p className="mt-1 rounded-lg border border-stone-800 bg-stone-950/60 px-3 py-2 text-xs text-stone-500">
@@ -149,7 +148,7 @@ export default function ContentPicker({
               <InfoButton
                 label={rowName(entry)}
                 meta={kind === "spells" ? spellSummary(entry.data, t.locale) : undefined}
-                text={describeContentEntry(entry.data)}
+                text={describeContentEntry(entry.data, undefined, locale)}
                 reference={
                   entry.source === "homebrew" ? undefined : { kind, slug: entry.slug }
                 }
