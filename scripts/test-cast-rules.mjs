@@ -521,19 +521,19 @@ test("held-spell refusal with ring advice localizes both known sentences only", 
   const ring = "Custom Ring [A+B]";
   const suffix = "{ring} holds it: use_item with spell casts it from there, then cast it with this tool.";
   const templates = [
-  "{name} has no Spellcasting feature and cannot cast spells.",
-  "{name} cannot cast \"{spell}\": it is not among the spells they know or have prepared ({ready}).",
-  "No spell called \"{spell}\" is known. {name} knows or has prepared {ready}: send the one meant, by the name on the sheet.",
-  "{spell} is chosen but not prepared yet: it becomes ready after the next long rest.",
-  "{spell} is in the spellbook but not prepared, so it cannot be cast. Prepare it from the sheet; it is ready after the next long rest.",
-  "{name} casts {spell} through {source} as a ritual only: ten minutes longer, no slot. Send ritual true.",
-  "{name} casts {spell} through {source} for {cost} {resource}, and has {left} left. It comes back after a {rest} rest.",
-  "{name} casts {spell} through {source} {times}, and again after a {rest} rest; {uses} spent.",
-  "{name} holds {spell} as a {classId} spell, and a {classId}'s Spellcasting does not cast rituals (bards, clerics, druids, wizards and artificers do, through their own spells). It can be cast from a slot instead.",
-  "{spell} is not written in {name}'s ritual book, so it cannot be cast as a ritual. It goes in the book first (a ritual of a level they can cast, found and copied), or it is cast from a slot."
-];
+    "{name} has no Spellcasting feature and cannot cast spells.",
+    "{name} cannot cast \"{spell}\": it is not among the spells they know or have prepared ({ready}).",
+    "No spell called \"{spell}\" is known. {name} knows or has prepared {ready}: send the one meant, by the name on the sheet.",
+    "{spell} is chosen but not prepared yet: it becomes ready after the next long rest.",
+    "{spell} is in the spellbook but not prepared, so it cannot be cast. Prepare it from the sheet; it is ready after the next long rest.",
+    "{name} casts {spell} through {source} as a ritual only: ten minutes longer, no slot. Send ritual true.",
+    "{name} casts {spell} through {source} for {cost} {resource}, and has {left} left. It comes back after a {rest} rest.",
+    "{name} casts {spell} through {source} {times}, and again after a {rest} rest; {uses} spent.",
+    "{name} holds {spell} as a {classId} spell, and a {classId}'s Spellcasting does not cast rituals (bards, clerics, druids, wizards and artificers do, through their own spells). It can be cast from a slot instead.",
+    "{spell} is not written in {name}'s ritual book, so it cannot be cast as a ritual. It goes in the book first (a ritual of a level they can cast, found and copied), or it is cast from a slot."
+  ];
   const vars = { name: iris.name, spell: "Custom [A+B]", source: "Custom Grant", ready: "none", cost: 2, resource: "Custom Pool", left: 0, rest: "long", times: "once", uses: "that use is", classId: "fighter" };
-  const actual = spellHeldProblem(iris, "Fly", facts("Fly"));
+  const actual = spellHeldProblem(iris, "Counterspell", facts("Counterspell"));
   assert.equal(typeof actual?.error, "string");
   const messages = [actual.error, ...templates.map((key) => translate("en", key, vars))];
   for (const base of messages) {
