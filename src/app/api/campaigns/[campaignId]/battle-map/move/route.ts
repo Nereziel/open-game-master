@@ -140,7 +140,7 @@ export async function POST(
   // a fight nobody moves on a turn that is not theirs.
   // The move they readied releases off their turn: their reaction, up to
   // their full speed, their own turn's movement untouched (readied-release.ts).
-  const readied = readiedReleaseFor(sheet, encounter, "move");
+  const readied = readiedReleaseFor(sheet, encounter, "move", t);
   if (readied && "error" in readied) {
     return Response.json({ error: readied.error }, { status: 409 });
   }
@@ -153,7 +153,7 @@ export async function POST(
 
   // On an independent mount the pair moves on the mount's turn, which the
   // GM plays (token-rules.ts carriedRefusal).
-  const carriedOn = carriedRefusal(campaignId, encounter, sheet);
+  const carriedOn = carriedRefusal(campaignId, encounter, sheet, t);
   if (carriedOn) {
     return Response.json({ error: carriedOn }, { status: 409 });
   }
@@ -161,7 +161,7 @@ export async function POST(
   const floor = getFloor(campaignId);
   // Their End Turn is in and the move waits on a watcher's stop
   // (src/lib/dm/turn-hold.ts): the turn is over.
-  const ending = heldMoveLine(encounter, sheet.id);
+  const ending = heldMoveLine(encounter, sheet.id, t);
   if (ending) {
     return Response.json({ error: ending }, { status: 409 });
   }
@@ -215,7 +215,7 @@ export async function POST(
   // Swallowed (src/lib/dm/swallow.ts): inside a living creature the route
   // says so, and how out; out of a dead one the walk is the climb out of its
   // corpse.
-  const climb = campaign && !readied ? swallowWalk(campaign, encounter, map, sheet, token) : null;
+  const climb = campaign && !readied ? swallowWalk(campaign, encounter, map, sheet, token, t) : null;
   if (climb) {
     return "error" in climb
       ? Response.json({ error: climb.error }, { status: 409 })
@@ -265,7 +265,7 @@ export async function POST(
     if (awayFromFear(token, line, feared).length < line.length) {
       return Response.json({ error: t("You are frightened and cannot move closer to what you fear. Move away from it, or hold your ground.") }, { status: 409 });
     }
-    const leap = jumpMove({ campaign, encounter, map, sheet, token, to: { x, y }, budgetTiles: budget, scene, disengaged: turnState?.disengaged ?? false });
+    const leap = jumpMove({ campaign, encounter, map, sheet, token, to: { x, y }, budgetTiles: budget, scene, disengaged: turnState?.disengaged ?? false }, t);
     if ("error" in leap) {
       return Response.json({ error: leap.error }, { status: leap.status });
     }
@@ -394,11 +394,11 @@ export async function POST(
   // on their word (issue 503, src/lib/dm/party-conduct.ts).
   // An orc's Aggressive Dash carries only toward a hostile creature they
   // can see (src/lib/dm/mt-species-board.ts).
-  const rush = path && turnState ? aggressiveRefusal({ encounter, map, sheet, token, path, budgetTiles: budget, speedTiles: speedToTiles(speed), marks: turnState.oncePerTurn, traits }) : null;
+  const rush = path && turnState ? aggressiveRefusal({ encounter, map, sheet, token, path, budgetTiles: budget, speedTiles: speedToTiles(speed), marks: turnState.oncePerTurn, traits }, t) : null;
   if (rush) {
     return Response.json({ error: rush }, { status: 409 });
   }
-  const refusedOrder = campaign && path && !readied ? riskyOrderGate(campaign, sheet, user.id, [from, ...path], turnState?.disengaged ?? false) : null;
+  const refusedOrder = campaign && path && !readied ? riskyOrderGate(campaign, sheet, user.id, [from, ...path], turnState?.disengaged ?? false, t) : null;
   if (refusedOrder) {
     return Response.json({ error: refusedOrder }, { status: 409 });
   }

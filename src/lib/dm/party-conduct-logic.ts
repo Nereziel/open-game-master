@@ -21,6 +21,7 @@
 
 import { friendshipTier, tierIndex, TIER_LABEL } from "./relationship-logic.ts";
 import type { CompanionValue } from "./companion-values-logic.ts";
+import { formatMessage, type MessageVars } from "../messages-logic.ts";
 
 // Wary of them, or worse.
 export function waryOrWorse(approval: number | null): boolean {
@@ -80,15 +81,15 @@ export function aidRefusedWords(input: Pick<AidCase, "target" | "spend">): strin
 
 // `provokers`: the foes whose reach the walk leaves; `areas`: the spells
 // laid on the board whose area it walks into and that would strike it.
-export function riskyOrderRefusal(input: { companion: string; commander: string; approval: number | null; provokers: readonly string[]; areas?: readonly string[] }): string | null {
+export function riskyOrderRefusal(input: { companion: string; commander: string; approval: number | null; provokers: readonly string[]; areas?: readonly string[] }, t: (key: string, vars?: MessageVars) => string = formatMessage): string | null {
   const areas = input.areas ?? [];
   if ((!input.provokers.length && !areas.length) || !waryOrWorse(input.approval)) {
     return null;
   }
   if (input.provokers.length) {
-    return `${input.companion} will not walk out of ${input.provokers.join(" and ")}'s reach on ${input.commander}'s word: ${input.companion} ${standing(input.approval!)}. Take a path that leaves no foe's reach, or Disengage first. Nothing moved.`;
+    return t("{companion} will not walk out of {provokers}'s reach on {commander}'s word: {companion} {standing}. Take a path that leaves no foe's reach, or Disengage first. Nothing moved.", { companion: input.companion, provokers: input.provokers.join(` ${t("and")} `), commander: input.commander, standing: t(standing(input.approval!)) });
   }
-  return `${input.companion} will not walk into the ${areas.join(" and the ")} on ${input.commander}'s word: ${input.companion} ${standing(input.approval!)}. Take a path around it. Nothing moved.`;
+  return t("{companion} will not walk into the {areas} on {commander}'s word: {companion} {standing}. Take a path around it. Nothing moved.", { companion: input.companion, areas: areas.join(t(" and the ")), commander: input.commander, standing: t(standing(input.approval!)) });
 }
 
 // ---- the mercenary's share ----
