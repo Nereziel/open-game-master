@@ -334,7 +334,13 @@ test("localized SRD item names resolve without srdName and English names retain 
     ["Cape de protection", "Cloak of Protection"],
     ["Lance", "Lance"],
   ]) {
-    assert.deepEqual(srdNameFor(name, "grant_item"), { srdName: english }, name);
+    // The catalog row's printed casing can differ from the mechanics table
+    // (Chain mail vs Chain Mail). A localized grant must store exactly the
+    // same row as its English grant, not impose a new spelling on either.
+    const canonical = srdNameFor(english, "grant_item");
+    assert.ok(canonical.srdName, `English row exists: ${english}`);
+    assert.equal(textKey(canonical.srdName), textKey(english), english);
+    assert.deepEqual(srdNameFor(name, "grant_item"), canonical, name);
     assert.match(srdNameFor(name + " +1", "grant_item").error ?? "", /carries a bonus, which belongs in name/, name);
   }
   assert.match(srdNameFor("Neznámý meč", "grant_item").error ?? "", /no SRD or pack item is called/);
