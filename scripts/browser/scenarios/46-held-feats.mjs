@@ -92,7 +92,9 @@ export default {
         page.on("response", responded);
         page.on("requestfinished", finished);
         page.on("requestfailed", failed);
-        const section = scope.getByRole("button", { name: words.all }).locator("visible=true").first();
+        // The Czech parent button also contains "Všechny odbornosti"; only the
+        // actual catalog section has aria-busy, including after rows load.
+        const section = scope.getByRole("button", { name: words.all }).and(scope.locator("button[aria-busy]")).locator("visible=true").first();
         const narrow = scope.getByLabel(words.narrow);
         const row = scope.locator("li button").filter({ hasText: name }).locator("visible=true").first();
         try {
@@ -189,7 +191,7 @@ export default {
         await eventually(() => info.isVisible(), { label: "the localized feat info button" });
         await t.tap(info);
         const dialog = page.getByRole("dialog").filter({ hasText: words.duelist }).first();
-        await eventually(() => dialog.getByText(/Předpoklad: Obratnost 13 nebo vyšší/).count(), { label: "the Czech feat prerequisite" });
+        await eventually(() => dialog.getByText(/Vyžaduje Obratnost 13 nebo vyšší/).count(), { label: "the Czech feat prerequisite" });
         await eventually(() => dialog.getByText(/zdatnostní bonus k TZ/).count(), { label: "the Czech feat rules" });
         await page.keyboard.press("Escape");
         await eventually(async () => !(await dialog.isVisible()), { label: "the feat detail closes" });

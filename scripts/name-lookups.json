@@ -8081,8 +8081,8 @@
     "lib/battlemap/hand-core.ts#partial": [
       [
         "pattern",
-        5,
-        "a fixed pattern over text that reads no record's name: its English words are scripts/text-comparisons.json's to classify"
+        1,
+        "remaining presentation pattern; player standing and action refusal patterns moved into player-refusals.ts"
       ]
     ],
     "lib/battlemap/hand-escape.ts#keyed": [
@@ -14810,6 +14810,11 @@
         "parse",
         1,
         "the engine's own hands-full sentence swapped for the player's words in a tool's refusal (no record's name)"
+      ],
+      [
+        "parse",
+        1,
+        "match the canonical hands-full sentence at the reader boundary"
       ]
     ],
     "lib/dm/gear-hands.ts#whole": [
@@ -23452,6 +23457,11 @@
         "identity",
         5,
         "spells by whole name"
+      ],
+      [
+        "key",
+        1,
+        "homebrew class id prefix prevents substitution of a published display name"
       ]
     ],
     "lib/srd/spell-prep.ts#whole": [
@@ -23826,6 +23836,11 @@
         "pattern",
         1,
         "a fixed pattern over text that reads no record's name: its English words are scripts/text-comparisons.json's to classify"
+      ],
+      [
+        "parse",
+        1,
+        "presentation only: split canonical tool alternatives at the English separator, translate each label"
       ]
     ],
     "lib/srd/tool-choices.ts#whole": [
@@ -28396,6 +28411,41 @@
         "key",
         1,
         "Read the fixture catalog by its exact published feature key."
+      ]
+    ],
+    "lib/dm/player-refusals.ts#whole-single": [
+      [
+        "parse",
+        6,
+        "whole canonical canAct sentences compared for reader-only presentation, not name resolution"
+      ]
+    ],
+    "lib/dm/player-refusals.ts#partial": [
+      [
+        "parse",
+        6,
+        "extract fields from known engine refusal sentences for display; not a name lookup"
+      ]
+    ],
+    "lib/dm/cast-refusal-display.ts#partial": [
+      [
+        "parse",
+        9,
+        "known canonical spell refusal templates, slot lists, fragments and separators; display only, unknown wording is preserved"
+      ]
+    ],
+    "lib/dm/cast-refusal-display.ts#whole": [
+      [
+        "parse",
+        1,
+        "require captured actor to equal the actual actor before presenting an engine sentence"
+      ]
+    ],
+    "lib/dice/error-display.ts#partial": [
+      [
+        "parse",
+        2,
+        "canonical dice parser diagnostic prefix and numeric-value format; no record lookup"
       ]
     ]
   }

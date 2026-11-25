@@ -5626,13 +5626,6 @@
         "condition labels (engine vocabulary)"
       ]
     ],
-    "lib/dm/swallow.ts#toUpperCase": [
-      [
-        "display",
-        1,
-        "a sentence's first letter, shown"
-      ]
-    ],
     "lib/language/player-text.ts#[a-z]": [
       [
         "english-source",
@@ -21181,6 +21174,11 @@
         "key",
         1,
         "the workshop class id's own prefix"
+      ],
+      [
+        "key",
+        3,
+        "homebrew class/list id prefixes prevent conflating authored classes with published display names"
       ]
     ],
     "lib/homebrew/species-choice-server.ts#re-word": [
@@ -26028,6 +26026,95 @@
         "english-source",
         1,
         "Select the published Agonizing Blast invocation fixture by its exact source name."
+      ]
+    ],
+    "lib/srd/tool-choices.ts#str-split": [
+      [
+        "english-source",
+        1,
+        "canonical English alternative delimiter in tool label presentation"
+      ]
+    ],
+    "lib/srd/spell-prep.ts#str-startsWith": [
+      [
+        "key",
+        1,
+        "homebrew class id prefix"
+      ]
+    ],
+    "lib/dm/player-refusals.ts#str-startsWith": [
+      [
+        "english-source",
+        1,
+        "canonical canAct turn-refusal sentence prefix, reader-only"
+      ]
+    ],
+    "lib/dm/player-refusals.ts#str-eq": [
+      [
+        "english-source",
+        3,
+        "fixed engine placeholders for enemy, someone else and reaction; display only"
+      ]
+    ],
+    "lib/dm/gear-hands.ts#re-word": [
+      [
+        "english-source",
+        1,
+        "match canonical storyteller hands-full wording for the reader; no player prose parsed"
+      ]
+    ],
+    "lib/dm/gear-hands.ts#str-eq": [
+      [
+        "english-source",
+        1,
+        "captured engine verb distinguishes draw from shield donning"
+      ]
+    ],
+    "lib/dm/cast-refusal-display.ts#\\w": [
+      [
+        "key",
+        2,
+        "gettext placeholder field names and canonical SRD class-id token in a known focus refusal"
+      ]
+    ],
+    "lib/dm/cast-refusal-display.ts#re-word": [
+      [
+        "english-source",
+        5,
+        "fixed canonical spell refusal fragments: available slots, number of uses and attacks, focus requirement"
+      ]
+    ],
+    "lib/dm/cast-refusal-display.ts#str-eq": [
+      [
+        "key",
+        8,
+        "named placeholder fields controlling display formatting"
+      ],
+      [
+        "english-source",
+        3,
+        "canonical fallback labels none, no spells, their armor"
+      ]
+    ],
+    "lib/dm/cast-refusal-display.ts#str-split": [
+      [
+        "english-source",
+        1,
+        "canonical focus alternative delimiter"
+      ]
+    ],
+    "lib/dm/cast-refusal-display.ts#str-list": [
+      [
+        "key",
+        1,
+        "placeholder field names for formatting"
+      ]
+    ],
+    "lib/dice/error-display.ts#re-word": [
+      [
+        "english-source",
+        1,
+        "canonical numeric die validation diagnostic"
       ]
     ]
   }
