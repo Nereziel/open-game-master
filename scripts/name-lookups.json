@@ -458,6 +458,13 @@
         "a fixed pattern over text that reads no record's name: its English words are scripts/text-comparisons.json's to classify"
       ]
     ],
+    "app/api/content/[kind]/[slug]/route.ts#fallback": [
+      [
+        "key",
+        1,
+        "Legacy unnamespaced item ID: exact bundled magic-item slug or exact srd-gear slug, after published and scoped homebrew lookups."
+      ]
+    ],
     "app/api/content/[kind]/[slug]/route.ts#keyed": [
       [
         "key",
@@ -8321,6 +8328,11 @@
         "key",
         1,
         "Read translated gear prose by its catalog key."
+      ],
+      [
+        "key",
+        1,
+        "Read the Czech display prose using the whole-name matchGear canonical alias key; unknown names have no description."
       ]
     ],
     "lib/content/entry-descriptions.ts#first": [
@@ -21380,6 +21392,16 @@
         "identity",
         1,
         "Whole-name match for item-card results."
+      ],
+      [
+        "key",
+        1,
+        "Known canonical rarity labels select the Czech message context, not a game record."
+      ],
+      [
+        "key",
+        1,
+        "Compare a display translation against its original message key to detect a catalog hit."
       ]
     ],
     "lib/help/rules-text.ts#partial": [
@@ -21667,6 +21689,20 @@
         "key",
         1,
         "cookie name comparison"
+      ]
+    ],
+    "lib/i18n/localized-tables.test.ts#bypass": [
+      [
+        "key",
+        1,
+        "Canonical carried item name used in the correction-editor regression fixture."
+      ]
+    ],
+    "lib/i18n/localized-tables.test.ts#first": [
+      [
+        "key",
+        1,
+        "Assert the first presentation-only flag in the correction-editor fixture; not a record lookup."
       ]
     ],
     "lib/i18n/rule-term-input.ts#first": [
