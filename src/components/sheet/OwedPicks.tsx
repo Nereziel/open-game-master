@@ -7,7 +7,7 @@ import { replayAnimation } from "@/lib/motion/replay";
 import { STANDARD_LANGUAGES } from "@/lib/content/mechanics";
 import type { CharacterSheet } from "@/lib/schemas/sheet";
 import { fightingStyleFeatureName } from "@/lib/srd/feature-effects";
-import { optionCost, optionFeatureName, remainingWords, slotTakes, type OptionSlot } from "@/lib/srd/options";
+import { optionCost, optionFeatureName, remainingWords, slotTakes, type OptionSlot, type OptionDef } from "@/lib/srd/options";
 import { owedChoiceGroups, owedChoicesSentences } from "@/lib/srd/owed-choices";
 import { owedPickSlots } from "@/lib/srd/owed-picks-logic";
 import { LANGUAGES_TO_CHOOSE } from "@/lib/srd/owed-languages";
@@ -15,6 +15,7 @@ import { subclassChoicePickName, subclassChoiceSummary } from "@/lib/content/sub
 import { hostOffers, useCapabilities } from "@/lib/use-capabilities";
 import { textKey } from "@/lib/language/text-logic";
 import { useLocale, useT } from "@/lib/locale";
+import { optionDisplayName } from "@/lib/content/option-labels";
 
 // The two refusals sendOwed writes itself (the server's own error text rides
 // through as it came): matched by identity at the render site and said in
@@ -71,7 +72,7 @@ function OwedPickers({ sheet, owed }: { sheet: CharacterSheet; owed: ReturnType<
   return (
     <div className="reveal mt-3 space-y-3">
       {owed.options.map((slot) => (
-        <SlotPicker key={slot.kind} sheet={sheet} slot={{ ...slot, label: t(slot.label) }} />
+        <SlotPicker key={slot.kind} sheet={sheet} slot={{ ...slot, label: t(slot.label) }} published />
       ))}
       {/* A workshop subclass's own choice (issue #833), saved as "Bloodline
           (Storm)" and judged by the route against the table's subclasses. */}
@@ -139,12 +140,16 @@ function SlotPicker({
   sheet,
   slot,
   featureOf = (name) => optionFeatureName(slot.kind, name),
+  published = false,
 }: {
   sheet: CharacterSheet;
   slot: OptionSlot;
   featureOf?: (name: string) => string;
+  published?: boolean;
 }) {
   const t = useT();
+  const labelOf = (option: OptionDef) => published ? optionDisplayName(option, t.locale) : option.n;
+  const descriptionOf = (option: OptionDef) => published ? t(option.d) : option.d;
   const [picked, setPicked] = useState<string[]>([]);
   const [busy, setBusy] = useState(false);
   const [refusal, setRefusal] = useState<string | null>(null);
@@ -202,7 +207,7 @@ function SlotPicker({
               disabled={busy || !fits}
               style={{ "--i": index } as CSSProperties}
               onClick={() => toggle(option.n)}
-              title={option.d}
+              title={descriptionOf(option)}
               className={cn(
                 "hand-option motion-press inline-flex min-h-[40px] items-center gap-1 rounded-full border px-3 sm:min-h-[32px]",
                 "focus-visible:outline focus-visible:outline-2 focus-visible:outline-amber-400",
@@ -211,14 +216,14 @@ function SlotPicker({
               )}
             >
               {on ? <Check className="size-3" aria-hidden /> : null}
-              {option.n}
+              {labelOf(option)}
             </button>
           );
         })}
       </div>
       {last ? (
         <p key={last.n} className="animate-fade-up text-[11px] text-stone-400">
-          <span className="text-stone-200">{last.n}:</span> {last.d}
+          <span className="text-stone-200">{labelOf(last)}:</span> {descriptionOf(last)}
         </p>
       ) : null}
       {picked.length ? (
@@ -229,7 +234,10 @@ function SlotPicker({
           className="motion-press inline-flex min-h-[40px] items-center gap-1.5 rounded-lg border border-amber-500/60 bg-amber-500/15 px-3 text-amber-100 hover:bg-amber-500/25 focus-visible:outline focus-visible:outline-2 focus-visible:outline-amber-400 sm:min-h-[32px]"
         >
           {busy ? <Loader2 className="size-3 animate-spin" aria-hidden /> : <Check className="size-3" aria-hidden />}
-          {t("Keep {names}", { names: picked.join(t("and")) })}
+          {t("Keep {names}", { names: picked.map((name) => {
+            const option = options.find((entry) => entry.n === name);
+            return option ? labelOf(option) : name;
+          }).join(t.locale === "en" ? t("and") : ` ${t("and")} `) })}
         </button>
       ) : null}
       {refusal ? (
