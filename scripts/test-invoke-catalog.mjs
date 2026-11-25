@@ -1570,4 +1570,119 @@ test("the rules audit's new console fields ask for the host", () => {
   assert.ok(!hazardTypes(() => false).includes("frigid_water"), "an older host is offered no frigid water");
 });
 
+
+test("extra cast outcomes localize only known result fields and preserve unknown grants", () => {
+  const fixtures = [
+    [
+      "granted",
+      "{spell} is cast through Chains of Carceri. Chains of Carceri targets a celestial, fiend or elemental only, and not the same creature again until a long rest.",
+      "{spell} sesláno díky Chains of Carceri. Chains of Carceri lze zacílit pouze na nebešťana, běsa nebo elementála, a na stejného tvora znovu až po důkladném odpočinku.",
+      "{spell} lancé grâce à Chains of Carceri. Chains of Carceri ne cible qu’un céleste, un fiélon ou un élémentaire, et ne peut cibler de nouveau la même créature avant un repos long."
+    ],
+    [
+      "granted",
+      "{spell} is cast through Grasping Tentacles. Casting it gives the warlock temporary hit points equal to their warlock level, and damage cannot break their concentration on it.",
+      "{spell} sesláno díky Grasping Tentacles. Seslání dá černokněžníkovi dočasné životy rovné jeho úrovni černokněžníka a zranění nemůže přerušit jeho soustředění na toto kouzlo.",
+      "{spell} lancé grâce à Grasping Tentacles. Le lancement confère à l’occultiste des points de vie temporaires égaux à son niveau d’occultiste, et les dégâts ne peuvent pas interrompre sa concentration sur ce sort."
+    ],
+    [
+      "granted",
+      "{spell} is cast through Shapechanger. The free casting is on the wizard themselves, into a beast of challenge rating 1 or lower.",
+      "{spell} sesláno díky Shapechanger. Bezplatné seslání cílí na samotného kouzelníka a promění ho ve zvíře s nebezpečností 1 nebo nižší.",
+      "{spell} lancé grâce à Shapechanger. Le lancement gratuit cible le magicien lui-même et le transforme en bête de facteur de puissance 1 ou moins."
+    ],
+    [
+      "granted",
+      "{spell} is cast with a spell slot; {source} gives it without one, once a short rest.",
+      "{spell} sesláno s pozicí kouzla; {source} umožňuje seslání bez pozice jednou za krátký odpočinek.",
+      "{spell} lancé avec un emplacement de sort ; {source} permet de le lancer sans emplacement une fois par repos court."
+    ],
+    [
+      "granted",
+      "{spell} is cast with a spell slot; {source} gives it without one, once a long rest.",
+      "{spell} sesláno s pozicí kouzla; {source} umožňuje seslání bez pozice jednou za důkladný odpočinek.",
+      "{spell} lancé avec un emplacement de sort ; {source} permet de le lancer sans emplacement une fois par repos long."
+    ],
+    [
+      "granted",
+      "{spell} is cast with a spell slot; {source} gives it without one, {count} times a short rest.",
+      "{spell} sesláno s pozicí kouzla; {source} umožňuje seslání bez pozice {count}krát za krátký odpočinek.",
+      "{spell} lancé avec un emplacement de sort ; {source} permet de le lancer sans emplacement {count} fois par repos court."
+    ],
+    [
+      "granted",
+      "{spell} is cast with a spell slot; {source} gives it without one, {count} times a long rest.",
+      "{spell} sesláno s pozicí kouzla; {source} umožňuje seslání bez pozice {count}krát za důkladný odpočinek.",
+      "{spell} lancé avec un emplacement de sort ; {source} permet de le lancer sans emplacement {count} fois par repos long."
+    ],
+    [
+      "granted",
+      "{spell} is cast with a spell slot; {source} gives it without one.",
+      "{spell} sesláno s pozicí kouzla; {source} umožňuje seslání bez pozice.",
+      "{spell} lancé avec un emplacement de sort ; {source} permet de le lancer sans emplacement."
+    ],
+    [
+      "granted",
+      "{spell} is cast through {source}.",
+      "{spell} sesláno díky {source}.",
+      "{spell} lancé grâce à {source}."
+    ],
+    [
+      "slotRefund",
+      "{feature}: a spent level {level} slot comes back.",
+      "{feature}: obnovena utracená pozice kouzla {level}. úrovně.",
+      "{feature} : un emplacement de sort dépensé de niveau {level} est récupéré."
+    ],
+    [
+      "completed",
+      "{spell}'s casting is complete and it takes effect now; it costs no action.",
+      "Sesílání kouzla {spell} je dokončeno a kouzlo nyní účinkuje; nevyžaduje žádnou akci.",
+      "L’incantation de {spell} est terminée et le sort prend effet maintenant ; cela ne coûte aucune action."
+    ]
+  ];
+  const vars = {"spell":"Custom [A+B]","source":"Custom Grant (A+B)","feature":"Custom Feature [A+B]","count":"3","level":"2"};
+  const fill = (text) => text.replace(/\{(\w+)\}/g, (_, key) => vars[key]);
+  for (const [field, en, cs, fr] of fixtures) {
+    const raw = fill(en);
+    for (const [locale, expected] of [["en", en], ["cs", cs], ["fr", fr]]) {
+      const t = (key, values) => translateSlotResult(locale, key, values);
+      const result = { [field]: raw };
+      assert.deepEqual(describeAdjudicationResult(result, t), [{ text: fill(expected), tone: "info" }]);
+      assert.equal(result[field], raw);
+      assert.deepEqual(describeAdjudicationResult({ note: raw }, t), [{ text: raw, tone: "info" }]);
+      const unknown = raw + " Unknown tail.";
+      assert.deepEqual(describeAdjudicationResult({ [field]: unknown }, t), [{ text: unknown, tone: "info" }]);
+    }
+  }
+  const t = (key, values) => translateSlotResult("cs", key, values);
+  for (const [field, raw] of [
+    [
+      "granted",
+      "Custom [A+B] is cast through Custom Grant. An unknown note."
+    ],
+    [
+      "granted",
+      "Custom [A+B] is cast through Dr. Custom."
+    ],
+    [
+      "granted",
+      "Custom [A+B] is cast with a spell slot; Custom Grant gives it without one, 1 times a short rest."
+    ],
+    [
+      "granted",
+      "Custom [A+B] is cast with a spell slot; Custom Grant gives it without one, 3 times a week rest."
+    ],
+    [
+      "slotRefund",
+      "Custom Feature: a spent level 0 slot comes back."
+    ],
+    [
+      "slotRefund",
+      "Custom Feature: a spent level 9 slot comes back."
+    ]
+  ]) {
+    assert.deepEqual(describeAdjudicationResult({ [field]: raw }, t), [{ text: raw, tone: "info" }]);
+  }
+});
+
 console.log(`invoke-catalog: ${passed} tests passed`);

@@ -204,3 +204,35 @@ export function castSlotDisplay(raw: string, t: T): string {
   }
   return raw;
 }
+
+
+// Other successful cast result fields. Keep the source/feature names as
+// supplied by the engine; a grant with unknown appended prose is not a
+// plain grant. A dot in a source name is ambiguous in the legacy format.
+const EXTRA_CAST_PATTERNS = [
+  { field: "granted", key: "{spell} is cast through Chains of Carceri. Chains of Carceri targets a celestial, fiend or elemental only, and not the same creature again until a long rest." },
+  { field: "granted", key: "{spell} is cast through Grasping Tentacles. Casting it gives the warlock temporary hit points equal to their warlock level, and damage cannot break their concentration on it." },
+  { field: "granted", key: "{spell} is cast through Shapechanger. The free casting is on the wizard themselves, into a beast of challenge rating 1 or lower." },
+  { field: "granted", key: "{spell} is cast with a spell slot; {source} gives it without one, once a short rest." },
+  { field: "granted", key: "{spell} is cast with a spell slot; {source} gives it without one, once a long rest." },
+  { field: "granted", key: "{spell} is cast with a spell slot; {source} gives it without one, {count} times a short rest." },
+  { field: "granted", key: "{spell} is cast with a spell slot; {source} gives it without one, {count} times a long rest." },
+  { field: "granted", key: "{spell} is cast with a spell slot; {source} gives it without one." },
+  { field: "granted", key: "{spell} is cast through {source}." },
+  { field: "slotRefund", key: "{feature}: a spent level {level} slot comes back." },
+  { field: "completed", key: "{spell}'s casting is complete and it takes effect now; it costs no action." },
+].map(({ field, key }) => ({ field, key, pattern: patternFor(key) }));
+
+export function castExtraDisplay(raw: string, t: T, field: "granted" | "slotRefund" | "completed"): string {
+  for (const entry of EXTRA_CAST_PATTERNS) {
+    if (entry.field !== field) continue;
+    const match = entry.pattern.exec(raw);
+    if (!match?.groups || Object.values(match.groups).some((value) => !value.trim())) continue;
+    const { source, count, level } = match.groups;
+    if (source?.includes(".")) continue;
+    if (count !== undefined && (!Number.isSafeInteger(Number(count)) || String(Number(count)) !== count || Number(count) < 2)) continue;
+    if (level !== undefined && (!Number.isSafeInteger(Number(level)) || String(Number(level)) !== level || Number(level) < 1 || Number(level) > 8)) continue;
+    return t(entry.key, match.groups);
+  }
+  return raw;
+}

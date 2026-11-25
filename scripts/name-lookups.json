@@ -28425,7 +28425,11 @@
         "extract fields from known engine refusal sentences for display; not a name lookup"
       ]
     ],
+    "lib/dm/cast-refusal-display.ts#number": [
+      ["parse",14,"Validate numeric captures in known slot outcomes and granted/refund result templates; display only."]
+    ],
     "lib/dm/cast-refusal-display.ts#partial": [
+      ["parse",2,"Exact known cast outcome templates and ambiguous legacy grant source punctuation; reader only."],
       [
         "parse",
         9,

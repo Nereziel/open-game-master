@@ -1,5 +1,16 @@
 {
   "messages": {
+    "{spell} is cast through Chains of Carceri. Chains of Carceri targets a celestial, fiend or elemental only, and not the same creature again until a long rest.": "{spell} lancé grâce à Chains of Carceri. Chains of Carceri ne cible qu’un céleste, un fiélon ou un élémentaire, et ne peut cibler de nouveau la même créature avant un repos long.",
+    "{spell} is cast through Grasping Tentacles. Casting it gives the warlock temporary hit points equal to their warlock level, and damage cannot break their concentration on it.": "{spell} lancé grâce à Grasping Tentacles. Le lancement confère à l’occultiste des points de vie temporaires égaux à son niveau d’occultiste, et les dégâts ne peuvent pas interrompre sa concentration sur ce sort.",
+    "{spell} is cast through Shapechanger. The free casting is on the wizard themselves, into a beast of challenge rating 1 or lower.": "{spell} lancé grâce à Shapechanger. Le lancement gratuit cible le magicien lui-même et le transforme en bête de facteur de puissance 1 ou moins.",
+    "{spell} is cast with a spell slot; {source} gives it without one, once a short rest.": "{spell} lancé avec un emplacement de sort ; {source} permet de le lancer sans emplacement une fois par repos court.",
+    "{spell} is cast with a spell slot; {source} gives it without one, once a long rest.": "{spell} lancé avec un emplacement de sort ; {source} permet de le lancer sans emplacement une fois par repos long.",
+    "{spell} is cast with a spell slot; {source} gives it without one, {count} times a short rest.": "{spell} lancé avec un emplacement de sort ; {source} permet de le lancer sans emplacement {count} fois par repos court.",
+    "{spell} is cast with a spell slot; {source} gives it without one, {count} times a long rest.": "{spell} lancé avec un emplacement de sort ; {source} permet de le lancer sans emplacement {count} fois par repos long.",
+    "{spell} is cast with a spell slot; {source} gives it without one.": "{spell} lancé avec un emplacement de sort ; {source} permet de le lancer sans emplacement.",
+    "{spell} is cast through {source}.": "{spell} lancé grâce à {source}.",
+    "{feature}: a spent level {level} slot comes back.": "{feature} : un emplacement de sort dépensé de niveau {level} est récupéré.",
+    "{spell}'s casting is complete and it takes effect now; it costs no action.": "L’incantation de {spell} est terminée et le sort prend effet maintenant ; cela ne coûte aucune action.",
     "{spell} is cast through {source}, with no spell slot.": "{spell} lancé grâce à {source}, sans emplacement de sort.",
     "{spell} is cast through {source}, with no spell slot: once until a long rest.": "{spell} lancé grâce à {source}, sans emplacement de sort : une fois jusqu’au prochain repos long.",
     "{spell} is cast through {source} with no spell slot: once, and again after a short rest, as a level {level} spell.": "{spell} lancé grâce à {source} sans emplacement au niveau {level} : une fois, puis de nouveau après un repos court.",

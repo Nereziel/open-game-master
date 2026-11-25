@@ -1,5 +1,16 @@
 {
   "messages": {
+    "{spell} is cast through Chains of Carceri. Chains of Carceri targets a celestial, fiend or elemental only, and not the same creature again until a long rest.": "{spell} sesláno díky Chains of Carceri. Chains of Carceri lze zacílit pouze na nebešťana, běsa nebo elementála, a na stejného tvora znovu až po důkladném odpočinku.",
+    "{spell} is cast through Grasping Tentacles. Casting it gives the warlock temporary hit points equal to their warlock level, and damage cannot break their concentration on it.": "{spell} sesláno díky Grasping Tentacles. Seslání dá černokněžníkovi dočasné životy rovné jeho úrovni černokněžníka a zranění nemůže přerušit jeho soustředění na toto kouzlo.",
+    "{spell} is cast through Shapechanger. The free casting is on the wizard themselves, into a beast of challenge rating 1 or lower.": "{spell} sesláno díky Shapechanger. Bezplatné seslání cílí na samotného kouzelníka a promění ho ve zvíře s nebezpečností 1 nebo nižší.",
+    "{spell} is cast with a spell slot; {source} gives it without one, once a short rest.": "{spell} sesláno s pozicí kouzla; {source} umožňuje seslání bez pozice jednou za krátký odpočinek.",
+    "{spell} is cast with a spell slot; {source} gives it without one, once a long rest.": "{spell} sesláno s pozicí kouzla; {source} umožňuje seslání bez pozice jednou za důkladný odpočinek.",
+    "{spell} is cast with a spell slot; {source} gives it without one, {count} times a short rest.": "{spell} sesláno s pozicí kouzla; {source} umožňuje seslání bez pozice {count}krát za krátký odpočinek.",
+    "{spell} is cast with a spell slot; {source} gives it without one, {count} times a long rest.": "{spell} sesláno s pozicí kouzla; {source} umožňuje seslání bez pozice {count}krát za důkladný odpočinek.",
+    "{spell} is cast with a spell slot; {source} gives it without one.": "{spell} sesláno s pozicí kouzla; {source} umožňuje seslání bez pozice.",
+    "{spell} is cast through {source}.": "{spell} sesláno díky {source}.",
+    "{feature}: a spent level {level} slot comes back.": "{feature}: obnovena utracená pozice kouzla {level}. úrovně.",
+    "{spell}'s casting is complete and it takes effect now; it costs no action.": "Sesílání kouzla {spell} je dokončeno a kouzlo nyní účinkuje; nevyžaduje žádnou akci.",
     "{spell} is cast through {source}, with no spell slot.": "{spell} sesláno díky {source} bez pozice kouzla.",
     "{spell} is cast through {source}, with no spell slot: once until a long rest.": "{spell} sesláno díky {source} bez pozice kouzla: jednou do důkladného odpočinku.",
     "{spell} is cast through {source} with no spell slot: once, and again after a short rest, as a level {level} spell.": "{spell} sesláno díky {source} bez pozice kouzla na {level}. úrovni: jednou, znovu po krátkém odpočinku.",
