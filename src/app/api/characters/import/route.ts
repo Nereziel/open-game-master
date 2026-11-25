@@ -6,6 +6,7 @@ import {
   unpackCharacterBundle,
 } from "@/lib/character-bundle";
 import { admitSheet, refusal } from "@/lib/characters/admit";
+import { bookLocaleOf } from "@/lib/request-locale";
 import { createCharacter } from "@/lib/db/characters";
 import { getDatabase } from "@/lib/db/core";
 import { forgetRefusedArrivals, landCharacterFile, type FileArrival } from "@/lib/db/character-file";
@@ -65,11 +66,12 @@ export async function POST(request: Request) {
   }
   // The Homebrew the file carries lands on the importer's shelf first, and
   // the sheet is judged against it; a refusal takes the arrivals back.
+  const locale = bookLocaleOf(request);
   let landed: { sheet: CreateSheetInput; arrival: FileArrival; admitted: Extract<ReturnType<typeof admitSheet>, { ok: true }> };
   try {
     landed = getDatabase().transaction(() => {
       const file = landCharacterFile(user.id, parsed.bundle);
-      const verdict = admitSheet({ door: "import", level: parsed.bundle.level, sheet: file.sheet, userId: user.id });
+      const verdict = admitSheet({ door: "import", level: parsed.bundle.level, sheet: file.sheet, userId: user.id, locale });
       if (!verdict.ok) {
         throw new RefusedFile(verdict.problems);
       }

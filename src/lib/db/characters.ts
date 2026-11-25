@@ -1,6 +1,6 @@
 import { getDatabase, nowIso, parseJson } from "@/lib/db/core";
 import { byName, textKey } from "@/lib/language/text-logic";
-import { translate } from "@/lib/messages-logic";
+import { translate, type Locale } from "@/lib/messages-logic";
 import { createSheet, getSheetById, listSheetsForUser } from "@/lib/db/sheets";
 import { heroDoorOpen } from "@/lib/characters/fallen-logic";
 import { adaptSheetToLevel } from "@/lib/characters/adapt";
@@ -453,6 +453,7 @@ export function admitLibraryCharacter(
   // The classes the seat this character replaces holds: its own edit at a
   // table that turned multiclassing off after it sat down.
   held?: ReadonlyArray<{ id: string }>,
+  locale: Locale = "en",
 ): { ok: true; sheet: CreateSheetInput } | { ok: false; error: string; problems: string[] } {
   // The adaptation itself lives in src/lib/characters/adapt.ts, pure, so a
   // companion coming out of this same library gets exactly the work done to
@@ -469,6 +470,7 @@ export function admitLibraryCharacter(
   }
   const admitted = admitSheet({
     door: "stored",
+    locale,
     level,
     sheet: adapted,
     userId,

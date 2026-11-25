@@ -11,8 +11,7 @@ import { publishPersisted } from "@/lib/events";
 import { queueLibraryPortrait } from "@/lib/portrait";
 import { pregenById } from "@/lib/starter/pregens";
 import { seatPicksSchema } from "@/lib/characters/seat-picks";
-import { bookLocaleOf } from "@/lib/request-locale";
-import { translate } from "@/lib/messages-logic";
+import { requestT } from "@/lib/request-locale";
 
 export const runtime = "nodejs";
 export const dynamic = "force-dynamic";
@@ -34,8 +33,7 @@ export async function POST(
     return context;
   }
   // The refusals read the asker's language.
-  const t = (key: string, vars?: Record<string, string | number>) =>
-    translate(bookLocaleOf(request), key, vars);
+  const t = requestT(request);
   if (!capsFor(context).needsCharacter) {
     return Response.json({ error: t("The GM seat plays no character.") }, { status: 400 });
   }
@@ -52,14 +50,14 @@ export async function POST(
     return Response.json({ error: t("Those picks could not be read.") }, { status: 400 });
   }
   const pregen = parsed.success
-    ? pregenById(parsed.data.id, bookLocaleOf(request))
+    ? pregenById(parsed.data.id, t.locale)
     : null;
   if (!pregen) {
     return Response.json({ error: t("No such hero.") }, { status: 404 });
   }
   // The door and the owed improvements are src/lib/characters/seat-preview.ts,
   // shared with the confirm sheet the player reads before this.
-  const admitted = admitPregen(pregen, door.campaign, context.user.id, parsed.success ? parsed.data.picks : null);
+  const admitted = admitPregen(pregen, door.campaign, context.user.id, parsed.success ? parsed.data.picks : null, t.locale);
   if (!admitted.ok) {
     return refusal(admitted.problems);
   }

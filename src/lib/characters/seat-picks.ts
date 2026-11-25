@@ -47,6 +47,7 @@ import { subclassOwed } from "@/lib/srd/owed-choices";
 import { applySubclassTraining, grantsForHeldTraining, subclassGrants } from "@/lib/srd/subclass-training";
 import type { SubclassExtras } from "@/lib/srd/subclass-tables";
 import { textKey } from "@/lib/language/text-logic";
+import type { Locale } from "@/lib/messages-logic";
 
 // What the confirm sheet sends beside the hero. Every field may be left
 // out: what is not picked stays owed.
@@ -63,6 +64,7 @@ export const seatPicksSchema = z.object({
 export type SeatPicks = z.infer<typeof seatPicksSchema>;
 
 export type SeatPicksContext = {
+  locale?: Locale;
   classOf: (classId: string) => ClassGrants | null;
   featOf: (name: string) => FeatFacts | null;
   spellOf: (name: string) => SpellFacts | null;
@@ -242,7 +244,7 @@ export function applySeatPicks(
     proficiencies,
   );
   if (freshTraining.length) {
-    const trained = applySubclassTraining({ proficiencies, grants: freshTraining, choices, strict: true, abilities: seated.abilities });
+    const trained = applySubclassTraining({ proficiencies, grants: freshTraining, choices, locale: context.locale, strict: true, abilities: seated.abilities });
     problems.push(...trained.problems);
     proficiencies = trained.proficiencies;
   }
@@ -328,7 +330,7 @@ export function applySeatPicks(
   }
   if (featsTaken.length) {
     const described = featsTaken.map((feat) => ({ name: feat, desc: context.featOf(feat)?.desc ?? "" }));
-    const granted = applyFeatGrants({ proficiencies, feats: described, choices, strict: true });
+    const granted = applyFeatGrants({ proficiencies, feats: described, choices, locale: context.locale, strict: true });
     problems.push(...granted.problems);
     proficiencies = granted.proficiencies;
     // The spells a feat teaches (Magic Initiate's) are named in full here;
@@ -338,6 +340,7 @@ export function applySeatPicks(
       choices,
       raisedAbility: (feat) => raisedBy.get(textKey(feat)) ?? null,
       spellOf: context.spellOf,
+      locale: context.locale,
       strict: true,
     });
     problems.push(...taught.problems);

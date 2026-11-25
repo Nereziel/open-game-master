@@ -72,11 +72,12 @@ function picksOf(raw: unknown, t: (key: string, vars?: Record<string, string | n
 
 // The library door with the picks made: the hero is adapted and admitted
 // as ever, then the picks are applied and judged (seat-preview.ts).
-function admitWith(campaign: MemberContext["campaign"], picks: SeatPicks | null) {
+function admitWith(campaign: MemberContext["campaign"], picks: SeatPicks | null, locale: ReturnType<typeof requestT>["locale"]) {
   return hasSeatPicks(picks)
     ? (character: Parameters<typeof admitLibraryForSeat>[0], _campaign: unknown, userId: string, level: number) =>
-        admitLibraryForSeat(character, campaign, userId, level, picks)
-    : undefined;
+        admitLibraryForSeat(character, campaign, userId, level, picks, locale)
+    : (character: Parameters<typeof admitLibraryCharacter>[0], table: Parameters<typeof admitLibraryCharacter>[1], userId: string, level: number) =>
+        admitLibraryCharacter(character, table, userId, level, undefined, locale);
 }
 
 const editSchema = z.object({
@@ -216,7 +217,7 @@ export async function POST(
       campaignId,
       context.user.id,
       door.level,
-      admitWith(door.campaign, picked.picks),
+      admitWith(door.campaign, picked.picks, t.locale),
     );
     if ("error" in result) {
       return Response.json(result, { status: 400 });
@@ -332,7 +333,7 @@ export async function PUT(
     // Picks that are not within the rules are refused before the old sheet
     // goes too: the switch is judged first, then made.
     if (hasSeatPicks(picked.picks)) {
-      const judged = admitLibraryForSeat(character, context.campaign, context.user.id, Math.max(1, Math.min(20, context.campaign.startingLevel)), picked.picks);
+      const judged = admitLibraryForSeat(character, context.campaign, context.user.id, Math.max(1, Math.min(20, context.campaign.startingLevel)), picked.picks, t.locale);
       if (!judged.ok) {
         return refusal(judged.problems);
       }
@@ -349,7 +350,7 @@ export async function PUT(
       campaignId,
       context.user.id,
       context.campaign.startingLevel,
-      admitWith(context.campaign, picked.picks),
+      admitWith(context.campaign, picked.picks, t.locale),
     );
     if ("error" in result) {
       // The old sheet is already gone; the lobby falls back to its
@@ -453,7 +454,7 @@ export async function PUT(
       campaignId,
       context.user.id,
       context.campaign.startingLevel,
-      (entry, table, user, level) => admitLibraryCharacter(entry, table, user, level, replaced.classes ?? []),
+      (entry, table, user, level) => admitLibraryCharacter(entry, table, user, level, replaced.classes ?? [], t.locale),
     );
     if ("error" in result) {
       publishPersisted(campaignId, "sheet_deleted", {
