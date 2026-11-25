@@ -38,7 +38,7 @@ export default defineConfig({
     ],
   },
   test: {
-    include: ["scripts/test-*.mjs", "src/lib/{content/czech-names,content/entry-descriptions-cs,i18n/czech-locale,i18n/localized-tables,rulebook/czech-book,srd/class-resources-cs}.test.ts"],
+    include: ["scripts/test-*.mjs", "src/lib/{content/czech-names,content/entry-descriptions-cs,content/option-labels,i18n/czech-locale,i18n/localized-tables,rulebook/czech-book,srd/class-resources-cs}.test.ts"],
     globalSetup: ["scripts/lib/vitest-global-setup.mjs"],
     setupFiles: ["scripts/lib/vitest-file-setup.mjs"],
     passWithNoTests: true,
