@@ -474,9 +474,22 @@ export default {
       await openTable(ids.campaignId);
       const status = page.locator(`${root}.session-compose-entry .session-status`);
       await eventually(() => status.isVisible(), { label: "native DM status in the session layout" });
-      const statusBox = await boxOf(status);
-      const liveChronicle = await boxOf(page.locator(`${root}.cine-fight > .cine-chronicle`));
-      check(Math.abs(statusBox.x - liveChronicle.x) < 2 && statusBox.y + statusBox.height <= liveChronicle.y + 1, "native DM activity is pinned above Chronicle");
+      // Visibility can precede the stage's final geometry (hydration, entrance
+      // transitions and the projected status update). Keep the same spatial
+      // assertion, but measure after motion and allow the layout to settle.
+      await untilStill(page);
+      const chronicle = page.locator(`${root}.cine-fight > .cine-chronicle`);
+      let geometry;
+      try {
+        await eventually(async () => {
+          const [statusBox, liveChronicle] = await Promise.all([boxOf(status), boxOf(chronicle)]);
+          geometry = { statusBox, liveChronicle };
+          return statusBox && liveChronicle && Math.abs(statusBox.x - liveChronicle.x) < 2 && statusBox.y + statusBox.height <= liveChronicle.y + 1;
+        }, { label: "native DM activity is pinned above Chronicle" });
+      } catch (error) {
+        console.error("native DM activity geometry", JSON.stringify(geometry));
+        throw error;
+      }
       check((await status.innerText()).includes("GM at work"), "activity uses the native job phrase");
       check(await status.getByRole("button", { name: "Stop the GM" }).count() === 1, "native story authority still controls Stop");
       await page.evaluate(() => { window.__statusNode = document.querySelector(".session-compose-entry .session-status"); });
