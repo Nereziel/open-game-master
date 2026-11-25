@@ -272,6 +272,30 @@ test("a pack row's \"no\" is no: Light is neither concentration nor a ritual", (
 });
 
 await import("../src/lib/i18n/server-catalogs.ts");
+
+test("Czech covers every genre feature description and authored option text", () => {
+  const missing = [];
+  let genreCount = 0;
+  for (const genre of ["cyberpunk", "dark-fantasy", "horror", "mystery", "post-apocalyptic", "steampunk"]) {
+    const { classes } = readJson("classes", genre + "-features.json");
+    for (const [classId, table] of Object.entries(classes)) {
+      for (const feature of [...Object.values(table.levels), ...Object.values(table.subclass.levels)].flat()) {
+        genreCount += 1;
+        if (translate("cs", feature.d) === feature.d) missing.push(classId + ": " + feature.n);
+      }
+    }
+  }
+  assert.ok(genreCount >= 733);
+  const { options } = readJson("srd", "options.json");
+  assert.ok(options.length >= 245);
+  for (const option of options) {
+    for (const text of [option.d, option.req].filter(Boolean)) {
+      if (translate("cs", text) === text) missing.push(option.n + ": " + text);
+    }
+  }
+  assert.deepEqual(missing, []);
+});
+
 test("spell summary metadata follows locale and keeps conditional text intact", () => {
   const data = { level_int: 3, school: { name: "Evocation" }, casting_time: "1 bonus action", range: "60 feet", concentration: "yes", ritual: true };
   const original = JSON.stringify(data);
