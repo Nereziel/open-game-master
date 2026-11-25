@@ -86,6 +86,7 @@ const REGISTRY = {
   "prompt-snapshot.ts:__odmSnapshotNarrators": { kind: PLUMBING, what: "prompt snapshots: what each narrator's slots hold, restored from the saved files when forgotten" },
   "prompt-snapshot.ts:__odmSnapshotProbes": { kind: PLUMBING, what: "prompt snapshots: a narrator being asked whether it keeps them" },
   "queue.ts:releases": { kind: PLUMBING, what: "the queue" },
+  "queue.ts:debugHeartbeat": { kind: PLUMBING, what: "last debug heartbeat timestamp for each in-flight job; restart forgets only diagnostic log throttling" },
   "queue.ts:__odmDmQueues": { kind: PLUMBING, what: "the queue, recovered at boot" },
   "queue.ts:__odmDmPauses": { kind: PLUMBING, what: "the queue" },
   "queue.ts:__odmDmRunning": { kind: PLUMBING, what: "the queue" },
