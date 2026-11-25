@@ -11,7 +11,7 @@ import {
   Sparkles,
 } from "lucide-react";
 import { Dialog } from "@/components/ui/Dialog";
-import { ModeRow, Section } from "@/components/HelpDialog";
+import { ModeRow, Section } from "@/components/HelpParts";
 import { useT } from "@/lib/locale";
 
 // Onboarding read for newcomers: what the app is, how to get a table running,
