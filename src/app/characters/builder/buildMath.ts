@@ -268,7 +268,7 @@ export function buildMathSections({ t, derived, scores, klass, atTable }: BuildM
     ...SLOT_LEVELS.flatMap(([level, ordinal]) => {
       const slot = derived.spellSlots[level];
       return slot && slot.max > 0
-        ? [{ id: `slots-${level}`, label: t("{ordinal}-level slots", { ordinal: t(ordinal) }), value: String(slot.max), working: slotTable }]
+        ? [{ id: `slots-${level}`, label: t("{ordinal}-level slots", { ordinal: t(ordinal), context: "builder.math.slots" }), value: String(slot.max), working: slotTable }]
         : [];
     }),
     // A warlock's pact slots on a class list sit apart from the rest.
@@ -280,6 +280,7 @@ export function buildMathSections({ t, derived, scores, klass, atTable }: BuildM
             value: t("{count} at {ordinal} level", {
               count: derived.pactSlots.max,
               ordinal: t(SLOT_LEVELS[derived.pactSlots.level - 1]?.[1] ?? String(derived.pactSlots.level)),
+              context: "builder.math.slots",
             }),
             working: t("warlock levels, recovered on a short rest"),
           },
