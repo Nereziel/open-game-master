@@ -275,7 +275,7 @@ export function applyOwedPicks(sheet: OwedSheet, request: OwedPicksRequest, cont
   if (choiceGrants.length) {
     const named = Object.fromEntries(Object.entries(choices).filter(([key]) => choiceGrants.some((grant) => textKey(grant.name) === textKey(key))));
     const picks = autoSubclassPicks(choiceGrants, sheet.proficiencies, keyedFeatChoices(named));
-    const trained = applySubclassTraining({ proficiencies: sheet.proficiencies, grants: choiceGrants, choices: picks, strict: true });
+    const trained = applySubclassTraining({ proficiencies: sheet.proficiencies, grants: choiceGrants, choices: picks, strict: true, locale });
     if (trained.problems.length) {
       return { ok: false, error: trained.problems[0] };
     }
@@ -341,7 +341,7 @@ export function applyOwedPicks(sheet: OwedSheet, request: OwedPicksRequest, cont
       // Named here, the pick is held to the grant like any other.
       grants.push({ name: grant.name, classId: grant.classId, subclass: grant.subclass, level: grant.level, spec: grant.spec });
     }
-    const trained = applySubclassTraining({ proficiencies: trainedBy ?? sheet.proficiencies, grants, choices: merged, strict: true });
+    const trained = applySubclassTraining({ proficiencies: trainedBy ?? sheet.proficiencies, grants, choices: merged, strict: true, locale });
     if (trained.problems.length) {
       return { ok: false, error: trained.problems[0] };
     }

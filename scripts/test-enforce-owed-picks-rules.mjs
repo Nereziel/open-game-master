@@ -128,6 +128,22 @@ await test("Owed prerequisite refusals follow the reader language and leave the 
   assert.deepEqual(world.sheet(hero.id).features, before);
 });
 
+await test("Shared training refusals follow the reader locale without changing the grant.", async () => {
+  const { applyFeatGrants, featGrantSpec } = await import("../src/lib/srd/feat-grants.ts");
+  const spec = { ...featGrantSpec(""), languages: 1 };
+  const input = { proficiencies: PROF, feats: [{ name: "Custom training", desc: "", spec }], choices: { "custom training": { languages: ["Common"] } }, strict: true };
+  const before = structuredClone(input);
+  const en = applyFeatGrants(input);
+  assert.deepEqual(en.problems, ["Custom training's languages are new ones; this character already speaks Common."]);
+  const cs = applyFeatGrants({ ...input, locale: "cs" });
+  const fr = applyFeatGrants({ ...input, locale: "fr" });
+  assert.match(cs.problems[0], /Postava už mluví jazykem Common/);
+  assert.match(fr.problems[0], /ce personnage parle déjà Common/);
+  assert.deepEqual(cs.proficiencies, en.proficiencies);
+  assert.deepEqual(fr.proficiencies, en.proficiencies);
+  assert.deepEqual(input, before);
+});
+
 // ---- fighting styles ----
 
 await test("A paladin's saved Archery stays through a level-up; a new Archery at the level-up is refused.", async () => {

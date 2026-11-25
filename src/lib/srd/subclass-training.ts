@@ -22,6 +22,7 @@
 // feature's name. Saving throws are the one kind a feat's spec has no
 // place for, and are applied here. Pure.
 import { optionTraining } from "@/lib/srd/mt-fb-training";
+import type { Locale } from "@/lib/messages-logic";
 import type { Ability, Proficiencies } from "@/lib/schemas/sheet";
 import { classFeaturesFor, subclassFeatureDescription } from "@/lib/srd/features";
 import { applyFeatGrants, type FeatChoices, type FeatGrantVerdict } from "@/lib/srd/feat-grants";
@@ -517,6 +518,7 @@ export function applySubclassTraining(input: {
   strict: boolean;
   // A file's picks may wait, as a feat's do (applyFeatGrants).
   picksMayWait?: boolean;
+  locale?: Locale;
   abilities?: Partial<Record<Ability, number>>;
 }): FeatGrantVerdict {
   if (!input.grants.length) {
@@ -531,6 +533,7 @@ export function applySubclassTraining(input: {
     choices: input.choices,
     strict: input.strict,
     picksMayWait: input.picksMayWait,
+    locale: input.locale,
   });
   // The picks that may wait: a named one is still held to the grant; one
   // left out is owed (applyFeatGrants picksMayWait).
@@ -541,6 +544,7 @@ export function applySubclassTraining(input: {
         choices: input.choices,
         strict: input.strict,
         picksMayWait: true,
+        locale: input.locale,
       })
     : { proficiencies: applied.proficiencies, problems: [] as string[], owed: undefined };
   const saves = withSaves(optional.proficiencies.saves as Ability[], input.grants, input.abilities);
