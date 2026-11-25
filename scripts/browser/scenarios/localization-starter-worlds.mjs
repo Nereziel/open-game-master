@@ -2,12 +2,14 @@
 // No storyteller call is made: creation stays in the lobby, using a closed
 // loopback port for the configured model. Restore settings and remove fixtures.
 import assert from "node:assert/strict";
+import { eventually } from "../lib.mjs";
 
 export default {
   name: "starter-world-language",
   viewports: ["desktop"],
   app: false,
-  async run({ api, base }) {
+  async run(t) {
+    const { api, base, page } = t;
     const json = async (method, path, options = {}, expected = 200) => {
       const response = await api[method](base + path, options);
       const body = await response.json();
@@ -63,6 +65,35 @@ export default {
       assert.equal(new Set(seeds.map((seed) => seed.pregens[0].tagline)).size, 3);
       assert.deepEqual(sheets[1], sheets[0]);
       assert.deepEqual(sheets[2], sheets[0]);
+
+      // Reopen the same mounted StarterDialog without navigating away.
+      // Changing the saved preference directly keeps this component alive
+      // (the Settings page would unmount it and hide a stale-cache bug).
+      // Opening the dialog renders its useT subscription against that choice.
+      await t.open("/");
+      const tile = page.locator('[data-tour="tile-quick-start"]').first();
+      await eventually(() => tile.isVisible(), { timeoutMs: 30_000, label: "Quick start tile" });
+      const originalLocale = await page.evaluate(() => localStorage.getItem("odm.locale"));
+      try {
+        for (const locale of ["en", "cs", "fr", "en"]) {
+          const seed = seeds[Object.keys(expected).indexOf(locale)];
+          await page.evaluate((choice) => localStorage.setItem("odm.locale", choice), locale);
+          await t.tap(tile);
+          const dialog = page.getByRole("dialog").filter({ has: page.getByText(seed.oneShot.title, { exact: true }) });
+          await eventually(() => dialog.isVisible(), { timeoutMs: 30_000, label: locale + " quick-start preview" });
+          assert.ok(await dialog.getByText(seed.oneShot.description, { exact: true }).isVisible(), locale + " description");
+          for (const hero of seed.pregens) {
+            assert.ok(await dialog.getByText(hero.tagline, { exact: true }).isVisible(), locale + " hero " + hero.id);
+          }
+          await t.tap(dialog.getByRole("button", { name: "Close", exact: true }));
+          await eventually(async () => !(await dialog.isVisible()), { label: "closed quick start" });
+        }
+      } finally {
+        await page.evaluate((choice) => {
+          if (choice === null) localStorage.removeItem("odm.locale");
+          else localStorage.setItem("odm.locale", choice);
+        }, originalLocale);
+      }
 
       // Pack-owned texts are not gettext keys. Listing and detail must
       // preserve the manifest exactly when the reader changes language.
