@@ -41,7 +41,7 @@ export function czechDynamicResourceDisplay(id: string): { name?: string; guidan
     const invocation = classFeatureName("warlock", `Invocation: ${row.invocation}`, "cs");
     return {
       name: `${spell} (${invocation})`,
-      guidance: `Kouzlo „${spell}“ můžeš díky invokaci „${invocation}“ seslat jednou za použití pozice kouzla černokněžníka. Další použití se obnoví po dlouhém odpočinku. Server je utratí automaticky při seslání.`,
+      guidance: `Kouzlo „${spell}“ můžeš díky invokaci „${invocation}“ seslat jednou a utratíš přitom pozici kouzla černokněžníka. Další použití se obnoví po dlouhém odpočinku. Server je utratí automaticky při seslání.`,
     };
   }
   return null;
