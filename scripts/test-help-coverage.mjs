@@ -14,6 +14,7 @@ register("./lib/register-alias.mjs", import.meta.url);
 
 const {
   describeFeature,
+  describeContentEntry,
   describeRace,
   describeRaceTrait,
   describeSkill,
@@ -317,6 +318,25 @@ test("chosen element help translates its template and damage type without changi
   assert.match(describeFeature("sorcerer", "", feature, "en"), /Bloodline chosen: fire/);
   assert.match(describeFeature("sorcerer", "", feature, "fr"), /Feu/);
   assert.match(describeFeature("sorcerer", "", feature, "cs"), /Ohnivé/);
+});
+
+test("content help localizes labels but preserves original pack prerequisites and prose", () => {
+  const data = { desc: "Custom flavor.", prerequisite: "Strength 13", effects_desc: "Gain a bonus.", feature: "Custom gift", feature_desc: "Original feature text." };
+  const original = JSON.stringify(data);
+  for (const [locale, requirement, feature] of [
+    ["en", "Requires Strength 13", "Feature"],
+    ["fr", "Nécessite Strength 13", "Capacité"],
+    ["cs", "Vyžaduje Strength 13", "Schopnost"],
+  ]) {
+    const text = describeContentEntry(data, undefined, locale);
+    assert.ok(text.includes(requirement), locale + " prerequisite heading");
+    assert.ok(text.includes("**" + feature + ": Custom gift.** Original feature text."), locale + " feature heading");
+    assert.ok(text.includes("Custom flavor."));
+    assert.ok(text.includes("Gain a bonus."));
+    assert.equal(describeContentEntry(data, "Custom gift", locale), "**" + feature + ": Custom gift.** Original feature text.");
+    assert.equal(describeContentEntry({ ...data, localized_desc: "Reviewed display text." }, undefined, locale), "Reviewed display text.");
+    assert.equal(JSON.stringify(data), original);
+  }
 });
 
 console.log(`\ntest-help-coverage: ${passed} passed`);
