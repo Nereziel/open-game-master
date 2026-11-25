@@ -86,6 +86,12 @@ const KEY_MEMO = new Map<string, string>();
 const KEY_MEMO_SIZE = 4096;
 const KEY_MEMO_TEXT = 80;
 
+// A controlled vocabulary in a free-text field must match the whole entry.
+// A punctuation mark or an extra internal space can be part of a custom value.
+export function literalTextKey(text: string): string {
+  return text.trim().normalize("NFC").toUpperCase().toLowerCase();
+}
+
 // What a search typed as you go compares by (the composer's @ menu, issue
 // 650): textKey with accents and apostrophes set aside, so "fabb" finds
 // "Fàbbro" and "thundertrees" finds "Thundertree's" on a phone keyboard

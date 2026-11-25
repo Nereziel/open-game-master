@@ -21,6 +21,7 @@ const {
   formatPrice,
   formatPurse,
   fromCopper,
+  localizeCoins,
   packCostCopper,
   parseCoins,
   priceText,
@@ -73,11 +74,18 @@ test("the Market shows prices in gold and the purse in its coins", () => {
   const panel = read("src/app/campaigns/[campaignId]/MarketPanel.tsx");
   // The label's words are the dictionaries' (market.buyFor); the price
   // still comes from the line's asking price through formatPrice.
-  assert.match(panel, /label: t\("Buy for \{price\}", \{ price: formatPrice\(line\.askingCp\) \}\)/);
-  assert.match(panel, /price: formatPrice\(line\.askingCp\)/);
-  assert.match(panel, /coin-purse" \}\} size="size-5" \/> \{formatCopper\(purse\)\}/);
+  assert.match(panel, /label: t\("Buy for \{price\}", \{ price: localizeCoins\(formatPrice\(line\.askingCp\), t\.locale\) \}\)/);
+  assert.match(panel, /\{localizeCoins\(formatPrice\(line\.askingCp\), t\.locale\)\}/);
+  assert.match(panel, /coin-purse" \}\} size="size-5" \/> \{localizeCoins\(formatCopper\(purse\), t\.locale\)\}/);
   assert.doesNotMatch(panel, /formatCopper\(line\./, "a price still counts out in platinum");
   assert.match(read("src/app/campaigns/[campaignId]/MarketShopEditor.tsx"), /value=\{draft \?\? formatPrice\(value\)\}/);
+});
+
+test("displayed prices use the reader's coin labels and retain gold as the largest denomination", () => {
+  const price = formatPrice(5505);
+  assert.equal(localizeCoins(price, "en"), "55 gp 5 cp");
+  assert.equal(localizeCoins(price, "fr"), "55 po 5 pc");
+  assert.equal(localizeCoins(price, "cs"), "55 zl 5 md");
 });
 
 test("a coin change says its own direction, or is asked for again", () => {

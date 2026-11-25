@@ -1,5 +1,5 @@
 import { cn } from "@/lib/cn";
-import { SkeletonStatus } from "@/components/SkeletonStatus";
+import { T } from "@/components/T";
 
 // A route's shape while its data loads (docs/visual-overhaul-plan.md 8c.3 and
 // 8d.2): the page's real layout with shimmering parchment blocks where the
@@ -47,7 +47,7 @@ export function PageSkeleton({ kind = "flat", className }: { kind?: SkeletonKind
   if (kind === "table") {
     return (
       <div className="flex h-dvh w-full animate-overlay-soft flex-col" role="status">
-        <SkeletonStatus table />
+        <span className="sr-only"><T k="Loading the table" /></span>
         <Block className="m-2 h-12 rounded-xl" />
         <div className="flex min-h-0 flex-1 gap-2 px-2 pb-2">
           <div className="flex min-w-0 flex-1 flex-col gap-3 rounded-xl p-4">
@@ -63,7 +63,7 @@ export function PageSkeleton({ kind = "flat", className }: { kind?: SkeletonKind
   }
   return (
     <div className={cn(shell, kind === "hub" || kind === "shelf" ? "max-w-5xl" : "max-w-3xl")} role="status">
-      <SkeletonStatus />
+      <span className="sr-only"><T k="Loading" /></span>
       <div className="mb-6 flex items-center gap-3">
         <Block className="size-12 rounded-xl" />
         <div className="flex-1 space-y-2">

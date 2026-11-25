@@ -436,9 +436,11 @@ try {
 // image-variant-url.ts. The native board client (an addon's board view in the
 // apps) imported it, and the table page took the polyfill with it.
 {
-  const reached = staticImports("app/campaigns/[campaignId]/table/page.tsx");
-  assert.ok(reached.size > 100, `the walk reads the table page's imports (${reached.size} files)`);
-  assert.ok(!reached.has("lib/image-format.ts"), "the table page imports image-format.ts (Buffer); import variantUrl from image-variant-url.ts");
+  for (const entry of ["app/campaigns/[campaignId]/table/page.tsx", "app/campaigns/[campaignId]/BattleMapPanel.tsx", "app/campaigns/[campaignId]/MapPanel.tsx"]) {
+    const reached = staticImports(entry);
+    assert.ok(reached.has("lib/image-variant-url.ts"), `${entry} reaches the browser image URL helper`);
+    assert.ok(!reached.has("lib/image-format.ts"), `${entry} imports image-format.ts (Buffer); import variantUrl from image-variant-url.ts`);
+  }
   passed += 1;
 }
 

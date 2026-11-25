@@ -718,6 +718,18 @@
 @media (hover: none) {
   .ts-slot-actions { opacity: 1; transform: none; }
 }
+/* On touch screens the actions stay visible. Give them their own row so
+   their hit areas cannot cover the campaign link above them. */
+@media (pointer: coarse) {
+  .ts-slot-actions {
+    position: static;
+    align-self: flex-end;
+    margin-top: auto;
+    opacity: 1;
+    transform: none;
+  }
+  .ts-slot-actions .tap-reach { min-width: 2.5rem; min-height: 2.5rem; }
+}
 .ts-slot-new {
   align-items: center;
   justify-content: center;

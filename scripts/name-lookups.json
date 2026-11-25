@@ -2763,6 +2763,11 @@
         "key",
         1,
         "Check the canonical ID has no namespace separator before trying the bundled SRD fallback."
+      ],
+      [
+        "key",
+        1,
+        "Bundled archetype slug starts with the class ID and separator."
       ]
     ],
     "app/api/content/[kind]/[slug]/route.ts#whole": [
@@ -2789,6 +2794,11 @@
         "key",
         1,
         "route keys, refs, slugs and data URLs"
+      ],
+      [
+        "search",
+        2,
+        "Split the search query and filter the canonical catalog name by its words."
       ]
     ],
     "app/api/content/[kind]/route.ts#switch": [
@@ -3730,6 +3740,11 @@
         "key",
         1,
         "UI keys, ids, refs, view choices and documented defaults (a palette, a tile, a peer volume, the first sheet)"
+      ],
+      [
+        "identity",
+        1,
+        "Find a carried row by its exact stored name to render the display label."
       ]
     ],
     "app/campaigns/[campaignId]/MarketPanel.tsx#whole-single": [
@@ -3751,6 +3766,11 @@
         "identity",
         2,
         "a stock line by whole name"
+      ],
+      [
+        "key",
+        1,
+        "Show the localized stock label only if distinct from its stored name."
       ]
     ],
     "app/campaigns/[campaignId]/MessageActions.tsx#whole": [
@@ -4513,12 +4533,7 @@
       [
         "key",
         3,
-        "a catalog row's selection by its name"
-      ],
-      [
-        "search",
-        1,
-        "the catalog's filter box"
+        "Canonical names read for selection and removal of a picker choice."
       ]
     ],
     "app/characters/builder/CatalogBrowser.tsx#keyed": [
@@ -4530,19 +4545,9 @@
     ],
     "app/characters/builder/CatalogBrowser.tsx#partial": [
       [
-        "search",
-        2,
-        "the catalog's filter box"
-      ],
-      [
         "key",
-        2,
-        "a catalog row's selection by its name"
-      ],
-      [
-        "identity",
-        1,
-        "builder picks, kit lines, spells, tools and skills by whole name or id; ids, steps and defaults"
+        3,
+        "Membership of canonical selection and bucket IDs."
       ]
     ],
     "app/characters/builder/CatalogBrowser.tsx#whole": [
@@ -5168,6 +5173,11 @@
         "key",
         3,
         "a class or skill row by its id"
+      ],
+      [
+        "identity",
+        2,
+        "Match a subclass option by its whole canonical name."
       ]
     ],
     "app/characters/builder/steps/ClassChoices.tsx#whole": [
@@ -5554,15 +5564,15 @@
     "app/reference/ResultBadges.tsx#keyed": [
       [
         "key",
-        1,
-        "ids, refs, slugs, tool names, field names, env names, event kinds, UI keys, caches, door and map keys; a sheet's conditionMeta by the condition key it was written under; the usage route's gear map by the sheet's own stored item names (src/: every site read)"
+        4,
+        "Rarity and item-kind display dictionaries."
       ]
     ],
     "app/reference/ResultBadges.tsx#normalizer": [
       [
         "key",
-        1,
-        "slugs, hosts, file names, ids, env values, display text, throttle keys, model ids (src/: every site read)"
+        2,
+        "Normalize the rarity code for its color and display wording."
       ]
     ],
     "app/reference/ResultBadges.tsx#partial": [
@@ -5575,7 +5585,7 @@
     "app/reference/page.tsx#partial": [
       [
         "search",
-        3,
+        1,
         "the glossary's filter box"
       ],
       [
@@ -5750,6 +5760,11 @@
         "authoring",
         1,
         "workshop authoring (pickers, drafts, copied rows); every site read, none reads a carried item's row"
+      ],
+      [
+        "authoring",
+        1,
+        "Pass the printed spell name with its catalog row to the reference link."
       ]
     ],
     "app/workshop/bestiary/SpellcastingFields.tsx#number": [
@@ -6019,7 +6034,7 @@
     "app/workshop/homebrew/SpeciesTraitPicker.tsx#partial": [
       [
         "authoring",
-        3,
+        1,
         "workshop authoring (pickers, drafts, copied rows); every site read, none reads a carried item's row"
       ]
     ],
@@ -6860,6 +6875,11 @@
         "search",
         1,
         "the spell book's filter box"
+      ],
+      [
+        "search",
+        1,
+        "Include the localized spell name in the filter."
       ]
     ],
     "components/sheet/SpellBook.tsx#whole": [
@@ -7004,7 +7024,7 @@
     "components/ui/InfoDialog.tsx#whole": [
       [
         "identity",
-        2,
+        1,
         "a help card's rows by whole name"
       ]
     ],
@@ -11135,22 +11155,22 @@
     "lib/db/world-bindings.ts#partial": [
       [
         "key",
-        3,
-        "binding refs"
+        4,
+        "Identify homebrew and binding namespaces by prefix."
       ]
     ],
     "lib/db/world-bindings.ts#whole": [
       [
         "key",
-        1,
-        "binding refs"
+        3,
+        "Match stored binding references, canonical slug and base name."
       ]
     ],
     "lib/db/world-bindings.ts#whole-single": [
       [
         "key",
-        1,
-        "change detection on an update, binding slugs"
+        2,
+        "Check binding slug and exact base name before attaching catalog metadata."
       ]
     ],
     "lib/db/world-forge-bundle.ts#keyed": [
@@ -19459,8 +19479,13 @@
     "lib/help/index.ts#whole-single": [
       [
         "identity",
+        2,
+        "Compare the focused feature with its source by whole textKey."
+      ],
+      [
+        "key",
         1,
-        "a pack background's own feature, matched to the feature the info card opens by whole name (textKey on both sides)"
+        "Detect a translated label for presentation."
       ]
     ],
     "lib/help/index.ts#keyed": [
@@ -19475,6 +19500,11 @@
         "key",
         2,
         "slugs, hosts, file names, ids, env values, display text, throttle keys, model ids (src/: every site read)"
+      ],
+      [
+        "parse",
+        2,
+        "Normalize printed casting time and range for the help card."
       ]
     ],
     "lib/help/index.ts#partial": [
@@ -19497,13 +19527,23 @@
         "parse",
         1,
         "stripping the card's own label from its text"
+      ],
+      [
+        "parse",
+        2,
+        "Parse printed casting times and distances for the spell card."
       ]
     ],
     "lib/help/item-sheet.ts#fallback": [
       [
-        "identity",
+        "key",
         1,
-        "the weight of the row the whole name found"
+        "Choose the directly opened entry or first exact search result as the display source."
+      ],
+      [
+        "parse",
+        2,
+        "Weight and description fallbacks from compatible display rows."
       ]
     ],
     "lib/help/item-sheet.ts#keyed": [
@@ -19867,8 +19907,8 @@
     "lib/language/text-logic.ts#normalizer": [
       [
         "identity",
-        1,
-        "textKey itself"
+        2,
+        "Shared token-based name key and punctuation-preserving literal vocabulary key."
       ]
     ],
     "lib/language/text-logic.ts#number": [
@@ -20662,20 +20702,6 @@
         "key",
         1,
         "a host matched against the public services by its exact name (protocol)"
-      ]
-    ],
-    "lib/rulebook/book.ts#number": [
-      [
-        "parse",
-        1,
-        "the request's Accept-Language and X-Odm-Locale headers: BCP 47 language tags and their q weights (protocol), never a record's name"
-      ]
-    ],
-    "lib/rulebook/book.ts#partial": [
-      [
-        "parse",
-        6,
-        "the request's Accept-Language and X-Odm-Locale headers: BCP 47 language tags and their q weights (protocol), never a record's name"
       ]
     ],
     "lib/rulebook/catalog-rows.ts#fallback": [
@@ -24836,6 +24862,11 @@
         "authoring",
         17,
         "every site read"
+      ],
+      [
+        "authoring",
+        1,
+        "Inspect authored field paths, values and import origins while presenting a merge."
       ]
     ],
     "lib/worldforge/import-merge.ts#partial": [
@@ -24848,6 +24879,11 @@
         "pattern",
         1,
         "a fixed pattern over text that reads no record's name: its English words are scripts/text-comparisons.json's to classify"
+      ],
+      [
+        "authoring",
+        1,
+        "Inspect authored field paths, values and import origins while presenting a merge."
       ]
     ],
     "lib/worldforge/import-merge.ts#whole": [
@@ -24855,6 +24891,11 @@
         "authoring",
         2,
         "WorldForge records, types, stubs and links; every site read"
+      ],
+      [
+        "authoring",
+        1,
+        "Inspect authored field paths, values and import origins while presenting a merge."
       ]
     ],
     "lib/worldforge/model.ts#fallback": [
@@ -27213,13 +27254,6 @@
         "French SRD item name reverse lookup (ITEM_EN_BY_FR)"
       ]
     ],
-    "lib/dm/item-logic.ts#keyed": [
-      [
-        "key",
-        1,
-        "French-to-English SRD item name reverse lookup (ITEM_EN_BY_FR)"
-      ]
-    ],
     "lib/content/names.ts#normalizer": [
       [
         "key",
@@ -27230,15 +27264,20 @@
     "lib/content/names.ts#keyed": [
       [
         "key",
-        10,
-        "official SRD table lookups into FR_NAMES_BY_TABLE using normalized keys"
+        12,
+        "Published document IDs, normalized catalog keys and locale-specific feature or weapon dictionaries."
       ]
     ],
     "lib/content/names.ts#partial": [
       [
-        "key",
+        "search",
+        2,
+        "Canonical and localized names both participate in the catalog filter."
+      ],
+      [
+        "parse",
         3,
-        "parenthetical and measurement suffix stripping for speciesTraitName and backgroundFeatureName"
+        "Trim printed parenthetical or measurement suffixes from feature labels."
       ]
     ],
     "lib/dm/charge-logic.ts#partial": [
@@ -27616,8 +27655,8 @@
     "lib/roll-labels.ts#keyed": [
       [
         "key",
-        1,
-        "roll label lookup by roll kind/key"
+        2,
+        "Roll-kind label and localized detail vocabulary."
       ]
     ],
     "lib/battlemap/hand-display.ts#partial": [
@@ -27639,6 +27678,11 @@
         "key",
         1,
         "hand display kind comparison"
+      ],
+      [
+        "key",
+        1,
+        "Check whether a display spelling differs before substituting it."
       ]
     ],
     "lib/battlemap/hand-react.ts#fallback": [
@@ -27690,13 +27734,6 @@
         "roll result card formatting/parsing"
       ]
     ],
-    "components/sheet/SheetParts.tsx#bypass": [
-      [
-        "identity",
-        1,
-        "sheet part item lookup"
-      ]
-    ],
     "lib/battlemap/hand-play.ts#normalizer": [
       [
         "key",
@@ -27739,13 +27776,6 @@
         "map catalogue lookup by id"
       ]
     ],
-    "components/AttractionPicker.tsx#keyed": [
-      [
-        "key",
-        1,
-        "attraction picker lookup by key"
-      ]
-    ],
     "components/rulebook/RulebookContents.tsx#keyed": [
       [
         "key",
@@ -27760,25 +27790,11 @@
         "rulebook reader lookup by slug/id"
       ]
     ],
-    "app/campaigns/[campaignId]/MonsterFields.tsx#keyed": [
-      [
-        "key",
-        1,
-        "monster fields lookup by key"
-      ]
-    ],
     "app/workshop/pdf-import/send-book.ts#fallback": [
       [
         "authoring",
         1,
         "pdf-import section fallback"
-      ]
-    ],
-    "components/sheet/SheetGearRow.tsx#bypass": [
-      [
-        "identity",
-        1,
-        "sheet gear row lookup"
       ]
     ],
     "app/characters/builder/CardText.tsx#partial": [
@@ -27895,9 +27911,9 @@
     ],
     "lib/roll-labels.ts#partial": [
       [
-        "pattern",
-        2,
-        "display-only roll label pattern matching in roll-labels.ts"
+        "parse",
+        3,
+        "Detect dice notation and split the engine's stored target markers for display."
       ]
     ],
     "components/sheet/SheetParts.tsx#normalizer": [
@@ -27980,8 +27996,8 @@
     "lib/content/czech-names.test.ts#keyed": [
       [
         "key",
-        2,
-        "Regression assertion over fixed bundled translation IDs or expected display markers."
+        8,
+        "Compare fixed SRD catalog names and translations in test fixtures."
       ]
     ],
     "lib/rulebook/czech-book.test.ts#partial": [
@@ -27989,13 +28005,6 @@
         "parse",
         2,
         "Regression assertion over fixed bundled translation IDs or expected display markers."
-      ]
-    ],
-    "lib/content/entry-descriptions-cs.ts#partial": [
-      [
-        "parse",
-        1,
-        "Split Czech item Markdown into paragraphs to remove the metadata header for display only."
       ]
     ],
     "lib/content/entry-descriptions-cs.test.ts#first": [
@@ -28059,6 +28068,308 @@
         "key",
         1,
         "exact generated English message equality for import-result presentation; original message retained on missing display data"
+      ]
+    ],
+    "lib/content/names.ts#whole-single": [
+      [
+        "key",
+        1,
+        "Skip a redundant display label when the translation equals the source."
+      ]
+    ],
+    "lib/help/index.ts#number": [
+      [
+        "parse",
+        2,
+        "Numeric duration and distance captured from printed spell metadata."
+      ]
+    ],
+    "lib/help/terms.ts#whole": [
+      [
+        "key",
+        1,
+        "Compare the returned gettext label with the requested option key."
+      ]
+    ],
+    "lib/help/item-sheet.ts#whole": [
+      [
+        "key",
+        1,
+        "Check the SRD document allowlist."
+      ],
+      [
+        "identity",
+        1,
+        "Whole-name match for item-card results."
+      ]
+    ],
+    "lib/help/item-sheet.ts#first": [
+      [
+        "key",
+        1,
+        "First exact search result supplies the card source only when direct lookup missed."
+      ]
+    ],
+    "lib/content/item-display.ts#bypass": [
+      [
+        "parse",
+        2,
+        "Only the carried name declares its printed bonus; reading or removing it selects no item."
+      ]
+    ],
+    "lib/content/item-display.ts#whole-single": [
+      [
+        "key",
+        2,
+        "Preserve custom names and append the carried bonus only when stripped from the display label."
+      ]
+    ],
+    "lib/battlemap/condition-notes.ts#whole": [
+      [
+        "key",
+        1,
+        "Ability abbreviation from a structured condition note."
+      ]
+    ],
+    "lib/content/entry-descriptions-cs.ts#keyed": [
+      [
+        "key",
+        1,
+        "Read translated gear prose by its catalog key."
+      ]
+    ],
+    "lib/content/expansion-descriptions-cs.ts#whole": [
+      [
+        "key",
+        1,
+        "Compare publication metadata with the recorded source snapshot."
+      ]
+    ],
+    "lib/content/expansion-descriptions-cs.ts#keyed": [
+      [
+        "key",
+        1,
+        "Read each original metadata field before applying its translation."
+      ]
+    ],
+    "lib/content/entry-descriptions.ts#partial": [
+      [
+        "parse",
+        5,
+        "Split translated paragraphs and scan markdown section boundaries in the printed rulebook."
+      ]
+    ],
+    "lib/content/entry-descriptions.ts#whole": [
+      [
+        "key",
+        2,
+        "Match a printed race title and a rulebook heading to their source."
+      ],
+      [
+        "key",
+        1,
+        "Reject incomplete feature prose when gettext returns the source."
+      ]
+    ],
+    "lib/content/entry-descriptions.ts#first": [
+      [
+        "key",
+        1,
+        "Use the only matching published archetype after rejecting zero or multiple candidates."
+      ]
+    ],
+    "lib/content/entry-descriptions.ts#number": [
+      [
+        "parse",
+        4,
+        "Sort the printed class spell lists by numeric level."
+      ]
+    ],
+    "lib/content/entry-descriptions.ts#keyed": [
+      [
+        "key",
+        1,
+        "Allowlisted SRD document identity."
+      ]
+    ],
+    "app/campaigns/[campaignId]/MarketPanel.tsx#fallback": [
+      [
+        "key",
+        1,
+        "Show the original label if no carried row is available."
+      ]
+    ],
+    "components/sheet/SheetGearRow.tsx#whole": [
+      [
+        "identity",
+        1,
+        "Find a carried row by its exact stored name to render the display label."
+      ]
+    ],
+    "components/sheet/SheetGearRow.tsx#fallback": [
+      [
+        "key",
+        1,
+        "Show the original label if no carried row is available."
+      ]
+    ],
+    "lib/i18n/rule-term-input.ts#whole": [
+      [
+        "identity",
+        2,
+        "Match the whole canonical option or its whole label with punctuation intact."
+      ]
+    ],
+    "lib/i18n/rule-term-input.ts#first": [
+      [
+        "identity",
+        1,
+        "Use the localized match only when exactly one option has that label."
+      ]
+    ],
+    "lib/i18n/rule-term-input.ts#whole-single": [
+      [
+        "key",
+        1,
+        "Preserve a list segment verbatim when its term already has canonical spelling."
+      ]
+    ],
+    "lib/i18n/rule-term-input.ts#partial": [
+      [
+        "parse",
+        1,
+        "Substitute only the matched whole term within its padded list segment."
+      ]
+    ],
+    "components/ui/RuleTermInput.tsx#whole": [
+      [
+        "key",
+        1,
+        "Confirm a displayed option resolves to its own engine value."
+      ]
+    ],
+    "app/workshop/bestiary/StatBlockFields.tsx#normalizer": [
+      [
+        "key",
+        1,
+        "Format a fixed ability or skill identifier for glossary lookup."
+      ]
+    ],
+    "lib/characters/event-display.ts#partial": [
+      [
+        "parse",
+        14,
+        "Recognize exact engine-written event summary templates for display; unmatched prose is preserved."
+      ]
+    ],
+    "lib/worldforge/display.ts#keyed": [
+      [
+        "key",
+        2,
+        "Built-in link label vocabulary and default type ID."
+      ]
+    ],
+    "lib/worldforge/display.ts#whole": [
+      [
+        "key",
+        1,
+        "Require the original field name before translating it."
+      ]
+    ],
+    "lib/worldforge/display.ts#whole-single": [
+      [
+        "key",
+        1,
+        "A renamed bound record keeps its own label."
+      ]
+    ],
+    "lib/worldforge/display.ts#partial": [
+      [
+        "parse",
+        1,
+        "Recognize an engine-written CR detail for presentation."
+      ]
+    ],
+    "app/characters/builder/derivedReasons.ts#keyed": [
+      [
+        "key",
+        1,
+        "Check a fixed ability abbreviation."
+      ]
+    ],
+    "components/sheet/SheetPaperdoll.tsx#whole": [
+      [
+        "identity",
+        1,
+        "Match the worn line by its exact stored name for display."
+      ]
+    ],
+    "app/campaigns/[campaignId]/dmStatusPhrases.ts#fallback": [
+      [
+        "key",
+        1,
+        "Fall back to the English pool of display phrases."
+      ]
+    ],
+    "app/workshop/homebrew/ItemEffectFields.tsx#whole-single": [
+      [
+        "key",
+        1,
+        "Detect the gettext fallback for an effect mode."
+      ]
+    ],
+    "lib/workshop/species-trait-display.ts#partial": [
+      [
+        "key",
+        2,
+        "Group published trait headings by their whole textKey."
+      ],
+      [
+        "search",
+        1,
+        "Filter display names by the typed query."
+      ]
+    ],
+    "lib/workshop/species-trait-display.ts#whole": [
+      [
+        "key",
+        1,
+        "Match a contributing published species by its printed name."
+      ]
+    ],
+    "lib/tours/workshop-guide.ts#fallback": [
+      [
+        "key",
+        1,
+        "Locale catalog guide or inline translation with the same guide ID."
+      ]
+    ],
+    "lib/content/entry-descriptions-cs.test.ts#whole": [
+      [
+        "key",
+        1,
+        "Select a test fixture whose translated name differs from its source."
+      ]
+    ],
+    "lib/content/entry-descriptions-cs.test.ts#keyed": [
+      [
+        "key",
+        3,
+        "Read exact document, slug and gear dictionary fixtures."
+      ]
+    ],
+    "lib/content/entry-descriptions-cs.test.ts#partial": [
+      [
+        "parse",
+        4,
+        "Validate printed trait table sections and the displayed prerequisite marker."
+      ]
+    ],
+    "lib/content/entry-descriptions-cs.test.ts#number": [
+      [
+        "parse",
+        4,
+        "Numeric spell levels for ordering expected fixture rows."
       ]
     ]
   }
