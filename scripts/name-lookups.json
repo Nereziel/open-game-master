@@ -21626,9 +21626,9 @@
     ],
     "lib/srd/currency.ts#partial": [
       [
-        "pattern",
-        4,
-        "a fixed pattern over text that reads no record's name: its English words are scripts/text-comparisons.json's to classify"
+        "parse",
+        5,
+        "numeric cost notation, coin-code tokenization, unread-number diagnostics and signed coin changes; no name identity"
       ]
     ],
     "lib/srd/encumbrance.ts#keyed": [
@@ -27525,8 +27525,8 @@
     "lib/i18n/locale.ts#partial": [
       [
         "parse",
-        8,
-        "Accept-Language BCP 47 tag/q-weight parsing and cookie header splitting (protocol), never a record's name"
+        6,
+        "Accept-Language tag/q-weight parsing and cookie header delimiters; protocol only"
       ]
     ],
     "lib/i18n/locale.ts#number": [
@@ -28003,6 +28003,62 @@
         "key",
         1,
         "Use the first bundled spell as a fixture for rejecting other sources and lite rows; no runtime identity selection."
+      ]
+    ],
+    "lib/i18n/translate.ts#fallback": [
+      [
+        "key",
+        1,
+        "gettext context override falls back to the same English message key, then source text; presentation only"
+      ]
+    ],
+    "lib/i18n/locale.ts#fallback": [
+      [
+        "key",
+        2,
+        "registered UI locale metadata: tag and server language fall back to English metadata, not a content record"
+      ]
+    ],
+    "lib/attraction.ts#keyed": [
+      [
+        "key",
+        1,
+        "presentation label lookup by locale and fixed English choice; stored gender and tool words unchanged"
+      ]
+    ],
+    "lib/content/expansion-identity.ts#keyed": [
+      [
+        "key",
+        3,
+        "exact document slug, content kind and entry slug, guarded by own-property checks and original English name equality"
+      ]
+    ],
+    "lib/bestiary/printed-block.ts#whole": [
+      [
+        "key",
+        1,
+        "compare corresponding printed-block entries for exact snapshot equality (name, description and engine), not a record lookup"
+      ]
+    ],
+    "lib/workshop/import-display.ts#whole-single": [
+      [
+        "key",
+        1,
+        "compare translated message to its own gettext source key to retain original warning/result when untranslated"
+      ]
+    ],
+    "lib/workshop/import-display.ts#keyed": [
+      [
+        "key",
+        4,
+        "structured warning/result display variables and reference kinds keyed by known fields; placeholder interpolation never changes imported identity"
+      ]
+    ],
+    "lib/workshop/import-display.ts#whole": [
+      [
+        "key",
+        1,
+        "exact generated English message equality for import-result presentation; original message retained on missing display data"
       ]
     ]
   }

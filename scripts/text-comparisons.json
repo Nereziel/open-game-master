@@ -25858,6 +25858,62 @@
         2,
         "Explicit bundled alchemist ID and source feature spelling for the same-spelling Czech Alkahest regression."
       ]
+    ],
+    "lib/srd/currency.ts#\\b": [
+      [
+        "key",
+        2,
+        "boundaries around fixed canonical denomination codes for display conversion; not natural-language coin names"
+      ]
+    ],
+    "lib/srd/currency.ts#re-affix": [
+      [
+        "key",
+        1,
+        "canonical coin-code display pattern; denomination values stay unchanged"
+      ]
+    ],
+    "lib/content/expansion-identity.ts#str-eq": [
+      [
+        "key",
+        2,
+        "fixed content-table kind aliases races/species and archetypes/subclasses for exact source identity"
+      ]
+    ],
+    "lib/bestiary/printed-block.ts#str-list": [
+      [
+        "key",
+        1,
+        "fixed printed-block section field names for exact snapshot comparison"
+      ]
+    ],
+    "lib/workshop/import-display.ts#\\w": [
+      [
+        "key",
+        1,
+        "ASCII gettext-style placeholder identifiers in generated English import notes, not human names"
+      ]
+    ],
+    "lib/workshop/import-display.ts#str-eq": [
+      [
+        "key",
+        1,
+        "fixed locale code chooses the existing English import message"
+      ]
+    ],
+    "lib/i18n/game-term-labels.ts#toUpperCase": [
+      [
+        "display",
+        1,
+        "capitalize presentation label without changing canonical creature type or dragon color"
+      ]
+    ],
+    "lib/i18n/game-term-labels.ts#str-key": [
+      [
+        "key",
+        3,
+        "fixed locale dictionaries for spell school, size, creature type, movement, sense and dragon color"
+      ]
     ]
   }
 }
