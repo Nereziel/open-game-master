@@ -396,7 +396,7 @@ async function attempt(
   const durationMs = Date.now() - started - waited;
   const firstTokenMs = firstTokenAt ? firstTokenAt - started - waited : undefined;
 
-  dmDebug("model.result", { ...trace, durationMs, firstTokenMs, waitedMs: waited, outcome: outcomeOf(result), status: result.error?.status, finishReason: result.finishReason, inputTokens: result.usage?.inputTokens, outputTokens: result.usage?.outputTokens, reasoningTokens: result.usage?.reasoningTokens, cachedInputTokens: result.usage?.cachedInputTokens, promptMs: result.usage?.promptMs, generateMs: result.usage?.generateMs, loadMs: result.usage?.loadMs, replyChars: typeof result.message?.content === "string" ? result.message.content.length : 0, toolCalls: result.message?.tool_calls?.length });
+  dmDebug("model.result", { ...trace, durationMs, firstTokenMs, waitedMs: waited, outcome: outcomeOf(result), status: result.error?.status, finishReason: result.finishReason, inputTokens: result.usage?.inputTokens, outputTokens: result.usage?.outputTokens, reasoningTokens: result.usage?.reasoningTokens, cachedInputTokens: result.usage?.cachedInputTokens, promptMs: result.usage?.promptMs, generateMs: result.usage?.generateMs, loadMs: result.usage?.loadMs, replyChars: typeof result.message?.content === "string" ? result.message.content.length : 0, toolCalls: Array.isArray(result.message?.tool_calls) ? result.message.tool_calls.length : 0 });
   if (result.usage) {
     recordUsage({
       kind: result.usage.backend === "harness" ? "agent" : "text",

@@ -1553,6 +1553,7 @@ async function requestCustomMessageNow(
   }
 
   if (onDelta && upstream.body) {
+    dmDebug("transport.stream.start", trace);
     // OpenAI-compatible SSE: "data: {...}" lines carrying content and
     // tool-call fragments, terminated by "data: [DONE]".
     let streamUsage = null as TokenUsage | null;
@@ -1877,6 +1878,7 @@ async function requestLocalMessageNow(
   }
 
   if (onDelta && upstream.body) {
+    dmDebug("transport.stream.start", trace);
     // Ollama streams NDJSON: one JSON object per line with message.content
     // fragments; tool calls arrive whole on whichever line carries them.
     let localUsage = null as TokenUsage | null;

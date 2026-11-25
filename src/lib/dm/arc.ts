@@ -373,10 +373,12 @@ async function sagaFromPlan(
     }
   }
   const user = [context, `The saga's plan:\n${renderSagaPlan(plan)}`, opening].filter(Boolean).join("\n\n");
+  let openingAttempt = 0;
   const write = async (extra: string) => {
+    openingAttempt += 1;
     const reply = await arcModelCall(campaignId, OPENING_ACT_SYSTEM, extra ? `${user}\n\n${extra}` : user, "opening act");
     const parsed = reply === null ? null : parseOpeningActJson(reply);
-    dmDebug("arc.opening.parse", { ...trace, retry: Boolean(extra), chars: reply?.length, ok: Boolean(parsed), beats: parsed?.beats.length, stopped: currentJobSignal()?.aborted });
+    dmDebug("arc.opening.parse", { ...trace, attempt: openingAttempt, chars: reply?.length, ok: Boolean(parsed), beats: parsed?.beats.length, stopped: currentJobSignal()?.aborted });
     return parsed;
   };
   let act = await write("");
