@@ -1,6 +1,7 @@
 import { latestTurnParkedByAi } from "@/lib/db/dm-turns";
 import { publishEphemeral } from "@/lib/events";
-import { jobAbandoned } from "@/lib/dm/job-control";
+import { dmDebug } from "@/lib/dm/debug";
+import { currentDmJob, jobAbandoned } from "@/lib/dm/job-control";
 
 // Last-published DM status per campaign, kept in memory so the campaign
 // snapshot can report a turn already in flight (dm_status events are
@@ -30,6 +31,7 @@ export function setDmStatus(campaignId: string, state: DmStatusState) {
   if (jobAbandoned()) {
     return;
   }
+  dmDebug("dm.status", { campaignId, jobId: currentDmJob()?.id, previous: statuses().get(campaignId), state });
   statuses().set(campaignId, state);
   publishEphemeral(campaignId, "dm_status", { state });
 }

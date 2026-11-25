@@ -1,0 +1,50 @@
+import assert from "node:assert/strict";
+import { dmDebug, dmDebugArcReply, dmDebugEnabled } from "../src/lib/dm/debug.ts";
+
+const original = console.log;
+const previous = process.env.DM_DEBUG;
+const previousContent = process.env.DM_DEBUG_CONTENT;
+const lines = [];
+console.log = (...args) => lines.push(args);
+try {
+  delete process.env.DM_DEBUG;
+  process.env.DM_DEBUG_CONTENT = "1";
+  assert.equal(dmDebugEnabled(), false);
+  dmDebug("hidden", { jobId: "job" });
+  dmDebugArcReply("plan", "secret", {});
+  assert.equal(lines.length, 0);
+  process.env.DM_DEBUG = "0";
+  assert.equal(dmDebugEnabled(), false);
+  dmDebug("hidden");
+  assert.equal(lines.length, 0);
+  process.env.DM_DEBUG = "1";
+  delete process.env.DM_DEBUG_CONTENT;
+  assert.equal(dmDebugEnabled(), true);
+  const raw = '{"title":"secret"}';
+  dmDebugArcReply("plan", raw, { jobId: "job", finishReason: "length" });
+  assert.equal(lines.length, 1);
+  assert.equal(lines[0][0], "[dm-debug]");
+  const first = JSON.parse(lines[0][1]);
+  assert.equal(first.event, "arc.reply");
+  assert.equal(first.jobId, "job");
+  assert.equal(first.chars, raw.length);
+  assert.equal(first.finishReason, "length");
+  assert.equal(first.startsObject, true);
+  assert.equal(first.endsObject, true);
+  assert.equal("reply" in first, false);
+  process.env.DM_DEBUG_CONTENT = "1";
+  const truncated = raw.slice(0, -1);
+  dmDebugArcReply("retry", truncated, {});
+  const second = JSON.parse(lines[1][1]);
+  assert.equal(second.reply, truncated);
+  assert.equal(second.endsObject, false);
+  dmDebug("job.end", { stopped: true });
+  assert.equal(JSON.parse(lines[2][1]).stopped, true);
+} finally {
+  console.log = original;
+  if (previous === undefined) delete process.env.DM_DEBUG;
+  else process.env.DM_DEBUG = previous;
+  if (previousContent === undefined) delete process.env.DM_DEBUG_CONTENT;
+  else process.env.DM_DEBUG_CONTENT = previousContent;
+}
+console.log("test-dm-debug: passed");

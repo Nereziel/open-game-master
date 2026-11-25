@@ -104,6 +104,7 @@ services:
 
       # Verbose DM turn logging.
       DM_DEBUG: ${DM_DEBUG:-}
+      DM_DEBUG_CONTENT: ${DM_DEBUG_CONTENT:-}
     volumes:
       # public/ has to stay writable and keep its build-time assets, so the
       # three runtime directories are mounted individually instead of mounting

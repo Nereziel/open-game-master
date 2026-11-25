@@ -57,7 +57,9 @@ import { translate } from "@/lib/messages-logic";
 // panel's to word (SpeedField, which asks the same question with its own
 // translator).
 const enT = (key: string, vars?: Record<string, string | number>) => translate("en", key, vars);
-import { currentJobSignal, jobStopReason, noteJobProgress, withJobStage } from "@/lib/dm/job-control";
+import { dmDebug } from "@/lib/dm/debug";
+import { randomUUID } from "node:crypto";
+import { currentDmJob, currentJobSignal, jobStopReason, noteJobProgress, withJobStage } from "@/lib/dm/job-control";
 import { MODEL_STAGE_GRACE_MS } from "@/lib/dm/job-stage-logic";
 import { rolesMustAlternate, withAlternatingRoles } from "@/lib/chat-roles-logic";
 import {
@@ -1290,6 +1292,9 @@ async function requestCustomMessageNow(
     "CUSTOM_TEXT_TIMEOUT_MS",
     DEFAULT_CUSTOM_TEXT_TIMEOUT_MS,
   );
+  const trace = { transportId: randomUUID(), jobId: currentDmJob()?.id, campaignId: currentDmJob()?.campaignId, backend: "custom", streaming: Boolean(onDelta), timeoutMs };
+  const transportStarted = Date.now();
+  dmDebug("transport.start", trace);
   const requestTimeout = createRequestTimeout(timeoutMs);
   const guardedDelta = guardStreamDelta(onDelta, requestTimeout.cancel);
   const guardedReasoning = guardReasoningDelta(Boolean(onDelta), requestTimeout.cancel, options.reasoningBudgetChars);
@@ -1342,9 +1347,11 @@ async function requestCustomMessageNow(
       ),
     };
   } finally {
+    dmDebug("transport.headers_settled", { ...trace, elapsedMs: Date.now() - transportStarted, timedOut: requestTimeout.timedOut(), stopped: requestTimeout.stopped() });
     requestTimeout.clear();
   }
 
+  dmDebug("transport.headers", { ...trace, status: upstream.status, elapsedMs: Date.now() - transportStarted });
   if (!upstream.ok) {
     // Enough to recognise the error and quote its start; the rest unread.
     const { text } = await readBody(upstream, MAX_BACKEND_ERROR_BYTES);
@@ -1546,6 +1553,7 @@ async function requestCustomMessageNow(
   }
 
   if (onDelta && upstream.body) {
+    dmDebug("transport.stream.start", trace);
     // OpenAI-compatible SSE: "data: {...}" lines carrying content and
     // tool-call fragments, terminated by "data: [DONE]".
     let streamUsage = null as TokenUsage | null;
@@ -1677,13 +1685,16 @@ async function requestCustomMessageNow(
   }
 
   let data: { choices?: Array<{ message?: UpstreamChatMessage; finish_reason?: unknown }>; service_tier?: unknown };
+  dmDebug("transport.body.start", trace);
   try {
     const body = await readBody(upstream, MAX_BACKEND_BODY_BYTES);
     if (!body.complete) {
       throw new BackendRefusal("The backend's reply was far larger than any reply.");
     }
     data = JSON.parse(body.text) as typeof data;
+    dmDebug("transport.body.end", { ...trace, elapsedMs: Date.now() - transportStarted, chars: body.text.length });
   } catch {
+    dmDebug("transport.body.error", { ...trace, elapsedMs: Date.now() - transportStarted, stopped: requestTimeout.stopped(), timedOut: requestTimeout.timedOut() });
     return {
       error: Response.json(
         { error: "The backend returned an unreadable response." },
@@ -1794,6 +1805,9 @@ async function requestLocalMessageNow(
     "LOCAL_TEXT_TIMEOUT_MS",
     DEFAULT_LOCAL_TEXT_TIMEOUT_MS,
   );
+  const trace = { transportId: randomUUID(), jobId: currentDmJob()?.id, campaignId: currentDmJob()?.campaignId, backend: "local", streaming: Boolean(onDelta), timeoutMs };
+  const transportStarted = Date.now();
+  dmDebug("transport.start", trace);
   const requestTimeout = createRequestTimeout(timeoutMs);
   const guardedDelta = guardStreamDelta(onDelta, requestTimeout.cancel);
   const guardedReasoning = guardReasoningDelta(Boolean(onDelta), requestTimeout.cancel, options.reasoningBudgetChars);
@@ -1831,9 +1845,11 @@ async function requestLocalMessageNow(
       ),
     };
   } finally {
+    dmDebug("transport.headers_settled", { ...trace, elapsedMs: Date.now() - transportStarted, timedOut: requestTimeout.timedOut(), stopped: requestTimeout.stopped() });
     requestTimeout.clear();
   }
 
+  dmDebug("transport.headers", { ...trace, status: upstream.status, elapsedMs: Date.now() - transportStarted });
   if (!upstream.ok) {
     const text = await upstream.text();
 
@@ -1862,6 +1878,7 @@ async function requestLocalMessageNow(
   }
 
   if (onDelta && upstream.body) {
+    dmDebug("transport.stream.start", trace);
     // Ollama streams NDJSON: one JSON object per line with message.content
     // fragments; tool calls arrive whole on whichever line carries them.
     let localUsage = null as TokenUsage | null;
@@ -1943,9 +1960,12 @@ async function requestLocalMessageNow(
   }
 
   let data: { message?: UpstreamChatMessage; done_reason?: unknown };
+  dmDebug("transport.body.start", trace);
   try {
     data = (await upstream.json()) as typeof data;
+    dmDebug("transport.body.end", { ...trace, elapsedMs: Date.now() - transportStarted });
   } catch {
+    dmDebug("transport.body.error", { ...trace, elapsedMs: Date.now() - transportStarted, stopped: requestTimeout.stopped(), timedOut: requestTimeout.timedOut() });
     return {
       error: Response.json(
         { error: "The backend returned an unreadable response." },

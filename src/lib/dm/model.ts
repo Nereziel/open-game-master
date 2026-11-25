@@ -16,7 +16,9 @@ import {
 } from "@/lib/model-client";
 import { requestHarnessMessage } from "@/lib/harness/bridge";
 import { harnessConfig, harnessContextTokens } from "@/lib/harness/status";
-import { raceJobStop, withJobStage } from "@/lib/dm/job-control";
+import { currentDmJob, raceJobStop, withJobStage } from "@/lib/dm/job-control";
+import { dmDebug } from "@/lib/dm/debug";
+import { randomUUID } from "node:crypto";
 import { MODEL_STAGE_GRACE_MS } from "@/lib/dm/job-stage-logic";
 import { paidAiAllowedNow, paidAiRefusalResponse } from "@/lib/shared-host";
 import { recordUsage } from "@/lib/usage/ledger";
@@ -248,6 +250,9 @@ async function attempt(
 ): Promise<DmCallResult> {
   const scope = currentModelTask();
   const task = options.meta?.task ?? scope?.task ?? ledgerRole;
+  const job = currentDmJob();
+  const trace = { callId: randomUUID(), campaignId: job?.campaignId, jobId: job?.id, turnId: options.meta?.turnId ?? job?.turnId, callIndex: options.meta?.callIndex, task, role: ledgerRole, provider: route.provider, model: route.model };
+  dmDebug("model.attempt", { ...trace, fallback: Boolean(fallback), windowTokens: route.windowTokens, windowAssumed: route.windowAssumed, messages: messages.length, tools: options.tools?.length ?? 0, requestedTimeoutMs: options.timeoutMs, streaming: Boolean(options.onDelta) });
   const toolTokens = toolDefinitionTokens(options.tools);
   const calibration = calibrationFor(route.key);
   let sent = messages;
@@ -305,6 +310,7 @@ async function attempt(
         outcome: "capacity",
         fallback,
       });
+      dmDebug("model.capacity", { ...trace, promptTokens: fit.promptTokens, windowTokens: route.windowTokens });
       return { error: capacityResponse(route, fit.reason) };
     }
     if (fit.ok && (fit.dropped || fit.clipped)) {
@@ -325,11 +331,15 @@ async function attempt(
     }
   }
 
+  dmDebug("model.fitted", { ...trace, promptTokens: sizing?.promptTokens, maxOutputTokens: sizing?.outputTokens, dropped: sizing?.dropped, clipped: sizing?.clipped });
   const started = Date.now();
   let firstTokenAt = 0;
   const onDelta = options.onDelta
     ? (text: string) => {
-        if (!firstTokenAt && text) firstTokenAt = Date.now();
+        if (!firstTokenAt && text) {
+          firstTokenAt = Date.now();
+          dmDebug("model.first_token", { ...trace, elapsedMs: firstTokenAt - started });
+        }
         options.onDelta?.(text);
       }
     : undefined;
@@ -351,7 +361,9 @@ async function attempt(
   // known, without the effort the later calls carry, and on a local
   // narrator that is a different prompt start and a whole prompt read again.
   if (route.provider === "custom") {
+    dmDebug("model.probe.start", trace);
     await probeCustomContextWindow(route.baseUrl, route.apiKey, route.model);
+    dmDebug("model.probe.end", { ...trace, elapsedMs: Date.now() - started });
   }
   // A narrator that keeps prompt snapshots gives its tables' turns a slot of
   // their own (src/lib/dm/prompt-snapshot.ts). A call that names none goes
@@ -372,12 +384,19 @@ async function attempt(
     });
   let waited = 0;
   if (background) {
+    dmDebug("model.gate.wait", trace);
     waited = await waitForInteractive(route.key);
+    dmDebug("model.gate.ready", { ...trace, waitedMs: waited });
   }
-  const result = background ? await call() : await asInteractive(route.key, call);
+  dmDebug("model.send", { ...trace, background, waitedMs: waited });
+  const result = await (background ? call() : asInteractive(route.key, call)).catch((error: unknown) => {
+    dmDebug("model.throw", { ...trace, elapsedMs: Date.now() - started, errorType: error instanceof Error ? error.name : typeof error });
+    throw error;
+  });
   const durationMs = Date.now() - started - waited;
   const firstTokenMs = firstTokenAt ? firstTokenAt - started - waited : undefined;
 
+  dmDebug("model.result", { ...trace, durationMs, firstTokenMs, waitedMs: waited, outcome: outcomeOf(result), status: result.error?.status, finishReason: result.finishReason, inputTokens: result.usage?.inputTokens, outputTokens: result.usage?.outputTokens, reasoningTokens: result.usage?.reasoningTokens, cachedInputTokens: result.usage?.cachedInputTokens, promptMs: result.usage?.promptMs, generateMs: result.usage?.generateMs, loadMs: result.usage?.loadMs, replyChars: typeof result.message?.content === "string" ? result.message.content.length : 0, toolCalls: Array.isArray(result.message?.tool_calls) ? result.message.tool_calls.length : 0 });
   if (result.usage) {
     recordUsage({
       kind: result.usage.backend === "harness" ? "agent" : "text",
