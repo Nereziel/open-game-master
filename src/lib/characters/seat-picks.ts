@@ -226,7 +226,7 @@ export function applySeatPicks(
       problems.push(
         entry.subclass
           ? t("{name} is a {subclass}; a subclass is chosen once and later levels build on it.", { name, subclass: entry.subclass })
-          : t("A {className} chooses a subclass at {className} level {required}; {name} plays {className} {level} here.", { className, required: subclassLevelFor(entry.id), name, level: entry.level }),
+          : t("A {className} chooses a subclass at {className} level {required}; {name} plays {className} {level} here.", { className, required: String(subclassLevelFor(entry.id)), name, level: entry.level }),
       );
       continue;
     }
