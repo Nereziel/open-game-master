@@ -194,10 +194,12 @@ describe("History, audit and equipment reader language", () => {
     const cs = Object.assign((key: string, vars?: Record<string, string | number>) => translate("cs", key, vars), { locale: "cs" as const });
     const fr = Object.assign((key: string, vars?: Record<string, string | number>) => translate("fr", key, vars), { locale: "fr" as const });
     expect(describeAuditEntry(row, "Mira")).toBe("Mira creates a pact weapon: Custom Blade");
-    expect(describeAuditEntry(cs, row, "Mira")).toContain("Custom Blade");
-    expect(describeAuditEntry(cs, row, "Mira")).not.toBe(describeAuditEntry(row, "Mira"));
-    expect(describeAuditEntry(fr, row, "Mira")).not.toBe(describeAuditEntry(row, "Mira"));
-    expect(describeAuditEntry(cs, { kind: "reaction", delta: {} }, "Mira")).toBe("Mira provádí reakci");
+    expect(describeAuditEntry(cs, row, "Mira")).toBe("Mira vytváří paktovou zbraň: Custom Blade");
+    expect(describeAuditEntry(fr, row, "Mira")).toBe("Mira crée une arme de pacte : Custom Blade");
+    const reaction = { kind: "reaction", delta: {} };
+    expect(describeAuditEntry(reaction, "Mira")).toBe("Mira takes a reaction");
+    expect(describeAuditEntry(cs, reaction, "Mira")).toBe("Mira používá reakci");
+    expect(describeAuditEntry(fr, reaction, "Mira")).toBe("Mira utilise une réaction");
     expect(JSON.stringify(row)).toBe(before);
   });
 
