@@ -169,7 +169,7 @@ export function ClassChoices({
         <StepPanel
           key={slot.kind}
           anchor="options"
-          title={t("{label} (pick {total})", { label: slot.label, total: slot.total })}
+          title={t("{label} (pick {total})", { label: t(slot.label), total: slot.total })}
           help={
             <>
               {slot.remaining > 0 ? (
@@ -185,7 +185,7 @@ export function ClassChoices({
               ) : null}
               {rule ? `${rule} ` : null}
               {spells
-                ? "Tap the info button on any one to read the spell."
+                ? t("Tap the info button on any one to read the spell.")
                 : t(" These are real abilities your character gets. Tap the info button on any one to read what it does.")}
             </>
           }
@@ -199,6 +199,8 @@ export function ClassChoices({
               // closed, as the level-up shows it. One already chosen can
               // still be let go.
               const notYet = selected ? undefined : derived.optionUnmet?.[optionFeatureName(slot.kind, option.n)];
+              // These spell lists come from the bundled class checklist, not a workshop name.
+              const label = spells ? contentName("spells", option.n, locale) : option.n;
               return (
                 <div key={option.n} className={cn(optionCard(selected), "flex items-start gap-1", splitCard, notYet && "opacity-60")}>
                   <button
@@ -210,7 +212,7 @@ export function ClassChoices({
                     // spell's name (a Legerdemain cantrip).
                     className="min-h-10 grow text-left disabled:cursor-not-allowed"
                   >
-                    <span className="block text-xs">{option.n}</span>
+                    <span className="block text-xs">{label}</span>
                     {notYet || option.req || !spells ? (
                       <span className="block text-sm text-stone-500">
                         {notYet ? `Not yet: ${notYet} ` : option.req ? t("Requires {req}. ", { req: option.req }) : ""}
@@ -219,7 +221,7 @@ export function ClassChoices({
                     ) : null}
                   </button>
                   {spells ? (
-                    <InfoButton label={option.n} note={option.d} reference={{ kind: "spells", slug: contentSlug(option.n), name: option.n }} />
+                    <InfoButton label={label} note={option.d} reference={{ kind: "spells", slug: contentSlug(option.n), name: option.n }} />
                   ) : (
                     <InfoButton
                       label={option.n}
@@ -242,7 +244,7 @@ export function ClassChoices({
         <StepPanel
           key={`${slot.classId}|${slot.label}`}
           anchor="options"
-          title={`${slot.label} (pick 1)`}
+          title={t("{label} (pick {total})", { label: slot.label, total: 1 })}
           help={
             <>
               {slot.chosen ? null : <span className="text-amber-300">{t("1 still to choose. ")}</span>}
