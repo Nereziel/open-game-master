@@ -85,6 +85,8 @@ describe("Shared localized content descriptions", () => {
     for (const row of [...SRD_GEAR, ...SRD_GOODS, ...armor]) {
       expect(czechGearDescription(row.name), row.name).toBeTruthy();
     }
+    expect(czechGearDescription("Rope, Hempen")).toBe(gearCs["rope hempen 50 feet"]);
+    expect(czechGearDescription("Acid")).toBe(gearCs["acid vial"]);
     expect(czechGearDescription("An unknown custom item")).toBeUndefined();
   });
 
