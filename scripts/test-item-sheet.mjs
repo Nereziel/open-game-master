@@ -195,6 +195,26 @@ test("item cards localize presentation without modifying source rows or numeric 
   assert.equal(row.desc, "Original item prose.");
 });
 
+test("Czech weapon properties use the weapon glossary context", () => {
+  const row = { category: "Simple Ranged Weapons", damage_dice: "1d8", damage_type: "piercing", properties: ["light", "loading", "heavy", "ammunition (range 20/60)", "custom property"] };
+  const original = structuredClone(row);
+  const sheet = buildItemSheet("Test weapon", [row], { locale: "cs" });
+  assert.deepEqual(sheet.weapon.properties.map((property) => property.name), [
+    "Lehká", "Nabíjecí", "Těžká", "Střelná (dosah 20/60)", "Custom property",
+  ]);
+  assert.deepEqual(row, original);
+  assert.equal(buildItemSheet("Test weapon", [row], { locale: "en" }).weapon.properties[0].name, "Light");
+});
+
+test("Czech compound magic item categories and rarity preserve all qualifiers", () => {
+  const row = { type: "Weapon (any ammunition)", rarity: "uncommon (+1), rare (+2), or very rare (+3)", desc: "Original prose." };
+  const sheet = buildItemSheet("Example ammunition", [row], { locale: "cs" });
+  assert.equal(sheet.type, "Zbraň (libovolná munice)");
+  assert.equal(sheet.rarity, "Neobvyklý (+1), vzácný (+2) nebo velmi vzácný (+3)");
+  assert.equal(sheet.description, row.desc);
+  assert.equal(buildItemSheet("Example ammunition", [row], { locale: "en" }).type, row.type);
+});
+
 test("nothing known is null", () => {
   assert.equal(buildItemSheet("Mysterious Trinket", [undefined, null]), null);
 });
