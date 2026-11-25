@@ -147,7 +147,7 @@ export default function MultiContentPicker({
                 <InfoButton
                   label={rowName(entry)}
                   meta={kind === "spells" ? spellSummary(entry.data, t.locale) : undefined}
-                  text={describeContentEntry(entry.data)}
+                  text={describeContentEntry(entry.data, undefined, locale)}
                   reference={entry.source === "homebrew" ? undefined : { kind, slug: entry.slug }}
                 />
               </li>
@@ -162,13 +162,13 @@ export default function MultiContentPicker({
                 onClick={addCustom}
                 className="flex w-full items-center gap-1.5 px-3 py-1.5 text-left text-sm text-amber-300 hover:bg-stone-800"
               >
-                <Plus className="size-3.5 shrink-0" /> Add &quot;{trimmedQuery}&quot; as custom
+                <Plus className="size-3.5 shrink-0" /> {t('Add "{name}" as custom', { name: trimmedQuery })}
               </button>
             </li>
           ) : null}
           {failed ? (
             <li role="alert" className="px-3 py-1.5 text-xs text-amber-300/90">
-              Could not reach the server to search; type again to retry, or add entries by name.
+              {t("Could not reach the server to search; type again to retry, or add entries by name.")}
             </li>
           ) : unavailable ? (
             <li className="px-3 py-1.5 text-xs text-stone-500">
