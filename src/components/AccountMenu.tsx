@@ -6,10 +6,8 @@ import * as DropdownMenu from "@radix-ui/react-dropdown-menu";
 import { AppWindow, BookOpen, CircleHelp, Info, LogOut, Palette, SlidersHorizontal, UserRound } from "lucide-react";
 import Link from "next/link";
 import { usePathname, useRouter } from "next/navigation";
-import { useState, useSyncExternalStore } from "react";
+import { Suspense, lazy, useState, useSyncExternalStore } from "react";
 import type { ReactNode } from "react";
-import { AboutDialog } from "@/components/AboutDialog";
-import { HelpDialog } from "@/components/HelpDialog";
 import { setThemePanelOpen } from "@/lib/theme-mode";
 import { Tooltip } from "@/components/ui/Tooltip";
 import { headerButtonClass } from "@/app/campaigns/[campaignId]/headerButton";
@@ -17,6 +15,11 @@ import { GameIcon } from "@/components/ui/GameIcon";
 import { cn } from "@/lib/cn";
 import { useT } from "@/lib/locale";
 import { shellHost, type ShellHost } from "@/lib/shell-host";
+
+// Reference dialogs are not needed to render the account menu. Keep them
+// mounted after first use, matching the workshop hub and campaign creator.
+const HelpDialog = lazy(() => import("@/components/HelpDialog").then((module) => ({ default: module.HelpDialog })));
+const AboutDialog = lazy(() => import("@/components/AboutDialog").then((module) => ({ default: module.AboutDialog })));
 
 // window.odmShell is set once before any page script runs and never changes.
 const subscribeNever = () => () => {};
@@ -107,6 +110,10 @@ export function AccountMenu({
 }) {
   const [helpOpen, setHelpOpen] = useState(false);
   const [aboutOpen, setAboutOpen] = useState(false);
+  const [helpMounted, setHelpMounted] = useState(false);
+  const [aboutMounted, setAboutMounted] = useState(false);
+  if (helpOpen && !helpMounted) setHelpMounted(true);
+  if (aboutOpen && !aboutMounted) setAboutMounted(true);
   const pathname = usePathname();
   // Inside the desktop or Android app the menu grows a door back to the
   // app's server list. The host object is a client-only global, so it is
@@ -259,8 +266,12 @@ export function AccountMenu({
           </DropdownMenu.Content>
         </DropdownMenu.Portal>
       </DropdownMenu.Root>
-      {onHelp ? null : <HelpDialog open={helpOpen} onOpenChange={setHelpOpen} />}
-      <AboutDialog open={aboutOpen} onOpenChange={setAboutOpen} isAdmin={Boolean(user.isAdmin)} />
+      <Suspense fallback={null}>
+        {!onHelp && helpMounted ? <HelpDialog open={helpOpen} onOpenChange={setHelpOpen} /> : null}
+      </Suspense>
+      <Suspense fallback={null}>
+        {aboutMounted ? <AboutDialog open={aboutOpen} onOpenChange={setAboutOpen} isAdmin={Boolean(user.isAdmin)} /> : null}
+      </Suspense>
     </>
   );
 }
