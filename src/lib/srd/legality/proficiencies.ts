@@ -7,7 +7,7 @@
 // the server. Skills, expertise and chosen languages are the player's picks,
 // so they are checked: every pick needs a grant that offers it.
 import { fitName, LANGUAGE_NAME_MAX, TOOL_NAME_MAX, type Ability, type ClassEntry, type Proficiencies } from "@/lib/schemas/sheet";
-import { findSkill } from "@/lib/srd";
+import { findSkill, skillLabel } from "@/lib/srd";
 import { expertiseAllowed, expertiseSlotsFor } from "@/lib/srd/features";
 import { multiclassGrantsFor } from "@/lib/srd/multiclass";
 import { repeatedGrants } from "@/lib/srd/racial-grants";
@@ -27,7 +27,8 @@ import {
 } from "@/lib/srd/legality/types";
 import { textKey } from "@/lib/language/text-logic";
 import { KNOWN_TOOLS } from "@/lib/srd/feat-grant-text";
-import type { Locale } from "@/lib/messages-logic";
+import { translate, translatePlural, type Locale } from "@/lib/messages-logic";
+import { contentName } from "@/lib/content/names";
 
 export type ProficiencyInput = {
   locale?: Locale;
@@ -100,13 +101,22 @@ function placePicks(picks: string[], slots: Slot[]): boolean {
 const languageKey = (name: string) => textKey(fitName(name, LANGUAGE_NAME_MAX));
 const toolKey = (name: string) => textKey(fitName(name, TOOL_NAME_MAX));
 
-function plural(count: number, word: string) {
-  return `${count} ${word}${count === 1 ? "" : "s"}`;
+function counted(count: number, word: "weapon" | "skill" | "language", locale: Locale): string {
+  switch (word) {
+    case "weapon": return translatePlural(locale, "{count} weapon", "{count} weapons", { count });
+    case "skill": return translatePlural(locale, "{count} skill", "{count} skills", { count });
+    case "language": return translatePlural(locale, "{count} language", "{count} languages", { count });
+  }
 }
 
 export function judgeProficiencies(input: ProficiencyInput): ProficiencyVerdict {
   const problems: string[] = [];
   const { sent, race, background, held } = input;
+  const locale = input.locale ?? "en";
+  const raceName = contentName("species", race.name, locale);
+  const backgroundName = background ? contentName("backgrounds", background.name, locale) : "";
+  const shownSkill = (id: string) => locale === "en" ? id : skillLabel(id, locale);
+  const skillList = (ids: string[]) => ids.map(shownSkill).join(", ");
   const [first, ...others] = input.classes;
   const primary = input.classOf(first.id);
   const heldSkills = new Set((held?.skills ?? []).map(lower));
@@ -127,13 +137,13 @@ export function judgeProficiencies(input: ProficiencyInput): ProficiencyVerdict 
   const racialWeapons = uniqueNames((input.racialWeapons ?? []).filter(Boolean));
   const offWeapons = racialWeapons.filter((name) => !weaponChoice?.from.some((weapon) => textKey(weapon) === textKey(name)));
   if (offWeapons.length) {
-    problems.push(`${offWeapons.join(", ")} ${offWeapons.length === 1 ? "is not a weapon" : "are not weapons"} the ${race.name} may choose${weaponChoice ? `; pick from ${weaponChoice.from.join(", ")}` : ""}.`);
+    problems.push(translatePlural(locale, "{names} is not a weapon the {race} may choose{choices}.", "{names} are not weapons the {race} may choose{choices}.", { count: offWeapons.length, names: offWeapons.join(", "), race: raceName, choices: weaponChoice ? translate(locale, "; pick from {choices}", { choices: weaponChoice.from.map(name => contentName("weapons", name, locale)).join(", ") }) : "" }));
   }
   if (weaponChoice && racialWeapons.length > weaponChoice.count) {
-    problems.push(`The ${race.name} names ${plural(weaponChoice.count, "weapon")}; ${racialWeapons.length} were chosen.`);
+    problems.push(translate(locale, "The {race} names {weapons}; {actual} were chosen.", { race: raceName, weapons: counted(weaponChoice.count, "weapon", locale), actual: racialWeapons.length }));
   }
   if (weaponChoice && input.requireToolPicks && racialWeapons.length < weaponChoice.count) {
-    problems.push(`Name the ${plural(weaponChoice.count, "weapon")} the ${race.name} is trained with.`);
+    problems.push(translate(locale, "Name the {weapons} the {race} is trained with.", { race: raceName, weapons: counted(weaponChoice.count, "weapon", locale) }));
   }
   const weapons = uniqueNames([
     ...(primary?.weapons ?? []),
@@ -149,7 +159,7 @@ export function judgeProficiencies(input: ProficiencyInput): ProficiencyVerdict 
       : "";
   if (input.racialTool && !racialTool) {
     problems.push(
-      `${input.racialTool} is not a tool the ${race.name} may choose${toolChoice ? `; pick one of ${toolChoice.from.join(", ")}` : ""}.`,
+      translate(locale, "{name} is not a tool the {race} may choose{choices}.", { name: input.racialTool, race: raceName, choices: toolChoice ? translate(locale, "; pick one of {choices}", { choices: toolChoice.from.map(name => contentName("gear", name, locale)).join(", ") }) : "" }),
     );
   }
   // A grant that leaves the tool to the player ("three musical
@@ -166,10 +176,10 @@ export function judgeProficiencies(input: ProficiencyInput): ProficiencyVerdict 
   const trainedToolPicks = trainingPicks.filter((pick) => KNOWN_TOOLS.some((tool) => textKey(tool) === textKey(pick)));
   const unknownPicks = trainingPicks.filter((pick) => !trainedToolPicks.includes(pick) && !findSkill(lower(pick)));
   if (unknownPicks.length) {
-    problems.push(`${unknownPicks.join(", ")}: neither a skill nor a tool the ${race.name} may be trained in.`);
+    problems.push(translate(locale, "{names}: neither a skill nor a tool the {race} may be trained in.", { names: unknownPicks.join(", "), race: raceName }));
   }
   if (race.trainingChoice && input.requireToolPicks && trainingPicks.length < race.trainingChoice.count) {
-    problems.push(`Name the ${race.trainingChoice.count} skills or tools the ${race.name} is trained in.`);
+    problems.push(translate(locale, "Name the {count} skills or tools the {race} is trained in.", { count: race.trainingChoice.count, race: raceName }));
   }
   // A tool the class, the background and the race each name (a rogue
   // criminal's thieves' tools) is a tool of the player's choice in place of
@@ -256,7 +266,7 @@ export function judgeProficiencies(input: ProficiencyInput): ProficiencyVerdict 
   const sentSkills = uniqueNames(sent.skills.map(lower));
   for (const skill of sentSkills) {
     if (!findSkill(skill)) {
-      problems.push(`"${skill}" is not one of the eighteen skills.`);
+      problems.push(translate(locale, "\"{skill}\" is not one of the eighteen skills.", { skill }));
     }
   }
   const picks = sentSkills.filter(
@@ -265,14 +275,14 @@ export function judgeProficiencies(input: ProficiencyInput): ProficiencyVerdict 
   const slots: Slot[] = [];
   if (background?.skillChoice) {
     slots.push({
-      label: `${background.name}`,
+      label: backgroundName,
       count: background.skillChoice.count,
       from: new Set(background.skillChoice.from.map(lower)),
     });
   }
   if (primary) {
     slots.push({
-      label: primary.name,
+      label: contentName("classes", primary.name, locale),
       count: primary.skillChoices.count,
       from: primary.skillChoices.from.length
         ? new Set(primary.skillChoices.from.map(lower))
@@ -281,22 +291,22 @@ export function judgeProficiencies(input: ProficiencyInput): ProficiencyVerdict 
   }
   if (race.skillChoice) {
     const from = race.skillChoice.from ?? [];
-    slots.push({ label: race.name, count: race.skillChoice.count, from: from.length ? new Set(from.map(lower)) : null });
+    slots.push({ label: raceName, count: race.skillChoice.count, from: from.length ? new Set(from.map(lower)) : null });
   }
   const trainedSkillCount = trainingPicks.length - trainedToolPicks.length - unknownPicks.length;
   if (trainedSkillCount > 0) {
-    slots.push({ label: race.name, count: trainedSkillCount, from: null });
+    slots.push({ label: raceName, count: trainedSkillCount, from: null });
   }
   // The same skill from the background and the race: the player chooses
   // another in its place (SRD 5.1, Backgrounds).
   const repeated = repeatedGrants(background?.skills, race.skills).length;
   if (repeated) {
-    slots.push({ label: "the repeated grant", count: repeated, from: null });
+    slots.push({ label: translate(locale, "the repeated grant"), count: repeated, from: null });
   }
   secondary.forEach((grant, index) => {
     if (grant.skillChoice) {
       slots.push({
-        label: others[index].id,
+        label: contentName("classes", others[index].id, locale),
         count: grant.skillChoice.count,
         from: grant.skillChoice.from.length ? new Set(grant.skillChoice.from.map(lower)) : null,
       });
@@ -306,11 +316,11 @@ export function judgeProficiencies(input: ProficiencyInput): ProficiencyVerdict 
     const offered = slots
       .map(
         (slot) =>
-          `${plural(slot.count, "skill")} from ${slot.label}${slot.from ? ` (${[...slot.from].join(", ")})` : " (any)"}`,
+          translate(locale, "{skills} from {label} ({choices})", { skills: counted(slot.count, "skill", locale), label: slot.label, choices: slot.from ? skillList([...slot.from]) : translate(locale, "any") }),
       )
       .join("; ");
     problems.push(
-      `The skills chosen (${picks.join(", ")}) are more than, or other than, what this character is offered: ${offered || "no skill of their choice"}. ${fixed.length ? `${fixed.join(" and ")} come with the background and race.` : ""}`.trim(),
+      translate(locale, "The skills chosen ({picks}) are more than, or other than, what this character is offered: {offered}. {fixed}", { picks: skillList(picks), offered: offered || translate(locale, "no skill of their choice"), fixed: fixed.length ? translate(locale, "{skills} come with the background and race.", { skills: fixed.map(shownSkill).join(` ${translate(locale, "and")} `) }) : "" }).trim(),
     );
   }
   const skills = uniqueNames([
@@ -330,7 +340,7 @@ export function judgeProficiencies(input: ProficiencyInput): ProficiencyVerdict 
   const unproficient = expertise.filter((skill) => !expertiseAllowed(skill, [...skills, ...(input.grantedSkills ?? []).map(lower)], classIds) && !toolHeld(skill));
   if (unproficient.length) {
     problems.push(
-      `Expertise doubles a proficiency the character has; ${unproficient.join(", ")} ${unproficient.length === 1 ? "is" : "are"} not among their skills.`,
+      translatePlural(locale, "Expertise doubles a proficiency the character has; {skills} is not among their skills.", "Expertise doubles a proficiency the character has; {skills} are not among their skills.", { count: unproficient.length, skills: skillList(unproficient) }),
     );
   }
   // A race's own expertise (Adaptable Acumen) adds to the class's.
@@ -342,8 +352,8 @@ export function judgeProficiencies(input: ProficiencyInput): ProficiencyVerdict 
   if (expertisePicks.length > Math.max(0, expertiseSlots - heldExpertise.size)) {
     problems.push(
       expertiseSlots
-        ? `This character has earned expertise in ${plural(expertiseSlots, "skill")}${race.expertiseChoice ? " or tool" : ""}, not ${expertise.length}.`
-        : `Expertise is a rogue's feature (1st and 6th level) and a bard's (3rd and 10th); this character has none to pick.`,
+        ? translate(locale, "This character has earned expertise in {skills}{tools}, not {actual}.", { skills: counted(expertiseSlots, "skill", locale), tools: race.expertiseChoice ? translate(locale, " or tool") : "", actual: expertise.length })
+        : translate(locale, "Expertise is a rogue's feature (1st and 6th level) and a bard's (3rd and 10th); this character has none to pick."),
     );
   }
 
@@ -360,7 +370,7 @@ export function judgeProficiencies(input: ProficiencyInput): ProficiencyVerdict 
   const languageSlots = (race.bonusLanguages ?? 0) + (background?.languages ?? 0);
   if (chosen.length > languageSlots) {
     problems.push(
-      `${race.name}${background ? ` and ${background.name}` : ""} give ${plural(languageSlots, "language")} of the player's choice; ${chosen.length} were chosen (${chosen.join(", ")}).`,
+      translate(locale, "{sources} give {languages} of the player's choice; {actual} were chosen ({chosen}).", { sources: background ? `${raceName} ${translate(locale, "and")} ${backgroundName}` : raceName, languages: counted(languageSlots, "language", locale), actual: chosen.length, chosen: chosen.join(", ") }),
     );
   }
   const languages = uniqueNames(

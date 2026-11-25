@@ -10,6 +10,7 @@ register("./lib/register-alias.mjs", import.meta.url);
 
 const { legalizeSheet } = await import("../src/lib/srd/sheet-legality.ts");
 const { judgeSpellcasting } = await import("../src/lib/srd/legality/spells.ts");
+const { judgeProficiencies } = await import("../src/lib/srd/legality/proficiencies.ts");
 const options = await import("../src/lib/characters/options.ts");
 const { bundledPrices } = await import("../src/lib/srd/starting-wealth.ts");
 const { checklistSpell } = await import("../src/lib/srd/spell-lists.ts");
@@ -182,6 +183,29 @@ test("hit points follow the table's method", () => {
   assert.equal(derivedMaxHp("average", { classes: [{ die: 10, level: 3 }, { die: 6, level: 2 }], con: 10 }), 30);
 });
 
+test("proficiency refusals use the reader locale without changing grants", () => {
+  const ctx = context(FIGHTER);
+  const input = {
+    sent: { ...FIGHTER.proficiencies, skills: ["lockpicking", "arcana"], expertise: ["stealth"], languages: ["Common", "Dwarvish", "Elvish"] },
+    classes: [{ id: "fighter", level: 1, subclass: "" }],
+    classOf: ctx.classOf, race: ctx.race, background: ctx.background,
+    racialTool: "unknown tool", racialWeapons: ["unknown weapon"],
+    requireToolPicks: false,
+  };
+  const before = structuredClone(input.sent);
+  const en = judgeProficiencies(input);
+  assert.ok(en.problems.includes('"lockpicking" is not one of the eighteen skills.'));
+  assert.ok(en.problems.some(problem => problem.includes("Expertise is a rogue's feature")));
+  const results = ["en", "cs", "fr"].map(locale => judgeProficiencies({ ...input, locale }));
+  assert.deepEqual(results[0], en);
+  for (const result of results) {
+    assert.deepEqual(result.proficiencies, en.proficiencies);
+    assert.equal(result.problems.length, en.problems.length);
+    assert.ok(result.problems.every(problem => !/\{\w+\}/.test(problem)));
+  }
+  assert.equal(new Set(results.map(result => JSON.stringify(result.problems))).size, 3);
+  assert.deepEqual(input.sent, before);
+});
 test("skills, expertise and languages need a grant that offers them", () => {
   const profs = (overrides) => ({ ...FIGHTER, proficiencies: { ...FIGHTER.proficiencies, ...overrides } });
   refused(profs({ skills: ["arcana", "stealth", "athletics", "intimidation"] }), {}, "arcana on a fighter");
