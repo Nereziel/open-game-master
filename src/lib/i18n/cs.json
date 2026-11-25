@@ -1,5 +1,14 @@
 {
   "messages": {
+    "A character gains one level at a time: {name} is level {level}, so the next level is {next}. Take the levels one after another.": "Postava získává vždy jednu úroveň: {name} má úroveň {level}, další je tedy {next}. Zvyšuj úrovně postupně.",
+    "Multiclassing is turned off for this campaign (a lobby setting the owner controls).": "Kombinování povolání je v této kampani vypnuté (nastavení v lobby, které ovládá vlastník).",
+    "Cannot multiclass into that class.": "Toto povolání nelze kombinovat.",
+    "A {className} chooses a subclass at {className} level {required}; this is level {level}.": "Archetyp povolání {className} se volí na {required}. úrovni tohoto povolání; nyní máš {level}. úroveň.",
+    "{className} level {level} gives no Ability Score Improvement, so ability scores and feats stay as they are. Improvements come at the class's own levels.": "Povolání {className} na {level}. úrovni neposkytuje zvýšení vlastností, takže hodnoty vlastností a odbornosti zůstávají beze změny. Zvýšení se získává na určených úrovních povolání.",
+    "An Ability Score Improvement raises scores; it cannot lower {ability} from {before} to {after}.": "Zvýšení vlastností hodnoty zvyšuje; nemůže snížit vlastnost {ability} z {before} na {after}.",
+    "An Ability Score Improvement cannot raise {ability} above {cap}.": "Zvýšení vlastností nemůže zvýšit vlastnost {ability} nad {cap}.",
+    "{name} already has {feat}; taking it again means choosing another damage type ({types}).": "{name} už má odbornost {feat}; při opakované volbě musí vybrat jiný typ zranění ({types}).",
+    "{name}'s {feat} already covers {type}; each time the feat is taken it names a different damage type.": "Odbornost {feat} postavy {name} už zahrnuje typ zranění {type}; při každé další volbě odbornosti musí být vybrán jiný typ zranění.",
     "{feat} raises one of {abilities} by 1; choose which.": "Odbornost {feat} zvyšuje jednu z vlastností {abilities} o 1; vyber kterou.",
     "{name} is owed no Ability Score Improvement at this table's level.": "Postavě {name} na úrovni tohoto stolu nezbývá žádné zvýšení vlastností.",
     "{name} has no {className} levels to choose a subclass for.": "{name} nemá žádnou úroveň povolání {className}, pro které by mohl zvolit archetyp.",
@@ -15429,6 +15438,11 @@
     }
   },
   "plurals": {
+    "This level gives {name} {count} Ability Score Improvement: two points, or one feat, each. The request asks for {picked}.\u0000This level gives {name} {count} Ability Score Improvements: two points, or one feat, each. The request asks for {picked}.": [
+      "Tato úroveň postavě {name} poskytuje {count} zvýšení vlastností: za každé dva body nebo jednu odbornost. Počet požadovaných voleb: {picked}.",
+      "Tato úroveň postavě {name} poskytuje {count} zvýšení vlastností: za každé dva body nebo jednu odbornost. Počet požadovaných voleb: {picked}.",
+      "Tato úroveň postavě {name} poskytuje {count} zvýšení vlastností: za každé dva body nebo jednu odbornost. Počet požadovaných voleb: {picked}."
+    ],
     "{skills} is not a skill {name}'s class still offers.\u0000{skills} are not skills {name}'s class still offers.": [
       "Dovednost {skills} už povolání postavy {name} nenabízí.",
       "Dovednosti {skills} už povolání postavy {name} nenabízí.",

@@ -1,5 +1,14 @@
 {
   "messages": {
+    "A character gains one level at a time: {name} is level {level}, so the next level is {next}. Take the levels one after another.": "Un personnage gagne un niveau à la fois : {name} est au niveau {level}, le prochain est donc le niveau {next}. Prends les niveaux un par un.",
+    "Multiclassing is turned off for this campaign (a lobby setting the owner controls).": "Le multiclassement est désactivé dans cette campagne (un réglage du salon contrôlé par le propriétaire).",
+    "Cannot multiclass into that class.": "Impossible de se multiclasser dans cette classe.",
+    "A {className} chooses a subclass at {className} level {required}; this is level {level}.": "L’archétype de {className} se choisit au niveau {required} de cette classe ; tu es au niveau {level}.",
+    "{className} level {level} gives no Ability Score Improvement, so ability scores and feats stay as they are. Improvements come at the class's own levels.": "Au niveau {level}, la classe {className} n’accorde aucune amélioration de caractéristiques : les valeurs de caractéristiques et les dons restent inchangés. Les améliorations arrivent aux niveaux propres à la classe.",
+    "An Ability Score Improvement raises scores; it cannot lower {ability} from {before} to {after}.": "Une amélioration de caractéristiques augmente les valeurs ; elle ne peut pas faire baisser {ability} de {before} à {after}.",
+    "An Ability Score Improvement cannot raise {ability} above {cap}.": "Une amélioration de caractéristiques ne peut pas porter {ability} au-delà de {cap}.",
+    "{name} already has {feat}; taking it again means choosing another damage type ({types}).": "{name} possède déjà {feat} ; le reprendre implique de choisir un autre type de dégâts ({types}).",
+    "{name}'s {feat} already covers {type}; each time the feat is taken it names a different damage type.": "Le don {feat} de {name} couvre déjà {type} ; chaque nouvelle prise de ce don doit désigner un type de dégâts différent.",
     "{feat} raises one of {abilities} by 1; choose which.": "{feat} augmente de 1 l’une des caractéristiques {abilities} ; choisis laquelle.",
     "{name} is owed no Ability Score Improvement at this table's level.": "{name} n’a plus d’amélioration de caractéristiques à choisir au niveau de cette table.",
     "{name} has no {className} levels to choose a subclass for.": "{name} n’a aucun niveau de {className} pour lequel choisir un archétype.",
@@ -13549,6 +13558,10 @@
     }
   },
   "plurals": {
+    "This level gives {name} {count} Ability Score Improvement: two points, or one feat, each. The request asks for {picked}.\u0000This level gives {name} {count} Ability Score Improvements: two points, or one feat, each. The request asks for {picked}.": [
+      "Ce niveau accorde à {name} {count} amélioration de caractéristiques : deux points ou un don par amélioration. Nombre de choix demandés : {picked}.",
+      "Ce niveau accorde à {name} {count} améliorations de caractéristiques : deux points ou un don par amélioration. Nombre de choix demandés : {picked}."
+    ],
     "{skills} is not a skill {name}'s class still offers.\u0000{skills} are not skills {name}'s class still offers.": [
       "La classe de {name} ne propose plus la compétence {skills}.",
       "La classe de {name} ne propose plus les compétences {skills}."

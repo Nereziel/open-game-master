@@ -82,7 +82,7 @@ import { splitToolGrants, toolPickProblem } from "@/lib/srd/tool-choices";
 import { carrySwapRecords } from "@/lib/dm/ar-ws-spell-swap-record";
 import { petsAtLevel } from "@/lib/dm/pet-level-logic";
 import { featChoice } from "@/lib/schemas/sheet";
-import { translate, type Locale } from "@/lib/messages-logic";
+import { translate, translatePlural, type Locale } from "@/lib/messages-logic";
 
 export type LevelUpContext = {
   // Optional reader locale for shared grant validation messages.
@@ -131,6 +131,7 @@ type AbilityScoresKey = keyof AbilityScores;
 function improvementsAsked(
   sheet: CharacterSheet,
   request: LevelUpRequest,
+  locale: Locale = "en",
 ): { choices: AsiChoice[] } | { error: string } {
   if (request.asiChoices?.length) {
     return { choices: request.asiChoices };
@@ -148,14 +149,14 @@ function improvementsAsked(
       const delta = request.abilities[ability] - sheet.abilities[ability];
       if (delta < 0) {
         return {
-          error: `An Ability Score Improvement raises scores; it cannot lower ${ABILITY_NAMES[ability]} from ${sheet.abilities[ability]} to ${request.abilities[ability]}.`,
+          error: translate(locale, "An Ability Score Improvement raises scores; it cannot lower {ability} from {before} to {after}.", { ability: translate(locale, ABILITY_NAMES[ability]), before: sheet.abilities[ability], after: request.abilities[ability] }),
         };
       }
       // Held at 20 even where a manual or tome raised the maximum: SRD 5.1,
       // "you can't increase an ability score above 20 using this feature".
       if (request.abilities[ability] > ABILITY_SCORE_CAP && delta > 0) {
         return {
-          error: `An Ability Score Improvement cannot raise ${ABILITY_NAMES[ability]} above ${ABILITY_SCORE_CAP}.`,
+          error: translate(locale, "An Ability Score Improvement cannot raise {ability} above {cap}.", { ability: translate(locale, ABILITY_NAMES[ability]), cap: ABILITY_SCORE_CAP }),
         };
       }
       for (let point = 0; point < delta; point += 1) {
@@ -215,30 +216,30 @@ export function buildLevelUp(
   request: LevelUpRequest,
   context: LevelUpContext,
 ): LevelUpResult {
-  const t = (key: string, vars: Record<string, string | number>) => translate(context.locale ?? "en", key, vars);
+  const t = (key: string, vars?: Record<string, string | number>) => translate(context.locale ?? "en", key, vars);
   // ---- may this character level at all, and to this level ----
   if (sheet.deathSaves?.dead) {
-    return refuse(`${sheet.name} is dead, and the dead gain no levels.`, 409);
+    return refuse(t("{name} is dead, and the dead gain no levels.", { name: sheet.name }), 409);
   }
   if (sheet.currentHp <= 0) {
     return refuse(
-      `${sheet.name} is at 0 hit points. A character levels up once they are back on their feet.`,
+      t("{name} is at 0 hit points. A character levels up once they are back on their feet.", { name: sheet.name }),
       409,
     );
   }
   const target = request.level ?? sheet.level + 1;
   if (target > 20) {
-    return refuse("No character passes level 20.");
+    return refuse(t("No character passes level 20."));
   }
   if (target !== sheet.level + 1) {
     return refuse(
-      `A character gains one level at a time: ${sheet.name} is level ${sheet.level}, so the next level is ${sheet.level + 1}. Take the levels one after another.`,
+      t("A character gains one level at a time: {name} is level {level}, so the next level is {next}. Take the levels one after another.", { name: sheet.name, level: sheet.level, next: sheet.level + 1 }),
     );
   }
   const reached = levelForXp(sheet.xp);
   if (reached < target) {
     return refuse(
-      `Level ${target} takes ${XP_THRESHOLDS[target - 1]} experience points and ${sheet.name} has ${sheet.xp}. A level is earned in play, or granted by whoever runs the table.`,
+      t("Level {level} takes {xp} experience points and {name} has {have}. A level is earned in play, or granted by whoever runs the table.", { level: target, xp: XP_THRESHOLDS[target - 1], name: sheet.name, have: sheet.xp }),
       403,
     );
   }
@@ -256,13 +257,13 @@ export function buildLevelUp(
   if (!leveled) {
     if (!context.multiclassAllowed) {
       return refuse(
-        "Multiclassing is turned off for this campaign (a lobby setting the owner controls).",
+        t("Multiclassing is turned off for this campaign (a lobby setting the owner controls)."),
         403,
       );
     }
     const check = canMulticlassInto(sheet, classId);
     if (!check.ok) {
-      return refuse(check.error ?? "Cannot multiclass into that class.");
+      return refuse(check.error ?? t("Cannot multiclass into that class."));
     }
     leveled = { id: klass.id, subclass: "", level: 0 };
     classes.push(leveled);
@@ -281,7 +282,7 @@ export function buildLevelUp(
     const pickLevel = subclassLevelFor(klass.id);
     if (pickLevel !== null && leveled.level < pickLevel) {
       return refuse(
-        `A ${klass.name} chooses a subclass at ${klass.name} level ${pickLevel}; this is level ${leveled.level}.`,
+        t("A {className} chooses a subclass at {className} level {required}; this is level {level}.", { className: klass.name, required: pickLevel, level: leveled.level }),
       );
     }
     if (!context.subclassOffered(klass.id, wantedSubclass)) {
@@ -291,7 +292,7 @@ export function buildLevelUp(
   }
 
   // ---- improvements and feats ----
-  const asked = improvementsAsked(sheet, request);
+  const asked = improvementsAsked(sheet, request, context.locale);
   if ("error" in asked) {
     return refuse(asked.error);
   }
@@ -300,8 +301,8 @@ export function buildLevelUp(
   if (asked.choices.length > owed) {
     return refuse(
       owed
-        ? `This level gives ${sheet.name} ${owed} Ability Score Improvement${owed === 1 ? "" : "s"}: two points, or one feat, each. The request asks for ${asked.choices.length}.`
-        : `${klass.name} level ${leveled.level} gives no Ability Score Improvement, so ability scores and feats stay as they are. Improvements come at the class's own levels.`,
+        ? translatePlural(context.locale ?? "en", "This level gives {name} {count} Ability Score Improvement: two points, or one feat, each. The request asks for {picked}.", "This level gives {name} {count} Ability Score Improvements: two points, or one feat, each. The request asks for {picked}.", { name: sheet.name, count: owed, picked: asked.choices.length })
+        : t("{className} level {level} gives no Ability Score Improvement, so ability scores and feats stay as they are. Improvements come at the class's own levels.", { className: klass.name, level: leveled.level }),
     );
   }
   let abilities = applyChoices(sheet.abilities, asked.choices);
@@ -316,7 +317,7 @@ export function buildLevelUp(
     }
     if (feats.some((feat) => textKey(feat) === textKey(choice.feat))) {
       // Taken once, but for the feat whose text allows another (feat-repeat.ts).
-      const again = featRepeatRefusal({ ...sheet, feats }, choice.feat, featChoice(request.featChoices, choice.feat));
+      const again = featRepeatRefusal({ ...sheet, feats }, choice.feat, featChoice(request.featChoices, choice.feat), context.locale);
       if (again) {
         return refuse(again);
       }
