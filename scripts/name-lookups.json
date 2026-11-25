@@ -28426,6 +28426,11 @@
       ]
     ],
     "lib/dm/cast-refusal-display.ts#number": [
+      [
+        "parse",
+        3,
+        "Validate numeric adjustment, required price and paid points in known Twinned Spell settlement results."
+      ],
       ["parse",2,"Validate remaining and maximum counters in known lunar boon and cast share outcomes."],
       ["parse",2,"Validate captured available points and price before rendering a canonical refusal."],
       ["parse",14,"Validate numeric captures in known slot outcomes and granted/refund result templates; display only."]

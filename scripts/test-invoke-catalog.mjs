@@ -2028,4 +2028,103 @@ test("known ritual, stone, concentration, action and metamagic results support C
   }
 });
 
+test("awakened spellbook and twinned spell settlements localize only known result templates", () => {
+  const fixtures = [
+    [
+      "awakenedSpellbook",
+      "{spell} deals {type} damage in place of {own}: the type of {from}, a spell of the slot's level in the book.",
+      "Kouzlo {spell} působí zranění typu {type} namísto typu {own}: tento typ má kouzlo {from} stejné úrovně jako použitá pozice, zapsané v knize kouzel."
+    ],
+    [
+      "metamagic",
+      "Twinned Spell: {spell} takes a second creature in range, for 1 sorcery point ({delta} more charged: the price is the spell's level). The second target is another creature, never the first again.",
+      "Twinned Spell: kouzlo {spell} zasáhne druhého tvora v dosahu za 1 čarodějný bod (dodatečně utraceno bodů: {delta}; cena odpovídá úrovni kouzla). Druhým cílem musí být jiný tvor, nikoli opět první."
+    ],
+    [
+      "metamagic",
+      "Twinned Spell: {spell} takes a second creature in range, for 1 sorcery point ({delta} given back: the price is the spell's level). The second target is another creature, never the first again.",
+      "Twinned Spell: kouzlo {spell} zasáhne druhého tvora v dosahu za 1 čarodějný bod (vráceno bodů: {delta}; cena odpovídá úrovni kouzla). Druhým cílem musí být jiný tvor, nikoli opět první."
+    ],
+    [
+      "metamagic",
+      "Twinned Spell: {spell} takes a second creature in range, for {count} sorcery points ({delta} more charged: the price is the spell's level). The second target is another creature, never the first again.",
+      "Twinned Spell: kouzlo {spell} zasáhne druhého tvora v dosahu za {count} čarodějných bodů (dodatečně utraceno bodů: {delta}; cena odpovídá úrovni kouzla). Druhým cílem musí být jiný tvor, nikoli opět první."
+    ],
+    [
+      "metamagic",
+      "Twinned Spell: {spell} takes a second creature in range, for {count} sorcery points ({delta} given back: the price is the spell's level). The second target is another creature, never the first again.",
+      "Twinned Spell: kouzlo {spell} zasáhne druhého tvora v dosahu za {count} čarodějných bodů (vráceno bodů: {delta}; cena odpovídá úrovni kouzla). Druhým cílem musí být jiný tvor, nikoli opět první."
+    ],
+    [
+      "metamagic",
+      "Twinned Spell does not take {spell}: it has a range of self. The 1 sorcery point paid for it is back, and the spell is cast on its one target.",
+      "Twinned Spell nelze použít na kouzlo {spell}: má dosah na sesilatele. Vrací se 1 čarodějný bod utracený za zdvojení a kouzlo je sesláno na jediný cíl."
+    ],
+    [
+      "metamagic",
+      "Twinned Spell does not take {spell}: it has a range of self. The {count} sorcery points paid for it are back, and the spell is cast on its one target.",
+      "Twinned Spell nelze použít na kouzlo {spell}: má dosah na sesilatele. Vrací se {count} čarodějných bodů utracených za zdvojení a kouzlo je sesláno na jediný cíl."
+    ],
+    [
+      "metamagic",
+      "Twinned Spell does not take {spell}: it can target more than one creature at this level. The 1 sorcery point paid for it is back, and the spell is cast on its one target.",
+      "Twinned Spell nelze použít na kouzlo {spell}: na této úrovni může cílit na více než jednoho tvora. Vrací se 1 čarodějný bod utracený za zdvojení a kouzlo je sesláno na jediný cíl."
+    ],
+    [
+      "metamagic",
+      "Twinned Spell does not take {spell}: it can target more than one creature at this level. The {count} sorcery points paid for it are back, and the spell is cast on its one target.",
+      "Twinned Spell nelze použít na kouzlo {spell}: na této úrovni může cílit na více než jednoho tvora. Vrací se {count} čarodějných bodů utracených za zdvojení a kouzlo je sesláno na jediný cíl."
+    ],
+    [
+      "metamagic",
+      "Twinned Spell does not take {spell}: twinning it costs {price} sorcery points. The 1 sorcery point paid for it is back, and the spell is cast on its one target.",
+      "Twinned Spell nelze použít na kouzlo {spell}: jeho zdvojení stojí {price} čarodějných bodů. Vrací se 1 čarodějný bod utracený za zdvojení a kouzlo je sesláno na jediný cíl."
+    ],
+    [
+      "metamagic",
+      "Twinned Spell does not take {spell}: twinning it costs {price} sorcery points. The {count} sorcery points paid for it are back, and the spell is cast on its one target.",
+      "Twinned Spell nelze použít na kouzlo {spell}: jeho zdvojení stojí {price} čarodějných bodů. Vrací se {count} čarodějných bodů utracených za zdvojení a kouzlo je sesláno na jediný cíl."
+    ]
+  ];
+  const vars = {"spell":"Custom [A+B]","type":"fire","own":"cold","from":"Other [C+D]","count":"2","delta":"3","price":"5"};
+  const fill = (text) => text.replace(/\{(\w+)\}/g, (_, key) => vars[key]);
+  for (const [field, en, cs] of fixtures) {
+    const raw = fill(en);
+    for (const [locale, expected] of [["en", en], ["cs", cs], ["fr", en]]) {
+      const t = (key, values) => translateSlotResult(locale, key, values);
+      const result = Object.freeze({ [field]: raw });
+      assert.deepEqual(describeAdjudicationResult(result, t), [{ text: fill(expected), tone: "info" }]);
+      assert.equal(result[field], raw);
+      assert.deepEqual(describeAdjudicationResult({ note: raw }, t), [{ text: raw, tone: "info" }]);
+      const unknown = raw + " Unknown tail.";
+      assert.deepEqual(describeAdjudicationResult({ [field]: unknown }, t), [{ text: unknown, tone: "info" }]);
+    }
+  }
+  const t = (key, values) => translateSlotResult("cs", key, values);
+  for (const [field, raw] of [
+    [
+      "metamagic",
+      "Twinned Spell: Custom takes a second creature in range, for 1 sorcery point (0 given back: the price is the spell's level). The second target is another creature, never the first again."
+    ],
+    [
+      "metamagic",
+      "Twinned Spell: Custom takes a second creature in range, for 2 sorcery points (01 more charged: the price is the spell's level). The second target is another creature, never the first again."
+    ],
+    [
+      "metamagic",
+      "Twinned Spell does not take Custom: twinning it costs 2 sorcery points. The 2 sorcery points paid for it are back, and the spell is cast on its one target."
+    ],
+    [
+      "metamagic",
+      "Twinned Spell does not take Custom: unknown reason. The 1 sorcery point paid for it is back, and the spell is cast on its one target."
+    ],
+    [
+      "awakenedSpellbook",
+      "Custom deals fire damage in place of cold: the type of Other, a spell of the slot's level in the book. Unknown tail."
+    ]
+  ]) {
+    assert.deepEqual(describeAdjudicationResult({ [field]: raw }, t), [{ text: raw, tone: "info" }]);
+  }
+});
+
 console.log(`invoke-catalog: ${passed} tests passed`);

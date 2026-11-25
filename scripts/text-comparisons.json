@@ -10147,6 +10147,11 @@
       ]
     ],
     "lib/dm/catalog-result.ts#str-eq": [
+      [
+        "key",
+        1,
+        "Canonical awakenedSpellbook result field key."
+      ],
       ["key",5,"Known note, stoneChange, droppedConcentration, costNote and metamagic result keys."],
       ["key",4,"Canonical lunarBoons, refilled, castingTime and shares result field keys."],
       ["key",3,"Canonical debtComesDue, cost and wildMagicSurge result field keys."],
@@ -26085,6 +26090,11 @@
       ]
     ],
     "lib/dm/cast-refusal-display.ts#str-eq": [
+      [
+        "key",
+        2,
+        "Known result field keys restricting ambiguous spell captures."
+      ],
       [
         "key",
         8,
