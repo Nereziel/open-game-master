@@ -1,5 +1,41 @@
 {
   "messages": {
+    "Acquired {item}.": "Získaná výbava: {item}.",
+    "Identified {item}.": "Identifikovaný předmět: {item}.",
+    "{from} turned out to be {to}.": "Ukázalo se, že {from} je {to}.",
+    "Learned the cantrip {spell}.": "Naučený trik: {spell}.",
+    "Learned the spell {spell}.": "Naučené kouzlo: {spell}.",
+    "Copied {spell} into the spellbook.": "Do knihy kouzel zapsáno: {spell}.",
+    "Reached enough experience for level {level}.": "Dosaženo dost zkušeností pro {level}. úroveň.",
+    "{name} reached level {level}.": "{name} dosahuje {level}. úrovně.",
+    "Died: {cause}.": "Smrt: {cause}.",
+    "{name} joined the party as an AI companion ({kind}).": "{name} se přidává k družině jako společník řízený AI ({kind}).",
+    "{name} left the party.": "{name} opouští družinu.",
+    "{name} left the party: {reason}": "{name} opouští družinu: {reason}",
+    "{name} travels with the party as an ally the GM plays.": "{name} cestuje s družinou jako spojenec hraný PJ.",
+    "Bought {item} for {price} at {shop}.": "Nákup: {item} za {price} v obchodě {shop}.",
+    "Sold {item} for {price} at {shop}.": "Prodej: {item} za {price} v obchodě {shop}.",
+    "{name}: {state}. {action}.": "{name}: {state}. {action}.",
+    "Pack it away": "Ulož do batohu",
+    "Take it in hand": "Vezmi do ruky",
+    "Take it off your mount": "Sejmi z jízdního zvířete",
+    "Put it on your mount": "Nasaď na jízdní zvíře",
+    "Putting something on or taking it off happens on your own turn; it is not your turn.": "Nasazení nebo sejmutí předmětu je možné ve vlastním tahu; právě nejsi na tahu.",
+    "Putting something on or taking it off takes your free object interaction, on your own turn.": "Nasazení nebo sejmutí předmětu spotřebuje bezplatnou manipulaci s předmětem ve vlastním tahu.",
+    "Ending the attunement to {item} takes a short rest spent with it (1 hour).": "Ukončení sladění s předmětem {item} vyžaduje krátký odpočinek strávený s ním (1 hodina).",
+    "one suit of armor": "jednu zbroj",
+    "one shield": "jeden štít",
+    "one cloak": "jeden plášť",
+    "one item of headwear": "jednu pokrývku hlavy",
+    "one pair of footwear": "jeden pár obuvi",
+    "one pair of gloves or gauntlets": "jeden pár rukavic nebo zbrojních rukavic",
+    "one pair of bracers": "jeden pár nátepníků",
+    "one of its kind": "jeden předmět svého druhu",
+    "{name} goes where {off} are: a character wears {kind} at a time.": "{name} zabírá stejné místo jako {off}: postava může nosit současně jen {kind}.",
+    "{name} goes where {off} is: a character wears {kind} at a time.": "{name} zabírá stejné místo jako {off}: postava může nosit současně jen {kind}.",
+    "Drawing or stowing a weapon happens on your own turn; it is not your turn.": "Tasení či uložení zbraně je možné ve vlastním tahu; právě nejsi na tahu.",
+    "Nobody has said which weapon is out yet, so the first change is free.": "Dosud nebylo určeno, která zbraň je tasená, takže první změna je zdarma.",
+    "Drawing or stowing a weapon takes your free object interaction, on your own turn.": "Tasení či uložení zbraně spotřebuje bezplatnou manipulaci s předmětem ve vlastním tahu.",
     "Could not reach the server to search. Type again to retry.": "Nepodařilo se spojit se serverem a vyhledat položky. Zkus znovu psát.",
     "Nothing matched \"{query}\". Try fewer letters.": "Dotazu „{query}“ nic neodpovídá. Zkus méně písmen.",
     "fully restored": "plně zotaveno",
@@ -13126,6 +13162,9 @@
     "Unlimited": "Neomezený"
   },
   "contexts": {
+    "guest": {
+      "history.companionKind": "host"
+    },
     "magic_item": {
       "content.itemKind": "magický předmět"
     },
@@ -14695,6 +14734,7 @@
       "workshop.import.result": "nadřazená značka"
     },
     "party": {
+      "history.companionKind": "člen družiny",
       "workshop.import.result": "viditelnost pro družinu"
     },
     "strife": {
@@ -14744,6 +14784,9 @@
     }
   },
   "plurals": {
+    "Putting on {item} takes {count} minute.\u0000Putting on {item} takes {count} minutes.": ["Nasazení předmětu {item} trvá {count} minutu.","Nasazení předmětu {item} trvá {count} minuty.","Nasazení předmětu {item} trvá {count} minut."],
+    "Taking off {item} takes {count} minute.\u0000Taking off {item} takes {count} minutes.": ["Sejmutí předmětu {item} trvá {count} minutu.","Sejmutí předmětu {item} trvá {count} minuty.","Sejmutí předmětu {item} trvá {count} minut."],
+    "Taking off {item} with help takes {count} minute.\u0000Taking off {item} with help takes {count} minutes.": ["Sejmutí předmětu {item} s pomocí trvá {count} minutu.","Sejmutí předmětu {item} s pomocí trvá {count} minuty.","Sejmutí předmětu {item} s pomocí trvá {count} minut."],
     "level\u0000levels": [
       "úroveň",
       "úrovně",
