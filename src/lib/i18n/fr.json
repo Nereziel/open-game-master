@@ -1,5 +1,15 @@
 {
   "messages": {
+    "Unknown class \"{name}\".": "Classe inconnue « {name} ».",
+    "They already have levels in {className}.": "Ce personnage a déjà des niveaux dans la classe {className}.",
+    "At most {count} classes per character.": "Au maximum {count} classes par personnage.",
+    "Multiclassing into {className} requires {prerequisite}.": "Le multiclassage vers {className} exige : {prerequisite}.",
+    "Leaving {className} for another class requires {prerequisite} (RAW checks both directions).": "Passer de {className} à une autre classe exige : {prerequisite} (les règles vérifient les conditions dans les deux sens).",
+    "{className} leaves no tool to choose.": "La classe {className} ne propose aucun outil à choisir.",
+    "{name} has earned expertise in {slots} skills and holds {held}; {picked} more cannot be picked.": "{name} a droit à l’expertise dans {slots} compétences et en possède déjà {held} ; impossible d’en choisir {picked} de plus.",
+    "Expertise is a rogue's feature (1st and 6th level) and a bard's (3rd and 10th); this character has none to pick.": "L’expertise est une aptitude du roublard (niveaux 1 et 6) et du barde (niveaux 3 et 10) ; ce personnage n’a aucun choix à faire.",
+    "{spell} is not in {name}'s spellbook; {feature} names a spell written there.": "{spell} ne figure pas dans le grimoire de {name} ; {feature} exige un sort qui y est inscrit.",
+    "{style} is not a fighting style {name}'s classes offer; pick one of {styles}.": "{style} n’est pas un style de combat proposé par les classes de {name} ; choisis parmi {styles}.",
     "A character gains one level at a time: {name} is level {level}, so the next level is {next}. Take the levels one after another.": "Un personnage gagne un niveau à la fois : {name} est au niveau {level}, le prochain est donc le niveau {next}. Prends les niveaux un par un.",
     "Multiclassing is turned off for this campaign (a lobby setting the owner controls).": "Le multiclassement est désactivé dans cette campagne (un réglage du salon contrôlé par le propriétaire).",
     "Cannot multiclass into that class.": "Impossible de se multiclasser dans cette classe.",

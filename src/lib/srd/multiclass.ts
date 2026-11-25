@@ -8,6 +8,7 @@ import spellSlotsJson from "@/lib/srd/spell-slots.json";
 import { findClass, spellSlotsFor } from "@/lib/srd";
 import { isThirdCaster, type ThirdCasterSetting } from "@/lib/srd/third-caster";
 import type { Ability, AbilityScores, ClassEntry } from "@/lib/schemas/sheet";
+import { translate, type Locale } from "@/lib/messages-logic";
 
 // UI sanity cap: RAW is unbounded, but nobody at this table needs four.
 export const MULTICLASS_CAP = 3;
@@ -244,23 +245,25 @@ export function describeGrantT(t: T, grant: MulticlassGrant): string {
 export function canMulticlassInto(
   sheet: ClassListSource & { abilities: AbilityScores },
   classId: string,
+  locale: Locale = "en",
 ): { ok: boolean; error?: string } {
+  const t: T = (key, vars) => translate(locale, key, vars);
   const klass = findClass(classId);
   if (!klass) {
-    return { ok: false, error: `Unknown class "${classId}".` };
+    return { ok: false, error: t('Unknown class "{name}".', { name: classId }) };
   }
   const classList = classListFor(sheet);
   const wanted = classId.trim().toLowerCase();
   if (classList.some((entry) => entry.id.toLowerCase() === wanted)) {
-    return { ok: false, error: `They already have levels in ${klass.name}.` };
+    return { ok: false, error: t("They already have levels in {className}.", { className: klass.name }) };
   }
   if (classList.length >= MULTICLASS_CAP) {
-    return { ok: false, error: `At most ${MULTICLASS_CAP} classes per character.` };
+    return { ok: false, error: t("At most {count} classes per character.", { count: MULTICLASS_CAP }) };
   }
   if (!meetsPrereq(sheet.abilities, classId)) {
     return {
       ok: false,
-      error: `Multiclassing into ${klass.name} requires ${describePrereq(classId)}.`,
+      error: t("Multiclassing into {className} requires {prerequisite}.", { className: klass.name, prerequisite: describePrereqT(t, classId) }),
     };
   }
   for (const entry of classList) {
@@ -268,7 +271,7 @@ export function canMulticlassInto(
       const held = findClass(entry.id)?.name ?? entry.id;
       return {
         ok: false,
-        error: `Leaving ${held} for another class requires ${describePrereq(entry.id)} (RAW checks both directions).`,
+        error: t("Leaving {className} for another class requires {prerequisite} (RAW checks both directions).", { className: held, prerequisite: describePrereqT(t, entry.id) }),
       };
     }
   }

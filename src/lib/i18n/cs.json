@@ -1,5 +1,14 @@
 {
   "messages": {
+    "They already have levels in {className}.": "Postava už má úrovně v povolání {className}.",
+    "At most {count} classes per character.": "Postava může mít nejvýše {count} povolání.",
+    "Multiclassing into {className} requires {prerequisite}.": "Přijetí povolání {className} vyžaduje: {prerequisite}.",
+    "Leaving {className} for another class requires {prerequisite} (RAW checks both directions).": "Při přechodu z povolání {className} k dalšímu je nutné splnit: {prerequisite} (pravidla vyžadují kontrolu v obou směrech).",
+    "{className} leaves no tool to choose.": "Povolání {className} nenabízí výběr nástroje.",
+    "{name} has earned expertise in {slots} skills and holds {held}; {picked} more cannot be picked.": "Postava {name} má nárok na kvalifikaci v počtu {slots} dovedností a již využívá {held}; dalších {picked} nelze vybrat.",
+    "Expertise is a rogue's feature (1st and 6th level) and a bard's (3rd and 10th); this character has none to pick.": "Kvalifikace je schopnost tuláka (1. a 6. úroveň) a barda (3. a 10. úroveň); tato postava na výběr nemá nárok.",
+    "{spell} is not in {name}'s spellbook; {feature} names a spell written there.": "Kouzlo {spell} není v knize kouzel postavy {name}; schopnost {feature} vyžaduje kouzlo zapsané v této knize.",
+    "{style} is not a fighting style {name}'s classes offer; pick one of {styles}.": "Bojový styl {style} není pro povolání postavy {name} dostupný. Vyber z možností: {styles}.",
     "A character gains one level at a time: {name} is level {level}, so the next level is {next}. Take the levels one after another.": "Postava získává vždy jednu úroveň: {name} má úroveň {level}, další je tedy {next}. Zvyšuj úrovně postupně.",
     "Multiclassing is turned off for this campaign (a lobby setting the owner controls).": "Kombinování povolání je v této kampani vypnuté (nastavení v lobby, které ovládá vlastník).",
     "Cannot multiclass into that class.": "Toto povolání nelze kombinovat.",

@@ -261,7 +261,7 @@ export function buildLevelUp(
         403,
       );
     }
-    const check = canMulticlassInto(sheet, classId);
+    const check = canMulticlassInto(sheet, classId, context.locale);
     if (!check.ok) {
       return refuse(check.error ?? t("Cannot multiclass into that class."));
     }
@@ -409,7 +409,7 @@ export function buildLevelUp(
     const { fixed: fixedTools, choices: toolChoices } = splitToolGrants(grants.tools);
     const toolPicks = (request.levelUpTools ?? []).map((tool) => tool.trim()).filter(Boolean);
     if (toolPicks.length) {
-      const problem = toolChoices.length ? toolPickProblem(toolChoices, toolPicks) : `${klass.name} leaves no tool to choose.`;
+      const problem = toolChoices.length ? toolPickProblem(toolChoices, toolPicks) : t("{className} leaves no tool to choose.", { className: klass.name });
       if (problem) {
         return refuse(problem);
       }
@@ -511,14 +511,14 @@ export function buildLevelUp(
     if (picks.length > Math.max(0, slots - held.length)) {
       return refuse(
         slots
-          ? `${sheet.name} has earned expertise in ${slots} skills and holds ${held.length}; ${picks.length} more cannot be picked.`
-          : "Expertise is a rogue's feature (1st and 6th level) and a bard's (3rd and 10th); this character has none to pick.",
+          ? t("{name} has earned expertise in {slots} skills and holds {held}; {picked} more cannot be picked.", { name: sheet.name, slots, held: held.length, picked: picks.length })
+          : t("Expertise is a rogue's feature (1st and 6th level) and a bard's (3rd and 10th); this character has none to pick."),
       );
     }
     const unproficient = picks.filter((skill) => !expertiseAllowed(skill, proficiencies.skills, classes.map((entry) => entry.id)));
     if (unproficient.length) {
       return refuse(
-        `Expertise doubles a proficiency the character has; ${unproficient.join(", ")} ${unproficient.length === 1 ? "is" : "are"} not among ${sheet.name}'s skills.`,
+        translatePlural(context.locale ?? "en", "Expertise doubles a proficiency the character has; {skills} is not among {name}'s skills.", "Expertise doubles a proficiency the character has; {skills} are not among {name}'s skills.", { count: unproficient.length, skills: unproficient.join(", "), name: sheet.name }),
       );
     }
     proficiencies = { ...proficiencies, expertise: [...held, ...picks] };
@@ -577,7 +577,7 @@ export function buildLevelUp(
   for (const pick of picked) {
     const option = findOptionByFeatureName(pick.name);
     if (option && !pickInSpellbook(option, book)) {
-      return refuse(`${option.n} is not in ${sheet.name}'s spellbook; ${pick.name.split(":")[0]} names a spell written there.`);
+      return refuse(t("{spell} is not in {name}'s spellbook; {feature} names a spell written there.", { spell: option.n, name: sheet.name, feature: pick.name.split(":")[0] }));
     }
     // An invocation's level, pact boon or cantrip (options.ts optionReqProblem),
     // by the class levels after this one.
@@ -600,7 +600,7 @@ export function buildLevelUp(
       const heldStyles = chosenFightingStyles(featuresWithPicks.filter((feature) => feature.name !== pick.name));
       if (!newStyleFits(heldStyles, style, after)) {
         const open = fightingStyleChoices(after).filter((entry) => newStyleFits(heldStyles, entry.name, after));
-        return refuse(`${style} is not a fighting style ${sheet.name}'s classes offer; pick one of ${open.map((entry) => entry.name).join(", ") || "none"}.`);
+        return refuse(t("{style} is not a fighting style {name}'s classes offer; pick one of {styles}.", { style, name: sheet.name, styles: open.map((entry) => entry.name).join(", ") || t("none") }));
       }
     }
   }
