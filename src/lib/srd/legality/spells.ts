@@ -42,6 +42,8 @@ import { textKey } from "@/lib/language/text-logic";
 import { revisedOnlySpellProblem } from "@/lib/content/edition";
 import { classSpellGrants, offListProblems } from "@/lib/srd/class-spell-grants";
 import { withoutSwappedOut } from "@/lib/dm/ar-ws-spell-swap-record";
+import { translate, type Locale } from "@/lib/messages-logic";
+import { contentName } from "@/lib/content/names";
 
 type Casting = NonNullable<Spellcasting>;
 type CastingAbility = Casting["ability"];
@@ -116,6 +118,7 @@ export function derivedSlots(
 }
 
 export type NameRules = {
+  locale?: Locale;
   spellOf: (name: string) => SpellFacts | null;
   // Names the character already holds: earned, so not judged again.
   held: Set<string>;
@@ -147,7 +150,7 @@ export function spellNameProblems(view: CasterView, list: string, rules: NameRul
     const key = textKey(name);
     // A 2024-only spell a sheet held from before they were taken out is
     // asked for again on this edit, held or not (src/lib/content/edition.ts).
-    const revised = revisedOnlySpellProblem(name, asCantrip ? "cantrip" : "spell");
+    const revised = revisedOnlySpellProblem(name, asCantrip ? "cantrip" : "spell", rules.locale);
     if (revised) {
       problems.push(revised);
       return;
@@ -202,7 +205,13 @@ export function spellNameProblems(view: CasterView, list: string, rules: NameRul
     judge(name, false);
   }
   const grants = classSpellGrants(view);
-  problems.push(...offListProblems({ grants, allowedBefore: grants.anyList, kept: keptOff, strays, list: spellListLabel(list), label: labelOf(view) }));
+  const locale = rules.locale ?? "en";
+  const className = classLabelOf(view.classId);
+  const listName = spellListLabel(list);
+  const displayClass = view.classId.startsWith("homebrew-") ? className : contentName("classes", className, locale);
+  const displayList = list.startsWith("homebrew-") ? listName : contentName("classes", listName, locale);
+  const label = locale === "en" ? labelOf(view) : translate(locale, "{className} of level {level}", { className: displayClass, level: view.level });
+  problems.push(...offListProblems({ grants, allowedBefore: grants.anyList, kept: keptOff, strays, list: displayList, label, locale }));
   return problems;
 }
 
@@ -227,6 +236,7 @@ export function spellFilingProblems(view: CasterView): string[] {
 }
 
 export type SpellcastingInput = {
+  locale?: Locale;
   sent: Spellcasting;
   classes: ClassEntry[];
   classOf: (classId: string) => ClassGrants | null;
@@ -440,6 +450,7 @@ export function judgeSpellcasting(input: SpellcastingInput): SpellcastingVerdict
       problems.push(
         ...spellNameProblems(view, list, {
           spellOf: input.spellOf,
+          locale: input.locale,
           held,
           racialCantrips: racial,
           free: new Set(free.map(textKey)),
@@ -464,6 +475,7 @@ export function judgeSpellcasting(input: SpellcastingInput): SpellcastingVerdict
         level: view.level,
         spells: levelled((view.known.length ? view.known : view.prepared).filter((name) => !taught.spells.some((entry) => textKey(entry) === textKey(name)))),
         heldOutside: thirdCasterOutside(view.classId, levelled(heldNames), view.progression),
+        locale: input.locale,
       });
       if (schools) {
         problems.push(schools);
@@ -477,6 +489,7 @@ export function judgeSpellcasting(input: SpellcastingInput): SpellcastingVerdict
         { ...sheetLike, spellcasting: written },
         {
           bookAllowance: input.bookAllowance,
+          locale: input.locale,
           freeCantrips: [...racial.map((entry) => entry.name), ...innate, ...taught.cantrips],
           freeSpells: taught.spells,
           extras: input.subclassExtras,

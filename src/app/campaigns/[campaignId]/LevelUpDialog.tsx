@@ -844,6 +844,7 @@ export function LevelUpDialog({
       return null;
     }
     const offSchool = thirdCasterPickRefusal({
+      locale,
       classId: classChoice,
       subclass: effectiveSubclass,
       progression,

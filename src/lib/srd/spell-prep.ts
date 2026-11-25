@@ -17,6 +17,7 @@ import {
 } from "@/lib/srd/third-caster";
 import type { ToolError } from "@/lib/dm/tool-errors";
 import { textKey } from "@/lib/language/text-logic";
+import type { Locale } from "@/lib/messages-logic";
 import { classSpellGrants } from "@/lib/srd/class-spell-grants";
 import { arcanumExtraProblem, arcanumSplit, mysticArcanumTop } from "@/lib/srd/mystic-arcanum";
 import { effectiveAbilities, type Wearer, type WornMagicItem } from "@/lib/srd/magic-items";
@@ -521,6 +522,7 @@ export function spellListProblems(
   sheet: SheetLike & { abilities: CharacterSheet["abilities"] },
   options: {
     bookAllowance?: boolean;
+    locale?: Locale;
     freeCantrips?: string[];
     freeCantripCount?: number;
     freeSpells?: string[];
@@ -561,7 +563,7 @@ export function spellListProblems(
     const namedCantrip =
       options.bookAllowance === false
         ? null
-        : thirdCasterCantripProblem({ classId: view.classId, subclass: view.subclass, profile: view.progression, level: view.level, cantrips, cap: cantripCap });
+        : thirdCasterCantripProblem({ classId: view.classId, subclass: view.subclass, profile: view.progression, level: view.level, cantrips, cap: cantripCap, locale: options.locale });
     if (namedCantrip) {
       problems.push(namedCantrip);
     }
@@ -572,7 +574,7 @@ export function spellListProblems(
     // A warlock's arcana sit beside the Spells Known column: one of each
     // arcanum level is left out of the count, a second of one level refused.
     const arcana = arcanumSplit(view, held, options.spellLevelOf);
-    const extraArcanum = arcanumExtraProblem(arcana, options.spellLevelOf, view.classId);
+    const extraArcanum = arcanumExtraProblem(arcana, options.spellLevelOf, view.classId, options.locale);
     if (extraArcanum) {
       problems.push(extraArcanum);
     }

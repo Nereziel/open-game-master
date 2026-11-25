@@ -175,8 +175,8 @@ function CasterBook({
   const revised = [
     ...new Set(
       [
-        ...view.cantrips.map((name) => revisedOnlySpellProblem(name, "cantrip")),
-        ...[...heldSpells(view), ...view.pending, ...spellbookOf(view)].map((name) => revisedOnlySpellProblem(name)),
+        ...view.cantrips.map((name) => revisedOnlySpellProblem(name, "cantrip", locale)),
+        ...[...heldSpells(view), ...view.pending, ...spellbookOf(view)].map((name) => revisedOnlySpellProblem(name, "spell", locale)),
       ].filter((problem): problem is string => problem !== null),
     ),
   ];

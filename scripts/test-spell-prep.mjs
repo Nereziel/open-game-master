@@ -310,4 +310,22 @@ test("delegated spell refusals preserve the English contract and localize presen
   }
   assert.deepEqual({ schools, cantrips, split, off }, snapshot);
 });
+
+const { spellNameProblems } = await import("../src/lib/srd/legality/spells.ts");
+const { spellListProblems } = await import("../src/lib/srd/spell-prep.ts");
+const { thirdCasterPickRefusal } = await import("../src/app/campaigns/[campaignId]/level-up-preview.ts");
+test("creation and preview pass locale through the delegated spell validators", () => {
+  const view = casterViewsOf(wizard({ cantrips: ["Sorcerous Burst"] }))[0];
+  const rules = { spellOf: checklistSpell, held: new Set(), racialCantrips: [] };
+  const rogue = { ...wizard({ spellbook: undefined, known: [], prepared: [], cantrips: ["Fire Bolt", "Light", "Ray of Frost"] }), class: "rogue", subclass: "Arcane Trickster", level: 3 };
+  const pick = { classId: "fighter", subclass: "Eldritch Knight", level: 3, known: [], picks: ["Sleep"], adding: "Charm Person", schoolOf: () => "enchantment" };
+  const snapshot = structuredClone({ view, rogue });
+  for (const locale of ["en", "cs", "fr"]) {
+    assert.deepEqual(spellNameProblems(view, "wizard", { ...rules, locale }), [revisedOnlySpellProblem("Sorcerous Burst", "cantrip", locale)]);
+    assert.deepEqual(spellListProblems(rogue, { locale }), [thirdCasterCantripProblem({ classId: "rogue", subclass: "Arcane Trickster", level: 3, cantrips: rogue.spellcasting.cantrips, cap: 3, locale })]);
+    assert.equal(thirdCasterPickRefusal({ ...pick, locale }), thirdCasterSchoolProblem({ classId: "fighter", subclass: "Eldritch Knight", level: 3, spells: [{ name: "Sleep", school: "enchantment" }, { name: "Charm Person", school: "enchantment" }], locale }));
+    assert.deepEqual(spellListProblems({ ...rogue, spellcasting: { ...rogue.spellcasting, cantrips: ["Mage Hand", "Light", "Fire Bolt"] } }, { locale }), []);
+  }
+  assert.deepEqual({ view, rogue }, snapshot);
+});
 console.log(`test-spell-prep: ${passed} tests passed.`);

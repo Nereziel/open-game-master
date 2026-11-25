@@ -682,6 +682,7 @@ export function legalizeSheet(input: CreateSheetInput, context: LegalityContext)
   owed.push(...racialCantrips.owed);
   const racialPicks = racialCantrips.picks.map((pick) => pick.name);
   const spells = judgeSpellcasting({
+    locale: context.locale,
     sent: input.spellcasting ?? null,
     classes,
     classOf: context.classOf,

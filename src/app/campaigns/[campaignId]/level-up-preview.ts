@@ -47,6 +47,7 @@ import {
 } from "@/lib/srd/third-caster";
 import { featureHitPoints, holdsFeature, withPrimalChampion } from "@/lib/srd/trait-rules";
 import { textKey } from "@/lib/language/text-logic";
+import type { Locale } from "@/lib/messages-logic";
 
 type ClassRow = { id: string; subclass: string; level: number };
 
@@ -255,9 +256,11 @@ export function thirdCasterPickRefusal(input: {
   picks: string[];
   adding: string;
   schoolOf?: (name: string) => unknown;
+  locale?: Locale;
 }): string | null {
   const of = (name: string) => ({ name, school: input.schoolOf?.(name) ?? bundledSpellSchool(name) });
   return thirdCasterSchoolProblem({
+    locale: input.locale,
     classId: input.classId,
     subclass: input.subclass,
     profile: input.progression,

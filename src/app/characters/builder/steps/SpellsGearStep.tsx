@@ -335,6 +335,7 @@ export function SpellsSection({
   // `without` is the spell a swap takes out to make room.
   const offSchool = (name: string, without?: string) =>
     thirdCasterSchoolProblem({
+      locale,
       classId: klass.id,
       subclass: derived.casterSubclass ?? state.subclass,
       profile: subclassCastingProfileFor(klass.id, derived.casterSubclass ?? state.subclass),
