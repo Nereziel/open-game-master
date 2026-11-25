@@ -477,4 +477,24 @@ test("invalid level-up choice replacements respect the locale and preserve held 
   assert.equal(new Set(messages).size, 3);
 });
 
+test("direct sheet refusals localize without changing the normalized sheet", () => {
+  const split = { ...FIGHTER, classes: [{ id: "fighter", subclass: "", level: 3 }, { id: "wizard", subclass: "", level: 2 }] };
+  const cases = [
+    [split, { level: 5, multiclassAllowed: false }, "This table turns multiclassing off; a character made here holds one class.", undefined],
+    [{ ...FIGHTER, class: "unknown-class" }, {}, '"{name}" is not a class this server knows; pick one from the builder\'s list.', { name: "unknown-class" }],
+  ];
+  for (const [sheet, overrides, key, vars] of cases) {
+    const snapshot = structuredClone(sheet);
+    const english = judge(sheet, { ...overrides, locale: "en" });
+    for (const locale of ["en", "cs", "fr"]) {
+      const actual = judge(sheet, { ...overrides, locale });
+      const expected = translateRefusal(locale, key, vars);
+      assert.ok(actual.problems.includes(expected), expected);
+      if (locale !== "en") assert.notEqual(expected, translateRefusal("en", key, vars));
+      assert.deepEqual(actual.sheet, english.sheet);
+      assert.deepEqual(sheet, snapshot);
+    }
+  }
+});
+
 console.log(`test-sheet-legality: ${passed} passed`);
