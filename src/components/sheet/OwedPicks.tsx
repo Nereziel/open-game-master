@@ -14,7 +14,7 @@ import { LANGUAGES_TO_CHOOSE } from "@/lib/srd/owed-languages";
 import { subclassChoicePickName, subclassChoiceSummary } from "@/lib/content/subclass-choices";
 import { hostOffers, useCapabilities } from "@/lib/use-capabilities";
 import { textKey } from "@/lib/language/text-logic";
-import { useLocale, useT } from "@/lib/locale";
+import { odmLocaleHeaders, useLocale, useT } from "@/lib/locale";
 import { fightingStyleDisplayName, optionDisplayName } from "@/lib/content/option-labels";
 
 // The two refusals sendOwed writes itself (the server's own error text rides
@@ -127,7 +127,7 @@ async function sendOwed(sheet: CharacterSheet, body: Record<string, unknown>): P
   try {
     const response = await fetch(`/api/campaigns/${sheet.campaignId}/sheet/owed`, {
       method: "POST",
-      headers: { "Content-Type": "application/json" },
+      headers: { "Content-Type": "application/json", ...odmLocaleHeaders() },
       body: JSON.stringify({ characterId: sheet.id, ...body }),
     });
     if (!response.ok) {

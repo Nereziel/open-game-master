@@ -55,6 +55,7 @@ export async function POST(request: Request, { params }: { params: Promise<{ cam
     sheet,
     { features: parsed.data.features, featChoices: parsed.data.featChoices },
     { extras: subclassExtrasFor(tableAuthors(campaignId)), campaignId },
+    t.locale,
   );
   if (!applied.ok) {
     return Response.json({ error: applied.error }, { status: 400 });

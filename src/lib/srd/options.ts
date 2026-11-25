@@ -146,6 +146,10 @@ export function optionPicksSpells(kind: OptionKind): boolean {
 }
 
 // That rule, for a kind that picks spells; null for any other kind.
+export function optionKindLabel(kind: OptionKind): string {
+  return KINDS[kind].label;
+}
+
 export function optionKindRule(kind: OptionKind): string | null {
   return optionPicksSpells(kind) ? (SPELL_PICK_TEXT[kind] ?? null) : null;
 }

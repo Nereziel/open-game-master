@@ -14,7 +14,8 @@
 //
 // Pure: the sheet comes in as a value.
 
-import { formatMessage, type MessageVars } from "@/lib/messages-logic";
+import { formatMessage, translate, type Locale, type MessageVars } from "@/lib/messages-logic";
+import { fightingStyleDisplayName, optionDisplayName, optionReqDisplay } from "@/lib/content/option-labels";
 import type { CharacterSheet, Proficiencies, SheetFeature } from "@/lib/schemas/sheet";
 import { featChoice, keyedFeatChoices, withFeatChoice } from "@/lib/schemas/sheet";
 import type { FeatChoices } from "@/lib/srd/feat-grants";
@@ -31,6 +32,7 @@ import {
   findOptionByFeatureName,
   openOptionSlots,
   optionFeatureName,
+  optionKindLabel,
   optionReqProblem,
   remainingWords,
   slotTakes,
@@ -182,11 +184,13 @@ export type OwedPicksApplied =
 // The sheet with the picks made, or why one cannot be. Each pick is judged
 // against what is owed after the ones before it, so two picks of one list
 // cannot both take its last slot.
-export function applyOwedPicks(sheet: OwedSheet, request: OwedPicksRequest, context: OwedContext = {}): OwedPicksApplied {
+export function applyOwedPicks(sheet: OwedSheet, request: OwedPicksRequest, context: OwedContext = {}, locale: Locale = "en"): OwedPicksApplied {
+  const t = (key: string, vars?: MessageVars) => translate(locale, key, vars);
+  const character = sheet.name ?? t("This character");
   const asked = request.features ?? [];
   const choices: FeatChoices = { ...(request.featChoices ?? {}) };
   if (!asked.length && !Object.keys(choices).length) {
-    return { ok: false, error: "Name a pick to make: an owed option by its feature name, or a language for an owed grant." };
+    return { ok: false, error: t("Name a pick to make: an owed option by its feature name, or a language for an owed grant.") };
   }
   let features: SheetFeature[] = [...sheet.features];
   const made: string[] = [];
@@ -202,7 +206,7 @@ export function applyOwedPicks(sheet: OwedSheet, request: OwedPicksRequest, cont
       const slot = owedPickSlots({ ...sheet, features }, context).choices.find((entry) => textKey(entry.label) === textKey(parsed.label));
       const option = slot?.options.find((entry) => textKey(entry.name) === textKey(parsed.option));
       if (!slot || !option) {
-        return { ok: false, error: `${sheet.name ?? "This character"} owes no ${parsed.label} pick of ${parsed.option}: none of their subclasses has that choice open at its level.` };
+        return { ok: false, error: t("{character} owes no {label} pick of {option}: none of their subclasses has that choice open at its level.", { character, label: parsed.label, option: parsed.option }) };
       }
       const feature = subclassChoicePickName(slot.label, option);
       features = [...features, { name: feature, source: "choice", optionId: pickOptionId({ id: slot.choiceId }, option) }];
@@ -214,23 +218,23 @@ export function applyOwedPicks(sheet: OwedSheet, request: OwedPicksRequest, cont
     if (option) {
       const slot = owedPickSlots({ ...sheet, features }, context).options.find((entry) => entry.kind === option.k);
       if (!slot) {
-        return { ok: false, error: `${sheet.name ?? "This character"} owes no ${option.k.replace(/_/g, " ")} pick: none of their classes has one left at its level.` };
+        return { ok: false, error: t("{character} owes no {label} pick: none of their classes has one left at its level.", { character, label: locale === "en" ? option.k.replace(/_/g, " ") : t(optionKindLabel(option.k)) }) };
       }
       if (slot.chosen.some((chosen) => textKey(chosen) === textKey(option.n))) {
-        return { ok: false, error: `${option.n} is already chosen for ${slot.label}.` };
+        return { ok: false, error: t("{option} is already chosen for {label}.", { option: optionDisplayName(option, locale), label: t(slot.label) }) };
       }
       if (!slot.options.some((entry) => textKey(entry.n) === textKey(option.n))) {
-        return { ok: false, error: `${option.n} is not one of the ${slot.label} choices open to this character${slot.kind.startsWith("spell_") || slot.kind === "signature_spell" ? ": it must be a spell of that level in their spellbook" : ""}.` };
+        return { ok: false, error: t(slot.kind.startsWith("spell_") || slot.kind === "signature_spell" ? "{option} is not one of the {label} choices open to this character: it must be a spell of that level in their spellbook." : "{option} is not one of the {label} choices open to this character.", { option: optionDisplayName(option, locale), label: t(slot.label) }) };
       }
       if (!slotTakes(slot, option)) {
-        return { ok: false, error: `${slot.label} has only half a pick left, which takes one more humanoid race.` };
+        return { ok: false, error: t("{label} has only half a pick left, which takes one more humanoid race.", { label: t(slot.label) }) };
       }
       // Its prerequisite, as the level-up holds it (options.ts optionReqProblem).
       const unmet = optionReqProblem(option, {
         classLevel: (classId) => classListFor(sheet).find((entry) => textKey(entry.id) === textKey(classId))?.level ?? 0,
         features,
         cantrips: sheetCantrips(sheet),
-      });
+      }, { describe: locale === "en" ? undefined : (issue) => optionReqDisplay(option, issue, locale) });
       if (unmet) {
         return { ok: false, error: unmet };
       }
@@ -244,17 +248,17 @@ export function applyOwedPicks(sheet: OwedSheet, request: OwedPicksRequest, cont
     if (known) {
       const owed = owedPickSlots({ ...sheet, features }, context).styles;
       if (owed.count <= 0) {
-        return { ok: false, error: "No fighting style is owed: every slot this character's classes give is chosen." };
+        return { ok: false, error: t("No fighting style is owed: every slot this character's classes give is chosen.") };
       }
       if (!owed.choices.some((entry) => entry.id === known.id)) {
-        return { ok: false, error: `${known.name} is not a fighting style this character's class offers; pick one of ${owed.choices.map((entry) => entry.name).join(", ")}.` };
+        return { ok: false, error: t("{style} is not a fighting style this character's class offers; pick one of {styles}.", { style: fightingStyleDisplayName(known, locale), styles: owed.choices.map((entry) => fightingStyleDisplayName(entry, locale)).join(", ") }) };
       }
       const feature = fightingStyleFeatureName(known.id);
       features = [...features, { name: feature, source: "choice" }];
       made.push(feature);
       continue;
     }
-    return { ok: false, error: `"${name}" is not a pick this server knows. Send an owed option as its feature name ("Dragon Ancestor: Red", "Fighting Style: Defense", "Bloodline (Storm)").` };
+    return { ok: false, error: t('"{name}" is not a pick this server knows. Send an owed option as its feature name ("Dragon Ancestor: Red", "Fighting Style: Defense", "Bloodline (Storm)").', { name }) };
   }
   // A workshop choice's option trains in its skills and languages, a skill
   // or language held already turned into a pick of another as the level-up
@@ -292,7 +296,7 @@ export function applyOwedPicks(sheet: OwedSheet, request: OwedPicksRequest, cont
     const kept = populateFeaturesForClasses(features, classes, sheet.race ?? "", featsAsRun(sheet.feats, context.campaignId ?? sheet.campaignId), context.extras);
     const dropped = made.find((name) => !kept.some((feature) => textKey(feature.name) === textKey(name)));
     if (dropped) {
-      return { ok: false, error: `${dropped} is not a pick this character's classes have room for.` };
+      return { ok: false, error: t("{name} is not a pick this character's classes have room for.", { name: dropped }) };
     }
     features = kept;
   }
@@ -312,10 +316,10 @@ export function applyOwedPicks(sheet: OwedSheet, request: OwedPicksRequest, cont
       const picked = [...new Set((featChoice(choices, free) ?? choices[free])?.languages ?? [])].map((name) => name.trim()).filter(Boolean);
       const held = new Set((trainedBy ?? sheet.proficiencies).languages.map(textKey));
       if (!grant) {
-        return { ok: false, error: "No language of the player's choice is owed: the species and background's are all named." };
+        return { ok: false, error: t("No language of the player's choice is owed: the species and background's are all named.") };
       }
       if (!picked.length || picked.length > grant.spec.languages || picked.some((name) => held.has(textKey(name)))) {
-        return { ok: false, error: `Name up to ${grant.spec.languages} language${grant.spec.languages === 1 ? "" : "s"} the character does not speak yet.` };
+        return { ok: false, error: t(grant.spec.languages === 1 ? "Name up to {count} language the character does not speak yet." : "Name up to {count} languages the character does not speak yet.", { count: grant.spec.languages }) };
       }
       const base = trainedBy ?? sheet.proficiencies;
       trainedBy = { ...base, languages: [...base.languages, ...picked] };
@@ -326,7 +330,7 @@ export function applyOwedPicks(sheet: OwedSheet, request: OwedPicksRequest, cont
     for (const key of keys) {
       const grant = owed.find((entry) => textKey(entry.name) === textKey(key));
       if (!grant) {
-        return { ok: false, error: `Nothing owed is called "${key}"; the owed training picks are ${owed.map((entry) => entry.name).join(", ") || "none"}.` };
+        return { ok: false, error: t('Nothing owed is called "{key}"; the owed training picks are {names}.', { key, names: owed.map((entry) => entry.name).join(", ") || t("none") }) };
       }
       // Keyed as the schema keys them, or as written by a caller that did not
       // go through it.

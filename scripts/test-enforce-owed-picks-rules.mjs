@@ -26,9 +26,9 @@ const { chosenOptions, openOptionSlots } = await import("../src/lib/srd/options.
 const owedRoute = await world.route("campaigns/[campaignId]/sheet/owed");
 const homebrew = await world.route("homebrew");
 
-async function post(body, user = world.owner) {
+async function post(body, user = world.owner, locale = "en") {
   world.signIn(user);
-  const request = new Request("http://test/", { method: "POST", headers: { "content-type": "application/json" }, body: JSON.stringify(body) });
+  const request = new Request("http://test/", { method: "POST", headers: { "content-type": "application/json", "x-odm-locale": locale }, body: JSON.stringify(body) });
   const response = await owedRoute.POST(request, { params: Promise.resolve({ campaignId: world.campaignId }) });
   return { status: response.status, json: await response.json() };
 }
@@ -110,6 +110,22 @@ await test("The level-up holds an invocation's prerequisite too.", async () => {
   const out = await table.levelUp("warlock", { features: [{ name: "Invocation: Thirsting Blade", source: "choice" }] });
   assert.ok(out.status >= 400, `the level-up took it: ${out.status}`);
   assert.match(out.error ?? "", /warlock level 5/);
+});
+
+await test("Owed prerequisite refusals follow the reader language and leave the sheet unchanged.", async () => {
+  const hero = table.hero({ class: "warlock", subclass: "The Fiend", level: 2, proficiencies: TRAINED });
+  const before = world.sheet(hero.id).features;
+  const body = { characterId: hero.id, features: ["Invocation: Thirsting Blade"] };
+  const en = await post(body);
+  assert.equal(en.status, 400);
+  assert.match(en.json.error, /warlock level 5/);
+  const cs = await post(body, world.owner, "cs");
+  const fr = await post(body, world.owner, "fr");
+  assert.equal(cs.status, 400);
+  assert.equal(fr.status, 400);
+  assert.match(cs.json.error, /5\. úroveň/);
+  assert.match(fr.json.error, /niveau 5/);
+  assert.deepEqual(world.sheet(hero.id).features, before);
 });
 
 // ---- fighting styles ----
