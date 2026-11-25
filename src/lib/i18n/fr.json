@@ -1,5 +1,24 @@
 {
   "messages": {
+    "{name} is not a spell this server knows; pick one from the {list} spell list.": "Le serveur ne connaît pas le sort {name} ; choisis un sort de la liste {list}.",
+    "{className} of level {level}": "{className} de niveau {level}",
+    "{name} is not a spell this character knows, so it cannot be given up for another.": "Ce personnage ne connaît pas le sort {name} ; il ne peut donc pas l’échanger contre un autre.",
+    "A {label} knows its spells and prepares none; {spells} would be held beside the spells known. Learn them as spells known, within the number the class knows.": "Un personnage {label} connaît ses sorts et n’en prépare aucun ; {spells} s’ajouteraient aux sorts connus. Apprends-les comme sorts connus dans la limite autorisée.",
+    "A cantrip, once known, is known for good; {spells} cannot be replaced at a level-up.": "Un sort mineur appris reste connu définitivement ; impossible de remplacer {spells} lors d’un gain de niveau.",
+    "{spells} is written in the spellbook and stays there; a level-up adds to the book.": "Les sorts inscrits dans le grimoire y restent : {spells}. Un gain de niveau enrichit le grimoire.",
+    "On gaining a level a {label} may replace one spell they know with another, not {count} ({spells}).": "Lors d’un gain de niveau, un personnage {label} peut remplacer un seul sort connu, pas {count} ({spells}).",
+    "{name} is a level {level} spell, not a cantrip; it cannot sit on the cantrip list.": "{name} est un sort de niveau {level}, pas un sort mineur ; il ne peut pas figurer dans la liste des sorts mineurs.",
+    "{name} is not a {list} cantrip, so a {label} cannot learn it.": "{name} n’est pas un sort mineur de la liste {list} ; un personnage {label} ne peut pas l’apprendre.",
+    "{name} is a cantrip; it belongs on the cantrip list, not among the spells.": "{name} est un sort mineur ; il doit figurer dans la liste des sorts mineurs, pas parmi les autres sorts.",
+    "{name} is not on the {list} spell list, so a {label} cannot learn or prepare it.": "{name} ne figure pas dans la liste de sorts {list} ; un personnage {label} ne peut ni l’apprendre ni le préparer.",
+    "A {label} has no spell slots yet, so {name} cannot be learned.": "Un personnage {label} n’a pas encore d’emplacements de sorts et ne peut donc pas apprendre {name}.",
+    "{name} is a level {level} spell; a {label} casts up to level {top}.": "{name} est un sort de niveau {level} ; un personnage {label} lance des sorts jusqu’au niveau {top}.",
+    "A {label} knows no cantrips.": "Un personnage {label} ne connaît aucun sort mineur.",
+    "A wizard writes {count} new spells in the spellbook at this level, not {actual}.": "Un magicien inscrit {count} nouveaux sorts dans son grimoire à ce niveau, pas {actual}.",
+    "A {label} may hold {count} {cap}; that list would have {actual}.": "Un personnage {label} peut avoir {count} {cap} ; la liste en contiendrait {actual}.",
+    "A {label} has no spells to learn yet.": "Un personnage {label} n’a pas encore de sorts à apprendre.",
+    "A wizard prepares only spells written in the spellbook; {spells} is not in it. Write them in the book first, two a level.": "Un magicien ne prépare que des sorts inscrits dans son grimoire ; {spells} n’y figure pas. Inscris-les d’abord, deux par niveau.",
+    "A wizard prepares only spells written in the spellbook; {spells} are not in it. Write them in the book first, two a level.": "Un magicien ne prépare que des sorts inscrits dans son grimoire ; {spells} n’y figurent pas. Inscris-les d’abord, deux par niveau.",
     "{label}: {option} is one of the picks, learned with the first; choose it in place of another.": "{label} : {option} fait partie des premiers choix ; choisis cette option à la place d’une autre.",
     "\"{name}\" is not one of {subclass}'s {choice} options; pick one of {options}.": "« {name} » ne fait pas partie des options de {choice} de {subclass} ; choisis parmi {options}.",
     "{subclass}'s {choice} is chosen at class level {required}; this character is level {level} in that class.": "Le choix {choice} de {subclass} se fait au niveau {required} de classe ; ce personnage est au niveau {level} dans cette classe.",
@@ -13579,6 +13598,7 @@
     }
   },
   "plurals": {
+    "A {label} knows {count} cantrip; that list would have {actual}.\u0000A {label} knows {count} cantrips; that list would have {actual}.": ["Un personnage {label} connaît {count} sort mineur ; la liste en contiendrait {actual}.","Un personnage {label} connaît {count} sorts mineurs ; la liste en contiendrait {actual}."],
     "{count} {label}\u0000{count} {label}s": ["{count} × {label}","{count} × {label}"],
     "This level gives {name} {count} Ability Score Improvement: two points, or one feat, each. The request asks for {picked}.\u0000This level gives {name} {count} Ability Score Improvements: two points, or one feat, each. The request asks for {picked}.": [
       "Ce niveau accorde à {name} {count} amélioration de caractéristiques : deux points ou un don par amélioration. Nombre de choix demandés : {picked}.",

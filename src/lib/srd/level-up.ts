@@ -694,6 +694,7 @@ export function buildLevelUp(
         features,
         spellOf: context.spellOf,
         picks,
+        locale: context.locale,
       });
       if ("error" in learned) {
         return refuse(learned.error);

@@ -251,4 +251,28 @@ test("the checklist knows spell levels and class lists", () => {
   assert.equal(checklistClassSpell("Spiritual Weapon", "cleric", 1), null);
 });
 
+const { levelUpSpells } = await import("../src/lib/srd/level-up-spells.ts");
+const { checklistSpell } = await import("../src/lib/srd/spell-lists.ts");
+await import("../src/lib/i18n/server-catalogs.ts");
+test("level-up spell refusals localize without altering canonical choices or decisions", () => {
+  const before = casterViewsOf(wizard())[0];
+  const input = { before, level: 2, subclass: "", list: "wizard", firstLevel: false, abilities: ABILITIES, freeCantrips: 0, spellOf: checklistSpell };
+  const bad = [
+    { picks: { kind: "picks", spells: ["Imaginary Spell"] }, english: "Imaginary Spell is not a spell this server knows; pick one from the wizard spell list." },
+    { picks: { kind: "picks", spells: ["Fireball"] }, english: "Fireball is a level 3 spell; a wizard of level 2 casts up to level 1." },
+    { picks: { kind: "picks", spells: [], forget: "Shield" }, english: "Shield is not a spell this character knows, so it cannot be given up for another." },
+  ];
+  const snapshot = structuredClone(before);
+  const valid = { ...input, picks: null };
+  const expected = levelUpSpells(valid);
+  assert.ok("view" in expected);
+  for (const { picks, english } of bad) {
+    assert.deepEqual(levelUpSpells({ ...input, picks }), { error: english });
+    const messages = ["en", "cs", "fr"].map(locale => levelUpSpells({ ...input, picks, locale }).error);
+    assert.equal(new Set(messages).size, 3);
+    assert.ok(messages.every(message => typeof message === "string" && !/\{\w+\}/.test(message)));
+  }
+  for (const locale of ["en", "cs", "fr"]) assert.deepEqual(levelUpSpells({ ...valid, locale }), expected);
+  assert.deepEqual(before, snapshot);
+});
 console.log(`test-spell-prep: ${passed} tests passed.`);

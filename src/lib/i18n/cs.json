@@ -1,5 +1,24 @@
 {
   "messages": {
+    "{name} is not a spell this server knows; pick one from the {list} spell list.": "Server kouzlo {name} nezná; vyber kouzlo ze seznamu povolání {list}.",
+    "{className} of level {level}": "{className} na {level}. úrovni",
+    "{name} is not a spell this character knows, so it cannot be given up for another.": "Postava nezná kouzlo {name}, takže jej nemůže vyměnit za jiné.",
+    "A {label} knows its spells and prepares none; {spells} would be held beside the spells known. Learn them as spells known, within the number the class knows.": "Povolání {label} má známá kouzla a žádná nepřipravuje; {spells} by byla vedena navíc. Nauč se je jako známá kouzla v rámci povoleného počtu.",
+    "A cantrip, once known, is known for good; {spells} cannot be replaced at a level-up.": "Naučený trik zůstává známý natrvalo; při zvýšení úrovně nelze vyměnit {spells}.",
+    "{spells} is written in the spellbook and stays there; a level-up adds to the book.": "Kouzla zapsaná v knize kouzel v ní zůstávají: {spells}. Při zvýšení úrovně se kniha doplňuje.",
+    "On gaining a level a {label} may replace one spell they know with another, not {count} ({spells}).": "Při zvýšení úrovně může postava s povoláním {label} vyměnit jedno známé kouzlo, nikoli {count} ({spells}).",
+    "{name} is a level {level} spell, not a cantrip; it cannot sit on the cantrip list.": "{name} je kouzlo {level}. stupně, nikoli trik; nepatří na seznam triků.",
+    "{name} is not a {list} cantrip, so a {label} cannot learn it.": "{name} není trik ze seznamu povolání {list}, takže se jej postava s povoláním {label} nemůže naučit.",
+    "{name} is a cantrip; it belongs on the cantrip list, not among the spells.": "{name} je trik; patří na seznam triků, nikoli mezi kouzla vyšších stupňů.",
+    "{name} is not on the {list} spell list, so a {label} cannot learn or prepare it.": "{name} není na seznamu kouzel povolání {list}, takže se jej postava s povoláním {label} nemůže naučit ani jej připravit.",
+    "A {label} has no spell slots yet, so {name} cannot be learned.": "Povolání {label} zatím nemá žádné pozice kouzel, takže se nelze naučit {name}.",
+    "{name} is a level {level} spell; a {label} casts up to level {top}.": "{name} je kouzlo {level}. stupně; povolání {label} sesílá kouzla nejvýše {top}. stupně.",
+    "A {label} knows no cantrips.": "Povolání {label} nezná žádné triky.",
+    "A wizard writes {count} new spells in the spellbook at this level, not {actual}.": "Kouzelník na této úrovni zapisuje do knihy kouzel {count} nových kouzel, nikoli {actual}.",
+    "A {label} may hold {count} {cap}; that list would have {actual}.": "Povolání {label}: povolený počet ({cap}) je {count}; seznam by obsahoval {actual}.",
+    "A {label} has no spells to learn yet.": "Povolání {label} se zatím nemůže učit žádná kouzla.",
+    "A wizard prepares only spells written in the spellbook; {spells} is not in it. Write them in the book first, two a level.": "Kouzelník připravuje jen kouzla zapsaná v knize kouzel; {spells} v ní není. Nejdřív je zapiš, dvě za úroveň.",
+    "A wizard prepares only spells written in the spellbook; {spells} are not in it. Write them in the book first, two a level.": "Kouzelník připravuje jen kouzla zapsaná v knize kouzel; {spells} v ní nejsou. Nejdřív je zapiš, dvě za úroveň.",
     "{label}: {option} is one of the picks, learned with the first; choose it in place of another.": "{label}: mezi prvními volbami musí být {option}; vyber ji místo jiné možnosti.",
     "\"{name}\" is not one of {subclass}'s {choice} options; pick one of {options}.": "„{name}“ není mezi možnostmi volby {choice} archetypu {subclass}; vyber jednu z možností: {options}.",
     "{subclass}'s {choice} is chosen at class level {required}; this character is level {level} in that class.": "Volba {choice} archetypu {subclass} je dostupná na {required}. úrovni povolání; postava má v tomto povolání úroveň {level}.",
@@ -15458,6 +15477,7 @@
     }
   },
   "plurals": {
+    "A {label} knows {count} cantrip; that list would have {actual}.\u0000A {label} knows {count} cantrips; that list would have {actual}.": ["Povolání {label} zná {count} trik; seznam by obsahoval {actual}.","Povolání {label} zná {count} triky; seznam by obsahoval {actual}.","Povolání {label} zná {count} triků; seznam by obsahoval {actual}."],
     "{count} {label}\u0000{count} {label}s": ["{count} × {label}","{count} × {label}","{count} × {label}"],
     "This level gives {name} {count} Ability Score Improvement: two points, or one feat, each. The request asks for {picked}.\u0000This level gives {name} {count} Ability Score Improvements: two points, or one feat, each. The request asks for {picked}.": [
       "Tato úroveň postavě {name} poskytuje {count} zvýšení vlastností: za každé dva body nebo jednu odbornost. Počet požadovaných voleb: {picked}.",

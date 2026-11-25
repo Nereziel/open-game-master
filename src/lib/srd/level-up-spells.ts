@@ -34,10 +34,12 @@ import { revisedOnlySpellProblem } from "@/lib/content/edition";
 import { classSpellGrants, offListProblems } from "@/lib/srd/class-spell-grants";
 import { originSwap } from "@/lib/dm/ar-ws-origin-swap";
 import { arcanumExtraProblem, arcanumSplit, mysticArcanumTop } from "@/lib/srd/mystic-arcanum";
+import { translate, translatePlural, type Locale, type MessageVars } from "@/lib/messages-logic";
+import { contentName } from "@/lib/content/names";
 
 // A name no list carries: a 2024-only spell says so, anything else is unknown.
-function unknownSpell(name: string, list: string): string {
-  return revisedOnlySpellProblem(name) ?? `${name} is not a spell this server knows; pick one from the ${list} spell list.`;
+function unknownSpell(name: string, list: string, locale: Locale): string {
+  return revisedOnlySpellProblem(name) ?? translate(locale, "{name} is not a spell this server knows; pick one from the {list} spell list.", { name, list });
 }
 
 const has = (list: string[], name: string) => list.some((entry) => textKey(entry) === textKey(name));
@@ -77,16 +79,21 @@ export type SpellLevelUp = {
   features?: Array<{ name: string }>;
   spellOf: (name: string) => SpellFacts | null;
   picks: SpellPicks | null;
+  locale?: Locale;
 };
 
 export type SpellLevelUpResult = { view: CasterView } | { error: string };
 
 export function levelUpSpells(input: SpellLevelUp): SpellLevelUpResult {
-  const { before, picks } = input;
-  const label = `${classLabelOf(before.classId)} of level ${input.level}`;
+  const { before, picks, locale = "en" } = input;
+  const t = (key: string, vars?: MessageVars) => translate(locale, key, vars);
+  const className = classLabelOf(before.classId);
+  const displayClass = before.classId.startsWith("homebrew-") ? className : contentName("classes", className, locale);
+  const label = t("{className} of level {level}", { className: displayClass, level: input.level });
   // A workshop class's list is named by its id (spellPoolKeyFor); a player
   // reads the list it borrows or the class's own name.
   const listName = spellListLabel(input.list);
+  const displayList = input.list.startsWith("homebrew-") ? listName : contentName("classes", listName, locale);
   const after: CasterView = {
     ...before,
     level: input.level,
@@ -114,7 +121,7 @@ export function levelUpSpells(input: SpellLevelUp): SpellLevelUpResult {
       }
       const spell = input.spellOf(name);
       if (!spell) {
-        return { error: unknownSpell(name, listName) };
+        return { error: unknownSpell(name, displayList, locale) };
       }
       if (spell.level === 0) {
         after.cantrips.push(spell.name);
@@ -140,7 +147,7 @@ export function levelUpSpells(input: SpellLevelUp): SpellLevelUpResult {
       granted = grantedSpellsOf(after);
     } else if (forget) {
       if (after.style !== "known" || !has(before.known, forget)) {
-        return { error: `${forget} is not a spell this character knows, so it cannot be given up for another.` };
+        return { error: t("{name} is not a spell this character knows, so it cannot be given up for another.", { name: forget }) };
       }
       after.known = after.known.filter((name) => textKey(name) !== textKey(forget));
       removed = [forget];
@@ -157,14 +164,14 @@ export function levelUpSpells(input: SpellLevelUp): SpellLevelUpResult {
       const apart = after.prepared.filter((name) => !has(after.known, name) && !isGranted(name));
       if (apart.length) {
         return {
-          error: `A ${label} knows its spells and prepares none; ${apart.join(", ")} would be held beside the spells known. Learn them as spells known, within the number the class knows.`,
+          error: t("A {label} knows its spells and prepares none; {spells} would be held beside the spells known. Learn them as spells known, within the number the class knows.", { label, spells: apart.join(", ") }),
         };
       }
     }
     const lostCantrips = before.cantrips.filter((name) => !has(after.cantrips, name));
     if (lostCantrips.length) {
       return {
-        error: `A cantrip, once known, is known for good; ${lostCantrips.join(", ")} cannot be replaced at a level-up.`,
+        error: t("A cantrip, once known, is known for good; {spells} cannot be replaced at a level-up.", { spells: lostCantrips.join(", ") }),
       };
     }
     const heldBefore = after.style === "known" ? (before.known.length ? before.known : before.prepared) : [];
@@ -175,13 +182,13 @@ export function levelUpSpells(input: SpellLevelUp): SpellLevelUpResult {
         (name) => !has(spellbookOf(after), name),
       );
       if (torn.length) {
-        return { error: `${torn.join(", ")} is written in the spellbook and stays there; a level-up adds to the book.` };
+        return { error: t("{spells} is written in the spellbook and stays there; a level-up adds to the book.", { spells: torn.join(", ") }) };
       }
     }
   }
   if (removed.length > 1) {
     return {
-      error: `On gaining a level a ${label} may replace one spell they know with another, not ${removed.length} (${removed.join(", ")}).`,
+      error: t("On gaining a level a {label} may replace one spell they know with another, not {count} ({spells}).", { label, count: removed.length, spells: removed.join(", ") }),
     };
   }
 
@@ -221,14 +228,14 @@ export function levelUpSpells(input: SpellLevelUp): SpellLevelUpResult {
   for (const name of newCantrips) {
     const spell = input.spellOf(name);
     if (!spell) {
-      return { error: unknownSpell(name, listName) };
+      return { error: unknownSpell(name, displayList, locale) };
     }
     if (spell.level !== 0) {
-      return { error: `${spell.name} is a level ${spell.level} spell, not a cantrip; it cannot sit on the cantrip list.` };
+      return { error: t("{name} is a level {level} spell, not a cantrip; it cannot sit on the cantrip list.", { name: spell.name, level: spell.level }) };
     }
     if (!onList(spell)) {
       if (!grants.anyList) {
-        return { error: `${spell.name} is not a ${listName} cantrip, so a ${label} cannot learn it.` };
+        return { error: t("{name} is not a {list} cantrip, so a {label} cannot learn it.", { name: spell.name, list: displayList, label }) };
       }
       strays.push({ name: spell.name, cantrip: true });
     }
@@ -236,14 +243,14 @@ export function levelUpSpells(input: SpellLevelUp): SpellLevelUpResult {
   for (const name of newSpells) {
     const spell = input.spellOf(name);
     if (!spell) {
-      return { error: unknownSpell(name, listName) };
+      return { error: unknownSpell(name, displayList, locale) };
     }
     if (spell.level === 0) {
-      return { error: `${spell.name} is a cantrip; it belongs on the cantrip list, not among the spells.` };
+      return { error: t("{name} is a cantrip; it belongs on the cantrip list, not among the spells.", { name: spell.name }) };
     }
     if (!onList(spell)) {
       if (!grants.anyListSpells) {
-        return { error: `${spell.name} is not on the ${listName} spell list, so a ${label} cannot learn or prepare it.` };
+        return { error: t("{name} is not on the {list} spell list, so a {label} cannot learn or prepare it.", { name: spell.name, list: displayList, label }) };
       }
       strays.push({ name: spell.name, cantrip: false, ritual: Boolean(spell.ritual) });
     }
@@ -251,8 +258,8 @@ export function levelUpSpells(input: SpellLevelUp): SpellLevelUpResult {
       return {
         error:
           top === 0
-            ? `A ${label} has no spell slots yet, so ${spell.name} cannot be learned.`
-            : `${spell.name} is a level ${spell.level} spell; a ${label} casts up to level ${top}.`,
+            ? t("A {label} has no spell slots yet, so {name} cannot be learned.", { label, name: spell.name })
+            : t("{name} is a level {level} spell; a {label} casts up to level {top}.", { name: spell.name, level: spell.level, label, top }),
       };
     }
   }
@@ -275,7 +282,7 @@ export function levelUpSpells(input: SpellLevelUp): SpellLevelUpResult {
       kept,
       strays,
       list: listName,
-      label,
+      label: `${className} of level ${input.level}`,
     });
     if (refusal) {
       return { error: refusal };
@@ -322,11 +329,11 @@ export function levelUpSpells(input: SpellLevelUp): SpellLevelUpResult {
   // A subclass's own cantrips are known on top of the column.
   const cantrips = dedupeNames(after.cantrips).filter((name) => !isGranted(name));
   if (newCantrips.length && cantripCap === null) {
-    return { error: `A ${label} knows no cantrips.` };
+    return { error: t("A {label} knows no cantrips.", { label }) };
   }
   if (cantripCap !== null && newCantrips.length && cantrips.length - input.freeCantrips > cantripCap) {
     return {
-      error: `A ${label} knows ${cantripCap} ${cantripCap === 1 ? "cantrip" : "cantrips"}; that list would have ${cantrips.length - input.freeCantrips}.`,
+      error: translatePlural(locale, "A {label} knows {count} cantrip; that list would have {actual}.", "A {label} knows {count} cantrips; that list would have {actual}.", { label, count: cantripCap, actual: cantrips.length - input.freeCantrips }),
     };
   }
   // The cantrip a third caster's Spellcasting names (an Arcane Trickster's
@@ -353,7 +360,7 @@ export function levelUpSpells(input: SpellLevelUp): SpellLevelUpResult {
     const allowance = input.firstLevel ? spellbookAllowance(input.level) : 2;
     if (written.length > allowance) {
       return {
-        error: `A wizard writes ${allowance} new spells in the spellbook at this level, not ${written.length}.`,
+        error: t("A wizard writes {count} new spells in the spellbook at this level, not {actual}.", { count: allowance, actual: written.length }),
       };
     }
     const book = [...after.spellbook, ...spellbookOf(before)];
@@ -362,7 +369,7 @@ export function levelUpSpells(input: SpellLevelUp): SpellLevelUpResult {
     );
     if (unwritten.length) {
       return {
-        error: `A wizard prepares only spells written in the spellbook; ${unwritten.join(", ")} ${unwritten.length === 1 ? "is" : "are"} not in it. Write them in the book first, two a level.`,
+        error: t(unwritten.length === 1 ? "A wizard prepares only spells written in the spellbook; {spells} is not in it. Write them in the book first, two a level." : "A wizard prepares only spells written in the spellbook; {spells} are not in it. Write them in the book first, two a level.", { spells: unwritten.join(", ") }),
       };
     }
     if (picks?.kind === "picks") {
@@ -378,7 +385,7 @@ export function levelUpSpells(input: SpellLevelUp): SpellLevelUpResult {
     }
     if (cap && preparedCount(after) > cap.count && added(after.prepared, before.prepared).length) {
       return {
-        error: `A ${label} may hold ${cap.count} ${cap.label}; that list would have ${preparedCount(after)}.`,
+        error: t("A {label} may hold {count} {cap}; that list would have {actual}.", { label, count: cap.count, cap: t(cap.label), actual: preparedCount(after) }),
       };
     }
   } else if (cap) {
@@ -394,11 +401,11 @@ export function levelUpSpells(input: SpellLevelUp): SpellLevelUpResult {
           : preparedCount(before));
     if (grew && held > cap.count) {
       return {
-        error: `A ${label} may hold ${cap.count} ${cap.label}; that list would have ${held}.`,
+        error: t("A {label} may hold {count} {cap}; that list would have {actual}.", { label, count: cap.count, cap: t(cap.label), actual: held }),
       };
     }
   } else if (newSpells.length) {
-    return { error: `A ${label} has no spells to learn yet.` };
+    return { error: t("A {label} has no spells to learn yet.", { label }) };
   }
 
   return { view: after };
