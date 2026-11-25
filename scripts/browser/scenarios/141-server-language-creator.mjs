@@ -29,9 +29,13 @@ export default {
         await eventually(() => dialog.locator("button.wizard-continue").count(), { timeoutMs: 30_000, label: "the creator" });
         // The interface may follow the server too. The picker has its own
         // translated accessible name, while the selected language is native.
-        const picker = dialog.getByRole("button", { name: /^(Table language|Langue de la table|Jazyk kampaně)$/i }).first();
+        const world = dialog.locator('[data-group="world"]');
+        const toggle = world.locator("button.cc-group-toggle");
+        await eventually(() => toggle.isVisible(), { label: "the World and story group" });
+        if ((await toggle.getAttribute("aria-expanded")) !== "true") await t.tap(toggle);
+        const picker = world.getByRole("button", { name: /^(Table language|Langue de la table|Jazyk kampaně)$/i }).first();
         await eventually(async () => (await picker.count()) > 0 && (await picker.innerText()).includes(native), { label: "the new campaign starts in " + native });
-        check((await picker.locator("svg").count()) >= 1, "the Table language picker shows the flag");
+        check(await picker.locator('svg[viewBox="0 0 30 20"] > *').count() > 0, "the Table language picker shows a drawn flag");
         await picker.scrollIntoViewIfNeeded();
         await untilStill(page);
         await t.shot("creator-" + server);
