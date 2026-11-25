@@ -15,6 +15,27 @@ const build = JSON.parse(fs.readFileSync(path.join(next, "build-manifest.json"),
 const shared = [...(build.polyfillFiles ?? []), ...(build.rootMainFiles ?? [])];
 
 const sizes = new Map();
+// Attribute built files to the client references and entry groups that load
+// them. These are manifest associations, not a complete list of the modules
+// bundled inside the file (dependencies need not be client references).
+const references = new Map();
+function noteReference(file, kind, source) {
+  if (typeof file !== "string" || !file.startsWith("static/") || !file.endsWith(".js")) return;
+  if (!references.has(file)) references.set(file, { entries: new Set(), clients: new Set() });
+  const name = source.replaceAll("\\", "/").replace(/^.*?\/(?:src|node_modules)\//, (prefix) => prefix.endsWith("/src/") ? "src/" : "node_modules/");
+  references.get(file)[kind].add(name);
+}
+
+function describeReferences(file) {
+  const reference = references.get(file);
+  if (!reference) return;
+  for (const kind of ["entries", "clients"]) {
+    const names = [...reference[kind]].sort();
+    if (!names.length) continue;
+    const shown = names.slice(0, 12);
+    console.log(`    ${kind} (${names.length}): ${shown.join(", ")}${names.length > shown.length ? ", …" : ""}`);
+  }
+}
 function measure(file) {
   if (!sizes.has(file)) {
     const bytes = fs.readFileSync(path.join(next, file));
@@ -32,7 +53,15 @@ function routeFiles(page) {
   const entry = Object.values(globalThis.__RSC_MANIFEST)[0];
   const js = new Set(shared);
   const css = new Set();
-  for (const files of Object.values(entry.entryJSFiles ?? {})) for (const file of files) js.add(file);
+  for (const [source, files] of Object.entries(entry.entryJSFiles ?? {})) {
+    for (const file of files) {
+      js.add(file);
+      noteReference(file, "entries", source);
+    }
+  }
+  for (const [source, client] of Object.entries(entry.clientModules ?? {})) {
+    for (const file of client.chunks ?? []) noteReference(file, "clients", source);
+  }
   for (const files of Object.values(entry.entryCSSFiles ?? {})) for (const file of files) if (!file.inlined) css.add(file.path);
   return { js: [...js], css: [...css] };
 }
@@ -66,12 +95,18 @@ if (problems.length) {
   const bySize = (a, b) => measure(b[0]).gzip - measure(a[0]).gzip || a[0].localeCompare(b[0]);
   const common = [...allFiles].filter(([, pages]) => pages.length === jsByRoute.size).sort(bySize);
   console.log(`Shared JS across all measured routes: ${kib(common.reduce((sum, [file]) => sum + measure(file).gzip, 0))} KiB gzip`);
-  for (const [file] of common) console.log(`  ${kib(measure(file).gzip)} KiB ${file}`);
+  for (const [file] of common) {
+    console.log(`  ${kib(measure(file).gzip)} KiB ${file}`);
+    describeReferences(file);
+  }
   for (const [page, files] of jsByRoute) {
     if (current[page].jsGzipKiB <= budgets.routes[page].jsGzipKiB) continue;
     const other = [...files].map((file) => [file, allFiles.get(file)]).filter(([, pages]) => pages.length !== jsByRoute.size).sort(bySize);
     console.log(`Largest non-common JS chunks for ${page}:`);
-    for (const [file, pages] of other.slice(0, 5)) console.log(`  ${kib(measure(file).gzip)} KiB ${file} (used by ${pages.length}/${jsByRoute.size} measured routes)`);
+    for (const [file, pages] of other.slice(0, 5)) {
+      console.log(`  ${kib(measure(file).gzip)} KiB ${file} (used by ${pages.length}/${jsByRoute.size} measured routes)`);
+      describeReferences(file);
+    }
   }
   for (const problem of problems) console.error(`budget: ${problem}`);
   console.error("If the growth is wanted, raise the budget in scripts/bundle-budget.json in the same change and say why.");
