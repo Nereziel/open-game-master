@@ -570,6 +570,41 @@ test("a charged item shows its count, a pending attunement shows, and a cursed o
   assert.match(status.attuneRefusal, /is cursed/);
 });
 
+test("stored spells and attunement reasons follow the reader without changing decisions or stored names", () => {
+  const empty = item("Ring of Spell Storing");
+  const ring = item("Ring of Spell Storing", { storedSpells: [{ spell: "My own {level} spell", level: 2 }] });
+  const axe = item("Berserker Axe", { equipped: true, attuned: true });
+  const wand = item("Wand of Magic Missiles");
+  const staff = item("Staff of Power");
+  const copy = item("Ring of Protection");
+  const worn = item("Ring of Protection", { attuned: true });
+  const cases = [
+    [empty, [empty]], [ring, [ring]], [axe, [axe]], [wand, [wand]],
+    [staff, [staff]], [copy, [worn, copy]],
+    [copy, [item("A", { attuned: true }), item("B", { attuned: true }), item("C", { attuning: true }), copy]],
+  ];
+  for (const [locale, expected] of [
+    ["en", ["Holds no spells", "Holds My own {level} spell (level 2)", "is cursed", "needs no attunement", "a sorcerer, warlock, or wizard", "already attuned", "3 items already"]],
+    ["cs", ["Neobsahuje žádná kouzla", "Obsahuje: My own {level} spell (úroveň 2)", "prokletý předmět", "nevyžaduje sladění", "čaroděj, černokněžník nebo kouzelník", "už má sladění", "3 předměty"]],
+    ["fr", ["Ne contient aucun sort", "Contient : My own {level} spell (niveau 2)", "objet maudit", "ne nécessite aucune harmonisation", "un ensorceleur, un occultiste ou un magicien", "déjà en harmonie", "3 objets"]],
+  ]) {
+    if (locale !== "en") installCatalog(locale, JSON.parse(fs.readFileSync(new URL(`../src/lib/i18n/${locale}.json`, import.meta.url), "utf8")));
+    const tr = (key, vars) => translate(locale, key, vars);
+    for (const [index, [row, equipment]] of cases.entries()) {
+      const hero = sheet({ equipment });
+      const before = JSON.stringify(hero);
+      const en = itemStatus(t, hero, row);
+      const localized = itemStatus(tr, hero, row);
+      assert.equal(Boolean(localized.attuneRefusal), Boolean(en.attuneRefusal));
+      assert.equal(localized.cursed, en.cursed);
+      assert.equal(localized.attuning, en.attuning);
+      if (index < 2) assert.equal(localized.stored, expected[index]);
+      else assert.ok(localized.attuneRefusal?.includes(expected[index]), localized.attuneRefusal ?? "missing refusal");
+      assert.equal(JSON.stringify(hero), before);
+    }
+  }
+});
+
 // The engine swings a versatile weapon one-handed while a shield is on the
 // arm (handsRuling), so the card must not offer the two-handed grip.
 test("a versatile weapon offers two hands only when no shield is worn", () => {

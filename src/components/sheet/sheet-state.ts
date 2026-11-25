@@ -257,8 +257,8 @@ export function itemStatus(t: Translator, sheet: CharacterSheet, item: Equipment
   const rule = chargeRuleOf(item);
   const charges = rule ? t("{left}/{max} charges", { left: chargesLeft(item, rule), max: chargeMax(rule) }) : null;
   const cursed = Boolean(item.attuned && gearDefFor(item)?.cursed);
-  const refusal = attunementRefusal(sheet, { [item.name]: { attuned: !(item.attuned || item.attuning) } });
-  const stored = isSpellStorer(item) ? storedSpellsSummary(item) : null;
+  const refusal = attunementRefusal(sheet, { [item.name]: { attuned: !(item.attuned || item.attuning) } }, t);
+  const stored = isSpellStorer(item) ? storedSpellsSummary(item, t) : null;
   return { charges, stored, attuning: Boolean(item.attuning), cursed, attuneRefusal: refusal };
 }
 
