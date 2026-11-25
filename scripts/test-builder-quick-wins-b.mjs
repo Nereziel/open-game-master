@@ -171,7 +171,7 @@ await test("Q9: the level-up moment waits for a named Dismiss when still", () =>
   assert.ok(stage, "the stage renders");
   assert.doesNotMatch(stage, /onClick/, "the stage is not a clickable div");
   assert.doesNotMatch(stage, /role=/, "the stage carries no role; the words are the status");
-  assert.match(moment, /<button ref=\{dismiss\} type="button" className="moment-dismiss" onClick=\{onDone\}>\s*Dismiss\s*<\/button>/, "a named Dismiss button");
+  assert.match(moment, /<button ref=\{dismiss\} type="button" className="moment-dismiss" onClick=\{onDone\}>\s*\{t\("Dismiss"\)\}\s*<\/button>/, "a localized named Dismiss button");
   assert.match(moment, /dismiss\.current\?\.focus/, "Dismiss takes focus, so Enter or Space closes it");
   const css = read("src/app/styles/moments.css");
   assert.ok(px(ruleBody(css, ".moment-dismiss"), "min-height") >= 44, "Dismiss is 44 px tall");
