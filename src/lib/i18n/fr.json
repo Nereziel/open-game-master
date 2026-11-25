@@ -1,5 +1,7 @@
 {
   "messages": {
+    "{bonuses} to {word} of your choice": "{bonuses} au choix (nombre de caractéristiques : {word})",
+    "{bonuses} to {word} more of your choice": "{bonuses} au choix (caractéristiques restantes : {word})",
     "Acquired {item}.": "Objet acquis : {item}.",
     "Identified {item}.": "Objet identifié : {item}.",
     "{from} turned out to be {to}.": "{from} s’est révélé être {to}.",
@@ -11316,6 +11318,24 @@
     "Unlimited": "Illimitée"
   },
   "contexts": {
+    "{count} at {ordinal} level": {
+      "builder.math.slots": "{count} au niveau {ordinal}"
+    },
+    "{ordinal}-level slots": {
+      "builder.math.slots": "emplacements de niveau {ordinal}"
+    },
+    "four": {
+      "builder.math.choiceCount": "4"
+    },
+    "three": {
+      "builder.math.choiceCount": "3"
+    },
+    "two": {
+      "builder.math.choiceCount": "2"
+    },
+    "one": {
+      "builder.math.choiceCount": "1"
+    },
     "guest": {
       "history.companionKind": "invité"
     },
