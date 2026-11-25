@@ -237,7 +237,7 @@ function SlotPicker({
           {t("Keep {names}", { names: picked.map((name) => {
             const option = options.find((entry) => entry.n === name);
             return option ? labelOf(option) : name;
-          }).join(t.locale === "en" ? t("and") : ` ${t("and")} `) })}
+          }).join(` ${t("and")} `) })}
         </button>
       ) : null}
       {refusal ? (
