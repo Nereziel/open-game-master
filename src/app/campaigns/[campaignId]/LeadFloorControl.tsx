@@ -168,7 +168,7 @@ export function LeadFloorControl({
 
   return (
     <div className="panel mb-3 rounded-lg p-3">
-      <SectionHead title={t("The floor")} glyph="rest-initiative" />
+      <SectionHead title={t("The floor", { context: "lead.floor.title" })} glyph="rest-initiative" />
       <p className="text-xs text-stone-300">{modeLabel(t, floor)}</p>
 
       {floor.mode === "initiative" ? (
@@ -210,7 +210,7 @@ export function LeadFloorControl({
         </div>
       ) : (
         <>
-          <div data-pill-group="" role="group" aria-label={t("Floor mode")} className="mt-2 flex flex-wrap gap-1.5">
+          <div data-pill-group="" role="group" aria-label={t("Floor mode", { context: "lead.floor.mode" })} className="mt-2 flex flex-wrap gap-1.5">
             <button data-on={floor.mode === "open" ? "" : undefined}
               type="button"
               disabled={busy || floor.mode === "open"}
@@ -218,7 +218,7 @@ export function LeadFloorControl({
               title={t("Let anyone act")}
               className={cn(chip, floor.mode === "open" ? chipOn : chipOff)}
             >
-              {t("Open floor")}
+              {t("Open floor", { context: "lead.floor.open" })}
             </button>
             <button data-on={floor.mode === "hold" ? "" : undefined}
               type="button"
@@ -419,7 +419,7 @@ export function LeadFloorControl({
               data-coordinate-start
             >
               {busy ? <Loader2 className="size-3.5 animate-spin" /> : null}
-              {t("Coordinate")}
+              {t("Coordinate", { context: "lead.floor.coordinate" })}
             </button>
           </div>
         </div>
