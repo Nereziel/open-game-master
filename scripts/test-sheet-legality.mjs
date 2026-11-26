@@ -18,7 +18,7 @@ const { bundledSubclassName } = await import("../src/lib/srd/features.ts");
 const { derivedMaxHp, hpRange } = await import("../src/lib/srd/hit-points.ts");
 const { asiOwed, readAsiLedger } = await import("../src/lib/srd/asi-ledger.ts");
 const { earnedAsiCount, earnedAsiCountFor, crossedAsiLevels } = await import("../src/lib/srd/asi.ts");
-const { isMechanicalFeature, unmetPrerequisite } = await import("../src/lib/srd/legality/features.ts");
+const { isMechanicalFeature, unmetPrerequisite, checkPrerequisite } = await import("../src/lib/srd/legality/features.ts");
 const { slotTableFor } = await import("../src/lib/srd/multiclass.ts");
 const { splitPurse } = options;
 const { authoredFeatDesc } = await import("../src/lib/srd/feat-effects.ts");
@@ -293,6 +293,29 @@ test("feat prerequisites", () => {
   }
   assert.equal(unmetPrerequisite("", weak), null);
   refused({ ...FIGHTER, maxHp: 36, abilities: { str: 9, dex: 16, con: 15, int: 14, wis: 11, cha: 13 }, asiChoices: [{ mode: "feat", feat: "Grappler" }] }, { level: 4 });
+});
+
+test("feat prerequisite notes localize without changing the verdict or canonical requirements", () => {
+  const who = { abilities: { str: 12, dex: 10, con: 10, int: 10, wis: 10, cha: 10 }, armor: [], casts: false, raceId: "human", raceName: "Human", level: 4 };
+  const cases = [
+    ["Strength 13 or higher", {}, "Požadavek: Síla 13, máš 12"],
+    ["Strength 13 or higher", { abilities: ["str"] }, "Čeká se na: Síla"],
+    ["Strength 13 or higher", { abilityRoom: { str: 1 } }, "Síla 13, máš 12: čeká se na zbývající volby vlastností"],
+    ["Intelligence or Wisdom 13 or higher", {}, "Požadavek: Inteligence nebo Moudrost 13, máš 10 a 10"],
+    ["Proficiency with heavy armor", { armor: true }, "Čeká se na: volbu povolání"],
+    ["Halfling", {}, "Požadavek: Půlčík"],
+    ["8th level or higher", {}, "Vyžaduje úroveň 8, máš úroveň 4"],
+    ["Unknown custom requirement", {}, "Unknown custom requirement: ověří PJ"],
+  ];
+  for (const [requirement, waiting, note] of cases) {
+    const en = checkPrerequisite(requirement, who, waiting);
+    const cs = checkPrerequisite(requirement, who, waiting, "cs");
+    assert.equal(cs.requirements[0].note, note);
+    assert.deepEqual({ ...cs, requirements: cs.requirements.map(({ note: _note, ...rest }) => rest) }, { ...en, requirements: en.requirements.map(({ note: _note, ...rest }) => rest) });
+    assert.deepEqual(checkPrerequisite(requirement, who, waiting, "fr"), en);
+  }
+  assert.equal(checkPrerequisite("Strength 12 or higher", who, {}, "cs").requirements[0].note, "Síla 12, máš 12");
+  assert.equal(checkPrerequisite("Strength 13 or higher", who).requirements[0].note, "Needs Strength 13, you have 12");
 });
 
 test("a caster's slots and ability are the class's, and the race's cantrip is on top", () => {

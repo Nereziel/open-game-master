@@ -31,6 +31,7 @@ import { textKey } from "@/lib/language/text-logic";
 import { speciesLineage } from "@/lib/srd/race-id";
 import { isSwapRecord } from "@/lib/dm/ar-ws-spell-swap-record";
 import { studiedRaise } from "@/lib/srd/studied-books";
+import { translate, type Locale } from "@/lib/messages-logic";
 
 let tableNames: Set<string> | null = null;
 
@@ -336,20 +337,23 @@ function speciesRequirement(part: string): ((who: FeatCandidate) => boolean) | n
 
 const sentence = (text: string) => text.charAt(0).toUpperCase() + text.slice(1);
 const phrase = (text: string) => text.charAt(0).toLowerCase() + text.slice(1);
-const orList = (items: string[]) =>
-  items.length < 2 ? (items[0] ?? "") : `${items.slice(0, -1).join(", ")} or ${items[items.length - 1]}`;
+const orList = (items: string[], locale: Locale) =>
+  items.length < 2 ? (items[0] ?? "") : translate(locale, "{first} or {last}", { first: items.slice(0, -1).join(", "), last: items[items.length - 1] });
+const andList = (items: string[], locale: Locale) => items.reduce((first, last) => translate(locale, "{first} and {last}", { first, last }));
 
 // One requirement, judged. A requirement of a kind the server cannot check
 // (a prestige rating, a class feature by name) is the table's.
-function requirementCheck(requirement: string, who: FeatCandidate, waiting: FeatWaiting = {}): RequirementCheck {
+function requirementCheck(requirement: string, who: FeatCandidate, waiting: FeatWaiting = {}, locale: Locale = "en"): RequirementCheck {
+  const label = translate(locale, sentence(requirement), { context: "content.featPrerequisite" });
+  const abilityName = (ability: Ability) => translate(locale, ABILITY_NAMES[ability]);
   const verdict = (state: RequirementCheck["state"], note: string): RequirementCheck => ({ requirement, state, note });
-  const unchecked = () => verdict("unchecked", `${sentence(requirement)}: the table checks this`);
+  const unchecked = () => verdict("unchecked", translate(locale, "{requirement}: the table checks this", { requirement: label }));
   const held = (yes: boolean, waits: boolean | undefined, waitsOn: string) =>
     yes
-      ? verdict("met", `${sentence(requirement)}, you have it`)
+      ? verdict("met", translate(locale, "{requirement}, you have it", { requirement: label }))
       : waits
-        ? verdict("waiting", `Waiting on ${waitsOn}`)
-        : verdict("unmet", `Needs ${phrase(requirement)}`);
+        ? verdict("waiting", translate(locale, "Waiting on {choice}", { choice: translate(locale, waitsOn) }))
+        : verdict("unmet", translate(locale, "Needs {requirement}", { requirement: locale === "en" ? phrase(requirement) : label }));
   const part = requirement.toLowerCase().replace(/^(?:the|a|an) /, "").trim();
   const scores = /^(\w+)(?: or (\w+))? (\d+)(?: or higher)?$/.exec(part);
   if (scores) {
@@ -364,20 +368,20 @@ function requirementCheck(requirement: string, who: FeatCandidate, waiting: Feat
     const pending = abilities.filter((ability) => waiting.abilities?.includes(ability));
     const meeting = abilities.find((ability) => !pending.includes(ability) && who.abilities[ability] >= need);
     if (meeting) {
-      return verdict("met", `${ABILITY_NAMES[meeting]} ${need}, you have ${who.abilities[meeting]}`);
+      return verdict("met", translate(locale, "{ability} {need}, you have {have}", { ability: abilityName(meeting), need, have: who.abilities[meeting] }));
     }
     if (pending.length) {
-      return verdict("waiting", `Waiting on ${orList(pending.map((ability) => ABILITY_NAMES[ability]))}`);
+      return verdict("waiting", translate(locale, "Waiting on {choice}", { choice: orList(pending.map(abilityName), locale) }));
     }
     const rising = abilities.find((ability) => who.abilities[ability] + (waiting.abilityRoom?.[ability] ?? 0) >= need);
     if (rising) {
       return verdict(
         "waiting",
-        `${ABILITY_NAMES[rising]} ${need}, you have ${who.abilities[rising]}: waiting on your open ability score picks`,
+        translate(locale, "{ability} {need}, you have {have}: waiting on your open ability score picks", { ability: abilityName(rising), need, have: who.abilities[rising] }),
       );
     }
     const have = abilities.map((ability) => String(who.abilities[ability]));
-    return verdict("unmet", `Needs ${orList(abilities.map((ability) => ABILITY_NAMES[ability]))} ${need}, you have ${have.join(" and ")}`);
+    return verdict("unmet", translate(locale, "Needs {abilities} {need}, you have {have}", { abilities: orList(abilities.map(abilityName), locale), need, have: andList(have, locale) }));
   }
   const armor = /^proficiency with (light|medium|heavy) armor$/.exec(part);
   if (armor) {
@@ -398,8 +402,8 @@ function requirementCheck(requirement: string, who: FeatCandidate, waiting: Feat
       return unchecked();
     }
     return who.level < Number(level[1])
-      ? verdict("unmet", `Needs level ${level[1]}, you are level ${who.level}`)
-      : verdict("met", `Level ${level[1]}, you are level ${who.level}`);
+      ? verdict("unmet", translate(locale, "Needs level {need}, you are level {have}", { need: level[1], have: who.level }))
+      : verdict("met", translate(locale, "Level {need}, you are level {have}", { need: level[1], have: who.level }));
   }
   const trained = /^proficiency (?:in|with) (?:at least )?(?:one of the following skills: )?(.+?)(?: skills?)?$/.exec(part);
   if (!trained) {
@@ -437,7 +441,9 @@ function requirementCheck(requirement: string, who: FeatCandidate, waiting: Feat
 // higher and the Ki class feature", "Proficiency with Survival, 8th level
 // or higher"). The server and the builder's feat pickers both read feats
 // through this, so a feat the picker offers is one the save accepts.
-export function checkPrerequisite(prerequisite: string, who: FeatCandidate, waiting?: FeatWaiting): PrerequisiteCheck {
+export function checkPrerequisite(prerequisite: string, who: FeatCandidate, waiting?: FeatWaiting, locale: Locale = "en"): PrerequisiteCheck {
+  // Keep English fallback whole until the reader language has reviewed notes.
+  const noteLocale = locale === "cs" ? locale : "en";
   const text = prerequisiteText(prerequisite);
   if (!text) {
     return { text: "", state: "none", requirements: [] };
@@ -446,7 +452,7 @@ export function checkPrerequisite(prerequisite: string, who: FeatCandidate, wait
     .split(/\s+and\s+|,\s*(?=(?:proficien|strength|dexterity|constitution|intelligence|wisdom|charisma|the ability|ability)\b|\d)/i)
     .map((entry) => entry.trim())
     .filter(Boolean)
-    .map((requirement) => requirementCheck(requirement, who, waiting));
+    .map((requirement) => requirementCheck(requirement, who, waiting, noteLocale));
   const state = requirements.some((entry) => entry.state === "unmet")
     ? "unmet"
     : requirements.some((entry) => entry.state === "waiting")
