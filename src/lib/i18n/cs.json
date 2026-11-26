@@ -1,5 +1,35 @@
 {
   "messages": {
+    "{by} drags {rider} out of the saddle; {mount} stays.": "{by} strhává tvora {rider} ze sedla; {mount} zůstává na místě.",
+    "{rider} mounts {mount}.": "{rider} nasedá na tvora {mount}.",
+    "{rider} gets down from {mount}.": "{rider} sesedá z tvora {mount}.",
+    "Take up {name}?": "Vzít do ruky {name}?",
+    "{who}'s hands are full ({items}), so something has to be put away before {name} is taken up.": "{who} má plné ruce ({items}), takže před uchopením předmětu {name} musí něco odložit.",
+    "Nobody has said which weapon is out yet, so this change is free.": "Zatím nebylo určeno, která zbraň je v ruce, takže tato změna nic nestojí.",
+    "Put away {off}, take up {name}": "Odložit {off}, vzít do ruky {name}",
+    "{name}'s hands are full ({items}), so {what} cannot be drawn yet. Put one of them away first: nobody had said which weapon was out, so this first change costs nothing.": "{name} má plné ruce ({items}), takže zatím nemůže vytáhnout {what}. Nejprve jednu zbraň odlož: zatím nebylo určeno, která zbraň je v ruce, takže první změna nic nestojí.",
+    "Put one of them away first: out of a fight that costs nothing.": "Nejprve jednu odlož: mimo boj to nic nestojí.",
+    "Put one of them away first: nobody had said which weapon was out, so this first change costs nothing.": "Nejprve jednu odlož: zatím nebylo určeno, která zbraň je v ruce, takže první změna nic nestojí.",
+    "{who} puts away {items} and takes up {item}.": "{who} odkládá {items} a bere do ruky {item}.",
+    "{who} takes up {item}.": "{who} bere do ruky {item}.",
+    "After each turn the server compares the GM's narration against what the dice and tools actually resolved: a hit written on a miss, a death the hit points deny, a damage number no die rolled. A contradiction is sent back to the GM once for a rewrite. It also does what the GM left undone: a spell a player asked for that the story cast is cast for real, a kindness or flirt a player declared is recorded on their bonds, and a thing a player handed over or used that the story took leaves their pack.": "Po každém tahu server porovná vyprávění PJ se skutečnými výsledky kostek a nástrojů: popsaný zásah při minutí, smrt, kterou zbývající životy vylučují, nebo zranění, které žádná kostka neurčila. Při rozporu server jednou požádá PJ o přepracování vyprávění. Provede také to, co PJ opomenul: kouzlo, o které hráč požádal a které bylo ve vyprávění sesláno, skutečně sešle, projevenou laskavost nebo flirt zaznamená do vztahů postavy a předaný či použitý předmět, který podle vyprávění postava odevzdala, odebere z jejího batohu.",
+    "After each turn the server compares the GM's narration against what the dice and tools actually resolved: a hit written on a miss, a death the hit points deny, a damage number no die rolled.\n\nA contradiction is sent back to the GM once for a rewrite. It also does what the GM left undone: a spell a player asked for that the story cast is cast for real, a kindness or flirt a player declared is recorded on their bonds, and a thing a player handed over or used that the story took leaves their pack.\n\nOff costs nothing but the check, and the narration is persisted exactly as written.": "Po každém tahu server porovná vyprávění PJ se skutečnými výsledky kostek a nástrojů: popsaný zásah při minutí, smrt, kterou zbývající životy vylučují, nebo zranění, které žádná kostka neurčila.\n\nPři rozporu server jednou požádá PJ o přepracování vyprávění. Provede také to, co PJ opomenul: kouzlo, o které hráč požádal a které bylo ve vyprávění sesláno, skutečně sešle, projevenou laskavost nebo flirt zaznamená do vztahů postavy a předaný či použitý předmět, který podle vyprávění postava odevzdala, odebere z jejího batohu.\n\nPři vypnutí se pouze vynechá kontrola a vyprávění se uloží přesně tak, jak bylo napsáno.",
+    "opportunity attack": "příležitostný útok",
+    "half on a miss": "poloviční zranění při minutí",
+    "an object": "předmět",
+    "someone unseen": "někdo neviděný",
+    "reroll any die of {below} or less once (Great Weapon Fighting)": "jednou přehoď každou kostku s výsledkem {below} nebo méně (Boj s obouruční zbraní)",
+    "roll the damage a second time and keep the better total (Brutal Attack)": "hoď na zranění podruhé a ponech vyšší součet (Brutální útok)",
+    "roll the weapon's dice a second time and keep the better total (Savage Attacker)": "hoď podruhé kostkami zbraně a ponech vyšší součet (Neurvalý útočník)",
+    "reroll the lowest damage die once and keep the new roll (Piercer)": "jednou přehoď nejnižší kostku zranění a ponech nový výsledek (Bodavec)",
+    "reroll up to {dice} of the damage dice and keep the new rolls (Empowered Spell)": "přehoď až {dice} kostek zranění a ponech nové výsledky (Posílené kouzlo)",
+    "Before you enter your dice: {steps}.": "Než zadáš výsledky kostek: {steps}.",
+    "{used} attack against {target}": "Útok ({used}) proti {target}",
+    "{used} damage against {target}": "Zranění ({used}) proti {target}",
+    "{used} half damage against {target}": "Poloviční zranění ({used}) proti {target}",
+    "Cast {spell} at {target}. Your reaction is spent until your next turn.": "Sešli {spell} na {target}. Tvoje reakce je spotřebována do příštího tahu.",
+    "Cast at {target}": "Seslat na {target}",
+    "{movement} with {rider} on its back. Cast {spell} as your opportunity attack (War Caster), and at which of them? It uses your reaction.": "{movement} s jezdcem {rider} na hřbetě. Chceš seslat {spell} jako příležitostný útok (Válečný sesilatel), a na koho z nich? Spotřebuješ svou reakci.",
     "\"{name}\" is not a feat this server knows; pick one from the feat list.": "Server odbornost „{name}“ nezná; vyber jednu ze seznamu odborností.",
     "{name} requires {prerequisite}, which this character does not have.": "Odbornost {name} má nesplněný předpoklad: {prerequisite}.",
     "\"{name}\" is a {source} feature, and those are granted in play by whoever runs the table; a character's features come from its class, race and background. Remove it.": "„{name}“ je schopnost typu {source}, kterou během hry uděluje PJ; schopnosti postavy vycházejí z povolání, rasy a zázemí. Odeber ji.",
@@ -14507,6 +14537,15 @@
     "Unlimited": "Neomezený"
   },
   "contexts": {
+    "then": {
+      "roll.steps": "poté"
+    },
+    "physical": {
+      "roll.dice": "fyzické kostky"
+    },
+    "vs": {
+      "roll.aim": "proti"
+    },
     "story": {"legality.featureSource":"příběhová"},
     "feat": {"legality.featureSource":"odbornost"},
     "Dexterity 13 or higher": {
@@ -15297,6 +15336,7 @@
       "builder.levels.none": "Žádné"
     },
     "on": {
+      "roll.aim": "na",
       "admin.voice.state.on": "zapnuto"
     },
     "Hidden": {

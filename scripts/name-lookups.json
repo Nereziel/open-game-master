@@ -325,6 +325,11 @@
         "identity",
         4,
         "a gear toggle by the carried line's own name (the sheet sends it)"
+      ],
+      [
+        "identity",
+        1,
+        "each row a chosen swap names, by the carried line's own name (the sheet sends the names it was offered)"
       ]
     ],
     "app/api/campaigns/[campaignId]/sheets/[sheetId]/unknown-gear/route.ts#first": [
@@ -5015,6 +5020,13 @@
         "Show the original label if no carried row is available."
       ]
     ],
+    "components/sheet/SheetGearRow.tsx#first": [
+      [
+        "key",
+        1,
+        "First translated label when rendering a zero- or one-element display list; no record selection."
+      ]
+    ],
     "components/sheet/SheetGearRow.tsx#whole": [
       [
         "identity",
@@ -5161,6 +5173,11 @@
         "key",
         1,
         "UI page keys; the worn armor named by the AC breakdown (the same stored item's own name both sides)"
+      ],
+      [
+        "parse",
+        1,
+        "the usage route's own hands-full sentence, whole, before it is said in the reader's language (no record is looked up)"
       ]
     ],
     "components/sheet/spellFilters.ts#partial": [
@@ -9607,13 +9624,6 @@
         "change detection: a rename noticed against the stored name"
       ]
     ],
-    "lib/db/sheets.ts#bypass": [
-      [
-        "parse",
-        1,
-        "a stored attack roll's label read against the label rollAgainst writes for the carried line's own name (\"Longbow vs \"), so only the whole name before the separator matches"
-      ]
-    ],
     "lib/db/sheets.ts#fallback": [
       [
         "key",
@@ -9626,13 +9636,6 @@
         "key",
         2,
         "digits a regex already captured, ids, headers, stored and form numbers (number inputs), dice parts, the pack's English text (\"1,000 feet\", a purse); src/: every site read"
-      ]
-    ],
-    "lib/db/sheets.ts#partial": [
-      [
-        "parse",
-        1,
-        "a stored attack roll's label read against the label rollAgainst writes for the carried line's own name (\"Longbow vs \"), so only the whole name before the separator matches"
       ]
     ],
     "lib/db/sheets.ts#whole": [
@@ -10382,11 +10385,6 @@
         "pattern",
         1,
         "a fixed pattern over text that reads no record's name: its English words are scripts/text-comparisons.json's to classify"
-      ],
-      [
-        "key",
-        1,
-        "ODM's own roll-detail format"
       ]
     ],
     "lib/dm/ai-gate.ts#switch": [
@@ -10735,17 +10733,10 @@
         "a spell against the sheet's cantrip list, by whole name (textKey on both sides)"
       ]
     ],
-    "lib/dm/ar-ws-deflection.ts#normalizer": [
-      [
-        "key",
-        1,
-        "the creature refs a call names, trimmed before the engine's own resolver reads them"
-      ]
-    ],
     "lib/dm/ar-ws-deflection.ts#partial": [
       [
         "identity",
-        3,
+        1,
         "the reaction's whole name with its variant word after it (\"Arcane Deflection save\"), and a holder's answer key on a record"
       ]
     ],
@@ -11328,6 +11319,11 @@
         "a worn item's weapons against the one word the unarmed strike goes by, which no sheet or pack writes"
       ],
       [
+        "identity",
+        1,
+        "a carried weapon swung as an improvised one by its whole name (textKey both sides) against the row it is: only a line carried under its row's own name names that row for its roll's words"
+      ],
+      [
         "key",
         1,
         "the strike's damage type against the one a monk's subclass gave it, the engine's own word on both sides"
@@ -11416,6 +11412,13 @@
         "the dice and flat terms of a roll suffix the engine wrote"
       ]
     ],
+    "lib/dm/attack-rules.ts#bypass": [
+      [
+        "identity",
+        1,
+        "heldFirst: a held row's own name through textKey, against the carried weapon's name through textKey"
+      ]
+    ],
     "lib/dm/attack-rules.ts#fallback": [
       [
         "identity",
@@ -11447,6 +11450,11 @@
         "key",
         2,
         "a weapon's loading key (textKey of the profile's weapon)"
+      ],
+      [
+        "identity",
+        1,
+        "heldFirst: a carried weapon's row against the same sheet's held rows, textKey on both sides"
       ]
     ],
     "lib/dm/attack-sight.ts#partial": [
@@ -11922,11 +11930,6 @@
       ]
     ],
     "lib/dm/authored-spend-more.ts#partial": [
-      [
-        "pattern",
-        2,
-        "a fixed pattern over text that reads no record's name: its English words are scripts/text-comparisons.json's to classify"
-      ],
       [
         "parse",
         2,
@@ -12672,6 +12675,11 @@
         "search",
         15,
         "quotes and speakers in narration, a bond's quote in the players' words, and the sentences a turn_over quote stands in (squash: checked clean)"
+      ],
+      [
+        "pattern",
+        3,
+        "englishOwnTurn's fixed patterns over a turn_over quote, split into its clauses, with the acting character's name set into them as written (issues 1099 and 1101): no record is chosen by it, and its English words are scripts/text-comparisons.json's to classify"
       ]
     ],
     "lib/dm/claims-logic.ts#whole": [
@@ -12698,6 +12706,11 @@
         "key",
         1,
         "the party's fighters listed beside the creatures under their creature key, one entry a key (issue 931)"
+      ],
+      [
+        "key",
+        1,
+        "tool names (request_roll, group_check) by the name the exchange ran under"
       ]
     ],
     "lib/dm/claims.ts#whole": [
@@ -13652,6 +13665,11 @@
         "pattern",
         2,
         "a fixed pattern over text that reads no record's name: its English words are scripts/text-comparisons.json's to classify"
+      ],
+      [
+        "key",
+        1,
+        "tool names and message roles (engine vocabulary): the calls whose going through the whole table sees (TABLE_TOOLS, issue 1108)"
       ]
     ],
     "lib/dm/encounter-logic.ts#first": [
@@ -13764,6 +13782,11 @@
         "parse",
         1,
         "a fight line's mount (goblin riding wolf), issue 1055"
+      ],
+      [
+        "parse",
+        1,
+        "a fight line's controlled mount (knight riding warhorse controlled), issue 1055"
       ]
     ],
     "lib/dm/encounter-template-logic.ts#whole": [
@@ -14075,6 +14098,27 @@
         "key",
         1,
         "a drained score's condition by the label the engine wrote it under"
+      ]
+    ],
+    "lib/dm/enemy-mounting.ts#fallback": [
+      [
+        "key",
+        1,
+        "the rider's own row by its id, else the copy the call already holds; a token by the ref id of the creature it stands for, else none"
+      ]
+    ],
+    "lib/dm/enemy-mounting.ts#first": [
+      [
+        "key",
+        1,
+        "the open square beside a mount nearest the one a call names, from a list sorted by distance (no text names one)"
+      ]
+    ],
+    "lib/dm/enemy-mounting.ts#whole": [
+      [
+        "identity",
+        1,
+        "a mount the party keeps on record, by its whole name (textKey), so an enemy that names it is refused it"
       ]
     ],
     "lib/dm/enemy-polymorph-logic.ts#keyed": [
@@ -14450,16 +14494,6 @@
         "key",
         1,
         "the SRD row's creature type"
-      ],
-      [
-        "pattern",
-        2,
-        "a fixed pattern over text that reads no record's name: its English words are scripts/text-comparisons.json's to classify"
-      ],
-      [
-        "pattern",
-        1,
-        "the engine's own roll detail string"
       ]
     ],
     "lib/dm/feature-spends.ts#whole": [
@@ -14819,6 +14853,13 @@
         "a carried line by its whole own name (two copies of one sheet's lines)"
       ]
     ],
+    "lib/dm/gear-hands.ts#first": [
+      [
+        "key",
+        1,
+        "Read the canonical source sentence of the matched storyteller/player wording tuple to preserve the remaining suffix; not a record lookup."
+      ]
+    ],
     "lib/dm/gear-hands.ts#partial": [
       [
         "parse",
@@ -14829,6 +14870,11 @@
         "parse",
         1,
         "match the canonical hands-full sentence at the reader boundary"
+      ],
+      [
+        "parse",
+        1,
+        "Recognize the canonical storyteller advice prefix before substituting its localized reader-facing sentence; no record lookup."
       ]
     ],
     "lib/dm/gear-hands.ts#whole": [
@@ -14841,8 +14887,8 @@
     "lib/dm/gear-tool.ts#bypass": [
       [
         "identity",
-        6,
-        "moving a line by its own name, and the line handed over named in the carrying refusal"
+        7,
+        "moving a line by its own name, the line handed over named in the carrying refusal, and the weapon to be drawn named in the full-hands refusal that asks which held one goes"
       ]
     ],
     "lib/dm/genie-vessel.ts#fallback": [
@@ -14911,8 +14957,8 @@
     "lib/dm/genre-a-cyberpunk-spends.ts#partial": [
       [
         "parse",
-        3,
-        "an SRD weapon's damage line cut into its dice and type; the skill or ability a check card the engine wrote names"
+        1,
+        "an SRD weapon's damage line cut into its dice and type"
       ]
     ],
     "lib/dm/genre-a-cyberpunk-spends.ts#whole": [
@@ -15067,13 +15113,6 @@
         "what the holder let fall, by who dropped it and the place it lies, textKey on both sides"
       ]
     ],
-    "lib/dm/genre-cc-a-checks.ts#partial": [
-      [
-        "parse",
-        2,
-        "the skill a check card names in the detail the engine wrote for it (the roll record keeps no skill field), read as Grease the Wheels reads it"
-      ]
-    ],
     "lib/dm/genre-cc-a-saves.ts#keyed": [
       [
         "key",
@@ -15142,20 +15181,6 @@
         "key",
         1,
         "a sheet's conditionMeta by the condition key it was written under"
-      ]
-    ],
-    "lib/dm/genre-gh-horror-plays.ts#partial": [
-      [
-        "pattern",
-        4,
-        "ODM's own roll records (\"DEX save vs. frightened\") read for their ability and what the save was against"
-      ]
-    ],
-    "lib/dm/genre-gh-horror-plays.ts#whole": [
-      [
-        "key",
-        1,
-        "an ability id among the reroll's abilities"
       ]
     ],
     "lib/dm/genre-gh-hunted.ts#whole": [
@@ -15579,11 +15604,111 @@
         "tool names and damage shares"
       ]
     ],
+    "lib/dm/item-claims-logic.ts#helper": [
+      [
+        "search",
+        1,
+        "a party member's name in the player's own words (containsPhrase, whole words): a hit only stops the engine from taking a thing out of play that was meant for them"
+      ]
+    ],
+    "lib/dm/item-claims-logic.ts#partial": [
+      [
+        "key",
+        1,
+        "a call's tool name in the engine's own list of the tools that eat or hand over without naming what (EATS)"
+      ],
+      [
+        "parse",
+        1,
+        "the numbers of an amount the reader wrote in the coins' codes: no record is named"
+      ],
+      [
+        "search",
+        1,
+        "whether a player's own words hold every word of a carried line's name, by stem (language.ts stems), so 'one of my rations' names 'Rations (1 day)': a yes or no about the line the reader's ref already picked out, never a choice of line, and a miss leaves the hand-off to the narrator (issue 1097)"
+      ]
+    ],
+    "lib/dm/item-claims-logic.ts#switch": [
+      [
+        "key",
+        1,
+        "a tool's name, the engine's own"
+      ]
+    ],
+    "lib/dm/item-claims-logic.ts#whole": [
+      [
+        "search",
+        1,
+        "which grant of the turn answers a thing the narration had a character gain: the one of the same whole name (textKey on both sides) first, any other after it, since the narrator grants its 'soot-stained ledger' as a 'Charred Ledger'; a miss only asks the narrator whether the thing moved (issue 1097)"
+      ]
+    ],
+    "lib/dm/item-claims.ts#bypass": [
+      [
+        "identity",
+        1,
+        "a carried line's own name, as the reader's ref named it, looked up again on the sheet as it stands by lineNamed: gone since, it is no claim"
+      ],
+      [
+        "search",
+        1,
+        "a carried line's own name against a player's words by stem, to decide only whether an exchange in a fight is read at all: a miss reads nothing, as before the read existed"
+      ]
+    ],
+    "lib/dm/item-claims.ts#keyed": [
+      [
+        "key",
+        1,
+        "what each player wrote this exchange, by their character's id"
+      ]
+    ],
+    "lib/dm/item-claims.ts#partial": [
+      [
+        "key",
+        2,
+        "a note's stored subject by the server's own heading, and a hand-off's key by the receiver's id"
+      ]
+    ],
     "lib/dm/item-powers.ts#keyed": [
       [
         "identity",
         1,
         "a property's count on the row, by the property's own name from the item table"
+      ]
+    ],
+    "lib/dm/item-read-logic.ts#fallback": [
+      [
+        "identity",
+        1,
+        "a carried line by the ref the reader copied, else by the whole name it wrote out (lineNamed, then the name's stems): both name one line, and with neither there is no claim"
+      ],
+      [
+        "key",
+        1,
+        "what a gain is called: the carried line's name when the reader gave another character's ref, else the narration's own words for the thing, which name no record"
+      ]
+    ],
+    "lib/dm/item-read-logic.ts#partial": [
+      [
+        "parse",
+        1,
+        "the coins' codes in an amount the reader wrote: no record is named"
+      ],
+      [
+        "search",
+        1,
+        "a claim's quote in the narration that was read (claims-logic.ts squash on both sides): a claim that quotes nothing of it is dropped"
+      ]
+    ],
+    "lib/dm/item-read-logic.ts#whole": [
+      [
+        "identity",
+        1,
+        "an item claim's item against the refs the request listed the party's carried lines under (i1, i2): a ref the reader copies whole, never a word of a name (issue 1097)"
+      ],
+      [
+        "identity",
+        1,
+        "a line the reader wrote out by name instead of its ref, against that character's own lines by the whole name's stems in order (language.ts stems), so 'ration' is 'Rations (1 day)' and 'potion' is neither of two potions; two lines so named pick out none, and a miss is no claim"
       ]
     ],
     "lib/dm/item-summary.ts#bypass": [
@@ -15740,11 +15865,6 @@
         "key",
         1,
         "a hit's answered list asked for an answer key (feature and holder) or its bare label, both stored forms"
-      ],
-      [
-        "pattern",
-        1,
-        "a fixed pattern over text that reads no record's name: its English words are scripts/text-comparisons.json's to classify"
       ]
     ],
     "lib/dm/last-hit.ts#whole": [
@@ -16993,6 +17113,16 @@
         "search",
         2,
         "the question a reply ends on, read off its last sentence to see the same one repeated; a miss adds no note"
+      ],
+      [
+        "search",
+        2,
+        "a party character's own name in the label a reply opens on (withoutLineLabels: \"[Avery] ...\", \"[Bram | turn]\"), found as the server writes it in the transcript; a miss leaves the prose as it is"
+      ],
+      [
+        "search",
+        5,
+        "withoutEarlierPassages: a paragraph's long sentences held, by their words under textKey, against the GM's newest passages to cut one pasted from them (issues 1104 and 1109); it reads no language's words, and a miss only means the paragraph is told again as before"
       ]
     ],
     "lib/dm/narration-tidy-logic.ts#whole": [
@@ -18067,6 +18197,11 @@
         "search",
         2,
         "the opening quote marks a question closed with, cut from the words after it that say who asks (onlyAsks); no record is chosen by it, and a miss only means a question rolls as it did before"
+      ],
+      [
+        "search",
+        4,
+        "onlySpeaks: the quoted spans cut from a player's line to read whether anything is written outside them (issue 1108); no record is chosen by it, and a miss only means the line declares an action as it did before"
       ]
     ],
     "lib/dm/player-word-read.ts#keyed": [
@@ -19420,7 +19555,7 @@
     "lib/dm/speech-prose.ts#partial": [
       [
         "pattern",
-        16,
+        17,
         "a fixed pattern over text that reads no record's name: its English words are scripts/text-comparisons.json's to classify"
       ],
       [
@@ -21452,6 +21587,11 @@
         "search",
         1,
         "the names a creature the table sees also answers to, kept in the prose"
+      ],
+      [
+        "identity",
+        2,
+        "whom a roll is against, among the creatures kept from the table: by the target's id where it says one, and for a waiting card's target, sent by name alone, by its whole name through textKey among the hidden creatures' names, never a part of it"
       ]
     ],
     "lib/hidden-names-logic.ts#partial": [
@@ -23257,6 +23397,32 @@
         "key",
         2,
         "display-only roll label translation (skill/ability/save) in roll-labels.ts"
+      ]
+    ],
+    "lib/roll-parts.ts#partial": [
+      [
+        "parse",
+        8,
+        "the sentence the engine wrote for a roll stored before its parts (issue #1064), read for those rolls alone: its skill, its ability, what a save was against, the weapon its label opens with, its marks and the ambush it was rolled for"
+      ]
+    ],
+    "lib/roll-parts.ts#whole": [
+      [
+        "identity",
+        1,
+        "a carried line by its whole own name, as the attack roll stored it in its parts"
+      ],
+      [
+        "key",
+        3,
+        "a skill's or an ability's id, as a roll's parts store it or as the engine wrote it, among the ids a rule asks about"
+      ]
+    ],
+    "lib/roll-words.ts#whole-single": [
+      [
+        "identity",
+        1,
+        "what a roll used, by its whole name through textKey against the key of the content row its roll stored: only a name that is its row's own is put into the reader's language, and any other is shown as written"
       ]
     ],
     "lib/rulebook/catalog-rows.ts#fallback": [

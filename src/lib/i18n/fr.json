@@ -7625,7 +7625,6 @@
     "Guests at once": "Invités à la fois",
     "Two choices decide who reads a line aloud.\n\n**The narrator's voice and pace** read the story, and every speaker who has no voice of their own.\n\n**Character voices** belong to one speaker each. With *Each speaker gets a voice*, everyone who speaks (an innkeeper, a monster, a companion) is given one of this server's voices the first time they talk and keeps it from then on. With *The narrator reads them*, nobody is given one automatically, and any voice you do give a character still plays.\n\nEither way, a voice can be given or changed per character once the campaign has people in it: the Character voices list in Table settings (Narration and character voices), in the lobby or the table's Settings tab. Each player can also choose the voice their own character speaks in there.\n\nThis is the table's spoken narration. Live voice chat between players is a separate setting.": "Deux options déterminent qui lit une réplique à voix haute.\n\n**La voix et la cadence du narrateur** lisent le récit ainsi que chaque personnage sans voix propre.\n\n**Les voix des personnages** sont attribuées individuellement. Avec l’option *Chaque intervenant a sa voix*, quiconque prend la parole (un aubergiste, un monstre, un compagnon) se voit attribuer une des voix de ce serveur lors de sa première réplique et la conserve ensuite. Avec *Le narrateur les lit*, personne n’en reçoit automatiquement, mais les voix personnalisées assignées aux personnages restent utilisées.\n\nDans les deux cas, une voix peut être attribuée ou modifiée par personnage dès que la campagne accueille des participants : via la liste Voix des personnages dans les paramètres de la table (Narration et voix des personnages), dans le salon ou dans l’onglet Paramètres. Chaque joueur peut également y choisir la voix de son propre personnage.\n\nCeci concerne la narration parlée de la table. Le chat vocal en direct entre joueurs fait l’objet d’un réglage séparé.",
     "The romance ladder on top of the bond meter: interested, courting, together, betrothed, married.\n\nNobody can be romanced who does not already like the character, nobody is courted who did not ask to be, partners keep to each other unless everyone involved is open to more than one partner, and intimate scenes always fade to black.\n\nEach step needs a little story time after the last, the other side starts scenes of their own, and every step is told to the table.\n\nRequires Bonds to be on.": "L’échelle de romance par-dessus la jauge de liens : intérêt, cour, couple, fiançailles, mariage.\n\nAucune romance n’est possible sans affinité préalable, personne n’est courtisé sans son consentement, les partenaires restent exclusifs à moins que chacun ne soit ouvert au polyamour, et les scènes intimes se concluent toujours par un fondu au noir.\n\nChaque étape nécessite un temps de jeu après la précédente, l’autre personnage initie ses propres scènes, et chaque progression est annoncée à la table.\n\nNécessite l’activation des liens.",
-    "After each turn the server compares the GM's narration against what the dice and tools actually resolved: a hit written on a miss, a death the hit points deny, a damage number no die rolled.\n\nA contradiction is sent back to the GM once for a rewrite. It also does what the GM left undone: a spell a player asked for that the story cast is cast for real, and a kindness or flirt a player declared is recorded on their bonds.\n\nOff costs nothing but the check, and the narration is persisted exactly as written.": "Après chaque tour, le serveur compare la narration du MJ à ce que les dés et les outils ont réellement résolu : un coup au but décrit sur un raté, une mort que les points de vie démentent, un nombre de dégâts qu’aucun dé n’a donné.\n\nUne contradiction est renvoyée une fois au MJ pour réécriture. Le serveur exécute aussi ce que le MJ a omis : un sort demandé par un joueur et décrit dans le récit est réellement lancé, et un acte de bienveillance ou de séduction est consigné dans ses liens relationnels.\n\nDésactiver cette option ne fait rien perdre d’autre que la vérification elle-même, et la narration est conservée exactement telle qu’écrite.",
     "the Character voices list in Table settings (Narration and character voices), in the lobby or the table's Settings tab": "la liste Voix des personnages dans les Paramètres de la table (Narration et voix des personnages), dans le salon ou l’onglet Paramètres de la table",
     "The narrator": "Le narrateur",
     "only with an AI narrator": "seulement avec un narrateur IA",
@@ -8339,7 +8338,6 @@
     "The GM invents the plot before the first scene.": "Le MJ invente l’intrigue avant la première scène.",
     "The story starts from your premise and prep alone.": "L’histoire part de ta prémisse et de ta préparation seules.",
     "After each turn the server compares the GM's narration against what the dice and tools actually resolved: a hit written on a miss, a death the hit points deny, a damage number no die rolled. A contradiction is sent back to the GM once for a rewrite. Nothing on any sheet changes either way.": "Après chaque tour, le serveur compare la narration du MJ à ce que les dés et les outils ont réellement résolu : un coup au but décrit sur un raté, une mort que les points de vie démentent, un nombre de dégâts qu’aucun dé n’a donné. Une contradiction est renvoyée une fois au MJ pour réécriture. Rien ne change sur une fiche, dans un cas comme dans l’autre.",
-    "After each turn the server compares the GM's narration against what the dice and tools actually resolved: a hit written on a miss, a death the hit points deny, a damage number no die rolled. A contradiction is sent back to the GM once for a rewrite. It also does what the GM left undone: a spell a player asked for that the story cast is cast for real, and a kindness or flirt a player declared is recorded on their bonds.": "Après chaque tour, le serveur confronte la narration du MJ aux résultats réels des dés et des règles : un coup au but décrit sur un raté, une mort contredite par les points de vie restants, ou des dégâts non tirés aux dés. Toute contradiction est renvoyée une fois au MJ pour réécriture. Le système applique également les actions omises par le MJ : un sort demandé par un joueur et mentionné dans le récit est réellement dépensé, et un acte de bienveillance ou de séduction est consigné dans ses liens relationnels.",
     "Outcome check on": "Vérification des issues activée",
     "Outcome check off": "Vérification des issues désactivée",
     "Narration that contradicts the dice goes back for one rewrite.": "La narration qui contredit les dés repart pour une réécriture.",
@@ -12409,10 +12407,32 @@
     "no concentration": "sans concentration",
     "{school} cantrip": "sort mineur ({school})",
     "level {level} {school}": "{school}, niveau {level}",
-    "Unlimited": "Illimitée"
+    "Unlimited": "Illimitée",
+    "Take up {name}?": "Prendre {name} en main ?",
+    "{who}'s hands are full ({items}), so something has to be put away before {name} is taken up.": "{who} a les mains pleines ({items}) : il faut ranger quelque chose avant de prendre {name}.",
+    "Nobody has said which weapon is out yet, so this change is free.": "Personne n’a encore dit quelle arme est sortie : ce changement est donc gratuit.",
+    "Put away {off}, take up {name}": "Ranger {off}, prendre {name}",
+    "{name}'s hands are full ({items}), so {what} cannot be drawn yet. Put one of them away first: nobody had said which weapon was out, so this first change costs nothing.": "{name} a les mains pleines ({items}) : impossible de dégainer {what} pour l’instant. Range d’abord l’une d’elles : personne n’avait dit quelle arme était sortie, ce premier changement est donc gratuit.",
+    "After each turn the server compares the GM's narration against what the dice and tools actually resolved: a hit written on a miss, a death the hit points deny, a damage number no die rolled.\n\nA contradiction is sent back to the GM once for a rewrite. It also does what the GM left undone: a spell a player asked for that the story cast is cast for real, a kindness or flirt a player declared is recorded on their bonds, and a thing a player handed over or used that the story took leaves their pack.\n\nOff costs nothing but the check, and the narration is persisted exactly as written.": "Après chaque tour, le serveur compare la narration du MJ à ce que les dés et les outils ont réellement résolu : un coup au but décrit sur un raté, une mort que les points de vie démentent, un nombre de dégâts qu’aucun dé n’a donné.\n\nUne contradiction est renvoyée une fois au MJ pour réécriture. Le serveur exécute aussi ce que le MJ a omis : un sort demandé par un joueur et décrit dans le récit est réellement lancé, un acte de bienveillance ou de séduction est consigné dans ses liens relationnels, et un objet qu’un joueur a donné ou utilisé, et que le récit a pris, quitte son sac.\n\nDésactiver cette option ne fait rien perdre d’autre que la vérification elle-même, et la narration est conservée exactement telle qu’écrite.",
+    "After each turn the server compares the GM's narration against what the dice and tools actually resolved: a hit written on a miss, a death the hit points deny, a damage number no die rolled. A contradiction is sent back to the GM once for a rewrite. It also does what the GM left undone: a spell a player asked for that the story cast is cast for real, a kindness or flirt a player declared is recorded on their bonds, and a thing a player handed over or used that the story took leaves their pack.": "Après chaque tour, le serveur confronte la narration du MJ aux résultats réels des dés et des règles : un coup au but décrit sur un raté, une mort contredite par les points de vie restants, ou des dégâts non tirés aux dés. Toute contradiction est renvoyée une fois au MJ pour réécriture. Le système applique également les actions omises par le MJ : un sort demandé par un joueur et mentionné dans le récit est réellement dépensé, un acte de bienveillance ou de séduction est consigné dans ses liens relationnels, et un objet qu’un joueur a donné ou utilisé, et que le récit a pris, quitte son sac.",
+    "opportunity attack": "attaque d’opportunité",
+    "half on a miss": "moitié sur un raté",
+    "someone unseen": "quelqu’un hors de vue",
+    "an object": "un objet",
+    "{used} attack against {target}": "{used} : attaque contre {target}",
+    "{used} damage against {target}": "{used} : dégâts contre {target}",
+    "{used} half damage against {target}": "{used} : demi-dégâts contre {target}",
+    "Before you enter your dice: {steps}.": "Avant de saisir tes dés : {steps}.",
+    "reroll any die of {below} or less once (Great Weapon Fighting)": "relance une fois tout dé de {below} ou moins (Great Weapon Fighting)",
+    "roll the damage a second time and keep the better total (Brutal Attack)": "lance les dégâts une seconde fois et garde le meilleur total (Brutal Attack)",
+    "roll the weapon's dice a second time and keep the better total (Savage Attacker)": "lance les dés de l’arme une seconde fois et garde le meilleur total (Savage Attacker)",
+    "reroll the lowest damage die once and keep the new roll (Piercer)": "relance une fois le dé de dégâts le plus bas et garde le nouveau résultat (Piercer)",
+    "reroll up to {dice} of the damage dice and keep the new rolls (Empowered Spell)": "relance jusqu’à {dice} des dés de dégâts et garde les nouveaux résultats (Empowered Spell)"
   },
   "contexts": {
-    "{count} {label}": {"tool-choice-count":"{count} × {label}"},
+    "{count} {label}": {
+      "tool-choice-count": "{count} × {label}"
+    },
     "{count} at {ordinal} level": {
       "builder.math.slots": "{count} au niveau {ordinal}"
     },
@@ -13126,7 +13146,8 @@
       "builder.levels.none": "Aucun"
     },
     "on": {
-      "admin.voice.state.on": "allumé"
+      "admin.voice.state.on": "allumé",
+      "roll.aim": "sur"
     },
     "Hidden": {
       "quests.status.hidden": "Masquée"
@@ -14014,21 +14035,66 @@
     },
     "artifact": {
       "content.rarity": "artéfact"
+    },
+    "vs": {
+      "roll.aim": "c/"
+    },
+    "physical": {
+      "roll.dice": "dés physiques"
+    },
+    "then": {
+      "roll.steps": "puis"
     }
   },
   "plurals": {
-    "The dice for this hit die changed while you rolled: it is {expression} now, {count} die, and {actual} came in. No hit die was spent; roll what the sheet shows now.\u0000The dice for this hit die changed while you rolled: it is {expression} now, {count} dice, and {actual} came in. No hit die was spent; roll what the sheet shows now.": ["Les dés ont changé pendant le lancer : {expression} désormais, {count} dé attendu, {actual} reçu(s). Aucun dé de vie dépensé ; lancez les dés affichés sur la fiche.","Les dés ont changé pendant le lancer : {expression} désormais, {count} dés attendus, {actual} reçu(s). Aucun dé de vie dépensé ; lancez les dés affichés sur la fiche."],
-    "The {race}'s increase of the player's choice goes to {count} different ability{choices} the race does not already raise; {ability} cannot take it.\u0000The {race}'s increase of the player's choice goes to {count} different abilities{choices} the race does not already raise; {ability} cannot take it.": ["Pour {race}, l’augmentation au choix du joueur concerne {count} caractéristique distincte{choices} que la race n’augmente pas déjà ; choix impossible : {ability}.","Pour {race}, l’augmentation au choix du joueur concerne {count} caractéristiques distinctes{choices} que la race n’augmente pas déjà ; choix impossible : {ability}."],
-    "This character has earned {count} Ability Score Improvement at its level; {actual} are recorded.\u0000This character has earned {count} Ability Score Improvements at its level; {actual} are recorded.": ["Ce personnage a obtenu {count} augmentation de caractéristiques à son niveau ; nombre enregistré : {actual}.","Ce personnage a obtenu {count} augmentations de caractéristiques à son niveau ; nombre enregistré : {actual}."],
-    "A {race} starts with a feat of their choice; pick one from the feat list.\u0000A {race} starts with {count} feats of their choice; pick them from the feat list.": ["Un personnage de race {race} commence avec un don de son choix ; choisissez-le dans la liste des dons.","Un personnage de race {race} commence avec {count} dons de son choix ; choisissez-les dans la liste des dons."],
-    "{count} weapon\u0000{count} weapons": ["{count} arme","{count} armes"],
-    "{count} skill\u0000{count} skills": ["{count} compétence","{count} compétences"],
-    "{count} language\u0000{count} languages": ["{count} langue","{count} langues"],
-    "{names} is not a weapon the {race} may choose{choices}.\u0000{names} are not weapons the {race} may choose{choices}.": ["{names} ne fait pas partie des armes que peut choisir l’espèce {race}{choices}.","{names} ne font pas partie des armes que peut choisir l’espèce {race}{choices}."],
-    "Expertise doubles a proficiency the character has; {skills} is not among their skills.\u0000Expertise doubles a proficiency the character has; {skills} are not among their skills.": ["L’expertise double le bonus d’une maîtrise acquise ; {skills} ne fait pas partie de ses compétences.","L’expertise double le bonus d’une maîtrise acquise ; {skills} ne font pas partie de ses compétences."],
-    "A {label} knows {count} cantrip; that list has {actual}.\u0000A {label} knows {count} cantrips; that list has {actual}.": ["Un personnage {label} connaît {count} sort mineur ; la liste en contient {actual}.","Un personnage {label} connaît {count} sorts mineurs ; la liste en contient {actual}."],
-    "A {label} knows {count} cantrip; that list would have {actual}.\u0000A {label} knows {count} cantrips; that list would have {actual}.": ["Un personnage {label} connaît {count} sort mineur ; la liste en contiendrait {actual}.","Un personnage {label} connaît {count} sorts mineurs ; la liste en contiendrait {actual}."],
-    "{count} {label}\u0000{count} {label}s": ["{count} × {label}","{count} × {label}"],
+    "The dice for this hit die changed while you rolled: it is {expression} now, {count} die, and {actual} came in. No hit die was spent; roll what the sheet shows now.\u0000The dice for this hit die changed while you rolled: it is {expression} now, {count} dice, and {actual} came in. No hit die was spent; roll what the sheet shows now.": [
+      "Les dés ont changé pendant le lancer : {expression} désormais, {count} dé attendu, {actual} reçu(s). Aucun dé de vie dépensé ; lancez les dés affichés sur la fiche.",
+      "Les dés ont changé pendant le lancer : {expression} désormais, {count} dés attendus, {actual} reçu(s). Aucun dé de vie dépensé ; lancez les dés affichés sur la fiche."
+    ],
+    "The {race}'s increase of the player's choice goes to {count} different ability{choices} the race does not already raise; {ability} cannot take it.\u0000The {race}'s increase of the player's choice goes to {count} different abilities{choices} the race does not already raise; {ability} cannot take it.": [
+      "Pour {race}, l’augmentation au choix du joueur concerne {count} caractéristique distincte{choices} que la race n’augmente pas déjà ; choix impossible : {ability}.",
+      "Pour {race}, l’augmentation au choix du joueur concerne {count} caractéristiques distinctes{choices} que la race n’augmente pas déjà ; choix impossible : {ability}."
+    ],
+    "This character has earned {count} Ability Score Improvement at its level; {actual} are recorded.\u0000This character has earned {count} Ability Score Improvements at its level; {actual} are recorded.": [
+      "Ce personnage a obtenu {count} augmentation de caractéristiques à son niveau ; nombre enregistré : {actual}.",
+      "Ce personnage a obtenu {count} augmentations de caractéristiques à son niveau ; nombre enregistré : {actual}."
+    ],
+    "A {race} starts with a feat of their choice; pick one from the feat list.\u0000A {race} starts with {count} feats of their choice; pick them from the feat list.": [
+      "Un personnage de race {race} commence avec un don de son choix ; choisissez-le dans la liste des dons.",
+      "Un personnage de race {race} commence avec {count} dons de son choix ; choisissez-les dans la liste des dons."
+    ],
+    "{count} weapon\u0000{count} weapons": [
+      "{count} arme",
+      "{count} armes"
+    ],
+    "{count} skill\u0000{count} skills": [
+      "{count} compétence",
+      "{count} compétences"
+    ],
+    "{count} language\u0000{count} languages": [
+      "{count} langue",
+      "{count} langues"
+    ],
+    "{names} is not a weapon the {race} may choose{choices}.\u0000{names} are not weapons the {race} may choose{choices}.": [
+      "{names} ne fait pas partie des armes que peut choisir l’espèce {race}{choices}.",
+      "{names} ne font pas partie des armes que peut choisir l’espèce {race}{choices}."
+    ],
+    "Expertise doubles a proficiency the character has; {skills} is not among their skills.\u0000Expertise doubles a proficiency the character has; {skills} are not among their skills.": [
+      "L’expertise double le bonus d’une maîtrise acquise ; {skills} ne fait pas partie de ses compétences.",
+      "L’expertise double le bonus d’une maîtrise acquise ; {skills} ne font pas partie de ses compétences."
+    ],
+    "A {label} knows {count} cantrip; that list has {actual}.\u0000A {label} knows {count} cantrips; that list has {actual}.": [
+      "Un personnage {label} connaît {count} sort mineur ; la liste en contient {actual}.",
+      "Un personnage {label} connaît {count} sorts mineurs ; la liste en contient {actual}."
+    ],
+    "A {label} knows {count} cantrip; that list would have {actual}.\u0000A {label} knows {count} cantrips; that list would have {actual}.": [
+      "Un personnage {label} connaît {count} sort mineur ; la liste en contiendrait {actual}.",
+      "Un personnage {label} connaît {count} sorts mineurs ; la liste en contiendrait {actual}."
+    ],
+    "{count} {label}\u0000{count} {label}s": [
+      "{count} × {label}",
+      "{count} × {label}"
+    ],
     "This level gives {name} {count} Ability Score Improvement: two points, or one feat, each. The request asks for {picked}.\u0000This level gives {name} {count} Ability Score Improvements: two points, or one feat, each. The request asks for {picked}.": [
       "Ce niveau accorde à {name} {count} amélioration de caractéristiques : deux points ou un don par amélioration. Nombre de choix demandés : {picked}.",
       "Ce niveau accorde à {name} {count} améliorations de caractéristiques : deux points ou un don par amélioration. Nombre de choix demandés : {picked}."
@@ -14089,9 +14155,18 @@
       "{count} sort rituel de niveau {level}{schools}",
       "{count} sorts rituels de niveau {level}{schools}"
     ],
-    "Putting on {item} takes {count} minute.\u0000Putting on {item} takes {count} minutes.": ["Mettre {item} prend {count} minute.","Mettre {item} prend {count} minutes."],
-    "Taking off {item} takes {count} minute.\u0000Taking off {item} takes {count} minutes.": ["Retirer {item} prend {count} minute.","Retirer {item} prend {count} minutes."],
-    "Taking off {item} with help takes {count} minute.\u0000Taking off {item} with help takes {count} minutes.": ["Retirer {item} avec de l’aide prend {count} minute.","Retirer {item} avec de l’aide prend {count} minutes."],
+    "Putting on {item} takes {count} minute.\u0000Putting on {item} takes {count} minutes.": [
+      "Mettre {item} prend {count} minute.",
+      "Mettre {item} prend {count} minutes."
+    ],
+    "Taking off {item} takes {count} minute.\u0000Taking off {item} takes {count} minutes.": [
+      "Retirer {item} prend {count} minute.",
+      "Retirer {item} prend {count} minutes."
+    ],
+    "Taking off {item} with help takes {count} minute.\u0000Taking off {item} with help takes {count} minutes.": [
+      "Retirer {item} avec de l’aide prend {count} minute.",
+      "Retirer {item} avec de l’aide prend {count} minutes."
+    ],
     "{count} place\u0000{count} places": [
       "{count} lieu",
       "{count} lieux"

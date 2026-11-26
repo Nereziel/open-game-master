@@ -25,11 +25,14 @@ export type OpportunityTrigger = "leaves" | "enters" | "within" | "echo";
 // ruling 5: enemy-riders.ts): "If the mount provokes an opportunity attack
 // while you're on it, the attacker can target you or the mount" (SRD 5.1,
 // Mounted Combat), so the card offers both by name and `target` is the id of
-// the one the player chose.
+// the one the player chose. `spell` is the spell War Caster casts in the
+// swing's place (ar-wbf-feat-warcaster.ts), on a pair's card only: a spell at
+// one creature is cast with nobody asked, as the player named it beforehand.
 export type OpportunityAsk = {
   walkerId: string;
   walker: string;
   weapon: string;
+  spell?: string;
   trigger: OpportunityTrigger;
   rider?: { id: string; name: string };
   deadline?: string;
@@ -100,9 +103,12 @@ const WATCHER_MOVES: Record<OpportunityTrigger, string> = {
 // With a rider on the walker's back: "The Wolf is moving out of your reach
 // with Goblin on its back. Take your opportunity attack with your Longsword,
 // and at which of them? It uses your reaction."
-export function askLine(ask: Pick<OpportunityAsk, "walker" | "weapon" | "trigger" | "rider">, t: OpportunityT = englishT): string {
+export function askLine(ask: Pick<OpportunityAsk, "walker" | "weapon" | "trigger" | "rider" | "spell">, t: OpportunityT = englishT): string {
   // Only the UI supplies a translator; the parked roll keeps its canonical reason.
   const movement = t(PLAYER_MOVES[ask.trigger], { walker: ask.walker });
+  if (ask.rider && ask.spell) {
+    return t("{movement} with {rider} on its back. Cast {spell} as your opportunity attack (War Caster), and at which of them? It uses your reaction.", { movement, rider: ask.rider.name, spell: ask.spell });
+  }
   return ask.rider
     ? t("{movement} with {rider} on its back. Take your opportunity attack with your {weapon}, and at which of them? It uses your reaction.", { movement, rider: ask.rider.name, weapon: ask.weapon })
     : t("{movement}. Take your opportunity attack with your {weapon}? It uses your reaction.", { movement, weapon: ask.weapon });

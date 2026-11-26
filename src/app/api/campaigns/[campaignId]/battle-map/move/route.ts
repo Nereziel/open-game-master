@@ -44,7 +44,8 @@ import { afterMoveLeashes } from "@/lib/dm/condition-leash";
 import { withZoneSteps } from "@/lib/dm/zone-rules";
 import { zonesAfterMove } from "@/lib/dm/zone-triggers";
 import { standUpTiles } from "@/lib/srd/authored-effects-more";
-import { dragCostFactor, dragPlacements, grappledBy, walkCostFactor } from "@/lib/dm/drag";
+import { dragCostFactor, grappledBy, walkCostFactor } from "@/lib/dm/drag";
+import { dragLandings, setDownDragged } from "@/lib/dm/drag-move";
 import { jumpMove } from "@/lib/dm/jump-move";
 import { jumpLine } from "@/lib/srd/jump";
 import { sheetSize } from "@/lib/srd";
@@ -420,17 +421,8 @@ export async function POST(
     if (spend > budget) {
       return Response.json({ error: t("Dragging a grappled creature halves {name}'s speed: that move costs {cost} feet and {left} are left this turn.", { name: sheet.name, cost: spend * 5, left: budget * 5 }) }, { status: 400 });
     }
-    const heldIds = new Set(heldTokens.map((entry) => entry.token.id));
-    const landed = tokens.filter((entry) => !heldIds.has(entry.id)).map((entry) => (entry.id === token.id ? { ...entry, x, y } : entry));
-    const placed = dragPlacements({
-      terrain: map.terrain,
-      width: map.width,
-      height: map.height,
-      occupied: occupiedTiles(map, landed, null, footprintLookup(enemiesById)),
-      landing: { x, y },
-      walked: [from, ...(path ?? [])],
-      dragged: heldTokens.map((entry) => ({ token: entry.token, footprint: footprintLookup(enemiesById)(entry.token) })),
-    });
+    // A rider held goes alone, and its mount keeps the pair's space (drag-move.ts).
+    const placed = dragLandings({ map, tokens, mover: token, landing: { x, y }, walked: [from, ...(path ?? [])], held: heldTokens.map((entry) => entry.token), footprintOf: footprintLookup(enemiesById) });
     if (!placed) {
       return Response.json({ error: t("There is no room beside ({x},{y}) to set down the creature {name} drags. Choose another square.", { x, y, name: sheet.name }) }, { status: 400 });
     }
@@ -449,8 +441,12 @@ export async function POST(
     endShadowInvisibility(campaignId, sheet.id, "moves");
     cloakIntoLight(campaignId, sheet.id);
   }
-  for (const entry of carried) {
-    moveToken(entry.token.id, entry.at.x, entry.at.y, entry.token.movedThisRound);
+  // A rider dragged leaves the saddle, and its mount stays (drag-move.ts);
+  // that is not taken back with the walk.
+  const riders = new Set([...enemiesById.values()].filter((enemy) => enemy.ridesEnemyId).map((enemy) => enemy.id));
+  const unsaddled = carried.some((entry) => riders.has(entry.token.refId));
+  if (campaign) {
+    setDownDragged(campaign, map, carried, sheet.name);
   }
   // Walking away from a grapple ends it (src/lib/dm/grapple.ts), and away
   // from a creature the walker leashes ends the leash (condition-leash.ts).
@@ -498,7 +494,7 @@ export async function POST(
 
   // Fresh self view in the response saves the mover a follow-up fetch.
   const view = buildPlayerMapView(campaignId, user.id, { enemyNumbers: capsFor(context).enemyNumbers });
-  settle(view, opportunity.notes.length > 0 || zoneEffects.length > 0 || letGo.length > 0 || Boolean(opportunity.downedAt), {
+  settle(view, unsaddled || opportunity.notes.length > 0 || zoneEffects.length > 0 || letGo.length > 0 || Boolean(opportunity.downedAt), {
     from,
     movedBefore: token.movedThisRound,
     carried: carried.map((entry) => ({ tokenId: entry.token.id, from: { x: entry.token.x, y: entry.token.y }, movedThisRound: entry.token.movedThisRound })),

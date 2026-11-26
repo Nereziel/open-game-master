@@ -35,6 +35,7 @@ import { currentTurnId } from "@/lib/dm/job-control";
 import { tellOfRider } from "@/lib/dm/mount-moved";
 import { isProne } from "@/lib/dm/mount-thrown";
 import { tableNoteSeq } from "@/lib/dm/narration-slot";
+import { tableTranslator } from "@/lib/messages-logic";
 import { flightOf } from "@/lib/dm/token-state";
 import { handleSetCondition } from "@/lib/dm/set-condition";
 import { standBesideRider } from "@/lib/dm/summon-store";
@@ -47,7 +48,11 @@ import { standBesideRider } from "@/lib/dm/summon-store";
 // landed, or null when this character rides nothing or stands on no board.
 // What happened is told to the GM as the call finishes (mount-tools.ts
 // settleMovedRiders).
-export function pushedFromSaddle(campaign: Campaign, map: BattleMap, riderId: string, at: XY): { at: XY } | null {
+//
+// `draggedBy` is the grappler dragging them along (drag-move.ts): the same
+// way out of the saddle, but a drag knocks nobody prone, so they are set down
+// standing, still held.
+export function pushedFromSaddle(campaign: Campaign, map: BattleMap, riderId: string, at: XY, how: { draggedBy?: string } = {}): { at: XY } | null {
   const mount = getMounts(campaign.id)[riderId];
   const sheet = mount ? getSheetById(riderId) : null;
   const tokens = listTokens(map.id);
@@ -86,8 +91,9 @@ export function pushedFromSaddle(campaign: Campaign, map: BattleMap, riderId: st
       placeToken(own.id, stood.x, stood.y);
     }
   }
-  const standing = landsOnFeet(sheet, { offMount: true, feet: token.movement === "fly" ? null : 5 });
-  if (!standing && !isProne(sheet.conditions)) {
+  const dragged = how.draggedBy;
+  const standing = dragged ? null : landsOnFeet(sheet, { offMount: true, feet: token.movement === "fly" ? null : 5 });
+  if (!dragged && !standing && !isProne(sheet.conditions)) {
     const turnId = currentTurnId();
     if (turnId) {
       handleSetCondition(campaign, turnId, sheet, { condition: "prone" }, `pushed from ${mount.name}`);
@@ -104,10 +110,20 @@ export function pushedFromSaddle(campaign: Campaign, map: BattleMap, riderId: st
     seq,
     authorType: "system",
     glyph: "cue-travel",
-    content: `${sheet.name} is knocked out of the saddle${standing ? " and lands on their feet" : falls ? " and falls" : ""}; ${mount.name} stays.`,
+    content: dragged
+      ? tableTranslator(campaign.gameSettings.tableLanguage)("{by} drags {rider} out of the saddle; {mount} stays.", { by: dragged, rider: sheet.name, mount: mount.name })
+      : `${sheet.name} is knocked out of the saddle${standing ? " and lands on their feet" : falls ? " and falls" : ""}; ${mount.name} stays.`,
   });
   publishWithSeq(campaign.id, seq, "message_added", { message });
   publishPersisted(campaign.id, "mounts_updated", { mounts: getMounts(campaign.id) });
+  const left = `${mount.name} stays where the pair stood${steed ? ", riderless, on a token of its own, with a turn of its own" : ""}.${falls ? ` They came off ${mount.name} in the air: if it flew high, send apply_hazard falling with the feet for the fall's damage.` : ""}`;
+  if (dragged) {
+    tellOfRider(
+      campaign.id,
+      `${dragged} drags ${sheet.name} out of the saddle: they stand at (${landed.x},${landed.y}), still grappled, no longer mounted, with no save to stay on, as the grapple holds the rider and the mount was not moved. ${left}`,
+    );
+    return { at: landed };
+  }
   tellOfRider(
     campaign.id,
     `${sheet.name} is taken out of the saddle and lands ${standing ? `on their feet (${standing})` : "prone"} at (${landed.x},${landed.y}), no longer mounted, with no save to stay on: the effect named the rider, who already resisted it. ${mount.name} stays where the pair stood${steed ? ", riderless, on a token of its own, with a turn of its own" : ""}.${falls ? ` They fell from ${mount.name} in the air: if it flew high, send apply_hazard falling with the feet for the fall's damage.` : ""}`,

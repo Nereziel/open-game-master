@@ -5,7 +5,7 @@ import { armsWatchRow } from "@/lib/dm/after-roll-table";
 import { tokenFootprint } from "@/lib/dm/board-reach";
 import { emptyTurnLine, type EmptyTurnPlayer } from "@/lib/dm/empty-turn";
 import { noteToolCallHealth } from "@/lib/tool-call-health";
-import { foesAboutBlock } from "@/lib/dm/foe-return";
+import { foesAboutBlock, lastFightBlock } from "@/lib/dm/foe-return";
 import { legendaryLairLines } from "@/lib/dm/legendary-tools";
 import { defaultSide } from "@/lib/dm/combat-sides-logic";
 import { combatantsOf } from "@/lib/dm/combatant";
@@ -141,6 +141,7 @@ import {
   REPEAT_LOOKBACK,
   REPEATED_NARRATION_PROMPT,
   repeatsEarlierNarration,
+  withoutEarlierPassages,
   tableNarrationParts,
   withoutOrphanClosers,
 } from "@/lib/dm/narration-tidy-logic";
@@ -159,7 +160,7 @@ import { resumeBackstop } from "@/lib/dm/backstop-resume";
 import { deedRefusal } from "@/lib/dm/deed-guard";
 import { playsWhole } from "@/lib/dm/legendary-play";
 import { awayCall, gateAiCall, healListRolledByServer } from "@/lib/dm/ai-gate";
-import { characterAwaitingPlayer, characterHeld, prepareWordFor } from "@/lib/dm/player-word";
+import { awaitingPlayerState, characterHeld, prepareWordFor } from "@/lib/dm/player-word";
 import { hitIdOf, openHits } from "@/lib/dm/last-hit";
 import { aiPlaysSheet } from "@/lib/dm/companion-command";
 import { enemiesDue, enemiesOwedTurn, personRunsTable } from "@/lib/dm/enemies-due";
@@ -198,6 +199,10 @@ import { pactLinesForPrompt } from "@/lib/dm/pacts";
 import { returnDirectorNotes } from "@/lib/dm/companion-revenge";
 import { noteUnrecordedDeeds } from "@/lib/dm/deed-claims";
 import { settleStoryMoves } from "@/lib/dm/story-moves-settle";
+import { itemsReadable, openItems, readItemMoves, settleItemClaims } from "@/lib/dm/item-claims";
+import { unrecordedItemsPrompt, type EngineItemCall } from "@/lib/dm/item-claims-logic";
+import type { ItemClaim } from "@/lib/dm/item-read-logic";
+import { exchangeWords } from "@/lib/dm/story-moves";
 import {
   buildDmMessages,
   type DmGameState,
@@ -541,7 +546,7 @@ export function buildEncounterState(campaignId: string, sheets: CharacterSheet[]
     // list never reaches its traits whole.
     ...(lair.length ? { lairOptions: lair.map((line, at) => `${at + 1}. ${line}`) } : {}),
     movementLeft: encounter.orderReady ? movementLeft(campaignId, encounter, sheets) : null,
-    awaitingPlayer: characterAwaitingPlayer(campaignId)?.name ?? null,
+    ...awaitingPlayerState(campaignId),
     holding: characterHeld(campaignId)?.name ?? null,
     ...openHitsForState(campaignId, encounter, sheets),
     ...(due.length
@@ -646,6 +651,13 @@ function pairNote(enemies: EncounterEnemy[], enemy: EncounterEnemy): { pair?: st
     return {};
   }
   const mount = mountOf(enemies, enemy);
+  if (mount?.ledBy === enemy.id) {
+    return { pair: `rides ${mount.displayName} [enemyId=${mount.id}], a controlled mount: one token for the pair, moved on this turn by ${mount.displayName}'s move_token at ${mount.displayName}'s speed; attacks reach it and ${mount.displayName} each by their own enemyId` };
+  }
+  if (enemy.ledBy) {
+    const steers = enemies.find((entry) => entry.id === enemy.ledBy);
+    return { pair: `controlled mount of ${steers?.displayName ?? "its rider"} [enemyId=${enemy.ledBy}], on their token: no turn of its own and no attacks; on ${steers?.displayName ?? "its rider"}'s turn its move_token moves both and it may take_action dash, disengage or dodge` };
+  }
   if (mount) {
     return { pair: `rides ${mount.displayName} [enemyId=${mount.id}]: one token for the pair, no movement of its own (${mount.displayName}'s move_token on its turn moves both); attacks reach it and ${mount.displayName} each by their own enemyId` };
   }
@@ -1035,7 +1047,8 @@ async function openTurn(
       ),
       // Who the last fight left about, so the next fight brings them back as
       // they were rather than fresh (issue #667).
-      foesAbout: foesAboutBlock(campaign, Boolean(encounterNow)),
+      // And who fell in it, so the aftermath counts no one twice (issue #1094).
+      foesAbout: [lastFightBlock(campaign, Boolean(encounterNow)), foesAboutBlock(campaign, Boolean(encounterNow))].filter(Boolean).join("\n"),
       // A storyteller-secret roll (a pact's, issue 503) stays out of the
       // part of the prompt the lead of an AI table reads in the Context tab.
       recentRolls: listRecentRolls(campaignId, 8).filter((roll) => roll.visibility !== "secret").slice(-5),
@@ -1499,6 +1512,36 @@ export async function resumeDmTurn(campaignId: string, turnId: string) {
     const waiting = await runInTurnScope(turn.id, () => runHeldCalls(loadContext(campaign), turn, watcherId, stop));
     dropHeldCalls(pending.id);
     if (waiting) {
+      turn.status = "awaiting_rolls";
+      saveDmTurn(turn);
+      setDmStatus(campaignId, "awaiting_rolls");
+      return;
+    }
+  }
+
+  // A fight a held call opened has asked nobody for initiative. The party's
+  // ambush rolls its Stealth as the fight opens, and for a player on their
+  // own dice the call waits on that card: it returns parked, past the ask
+  // that follows a fight's opening (resolveModelCall), and the run that
+  // finishes it once the dice land is not the turn loop's (held-call.ts
+  // runHeldAgain). The fight then stood open with no initiative card, the
+  // narration went out, and the table sat on "Rolling initiative" until the
+  // next turn dealt the card (issue 1109). The seats the server does not roll
+  // for get their cards now, written into the opening's answer as a fight
+  // opened in the loop writes them, and the turn waits on them.
+  const opened = getActiveEncounter(campaignId);
+  if (opened && !opened.orderReady) {
+    const opening = pendings.find((pending) => pending.carry?.call?.name === "start_encounter")?.carry?.call?.toolCallId ?? null;
+    const ask = askForInitiative(campaign, turn, heldRollUserIds(campaign.gameSettings.dicePolicy, listMembers(campaignId)), { toolCallId: opening });
+    const answer = opening ? turn.conversation.findLast((message) => message.role === "tool" && message.tool_call_id === opening) : undefined;
+    if (ask && answer && typeof answer.content === "string") {
+      try {
+        answer.content = JSON.stringify(withInitiativeCards(JSON.parse(answer.content) as ToolResult, ask));
+      } catch {
+        // An answer that is not an object keeps its words; the cards still go out.
+      }
+    }
+    if (ask?.waiting.length) {
       turn.status = "awaiting_rolls";
       saveDmTurn(turn);
       setDmStatus(campaignId, "awaiting_rolls");
@@ -2187,6 +2230,25 @@ async function runAdvance(context: TurnContext, turn: DmTurn) {
   // The same single shot for a spell a reply cast with nothing behind it,
   // which its caster's player asked for (issue 570).
   let castNudged = false;
+  // And for a thing or money the reply moved with no tool behind it, which
+  // the engine does not settle itself (issue 1097, item-claims-logic.ts).
+  let itemNudged = false;
+  // What each passage of the turn's narration was read as moving, by its
+  // text, so the end of the turn reads only what no read covered. Read only
+  // where it can matter (item-claims.ts itemsReadable), beside what the
+  // players wrote this exchange.
+  const partItems = new Map<string, Promise<ItemClaim[]>>();
+  let saidThisTurn: ReturnType<typeof exchangeWords> | null = null;
+  const itemsIn = (text: string): Promise<ItemClaim[]> => {
+    const known = partItems.get(text);
+    if (known) {
+      return known;
+    }
+    saidThisTurn ??= exchangeWords(campaignId, sheets, turn.createdAt);
+    const read = itemsReadable(campaign, sheets, saidThisTurn) ? readItemMoves(campaign, { label: `turn ${turn.id}`, text, sheets, words: saidThisTurn }) : Promise.resolve([]);
+    partItems.set(text, read);
+    return read;
+  };
   // Every complete card from the Hand is resolved by the engine as the turn's
   // first step, with no model call to choose the tool (directCards), on a
   // turn that has run nothing yet.
@@ -2211,6 +2273,22 @@ async function runAdvance(context: TurnContext, turn: DmTurn) {
   // One shot at a reply that wrote the story arc's bookkeeping instead of
   // making the calls it stands for (arcBookkeepingPrompt, issue 941).
   let arcNudged = false;
+  // The newest narration a correction held back, with its read. The model
+  // is sent to put right what that reply told with nothing behind it, and
+  // the telling that follows takes its place. When nothing follows (the call
+  // it was sent to make is refused, the calls run out, the last reply is a
+  // note to itself), the held reply is the only story the turn was told, and
+  // it goes to the table after all: a fighter's killing blow was told, taken
+  // back for the fight the same reply announced, and the table read "the GM
+  // gave no narration" (issue 1100). What it claims is still held to the
+  // turn's results by the guard below.
+  let withheld = null as { narration: string; read: PartRead | null } | null;
+  const holdBack = () => {
+    const narration = turn.narrationParts.pop();
+    if (narration) {
+      withheld = { narration, read: partReads.get(narration) ?? null };
+    }
+  };
   // What the current call streamed to the draft, and how many narration
   // parts the turn held before it. Settled once the call's text is kept or
   // withheld for good: before the next call (a correction sends the model
@@ -2889,7 +2967,7 @@ async function runAdvance(context: TurnContext, turn: DmTurn) {
       // narrate the moment.
       if (!finalCall && !arcNudged && !toolCalls.length && narration && turn.narrationParts[turn.narrationParts.length - 1] === narration && ARC_MARKER.test(prose)) {
         arcNudged = true;
-        turn.narrationParts.pop();
+        holdBack();
         turn.conversation.push({ role: "assistant", content: visibleText || "", ...carried });
         turn.conversation.push({ role: "user", content: arcBookkeepingPrompt(prose) });
         saveDmTurn(turn);
@@ -2907,7 +2985,7 @@ async function runAdvance(context: TurnContext, turn: DmTurn) {
         fightAnnounced(claims)
       ) {
         encounterNudged = true;
-        turn.narrationParts.pop();
+        holdBack();
         turn.conversation.push({
           role: "assistant",
           ...carried,
@@ -2929,7 +3007,7 @@ async function runAdvance(context: TurnContext, turn: DmTurn) {
           : null;
       if (unrolled) {
         damageNudged = true;
-        turn.narrationParts.pop();
+        holdBack();
         turn.conversation.push({
           role: "assistant",
           ...carried,
@@ -2950,7 +3028,7 @@ async function runAdvance(context: TurnContext, turn: DmTurn) {
           : null;
       if (blow) {
         attackNudged = true;
-        turn.narrationParts.pop();
+        holdBack();
         turn.conversation.push({
           role: "assistant",
           ...carried,
@@ -2977,7 +3055,7 @@ async function runAdvance(context: TurnContext, turn: DmTurn) {
       const owed = unpaid && castDeclared(unpaid.spell, linesOf(context, turn, unpaid.casterId)) ? unpaid : null;
       if (owed) {
         castNudged = true;
-        turn.narrationParts.pop();
+        holdBack();
         turn.conversation.push({
           role: "assistant",
           ...carried,
@@ -2992,6 +3070,38 @@ async function runAdvance(context: TurnContext, turn: DmTurn) {
         saveDmTurn(turn);
         continue;
       }
+      // A thing or money the reply moved with no tool behind it has not moved
+      // either: the pack still holds the ration the story gave away, and the
+      // ledger pressed into a hero's hands is on no sheet (issue 1097). What a
+      // player's own words declared the engine carries out itself once the
+      // turn is told (settleItemClaims below), with no call spent here; for
+      // the rest the prose is held back and the model is sent once to its
+      // tools, or to say that nothing changed hands.
+      const itemsOwed =
+        !finalCall && !itemNudged && narration && turn.narrationParts[turn.narrationParts.length - 1] === narration
+          ? openItems(campaign, {
+              turn,
+              sheets,
+              claims: await itemsIn(narration),
+              pending: toolCalls.map((toolCall) => ({ name: toolCall.name, args: argsObject(toolCall.rawArguments), result: null })),
+            }).owed
+          : [];
+      if (itemsOwed.length) {
+        itemNudged = true;
+        // Held back as every correction's reply is: the model is asked to
+        // tell it again, so when nothing follows it is still the turn's story.
+        holdBack();
+        turn.conversation.push({
+          role: "assistant",
+          ...carried,
+          content: visibleText || "",
+          tool_calls: echoedToolCalls,
+        });
+        answerRanAbove(fightOwnsFloor(campaignId), false);
+        turn.conversation.push({ role: "user", content: unrecordedItemsPrompt(itemsOwed) });
+        saveDmTurn(turn);
+        continue;
+      }
       // A card played from the Hand as an attack or a cast that no tool
       // resolved has not happened, however the prose tells it. The prose is
       // held back and the model is sent once to the tool the card names;
@@ -3001,7 +3111,7 @@ async function runAdvance(context: TurnContext, turn: DmTurn) {
       if (card) {
         intentNudged = true;
         if (narration && turn.narrationParts[turn.narrationParts.length - 1] === narration) {
-          turn.narrationParts.pop();
+          holdBack();
         }
         turn.conversation.push({
           role: "assistant",
@@ -3029,7 +3139,7 @@ async function runAdvance(context: TurnContext, turn: DmTurn) {
       if (stateRead && (stateRead.clashes.length || stateRead.unrecorded.length)) {
         stateNudged = true;
         if (stateRead.clashes.length && narration && turn.narrationParts[turn.narrationParts.length - 1] === narration) {
-          turn.narrationParts.pop();
+          holdBack();
         }
         turn.conversation.push({
           role: "assistant",
@@ -3216,19 +3326,37 @@ async function runAdvance(context: TurnContext, turn: DmTurn) {
   }
   settleDraft();
 
+  // A turn that would end with nothing told is asked once more for its
+  // narration, with its tools closed. That was done only for a last call
+  // that leaked a tool call, repeated an earlier passage or came back empty;
+  // a last reply that held words and no story (a note to itself on the final
+  // call, a hand-written roll marker, a bracketed call nothing could run)
+  // ended the turn on "The GM had no answer to that", and did so after a
+  // fight had opened and its checks were rolled (issues 1105 and 1108).
   // A private exchange (whispers only) is allowed to end without narration
-  // (finalize() writes nothing to the table for it), so an empty reply there
-  // gets no call asking for some.
+  // (finalize() writes nothing to the table for it), so a reply with no
+  // story there gets no call asking for some.
   if (
     !failed &&
     !turn.narrationParts.length &&
-    (finalCallLeaked || finalRepeated || (lastReplyEmpty && !turn.playerWhisperIds.length))
+    (finalCallLeaked || finalRepeated || !turn.playerWhisperIds.length)
   ) {
+    if (!finalCallLeaked && !finalRepeated && !lastReplyEmpty) {
+      // Named in the log: turns that ran pass_time or take_rest reached the
+      // table as "The GM had no answer" with nothing to say why (fork PR 1019).
+      console.warn(`[dm-turn] turn ${turn.id}: the loop ended after ${turn.callIndex} call(s) with words and no narration; asking once more for the narration.`);
+    }
     failed = await narrateAfterToolLeak(context, turn, finalRepeated);
-  } else if (!failed && !turn.narrationParts.length && !turn.playerWhisperIds.length) {
-    // Named in the log: turns that ran pass_time or take_rest reached the
-    // table as "The GM had no answer" with nothing to say why (fork PR 1019).
-    console.warn(`[dm-turn] turn ${turn.id}: the loop ended after ${turn.callIndex} call(s) with no narration and no rescue (last reply empty: ${lastReplyEmpty}).`);
+  }
+  // Still nothing: the reply a correction held back is the turn's story.
+  const kept = withheld as { narration: string; read: PartRead | null } | null;
+  if (!failed && !turn.narrationParts.length && kept) {
+    console.warn(`[dm-turn] turn ${turn.id}: nothing was told after the correction; the narration it held back stands.`);
+    turn.narrationParts.push(kept.narration);
+    if (kept.read) {
+      partReads.set(kept.narration, kept.read);
+    }
+    saveDmTurn(turn);
   }
   // A card no call carried out, the correction included, did not happen: it
   // goes back to its player, and the guard keeps the story from telling it
@@ -3264,6 +3392,16 @@ async function runAdvance(context: TurnContext, turn: DmTurn) {
     // the engine records a declared one, or the GM reads a note next turn
     // (issue 641, src/lib/dm/story-moves-settle.ts).
     settleStoryMoves(campaign, { turn, sheets, claims: [...guarded.deeds, ...(guarded.bonds ?? [])], record: true });
+    // A thing or money the narration that stands moved and no call recorded
+    // (issue 1097, src/lib/dm/item-claims.ts): what a player's own words
+    // declared is carried out now, through the turn's own rails, and the rest
+    // is a note the GM reads next turn.
+    const unreadParts = turn.narrationParts.filter((part) => !partItems.has(part));
+    const itemClaims = [
+      ...(await Promise.all(turn.narrationParts.flatMap((part) => partItems.get(part) ?? []))).flat(),
+      ...(unreadParts.length ? await itemsIn(unreadParts.join("\n\n")) : []),
+    ];
+    await settleItemClaims(campaign, { turn, sheets, claims: itemClaims, run: (call) => runItemCall(context, turn, call) });
     // The narration told the table a player's turn is over ("It is now
     // Bram's turn") and no call ended it: it ends after the narration, as
     // the table was told, and the enemies it passes act then
@@ -3707,6 +3845,20 @@ function castSlotlessFor(context: TurnContext, turn: DmTurn): (cast: { casterId:
     }
     return { rolled: castRolled(call.name) };
   };
+}
+
+// One hand-off the engine carries out itself (issue 1097, item-claims.ts
+// settleItemClaims): through the same rails as a model's call, and beside
+// them in the turn's conversation, so a turn read again finds it recorded
+// and a turn taken back takes it back too.
+async function runItemCall(context: TurnContext, turn: DmTurn, call: EngineItemCall): Promise<Record<string, unknown>> {
+  const id = `item_${turn.conversation.length}`;
+  const rawArguments = JSON.stringify(call.args);
+  turn.conversation.push({ role: "assistant", content: "", tool_calls: [{ id, type: "function", function: { name: call.name, arguments: rawArguments } }] });
+  const outcome = await answerModelCall(context, turn, { id, name: call.name, rawArguments });
+  turn.conversation.push({ role: "tool", tool_call_id: id, content: JSON.stringify(outcome) });
+  saveDmTurn(turn);
+  return outcome as Record<string, unknown>;
 }
 
 // The cards no call carried out go back to their players: each one's line
@@ -4526,11 +4678,21 @@ function finalize(context: TurnContext, turn: DmTurn, failed: string, spoken: re
   // says each sentence once (src/lib/dm/narration-tidy-logic.ts). Any
   // marker already in a part is the model's own (the rescue's and the
   // guard's rewrite included), never one of the real ones placed below.
-  const narrationParts = tableNarrationParts(turn.narrationParts, fightNames(campaignId, turn.createdAt), campaignLanguage(campaignId));
+  // A paragraph pasted from one of the GM's newest passages is not told
+  // again (issues 1104 and 1109).
+  const narrationParts = withoutEarlierPassages(
+    tableNarrationParts(
+      turn.narrationParts,
+      fightNames(campaignId, turn.createdAt),
+      campaignLanguage(campaignId),
+      listSheets(campaignId).map((sheet) => sheet.name),
+    ),
+    recentGmNarrations(campaignId),
+  );
   let content = narrationParts.join("\n\n").trim();
   if (!content) {
     // A refused player action says why instead of the bare fallback line.
-    content = emptyTurnLine(turn.conversation, emptyTurnPlayer(context));
+    content = emptyTurnLine(turn.conversation, emptyTurnPlayer(context), tableRolls);
   }
   if (turn.rollIds.length && narrationParts.length > 1) {
     const lastPart = narrationParts[narrationParts.length - 1];
