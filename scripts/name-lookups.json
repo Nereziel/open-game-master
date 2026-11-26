@@ -8293,6 +8293,11 @@
         "key",
         3,
         "Read exact document, slug and gear dictionary fixtures."
+      ],
+      [
+        "key",
+        1,
+        "Read the reviewed authored feat translation by the exact fixture slug."
       ]
     ],
     "lib/content/entry-descriptions-cs.test.ts#number": [
@@ -8307,6 +8312,11 @@
         "parse",
         4,
         "Validate printed trait table sections and the displayed prerequisite marker."
+      ],
+      [
+        "parse",
+        1,
+        "Extract the reviewed Czech prerequisite heading from its fixture description."
       ]
     ],
     "lib/content/entry-descriptions-cs.test.ts#whole": [
@@ -8490,6 +8500,20 @@
         "key",
         2,
         "Preserve custom names and append the carried bonus only when stripped from the display label."
+      ]
+    ],
+    "lib/content/item-rarity.ts#keyed": [
+      [
+        "key",
+        2,
+        "Exact whole-label membership in the simple and reviewed compound rarity sets; selects display text only."
+      ]
+    ],
+    "lib/content/item-rarity.ts#normalizer": [
+      [
+        "key",
+        1,
+        "Normalize the printed rarity label for a display-only catalog lookup; never change the stored value."
       ]
     ],
     "lib/content/item-weights.ts#keyed": [
@@ -21304,6 +21328,11 @@
         "parse",
         2,
         "Parse printed casting times and distances for the spell card."
+      ],
+      [
+        "pattern",
+        1,
+        "Recognize an empty prerequisite sentinel (N/A, none, or dash) in a printed content description."
       ]
     ],
     "lib/help/index.ts#whole": [
@@ -21385,11 +21414,6 @@
         "identity",
         1,
         "Whole-name match for item-card results."
-      ],
-      [
-        "key",
-        1,
-        "Known canonical rarity labels select the Czech message context, not a game record."
       ],
       [
         "key",
