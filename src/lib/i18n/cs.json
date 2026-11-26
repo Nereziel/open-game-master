@@ -1,5 +1,12 @@
 {
   "messages": {
+    "step {step}, ": "krok {step}, ",
+    "A fight began before the party's coordinated plan was resolved.": "Boj začal dříve, než byl vyhodnocen společný plán družiny.",
+    "A fight began before the party's coordinated plan was resolved; none of it was carried out ({details}).": "Boj začal dříve, než byl vyhodnocen společný plán družiny. Žádná z plánovaných akcí neproběhla ({details}).",
+    "The party's coordinated plan sat untouched and lapsed.": "Společný plán družiny vypršel kvůli nečinnosti.",
+    "The party's coordinated plan sat untouched and lapsed; none of it was carried out ({details}).": "Společný plán družiny vypršel kvůli nečinnosti. Žádná z plánovaných akcí neproběhla ({details}).",
+    "The lead set the party's coordinated plan aside.": "Vůdce zrušil společný plán družiny.",
+    "The lead set the party's coordinated plan aside; none of it was carried out ({details}).": "Vůdce zrušil společný plán družiny. Žádná z plánovaných akcí neproběhla ({details}).",
     "Passed": "Vynecháno",
     "The plan did not change.": "Plán se nepodařilo změnit.",
     "AI companion · asked by {name}": "AI společník · na žádost postavy {name}",

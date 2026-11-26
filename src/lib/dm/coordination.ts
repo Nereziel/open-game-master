@@ -1,4 +1,4 @@
-import { allocateSeq, campaignSeats, combatOwnsFloor, getFloor, listMembers, type Campaign } from "@/lib/db/campaigns";
+import { allocateSeq, campaignLanguage, campaignSeats, combatOwnsFloor, getFloor, listMembers, type Campaign } from "@/lib/db/campaigns";
 import { getActiveEncounter } from "@/lib/db/encounters";
 import { insertCampaignMessage } from "@/lib/db/messages";
 import { listSheets } from "@/lib/db/sheets";
@@ -25,6 +25,7 @@ import {
   type CoordinationPhase,
 } from "@/lib/dm/coordination-logic";
 import { normalizeSequence, type PlanSequence } from "@/lib/dm/plan-order";
+import { tableTranslator } from "@/lib/messages-logic";
 
 // Coordinate actions (issue 254), the server half: opening a plan, staging,
 // resolving it into one DM turn, and setting it aside. The rules are in
@@ -45,7 +46,7 @@ function tableNote(campaignId: string, content: string) {
 
 function setAside(phase: CoordinationPhase, reason: "fight" | "lapsed" | "cancelled"): CoordinationPhase {
   const ended = saveCoordination({ ...phase, status: "cancelled", outcome: reason, updatedAt: nowIso() });
-  tableNote(phase.campaignId, setAsideNote(phase, reason));
+  tableNote(phase.campaignId, setAsideNote(phase, reason, tableTranslator(campaignLanguage(phase.campaignId))));
   publish(phase.campaignId, null);
   return ended;
 }

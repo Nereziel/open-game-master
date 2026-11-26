@@ -201,6 +201,16 @@ assert.equal(translate("cs", "Pass"), "Vynechat");
 assert.equal(translate("cs", "What does {name} do at this step?", { name: "Kara" }), "Co dělá Kara v tomto kroku?");
 assert.equal(translate("cs", "Move {name} earlier", { name: "Kara" }), "Posunout postavu Kara dříve");
 
+// Shared cancellation notes use the campaign language, with English fallback.
+const { setAsideNote } = await import("../src/lib/dm/coordination-logic.ts");
+const noPlan = { entries: [] };
+assert.equal(setAsideNote(noPlan, "cancelled", tableTranslator("czech")), "Vůdce zrušil společný plán družiny.");
+assert.equal(setAsideNote(noPlan, "fight", tableTranslator("czech")), "Boj začal dříve, než byl vyhodnocen společný plán družiny.");
+assert.equal(setAsideNote(noPlan, "lapsed", tableTranslator("czech")), "Společný plán družiny vypršel kvůli nečinnosti.");
+assert.equal(setAsideNote(noPlan, "cancelled", tableTranslator("english")), "The lead set the party's coordinated plan aside.");
+const stagedPlan = { entries: [{ name: "Kara", text: "Otevřu dveře.", state: "ready", companion: false }] };
+assert.equal(setAsideNote(stagedPlan, "cancelled", tableTranslator("czech")), "Vůdce zrušil společný plán družiny. Žádná z plánovaných akcí neproběhla (Kara: Otevřu dveře.).");
+
 // Czech authored subclass prose is an additional exact-key catalog.
 const authoredText = JSON.parse(fs.readFileSync(new URL("../src/lib/i18n/authored-subclass-text-cs.json", import.meta.url), "utf8"));
 for (const [key, value] of Object.entries(authoredText)) {
