@@ -1,9 +1,10 @@
 import assert from "node:assert/strict";
-import { dmDebug, dmDebugArcReply, dmDebugEnabled, dmDebugTrace } from "../src/lib/dm/debug.ts";
+import { dmDebug, dmDebugArcReply, dmDebugEnabled, dmDebugTrace, dmDebugModelInput, narrationContinuity } from "../src/lib/dm/debug.ts";
 
 const original = console.log;
 const previous = process.env.DM_DEBUG;
 const previousContent = process.env.DM_DEBUG_CONTENT;
+const previousPrompt = process.env.DM_DEBUG_PROMPT;
 const lines = [];
 console.log = (...args) => lines.push(args);
 try {
@@ -57,13 +58,55 @@ try {
   circular.self = circular;
   assert.doesNotThrow(() => dmDebugTrace("tool.result", {}, { circular }));
   assert.equal(lines.length, 5);
-  process.env.DM_DEBUG = "0";
-  dmDebugTrace("roll.recorded", { rollId: "roll" }, payload);
+  delete process.env.DM_DEBUG_PROMPT;
+  const input = [{ role: "system", content: "hidden rules" }, { role: "user", content: [{ type: "text", text: "Zapálím lavici" }, { type: "image_url", image_url: { url: "data:secret-image" } }] }, { role: "assistant", content: "", provider_items: ["opaque-secret"], tool_calls: [{ id: "roll" }] }, { role: "tool", content: "roll success", tool_call_id: "roll" }];
+  dmDebugModelInput({ callId: "call" }, input, [{ type: "function" }]);
   assert.equal(lines.length, 5);
+  process.env.DM_DEBUG_PROMPT = "1";
+  delete process.env.DM_DEBUG_CONTENT;
+  dmDebugModelInput({}, input, []);
+  assert.equal(lines.length, 5);
+  process.env.DM_DEBUG_CONTENT = "1";
+  dmDebugModelInput({ callId: "call" }, input, [{ type: "function" }]);
+  const logged = JSON.parse(lines[5][1]);
+  assert.equal(logged.event, "model.input");
+  assert.equal(logged.callId, "call");
+  assert.equal(logged.payload.messages[0].content, "hidden rules");
+  assert.equal(logged.payload.messages[1].content[0].text, "Zapálím lavici");
+  assert.equal(logged.payload.messages[1].content[1].omitted, true);
+  assert.equal(logged.payload.messages[3].tool_call_id, "roll");
+  assert.equal(logged.payload.tools.length, 1);
+  assert.doesNotMatch(lines[5][1], /opaque-secret|secret-image/);
+  const history = [
+    { id: "old", seq: 1, authorType: "player", content: "Prozkoumám dveře" },
+    { id: "previous", seq: 2, authorType: "dm", content: "Stará lavice" },
+    { id: "action", seq: 3, authorType: "player", content: "Zapálím lavici" },
+    { id: "system", seq: 4, authorType: "system", content: "dice" },
+    { id: "late", seq: 6, authorType: "player", content: "Otevřu dveře" },
+  ];
+  const continuity = narrationContinuity(history, 5, "Zapalim lavici [roll:uuid]");
+  assert.equal(continuity.fields.actionCount, 1);
+  assert.equal(continuity.fields.lastActionId, "action");
+  assert.equal(continuity.fields.previousNarrationId, "previous");
+  assert.equal(continuity.fields.actionWordCoveragePct, 100);
+  assert.equal(continuity.fields.finalWordCount, 2);
+  assert.equal(narrationContinuity(history, 3, "test").fields.actionWordCoveragePct, null);
+  dmDebugTrace("narration.continuity", continuity.fields, continuity.payload);
+  assert.equal(JSON.parse(lines[6][1]).payload.actions[0].id, "action");
+  delete process.env.DM_DEBUG_CONTENT;
+  dmDebugTrace("narration.continuity", continuity.fields, continuity.payload);
+  assert.equal("payload" in JSON.parse(lines[7][1]), false);
+  assert.doesNotMatch(lines[7][1], /Zapálím|Stará/);
+  process.env.DM_DEBUG = "0";
+  dmDebugModelInput({}, input, []);
+  dmDebugTrace("roll.recorded", { rollId: "roll" }, payload);
+  assert.equal(lines.length, 8);
 } finally {
   console.log = original;
   if (previous === undefined) delete process.env.DM_DEBUG;
   else process.env.DM_DEBUG = previous;
+  if (previousPrompt === undefined) delete process.env.DM_DEBUG_PROMPT;
+  else process.env.DM_DEBUG_PROMPT = previousPrompt;
   if (previousContent === undefined) delete process.env.DM_DEBUG_CONTENT;
   else process.env.DM_DEBUG_CONTENT = previousContent;
 }

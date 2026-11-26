@@ -1,4 +1,4 @@
-import { dmDebugTrace } from "@/lib/dm/debug";
+import { dmDebugEnabled, dmDebugTrace, narrationContinuity } from "@/lib/dm/debug";
 import { getClock } from "@/lib/db/clock";
 import { mountOf, riderOf } from "@/lib/dm/enemy-riders";
 import { carryDroppedItems } from "@/lib/db/dropped-items";
@@ -4755,6 +4755,16 @@ function finalize(context: TurnContext, turn: DmTurn, failed: string, spoken: re
     speech: modelTextLines(context.campaign, content, spoken),
   });
   dmDebugTrace("narration.final", { campaignId, turnId: turn.id, messageId: message.id, seq, rollCount: turn.rollIds.length, guard: turn.guard?.outcome }, { text: message.content, rollIds: turn.rollIds });
+  if (dmDebugEnabled()) {
+    try {
+      const history = listRecentMessages(campaignId, REPEAT_LOOKBACK * 4);
+      const continuity = narrationContinuity(history, seq, message.content);
+      const earlier = history.filter((entry) => entry.seq < seq && entry.authorType === "dm").slice(-REPEAT_LOOKBACK).map((entry) => entry.content);
+      dmDebugTrace("narration.continuity", { campaignId, turnId: turn.id, messageId: message.id, seq, ...continuity.fields, repeatedEarlierPassage: repeatsEarlierNarration(message.content, earlier) }, continuity.payload);
+    } catch {
+      // A diagnostic must never interrupt publishing a completed turn.
+    }
+  }
   publishWithSeq(campaignId, claimed === null ? seq : allocateSeq(campaignId), "message_added", { message });
   setDmStatus(campaignId, "idle");
   // Whoever spoke to the party in it has met them (issue 580).
