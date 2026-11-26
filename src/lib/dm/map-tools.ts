@@ -92,7 +92,7 @@ import { zonesAfterMove } from "@/lib/dm/zone-triggers";
 import { recordMovesNear } from "@/lib/dm/move-near";
 import { zoneCoverBetween } from "@/lib/dm/zone-rules";
 import { longRangeTilesOf, pastNormalRange } from "@/lib/dm/attack-rules";
-import { dragLandings, enemyDrag } from "@/lib/dm/drag-move";
+import { dragLandings, draggedWords, enemyDrag, setDownDragged } from "@/lib/dm/drag-move";
 import { walkCostFactor } from "@/lib/dm/drag";
 import { flightOf, markSqueezing } from "@/lib/dm/token-state";
 import { livePurchase } from "@/lib/dm/legendary-logic";
@@ -711,7 +711,9 @@ export function handleMoveToken(
   const ridden = resolved.enemy?.ridesEnemyId && !args.forced ? getEnemy(resolved.enemy.ridesEnemyId) : null;
   if (ridden) {
     return {
-      error: `${moverName} rides ${ridden.displayName} and has no movement of its own: the pair moves on ${ridden.displayName}'s turn, with move_token for ${ridden.displayName}. Nothing was moved.`,
+      error: ridden.ledBy === resolved.enemy?.id
+        ? `${moverName} rides ${ridden.displayName}, a controlled mount, and moves on its legs: on ${moverName}'s turn call move_token for ${ridden.displayName}, which walks the pair at ${ridden.displayName}'s speed. Nothing was moved.`
+        : `${moverName} rides ${ridden.displayName} and has no movement of its own: the pair moves on ${ridden.displayName}'s turn, with move_token for ${ridden.displayName}. Nothing was moved.`,
       refused: "rules",
     };
   }
@@ -991,16 +993,12 @@ export function handleMoveToken(
   if (allowance?.fly && resolved.token.movement !== "fly") {
     setTokenMovement(resolved.token.id, "fly");
   }
-  for (const entry of carriedNow) {
-    moveToken(entry.token.id, entry.at.x, entry.at.y, entry.token.movedThisRound);
-    // Dragged along: a rider's mount went where it did not choose to (mount-moved.ts).
-    if (entry.token.kind === "pc") {
-      mountMoved(campaign.id, entry.token.refId);
-    }
-  }
-  // A push, a drag or a carry that moved the pair's token moved the mount
-  // against its will: the rider's save to stay on is asked as this call
-  // finishes. One that named the rider was answered above, and took them alone.
+  // Dragged along: a character in the saddle leaves it, and their mount
+  // stays where the pair stood (drag-move.ts).
+  const setDown = setDownDragged(campaign, map, carriedNow, moverName);
+  // A push or a carry that moved the pair's token moved the mount against its
+  // will: the rider's save to stay on is asked as this call finishes. One
+  // that named the rider was answered above, and took them alone.
   if (args.forced && resolved.token.kind === "pc" && (landing.x !== origin.x || landing.y !== origin.y)) {
     mountMoved(campaign.id, moverId);
   }
@@ -1045,6 +1043,7 @@ export function handleMoveToken(
     ok: true,
     name: moverName,
     at: `(${landing.x},${landing.y})`,
+    ...(setDown.length ? { dragged: draggedWords(setDown) } : {}),
     ...distancesFrom(tokens, resolved.token, landing),
     ...(zoneEffects.length ? { zoneEffects } : {}),
     ...(leashesEnded.length ? { released: leashesEnded.join(" ") } : {}),

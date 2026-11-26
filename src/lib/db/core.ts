@@ -2253,6 +2253,10 @@ function ensureSchema(db: SqliteDatabase) {
     // rows, and the rider's names its mount (issue 1055,
     // src/lib/dm/enemy-riders.ts).
     ["rides_enemy_id", `TEXT NOT NULL DEFAULT ''`],
+    // On a mount's own row: the rider steering it as a controlled mount,
+    // which takes no turn of its own (issue 1055, ruling 2). '+' once that
+    // rider is off it and its place in the order is still to be made.
+    ["led_by_enemy_id", `TEXT NOT NULL DEFAULT ''`],
   ]);
   db.exec(`
     CREATE INDEX IF NOT EXISTS idx_encounter_enemies_npc ON encounter_enemies(campaign_id, npc_id);
@@ -2273,6 +2277,10 @@ function ensureSchema(db: SqliteDatabase) {
     // Who may read the roll once it lands (rolls.visibility): a person's
     // screen survives the roll being parked for real dice or a held roll.
     ["visibility", `TEXT NOT NULL DEFAULT 'public'`],
+    // What the roll this card becomes says of itself as fields (rolls.parts_json
+    // below), kept while the card waits. NULL: a card dealt before the column,
+    // whose roll is stored without parts and read by its words.
+    ["parts_json", `TEXT`],
   ]);
 
   addColumns("rolls", [
@@ -2295,6 +2303,13 @@ function ensureSchema(db: SqliteDatabase) {
     // here. NULL: a roll that is neither an attack nor damage, or one stored
     // before the column.
     ["attacker_json", `TEXT`],
+    // What a rule reads back from a roll, as fields beside its sentence
+    // (src/lib/roll-parts.ts, issue #1064): the weapon, the skill or ability,
+    // what a save was for, whether the dice were the player's own. NULL: a
+    // roll stored before the column, or landed from a card dealt before it
+    // (pending_rolls.parts_json above), read by its words. Every other roll
+    // has its parts, '{}' where it has none to name.
+    ["parts_json", `TEXT`],
   ]);
 
   addColumns("campaign_notes", [
