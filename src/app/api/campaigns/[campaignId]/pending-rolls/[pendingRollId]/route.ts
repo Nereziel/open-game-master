@@ -1,6 +1,6 @@
 import { z } from "zod";
 import { diceErrorDisplay } from "@/lib/dice/error-display";
-import { isErrorResponse, requireMember, steersStory } from "@/lib/campaign-api";
+import { forSeat, isErrorResponse, requireMember, steersStory } from "@/lib/campaign-api";
 import { refuseDuringBreak } from "@/lib/dm/table-break";
 import {
   dicePreferencesOf,
@@ -96,7 +96,7 @@ export async function POST(
   // swing the clock would take (opportunity-ask-timer.ts).
   if (pending.parkedFor === "opportunity") {
     const struck = await answerOpportunityAsk(context.campaign, pending, { strike: true });
-    return struck ? Response.json(landedBody(struck)) : Response.json({ error: t("That roll was already resolved.") }, { status: 409 });
+    return struck ? Response.json(forSeat(context, landedBody(struck))) : Response.json({ error: t("That roll was already resolved.") }, { status: 409 });
   }
 
   // The dice are already thrown and wait on the player's choice. A card from
@@ -105,7 +105,7 @@ export async function POST(
   // table is never left waiting on a button the answerer cannot see.
   if (pending.thrown) {
     const kept = landPendingRoll(context.campaign, pending, pending.thrown.outcome, pending.thrown.landing);
-    return kept ? Response.json(landedBody(kept)) : Response.json({ error: t("That roll was already resolved.") }, { status: 409 });
+    return kept ? Response.json(forSeat(context, landedBody(kept))) : Response.json({ error: t("That roll was already resolved.") }, { status: 409 });
   }
 
   // The faces the player typed or their Pixels dice reported. A "digital"
@@ -184,7 +184,7 @@ export async function POST(
     }
     armAfterRollKeep(waiting.id, waiting.thrown?.deadline);
     publishPersisted(campaignId, "roll_pending", { pendingRoll: publicPendingRoll(waiting) });
-    return Response.json({ pendingRoll: publicPendingRoll(waiting) });
+    return Response.json(forSeat(context, { pendingRoll: publicPendingRoll(waiting) }));
   }
 
   const roll = landPendingRoll(context.campaign, pending, outcome, {
@@ -195,5 +195,5 @@ export async function POST(
   if (!roll) {
     return Response.json({ error: t("That roll was already resolved.") }, { status: 409 });
   }
-  return Response.json(landedBody(roll));
+  return Response.json(forSeat(context, landedBody(roll)));
 }
