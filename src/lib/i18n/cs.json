@@ -14489,6 +14489,72 @@
     "Unlimited": "Neomezený"
   },
   "contexts": {
+    "Dexterity 13 or higher": {
+      "content.featPrerequisite": "Obratnost 13 nebo vyšší"
+    },
+    "Elf or half-elf": {
+      "content.featPrerequisite": "Elf nebo půlelf"
+    },
+    "The ability to cast at least one spell": {
+      "content.featPrerequisite": "Schopnost seslat alespoň jedno kouzlo"
+    },
+    "Proficiency with medium armor": {
+      "content.featPrerequisite": "Zdatnost se středními zbrojemi"
+    },
+    "Proficiency with heavy armor": {
+      "content.featPrerequisite": "Zdatnost s těžkými zbrojemi"
+    },
+    "Charisma 13 or higher": {
+      "content.featPrerequisite": "Charisma 13 nebo vyšší"
+    },
+    "Proficiency with light armor": {
+      "content.featPrerequisite": "Zdatnost s lehkými zbrojemi"
+    },
+    "Intelligence or Wisdom 13 or higher": {
+      "content.featPrerequisite": "Inteligence nebo Moudrost 13 či vyšší"
+    },
+    "Spellcasting or Pact Magic": {
+      "content.featPrerequisite": "Sesílání kouzel nebo Magie daná paktem"
+    },
+    "Proficiency with a martial weapon": {
+      "content.featPrerequisite": "Zdatnost s vojenskou zbraní"
+    },
+    "Half-elf, half-orc, or human": {
+      "content.featPrerequisite": "Půlelf, půlork nebo člověk"
+    },
+    "Strength 13 or higher": {
+      "content.featPrerequisite": "Síla 13 nebo vyšší"
+    },
+    "Dwarf or a Small race": {
+      "content.featPrerequisite": "Trpaslík nebo rasa velikosti Malá"
+    },
+    "Tiefling": {
+      "content.featPrerequisite": "Tiefling"
+    },
+    "High elf": {
+      "content.featPrerequisite": "Vysoký elf"
+    },
+    "Wood elf": {
+      "content.featPrerequisite": "Lesní elf"
+    },
+    "Drow": {
+      "content.featPrerequisite": "Drow"
+    },
+    "Dragonborn": {
+      "content.featPrerequisite": "Drakorozený"
+    },
+    "Dwarf": {
+      "content.featPrerequisite": "Trpaslík"
+    },
+    "Gnome": {
+      "content.featPrerequisite": "Gnóm"
+    },
+    "Halfling": {
+      "content.featPrerequisite": "Půlčík"
+    },
+    "Half-orc": {
+      "content.featPrerequisite": "Půlork"
+    },
     "{count} {label}": {"tool-choice-count":"{count} × {label}"},
     "{count} at {ordinal} level": {
       "builder.math.slots": "{count} na {ordinal} úrovni"

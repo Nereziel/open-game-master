@@ -665,9 +665,16 @@ describe("Reviewed ODM authored feat rules", () => {
     expect(rows).toHaveLength(72);
     expect(Object.keys(authoredFeatTranslations)).toHaveLength(rows.length);
     let prerequisites = 0;
+    const checkedPrerequisites = new Set<string>();
     for (const row of rows) {
       const original = packFeatText(row.data);
-      if (original.prerequisite) prerequisites++;
+      if (original.prerequisite) {
+        prerequisites++;
+        checkedPrerequisites.add(original.prerequisite);
+        const reviewed = authoredFeatTranslations[row.slug as keyof typeof authoredFeatTranslations].description.match(/^\*Předpoklad: (.*?)\.\*/)?.[1];
+        expect(reviewed, row.name).toBeTruthy();
+        expect(translate("cs", original.prerequisite, { context: "content.featPrerequisite" }), row.name).toBe(reviewed);
+      }
       const result = localizeEntry("feats", row, "cs");
       const { localized_desc, ...canonical } = result.data;
       expect(typeof localized_desc, row.name).toBe("string");
@@ -691,6 +698,7 @@ describe("Reviewed ODM authored feat rules", () => {
       }
     }
     expect(prerequisites).toBe(30);
+    expect(checkedPrerequisites.size).toBe(22);
   });
 });
 

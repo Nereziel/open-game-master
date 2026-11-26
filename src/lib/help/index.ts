@@ -31,6 +31,7 @@ import { guidanceFor } from "@/lib/srd/feature-effects";
 import { subclassFeatureDescription } from "@/lib/srd/features";
 import { findOptionByFeatureName } from "@/lib/srd/options";
 import { subclassChoicePickDescription } from "@/lib/srd/subclass-choice-picks";
+import { readsAsRules } from "@/lib/srd/feat-text";
 import { choiceDamageTypeOf } from "@/lib/srd/chosen-element";
 
 export type GlossaryTerm = {
@@ -274,19 +275,22 @@ export function describeContentEntry(data: Record<string, unknown> | undefined, 
       break;
     }
   }
+  // A prerequisite belongs to the entry even when its benefits are already
+  // in desc. The pack occasionally stores rules in that field instead.
+  const prerequisite = typeof data.prerequisite === "string" ? data.prerequisite.trim().replace(/^[*_]+|[*_]+$/g, "").trim() : "";
+  if (prerequisite && !/^(?:n\/a|none|-)$/i.test(prerequisite)) {
+    if (readsAsRules(prerequisite)) {
+      parts.unshift(prerequisite);
+    } else {
+      const label = translate(locale, prerequisite, { context: "content.featPrerequisite" });
+      parts.push(`*${translate(locale, "Requires {prereq}", { prereq: label })}*`);
+    }
+  }
   // A Level Up feat keeps its flavor line in desc and its rules in
   // effects_desc, one benefit per entry.
   const effects = textOf(data.effects_desc);
   if (effects.trim()) {
-    const prerequisite = typeof data.prerequisite === "string" && data.prerequisite.trim()
-      ? `*${translate(locale, "Requires {prereq}", { prereq: data.prerequisite.trim() })}*\n\n`
-      : "";
-    parts.push(
-      `${prerequisite}${effects
-        .split("\n\n")
-        .map((line) => `- ${line}`)
-        .join("\n")}`,
-    );
+    parts.push(effects.split("\n\n").map((line) => `- ${line}`).join("\n"));
   }
   // A background's feature is a field of its own.
   const feature = typeof data.feature === "string" ? data.feature.trim() : "";
