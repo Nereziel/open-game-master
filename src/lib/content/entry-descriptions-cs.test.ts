@@ -13,7 +13,7 @@ import { SRD_BACKGROUNDS, SRD_RACES } from "@/lib/srd";
 import { AUTHORED_SUBCLASS_ENTRIES } from "@/lib/srd/features";
 import { CUSTOM_BACKGROUNDS, describeBackgroundFeature } from "@/lib/backgrounds";
 import { translate } from "@/lib/i18n/translate";
-import { describeContentEntry } from "@/lib/help";
+import { describeContentEntry, spellRowConcentrates, spellSummary } from "@/lib/help";
 import spellFixture from "../../../scripts/fixtures/reader-golden/spell.json";
 import featFixture from "../../../scripts/fixtures/reader-golden/feat.json";
 import backgroundFixture from "../../../scripts/fixtures/reader-golden/background.json";
@@ -377,6 +377,11 @@ describe("Tome of Heroes spell metadata", () => {
       expect(data.casting_time, slug).toBeTypeOf("string");
       expect(data.range, slug).toBeTypeOf("string");
       expect(data.requires_concentration, slug).toBeTypeOf("boolean");
+      expect(spellRowConcentrates(data), slug).toBe(data.requires_concentration);
+      const equivalent = { ...data, level_int: data.spell_level, concentration: data.requires_concentration };
+      for (const locale of ["en", "fr", "cs"] as const) {
+        expect(spellSummary(data, locale), slug).toBe(spellSummary(equivalent, locale));
+      }
       const row = { slug, name: hit.englishName, documentSlug: "toh", source: "open5e", data };
       expect(localizeEntryCs("spells", row).data.localized_desc).toBe(hit.description);
       const changed = { ...row, data: { ...data, spell_level: -1 } };

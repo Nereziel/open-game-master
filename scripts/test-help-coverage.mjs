@@ -25,6 +25,7 @@ const {
   glossaryTerm,
   glossaryTerms,
   spellSummary,
+  spellRowConcentrates,
   starterSpellsFor,
 } = await import("../src/lib/help/index.ts");
 const { SRD_CLASSES } = await import("../src/lib/srd/index.ts");
@@ -276,6 +277,21 @@ test("a pack row's \"no\" is no: Light is neither concentration nor a ritual", (
 });
 
 await import("../src/lib/i18n/server-catalogs.ts");
+
+test("Open5e v1 spell metadata reads like the equivalent bundled and v2 fields", () => {
+  const legacy = { spell_level: 3, level: "3rd-level", school: "evocation", casting_time: "1 action", range: "60 feet", requires_concentration: true, can_be_cast_as_ritual: true };
+  const modern = { level: 3, school: { name: "Evocation" }, casting_time: "1 action", range: "60 feet", concentration: true, ritual: true };
+  const before = structuredClone(legacy);
+  for (const locale of ["en", "fr", "cs"]) {
+    assert.equal(spellSummary(legacy, locale), spellSummary(modern, locale));
+    assert.equal(spellSummary({ ...legacy, level_int: 2 }, locale), spellSummary({ ...modern, level: 2 }, locale));
+    assert.equal(spellSummary({ ...legacy, requires_concentration: "no", can_be_cast_as_ritual: false }, locale), spellSummary({ ...modern, concentration: false, ritual: false }, locale));
+  }
+  assert.deepEqual(legacy, before);
+  assert.equal(spellRowConcentrates(legacy), true);
+  assert.equal(spellRowConcentrates({ requires_concentration: "no", concentration: "no" }), false);
+  assert.equal(spellRowConcentrates(undefined), false);
+});
 
 test("Czech covers every genre feature description and authored option text", () => {
   const missing = [];

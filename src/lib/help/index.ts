@@ -362,7 +362,7 @@ const flagged = (value: unknown) =>
 // Whether a spell's row says it takes concentration (a pack's "yes", a
 // homebrew row's true): the spell tiles mark it (issue 252).
 export function spellRowConcentrates(data: Record<string, unknown> | undefined): boolean {
-  return Boolean(data && flagged(data.concentration));
+  return Boolean(data && (flagged(data.concentration) || flagged(data.requires_concentration)));
 }
 
 // Translate only complete recognized metadata values, never parse a
@@ -399,7 +399,9 @@ export function spellSummary(data: Record<string, unknown> | undefined, locale: 
   if (!data) {
     return "";
   }
-  const level = Number(data.level_int ?? data.level ?? 0);
+  // Open5e v1 also carries spell_level (numeric); its level can be a
+  // human-readable label. V2 and bundled rows carry numeric level.
+  const level = Number(data.level_int ?? data.spell_level ?? data.level ?? 0);
   const school = String(
     (data.school as { name?: string })?.name ?? data.school ?? "",
   ).toLowerCase();
@@ -410,8 +412,8 @@ export function spellSummary(data: Record<string, unknown> | undefined, locale: 
       : (schoolWord ? translate(locale, "level {level} {school}", { level, school: schoolWord }) : translate(locale, "level {level}", { level })),
     spellCastingTimeLabel(data.casting_time, locale),
     spellRangeLabel(data.range, locale),
-    flagged(data.concentration) ? translate(locale, "concentration") : "",
-    flagged(data.ritual) ? translate(locale, "ritual") : "",
+    spellRowConcentrates(data) ? translate(locale, "concentration") : "",
+    (flagged(data.ritual) || flagged(data.can_be_cast_as_ritual)) ? translate(locale, "ritual") : "",
   ].filter(Boolean);
   return parts.join(" · ");
 }
