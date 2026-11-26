@@ -35,6 +35,7 @@ import { currentTurnId } from "@/lib/dm/job-control";
 import { tellOfRider } from "@/lib/dm/mount-moved";
 import { isProne } from "@/lib/dm/mount-thrown";
 import { tableNoteSeq } from "@/lib/dm/narration-slot";
+import { tableTranslator } from "@/lib/messages-logic";
 import { flightOf } from "@/lib/dm/token-state";
 import { handleSetCondition } from "@/lib/dm/set-condition";
 import { standBesideRider } from "@/lib/dm/summon-store";
@@ -110,7 +111,7 @@ export function pushedFromSaddle(campaign: Campaign, map: BattleMap, riderId: st
     authorType: "system",
     glyph: "cue-travel",
     content: dragged
-      ? `${dragged} drags ${sheet.name} out of the saddle; ${mount.name} stays.`
+      ? tableTranslator(campaign.gameSettings.tableLanguage)("{by} drags {rider} out of the saddle; {mount} stays.", { by: dragged, rider: sheet.name, mount: mount.name })
       : `${sheet.name} is knocked out of the saddle${standing ? " and lands on their feet" : falls ? " and falls" : ""}; ${mount.name} stays.`,
   });
   publishWithSeq(campaign.id, seq, "message_added", { message });

@@ -39,6 +39,7 @@ const { subscribe } = await import("../src/lib/events.ts");
 const { askLine } = await import("../src/lib/dm/opportunity-ask-logic.ts");
 const { tokenFootprint } = await import("../src/lib/dm/board-reach.ts");
 const { listRecentMessages } = await import("../src/lib/db/messages.ts");
+await import("../src/lib/i18n/cs-catalog.ts");
 const said = (world) => listRecentMessages(world.campaignId, 20).map((message) => message.content).join("\n");
 
 const d20s = (world) => world.diceLog().filter((die) => die.sides === 20).length;
@@ -273,8 +274,9 @@ await test("A character on foot is dragged as before.", async () => {
   assert.equal(world.sheet(hero.id).conditions.includes("grappled"), true);
 });
 
-await test("A character who drags the enemy rider they grapple takes the rider alone: the mount stays where the pair stood on a token of its own, and the rider stands beside the character, still held.", async () => {
-  const world = await openWorld({ gameSettings: { ttsEnabled: false } });
+for (const tableLanguage of ["english", "czech"]) {
+await test(`(${tableLanguage}) A character who drags the enemy rider they grapple takes the rider alone: the mount stays where the pair stood on a token of its own, and the rider stands beside the character, still held.`, async () => {
+  const world = await openWorld({ gameSettings: { ttsEnabled: false, tableLanguage } });
   const hero = world.addHero({ ...RIDER, name: "Kara" });
   await world.beginFight([{ monster: "goblin", mount: "wolf" }], { heroFaces: { [hero.id]: 19 } });
   const rider = world.enemies().find((enemy) => enemy.ridesEnemyId);
@@ -315,7 +317,9 @@ await test("A character who drags the enemy rider they grapple takes the rider a
   assert.ok(dragged && nextTo(dragged, puller), `the rider at (${dragged?.x},${dragged?.y}) was not set down beside the character`);
   assert.equal(riderNow.conditions.some((entry) => /prone/i.test(entry)), false, "a drag knocked the rider prone");
   assert.equal(riderNow.conditions.some((entry) => /grappled/i.test(entry)), true, "the drag let the rider go");
-  assert.match(said(world), /Kara drags .* out of the saddle; .* stays\./, `the table was told nothing: ${said(world)}`);
+  const note = tableLanguage === "czech" ? `Kara strhává tvora ${rider.displayName} ze sedla; ${mount.displayName} zůstává na místě.` : `Kara drags ${rider.displayName} out of the saddle; ${mount.displayName} stays.`;
+  assert.ok(said(world).includes(note), `the table was told nothing: ${said(world)}`);
 });
+}
 
 finish();

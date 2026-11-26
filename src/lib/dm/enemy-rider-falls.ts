@@ -46,6 +46,7 @@ import { mountOf, partPair, riderOf } from "@/lib/dm/enemy-riders";
 import { rollEnemySave } from "@/lib/dm/forced-save";
 import { currentTurnId } from "@/lib/dm/job-control";
 import { tableNoteSeq } from "@/lib/dm/narration-slot";
+import { tableTranslator } from "@/lib/messages-logic";
 import { laySpellConditionsOnEnemy } from "@/lib/dm/spell-effects";
 import { isConditionNamed } from "@/lib/srd/feature-names";
 import { DISMOUNT_SAVE_DC } from "@/lib/srd/mounts";
@@ -128,12 +129,12 @@ export function shovedFromSaddle(campaign: Pick<Campaign, "id">, rider: Encounte
 // push that named it takes it, but a drag knocks nobody prone, so it stands
 // where it is set down, still held. The mount stays where the pair stood, on
 // a token of its own, and no save is asked: it was not moved.
-export function draggedFromSaddle(campaign: Pick<Campaign, "id">, rider: EncounterEnemy, at: XY, by: string): { at: XY } | null {
+export function draggedFromSaddle(campaign: Campaign, rider: EncounterEnemy, at: XY, by: string): { at: XY } | null {
   const mount = mountOf(listEnemies(rider.encounterId), rider);
   if (!mount || partPair(campaign, rider, false, at) === null) {
     return null;
   }
-  tableNote(campaign, rider, `${by} drags ${rider.displayName} out of the saddle; ${mount.displayName} stays.`);
+  tableNote(campaign, rider, tableTranslator(campaign.gameSettings.tableLanguage)("{by} drags {rider} out of the saddle; {mount} stays.", { by, rider: rider.displayName, mount: mount.displayName }));
   const map = getBattleMapForEncounter(rider.encounterId);
   const token = map ? listTokens(map.id).find((entry) => entry.refId === rider.id) : null;
   const landed = token ? { x: token.x, y: token.y } : at;

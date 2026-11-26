@@ -1,5 +1,6 @@
 {
   "messages": {
+    "{by} drags {rider} out of the saddle; {mount} stays.": "{by} strhává tvora {rider} ze sedla; {mount} zůstává na místě.",
     "{rider} mounts {mount}.": "{rider} nasedá na tvora {mount}.",
     "{rider} gets down from {mount}.": "{rider} sesedá z tvora {mount}.",
     "Take up {name}?": "Vzít do ruky {name}?",

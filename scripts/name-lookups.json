@@ -14853,6 +14853,13 @@
         "a carried line by its whole own name (two copies of one sheet's lines)"
       ]
     ],
+    "lib/dm/gear-hands.ts#first": [
+      [
+        "key",
+        1,
+        "Read the canonical source sentence of the matched storyteller/player wording tuple to preserve the remaining suffix; not a record lookup."
+      ]
+    ],
     "lib/dm/gear-hands.ts#partial": [
       [
         "parse",
