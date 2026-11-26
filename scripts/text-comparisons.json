@@ -1,5 +1,5 @@
 {
-  "note": "Every site in src/ where text could be compared, cased, ordered or cut into words by something other than Unicode: toLowerCase/toUpperCase/toLocale*Case, localeCompare, Intl.Collator, normalize, SQL COLLATE NOCASE, LOWER(, UPPER(, GLOB (any case) and LIKE (capitals), and in regular expressions \\b, \\B, \\w, \\W, ASCII letter classes and the i flag on a RegExp built from data. And every English word the code matches text against: a regex holding a word (re-word) or a letter beside an anchor (re-affix), a word compared (str-eq, str-case), searched or cut on (str-includes, str-startsWith, str-split and the like), listed (str-list, str-alt, str-split-list) or used as a key read by a computed key (str-key); a site the type checker types as a string-literal union is a fixed choice and needs no entry. scripts/test-text-comparisons.mjs holds each file's sites, per pattern, to these counts. What a thing is (an item's kind, a check's circumstance, a save's cause) comes from a field, never from English words in text written in the table's language; the table-language entries are the readers that still do, listed to be replaced, and the english-extra entries the English words kept beside a reading that serves every language, each with why a miss costs nothing more. Text a person writes (story, player, author, homebrew and workshop text, and searches) goes through the helpers in src/lib/language/text-logic.ts (textKey, words, containsPhrase, namesPattern, findNamed, compareNames, slugOf, asciiSlugOf), and stemmerWords in ./language.ts; a site classed human may stand only in the files under \"humanTextIn\". A new site is either one of those helpers or classified here with the reason it stays.",
+  "note": "Every site in src/ where text could be compared, cased, ordered or cut into words by something other than Unicode: toLowerCase/toUpperCase/toLocale*Case, localeCompare, Intl.Collator, normalize, SQL COLLATE NOCASE, LOWER(, UPPER(, GLOB (any case) and LIKE (capitals), and in regular expressions \\b, \\B, \\w, \\W, ASCII letter classes and the i flag on a RegExp built from data. And every English word the code matches text against: a regex holding a word (re-word) or a letter beside an anchor (re-affix), a word compared (str-eq, str-case), searched or cut on (str-includes, str-startsWith, str-split and the like), listed (str-list, str-alt, str-split-list) or used as a key read by a computed key (str-key); a site the type checker types as a string-literal union is a fixed choice and needs no entry. scripts/test-text-comparisons.mjs holds each file's sites, per pattern, to these counts. What a thing is (an item's kind, a check's circumstance, a save's cause) comes from a field, never from English words in text written in the table's language; the table-language entries are the readers that still do, listed to be replaced, and the english-extra entries the English words kept beside a reading that serves every language, each with why a miss costs nothing more. Text a person writes (story, player, author, homebrew and workshop text, and searches) goes through the helpers in src/lib/language/text-logic.ts (textKey, words, containsPhrase, namesPattern, findNamed, compareNames, slugOf, asciiSlugOf), and stemmerWords in ./language.ts; a site classed human may stand only in the files under \"humanTextIn\". A new site is either one of those helpers or classified here with the reason it stays. A stored roll's sentence (its detail) is read by src/lib/roll-parts.ts alone, for a roll stored before its parts: \"rollSentences\" lists every file that reads one, with how many reads and what it does with the words (stores, shows, quotes), so a new read is classified before it ships.",
   "classes": {
     "human": "text a person writes, compared only where \"humanTextIn\" allows",
     "key": "ids, fixed choices, codes, paths, headers, protocol tokens and the engine's own vocabulary",
@@ -9176,20 +9176,6 @@
         "condition label (engine vocabulary)"
       ]
     ],
-    "lib/dm/ai-gate.ts#\\b": [
-      [
-        "english-source",
-        4,
-        "the roll detail line the engine writes"
-      ]
-    ],
-    "lib/dm/ai-gate.ts#re-word": [
-      [
-        "english-source",
-        2,
-        "the roll detail line the engine writes"
-      ]
-    ],
     "lib/dm/ai-gate.ts#str-case": [
       [
         "key",
@@ -9435,32 +9421,11 @@
         "ability abbreviations shown"
       ]
     ],
-    "lib/dm/ar-ws-deflection.ts#\\b": [
-      [
-        "key",
-        2,
-        "the engine's own roll detail string"
-      ]
-    ],
-    "lib/dm/ar-ws-deflection.ts#re-word": [
-      [
-        "english-source",
-        2,
-        "the roll detail line the engine writes"
-      ]
-    ],
     "lib/dm/ar-ws-deflection.ts#str-eq": [
       [
         "key",
         1,
         "the call's variant word and the engine's statuses and kinds (engine vocabulary)"
-      ]
-    ],
-    "lib/dm/ar-ws-deflection.ts#toLowerCase": [
-      [
-        "key",
-        1,
-        "ability abbreviation read back from the engine's own roll detail"
       ]
     ],
     "lib/dm/ar-ws-deflection.ts#toUpperCase": [
@@ -10142,27 +10107,6 @@
         "ability abbreviation shown in a roll note"
       ]
     ],
-    "lib/dm/authored-spend-more.ts#\\b": [
-      [
-        "key",
-        3,
-        "the engine's own roll detail string"
-      ]
-    ],
-    "lib/dm/authored-spend-more.ts#re-affix": [
-      [
-        "english-source",
-        1,
-        "the roll detail line the engine writes"
-      ]
-    ],
-    "lib/dm/authored-spend-more.ts#re-word": [
-      [
-        "english-source",
-        1,
-        "the roll detail line the engine writes"
-      ]
-    ],
     "lib/dm/authored-spend-more.ts#str-eq": [
       [
         "key",
@@ -10173,8 +10117,8 @@
     "lib/dm/authored-spend-more.ts#toLowerCase": [
       [
         "key",
-        2,
-        "condition label (engine vocabulary); ability abbreviation read back from the engine's own roll detail"
+        1,
+        "condition label (engine vocabulary)"
       ]
     ],
     "lib/dm/authored-spend-more.ts#toUpperCase": [
@@ -10936,6 +10880,13 @@
         "tool schema enums and field names, statuses, condition labels and ids (engine vocabulary)"
       ]
     ],
+    "lib/dm/claims-logic.ts#RegExp i": [
+      [
+        "english-extra",
+        1,
+        "the English words that tell the acting character the turn is theirs (englishOwnTurn, OWN_TURN_ENDS: \"It is your turn.\", \"Jason, you're up.\"), read only at an English table (narration-guard.ts readNarration): a reader's turn_over claim on them hands nothing on (issues 1099 and 1101); words in any other language stay the reader's, and a fight's own opening is held by claims.ts turnOverFor at every table"
+      ]
+    ],
     "lib/dm/claims-logic.ts#\\b": [
       [
         "english-extra",
@@ -10956,6 +10907,18 @@
         "english-source",
         1,
         "the action-line and table-note formats ODM itself writes (\"[Name | attempt]\", \"[Table note]\") echoed back"
+      ],
+      [
+        "english-extra",
+        8,
+        "the English words that tell the acting character the turn is theirs (englishOwnTurn, OWN_TURN_ENDS: \"It is your turn.\", \"Jason, you're up.\"), read only at an English table (narration-guard.ts readNarration): a reader's turn_over claim on them hands nothing on (issues 1099 and 1101); words in any other language stay the reader's, and a fight's own opening is held by claims.ts turnOverFor at every table"
+      ]
+    ],
+    "lib/dm/claims-logic.ts#\\w": [
+      [
+        "english-extra",
+        1,
+        "the English words that tell the acting character the turn is theirs (englishOwnTurn, OWN_TURN_ENDS: \"It is your turn.\", \"Jason, you're up.\"), read only at an English table (narration-guard.ts readNarration): a reader's turn_over claim on them hands nothing on (issues 1099 and 1101); words in any other language stay the reader's, and a fight's own opening is held by claims.ts turnOverFor at every table"
       ]
     ],
     "lib/dm/claims-logic.ts#re-word": [
@@ -10978,6 +10941,11 @@
         "english-source",
         1,
         "the action-line and table-note formats ODM itself writes (\"[Name | attempt]\", \"[Table note]\") echoed back"
+      ],
+      [
+        "english-extra",
+        2,
+        "the English words that tell the acting character the turn is theirs (englishOwnTurn, OWN_TURN_ENDS: \"It is your turn.\", \"Jason, you're up.\"), read only at an English table (narration-guard.ts readNarration): a reader's turn_over claim on them hands nothing on (issues 1099 and 1101); words in any other language stay the reader's, and a fight's own opening is held by claims.ts turnOverFor at every table"
       ]
     ],
     "lib/dm/claims-logic.ts#str-eq": [
@@ -11664,6 +11632,13 @@
         "tool schema enums and field names, statuses, condition labels and ids (engine vocabulary)"
       ]
     ],
+    "lib/dm/encounter-spawn.ts#str-eq": [
+      [
+        "key",
+        1,
+        "a tool argument's yes sent as the string \"true\" by a weak caller (an entry's controlled, issue 1055): a JSON value, no player text"
+      ]
+    ],
     "lib/dm/encounter-summary.ts#str-eq": [
       [
         "key",
@@ -11702,6 +11677,11 @@
         "key",
         1,
         "the console fight line's own keyword for a mount (goblin riding wolf, issue 1055): ODM's syntax, read beside cr and as"
+      ],
+      [
+        "key",
+        1,
+        "the console fight line's own keyword for a mount its rider steers (knight riding warhorse controlled, issue 1055): ODM's syntax, read beside riding"
       ]
     ],
     "lib/dm/encounter-tool-defs.ts#str-list": [
@@ -11758,6 +11738,13 @@
         "display",
         2,
         "ability abbreviation shown"
+      ]
+    ],
+    "lib/dm/enemy-actions.ts#str-list": [
+      [
+        "key",
+        1,
+        "take_action's own action ids: the three a controlled mount may take (issue 1055)"
       ]
     ],
     "lib/dm/enemy-actions.ts#toLowerCase": [
@@ -11992,6 +11979,13 @@
         "key",
         1,
         "condition label (engine vocabulary)"
+      ]
+    ],
+    "lib/dm/enemy-mounting.ts#str-eq": [
+      [
+        "key",
+        1,
+        "tool schema enums and field names, statuses, condition labels and ids (engine vocabulary)"
       ]
     ],
     "lib/dm/enemy-polymorph-logic.ts#\\b": [
@@ -12360,25 +12354,11 @@
         "tool-argument variant; condition labels (engine vocabulary)"
       ]
     ],
-    "lib/dm/feature-spends.ts#\\b": [
-      [
-        "key",
-        5,
-        "the engine's own roll detail string"
-      ]
-    ],
-    "lib/dm/feature-spends.ts#re-affix": [
-      [
-        "english-source",
-        1,
-        "reference: SRD feature and option names the model writes in use_resource (the directive pins them), and the detail line the engine writes"
-      ]
-    ],
     "lib/dm/feature-spends.ts#re-word": [
       [
         "english-source",
-        7,
-        "reference: SRD feature and option names the model writes in use_resource (the directive pins them), the detail line the engine writes, and a stat block's creature types"
+        5,
+        "reference: SRD feature and option names the model writes in use_resource (the directive pins them), and a stat block's creature types"
       ]
     ],
     "lib/dm/feature-spends.ts#str-eq": [
@@ -12398,8 +12378,8 @@
     "lib/dm/feature-spends.ts#toLowerCase": [
       [
         "key",
-        3,
-        "condition labels (engine vocabulary); the engine's own roll detail string"
+        1,
+        "condition labels (engine vocabulary)"
       ]
     ],
     "lib/dm/feature-spends.ts#toUpperCase": [
@@ -12447,8 +12427,8 @@
     "lib/dm/foe-carry-logic.ts#str-eq": [
       [
         "key",
-        5,
-        "enemy statuses and fight outcomes (engine vocabulary), issue #667"
+        6,
+        "enemy statuses and fight outcomes (engine vocabulary), issues #667 and #1094"
       ]
     ],
     "lib/dm/foe-carry-logic.ts#str-list": [
@@ -12591,20 +12571,6 @@
         "the once-a-turn claim key of a feature rider, as pc-attack-damage.ts claimOncePerTurnRiders writes it (engine vocabulary)"
       ]
     ],
-    "lib/dm/genre-a-cyberpunk-spends.ts#\\b": [
-      [
-        "english-source",
-        4,
-        "the skill or ability on a check card the engine wrote (engine vocabulary)"
-      ]
-    ],
-    "lib/dm/genre-a-cyberpunk-spends.ts#re-word": [
-      [
-        "english-source",
-        2,
-        "the skill or ability on a check card the engine wrote (engine vocabulary)"
-      ]
-    ],
     "lib/dm/genre-a-cyberpunk-spends.ts#str-eq": [
       [
         "key",
@@ -12617,6 +12583,13 @@
         "key",
         1,
         "an SRD weapon property (engine vocabulary)"
+      ]
+    ],
+    "lib/dm/genre-a-cyberpunk-spends.ts#str-list": [
+      [
+        "key",
+        1,
+        "the Charisma skills, by their ids"
       ]
     ],
     "lib/dm/genre-a-dark-fantasy-hits.ts#str-list": [
@@ -12855,39 +12828,11 @@
         "a location's ambience bed id (\"ruins\")"
       ]
     ],
-    "lib/dm/genre-gh-horror-plays.ts#\\b": [
-      [
-        "english-source",
-        3,
-        "ODM's own roll records (\"DEX save vs. frightened\") read for their ability and what the save was against"
-      ]
-    ],
-    "lib/dm/genre-gh-horror-plays.ts#re-affix": [
-      [
-        "english-source",
-        1,
-        "ODM's own roll records (\"DEX save vs. frightened\") read for their ability and what the save was against"
-      ]
-    ],
-    "lib/dm/genre-gh-horror-plays.ts#re-word": [
-      [
-        "english-source",
-        1,
-        "ODM's own roll records (\"DEX save vs. frightened\") read for their ability and what the save was against"
-      ]
-    ],
     "lib/dm/genre-gh-horror-plays.ts#str-list": [
       [
         "key",
         1,
         "ability ids"
-      ]
-    ],
-    "lib/dm/genre-gh-horror-plays.ts#toLowerCase": [
-      [
-        "english-source",
-        3,
-        "ODM's own roll records (\"DEX save vs. frightened\") read for their ability and what the save was against"
       ]
     ],
     "lib/dm/genre-gh-horror-plays.ts#toUpperCase": [
@@ -13210,6 +13155,34 @@
         "tool schema enums and field names, statuses, condition labels and ids (engine vocabulary)"
       ]
     ],
+    "lib/dm/item-claims-logic.ts#str-case": [
+      [
+        "key",
+        1,
+        "tool schema enums and field names, statuses, condition labels and ids (engine vocabulary)"
+      ]
+    ],
+    "lib/dm/item-claims-logic.ts#str-eq": [
+      [
+        "key",
+        3,
+        "tool schema enums and field names, statuses, condition labels and ids (engine vocabulary)"
+      ]
+    ],
+    "lib/dm/item-claims-logic.ts#str-list": [
+      [
+        "key",
+        1,
+        "tool schema enums and field names, statuses, condition labels and ids (engine vocabulary)"
+      ]
+    ],
+    "lib/dm/item-read-logic.ts#str-list": [
+      [
+        "key",
+        1,
+        "tool schema enums and field names, statuses, condition labels and ids (engine vocabulary)"
+      ]
+    ],
     "lib/dm/item-summary.ts#str-eq": [
       [
         "key",
@@ -13342,13 +13315,6 @@
         "key",
         1,
         "a reaction's cut kinds (half, half_up)"
-      ]
-    ],
-    "lib/dm/last-hit.ts#str-startsWith": [
-      [
-        "english-source",
-        1,
-        "the roll detail line the engine writes"
       ]
     ],
     "lib/dm/last-hit.ts#toLowerCase": [
@@ -15301,6 +15267,11 @@
         "english-extra",
         3,
         "the plain English ways a player holds still, names a fight action or only turns one down (englishHold, englishActs, englishDeclines, HOLD_*, ACTS, DECLINED, STANCE, CLAUSE_BREAK), read only at an English table (player-word.ts playerWord); player-word-read.ts reads the same in every other language with the utility model, and a miss only means the AI waits for the player to say it again"
+      ],
+      [
+        "english-extra",
+        1,
+        "the English words around a spoken line that only say who speaks it (SPEECH_TAG) and spoken words that name the speaker's own action (SPOKEN_ACT), read only at an English table (onlySpeaks, issue 1108); a line wholly between quotation marks (QUOTED_SPAN) is speech in every language, and a miss only means the line declares an action as it did before"
       ]
     ],
     "lib/dm/player-word-logic.ts#\\b": [
@@ -15318,6 +15289,11 @@
         "english-extra",
         7,
         "the English words that say who asks a quoted question, or ask it indirectly (ASK_TAG, ASK_INDIRECT in onlyAsks), read only at an English table; at any other table only the question mark is read"
+      ],
+      [
+        "english-extra",
+        2,
+        "the English words around a spoken line that only say who speaks it (SPEECH_TAG) and spoken words that name the speaker's own action (SPOKEN_ACT), read only at an English table (onlySpeaks, issue 1108); a line wholly between quotation marks (QUOTED_SPAN) is speech in every language, and a miss only means the line declares an action as it did before"
       ]
     ],
     "lib/dm/player-word-logic.ts#\\w": [
@@ -15342,6 +15318,11 @@
         "english-extra",
         2,
         "the English words that say who asks a quoted question, or ask it indirectly (ASK_TAG, ASK_INDIRECT in onlyAsks), read only at an English table; at any other table only the question mark is read"
+      ],
+      [
+        "english-extra",
+        2,
+        "the English words around a spoken line that only say who speaks it (SPEECH_TAG) and spoken words that name the speaker's own action (SPOKEN_ACT), read only at an English table (onlySpeaks, issue 1108); a line wholly between quotation marks (QUOTED_SPAN) is speech in every language, and a miss only means the line declares an action as it did before"
       ]
     ],
     "lib/dm/player-word-logic.ts#str-list": [
@@ -16551,6 +16532,11 @@
         "english-extra",
         3,
         "English pronouns followed back to a speaker, read only at an English table (ENGLISH_PRONOUN and ENGLISH_OWN, gated by speech-lines.ts englishPronouns); every language is attributed by names and quote structure, and languages that drop the subject pronoun or have no gendered one give a pronoun reading nothing to hold on to"
+      ],
+      [
+        "english-extra",
+        1,
+        "an English sentence that says what a thing is like (\"It's charred\", \"It is cold\", \"It was sealed\": ENGLISH_THING_IS), read past when a line's speaker is followed back, only at an English table (subjectOf, gated by englishPronouns, issue 1095); every other table reads the sentence as before"
       ]
     ],
     "lib/dm/speech.ts#str-eq": [
@@ -17156,6 +17142,11 @@
         "key",
         1,
         "a schema's argument names against the fixed list a compact call to a table with no pet leaves off (COMPACT_PET_FIELDS)"
+      ],
+      [
+        "key",
+        1,
+        "a schema's argument names in the fixed list the compact set leaves off a tool (COMPACT_OMITS: where an enemy steps down, issue 1091)"
       ]
     ],
     "lib/dm/tool-profiles.ts#str-list": [
@@ -17211,6 +17202,11 @@
         "key",
         5,
         "the story arc's markers the prompt itself writes ([NOW], [ahead], a waypoint checklist and its step numbers), ODM's own markup a model copies back into the story, the same at every table (issue 941)"
+      ],
+      [
+        "key",
+        1,
+        "the story arc's own word for a beat's end, noted in the story in place of the complete_beat call (ARC_MARKER, issue 1095): the plan is the server's, in the server's words, at every table"
       ]
     ],
     "lib/dm/tool-text.ts#\\w": [
@@ -18291,6 +18287,13 @@
         "key",
         1,
         "a hidden creature's own names in the table's prose"
+      ]
+    ],
+    "lib/hidden-names-logic.ts#str-eq": [
+      [
+        "key",
+        3,
+        "the field that lists whom a roll is against and a target's kind (src/lib/roll-parts.ts RollTarget), the engine's own vocabulary: an object's name is a person's words and keeps its place, a creature kept from the table is replaced whole"
       ]
     ],
     "lib/hidden-names-logic.ts#toLowerCase": [
@@ -20582,6 +20585,55 @@
         "key",
         1,
         "roll kind ids"
+      ]
+    ],
+    "lib/roll-parts.ts#RegExp i": [
+      [
+        "english-source",
+        1,
+        "the sentence the engine wrote for a roll stored before its parts (issue #1064), read for those rolls alone: a roll that has parts is read by its fields"
+      ]
+    ],
+    "lib/roll-parts.ts#\\b": [
+      [
+        "english-source",
+        3,
+        "the sentence the engine wrote for a roll stored before its parts (issue #1064), read for those rolls alone: a roll that has parts is read by its fields"
+      ]
+    ],
+    "lib/roll-parts.ts#re-affix": [
+      [
+        "english-source",
+        1,
+        "the sentence the engine wrote for a roll stored before its parts (issue #1064), read for those rolls alone: a roll that has parts is read by its fields"
+      ]
+    ],
+    "lib/roll-parts.ts#toLowerCase": [
+      [
+        "english-source",
+        2,
+        "the sentence the engine wrote for a roll stored before its parts (issue #1064), read for those rolls alone: a roll that has parts is read by its fields"
+      ]
+    ],
+    "lib/roll-words.ts#str-eq": [
+      [
+        "key",
+        3,
+        "a roll's kind, among the kinds a waiting card's line has a sentence for: the engine's own ids, never words a person wrote"
+      ]
+    ],
+    "lib/roll-words.ts#str-key": [
+      [
+        "key",
+        2,
+        "the engine's own roll notes and dice steps by their ids, a card line's sentence by the roll's kind, and the names tables by the kind of thing a roll used: a roll's parts store the id and the kind, never the words"
+      ]
+    ],
+    "lib/roll-words.ts#str-list": [
+      [
+        "key",
+        1,
+        "the names of the fields a roll's words are made from (src/lib/roll-parts.ts RollParts), which a waiting card is sent and no others"
       ]
     ],
     "lib/rulebook/catalog-rows.ts#RegExp i": [
@@ -26268,6 +26320,44 @@
         1,
         "HTTP method"
       ]
+    ]
+  },
+  "rollSentences": {
+    "lib/db/rolls.ts": [
+      1,
+      "stored: the sentence is read back from its column; the one written there is the site's own or the one built from the roll's parts (src/lib/roll-words.ts rollSentence), and a roll with neither is refused"
+    ],
+    "lib/dm/ask.ts": [
+      1,
+      "quoted: a roll among the evidence Ask hands the model"
+    ],
+    "lib/dm/beats.ts": [
+      1,
+      "quoted: the line a roll leaves among the story's beats"
+    ],
+    "lib/dm/genre-gh-horror-plays.ts": [
+      2,
+      "quoted: The Final Chapter names the check it rolls again, in the reroll's own words and in its answer"
+    ],
+    "lib/dm/mt-srd-rogue.ts": [
+      2,
+      "quoted: Stroke of Luck's answer names the check it turns"
+    ],
+    "lib/dm/persons-record.ts": [
+      1,
+      "copied: onto the line a person's turn posts for its rolls"
+    ],
+    "lib/dm/prompt.ts": [
+      2,
+      "quoted: the recent rolls in GAME STATE"
+    ],
+    "lib/roll-labels.ts": [
+      1,
+      "shown: the sentence of a roll whose site still writes it, or stored before its parts, put into the reader's language for the roll card's label, the toast and the chronicle's line; a roll whose parts make its words is shown by them alone"
+    ],
+    "lib/roll-parts.ts": [
+      7,
+      "the one reader: a roll that has no parts is read by the sentence the engine wrote for it"
     ]
   }
 }
