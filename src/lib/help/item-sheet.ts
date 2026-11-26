@@ -1,5 +1,6 @@
 import { contentInfoAllowsNameFallback, contentInfoDirectMatches, describeContentEntry, type ContentInfoIdentity } from "@/lib/help";
 import { textKey } from "@/lib/language/text-logic";
+import { readWeightLb } from "@/lib/content/weight";
 import { DAMAGE_TYPE_BLURBS, WEAPON_PROPERTY_BLURBS } from "@/lib/help/terms";
 import { translate, type Locale } from "@/lib/messages-logic";
 import { armorNamed, type SrdArmor } from "@/lib/srd/armor";
@@ -72,25 +73,20 @@ function asType(category: string): string {
 }
 
 function formatPounds(pounds: number, t: T): string {
-  return t("{n} lb.", { n: Number(pounds.toFixed(2)) });
+  return t("{n} lb.", { n: Number(pounds.toFixed(4)) });
 }
 
 // v1 rows say "3 lb." (armour rows say nothing), v2 rows "5.000" plus a unit,
 // homebrew a bare number. A zero means "not recorded", never "weightless".
 function weightOf(row: Row, t: T): string | null {
-  const value = row.weight;
-  if (typeof value === "number") {
-    return value > 0 ? formatPounds(value, t) : null;
-  }
-  const text = str(row, "weight");
-  if (!text) {
-    return null;
-  }
-  const pounds = num(text);
-  if (pounds === null) {
-    return /^0+(\.0+)?\s*lb/i.test(text) ? null : text.replace(/lb\.$/i, t("lb."));
-  }
-  return pounds > 0 ? formatPounds(pounds, t) : null;
+  const { pounds, problem } = readWeightLb(row.weight, row.weight_unit);
+  if (pounds !== null) return pounds > 0 ? formatPounds(pounds, t) : null;
+  // Preserve an unrecognized source value without labeling it as pounds.
+  // Blank and dash values are absent, not a recorded weight.
+  if (!problem) return null;
+  const text = typeof row.weight === "number" ? String(row.weight) : str(row, "weight");
+  const unit = str(row, "weight_unit");
+  return [text, unit].filter(Boolean).join(" ") || null;
 }
 
 // v1 rows say "15 gp", v2 rows a bare gold figure ("0.01"), homebrew

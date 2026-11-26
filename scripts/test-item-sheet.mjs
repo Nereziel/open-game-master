@@ -195,6 +195,25 @@ test("item cards localize presentation without modifying source rows or numeric 
   assert.equal(row.desc, "Original item prose.");
 });
 
+test("item cards use the shared weight reader across source formats and locales", () => {
+  const { weight: _unused, ...base } = longsword;
+  const weight = (fields, locale) => buildItemSheet("Example gear", [{ ...base, ...fields }], { locale, allowBundledFallback: false }).weight;
+  for (const locale of ["en", "fr", "cs"]) {
+    assert.equal(weight({ weight: "1/4 lb." }, locale), weight({ weight: 0.25 }, locale));
+    assert.equal(weight({ weight: "0.075 lb." }, locale), weight({ weight: "0.075", weight_unit: "lb" }, locale));
+    assert.equal(weight({ weight: "2", weight_unit: "kg" }, locale), weight({ weight: 4.4092 }, locale));
+    assert.equal(weight({ weight: "4 oz" }, locale), weight({ weight: 0.25 }, locale));
+    assert.equal(weight({ weight: "0 lb." }, locale), null);
+    assert.equal(weight({ weight: "—" }, locale), null);
+    assert.equal(weight({ weight: "2", weight_unit: "stones" }, locale), "2 stones");
+  }
+  assert.equal(weight({ weight: "0.075 lb." }, "en"), "0.075 lb.");
+  assert.equal(weight({ weight: "2", weight_unit: "kg" }, "en"), "4.4092 lb.");
+  const row = { weight: "1/4", weight_unit: "lb" };
+  weight(row, "cs");
+  assert.deepEqual(row, { weight: "1/4", weight_unit: "lb" });
+});
+
 test("Czech weapon properties use the weapon glossary context", () => {
   const row = { category: "Simple Ranged Weapons", damage_dice: "1d8", damage_type: "piercing", properties: ["light", "loading", "heavy", "ammunition (range 20/60)", "custom property"] };
   const original = structuredClone(row);
