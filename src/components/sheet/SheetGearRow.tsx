@@ -13,6 +13,7 @@ import { itemDisplayName } from "@/lib/content/item-display";
 import { isTack } from "@/lib/srd/tack";
 import { useLocale } from "@/lib/locale";
 import type { CharacterSheet, EquipmentItem } from "@/lib/schemas/sheet";
+import type { HandsFull } from "@/lib/dm/gear-hands";
 import { ITEM_CATEGORY_LABEL, itemCategory, itemToneStyle } from "@/lib/srd/item-category-logic";
 import { inventoryItemIcon } from "@/lib/inventory-art-logic";
 
@@ -22,6 +23,8 @@ import { inventoryItemIcon } from "@/lib/inventory-art-logic";
 // CharacterSheetDialog.tsx, which posts the change. Putting it on where its
 // kind is already worn (a second cloak) asks first, with the swap and, for
 // the DM and the party lead, the SRD's exception of wearing both (issue 412).
+// Taking up a weapon with both hands full asks which one goes back in the
+// pack, where the route can make the change for nothing (issue 1105).
 export function SheetGearRow({
   sheet,
   item,
@@ -36,6 +39,8 @@ export function SheetGearRow({
   canLayer = false,
   onSwap,
   onLayer,
+  hands = null,
+  onHands,
   onDismiss,
 }: {
   sheet: CharacterSheet;
@@ -54,6 +59,10 @@ export function SheetGearRow({
   canLayer?: boolean;
   onSwap?: () => void;
   onLayer?: () => void;
+  // The route's question for full hands, while it is open on this row, and
+  // the answer: the weapons to put away as this one is taken up.
+  hands?: HandsFull | null;
+  onHands?: (putAway: string[]) => void;
   onDismiss?: () => void;
 }) {
   // Magic gear works only while worn, so every row here can
@@ -106,9 +115,13 @@ export function SheetGearRow({
   // open place that row can be the last thing on a phone's screen, which
   // left the question, and its answer buttons, below the fold.
   const question = useRef<HTMLDivElement>(null);
-  const asking = conflict?.item ?? null;
-  const offNames = conflict?.wearing.map((name) => itemDisplayName(sheet.equipment.find((row) => row.name === name) ?? { name }, locale, false)) ?? [];
-  const off = offNames.length > 1 ? `${offNames.slice(0, -1).join(", ")}${t(" and ")}${offNames.at(-1)}` : offNames[0] ?? "";
+  const asking = conflict?.item ?? hands?.item ?? null;
+  // The other rows a question names, in the reader's language as this row is.
+  const listed = (names: readonly string[]) => {
+    const labels = names.map((name) => itemDisplayName(sheet.equipment.find((entry) => entry.name === name) ?? { name }, locale, false));
+    return labels.length > 1 ? `${labels.slice(0, -1).join(", ")}${t(" and ")}${labels.at(-1)}` : labels[0] ?? "";
+  };
+  const off = listed(conflict?.wearing ?? []);
   useEffect(() => {
     if (asking) {
       question.current?.scrollIntoView({ block: "nearest" });
@@ -227,15 +240,34 @@ export function SheetGearRow({
       <div ref={question} role="group" aria-label={t("Wear {name}?", { name: shownName })} className="reveal ml-8 space-y-1.5 rounded border border-amber-800/60 bg-amber-950/30 px-2 py-1.5 text-[11px] text-amber-100">
         <p>{t(conflict.wearing.length > 1 ? "{name} goes where {off} are: a character wears {kind} at a time." : "{name} goes where {off} is: a character wears {kind} at a time.", { name: shownName, off, kind: t(oneOfKind(conflict.slot) ?? "one of its kind") })}</p>
         <div className="flex flex-wrap gap-1.5">
-          <button type="button" disabled={busy} onClick={onSwap} className="motion-press rounded border border-amber-700/70 bg-amber-950/40 px-1.5 py-0.5 text-amber-200 disabled:opacity-40">
+          <button type="button" disabled={busy} onClick={onSwap} className={cn(ANSWER, "border-amber-700/70 bg-amber-950/40 text-amber-200")}>
             {t("Take off {off}, wear {name}", { off, name: shownName })}
           </button>
           {canLayer ? (
-            <button type="button" disabled={busy} onClick={onLayer} title={t("The SRD's exception, the GM's call: a circlet under a helmet, two cloaks layered.")} className="motion-press rounded border border-stone-600 px-1.5 py-0.5 text-stone-200 disabled:opacity-40">
+            <button type="button" disabled={busy} onClick={onLayer} title={t("The SRD's exception, the GM's call: a circlet under a helmet, two cloaks layered.")} className={cn(ANSWER, "border-stone-600 text-stone-200")}>
               {t("Wear both (GM's call)")}
             </button>
           ) : null}
-          <button type="button" onClick={onDismiss} className="motion-press rounded border border-stone-700 px-1.5 py-0.5 text-stone-400">
+          <button type="button" onClick={onDismiss} className={cn(ANSWER, "border-stone-700 text-stone-400")}>
+            {t("Keep as is")}
+          </button>
+        </div>
+      </div>
+    ) : null}
+    {hands ? (
+      <div ref={question} role="group" data-hands-question={item.name} aria-label={t("Take up {name}?", { name: shownName })} className="reveal ml-8 space-y-1.5 rounded border border-amber-800/60 bg-amber-950/30 px-2 py-1.5 text-[11px] text-amber-100">
+        <p>
+          {t("{who}'s hands are full ({items}), so something has to be put away before {name} is taken up.", { who: sheet.name, items: listed(hands.holding), name: shownName })}
+          {/* In a fight the question is asked only while the change is free, and a player there expects a cost. */}
+          {inCombat ? ` ${t("Nobody has said which weapon is out yet, so this change is free.")}` : null}
+        </p>
+        <div className="flex flex-wrap gap-1.5">
+          {hands.swaps.map((putAway) => (
+            <button key={putAway.join("\n")} type="button" disabled={busy} onClick={() => onHands?.(putAway)} className={cn(ANSWER, "border-amber-700/70 bg-amber-950/40 text-amber-200")}>
+              {t("Put away {off}, take up {name}", { off: listed(putAway), name: shownName })}
+            </button>
+          ))}
+          <button type="button" onClick={onDismiss} className={cn(ANSWER, "border-stone-700 text-stone-400")}>
             {t("Keep as is")}
           </button>
         </div>
@@ -245,11 +277,23 @@ export function SheetGearRow({
   );
 }
 
+// An answer to a question a row asks. Finger-sized on a phone, the size of
+// the row's own toggle: at the line's own height the answers were under
+// half that, with "keep as is" a few pixels from the one that changes gear.
+const ANSWER = "motion-press min-h-[40px] rounded border px-1.5 py-0.5 disabled:opacity-40 sm:min-h-0";
+
 type GearChange = { equipped?: boolean; attuned?: boolean };
 type GearAsk = Record<string, GearChange & { layered?: boolean }>;
 
 // The swap question open on one row: what was asked, and what fills its place.
 export type PendingWear = { name: string; conflict: WearConflict; change: GearChange };
+
+// The question full hands ask on the row that was to be taken up, as the
+// route sent it (src/lib/dm/gear-hands.ts handSwaps).
+export type PendingHands = { name: string; hands: HandsFull };
+
+// One question is open on a sheet at a time, whichever kind it is.
+export type PendingAsk = PendingWear | PendingHands;
 
 // The question a change must ask before it is posted, or null when it can go
 // straight through: a press on a row and a drop on the paperdoll both ask it.
@@ -262,7 +306,10 @@ export function wearQuestion(item: EquipmentItem, equipment: EquipmentItem[], ch
 // kind is already worn opens the question instead of posting; the server
 // refuses the same change with the same conflict (src/lib/dm/usage-rules.ts
 // gearPatch), which opens it too. The swap takes the others off and puts
-// this one on in one request; "wear both" is the DM's and the lead's.
+// this one on in one request; "wear both" is the DM's and the lead's. Full
+// hands are the route's to judge (it knows the fight and the guess), so that
+// question opens only from its answer, and is answered the same way: the
+// weapons chosen put away and this one taken up in one request.
 export function SheetGearRows({
   sheet,
   items,
@@ -284,13 +331,15 @@ export function SheetGearRows({
   myTurn: boolean;
   dead: boolean;
   busy: boolean;
-  pending: PendingWear | null;
-  onPending: (pending: PendingWear | null) => void;
+  pending: PendingAsk | null;
+  onPending: (pending: PendingAsk | null) => void;
   onGear: (gear: GearAsk) => void;
 }) {
   return items.map((item) => {
     const state = gearWornState(item, sheet.equipment, armor);
-    const open = pending?.name === item.name ? pending : null;
+    const asked = pending?.name === item.name ? pending : null;
+    const open = asked && "conflict" in asked ? asked : null;
+    const hands = asked && "hands" in asked ? asked.hands : null;
     return (
       <SheetGearRow
         key={item.name}
@@ -321,6 +370,12 @@ export function SheetGearRows({
           if (!open) return;
           onPending(null);
           onGear({ [item.name]: { ...open.change, equipped: true, layered: true } });
+        }}
+        hands={hands}
+        onHands={(putAway) => {
+          onPending(null);
+          const off = Object.fromEntries(putAway.map((name) => [name, { equipped: false }]));
+          onGear({ ...off, [item.name]: { equipped: true } });
         }}
         onDismiss={() => onPending(null)}
       />
