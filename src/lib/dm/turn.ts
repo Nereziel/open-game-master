@@ -1641,7 +1641,7 @@ async function runHeldCalls(context: TurnContext, turn: DmTurn, watcherId: strin
       // leaves it to no other.
       clearWatchAnswered(campaignId);
     }
-    dmDebugTrace("tool.result", { campaignId, turnId: turn.id, callIndex: turn.callIndex, tool: toolCall.name, toolCallId: toolCall.id, resumed: true, failed: typeof outcome.error === "string", parked: Boolean(outcome[PARKED] || outcome[WATCH_HELD] || CARDS_OUT.has(outcome)) }, { arguments: toolCall.rawArguments, result: outcome });
+    dmDebugTrace("tool.result", { campaignId, turnId: turn.id, callIndex: turn.callIndex, tool: toolCall.name, toolCallId: toolCall.id, resumed: true, failed: typeof outcome.error === "string", parked: Boolean(outcome[PARKED]) || Boolean(outcome[WATCH_HELD]) || CARDS_OUT.has(outcome) }, { arguments: toolCall.rawArguments, result: outcome });
     const happened = settleTurn(campaign, holder);
     // A later call stopped for a watcher at its own first d20: the rest wait
     // behind that stop.
@@ -3254,7 +3254,7 @@ async function runAdvance(context: TurnContext, turn: DmTurn) {
         (offersTool(catalogue, toolCall.name)
           ? await answerModelCall(context, turn, toolCall)
           : { error: `The engine has no action called "${toolCall.name}".`, retry: true });
-      dmDebugTrace("tool.result", { campaignId, turnId: turn.id, callIndex: turn.callIndex, tool: toolCall.name, toolCallId: toolCall.id, failed: typeof outcome.error === "string", parked: Boolean(outcome[PARKED] || outcome[WATCH_HELD] || CARDS_OUT.has(outcome)) }, { arguments: toolCall.rawArguments, result: outcome });
+      dmDebugTrace("tool.result", { campaignId, turnId: turn.id, callIndex: turn.callIndex, tool: toolCall.name, toolCallId: toolCall.id, failed: typeof outcome.error === "string", parked: Boolean(outcome[PARKED]) || Boolean(outcome[WATCH_HELD]) || CARDS_OUT.has(outcome) }, { arguments: toolCall.rawArguments, result: outcome });
       if (cardKey) {
         const stop = drawStopsCast(toolCall.name, outcome);
         if (stop) castStopped.set(cardKey, stop);

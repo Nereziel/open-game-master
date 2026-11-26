@@ -26351,6 +26351,10 @@
       2,
       "quoted: the recent rolls in GAME STATE"
     ],
+    "lib/dm/roll-record.ts": [
+      1,
+      "logged: the stored roll sentence is copied into opt-in server diagnostics; it does not decide any game rule or identify a record"
+    ],
     "lib/roll-labels.ts": [
       1,
       "shown: the sentence of a roll whose site still writes it, or stored before its parts, put into the reader's language for the roll card's label, the toast and the chronicle's line; a roll whose parts make its words is shown by them alone"
