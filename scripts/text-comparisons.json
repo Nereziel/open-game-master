@@ -7287,6 +7287,13 @@
         "Construct the expected slug from a published subclass name in the fixture."
       ]
     ],
+    "lib/content/entry-descriptions-cs.test.ts#re-word": [
+      [
+        "display",
+        1,
+        "Extract the reviewed Czech prerequisite heading from its authored translation fixture."
+      ]
+    ],
     "lib/content/entry-descriptions-cs.test.ts#str-eq": [
       [
         "key",
@@ -7304,6 +7311,11 @@
         "key",
         21,
         "Locale, kind, field and expected translated archetype fixtures."
+      ],
+      [
+        "key",
+        1,
+        "Fixed fixture values in the spell metadata and authored content regression tests."
       ]
     ],
     "lib/content/entry-descriptions-cs.test.ts#toLowerCase": [
@@ -7454,6 +7466,32 @@
         "key",
         1,
         "Keep homebrew source labels verbatim."
+      ]
+    ],
+    "lib/content/item-rarity.ts#str-list": [
+      [
+        "english-source",
+        1,
+        "Closed vocabulary of canonical magic-item rarity fields, not a search or rules lookup."
+      ]
+    ],
+    "lib/content/item-rarity.ts#toLowerCase": [
+      [
+        "english-source",
+        1,
+        "Normalize the canonical English rarity field for an exact display catalog lookup."
+      ],
+      [
+        "display",
+        1,
+        "Lowercase the first letter of a reviewed compound label in the picker."
+      ]
+    ],
+    "lib/content/item-rarity.ts#toUpperCase": [
+      [
+        "display",
+        1,
+        "Capitalize the display label or English catalog key."
       ]
     ],
     "lib/content/levelup.ts#str-key": [
@@ -18099,6 +18137,11 @@
         "english-source",
         2,
         "Recognize the printed duration and distance units in help text."
+      ],
+      [
+        "english-source",
+        1,
+        "Ignore the source pack's empty prerequisite markers N/A and none."
       ]
     ],
     "lib/help/index.ts#str-eq": [
@@ -18156,6 +18199,13 @@
         "ability abbreviation shown"
       ]
     ],
+    "lib/help/item-sheet.ts#[a-z]": [
+      [
+        "english-source",
+        1,
+        "Detect an existing Latin-letter unit in a pack weight string before appending its separately supplied unit; display fallback only."
+      ]
+    ],
     "lib/help/item-sheet.ts#\\b": [
       [
         "english-source",
@@ -18189,18 +18239,13 @@
         "key",
         1,
         "Published source identifiers on item-card results."
-      ],
-      [
-        "english-source",
-        1,
-        "Closed list of canonical English magic-item rarity fields for the Czech rarity message context."
       ]
     ],
     "lib/help/item-sheet.ts#toLowerCase": [
       [
         "display",
-        3,
-        "category, type and rarity shown"
+        2,
+        "Category and type shown."
       ],
       [
         "english-source",
@@ -18211,11 +18256,6 @@
         "display",
         1,
         "Title-case alternative for a canonical English item type label."
-      ],
-      [
-        "english-source",
-        2,
-        "Known English rarity values and the matching contextual catalog key, not free table text."
       ]
     ],
     "lib/help/item-sheet.ts#toUpperCase": [
