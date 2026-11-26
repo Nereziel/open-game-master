@@ -1,0 +1,92 @@
+name: Prepare isolated upstream merge
+
+on:
+  push:
+    branches: [automation/upstream-merge-4f175c0]
+
+permissions:
+  contents: write
+
+jobs:
+  prepare:
+    runs-on: ubuntu-latest
+    timeout-minutes: 15
+    steps:
+      - uses: actions/checkout@v6
+        with:
+          ref: 7cd0aaa90116054750459d8adf9f1ebf9e9c570a
+          fetch-depth: 0
+      - name: Prepare merge candidate without changing integration
+        shell: bash
+        run: |
+          set -euo pipefail
+          report="$RUNNER_TEMP/upstream-merge-report"
+          mkdir -p "$report"
+          git config user.name "github-actions[bot]"
+          git config user.email "41898282+github-actions[bot]@users.noreply.github.com"
+          git fetch origin refs/heads/upstream/snapshot-4f175c0
+          test "$(git rev-parse FETCH_HEAD)" = "4f175c0e654c0f383ec6973e783217c2d76ca42b"
+          test "$(git rev-parse HEAD)" = "7cd0aaa90116054750459d8adf9f1ebf9e9c570a"
+          git switch -c "sync/candidate-4f175c0"
+          if git merge --no-ff --no-commit "4f175c0e654c0f383ec6973e783217c2d76ca42b"; then
+            echo "Clean merge" | tee "$report/status.txt"
+          else
+            git diff --name-only --diff-filter=U > "$report/conflicts.txt"
+            test -s "$report/conflicts.txt"
+            echo "INCOMPLETE: conflicting files kept at the local version until reviewed." | tee "$report/status.txt"
+            cat "$report/conflicts.txt"
+            git ls-files -u > "$report/stages.txt"
+            git diff --cc > "$report/combined.diff"
+            while IFS= read -r -d '' file; do
+              for stage in 1 2 3; do
+                if git cat-file -e ":$stage:$file" 2>/dev/null; then
+                  mkdir -p "$report/stage-$stage/$(dirname "$file")"
+                  git show ":$stage:$file" > "$report/stage-$stage/$file"
+                fi
+              done
+              if git cat-file -e ":2:$file" 2>/dev/null; then
+                git checkout --ours -- "$file"
+                git add -- "$file"
+              else
+                git rm -f -- "$file"
+              fi
+            done < <(git diff --name-only --diff-filter=U -z)
+          fi
+          git diff --cached --check > "$report/diff-check.txt" || true
+          git diff --cached --stat > "$report/stat.txt"
+          {
+            echo "WIP: upstream 0.40.2 merge candidate (isolated)"
+            echo
+            cat "$report/status.txt"
+            if test -s "$report/conflicts.txt"; then
+              echo
+              echo "Unresolved review paths (local version retained):"
+              cat "$report/conflicts.txt"
+            fi
+            echo
+            echo "Do not integrate until all conflict paths are reviewed and CI is green."
+          } > "$report/commit-message.txt"
+          git commit -F "$report/commit-message.txt"
+          git rev-list --parents -n 1 HEAD | tee "$report/parents.txt"
+          test "$(git rev-parse HEAD^1)" = "7cd0aaa90116054750459d8adf9f1ebf9e9c570a"
+          test "$(git rev-parse HEAD^2)" = "4f175c0e654c0f383ec6973e783217c2d76ca42b"
+          git push origin "HEAD:refs/heads/sync/candidate-4f175c0"
+          {
+            echo '### Isolated upstream merge candidate'
+            echo
+            cat "$report/status.txt"
+            echo
+            if test -s "$report/conflicts.txt"; then
+              echo 'Conflicts requiring manual adaptation:'
+              echo '~~~'
+              cat "$report/conflicts.txt"
+              echo '~~~'
+            fi
+            cat "$report/parents.txt"
+          } >> "$GITHUB_STEP_SUMMARY"
+      - uses: actions/upload-artifact@v4
+        if: always()
+        with:
+          name: upstream-merge-report-4f175c0
+          path: ${{ runner.temp }}/upstream-merge-report
+          retention-days: 7
