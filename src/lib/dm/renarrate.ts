@@ -1,3 +1,4 @@
+import { dmDebugTrace } from "@/lib/dm/debug";
 import { getCampaignById, type Campaign } from "@/lib/db/campaigns";
 import { getDatabase } from "@/lib/db/core";
 import { getDmTurn } from "@/lib/db/dm-turns";
@@ -209,6 +210,7 @@ export async function runRenarrate(input: {
     return { error: "Could not store the new take.", status: 500 };
   }
   refreshNarrationAudio(campaign, updated);
+  dmDebugTrace("narration.manual.reroll", { campaignId: campaign.id, turnId: turn.id, messageId: updated.id, variant: appended.index }, { before: current.content, after: updated.content });
   return { message: updated, correctionId };
 }
 
@@ -237,5 +239,6 @@ export function selectRenarrateVariant(input: {
     return { error: "Could not select that take.", status: 500 };
   }
   refreshNarrationAudio(campaign, updated);
+  dmDebugTrace("narration.manual.select", { campaignId: campaign.id, messageId: updated.id, variant: index }, { before: message.content, after: updated.content });
   return { message: updated };
 }

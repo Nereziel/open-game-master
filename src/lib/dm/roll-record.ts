@@ -53,6 +53,7 @@
 // import cycles.
 
 import { allocateSeq } from "@/lib/db/campaigns";
+import { dmDebugTrace } from "@/lib/dm/debug";
 import { getDatabase } from "@/lib/db/core";
 import { joinStoredTurn, type DmTurn } from "@/lib/db/dm-turns";
 import { insertRoll, revealRollRow, type RollInsert, type RollKind, type StoredRoll } from "@/lib/db/rolls";
@@ -135,6 +136,7 @@ export function recordRoll(record: RollRecord): StoredRoll {
   if (asked === true && target?.live && !target.live.askedRollIds.includes(roll.id)) {
     target.live.askedRollIds.push(roll.id);
   }
+  dmDebugTrace("roll.recorded", { campaignId: roll.campaignId, turnId: target?.live?.id ?? target?.storedId ?? null, rollId: roll.id, characterId: roll.characterId, kind: roll.kind, visibility: roll.visibility, source: landing?.source ?? "digital", pendingRollId: answers, asked: asked === true }, { detail: roll.detail, expression: roll.expression, advantage: roll.advantage, dc: roll.dc, total: roll.total, success: roll.success, breakdown: roll.breakdown, attacker: roll.attacker, parts: roll.parts });
   if (send !== false) {
     // Sent as it was made: told "digital", the stage threw a die on screen
     // that the player had already rolled.

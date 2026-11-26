@@ -1,3 +1,4 @@
+import { dmDebugTrace } from "@/lib/dm/debug";
 import { getDatabase, nowIso, parseJson } from "@/lib/db/core";
 import { awaitTurnBinding, currentTurnId, owningTurnOf } from "@/lib/dm/job-control";
 import { changesWindow } from "@/lib/sheet-audit-logic";
@@ -127,7 +128,9 @@ export function insertSheetAudit(input: {
   if (!turnId) {
     awaitTurnBinding(id);
   }
-  return getAuditEntry(id)!;
+  const entry = getAuditEntry(id)!;
+  dmDebugTrace("sheet.audit.recorded", { campaignId: entry.campaignId, turnId: entry.turnId, auditId: entry.id, characterId: entry.characterId, seq: entry.seq, kind: entry.kind, undoable: entry.undoable }, { delta: entry.delta, reason: entry.reason, patch: input.patch });
+  return entry;
 }
 
 // A turn job's writes from before its row existed (settling a companion's
@@ -215,6 +218,7 @@ export function markReverted(entryId: string, byEntryId: string) {
   getDatabase()
     .prepare(`UPDATE sheet_audit SET reverted_by = ?, reverted_at = ? WHERE id = ?`)
     .run(byEntryId, nowIso(), entryId);
+  dmDebugTrace("sheet.audit.reverted", { auditId: entryId, byAuditId: byEntryId });
 }
 
 // Live (not yet undone) entries on the same character recorded after the

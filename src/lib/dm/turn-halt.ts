@@ -1,3 +1,4 @@
+import { dmDebugTrace } from "@/lib/dm/debug";
 import { DM_HALTED_PREFIX } from "@/lib/campaign-types";
 import { allocateSeq, getCampaignById } from "@/lib/db/campaigns";
 import { createDmTurn, getAwaitingTurn, getDmTurn, saveDmTurn, type DmTurn } from "@/lib/db/dm-turns";
@@ -32,6 +33,7 @@ export function haltDmTurn(campaignId: string, turn: DmTurn, failed: string, cla
   setDmStatus(campaignId, "idle");
   turn.status = "failed";
   saveDmTurn(turn);
+  dmDebugTrace("narration.halted", { campaignId, turnId: turn.id, callIndex: turn.callIndex, messageId: message.id, seq }, { reason: failed });
 }
 
 // The whole conversation of a turn that stopped before it had a prompt
