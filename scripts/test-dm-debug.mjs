@@ -90,6 +90,16 @@ try {
   assert.equal(continuity.fields.previousNarrationId, "previous");
   assert.equal(continuity.fields.actionWordCoveragePct, 100);
   assert.equal(continuity.fields.finalWordCount, 2);
+  assert.equal(continuity.fields.previousWordCoveragePct, 0);
+  assert.deepEqual(continuity.payload.actions.map((action) => action.id), ["action"]);
+  const stale = narrationContinuity(history, 5, "Stará lavice");
+  assert.equal(stale.fields.actionWordCoveragePct, 0);
+  assert.equal(stale.fields.previousWordCoveragePct, 100);
+  const combined = narrationContinuity([...history, { id: "other", seq: 3.5, authorType: "player", content: "Otevřu dveře" }], 5, "Zapálím lavici. Otevřu dveře.");
+  assert.deepEqual(combined.payload.actions.map((action) => action.id), ["action", "other"]);
+  assert.equal(combined.fields.actionWordCoveragePct, 100);
+  assert.equal(narrationContinuity([], 1, "New scene").fields.previousWordCoveragePct, null);
+  assert.equal(narrationContinuity([], 1, "New scene").fields.actionCount, 0);
   assert.equal(narrationContinuity(history, 3, "test").fields.actionWordCoveragePct, null);
   dmDebugTrace("narration.continuity", continuity.fields, continuity.payload);
   assert.equal(JSON.parse(lines[6][1]).payload.actions[0].id, "action");
