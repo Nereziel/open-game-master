@@ -130,7 +130,9 @@ export function CoordinationPanel({
           <span className="text-[11px] text-stone-500">
             {entry.companion
               ? entry.text
-                ? t("AI companion · asked by {name}", { name: entry.requestedBy ?? t("the party") })
+                ? entry.requestedBy
+                  ? t("AI companion · asked by {name}", { name: entry.requestedBy })
+                  : t("AI companion · asked by the party")
                 : t("AI companion · acts as they see fit")
               : entry.orderChanged
                 ? t("Checking the new order")
@@ -337,7 +339,9 @@ export function CoordinationPanel({
             className={kitButtonClass("small")}
             title={
               unconfirmed.length
-                ? unconfirmed.length === 1 ? t("The order changed after {names} was ready; they mark it Ready again first", { names: unconfirmed.join(", ") }) : t("The order changed after {names} were ready; they mark it Ready again first", { names: unconfirmed.join(", ") })
+                ? (unconfirmed.length === 1
+                    ? t("The order changed after {names} was ready; they mark it Ready again first", { names: unconfirmed.join(", ") })
+                    : t("The order changed after {names} were ready; they mark it Ready again first", { names: unconfirmed.join(", ") }))
                 : waiting.length
                   ? t("{names} will pass", { names: waiting.join(", ") })
                   : t("Hand the plan to the GM now")
