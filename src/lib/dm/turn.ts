@@ -1,3 +1,4 @@
+import { dmDebugTrace } from "@/lib/dm/debug";
 import { getClock } from "@/lib/db/clock";
 import { mountOf, riderOf } from "@/lib/dm/enemy-riders";
 import { carryDroppedItems } from "@/lib/db/dropped-items";
@@ -1640,6 +1641,7 @@ async function runHeldCalls(context: TurnContext, turn: DmTurn, watcherId: strin
       // leaves it to no other.
       clearWatchAnswered(campaignId);
     }
+    dmDebugTrace("tool.result", { campaignId, turnId: turn.id, callIndex: turn.callIndex, tool: toolCall.name, toolCallId: toolCall.id, resumed: true, failed: typeof outcome.error === "string", parked: Boolean(outcome[PARKED] || outcome[WATCH_HELD] || CARDS_OUT.has(outcome)) }, { arguments: toolCall.rawArguments, result: outcome });
     const happened = settleTurn(campaign, holder);
     // A later call stopped for a watcher at its own first d20: the rest wait
     // behind that stop.
@@ -2158,7 +2160,9 @@ function resetDraftIfWithheld(campaignId: string, turn: DmTurn, shown: string, k
   if (!shown.trim() || squashed(turn.narrationParts.slice(keptFrom).join(" ")) === squashed(shown)) {
     return;
   }
-  publishEphemeral(campaignId, "dm_draft_reset", { text: turn.narrationParts.join("\n\n").trim() });
+  const kept = turn.narrationParts.join("\n\n").trim();
+  dmDebugTrace("narration.draft.reset", { campaignId, turnId: turn.id, callIndex: turn.callIndex, keptFrom, reason: "streamed_text_differs_from_kept" }, { streamed: shown, kept });
+  publishEphemeral(campaignId, "dm_draft_reset", { text: kept });
 }
 
 async function runAdvance(context: TurnContext, turn: DmTurn) {
@@ -2395,6 +2399,9 @@ async function runAdvance(context: TurnContext, turn: DmTurn) {
     // The card's own tool call stands in for the first reply: the engine
     // resolves it below exactly as a call the model made, and the next call
     // narrates from the result (directCard).
+    const callStarted = Date.now();
+    let firstDeltaMs: number | undefined;
+    dmDebugTrace("narration.call.start", { campaignId, turnId: turn.id, callIndex: turn.callIndex, task: callTask, tools: tools.length, promptTokens: turn.contextTrace?.promptTokens, contextLimit: turn.contextTrace?.limitTokens });
     const reply: DmCallResult = resolvesCard ? cardReply(direct) : await requestDmMessage(campaign.settings, turn.conversation, {
       tools,
       harness: {
@@ -2418,6 +2425,10 @@ async function runAdvance(context: TurnContext, turn: DmTurn) {
       // when it runs long, on a server that sets no budget of its own.
       ...(tuning.briefRules ? { reasoningBudgetChars: SMALL_MODEL_REASONING_CHARS } : {}),
       onDelta: (text) => {
+        if (firstDeltaMs === undefined && text.length) {
+          firstDeltaMs = Date.now() - callStarted;
+          dmDebugTrace("narration.call.first_delta", { campaignId, turnId: turn.id, callIndex: turn.callIndex, firstDeltaMs });
+        }
         const visible = closers.push(filter.push(text));
         if (visible) {
           batcher.push(visible);
@@ -2426,6 +2437,7 @@ async function runAdvance(context: TurnContext, turn: DmTurn) {
     });
 
     const { message, error, finishReason } = reply;
+    dmDebugTrace("narration.original", { campaignId, turnId: turn.id, callIndex: turn.callIndex, task: callTask, status: error?.status, finishReason, elapsedMs: Date.now() - callStarted, firstDeltaMs, outputTokens: reply.usage?.outputTokens, toolCount: extractToolCalls(message?.tool_calls).length }, { text: String(message?.content ?? ""), toolCalls: message?.tool_calls ?? null });
     if (slot !== undefined && !error) {
       noteTurnReuse(campaign.settings, campaignId, reply.usage?.cachedInputTokens);
     }
@@ -2460,11 +2472,6 @@ async function runAdvance(context: TurnContext, turn: DmTurn) {
     batcher.flush();
     noteTurnCall(turn, callTask, tools, reply);
     setJobStage("resolving");
-    if (process.env.DM_DEBUG) {
-      console.log(
-        `[dm-debug] call ${turn.callIndex}: content=${JSON.stringify(String(message?.content ?? "").slice(0, 300))} tool_calls=${JSON.stringify(message?.tool_calls ?? null).slice(0, 500)}`,
-      );
-    }
     // gpt-oss on vLLM sometimes ends a call on its reasoning alone: no text
     // and no tool call (PR #53). Nothing was said or done, so the same call
     // is simply asked again, once a turn and outside the call budget. An
@@ -3247,6 +3254,7 @@ async function runAdvance(context: TurnContext, turn: DmTurn) {
         (offersTool(catalogue, toolCall.name)
           ? await answerModelCall(context, turn, toolCall)
           : { error: `The engine has no action called "${toolCall.name}".`, retry: true });
+      dmDebugTrace("tool.result", { campaignId, turnId: turn.id, callIndex: turn.callIndex, tool: toolCall.name, toolCallId: toolCall.id, failed: typeof outcome.error === "string", parked: Boolean(outcome[PARKED] || outcome[WATCH_HELD] || CARDS_OUT.has(outcome)) }, { arguments: toolCall.rawArguments, result: outcome });
       if (cardKey) {
         const stop = drawStopsCast(toolCall.name, outcome);
         if (stop) castStopped.set(cardKey, stop);
@@ -3380,7 +3388,11 @@ async function runAdvance(context: TurnContext, turn: DmTurn) {
     // the encounter as it now stands, and spend the one call held in
     // reserve for it (outside MAX_MODEL_CALLS) on a rewrite when they
     // disagree. Its reads also say who speaks the narration's lines.
+    const beforeGuard = turn.narrationParts.join("\n\n");
+    dmDebugTrace("narration.guard.start", { campaignId, turnId: turn.id, callIndex: turn.callIndex, enabled: campaign.gameSettings.narrationGuard }, { text: beforeGuard });
     const guarded = await enforceEngineBoundary(campaign, turn, sheets, partReads, proseOnlyTools(turn.id), unresolved.map(returnedCardNote), castSlotlessFor(context, turn));
+    const afterGuard = turn.narrationParts.join("\n\n");
+    dmDebugTrace("narration.guard.end", { campaignId, turnId: turn.id, outcome: guarded.guard.outcome, kinds: guarded.guard.kinds.join(","), changed: beforeGuard !== afterGuard }, { before: beforeGuard, after: afterGuard });
     spoken = guarded.spoken;
     // What the guard did goes with the turn to its narrator quality row
     // (issue #460), written when finalize() saves it as done.
@@ -3838,6 +3850,7 @@ function castSlotlessFor(context: TurnContext, turn: DmTurn): (cast: { casterId:
     const rawArguments = JSON.stringify(call.args);
     turn.conversation.push({ role: "assistant", content: "", tool_calls: [{ id, type: "function", function: { name: call.name, arguments: rawArguments } }] });
     const outcome = await answerModelCall(context, turn, { id, name: call.name, rawArguments });
+    dmDebugTrace("tool.result", { campaignId: context.campaign.id, turnId: turn.id, tool: call.name, toolCallId: id, automatic: true, failed: typeof outcome.error === "string" }, { arguments: rawArguments, result: outcome });
     turn.conversation.push({ role: "tool", tool_call_id: id, content: JSON.stringify(outcome) });
     saveDmTurn(turn);
     if (typeof outcome.error === "string") {
@@ -3856,6 +3869,7 @@ async function runItemCall(context: TurnContext, turn: DmTurn, call: EngineItemC
   const rawArguments = JSON.stringify(call.args);
   turn.conversation.push({ role: "assistant", content: "", tool_calls: [{ id, type: "function", function: { name: call.name, arguments: rawArguments } }] });
   const outcome = await answerModelCall(context, turn, { id, name: call.name, rawArguments });
+  dmDebugTrace("tool.result", { campaignId: context.campaign.id, turnId: turn.id, tool: call.name, toolCallId: id, automatic: true, failed: typeof outcome.error === "string" }, { arguments: rawArguments, result: outcome });
   turn.conversation.push({ role: "tool", tool_call_id: id, content: JSON.stringify(outcome) });
   saveDmTurn(turn);
   return outcome as Record<string, unknown>;
@@ -4080,11 +4094,7 @@ async function narrateAfterToolLeak(context: TurnContext, turn: DmTurn, repeated
   batcher.flush();
   noteTurnCall(turn, "tools_closed_rescue", tools, rescue);
   turn.callIndex += 1;
-  if (process.env.DM_DEBUG) {
-    console.log(
-      `[dm-debug] tool-leak rescue: content=${JSON.stringify(String(message?.content ?? "").slice(0, 300))} error=${Boolean(error)}`,
-    );
-  }
+  dmDebugTrace("narration.original", { campaignId, turnId: turn.id, callIndex: turn.callIndex - 1, task: "tools_closed_rescue", status: error?.status, finishReason: rescue.finishReason, outputTokens: rescue.usage?.outputTokens }, { text: String(message?.content ?? ""), toolCalls: message?.tool_calls ?? null });
   const failure = error
     ? ((await error.json().catch(() => null)) as { code?: string; error?: string } | null)
     : null;
@@ -4629,6 +4639,7 @@ function finalize(context: TurnContext, turn: DmTurn, failed: string, spoken: re
   const claimed = slot.seq;
 
   if (failed) {
+    dmDebugTrace("narration.halted", { campaignId, turnId: turn.id, callIndex: turn.callIndex }, { reason: failed });
     haltDmTurn(campaignId, turn, failed, claimed);
     return;
   }
@@ -4690,6 +4701,10 @@ function finalize(context: TurnContext, turn: DmTurn, failed: string, spoken: re
     recentGmNarrations(campaignId),
   );
   let content = narrationParts.join("\n\n").trim();
+  const beforeCleanup = turn.narrationParts.join("\n\n").trim();
+  if (beforeCleanup !== content) {
+    dmDebugTrace("narration.cleanup", { campaignId, turnId: turn.id, reason: "table_narration_cleanup" }, { before: beforeCleanup, after: content });
+  }
   if (!content) {
     // A refused player action says why instead of the bare fallback line.
     content = emptyTurnLine(turn.conversation, emptyTurnPlayer(context), tableRolls);
@@ -4740,6 +4755,7 @@ function finalize(context: TurnContext, turn: DmTurn, failed: string, spoken: re
     dmTurnId: turn.id,
     speech: modelTextLines(context.campaign, content, spoken),
   });
+  dmDebugTrace("narration.final", { campaignId, turnId: turn.id, messageId: message.id, seq, rollCount: turn.rollIds.length, guard: turn.guard?.outcome }, { text: message.content, rollIds: turn.rollIds });
   publishWithSeq(campaignId, claimed === null ? seq : allocateSeq(campaignId), "message_added", { message });
   setDmStatus(campaignId, "idle");
   // Whoever spoke to the party in it has met them (issue 580).

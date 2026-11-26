@@ -1,5 +1,5 @@
 import assert from "node:assert/strict";
-import { dmDebug, dmDebugArcReply, dmDebugEnabled } from "../src/lib/dm/debug.ts";
+import { dmDebug, dmDebugArcReply, dmDebugEnabled, dmDebugTrace } from "../src/lib/dm/debug.ts";
 
 const original = console.log;
 const previous = process.env.DM_DEBUG;
@@ -12,6 +12,7 @@ try {
   assert.equal(dmDebugEnabled(), false);
   dmDebug("hidden", { jobId: "job" });
   dmDebugArcReply("plan", "secret", {});
+  dmDebugTrace("narration.original", { turnId: "turn" }, { text: "secret" });
   assert.equal(lines.length, 0);
   process.env.DM_DEBUG = "0";
   assert.equal(dmDebugEnabled(), false);
@@ -40,6 +41,25 @@ try {
   assert.equal(second.endsObject, false);
   dmDebug("job.end", { stopped: true });
   assert.equal(JSON.parse(lines[2][1]).stopped, true);
+  delete process.env.DM_DEBUG_CONTENT;
+  const payload = { before: "secret story", after: "corrected", result: { total: 17, faces: [12, 5] } };
+  dmDebugTrace("narration.guard.end", { turnId: "turn", changed: true }, payload);
+  const meta = JSON.parse(lines[3][1]);
+  assert.equal(meta.beforeChars, 12);
+  assert.equal(meta.afterChars, 9);
+  assert.equal(meta.turnId, "turn");
+  assert.equal("payload" in meta, false);
+  assert.doesNotMatch(lines[3][1], /secret story|corrected|faces/);
+  process.env.DM_DEBUG_CONTENT = "1";
+  dmDebugTrace("narration.guard.end", { turnId: "turn", changed: true }, payload);
+  assert.deepEqual(JSON.parse(lines[4][1]).payload, payload);
+  const circular = {};
+  circular.self = circular;
+  assert.doesNotThrow(() => dmDebugTrace("tool.result", {}, { circular }));
+  assert.equal(lines.length, 5);
+  process.env.DM_DEBUG = "0";
+  dmDebugTrace("roll.recorded", { rollId: "roll" }, payload);
+  assert.equal(lines.length, 5);
 } finally {
   console.log = original;
   if (previous === undefined) delete process.env.DM_DEBUG;

@@ -1,3 +1,4 @@
+import { dmDebugTrace } from "@/lib/dm/debug";
 import { noteTurnCall, turnCallOptions } from "@/lib/dm/turn-fit";
 import { buildLinePrompt } from "@/lib/dm/safety-logic";
 import { lineViolations } from "@/lib/dm/safety-lines-logic";
@@ -276,6 +277,8 @@ export async function enforceEngineBoundary(
 
   const summary = [...contradictions.map((entry) => entry.detail), ...crossed.map((line) => `line crossed: ${line}`)].join("; ");
 
+  dmDebugTrace("narration.guard.contradiction", { campaignId: campaign.id, turnId: turn.id, kinds: found.join(","), contradictions: contradictions.length, crossed: crossed.length }, { summary, before: narration });
+  const rewriteStarted = Date.now();
   // The narration is echoed back explicitly: a turn that ended on a pure
   // narration call never pushed that assistant message into the conversation,
   // so without this the model would be asked to rewrite prose it cannot see and
@@ -300,6 +303,7 @@ export async function enforceEngineBoundary(
   );
   noteTurnCall(turn, "guard_rewrite", [], rewrite);
   const { message, error } = rewrite;
+  dmDebugTrace("narration.guard.rewrite", { campaignId: campaign.id, turnId: turn.id, callIndex: turn.callIndex, status: error?.status, finishReason: rewrite.finishReason, elapsedMs: Date.now() - rewriteStarted, outputTokens: rewrite.usage?.outputTokens }, { text: String(message?.content ?? "") });
   turn.callIndex += 1;
   if (error) {
     console.warn(`[engine-boundary] turn ${turn.id}: correction call failed (${summary})`);
