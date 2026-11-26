@@ -1,6 +1,7 @@
 import { contentInfoAllowsNameFallback, contentInfoDirectMatches, describeContentEntry, type ContentInfoIdentity } from "@/lib/help";
 import { textKey } from "@/lib/language/text-logic";
 import { readWeightLb } from "@/lib/content/weight";
+import { itemRarityLabel } from "@/lib/content/item-rarity";
 import { DAMAGE_TYPE_BLURBS, WEAPON_PROPERTY_BLURBS } from "@/lib/help/terms";
 import { translate, type Locale } from "@/lib/messages-logic";
 import { armorNamed, type SrdArmor } from "@/lib/srd/armor";
@@ -360,14 +361,7 @@ export function buildItemSheet(
   const cost = found.map((row) => costOf(row, t, locale)).find(Boolean) ?? null;
   const description = found.map((row) => str(row, "localized_desc")).find(Boolean)
     ?? found.map((row) => describeContentEntry(row, undefined, locale)).find(Boolean) ?? null;
-  const rawRarity = magic ? capitalize(str(magic, "rarity").toLowerCase()) : null;
-  // "Common" is also the name of a language. Only the rarity context
-  // can distinguish it from a common magic item in Czech.
-  const rarity = rawRarity
-    ? locale === "cs" && ["mundane", "common", "uncommon", "rare", "very rare", "legendary", "artifact"].includes(rawRarity.toLowerCase())
-      ? capitalize(t(rawRarity.toLowerCase(), { context: "content.rarity" }))
-      : t(rawRarity)
-    : null;
+  const rarity = magic ? itemRarityLabel(str(magic, "rarity"), locale, true, t) : null;
   const attunement = found.some(
     (row) => row.requiresAttunement === true || /attunement/i.test(str(row, "requires_attunement")),
   );

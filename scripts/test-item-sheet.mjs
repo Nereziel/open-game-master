@@ -225,6 +225,32 @@ test("Czech weapon properties use the weapon glossary context", () => {
   assert.equal(buildItemSheet("Test weapon", [row], { locale: "en" }).weapon.properties[0].name, "Light");
 });
 
+const { pickerMeta } = await import("../src/lib/content/picker-display.ts");
+const { leadItemMeta } = await import("../src/app/campaigns/[campaignId]/lead-edit-display.ts");
+
+test("Czech rarity is consistent across item cards and pickers", () => {
+  const cases = [
+    ["common", "běžný"],
+    ["UNCOMMON", "neobvyklý"],
+    ["very rare", "velmi vzácný"],
+    ["uncommon (+1), rare (+2), or very rare (+3)", "neobvyklý (+1), vzácný (+2) nebo velmi vzácný (+3)"],
+    ["rare (+1), very rare (+2), or legendary (+3)", "vzácný (+1), velmi vzácný (+2) nebo legendární (+3)"],
+    ["Very rare or legendary", "velmi vzácný nebo legendární"],
+    ["rare (silver or brass), very rare (bronze), or legendary (iron)", "vzácný (stříbro nebo mosaz), velmi vzácný (bronz) nebo legendární (železo)"],
+  ];
+  for (const [rarity, expected] of cases) {
+    const row = { rarity, desc: "Original rules." };
+    assert.equal(pickerMeta(row, "cs"), expected);
+    assert.equal(leadItemMeta(row, "cs"), expected);
+    assert.equal(buildItemSheet("Example", [row], { locale: "cs" }).rarity, expected.charAt(0).toUpperCase() + expected.slice(1));
+    assert.equal(pickerMeta(row, "en"), rarity);
+    assert.equal(row.rarity, rarity);
+  }
+  assert.equal(pickerMeta({ rarity: "custom rare grade" }, "cs"), "custom rare grade");
+  assert.equal(pickerMeta({ kind: "gear" }, "cs"), "výbava");
+  assert.equal(pickerMeta({ level: 2, rarity: "rare" }, "en"), "Level 2");
+});
+
 test("Czech compound magic item categories and rarity preserve all qualifiers", () => {
   const row = { type: "Weapon (any ammunition)", rarity: "uncommon (+1), rare (+2), or very rare (+3)", desc: "Original prose." };
   const sheet = buildItemSheet("Example ammunition", [row], { locale: "cs" });
