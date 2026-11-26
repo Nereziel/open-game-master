@@ -47,6 +47,7 @@ import { contentName, type LocalizedNamesTable } from "@/lib/content/names";
 import { UNSEEN_NAME } from "@/lib/hidden-names-logic";
 import { interpolate, type Locale } from "@/lib/i18n/translate";
 import { textKey } from "@/lib/language/text-logic";
+import { findSkill, skillLabel } from "@/lib/srd";
 import type { RollNote, RollParts, RollTarget, RollUsed, WordedParts } from "@/lib/roll-parts";
 
 // The shape of a translator, as the pure sentence builders take it.
@@ -101,6 +102,9 @@ export function makesWords(parts: RollParts | null | undefined): parts is Worded
 function usedWords(t: RollTranslator, used: RollUsed): string {
   const table = KEY_TABLES[used.kind];
   const locale = t.locale ?? "en";
+  if (locale !== "en" && used.kind === "skill" && used.key && findSkill(used.key)) {
+    return skillLabel(used.key, locale);
+  }
   if (locale === "en" || !table || !used.key || textKey(used.name) !== used.key) {
     return used.name;
   }

@@ -16,6 +16,7 @@ import type { HazardKind, StoredRoll } from "@/lib/db/rolls";
 import { contentName } from "@/lib/content/names";
 import { damageWords } from "@/lib/dm/damage-logic";
 import { textKey } from "@/lib/language/text-logic";
+import { findSkill, skillLabel } from "@/lib/srd";
 import type { RollParts } from "@/lib/roll-parts";
 import { cardLine, makesWords, rollWords, type CardLine, type RollTranslator as T } from "@/lib/roll-words";
 
@@ -72,8 +73,16 @@ function localizeDetail(detail: string, locale: Locale): string {
 // Any other roll, and one stored before its parts, is shown by the sentence
 // its site wrote, with the little of it the reader above can put into
 // the reader's language.
-function rollDetailWords(t: T, said: Pick<StoredRoll, "detail"> & { parts?: RollParts | null }, tidy: (words: string) => string = (words) => words.trim()): string {
-  return makesWords(said.parts) ? tidy(rollWords(t, said.parts)) : localizeDetail(tidy(said.detail ?? ""), t.locale ?? "en");
+function skillCheckWords(kind: string, words: string, locale: Locale): string {
+  if (kind !== "skill_check" || locale === "en") return words;
+  // Only a complete canonical skill label/id is translated; custom reasons
+  // and sentences containing a skill name remain untouched.
+  const skill = findSkill(textKey(words).replaceAll(" ", "_"));
+  return skill ? skillLabel(skill.id, locale) : words;
+}
+
+function rollDetailWords(t: T, said: Pick<StoredRoll, "detail" | "kind"> & { parts?: RollParts | null }, tidy: (words: string) => string = (words) => words.trim()): string {
+  return makesWords(said.parts) ? tidy(rollWords(t, said.parts)) : skillCheckWords(said.kind, localizeDetail(tidy(said.detail ?? ""), t.locale ?? "en"), t.locale ?? "en");
 }
 
 // A roll card waiting on its player's dice, as its two faces read it.
@@ -85,7 +94,7 @@ type Waiting = { kind: string; detail: string; reason: string; parts?: RollParts
 // rolls, and a waiting card of a family that has not moved is not its to
 // change.
 export function pendingWords(t: T, pending: Waiting): string {
-  return makesWords(pending.parts) ? rollWords(t, pending.parts) : pending.detail;
+  return makesWords(pending.parts) ? rollWords(t, pending.parts) : skillCheckWords(pending.kind, pending.detail, t.locale ?? "en");
 }
 
 // What the card says besides: its reason. Where the parts make the words,

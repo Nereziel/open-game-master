@@ -113,7 +113,7 @@ export function RollCard({ roll, characterName }: { roll: StoredRoll; characterN
               className="check-well px-1.5 py-px"
               style={{ color: roll.success ? "var(--check-pass)" : "var(--check-fail)" }}
             >
-              DC {roll.dc} · {roll.success ? "success" : "failure"}
+              {t("DC")} {roll.dc} · {roll.success ? t("success") : t("failure")}
             </span>
           ) : null}
         </span>
