@@ -1,5 +1,7 @@
 {
   "messages": {
+    "{rider} mounts {mount}.": "{rider} nasedá na tvora {mount}.",
+    "{rider} gets down from {mount}.": "{rider} sesedá z tvora {mount}.",
     "Take up {name}?": "Vzít do ruky {name}?",
     "{who}'s hands are full ({items}), so something has to be put away before {name} is taken up.": "{who} má plné ruce ({items}), takže před uchopením předmětu {name} musí něco odložit.",
     "Nobody has said which weapon is out yet, so this change is free.": "Zatím nebylo určeno, která zbraň je v ruce, takže tato změna nic nestojí.",

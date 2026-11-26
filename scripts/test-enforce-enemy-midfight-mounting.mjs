@@ -31,6 +31,8 @@ import { diff, revertTurn, snapshot } from "./lib/sweep-lifecycle.mjs";
 const { test, finish } = suite("test-enforce-enemy-midfight-mounting");
 const { listTokens, resetTurnBudgets } = await import("../src/lib/db/battle-maps.ts");
 const { createDmTurn } = await import("../src/lib/db/dm-turns.ts");
+const { listAllMessages } = await import("../src/lib/db/messages.ts");
+await import("../src/lib/i18n/cs-catalog.ts");
 const { patchEnemyConditions, patchEnemyHp, saveEncounter, setEncounterSides } = await import("../src/lib/db/encounters.ts");
 const { enemyActedThisRound } = await import("../src/lib/dm/can-act.ts");
 const { invokeEngine } = await import("../src/lib/dm/invoke.ts");
@@ -50,8 +52,8 @@ const ai = (world, turn, name, args) => invokeEngine(world.campaign(), { kind: "
 // A hero, a creature on foot and a riderless creature beside it, far from the
 // hero on an open board. `first` says which of the two enemies comes first in
 // the order, after the hero; the pointer rests on the hero.
-async function afoot({ rider = "goblin", mount = "wolf", first = "rider", riderAt = { x: 12, y: 4 }, mountAt = { x: 13, y: 4 }, heroAt = { x: 2, y: 1 }, extra = [], rows = OPEN() } = {}) {
-  const world = await openWorld({ campaign: { maxPlayers: 8 }, gameSettings: { ttsEnabled: false } });
+async function afoot({ rider = "goblin", mount = "wolf", first = "rider", riderAt = { x: 12, y: 4 }, mountAt = { x: 13, y: 4 }, heroAt = { x: 2, y: 1 }, extra = [], rows = OPEN(), tableLanguage = "english" } = {}) {
+  const world = await openWorld({ campaign: { maxPlayers: 8 }, gameSettings: { ttsEnabled: false, tableLanguage } });
   const hero = world.addHero(HERO("Hero 1"));
   await world.beginFight([{ monster: rider, name: "Rider" }, { monster: mount, name: "Steed" }, ...extra.map((monster, index) => ({ monster, name: `Other ${index + 1}` }))]);
   const riderRow = world.enemies().find((enemy) => enemy.displayName === "Rider");
@@ -136,6 +138,20 @@ await test("GAME STATE and the call's result say who rides whom in the words a p
   assert.match(mountLine, new RegExp(`carries ${rider.displayName} \\[enemyId=${rider.id}\\]`));
   const down = await getDown(world, rider);
   void down;
+});
+
+await test("Enemy mounting table notes use the campaign language and preserve names.", async () => {
+  for (const tableLanguage of ["english", "czech"]) {
+    const { world, rider, mount } = await afoot({ tableLanguage });
+    // The console can mount and dismount away from the rider's turn.
+    const up = await mountUp(world, rider, mount);
+    assert.equal(up.ok, true, up.error);
+    const down = await getDown(world, rider);
+    assert.equal(down.ok, true, down.error);
+    const notes = listAllMessages(world.campaignId).filter((m) => m.authorType === "system").map((m) => m.content);
+    assert.ok(notes.includes(tableLanguage === "czech" ? "Rider nasedá na tvora Steed." : "Rider mounts Steed."));
+    assert.ok(notes.includes(tableLanguage === "czech" ? "Rider sesedá z tvora Steed." : "Rider gets down from Steed."));
+  }
 });
 
 // ---- ruling 2: what an enemy may mount ----

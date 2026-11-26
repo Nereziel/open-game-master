@@ -59,6 +59,7 @@ import { resolveSheetRef } from "@/lib/dm/rolls";
 import { toolError, type ToolError, type ToolResult } from "@/lib/dm/tool-errors";
 import { publishEphemeral, publishWithSeq } from "@/lib/events";
 import { textKey } from "@/lib/language/text-logic";
+import { tableTranslator } from "@/lib/messages-logic";
 import type { CharacterSheet } from "@/lib/schemas/sheet";
 import { isConditionNamed } from "@/lib/srd/feature-names";
 
@@ -346,7 +347,7 @@ export function enemyMountsUp(
   const leashesEnded = afterMoveLeashes(campaign);
   publishEphemeral(campaign.id, "battle_map_updated", {});
   publishEncounter(campaign.id);
-  tableNote(campaign, rider, `${rider.displayName} mounts ${mount.displayName}.`);
+  tableNote(campaign, rider, tableTranslator(campaign.gameSettings.tableLanguage)("{rider} mounts {mount}.", { rider: rider.displayName, mount: mount.displayName }));
   const now = listEnemies(encounter.id);
   const pairToken = map ? (listTokens(map.id).find((token) => token.refId === rider.id) ?? null) : null;
   const left = pairToken ? enemyMoveBudget(getActiveEncounter(campaign.id) ?? liveEncounter, getEnemy(mount.id) ?? steed, pairToken).tilesLeft * 5 : null;
@@ -483,7 +484,7 @@ export function enemyGetsDown(campaign: Campaign, fight: Fight, args: DismountAr
   const leashesEnded = afterMoveLeashes(campaign);
   publishEphemeral(campaign.id, "battle_map_updated", {});
   publishEncounter(campaign.id);
-  tableNote(campaign, rider, `${rider.displayName} gets down from ${mount.displayName}.`);
+  tableNote(campaign, rider, tableTranslator(campaign.gameSettings.tableLanguage)("{rider} gets down from {mount}.", { rider: rider.displayName, mount: mount.displayName }));
   const left = landed && charged ? enemyMoveBudget(getActiveEncounter(campaign.id) ?? liveEncounter, getEnemy(rider.id) ?? after, { ...landed, movedThisRound: half }).tilesLeft * 5 : null;
   const ownTurnWords = `takes a turn of its own from now on, on ${rider.displayName}'s place in the order`;
   const turnWords = !steered ? "keeps its turn" : spentTurn ? `${ownTurnWords}, from next round: its turn this round was ${rider.displayName}'s` : `${ownTurnWords}, with all its actions`;
