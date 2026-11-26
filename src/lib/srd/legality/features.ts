@@ -31,7 +31,7 @@ import { textKey } from "@/lib/language/text-logic";
 import { speciesLineage } from "@/lib/srd/race-id";
 import { isSwapRecord } from "@/lib/dm/ar-ws-spell-swap-record";
 import { studiedRaise } from "@/lib/srd/studied-books";
-import { translate, type Locale } from "@/lib/messages-logic";
+import { translate, translatePlural, type Locale } from "@/lib/messages-logic";
 
 let tableNames: Set<string> | null = null;
 
@@ -112,6 +112,7 @@ export function isChoiceFeature(name: string, extras?: SubclassExtras, optionId?
 }
 
 export type FeatureInput = {
+  locale?: Locale;
   sent: SheetFeature[];
   // Features the stored character holds, on an edit.
   held: SheetFeature[];
@@ -175,7 +176,7 @@ export function judgeFeatures(input: FeatureInput): FeatureVerdict {
       continue;
     }
     problems.push(
-      `"${feature.name}" is a ${feature.source} feature, and those are granted in play by whoever runs the table; a character's features come from its class, race and background. Remove it.`,
+      translate(input.locale ?? "en", "\"{name}\" is a {source} feature, and those are granted in play by whoever runs the table; a character's features come from its class, race and background. Remove it.", { name: feature.name, source: input.locale === "cs" ? translate("cs", feature.source, { context: "legality.featureSource" }) : feature.source }),
     );
   }
   for (const name of input.derived) {
@@ -203,6 +204,7 @@ export function judgeFeatures(input: FeatureInput): FeatureVerdict {
 // ---- feats ----
 
 export type FeatInput = {
+  locale?: Locale;
   sent: string[];
   // Feats taken with an improvement, as the sheet records them.
   recorded: string[];
@@ -486,12 +488,16 @@ export function judgeFeats(input: FeatInput): FeatVerdict {
   const recorded = new Set(input.recorded.map(textKey));
   const extra = feats.filter((name) => !recorded.has(textKey(name)) && !held.has(textKey(name)));
   const room = input.racialFeats + input.unrecordedSlots;
+  const locale = input.locale ?? "en";
   if (extra.length > room) {
-    problems.push(
-      room
-        ? `This character has room for ${room} feat${room === 1 ? "" : "s"} beyond the improvements on record; ${extra.join(", ")} ${extra.length === 1 ? "is" : "are"} too many.`
-        : `A feat is taken in place of an Ability Score Improvement; ${extra.join(", ")} ${extra.length === 1 ? "has" : "have"} no improvement behind ${extra.length === 1 ? "it" : "them"}.`,
-    );
+    const names = extra.join(", ");
+    const count = extra.length;
+    if (room) {
+      const allowance = translatePlural(locale, "This character has room for {count} feat beyond the improvements on record", "This character has room for {count} feats beyond the improvements on record", { count: room });
+      problems.push(translatePlural(locale, "{room}; {names} is too many.", "{room}; {names} are too many.", { count, room: allowance, names }));
+    } else {
+      problems.push(translatePlural(locale, "A feat is taken in place of an Ability Score Improvement; {names} has no improvement behind it.", "A feat is taken in place of an Ability Score Improvement; {names} have no improvement behind them.", { count, names }));
+    }
   }
   for (const name of feats) {
     if (held.has(textKey(name))) {
@@ -499,12 +505,12 @@ export function judgeFeats(input: FeatInput): FeatVerdict {
     }
     const facts = input.featOf(name);
     if (!facts) {
-      problems.push(`"${name}" is not a feat this server knows; pick one from the feat list.`);
+      problems.push(translate(locale, "\"{name}\" is not a feat this server knows; pick one from the feat list.", { name }));
       continue;
     }
     const unmet = unmetPrerequisite(facts.prerequisite, input.who);
     if (unmet) {
-      problems.push(`${facts.name} requires ${unmet}, which this character does not have.`);
+      problems.push(translate(locale, "{name} requires {prerequisite}, which this character does not have.", { name: facts.name, prerequisite: locale === "cs" ? translate(locale, unmet, { context: "content.featPrerequisite" }) : unmet }));
     }
   }
   // Feats beyond the race's own were paid for with improvements taken in play.

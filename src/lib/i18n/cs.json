@@ -1,5 +1,8 @@
 {
   "messages": {
+    "\"{name}\" is not a feat this server knows; pick one from the feat list.": "Server odbornost „{name}“ nezná; vyber jednu ze seznamu odborností.",
+    "{name} requires {prerequisite}, which this character does not have.": "Odbornost {name} má nesplněný předpoklad: {prerequisite}.",
+    "\"{name}\" is a {source} feature, and those are granted in play by whoever runs the table; a character's features come from its class, race and background. Remove it.": "„{name}“ je schopnost typu {source}, kterou během hry uděluje PJ; schopnosti postavy vycházejí z povolání, rasy a zázemí. Odeber ji.",
     "{requirement}: the table checks this": "{requirement}: ověří PJ",
     "{requirement}, you have it": "{requirement} – splněno",
     "Needs {requirement}": "Požadavek: {requirement}",
@@ -14504,6 +14507,8 @@
     "Unlimited": "Neomezený"
   },
   "contexts": {
+    "story": {"legality.featureSource":"příběhová"},
+    "feat": {"legality.featureSource":"odbornost"},
     "Dexterity 13 or higher": {
       "content.featPrerequisite": "Obratnost 13 nebo vyšší"
     },
@@ -16213,6 +16218,9 @@
     }
   },
   "plurals": {
+    "This character has room for {count} feat beyond the improvements on record\u0000This character has room for {count} feats beyond the improvements on record": ["Tato postava může mít {count} odbornost nad rámec zaznamenaných zvýšení vlastností","Tato postava může mít {count} odbornosti nad rámec zaznamenaných zvýšení vlastností","Tato postava může mít {count} odborností nad rámec zaznamenaných zvýšení vlastností"],
+    "{room}; {names} is too many.\u0000{room}; {names} are too many.": ["{room}; odbornost navíc: {names}.","{room}; odbornosti navíc: {names}.","{room}; odbornosti navíc: {names}."],
+    "A feat is taken in place of an Ability Score Improvement; {names} has no improvement behind it.\u0000A feat is taken in place of an Ability Score Improvement; {names} have no improvement behind them.": ["Odbornost se vybírá místo zvýšení vlastností; pro {names} není odpovídající zvýšení zaznamenáno.","Odbornosti se vybírají místo zvýšení vlastností; pro {names} nejsou odpovídající zvýšení zaznamenána.","Odbornosti se vybírají místo zvýšení vlastností; pro {names} nejsou odpovídající zvýšení zaznamenána."],
     "The dice for this hit die changed while you rolled: it is {expression} now, {count} die, and {actual} came in. No hit die was spent; roll what the sheet shows now.\u0000The dice for this hit die changed while you rolled: it is {expression} now, {count} dice, and {actual} came in. No hit die was spent; roll what the sheet shows now.": ["Během hodu se změnily kostky: nyní {expression}, očekává se {count} kostka, zadáno {actual}. Žádná Kostka životů nebyla utracena; hoď podle aktuálního deníku.","Během hodu se změnily kostky: nyní {expression}, očekávají se {count} kostky, zadáno {actual}. Žádná Kostka životů nebyla utracena; hoď podle aktuálního deníku.","Během hodu se změnily kostky: nyní {expression}, očekává se {count} kostek, zadáno {actual}. Žádná Kostka životů nebyla utracena; hoď podle aktuálního deníku."],
     "The {race}'s increase of the player's choice goes to {count} different ability{choices} the race does not already raise; {ability} cannot take it.\u0000The {race}'s increase of the player's choice goes to {count} different abilities{choices} the race does not already raise; {ability} cannot take it.": ["Rasové zvýšení podle volby hráče ({race}) se vztahuje na {count} vlastnost{choices}, kterou rasa již nezvyšuje; nelze zvolit: {ability}.","Rasové zvýšení podle volby hráče ({race}) se vztahuje na {count} různé vlastnosti{choices}, které rasa již nezvyšuje; nelze zvolit: {ability}.","Rasové zvýšení podle volby hráče ({race}) se vztahuje na {count} různých vlastností{choices}, které rasa již nezvyšuje; nelze zvolit: {ability}."],
     "This character has earned {count} Ability Score Improvement at its level; {actual} are recorded.\u0000This character has earned {count} Ability Score Improvements at its level; {actual} are recorded.": ["Postava na své úrovni získala {count} zvýšení vlastností; počet zaznamenaných voleb: {actual}.","Postava na své úrovni získala {count} zvýšení vlastností; počet zaznamenaných voleb: {actual}.","Postava na své úrovni získala {count} zvýšení vlastností; počet zaznamenaných voleb: {actual}."],

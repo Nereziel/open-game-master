@@ -391,6 +391,7 @@ export function legalizeSheet(input: CreateSheetInput, context: LegalityContext)
   const feats = policy.trustsHeld
     ? { problems: [], feats: input.feats ?? [], slotsUsed: 0 }
     : judgeFeats({
+        locale: context.locale,
         sent: input.feats ?? [],
         recorded: recorded.flatMap((choice) => (choice.mode === "feat" ? [choice.feat] : [])),
         racialFeats: race.feats,
@@ -734,6 +735,7 @@ export function legalizeSheet(input: CreateSheetInput, context: LegalityContext)
   const featured = policy.trustsHeld
     ? { problems: [], features: withFreeCasts(input.features ?? [], freeCasts) }
     : judgeFeatures({
+        locale: context.locale,
         sent: withHeldPickIds(input.features ?? [], held?.features).filter((feature) => !isAncestry(feature) && !featDerived(feature.name)),
         held: (held?.features ?? []).filter((feature) => !featDerived(feature.name)),
         // Written afresh every time, so an option given up leaves nothing.
