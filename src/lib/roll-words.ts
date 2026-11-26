@@ -43,14 +43,14 @@
 //
 // Pure: no database. Client components import it through roll-labels.ts.
 
-import { contentName, type FrNamesTable } from "@/lib/content/names";
+import { contentName, type LocalizedNamesTable } from "@/lib/content/names";
 import { UNSEEN_NAME } from "@/lib/hidden-names-logic";
-import { interpolate } from "@/lib/i18n/translate";
+import { interpolate, type Locale } from "@/lib/i18n/translate";
 import { textKey } from "@/lib/language/text-logic";
 import type { RollNote, RollParts, RollTarget, RollUsed, WordedParts } from "@/lib/roll-parts";
 
 // The shape of a translator, as the pure sentence builders take it.
-export type RollTranslator = ((key: string, vars?: Record<string, string | number>) => string) & { locale?: "en" | "fr" };
+export type RollTranslator = ((key: string, vars?: Record<string, string | number>) => string) & { locale?: Locale };
 
 // The version of the words `worded` parts make. Raised when a field these
 // words are made from changes its meaning: rows are never rewritten, so a
@@ -87,7 +87,7 @@ export const PHYSICAL = `(${PHYSICAL_WORD})`;
 const AIM_CONTEXT = "roll.aim";
 
 // The names table of each kind of thing that has a content key.
-const KEY_TABLES: Partial<Record<RollUsed["kind"], FrNamesTable>> = { weapon: "weapons", spell: "spells" };
+const KEY_TABLES: Partial<Record<RollUsed["kind"], LocalizedNamesTable>> = { weapon: "weapons", spell: "spells" };
 
 const ENGLISH: RollTranslator = Object.assign((key: string, vars?: Record<string, string | number>) => interpolate(key, vars), { locale: "en" as const });
 

@@ -36,7 +36,7 @@ register("./lib/register-alias.mjs", import.meta.url);
 
 const { translate } = await import("../src/lib/i18n/translate.ts");
 // The catalog and the name tables as a server process installs them.
-await import("../src/lib/i18n/fr-catalog.ts");
+await import("../src/lib/i18n/server-catalogs.ts");
 const { hideNames } = await import("../src/lib/hidden-names-logic.ts");
 const { pendingReason, pendingWords, rollAgainst, rollCardLabel, rollChronicleLead, rollToastLead } = await import("../src/lib/roll-labels.ts");
 const { attackParts, checkParts, foeTarget, noted, swingParts } = await import("../src/lib/roll-parts.ts");
@@ -53,6 +53,7 @@ function test(name, fn) {
 const translator = (locale) => Object.assign((key, vars) => translate(locale, key, vars), { locale });
 const en = translator("en");
 const fr = translator("fr");
+const cs = translator("cs");
 
 const GOBLIN = { id: "a-goblin", displayName: "Goblin" };
 const ARIA = { kind: "sheet", id: "aria", name: "Aria" };
@@ -104,6 +105,21 @@ test("a character fighting the party is struck as a character, a creature as a c
 // ---- a French table reads the card in French ----
 
 const card = (parts, kind = "attack", t = fr) => rollCardLabel(t, { kind, detail: rollSentence({ parts }), attacker: ARIA, parts }, "Aria");
+
+test("Czech structured rolls use the same parts and leave typed names and stored sentences alone", () => {
+  const parts = attackParts(longsword, foeTarget(GOBLIN), "opportunity");
+  const snapshot = structuredClone(parts);
+  assert.equal(rollWords(cs, parts), "Dlouhý meč (příležitostný útok) proti Goblin");
+  assert.equal(rollSentence({ parts }), "Longsword (opportunity attack) vs Goblin");
+  assert.equal(rollWords(cs, attackParts({ name: "Longsword +1", base: "Longsword" }, foeTarget(GOBLIN))), "Longsword +1 proti Goblin");
+  assert.equal(rollWords(cs, attackParts({ name: "Log" }, foeTarget(GOBLIN))), "Log proti Goblin");
+  assert.equal(rollWords(cs, atDoor(attackParts(fireBolt, foeTarget(GOBLIN)), true)), "Ohnivá střela proti Goblin (fyzické kostky)");
+  assert.deepEqual(parts, snapshot);
+  const pending = { kind: "attack", detail: rollSentence({ parts }), reason: rollSentence({ parts }), parts };
+  assert.equal(pendingWords(cs, pending), "Dlouhý meč (příležitostný útok) proti Goblin");
+  assert.equal(pendingReason(cs, pending, true), "");
+  assert.equal(pendingReason(cs, pending, false), pendingWords(cs, pending));
+});
 
 test("a French table's card says the weapon, the note and the joining words in French", () => {
   assert.equal(card(attackParts(longsword, foeTarget(GOBLIN))), "Aria · Jet d’attaque (Épée longue c/ Goblin)");

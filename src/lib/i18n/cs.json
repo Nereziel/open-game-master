@@ -1,5 +1,21 @@
 {
   "messages": {
+    "opportunity attack": "příležitostný útok",
+    "half on a miss": "poloviční zranění při minutí",
+    "an object": "předmět",
+    "someone unseen": "někdo neviděný",
+    "reroll any die of {below} or less once (Great Weapon Fighting)": "jednou přehoď každou kostku s výsledkem {below} nebo méně (Boj s obouruční zbraní)",
+    "roll the damage a second time and keep the better total (Brutal Attack)": "hoď na zranění podruhé a ponech vyšší součet (Brutální útok)",
+    "roll the weapon's dice a second time and keep the better total (Savage Attacker)": "hoď podruhé kostkami zbraně a ponech vyšší součet (Neurvalý útočník)",
+    "reroll the lowest damage die once and keep the new roll (Piercer)": "jednou přehoď nejnižší kostku zranění a ponech nový výsledek (Bodavec)",
+    "reroll up to {dice} of the damage dice and keep the new rolls (Empowered Spell)": "přehoď až {dice} kostek zranění a ponech nové výsledky (Posílené kouzlo)",
+    "Before you enter your dice: {steps}.": "Než zadáš výsledky kostek: {steps}.",
+    "{used} attack against {target}": "Útok ({used}) proti {target}",
+    "{used} damage against {target}": "Zranění ({used}) proti {target}",
+    "{used} half damage against {target}": "Poloviční zranění ({used}) proti {target}",
+    "Cast {spell} at {target}. Your reaction is spent until your next turn.": "Sešli {spell} na {target}. Tvoje reakce je spotřebována do příštího tahu.",
+    "Cast at {target}": "Seslat na {target}",
+    "{movement} with {rider} on its back. Cast {spell} as your opportunity attack (War Caster), and at which of them? It uses your reaction.": "{movement} s jezdcem {rider} na hřbetě. Chceš seslat {spell} jako příležitostný útok (Válečný sesilatel), a na koho z nich? Spotřebuješ svou reakci.",
     "\"{name}\" is not a feat this server knows; pick one from the feat list.": "Server odbornost „{name}“ nezná; vyber jednu ze seznamu odborností.",
     "{name} requires {prerequisite}, which this character does not have.": "Odbornost {name} má nesplněný předpoklad: {prerequisite}.",
     "\"{name}\" is a {source} feature, and those are granted in play by whoever runs the table; a character's features come from its class, race and background. Remove it.": "„{name}“ je schopnost typu {source}, kterou během hry uděluje PJ; schopnosti postavy vycházejí z povolání, rasy a zázemí. Odeber ji.",
@@ -14507,6 +14523,15 @@
     "Unlimited": "Neomezený"
   },
   "contexts": {
+    "then": {
+      "roll.steps": "poté"
+    },
+    "physical": {
+      "roll.dice": "fyzické kostky"
+    },
+    "vs": {
+      "roll.aim": "proti"
+    },
     "story": {"legality.featureSource":"příběhová"},
     "feat": {"legality.featureSource":"odbornost"},
     "Dexterity 13 or higher": {
@@ -15297,6 +15322,7 @@
       "builder.levels.none": "Žádné"
     },
     "on": {
+      "roll.aim": "na",
       "admin.voice.state.on": "zapnuto"
     },
     "Hidden": {
