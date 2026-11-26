@@ -357,18 +357,18 @@ function orderedBlock(phase: Pick<CoordinationPhase, "entries" | "prompt">, play
 
 // The table note a fight or a lapse leaves when it sets an unresolved plan
 // aside: what was staged and did not happen, in its order when it had one.
-export function setAsideNote(phase: Pick<CoordinationPhase, "entries">, reason: "fight" | "lapsed" | "cancelled"): string {
+export function setAsideNote(phase: Pick<CoordinationPhase, "entries">, reason: "fight" | "lapsed" | "cancelled", t: T = (key, vars) => key.replace(/\{(\w+)\}/g, (slot, name: string) => String(vars?.[name] ?? slot))): string {
   const staged = phase.entries.filter((entry) => entry.text && (entry.companion || entry.state === "ready" || entry.state === "drafting"));
   const ordered = isOrdered(phase);
-  const why =
-    reason === "fight"
-      ? "A fight began before the party's coordinated plan was resolved"
-      : reason === "lapsed"
-        ? "The party's coordinated plan sat untouched and lapsed"
-        : "The lead set the party's coordinated plan aside";
-  return staged.length
-    ? `${why}; none of it was carried out (${staged.map((entry) => `${ordered && entry.step ? `step ${entry.step}, ` : ""}${entry.name}: ${entry.text}`).join("; ")}).`
-    : `${why}.`;
+  const details = staged.map((entry) => `${ordered && entry.step ? t("step {step}, ", { step: entry.step }) : ""}${entry.name}: ${entry.text}`).join("; ");
+  switch (reason) {
+    case "fight":
+      return staged.length ? t("A fight began before the party's coordinated plan was resolved; none of it was carried out ({details}).", { details }) : t("A fight began before the party's coordinated plan was resolved.");
+    case "lapsed":
+      return staged.length ? t("The party's coordinated plan sat untouched and lapsed; none of it was carried out ({details}).", { details }) : t("The party's coordinated plan sat untouched and lapsed.");
+    case "cancelled":
+      return staged.length ? t("The lead set the party's coordinated plan aside; none of it was carried out ({details}).", { details }) : t("The lead set the party's coordinated plan aside.");
+  }
 }
 
 // The table note a resolved plan posts with its lines: who acts together,

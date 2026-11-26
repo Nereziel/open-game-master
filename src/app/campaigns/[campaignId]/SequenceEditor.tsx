@@ -3,6 +3,7 @@
 import { ArrowDown, ArrowUp, GripVertical, Link2, Unlink } from "lucide-react";
 import { useState, type DragEvent } from "react";
 import { cn } from "@/lib/cn";
+import { useT } from "@/lib/locale";
 import {
   joinPrevious,
   moveEarlier,
@@ -39,6 +40,7 @@ export function SequenceEditor({
   disabled?: boolean;
   label: string;
 }) {
+  const t = useT();
   const [dragging, setDragging] = useState<string | null>(null);
   const [over, setOver] = useState<Target | null>(null);
   const [said, setSaid] = useState("");
@@ -48,7 +50,7 @@ export function SequenceEditor({
     onChange(next);
     const at = next.findIndex((step) => step.includes(id));
     const mates = at >= 0 ? next[at].length - 1 : 0;
-    setSaid(`${nameOf(id)}: step ${at + 1} of ${next.length}${mates ? `, with ${mates} more` : ""}.`);
+    setSaid(mates ? t("{name}: step {step} of {total}, with {mates} more.", { name: nameOf(id), step: at + 1, total: next.length, mates }) : t("{name}: step {step} of {total}.", { name: nameOf(id), step: at + 1, total: next.length }));
   };
 
   // Taken on dragenter as well as dragover: the steps move under a still
@@ -112,9 +114,9 @@ export function SequenceEditor({
             )}
           >
             <p className="mb-1 text-[10px] uppercase tracking-wide text-stone-500">
-              Step {index + 1}
-              {index > 0 ? ` · after step ${index}` : " · first"}
-              {ids.length > 1 ? " · at the same time" : ""}
+              {t("Step {step}", { step: index + 1 })}
+              {index > 0 ? t(" · after step {step}", { step: index }) : t(" · first")}
+              {ids.length > 1 ? t(" · at the same time") : ""}
             </p>
             <ul className="space-y-1">
               {ids.map((id) => {
@@ -143,14 +145,14 @@ export function SequenceEditor({
                     <GripVertical className="size-3.5 shrink-0 cursor-grab text-stone-500" aria-hidden="true" />
                     <span className="min-w-0 flex-1 truncate font-medium text-stone-200">
                       {name}
-                      {item?.companion ? <span className="text-[10px] font-normal text-stone-500"> companion</span> : null}
+                      {item?.companion ? <span className="text-[10px] font-normal text-stone-500">{t(" companion")}</span> : null}
                     </span>
                     <button
                       type="button"
                       disabled={disabled || (alone && index === 0)}
                       onClick={() => change(id, moveEarlier(sequence, id))}
-                      aria-label={`Move ${name} earlier`}
-                      title="Earlier"
+                      aria-label={t("Move {name} earlier", { name })}
+                      title={t("Earlier")}
                       className={iconButton}
                       data-sequence-earlier
                     >
@@ -160,8 +162,8 @@ export function SequenceEditor({
                       type="button"
                       disabled={disabled || (alone && index === sequence.length - 1)}
                       onClick={() => change(id, moveLater(sequence, id))}
-                      aria-label={`Move ${name} later`}
-                      title="Later"
+                      aria-label={t("Move {name} later", { name })}
+                      title={t("Later")}
                       className={iconButton}
                       data-sequence-later
                     >
@@ -172,8 +174,8 @@ export function SequenceEditor({
                         type="button"
                         disabled={disabled}
                         onClick={() => change(id, joinPrevious(sequence, id))}
-                        aria-label={`${name} acts at the same time as step ${index}`}
-                        title="At the same time as the step above"
+                        aria-label={t("{name} acts at the same time as step {step}", { name, step: index })}
+                        title={t("At the same time as the step above")}
                         className={iconButton}
                         data-sequence-join
                       >
@@ -185,8 +187,8 @@ export function SequenceEditor({
                         type="button"
                         disabled={disabled}
                         onClick={() => change(id, ownStep(sequence, id))}
-                        aria-label={`${name} takes a step of their own`}
-                        title="A step of their own"
+                        aria-label={t("{name} takes a step of their own", { name })}
+                        title={t("A step of their own")}
                         className={iconButton}
                         data-sequence-split
                       >

@@ -62,13 +62,29 @@ const { entryDice } = await import("../src/lib/dice.ts");
 const { translate } = await import("../src/lib/i18n/translate.ts");
 const { textKey } = await import("../src/lib/language/text-logic.ts");
 await import("../src/lib/i18n/fr-catalog.ts");
-const { pendingReason, pendingWords, rollAgainst, rollCardLabel } = await import("../src/lib/roll-labels.ts");
+const { pendingReason, pendingWords, rollAgainst, rollCardLabel, rollToastLead, rollChronicleLead } = await import("../src/lib/roll-labels.ts");
 const { rollPhysical, rollWeaponRow } = await import("../src/lib/roll-parts.ts");
 const { PHYSICAL, rollSentence, WORDS_VERSION } = await import("../src/lib/roll-words.ts");
 const afterRoute = await world.route("campaigns/[campaignId]/pending-rolls/[pendingRollId]/after-roll");
 const submitRoute = await world.route("campaigns/[campaignId]/pending-rolls/[pendingRollId]");
 
 const fr = Object.assign((key, vars) => translate("fr", key, vars), { locale: "fr" });
+
+await import("../src/lib/i18n/cs-catalog.ts");
+const cs = Object.assign((key, vars) => translate("cs", key, vars), { locale: "cs" });
+await test("skill check labels are localized without changing the stored roll", () => {
+  const { kind, detail } = { kind: "skill_check", detail: "survival" };
+  const parts = { used: { kind: "skill", key: "survival", name: "Survival" } };
+  const roll = { kind, detail, parts, attacker: null, requestedBy: "dm" };
+  assert.equal(rollToastLead(cs, roll, "Kara"), "Kara · Přežití");
+  assert.equal(rollCardLabel(cs, roll, "Kara"), "Kara · Ověření dovednosti (Přežití)");
+  assert.equal(rollChronicleLead(cs, roll, "Kara"), "Přežití");
+  assert.equal(rollToastLead(cs, { ...roll, parts: null }, "Kara"), "Kara · Přežití");
+  assert.equal(pendingWords(cs, { kind, detail: "sleight_of_hand", reason: "" }), "Čachry");
+  assert.equal(pendingWords(cs, { kind, detail: "Survival in the woods", reason: "" }), "Survival in the woods");
+  assert.equal(rollToastLead(cs, { ...roll, parts: { ...parts, worded: WORDS_VERSION } }, "Kara"), "Kara · Přežití");
+  assert.equal(roll.detail, "survival");
+});
 
 const CASTING = {
   ability: "int",
