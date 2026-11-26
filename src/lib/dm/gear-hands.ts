@@ -224,7 +224,7 @@ export function handsFullError(
 // a player's words.
 export function handsFullForPlayer(text: string, t: (key: string, vars?: MessageVars) => string = formatMessage): string {
   // Recognize the complete canonical refusal and its three upstream ways out.
-  const match = /^(.*?)'s hands are full \((.*?)\), so (.*?) cannot be (drawn|strapped on) yet\. (.*)$/s.exec(text);
+  const match = /^([\s\S]*?)'s hands are full \(([\s\S]*?)\), so ([\s\S]*?) cannot be (drawn|strapped on) yet\. ([\s\S]*)$/.exec(text);
   if (match) {
     const pair = FOR_PLAYER.find(([told]) => match[5].startsWith(told));
     if (pair) {

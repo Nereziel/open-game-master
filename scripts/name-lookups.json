@@ -5020,6 +5020,13 @@
         "Show the original label if no carried row is available."
       ]
     ],
+    "components/sheet/SheetGearRow.tsx#first": [
+      [
+        "key",
+        1,
+        "First translated label when rendering a zero- or one-element display list; no record selection."
+      ]
+    ],
     "components/sheet/SheetGearRow.tsx#whole": [
       [
         "identity",
@@ -14856,6 +14863,11 @@
         "parse",
         1,
         "match the canonical hands-full sentence at the reader boundary"
+      ],
+      [
+        "parse",
+        1,
+        "Recognize the canonical storyteller advice prefix before substituting its localized reader-facing sentence; no record lookup."
       ]
     ],
     "lib/dm/gear-hands.ts#whole": [
