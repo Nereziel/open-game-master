@@ -2885,15 +2885,15 @@ async function runAdvance(context: TurnContext, turn: DmTurn) {
     // a history with an unanswered tool call.
     const answerRanAbove = (inFight: boolean, narrateNow: boolean) => {
       for (const toolCall of toolCalls) {
+        const outcome: ToolResult = ranAbove(toolCall, inFight, narrateNow) ??
+          (offersTool(tools, toolCall.name)
+            ? { ok: true }
+            : { error: `The engine has no action called "${toolCall.name}".`, retry: true });
+        dmDebugTrace("tool.result", { campaignId, turnId: turn.id, callIndex: turn.callIndex, tool: toolCall.name, toolCallId: toolCall.id, failed: typeof outcome.error === "string" }, { arguments: toolCall.rawArguments, result: outcome });
         turn.conversation.push({
           role: "tool",
           ...(toolCall.id ? { tool_call_id: toolCall.id } : {}),
-          content: JSON.stringify(
-            ranAbove(toolCall, inFight, narrateNow) ??
-              (offersTool(tools, toolCall.name)
-                ? { ok: true }
-                : { error: `The engine has no action called "${toolCall.name}".`, retry: true }),
-          ),
+          content: JSON.stringify(outcome),
         });
       }
     };
@@ -4639,7 +4639,6 @@ function finalize(context: TurnContext, turn: DmTurn, failed: string, spoken: re
   const claimed = slot.seq;
 
   if (failed) {
-    dmDebugTrace("narration.halted", { campaignId, turnId: turn.id, callIndex: turn.callIndex }, { reason: failed });
     haltDmTurn(campaignId, turn, failed, claimed);
     return;
   }

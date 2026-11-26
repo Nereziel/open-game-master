@@ -1,3 +1,4 @@
+import { dmDebugTrace } from "@/lib/dm/debug";
 import { normalizeSpeaker, normalizeSpokenLines, type Speaker, type SpokenLine } from "@/lib/dm/speech";
 import { getDatabase, nowIso, parseJson } from "@/lib/db/core";
 import { touchCampaign } from "@/lib/db/campaigns";
@@ -180,6 +181,7 @@ export function insertCampaignMessage(
     throw new Error("Failed to insert campaign message.");
   }
   namesHeardIn(message);
+  dmDebugTrace("campaign.message.recorded", { campaignId: message.campaignId, turnId: message.dmTurnId, messageId: message.id, seq: message.seq, authorType: message.authorType, characterId: message.characterId, locationId: message.locationId }, { text: message.content, intent: message.intent, rollIds: message.rollIds });
   return message;
 }
 
