@@ -17,7 +17,7 @@ import {
 import { requestHarnessMessage } from "@/lib/harness/bridge";
 import { harnessConfig, harnessContextTokens } from "@/lib/harness/status";
 import { currentDmJob, raceJobStop, withJobStage } from "@/lib/dm/job-control";
-import { dmDebug } from "@/lib/dm/debug";
+import { dmDebug, dmDebugModelInput, dmDebugPromptEnabled, dmDebugTrace } from "@/lib/dm/debug";
 import { randomUUID } from "node:crypto";
 import { MODEL_STAGE_GRACE_MS } from "@/lib/dm/job-stage-logic";
 import { paidAiAllowedNow, paidAiRefusalResponse } from "@/lib/shared-host";
@@ -374,14 +374,16 @@ async function attempt(
     route.provider !== "custom" || options.slot !== undefined
       ? options.slot
       : slotForOtherCall({ baseUrl: route.baseUrl, model: route.model, apiKey: route.apiKey }, messages[0]?.content, options.tools);
-  const call = () =>
-    send(route, sent, {
+  const call = () => {
+    dmDebugModelInput({ ...trace, dropped: sizing?.dropped, clipped: sizing?.clipped, toolChoice: options.toolChoice, thinking: options.thinking, maxOutputTokens: sizing && !sizing.windowAssumed ? sizing.outputTokens : options.maxOutputTokens, scope: "fitted_dm_messages" }, sent, options.tools);
+    return send(route, sent, {
       ...transport,
       ...leastThought,
       ...(slot !== undefined ? { slot } : {}),
       onDelta,
       ...(sizing && !sizing.windowAssumed ? { maxOutputTokens: sizing.outputTokens } : {}),
     });
+  };
   let waited = 0;
   if (background) {
     dmDebug("model.gate.wait", trace);
@@ -397,6 +399,9 @@ async function attempt(
   const firstTokenMs = firstTokenAt ? firstTokenAt - started - waited : undefined;
 
   dmDebug("model.result", { ...trace, durationMs, firstTokenMs, waitedMs: waited, outcome: outcomeOf(result), status: result.error?.status, finishReason: result.finishReason, inputTokens: result.usage?.inputTokens, outputTokens: result.usage?.outputTokens, reasoningTokens: result.usage?.reasoningTokens, cachedInputTokens: result.usage?.cachedInputTokens, promptMs: result.usage?.promptMs, generateMs: result.usage?.generateMs, loadMs: result.usage?.loadMs, replyChars: typeof result.message?.content === "string" ? result.message.content.length : 0, toolCalls: Array.isArray(result.message?.tool_calls) ? result.message.tool_calls.length : 0 });
+  if (dmDebugPromptEnabled()) {
+    dmDebugTrace("model.output", { ...trace, finishReason: result.finishReason, status: result.error?.status }, { text: typeof result.message?.content === "string" ? result.message.content : undefined, toolCalls: result.message?.tool_calls });
+  }
   if (result.usage) {
     recordUsage({
       kind: result.usage.backend === "harness" ? "agent" : "text",

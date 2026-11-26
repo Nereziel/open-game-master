@@ -182,16 +182,46 @@ const lastCalls = (n) =>
   process.env.OPENAI_COMPAT_CONTEXT = "8192";
   resetCalibration();
   seen.chat.length = 0;
-  const result = await requestUtilityMessage(
-    settings(),
-    [
-      { role: "system", content: "Summarize the passages." },
-      { role: "user", content: `BEGIN ${words(20_000)} END` },
-    ],
-    { meta: { task: "compaction" }, onDelta: () => {} },
-  );
+  const debugLines = [];
+  const originalLog = console.log;
+  const keys = ["DM_DEBUG", "DM_DEBUG_CONTENT", "DM_DEBUG_PROMPT"];
+  const savedDebug = keys.map((key) => process.env[key]);
+  let result;
+  try {
+    for (const key of keys) process.env[key] = "1";
+    console.log = (...args) => {
+      if (args[0] === "[dm-debug]") debugLines.push(JSON.parse(args[1]));
+      else originalLog(...args);
+    };
+    result = await requestUtilityMessage(
+      settings(),
+      [
+        { role: "system", content: "Summarize the passages." },
+        { role: "user", content: `BEGIN ${words(20_000)} END` },
+      ],
+      { meta: { task: "compaction" }, onDelta: () => {} },
+    );
+  } finally {
+    console.log = originalLog;
+    for (const [index, key] of keys.entries()) {
+      if (savedDebug[index] === undefined) delete process.env[key];
+      else process.env[key] = savedDebug[index];
+    }
+  }
   assert.ok(!result.error, "the call went through");
   const sent = seen.chat.at(-1);
+  assert.equal(seen.chat.length, 1, "prompt logging does not add a model request");
+  const inputs = debugLines.filter((entry) => entry.event === "model.input");
+  const outputs = debugLines.filter((entry) => entry.event === "model.output");
+  assert.equal(inputs.length, 1);
+  assert.equal(outputs.length, 1);
+  assert.equal(inputs[0].task, "compaction");
+  assert.equal(inputs[0].clipped, 1);
+  assert.equal(inputs[0].callId, outputs[0].callId);
+  assert.deepEqual(inputs[0].payload.messages, sent.messages, "the log contains the fitted messages actually sent to the fake backend");
+  assert.equal(inputs[0].maxOutputTokens, sent.max_tokens);
+  assert.equal(outputs[0].payload.text, result.message.content);
+  assert.equal(outputs[0].payload.text, "The guard nods.");
   const sentTokens = Math.ceil(JSON.stringify(sent.messages).length / 4);
   assert.ok(sentTokens < 8_192, `the oversized input was fitted (${sentTokens} tokens sent)`);
   assert.match(sent.messages[1].content, /^BEGIN /);
