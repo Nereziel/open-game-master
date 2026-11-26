@@ -476,4 +476,190 @@ test("casting refusals use the reader's locale and preserve the rules and identi
   assert.equal(castRefusalDisplay(custom + " Unrecognized tail.", t, iris.name), custom + " Unrecognized tail.");
 });
 
+
+test("delegated cast refusals translate complete producer templates without changing their payload", () => {
+  const vars = {"name":"Iris (A+B)","spell":"Custom [A+B]","condition":"stunned","source":"Custom Grant","limit":"on yourself","feature":"Custom Drone","owner":"Other (A+B)","time":"1 minute","ring":"Ring [A+B]","level":"6","free":"1","total":"5","range":"30","x":"4","y":"8","distance":"40"};
+  const templates = [
+    "{spell} is from the 2024 rules, which this server does not play; pick a 2014 spell in its place. Nothing was spent.",
+    "{name} is dead and cannot spend a spell slot.",
+    "{name} is at 0 HP and cannot spend a spell slot.",
+    "{name} is {condition} and cannot spend a spell slot until the condition ends.",
+    "{spell} brings its creatures in with their stat blocks: cast it with cast_buff, the creature in variant (and count for fewer). Nothing was spent.",
+    "{name} casts {spell} through {source} only {limit}; this casting is not, and no spell slot of theirs casts it. Nothing was spent.",
+    "{spell} has a material component: {name}'s focus is their drone ({feature}), and no drone of theirs stands (Drone Companion builds them out of a fight; a component pouch serves too). Nothing was spent.",
+    "{name} stands inside Antimagic Field, where no spell can be cast. Step out of it first. Nothing was spent.",
+    "{name} stands inside {owner}'s Antimagic Field, where no spell can be cast. Step out of it first. Nothing was spent.",
+    "{spell} came to {name} through Marginalia, which casts it as a ritual only: cast it with ritual true (ten minutes longer, no slot). Nothing was spent.",
+    "{spell} takes {time} to cast. In a fight it is begun with use_spell_slot: the server holds the casting across {name}'s turns (their action on each, their concentration throughout) and spends the slot when it is complete, and then this tool resolves its effect. Nothing was spent.",
+    "{name} used Arcane Deflection and casts only cantrips until the end of their next turn, so {spell} is not cast. Nothing was spent.",
+    "No Ring of Spell Storing named \"{ring}\" is there to hold {spell}. Nothing was spent.",
+    "{ring} stores spells of 1st through 5th level, not level {level}. Nothing was spent.",
+    "{ring} has {free} of {total} levels free, and {spell} at level {level} does not fit. Nothing was spent.",
+    "{spell} is laid within {range} feet of {name}, and ({x},{y}) is {distance} feet away. Name a square within range. Nothing was spent.",
+    "A wall stands between {name} and ({x},{y}): {spell} needs a clear path to where it is laid. Name a square {name} can see. Nothing was spent.",
+    "Slow holds {spell} back (the d20 came up 11 or higher): the slot and this turn's action are spent and the spell does not take effect yet. On {name}'s next turn, cast it again with its tool to complete it: that spends their action and no slot. If they do not, the spell is wasted. Do not resolve it now.",
+    "{spell} is cast as a reaction: use_reaction with feature \"{spell}\" when its trigger happens; the server checks the trigger and applies it. Nothing was spent."
+  ];
+  for (const key of templates) {
+    const raw = translate("en", key, vars);
+    for (const locale of ["en", "cs", "fr"]) {
+      const t = (message, values) => translate(locale, message, values);
+      const result = castRefusalDisplay(raw, t, vars.name);
+      assert.equal(result, t(key, { ...vars, condition: t(vars.condition) }), key);
+      assert.equal(result === raw, locale === "en", key);
+      assert.doesNotMatch(result, /\\{\\w+\\}/);
+      assert.equal(castRefusalDisplay(raw + " Unknown suffix.", t, vars.name), raw + " Unknown suffix.");
+    }
+  }
+  const raw = translate("en", templates[3], vars);
+  assert.equal(castRefusalDisplay(raw, (key, values) => translate("cs", key, values), "Different actor"), raw);
+});
+
+
+test("held-spell refusal with ring advice localizes both known sentences only", () => {
+  const iris = caster({ name: "Iris (A+B)" });
+  const ring = "Custom Ring [A+B]";
+  const suffix = "{ring} holds it: use_item with spell casts it from there, then cast it with this tool.";
+  const templates = [
+    "{name} has no Spellcasting feature and cannot cast spells.",
+    "{name} cannot cast \"{spell}\": it is not among the spells they know or have prepared ({ready}).",
+    "No spell called \"{spell}\" is known. {name} knows or has prepared {ready}: send the one meant, by the name on the sheet.",
+    "{spell} is chosen but not prepared yet: it becomes ready after the next long rest.",
+    "{spell} is in the spellbook but not prepared, so it cannot be cast. Prepare it from the sheet; it is ready after the next long rest.",
+    "{name} casts {spell} through {source} as a ritual only: ten minutes longer, no slot. Send ritual true.",
+    "{name} casts {spell} through {source} for {cost} {resource}, and has {left} left. It comes back after a {rest} rest.",
+    "{name} casts {spell} through {source} {times}, and again after a {rest} rest; {uses} spent.",
+    "{name} holds {spell} as a {classId} spell, and a {classId}'s Spellcasting does not cast rituals (bards, clerics, druids, wizards and artificers do, through their own spells). It can be cast from a slot instead.",
+    "{spell} is not written in {name}'s ritual book, so it cannot be cast as a ritual. It goes in the book first (a ritual of a level they can cast, found and copied), or it is cast from a slot."
+  ];
+  const vars = { name: iris.name, spell: "Custom [A+B]", source: "Custom Grant", ready: "none", cost: 2, resource: "Custom Pool", left: 0, rest: "long", times: "once", uses: "that use is", classId: "fighter" };
+  const actual = spellHeldProblem(iris, "Counterspell", facts("Counterspell"));
+  assert.equal(typeof actual?.error, "string");
+  const messages = [actual.error, ...templates.map((key) => translate("en", key, vars))];
+  for (const base of messages) {
+    const advice = translate("en", suffix, { ring });
+    const raw = base + " " + advice;
+    for (const locale of ["en", "cs", "fr"]) {
+      const t = (key, values) => translate(locale, key, values);
+      const result = castRefusalDisplay(raw, t, iris.name);
+      assert.equal(result, castRefusalDisplay(base, t, iris.name) + " " + t(suffix, { ring }));
+      assert.equal(result === raw, locale === "en");
+      assert.ok(result.includes(ring));
+      assert.equal(castRefusalDisplay(raw + " Unknown tail.", t, iris.name), raw + " Unknown tail.");
+      const unknown = "Unknown refusal. " + advice;
+      assert.equal(castRefusalDisplay(unknown, t, iris.name), unknown);
+    }
+  }
+  const raw = actual.error + " " + translate("en", suffix, { ring });
+  assert.equal(castRefusalDisplay(raw, (key, values) => translate("cs", key, values), "Different actor"), raw);
+});
+
+
+test("sorcery point refusals preserve counts, identities and unknown wording", () => {
+  const templates = [
+    [
+      "{name} has 1 sorcery point left, and {spell} through {feature} costs {cost}. Nothing was spent.",
+      "{name} má ještě 1 čarodějný bod a seslání kouzla {spell} díky {feature} stojí {cost} bodů. Nic nebylo utraceno.",
+      "Il reste 1 point de sorcellerie à {name}, et lancer {spell} grâce à {feature} coûte {cost} points. Rien n’a été dépensé."
+    ],
+    [
+      "{name} has {left} sorcery points left, and {spell} through {feature} costs {cost}. Nothing was spent.",
+      "{name}: zbývající čarodějné body: {left}. Seslání kouzla {spell} díky {feature} stojí {cost} bodů. Nic nebylo utraceno.",
+      "Il reste {left} points de sorcellerie à {name}, et lancer {spell} grâce à {feature} coûte {cost} points. Rien n’a été dépensé."
+    ]
+  ];
+  const vars = {"name":"Iris (A+B)","spell":"Custom [A+B]","feature":"Custom Feature [A+B]","cost":"3","level":"9","left":"2"};
+  for (const left of ["0", "1", "2"]) {
+    const [en, cs, fr] = templates[left === "1" ? 0 : 1];
+    const values = { ...vars, left };
+    const raw = translate("en", en, values);
+    for (const [locale, expected] of [["en", en], ["cs", cs], ["fr", fr]]) {
+      const t = (key, input) => translate(locale, key, input);
+      const filled = translate("en", expected, values);
+      assert.equal(castRefusalDisplay(raw, t, vars.name), filled);
+      assert.equal(castRefusalDisplay(raw, t, "Different actor"), raw);
+      assert.equal(castRefusalDisplay(raw + " Unknown tail.", t, vars.name), raw + " Unknown tail.");
+    }
+  }
+  const t = (key, input) => translate("cs", key, input);
+  for (const [left, cost] of [["1", "3"], ["02", "3"], ["-1", "3"], ["3", "3"], ["2", "1"], ["2", "3.5"]]) {
+    const raw = translate("en", templates[1][0], { ...vars, left, cost });
+    assert.equal(castRefusalDisplay(raw, t, vars.name), raw);
+  }
+});
+
+test("known enemy Counterspell refusals preserve actor and check identity", () => {
+  const fixtures = [
+    [
+      "{enemy} casts Counterspell (its reaction, a level-{slot} slot): {name}'s {spell} fails. The slot and the action {name} cast it with are spent; do not resolve the spell or cast it again.",
+      "Tvor {enemy} sesílá Counterspell (svou reakcí, z pozice {slot}. úrovně): kouzlo {spell} postavy {name} selhalo. Pozice kouzla i akce, kterou je postava {name} seslala, byly utraceny; nevyhodnocuj kouzlo ani je znovu nesesílej."
+    ],
+    [
+      "{enemy} casts Counterspell (its reaction, a level-{slot} slot) ({ability} check {rolled} against DC {dc}): {name}'s {spell} fails. The slot and the action {name} cast it with are spent; do not resolve the spell or cast it again.",
+      "Tvor {enemy} sesílá Counterspell (svou reakcí, z pozice {slot}. úrovně) (ověření {ability}: {rolled} proti SO {dc}): kouzlo {spell} postavy {name} selhalo. Pozice kouzla i akce, kterou je postava {name} seslala, byly utraceny; nevyhodnocuj kouzlo ani je znovu nesesílej."
+    ]
+  ];
+  const vars = {"enemy":"Enemy [C+D]","name":"Iris (A+B)","spell":"Custom [A+B]","slot":"3","ability":"INT","rolled":"17","dc":"15"};
+  for (const [en, cs] of fixtures) {
+    const raw = translate("en", en, vars);
+    for (const [locale, expected] of [["en", en], ["cs", cs], ["fr", en]]) {
+      const t = (key, values) => translate(locale, key, values);
+      assert.equal(castRefusalDisplay(raw, t, vars.name), translate("en", expected, vars));
+      assert.equal(castRefusalDisplay(raw, t, "Different actor"), raw);
+      assert.equal(castRefusalDisplay(raw + " Unknown tail.", t, vars.name), raw + " Unknown tail.");
+    }
+  }
+  const t = (key, values) => translate("cs", key, values);
+  for (const invalid of [{"slot":"2"},{"slot":"04"},{"slot":"9"},{"dc":"13"},{"dc":"20"},{"rolled":"14"},{"rolled":"17.5"},{"ability":"XYZ"}]) {
+    const raw = translate("en", fixtures[1][0], { ...vars, ...invalid });
+    assert.equal(castRefusalDisplay(raw, t, vars.name), raw);
+  }
+  const different = translate("en", fixtures[0][0], vars).replace("action Iris (A+B)", "action Another actor");
+  assert.equal(castRefusalDisplay(different, t, vars.name), different);
+});
+
+test("Awakened Spellbook refuses with complete localized advice and preserves source identities", () => {
+  const fixtures = [
+    [
+      true,
+      "Awakened Spellbook changes the damage type of a wizard spell from {name}'s spellbook, and {spell} is not in it. Leave the damage type out for {spell}'s own ({ownDamage}). Nothing was spent.",
+      "Awakened Spellbook mění typ zranění kouzelnického kouzla z knihy kouzel postavy {name}, ale kouzlo {spell} v ní není. Pro použití vlastního typu zranění kouzla {spell} ({ownDamage}) typ zranění nezadávej. Nic nebylo utraceno."
+    ],
+    [
+      false,
+      "Awakened Spellbook changes the damage type of a spell cast with a spell slot, and this casting of {spell} spends none. Leave the damage type out for {spell}'s own ({ownDamage}). Nothing was spent.",
+      "Awakened Spellbook mění typ zranění kouzla seslaného za použití pozice kouzla, ale toto seslání kouzla {spell} žádnou pozici nespotřebuje. Pro použití vlastního typu zranění kouzla {spell} ({ownDamage}) typ zranění nezadávej. Nic nebylo utraceno."
+    ],
+    [
+      true,
+      "Awakened Spellbook takes a damage type found in another spell of the slot's level in {name}'s spellbook, and no other level {bookLevel} spell there deals {askedDamage} damage (no other damaging spell of that level is in the book). Leave the damage type out for {spell}'s own ({ownDamage}). Nothing was spent.",
+      "Awakened Spellbook umožňuje použít typ zranění jiného kouzla z knihy kouzel postavy {name}, které má stejnou úroveň jako použitá pozice. Žádné jiné kouzlo {bookLevel}. úrovně v knize nepůsobí zranění typu {askedDamage} (v knize není žádné jiné zraňující kouzlo této úrovně). Pro použití vlastního typu zranění kouzla {spell} ({ownDamage}) typ zranění nezadávej. Nic nebylo utraceno."
+    ],
+    [
+      true,
+      "Awakened Spellbook takes a damage type found in another spell of the slot's level in {name}'s spellbook, and no other level {bookLevel} spell there deals {askedDamage} damage: the level {bookLevel} spells there deal {bookTypes}. Leave the damage type out for {spell}'s own ({ownDamage}). Nothing was spent.",
+      "Awakened Spellbook umožňuje použít typ zranění jiného kouzla z knihy kouzel postavy {name}, které má stejnou úroveň jako použitá pozice. Žádné jiné kouzlo {bookLevel}. úrovně v knize nepůsobí zranění typu {askedDamage}. Typy zranění kouzel {bookLevel}. úrovně z této knihy: {bookTypes}. Pro použití vlastního typu zranění kouzla {spell} ({ownDamage}) typ zranění nezadávej. Nic nebylo utraceno."
+    ]
+  ];
+  const vars = {"name":"Iris (A+B)","spell":"Custom [A+B]","ownDamage":"cold","askedDamage":"fire","bookLevel":"3","bookTypes":"acid (Custom [C+D]), lightning (Other (E+F))"};
+  for (const [hasActor, en, cs] of fixtures) {
+    const raw = translate("en", en, vars);
+    for (const [locale, expected] of [["en", en], ["cs", cs], ["fr", en]]) {
+      const t = (key, values) => translate(locale, key, values);
+      assert.equal(castRefusalDisplay(raw, t, vars.name), translate("en", expected, vars));
+      if (hasActor) assert.equal(castRefusalDisplay(raw, t, "Different actor"), raw);
+      assert.equal(castRefusalDisplay(raw + " Unknown tail.", t, vars.name), raw + " Unknown tail.");
+    }
+  }
+  const t = (key, values) => translate("cs", key, values);
+  for (const [index, invalid] of [[0,{"ownDamage":""}],[0,{"spell":"Unknown sentence. Custom"}],[2,{"bookLevel":"0"}],[2,{"bookLevel":"10"}],[2,{"bookLevel":"03"}],[2,{"askedDamage":""}],[3,{"bookTypes":"unknown list"}],[3,{"bookTypes":"acid (Custom). Unknown sentence"}],[3,{"bookTypes":""}]]) {
+    const raw = translate("en", fixtures[index][1], { ...vars, ...invalid });
+    assert.equal(castRefusalDisplay(raw, t, vars.name), raw);
+  }
+  const wrongSpell = translate("en", fixtures[0][1], vars).replace("for Custom [A+B]'s own", "for Another spell's own");
+  assert.equal(castRefusalDisplay(wrongSpell, t, vars.name), wrongSpell);
+  const wrongLevel = translate("en", fixtures[3][1], vars).replace("the level 3 spells", "the level 4 spells");
+  assert.equal(castRefusalDisplay(wrongLevel, t, vars.name), wrongLevel);
+});
+
 console.log(`test-cast-rules: ${passed} passed`);

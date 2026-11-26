@@ -16,6 +16,7 @@ import type { BackgroundOption, ClassOption, RaceOption } from "./useBuilderOpti
 import type { BuilderDerived } from "./useBuilderDerived";
 import type { BuilderState } from "./useBuilderState";
 import { textKey } from "@/lib/language/text-logic";
+import { translate, type Locale } from "@/lib/messages-logic";
 
 // The feat pickers judge a feat's prerequisite the way the save does
 // (src/lib/srd/legality/features.ts checkPrerequisite, which the server's
@@ -23,6 +24,7 @@ import { textKey } from "@/lib/language/text-logic";
 // requirement on a pick not yet made waits instead of failing: a variant
 // human picks a feat a step before the scores.
 export type FeatJudge = {
+  locale?: Locale;
   // A feat by the prerequisite it states. `forSlot` when the feat would
   // fill an open improvement, which then cannot also raise a score.
   check: (prerequisite: string, forSlot?: boolean) => PrerequisiteCheck;
@@ -154,16 +156,17 @@ export function builderFeatCandidate({ state, derived, race, klass, background }
 // content pack feat's as fetched (useFeatTexts), by lower-case name. A feat
 // the stored character already `held` before this edit is not judged
 // again, as the server does not judge it (judgeFeats).
-export function builderFeatJudge(facts: BuilderFacts, prerequisites: Record<string, string>, held: string[] = []): FeatJudge {
+export function builderFeatJudge(facts: BuilderFacts, prerequisites: Record<string, string>, held: string[] = [], locale: Locale = "en"): FeatJudge {
   const kept = new Set(held.map(textKey));
   const settled = builderFeatCandidate(facts);
   const filling = builderFeatCandidate(facts, true);
   const check = (prerequisite: string, forSlot = false) => {
     const { who, waiting } = forSlot ? filling : settled;
-    return checkPrerequisite(prerequisite, who, waiting);
+    return checkPrerequisite(prerequisite, who, waiting, locale);
   };
   const isHeld = (name: string) => kept.has(textKey(name));
   return {
+    locale,
     check,
     held: isHeld,
     checkFeat: (name) => {
@@ -184,7 +187,7 @@ export function unmetFeatMessage(judge: FeatJudge | undefined | null, feats: str
     const check = judge?.checkFeat(feat);
     if (check?.state === "unmet") {
       const unmet = check.requirements.filter((entry) => entry.state === "unmet").map((entry) => entry.note);
-      return `${feat}: ${unmet.join("; ")}. Pick another feat, or change what it depends on.`;
+      return translate(judge?.locale ?? "en", "{feat}: {note}. Pick another feat, or change what it depends on.", { feat, note: unmet.join("; ") });
     }
   }
   return null;

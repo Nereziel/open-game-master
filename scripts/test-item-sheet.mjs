@@ -195,6 +195,86 @@ test("item cards localize presentation without modifying source rows or numeric 
   assert.equal(row.desc, "Original item prose.");
 });
 
+test("item cards use the shared weight reader across source formats and locales", () => {
+  const weight = (fields, locale) => buildItemSheet("Example gear", [{ ...longsword, ...fields }], { locale, allowBundledFallback: false }).weight;
+  for (const locale of ["en", "fr", "cs"]) {
+    assert.equal(weight({ weight: "1/4 lb." }, locale), weight({ weight: 0.25 }, locale));
+    assert.equal(weight({ weight: "0.075 lb." }, locale), weight({ weight: "0.075", weight_unit: "lb" }, locale));
+    assert.equal(weight({ weight: "2", weight_unit: "kg" }, locale), weight({ weight: 4.4092 }, locale));
+    assert.equal(weight({ weight: "4 oz" }, locale), weight({ weight: 0.25 }, locale));
+    assert.equal(weight({ weight: "0 lb." }, locale), null);
+    assert.equal(weight({ weight: "—" }, locale), null);
+    assert.equal(weight({ weight: "2", weight_unit: "stones" }, locale), "2 stones");
+    assert.equal(weight({ weight: "2 stones", weight_unit: "stones" }, locale), "2 stones");
+  }
+  assert.equal(weight({ weight: "0.075 lb." }, "en"), "0.075 lb.");
+  assert.equal(weight({ weight: "2", weight_unit: "kg" }, "en"), "4.4092 lb.");
+  const row = { weight: "1/4", weight_unit: "lb" };
+  weight(row, "cs");
+  assert.deepEqual(row, { weight: "1/4", weight_unit: "lb" });
+});
+
+test("Czech weapon properties use the weapon glossary context", () => {
+  const row = { category: "Simple Ranged Weapons", damage_dice: "1d8", damage_type: "piercing", properties: ["light", "loading", "heavy", "ammunition (range 20/60)", "custom property"] };
+  const original = structuredClone(row);
+  const sheet = buildItemSheet("Test weapon", [row], { locale: "cs" });
+  assert.deepEqual(sheet.weapon.properties.map((property) => property.name), [
+    "Lehká", "Nabíjecí", "Těžká", "Střelná (dosah 20/60)", "Custom property",
+  ]);
+  assert.deepEqual(row, original);
+  assert.equal(buildItemSheet("Test weapon", [row], { locale: "en" }).weapon.properties[0].name, "Light");
+});
+
+const { pickerMeta } = await import("../src/lib/content/picker-display.ts");
+const { leadItemMeta } = await import("../src/app/campaigns/[campaignId]/lead-edit-display.ts");
+
+test("Czech rarity is consistent across item cards and pickers", () => {
+  const cases = [
+    ["common", "běžný"],
+    ["UNCOMMON", "neobvyklý"],
+    ["very rare", "velmi vzácný"],
+    ["uncommon (+1), rare (+2), or very rare (+3)", "neobvyklý (+1), vzácný (+2) nebo velmi vzácný (+3)"],
+    ["rare (+1), very rare (+2), or legendary (+3)", "vzácný (+1), velmi vzácný (+2) nebo legendární (+3)"],
+    ["Very rare or legendary", "velmi vzácný nebo legendární"],
+    ["rare (silver or brass), very rare (bronze), or legendary (iron)", "vzácný (stříbro nebo mosaz), velmi vzácný (bronz) nebo legendární (železo)"],
+  ];
+  for (const [rarity, expected] of cases) {
+    const row = { rarity, desc: "Original rules." };
+    assert.equal(pickerMeta(row, "cs"), expected);
+    assert.equal(leadItemMeta(row, "cs"), expected);
+    assert.equal(buildItemSheet("Example", [row], { locale: "cs" }).rarity, expected.charAt(0).toUpperCase() + expected.slice(1));
+    assert.equal(pickerMeta(row, "en"), rarity);
+    assert.equal(row.rarity, rarity);
+  }
+  assert.equal(pickerMeta({ rarity: "custom rare grade" }, "cs"), "custom rare grade");
+  assert.equal(pickerMeta({ kind: "gear" }, "cs"), "výbava");
+  assert.equal(pickerMeta({ level: 2, rarity: "rare" }, "en"), "Level 2");
+});
+
+test("Czech compound magic item categories and rarity preserve all qualifiers", () => {
+  const row = { type: "Weapon (any ammunition)", rarity: "uncommon (+1), rare (+2), or very rare (+3)", desc: "Original prose." };
+  const sheet = buildItemSheet("Example ammunition", [row], { locale: "cs" });
+  assert.equal(sheet.type, "Zbraň (libovolná munice)");
+  assert.equal(sheet.rarity, "Neobvyklý (+1), vzácný (+2) nebo velmi vzácný (+3)");
+  assert.equal(sheet.description, row.desc);
+  assert.equal(buildItemSheet("Example ammunition", [row], { locale: "en" }).type, row.type);
+});
+
+const { bundledItemRows } = await import("../src/lib/rulebook/catalog-rows.ts");
+test("every bundled magic item category and recorded rarity has Czech display text", () => {
+  const rows = bundledItemRows();
+  assert.ok(rows.length >= 239);
+  for (const row of rows) {
+    // Test the item's declared metadata, not any coincidentally named
+    // mundane weapon or armor that would override it in the card.
+    const en = buildItemSheet("Example magic item", [row.data], { locale: "en" });
+    const cs = buildItemSheet("Example magic item", [row.data], { locale: "cs" });
+    assert.ok(cs.type, row.name + ": type must be visible");
+    assert.notEqual(cs.type, en.type ?? row.data.type, row.name + ": type");
+    if (en.rarity) assert.notEqual(cs.rarity, en.rarity, row.name + ": rarity");
+  }
+});
+
 test("nothing known is null", () => {
   assert.equal(buildItemSheet("Mysterious Trinket", [undefined, null]), null);
 });

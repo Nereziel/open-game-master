@@ -26,7 +26,7 @@ import { textKey } from "@/lib/language/text-logic";
 // `name` lets the lookup recover when a row's slug is not the plain
 // slugified name (third-party documents pick their own), by falling back to
 // a search.
-export type ContentRef = { kind: string; slug: string; name?: string };
+export type ContentRef = { kind: string; slug: string; name?: string; source?: string; documentSlug?: string; exactSlug?: boolean };
 
 // Content-pack descriptions are markdown-ish: headings, bold, italics, tables.
 // The block structure comes from src/lib/help/rules-text.ts, which knows the
@@ -114,7 +114,7 @@ function ContentBody({ reference }: { reference: ContentRef }) {
     let cancelled = false;
     async function load() {
       try {
-        const { describeContentEntry } = await import("@/lib/help");
+        const { describeContentEntry, contentInfoAllowsNameFallback, contentInfoDirectMatches, uniqueContentInfoMatch } = await import("@/lib/help");
         const { needsNote } = await import("@/lib/content/levelup-logic");
         const headers = { "X-Odm-Locale": t.locale };
         // An entry built on rules this game does not play, or played from
@@ -131,25 +131,31 @@ function ContentBody({ reference }: { reference: ContentRef }) {
         );
         if (response.ok) {
           const data = await response.json();
-          // A background's feature asked by name opens that feature.
-          const text = withNote(data?.entry, describeContentEntry(data?.entry?.data, reference.kind === "backgrounds" ? reference.name : undefined, t.locale));
-          if (text) {
-            if (!cancelled) {
-              setState({ text, loading: false });
-            }
+          if (data?.entry) {
+            // A background's feature asked by name opens that feature.
+            // Do not substitute another row for a known identity, even
+            // when the selected entry has no description.
+            const text = contentInfoDirectMatches(data.entry, reference)
+              ? withNote(data.entry, describeContentEntry(data.entry.data, reference.kind === "backgrounds" ? reference.name : undefined, t.locale))
+              : null;
+            if (!cancelled) setState({ text, loading: false });
             return;
           }
         }
-        // The slug guessed from the name missed, or the row it found carries
-        // no text. Search by name and take an exact match.
+        // Only legacy name-only references may fall back to search.
+        if (!contentInfoAllowsNameFallback(reference)) {
+          if (!cancelled) setState({ text: null, loading: false });
+          return;
+        }
         const wanted = textKey(reference.name ?? reference.slug);
+        const limit = 20;
         const search = await fetch(
-          `/api/content/${reference.kind}?q=${encodeURIComponent(wanted)}&limit=20&mechanics=1${scopeQuery(campaignId, "&")}`,
+          `/api/content/${reference.kind}?q=${encodeURIComponent(wanted)}&limit=${limit}&mechanics=1${scopeQuery(campaignId, "&")}`,
           { headers },
         );
         const results = search.ok ? ((await search.json()).results ?? []) : [];
-        const hit = results.find(
-          (entry: { name: string }) => textKey(entry.name) === wanted,
+        const hit = uniqueContentInfoMatch<{ name: string; data?: Record<string, unknown>; needs?: Parameters<typeof needsNote>[0]; bestEffort?: boolean }>(
+          Array.isArray(results) ? results : [], wanted, limit,
         );
         if (!cancelled) {
           setState({ text: withNote(hit, describeContentEntry(hit?.data, reference.kind === "backgrounds" ? reference.name : undefined, t.locale)), loading: false });
@@ -164,7 +170,7 @@ function ContentBody({ reference }: { reference: ContentRef }) {
     return () => {
       cancelled = true;
     };
-  }, [reference.kind, reference.slug, reference.name, campaignId, t]);
+  }, [reference.kind, reference.slug, reference.name, reference.source, reference.documentSlug, reference.exactSlug, campaignId, t]);
 
   if (state.loading) {
     return (
@@ -243,8 +249,9 @@ function ItemBody({ reference }: { reference: ContentRef }) {
           fetch(`/api/content/items/${encodeURIComponent(reference.slug)}${scopeQuery(campaignId)}`, { headers }).then(readJson).catch(() => null),
           fetch(`/api/content/items?q=${encodeURIComponent(wanted)}&limit=20${scopeQuery(campaignId, "&")}`, { headers }).then(readJson).catch(() => null),
         ]);
-        const rows = itemCardRows(name, direct?.entry, search?.results ?? []);
-        const sheet = buildItemSheet(name, rows, { t, locale: t.locale });
+        const results = Array.isArray(search?.results) ? search.results : [];
+        const selection = itemCardRows(name, direct?.entry, results, reference);
+        const sheet = selection ? buildItemSheet(name, selection.rows, { t, locale: t.locale, allowBundledFallback: selection.allowBundledFallback }) : null;
         if (!cancelled) {
           setState({ sheet, loading: false });
         }
@@ -258,7 +265,7 @@ function ItemBody({ reference }: { reference: ContentRef }) {
     return () => {
       cancelled = true;
     };
-  }, [reference.slug, reference.name, campaignId, t]);
+  }, [reference.slug, reference.name, reference.source, reference.documentSlug, reference.exactSlug, campaignId, t]);
 
   if (state.loading) {
     return (

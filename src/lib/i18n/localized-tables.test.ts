@@ -9,13 +9,18 @@ import { CS_NAMES_BY_TABLE } from "../content/names-cs";
 import { RESOURCE_FR } from "../srd/class-resources-fr-data";
 import { RESOURCE_CS_GUIDANCE } from "../srd/class-resources-cs-data";
 import { resourceDisplayName, resourceGuidance } from "../srd/class-resources-fr";
+import { resourceDef } from "../srd/class-resources";
+import { invocationCounters } from "../srd/granted-casts";
 import { cardDisplayName, chipName } from "../battlemap/hand-display";
 import { genderLabel, storedGender } from "../gender";
 import { ATTRACTION_CHOICES, attractionLabel } from "../attraction";
-import { glossaryTerm, localizedGlossaryTerm } from "../help";
+import { describeFeature, glossaryTerm, localizedGlossaryTerm } from "../help";
+import srdFeatureHelp from "../help/srd-features.json";
 import { translate } from "./translate";
 import { pickerName, pickerMeta } from "../content/picker-display";
 import { itemDisplayName } from "../content/item-display";
+import { leadItemName, leadItemMeta, leadItemFlags, leadSpellMeta } from "@/app/campaigns/[campaignId]/lead-edit-display";
+import { SRD_SKILLS, skillLabel } from "../srd";
 import { characterEventDisplay } from "../characters/event-display";
 import { describeAuditEntry } from "@/app/campaigns/[campaignId]/event-log-logic";
 import { armorChangeMinutes } from "../dm/don-doff";
@@ -27,6 +32,23 @@ import { DM_STATUS_PHRASES, DM_STATUS_PHRASES_FR, dmStatusPhrase } from "@/app/c
 import type { HandCard } from "../battlemap/hand-core";
 
 describe("Shared reader-language display tables", () => {
+  it("localizes the sheet's equipped weapon state and fighter feature help", () => {
+    expect(translate("cs", "in hand")).toBe("v ruce");
+    expect(translate("en", "in hand")).toBe("in hand");
+    expect(describeFeature("fighter", "", "Second Wind", "cs")).toBe(
+      "Bonusovou akcí si bojovník obnoví 1k10 + svou úroveň bojovníka životů.",
+    );
+    expect(describeFeature("fighter", "", "Second Wind", "en")).toBe(
+      "A bonus action that restores 1d10 + fighter level hit points to the fighter.",
+    );
+    expect(describeFeature("fighter", "", "Extra Attack", "cs")).toBe(
+      "Kdykoli provedeš akci Útok, zaútočíš dvakrát místo jednou.",
+    );
+    expect(describeFeature("fighter", "", "Extra Attack", "en")).toBe(
+      "You attack twice instead of once whenever you take the Attack action.",
+    );
+  });
+
   it("retains every original name and resource map without mixing languages", () => {
     expect(localizedTables("en")).toBeNull();
     expect(catalogReady("fr")).toBe(true);
@@ -48,6 +70,76 @@ describe("Shared reader-language display tables", () => {
       expect(resourceDisplayName("__unknown_resource__", locale)).toBeNull();
       expect(resourceGuidance("__unknown_resource__", locale)).toBeNull();
     }
+  });
+
+  it("localizes dynamic spell counters without guessing the source of a name-only spell", () => {
+    const free = "free_cast_misty_step";
+    const short = "free_cast_sr_custom_bolt";
+    const racial = "racial_hellish_rebuke";
+    const racialShort = "racial_short_custom_bolt";
+    const before = JSON.stringify([resourceDef(free), resourceDef(short), resourceDef(racial), resourceDef(racialShort)]);
+    expect(resourceDisplayName(free, "cs")).toBe("Misty Step (seslání bez pozice)");
+    expect(resourceDisplayName(short, "cs")).toBe("Custom Bolt (seslání bez pozice)");
+    expect(resourceGuidance(free, "cs")).toContain("po dlouhém odpočinku");
+    expect(resourceGuidance(short, "cs")).toContain("po krátkém odpočinku");
+    expect(resourceGuidance(short, "cs")).toContain("Custom Bolt");
+    expect(resourceDisplayName(racial, "cs")).toBeNull();
+    expect(resourceGuidance(racial, "cs")).toContain("Hellish Rebuke");
+    expect(resourceGuidance(racial, "cs")).toContain("po dlouhém odpočinku");
+    expect(resourceGuidance(racialShort, "cs")).toContain("po krátkém odpočinku");
+    expect(resourceGuidance(racialShort, "cs")).toContain("Custom Bolt");
+    for (const id of [free, short, racial, racialShort]) {
+      expect(resourceGuidance(id, "cs")).not.toBe(resourceDef(id)?.guidance);
+      expect(resourceDisplayName(id, "en")).toBeNull();
+      expect(resourceGuidance(id, "en")).toBeNull();
+      expect(resourceDisplayName(id, "fr")).toBeNull();
+      expect(resourceGuidance(id, "fr")).toBeNull();
+    }
+    expect(resourceGuidance("free_cast_", "cs")).toBeNull();
+    expect(resourceGuidance("racial_", "cs")).toBeNull();
+    expect(resourceGuidance("free_cast__misty_step", "cs")).toBeNull();
+    expect(resourceGuidance("free_cast_aw_detect_magic", "cs")).toBeNull();
+    expect(resourceGuidance("invocation_unknown", "cs")).toBeNull();
+    expect(resourceGuidance("invocation_armor_of_shadows", "cs")).toBeNull();
+    expect(JSON.stringify([resourceDef(free), resourceDef(short), resourceDef(racial), resourceDef(racialShort)])).toBe(before);
+  });
+
+  it("localizes all seven source-backed once-per-rest invocation counters", () => {
+    const rows = invocationCounters([
+      { name: "Invocation: Bewitching Whispers" },
+      { name: "Invocation: Dreadful Word" },
+      { name: "Invocation: Minions of Chaos" },
+      { name: "Invocation: Mire the Mind" },
+      { name: "Invocation: Sculptor of Flesh" },
+      { name: "Invocation: Sign of Ill Omen" },
+      { name: "Invocation: Thief of Five Fates" },
+    ]);
+    expect(rows).toHaveLength(7);
+    for (const row of rows) {
+      const definition = resourceDef(row.id);
+      const before = JSON.stringify(definition);
+      expect(resourceDisplayName(row.id, "cs")).toBeTruthy();
+      expect(resourceDisplayName(row.id, "cs")).not.toBe(definition?.displayName);
+      expect(resourceGuidance(row.id, "cs")).toContain("pozici kouzla černokněžníka");
+      expect(resourceGuidance(row.id, "cs")).not.toBe(definition?.guidance);
+      expect(resourceDisplayName(row.id, "en")).toBeNull();
+      expect(resourceGuidance(row.id, "fr")).toBeNull();
+      expect(JSON.stringify(resourceDef(row.id))).toBe(before);
+    }
+    expect(resourceDisplayName("invocation_thief_of_five_fates", "cs")).toBe("Uřknutí (Zloděj pěti osudů)");
+  });
+
+  it("translates every bundled SRD feature help entry by its exact source text", () => {
+    const texts = [
+      ...Object.values(srdFeatureHelp.features),
+      ...Object.values(srdFeatureHelp.byClass).flatMap((features) => Object.values(features)),
+    ];
+    expect(texts).toHaveLength(148);
+    for (const text of texts) {
+      expect(translate("cs", text), text).not.toBe(text);
+      expect(translate("en", text)).toBe(text);
+    }
+    expect(translate("cs", "An unknown custom feature description.")).toBe("An unknown custom feature description.");
   });
 
   it("uses the same render functions for English, French and Czech combat cards", () => {
@@ -219,5 +311,47 @@ describe("History, audit and equipment reader language", () => {
       expect(itemDisplayName({ name: "Longsword", gear: {} }, locale)).toBe("Longsword");
     }
     expect(JSON.stringify(items)).toBe(before);
+  });
+});
+
+
+// The lead's correction editor displays the reader language but submits
+// the exact same item name, slug, flags and skill ID to the sheet API.
+describe("Lead correction editor labels", () => {
+  it("keeps selected and stored item identities canonical", () => {
+    const acid: EquipmentItem = { name: "Acid (vial)", slug: "srd-gear:acid-vial", qty: 1, equipped: true };
+    const pack = { ...acid, slug: "acid-vial" };
+    const reference = { name: acid.name, slug: pack.slug, source: "open5e", documentSlug: "wotc-srd" };
+    const before = JSON.stringify([acid, pack, reference]);
+    expect(leadItemName(acid, "cs")).toBe("Kyselina (lahvička)");
+    expect(leadItemName(pack, "cs", reference)).toBe("Kyselina (lahvička)");
+    expect(leadItemName(pack, "cs")).toBe("Acid (vial)");
+    expect(leadItemName(pack, "cs", { ...reference, documentSlug: "unrelated-book" })).toBe("Acid (vial)");
+    expect(leadItemName(pack, "cs", { ...reference, slug: "other-slug" })).toBe("Acid (vial)");
+    expect(leadItemName({ ...pack, name: "Custom Acid" }, "cs", reference)).toBe("Custom Acid");
+    expect(leadItemName({ ...acid, slug: "homebrew:acid" }, "cs")).toBe("Acid (vial)");
+    expect(leadItemName({ name: acid.name, qty: 1 }, "cs")).toBe("Acid (vial)");
+    expect(leadItemName({ ...acid, identified: false }, "cs")).toBe("Acid (vial)");
+    expect(leadItemName(acid, "en")).toBe(acid.name);
+    expect(JSON.stringify([acid, pack, reference])).toBe(before);
+  });
+
+  it("localizes skills, item kinds, rarity, state and spell metadata", () => {
+    expect(SRD_SKILLS.map((skill) => skillLabel(skill.id, "cs"))).not.toEqual(SRD_SKILLS.map((skill) => skill.name));
+    expect(skillLabel("insight", "cs")).toBe("Vhled");
+    expect(skillLabel("acrobatics", "cs")).toBe("Akrobacie");
+    expect(leadItemMeta({ kind: "gear", rarity: "", cost: "25 gp" }, "cs")).toBe("výbava · 25 zl");
+    expect(leadItemMeta({ kind: "magic_item", rarity: "uncommon" }, "cs")).toBe("magický předmět · neobvyklý");
+    expect(leadItemMeta({ kind: "magic_item", rarity: "rare" }, "cs")).toBe("magický předmět · vzácný");
+    expect(leadItemMeta({ kind: "gear", rarity: "", cost: "25 gp" }, "en")).toBe("gear · 25 gp");
+    const item: EquipmentItem = { name: "Acid (vial)", qty: 1, equipped: true, attuned: true, identified: false, charges: 2 };
+    const before = JSON.stringify(item);
+    expect(leadItemFlags(item, "cs").slice(0, 3)).toEqual(["nasazeno", "sladěno", "neidentifikovaný"]);
+    expect(leadItemFlags(item, "cs")[3]).toBe("2 náboje");
+    expect(leadItemFlags({ ...item, layered: true }, "cs")[0]).toBe("nasazeno vedle dalšího (rozhodnutí PJ)");
+    expect(leadItemFlags({ ...item, charges: 1 }, "en")[3]).toBe("1 charge");
+    expect(leadSpellMeta({ level: 0 }, "cs")).toBe("trik");
+    expect(leadSpellMeta({ level: 3 }, "cs")).toBe("úroveň 3");
+    expect(JSON.stringify(item)).toBe(before);
   });
 });

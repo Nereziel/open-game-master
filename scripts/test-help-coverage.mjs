@@ -15,12 +15,17 @@ register("./lib/register-alias.mjs", import.meta.url);
 const {
   describeFeature,
   describeContentEntry,
+  backgroundFeatureReference,
+  contentInfoAllowsNameFallback,
+  contentInfoDirectMatches,
+  uniqueContentInfoMatch,
   describeRace,
   describeRaceTrait,
   describeSkill,
   glossaryTerm,
   glossaryTerms,
   spellSummary,
+  spellRowConcentrates,
   starterSpellsFor,
 } = await import("../src/lib/help/index.ts");
 const { SRD_CLASSES } = await import("../src/lib/srd/index.ts");
@@ -272,6 +277,45 @@ test("a pack row's \"no\" is no: Light is neither concentration nor a ritual", (
 });
 
 await import("../src/lib/i18n/server-catalogs.ts");
+
+test("Open5e v1 spell metadata reads like the equivalent bundled and v2 fields", () => {
+  const legacy = { spell_level: 3, level: "3rd-level", school: "evocation", casting_time: "1 action", range: "60 feet", requires_concentration: true, can_be_cast_as_ritual: true };
+  const modern = { level: 3, school: { name: "Evocation" }, casting_time: "1 action", range: "60 feet", concentration: true, ritual: true };
+  const before = structuredClone(legacy);
+  for (const locale of ["en", "fr", "cs"]) {
+    assert.equal(spellSummary(legacy, locale), spellSummary(modern, locale));
+    assert.equal(spellSummary({ ...legacy, level_int: 2 }, locale), spellSummary({ ...modern, level: 2 }, locale));
+    assert.equal(spellSummary({ ...legacy, requires_concentration: "no", can_be_cast_as_ritual: false }, locale), spellSummary({ ...modern, concentration: false, ritual: false }, locale));
+  }
+  assert.deepEqual(legacy, before);
+  assert.equal(spellRowConcentrates(legacy), true);
+  assert.equal(spellRowConcentrates({ requires_concentration: "no", concentration: "no" }), false);
+  assert.equal(spellRowConcentrates(undefined), false);
+});
+
+test("Czech covers every genre feature description and authored option text", () => {
+  const missing = [];
+  let genreCount = 0;
+  for (const genre of ["cyberpunk", "dark-fantasy", "horror", "mystery", "post-apocalyptic", "steampunk"]) {
+    const { classes } = readJson("classes", genre + "-features.json");
+    for (const [classId, table] of Object.entries(classes)) {
+      for (const feature of [...Object.values(table.levels), ...Object.values(table.subclass.levels)].flat()) {
+        genreCount += 1;
+        if (translate("cs", feature.d) === feature.d) missing.push(classId + ": " + feature.n);
+      }
+    }
+  }
+  assert.ok(genreCount >= 733);
+  const { options } = readJson("srd", "options.json");
+  assert.ok(options.length >= 245);
+  for (const option of options) {
+    for (const text of [option.d, option.req].filter(Boolean)) {
+      if (translate("cs", text) === text) missing.push(option.n + ": " + text);
+    }
+  }
+  assert.deepEqual(missing, []);
+});
+
 test("spell summary metadata follows locale and keeps conditional text intact", () => {
   const data = { level_int: 3, school: { name: "Evocation" }, casting_time: "1 bonus action", range: "60 feet", concentration: "yes", ritual: true };
   const original = JSON.stringify(data);
@@ -285,12 +329,33 @@ test("spell summary metadata follows locale and keeps conditional text intact", 
     assert.equal(spellSummary(undefined, locale), "");
     assert.equal(JSON.stringify(data), original);
     const conditional = spellSummary({ level: 1, school: "Custom", casting_time: "1 reaction, when an ally falls", range: "Self (15-foot cone)" }, locale);
-    assert.ok(conditional.includes("1 reaction, when an ally falls · Self (15-foot cone)"));
+    assert.ok(conditional.includes(locale === "cs"
+      ? "1 reaction, when an ally falls · Sesilatel (kužel 15 stop)"
+      : "1 reaction, when an ally falls · Self (15-foot cone)"));
     assert.ok(conditional.includes("custom"));
   }
   assert.equal(spellSummary({ level: 0, school: "evocation", casting_time: "2 minutes", range: "Touch" }, "cs"), "trik (zaklínání) · 2 minuty · Dotek");
   assert.equal(spellSummary({ level: 1, school: "divination", casting_time: "5 hours" }, "cs"), "věštění, úroveň 1 · 5 hodin");
   assert.equal(spellSummary({ level: 0, school: "evocation", casting_time: "1 minute", range: "Self" }, "fr"), "sort mineur (évocation) · 1 minute · Sur soi");
+});
+
+test("every bundled spell has Czech casting-time and range metadata", () => {
+  const { pages } = readJson("rulebook", "srd-5.1.json");
+  const spells = pages.filter((page) => page.kind === "spell");
+  assert.ok(spells.length >= 319);
+  for (const page of spells) {
+    const casting = page.md.match(/\*\*Casting Time:\*\* ([^\n]+)/)?.[1];
+    const range = page.md.match(/\*\*Range:\*\* ([^\n]+)/)?.[1];
+    assert.ok(casting && range, page.id);
+    for (const [key, value] of [["casting_time", casting], ["range", range]]) {
+      const data = { [key]: value };
+      assert.notEqual(spellSummary(data, "cs").split(" · ").at(-1), value, page.id + ": " + key);
+      assert.equal(spellSummary(data, "en").split(" · ").at(-1), value);
+    }
+  }
+  const reaction = "1 reaction, which you take when you are hit by an attack or targeted by the *magic missile* spell";
+  assert.match(spellSummary({ casting_time: reaction }, "cs"), /magická střela/);
+  assert.match(spellSummary({ range: "Self (5-mile radius)" }, "cs"), /poloměr 5 mil/);
 });
 
 const { speciesTraitName } = await import("../src/lib/content/names.ts");
@@ -337,6 +402,37 @@ test("content help localizes labels but preserves original pack prerequisites an
     assert.equal(describeContentEntry({ ...data, localized_desc: "Reviewed display text." }, undefined, locale), "Reviewed display text.");
     assert.equal(JSON.stringify(data), original);
   }
+});
+
+test("info fallback never substitutes another source for a selected entry", () => {
+  const original = { name: "Fireball", slug: "fireball", source: "open5e", documentSlug: "wotc-srd" };
+  const expansion = { ...original, slug: "other-fireball", documentSlug: "other-book" };
+  const homebrew = { ...original, slug: "homebrew:example", source: "homebrew", documentSlug: "homebrew" };
+  const sameSlug = { ...original, documentSlug: "other-book" };
+  assert.equal(contentInfoDirectMatches(original, original), true);
+  assert.equal(contentInfoDirectMatches(expansion, original), false);
+  assert.equal(contentInfoDirectMatches(sameSlug, original), false);
+  assert.equal(contentInfoDirectMatches(homebrew, original), false);
+  assert.equal(contentInfoDirectMatches(original, { slug: "legacy-slug" }), true);
+  assert.equal(uniqueContentInfoMatch([original], "fireball", 20), original);
+  assert.equal(uniqueContentInfoMatch([original, expansion], "fireball", 20), undefined);
+  assert.equal(uniqueContentInfoMatch([homebrew, original], "fireball", 20), undefined);
+  assert.equal(uniqueContentInfoMatch([original], "fire", 20), undefined);
+  assert.equal(uniqueContentInfoMatch([original], "fireball", 1), undefined);
+  assert.equal(uniqueContentInfoMatch([], "fireball", 20), undefined);
+});
+
+test("stored content references cannot fall back to a different name match", () => {
+  assert.equal(contentInfoAllowsNameFallback(), true);
+  assert.equal(contentInfoAllowsNameFallback({ slug: "legacy" }), true);
+  assert.equal(contentInfoAllowsNameFallback({ slug: "legacy", exactSlug: false }), true);
+  assert.equal(contentInfoAllowsNameFallback({ slug: "known", exactSlug: true }), false);
+  assert.equal(contentInfoAllowsNameFallback({ slug: "known", source: "open5e" }), false);
+  assert.equal(contentInfoAllowsNameFallback({ slug: "known", documentSlug: "toh" }), false);
+  assert.equal(contentInfoDirectMatches({ slug: "redirected" }, { slug: "known", exactSlug: true }), true);
+  const reference = backgroundFeatureReference({ name: "Unknown Test Feature", source: "background" }, "stored-background");
+  assert.deepEqual(reference, { kind: "backgrounds", slug: "stored-background", name: "Unknown Test Feature", exactSlug: true });
+  assert.equal(contentInfoAllowsNameFallback(reference), false);
 });
 
 console.log(`\ntest-help-coverage: ${passed} passed`);

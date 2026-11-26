@@ -22,6 +22,7 @@ function write(file, content) {
 try {
   for (const folder of [caller, temp, browserDir, path.join(tree, "scripts", "lib")]) fs.mkdirSync(folder, { recursive: true });
   fs.copyFileSync(new URL("./browser/run.mjs", import.meta.url), path.join(browserDir, "run.mjs"));
+  fs.copyFileSync(new URL("./browser/shards.mjs", import.meta.url), path.join(browserDir, "shards.mjs"));
   fs.copyFileSync(new URL("./lib/remove-temp-dir.mjs", import.meta.url), path.join(tree, "scripts", "lib", "remove-temp-dir.mjs"));
   write(path.join(tree, ".next", "BUILD_ID"), "fixture");
   write(path.join(browserDir, "seed.mjs"), `

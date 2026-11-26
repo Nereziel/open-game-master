@@ -1,5 +1,7 @@
-import { describeContentEntry } from "@/lib/help";
+import { contentInfoAllowsNameFallback, contentInfoDirectMatches, describeContentEntry, type ContentInfoIdentity } from "@/lib/help";
 import { textKey } from "@/lib/language/text-logic";
+import { readWeightLb } from "@/lib/content/weight";
+import { itemRarityLabel } from "@/lib/content/item-rarity";
 import { DAMAGE_TYPE_BLURBS, WEAPON_PROPERTY_BLURBS } from "@/lib/help/terms";
 import { translate, type Locale } from "@/lib/messages-logic";
 import { armorNamed, type SrdArmor } from "@/lib/srd/armor";
@@ -72,25 +74,20 @@ function asType(category: string): string {
 }
 
 function formatPounds(pounds: number, t: T): string {
-  return t("{n} lb.", { n: Number(pounds.toFixed(2)) });
+  return t("{n} lb.", { n: Number(pounds.toFixed(4)) });
 }
 
 // v1 rows say "3 lb." (armour rows say nothing), v2 rows "5.000" plus a unit,
 // homebrew a bare number. A zero means "not recorded", never "weightless".
 function weightOf(row: Row, t: T): string | null {
-  const value = row.weight;
-  if (typeof value === "number") {
-    return value > 0 ? formatPounds(value, t) : null;
-  }
-  const text = str(row, "weight");
-  if (!text) {
-    return null;
-  }
-  const pounds = num(text);
-  if (pounds === null) {
-    return /^0+(\.0+)?\s*lb/i.test(text) ? null : text.replace(/lb\.$/i, t("lb."));
-  }
-  return pounds > 0 ? formatPounds(pounds, t) : null;
+  const { pounds, problem } = readWeightLb(row.weight, row.weight_unit);
+  if (pounds !== null) return pounds > 0 ? formatPounds(pounds, t) : null;
+  // Preserve an unrecognized source value without labeling it as pounds.
+  // Blank and dash values are absent, not a recorded weight.
+  if (!problem) return null;
+  const text = typeof row.weight === "number" ? String(row.weight) : str(row, "weight");
+  const unit = str(row, "weight_unit");
+  return [text, /[a-z]/i.test(text) ? "" : unit].filter(Boolean).join(" ") || null;
 }
 
 // v1 rows say "15 gp", v2 rows a bare gold figure ("0.01"), homebrew
@@ -110,12 +107,15 @@ function costOf(row: Row, t: T, locale: Locale): string | null {
   return copper > 0 ? localizeCoins(priceText(text), locale) : null;
 }
 
-function propertyOf(raw: string, t: T): ItemProperty {
+function propertyOf(raw: string, t: T, locale: Locale): ItemProperty {
   const trimmed = raw.trim();
   const paren = trimmed.indexOf(" (");
   const base = (paren === -1 ? trimmed : trimmed.slice(0, paren)).toLowerCase();
   const suffix = paren === -1 ? "" : trimmed.slice(paren).replace("(range ", `(${t("range")} `);
-  const label = t(capitalize(paren === -1 ? trimmed : trimmed.slice(0, paren)));
+  const rawLabel = capitalize(paren === -1 ? trimmed : trimmed.slice(0, paren));
+  const label = locale === "cs" && Object.hasOwn(WEAPON_PROPERTY_BLURBS, base)
+    ? t(base, { context: "glossary.option" })
+    : t(rawLabel);
   const rawBlurb = WEAPON_PROPERTY_BLURBS[base] ?? null;
   return { name: `${label}${suffix}`, blurb: rawBlurb ? t(rawBlurb) : null };
 }
@@ -132,16 +132,16 @@ function damageOf(dice: string, type: string, bonus: number, t: T) {
   };
 }
 
-function weaponFromSrd(weapon: SrdWeapon, bonus: number, t: T): NonNullable<ItemSheet["weapon"]> {
+function weaponFromSrd(weapon: SrdWeapon, bonus: number, t: T, locale: Locale): NonNullable<ItemSheet["weapon"]> {
   const [dice = "", ...rest] = weapon.damage.split(" ");
   return {
     ...damageOf(dice, rest.join(" "), bonus, t),
     range: weapon.rangeFt ? t("{range} ft.", { range: weapon.rangeFt }) : null,
-    properties: (weapon.properties ?? []).map((entry) => propertyOf(entry, t)),
+    properties: (weapon.properties ?? []).map((entry) => propertyOf(entry, t, locale)),
   };
 }
 
-function weaponFromPack(row: Row, bonus: number, t: T): NonNullable<ItemSheet["weapon"]> {
+function weaponFromPack(row: Row, bonus: number, t: T, locale: Locale): NonNullable<ItemSheet["weapon"]> {
   const properties = Array.isArray(row.properties)
     ? row.properties.filter((entry): entry is string => typeof entry === "string" && entry.trim() !== "")
     : [];
@@ -152,7 +152,7 @@ function weaponFromPack(row: Row, bonus: number, t: T): NonNullable<ItemSheet["w
   return {
     ...damageOf(str(row, "damage_dice"), str(row, "damage_type"), bonus, t),
     range: range ? t("{range} ft.", { range }) : null,
-    properties: properties.map((entry) => propertyOf(entry, t)),
+    properties: properties.map((entry) => propertyOf(entry, t, locale)),
   };
 }
 
@@ -235,30 +235,57 @@ function isCoreItem(entry: ItemCardEntry): boolean {
     && ["wotc-srd", "srd-2014"].includes(entry.documentSlug ?? "");
 }
 
-export function itemCardRows(name: string, direct: ItemCardEntry | null | undefined, results: ItemCardEntry[]): Array<Row | undefined> {
-  const hits = results.filter((entry) => textKey(entry.name) === textKey(name));
-  const primary = direct ?? hits[0];
-  if (!primary) return [];
-  const compatible = hits.filter((entry) => {
-    if (isCoreItem(primary)) return isCoreItem(entry);
-    return Boolean(primary.slug && primary.source && primary.documentSlug)
-      && entry.slug === primary.slug
-      && entry.source === primary.source
-      && entry.documentSlug === primary.documentSlug;
-  });
-  return [primary.data, ...compatible.filter((entry) => entry !== primary).map((entry) => entry.data)];
+// Match complementary versions of a core item, or the same exact
+// non-core identity. Missing identity is never evidence of equivalence.
+function compatibleItem(primary: ItemCardEntry, entry: ItemCardEntry): boolean {
+  if (isCoreItem(primary)) return isCoreItem(entry);
+  return Boolean(primary.slug && primary.source && primary.documentSlug)
+    && entry.slug === primary.slug
+    && entry.source === primary.source
+    && entry.documentSlug === primary.documentSlug;
+}
+
+type ItemCardSelection = { rows: Array<Row | undefined>; allowBundledFallback: boolean };
+
+// A legacy name-only search may combine complementary SRD rows, but it
+// must not choose arbitrarily between different books or custom entries.
+// A stored slug may use the server's deliberate edition redirect; only a
+// picker with explicit source metadata requires the precise identity.
+export function itemCardRows(
+  name: string,
+  direct: ItemCardEntry | null | undefined,
+  results: ItemCardEntry[],
+  reference?: ContentInfoIdentity,
+  limit = 20,
+): ItemCardSelection | null {
+  const strict = !contentInfoAllowsNameFallback(reference);
+  if (direct && reference && !contentInfoDirectMatches(
+    { slug: direct.slug ?? "", source: direct.source, documentSlug: direct.documentSlug }, reference,
+  )) return null;
+  if (!direct && (strict || results.length >= limit)) return null;
+  const wanted = textKey(direct?.name ?? name);
+  const hits = results.filter((entry) => textKey(entry.name) === wanted);
+  const [first, ...others] = hits;
+  if (!direct && first && others.some((entry) => !compatibleItem(first, entry))) return null;
+  const primary = direct ?? first;
+  if (!primary) return { rows: [], allowBundledFallback: true };
+  return {
+    rows: [primary.data, ...hits.filter((entry) => entry !== primary && compatibleItem(primary, entry)).map((entry) => entry.data)],
+    allowBundledFallback: isCoreItem(primary),
+  };
 }
 
 export function buildItemSheet(
   name: string,
   rows: Array<Row | undefined | null>,
-  options?: { t?: T; locale?: Locale },
+  options?: { t?: T; locale?: Locale; allowBundledFallback?: boolean },
 ): ItemSheet | null {
   const locale = options?.locale ?? "en";
   const t: T = options?.t ?? ((key, vars) => translate(locale, key, vars));
   const found = rows.filter((row): row is Row => Boolean(row) && typeof row === "object");
   const bonus = magicItemBonus(name);
   const homebrew = found.find(isHomebrew);
+  const allowBundledFallback = options?.allowBundledFallback !== false && !homebrew;
   const packWeapon = found.find(isPackWeapon);
   const packArmor = found.find(isPackArmor);
   const magic = found.find(isMagic);
@@ -274,7 +301,7 @@ export function buildItemSheet(
     armor = armorFromSrd(brewArmor, bonus, t);
     type = brewArmor.category === "shield" ? "Shield" : `${capitalize(brewArmor.category)} armor`;
   } else if (brewWeapon && typeof brewWeapon.damage === "string") {
-    weapon = weaponFromSrd(brewWeapon, bonus, t);
+    weapon = weaponFromSrd(brewWeapon, bonus, t, locale);
     type = `${capitalize(brewWeapon.category)} ${brewWeapon.kind} weapon`;
   } else if (packArmor) {
     armor = armorFromPack(packArmor, bonus, t);
@@ -283,17 +310,17 @@ export function buildItemSheet(
       type = `${type} armor`;
     }
     // The pack's armour rows carry no weight; the bundled table does.
-    srdArmor = armorNamed(str(packArmor, "name") || name);
+    if (allowBundledFallback) srdArmor = armorNamed(str(packArmor, "name") || name);
   } else if (packWeapon) {
-    weapon = weaponFromPack(packWeapon, bonus, t);
+    weapon = weaponFromPack(packWeapon, bonus, t, locale);
     type = asType(str(packWeapon, "category")) || "Weapon";
-  } else if ((srdArmor = armorNamed(name))) {
+  } else if (allowBundledFallback && (srdArmor = armorNamed(name))) {
     armor = armorFromSrd(srdArmor, bonus, t);
     type = srdArmor.category === "shield" ? "Shield" : `${capitalize(srdArmor.category)} armor`;
-  } else {
+  } else if (allowBundledFallback) {
     const srdWeapon = weaponNamed(withoutBonus(name));
     if (srdWeapon) {
-      weapon = weaponFromSrd(srdWeapon, bonus, t);
+      weapon = weaponFromSrd(srdWeapon, bonus, t, locale);
       type = `${capitalize(srdWeapon.category)} ${srdWeapon.kind} weapon`;
     }
   }
@@ -312,6 +339,19 @@ export function buildItemSheet(
   if (!type && homebrew) {
     type = homebrew.itemKind === "magic_item" ? "Magic item" : capitalize(String(homebrew.itemKind));
   }
+  // Some bundled rows carry a type but no separate rarity (Spell Scroll,
+  // Figurine of Wondrous Power), or use the plain "Adventuring Gear" type.
+  // Surface the translated, recognized label instead of an empty type.
+  if (!type && locale === "cs") {
+    for (const row of found) {
+      const raw = str(row, "type");
+      const label = [capitalize(raw), capitalize(raw.toLowerCase())].find((key) => key && t(key) !== key);
+      if (label) {
+        type = label;
+        break;
+      }
+    }
+  }
   if (type) {
     type = t(type);
   }
@@ -321,8 +361,7 @@ export function buildItemSheet(
   const cost = found.map((row) => costOf(row, t, locale)).find(Boolean) ?? null;
   const description = found.map((row) => str(row, "localized_desc")).find(Boolean)
     ?? found.map((row) => describeContentEntry(row, undefined, locale)).find(Boolean) ?? null;
-  const rawRarity = magic ? capitalize(str(magic, "rarity").toLowerCase()) : null;
-  const rarity = rawRarity ? t(rawRarity) : null;
+  const rarity = magic ? itemRarityLabel(str(magic, "rarity"), locale, true, t) : null;
   const attunement = found.some(
     (row) => row.requiresAttunement === true || /attunement/i.test(str(row, "requires_attunement")),
   );

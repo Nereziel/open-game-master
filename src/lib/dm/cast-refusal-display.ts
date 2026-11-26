@@ -4,15 +4,9 @@
 import type { MessageVars } from "@/lib/messages-logic";
 type T = (key: string, vars?: MessageVars) => string;
 
-const TEMPLATES = [
-  "{name} is raging and cannot cast spells or concentrate on them. They can cast once the rage ends.",
-  "{name} is polymorphed into a {form} and cannot cast spells; the form has no capacity for it. The spell waits until the transformation ends.",
-  "{name} is wild shaped as a {form} and cannot cast spells in beast form, cantrips included (that unlocks with Beast Spells at druid level 18). They can revert with use_resource on Wild Shape.",
-  "{name} is wearing armor they are not trained in ({armor}) and cannot cast spells in it. They cast again once it is off.",
-  "{spell} has a verbal component and {name} is {condition}: they cannot speak the words. A spell with no verbal component could still be cast.",
-  "{spell} needs a free hand for its gestures, and both of {name}'s hands are full. They must put a weapon away or lower the shield first (unequip it on the sheet).",
-  "{spell} needs a free hand for its material component{gestures}, and both of {name}'s hands are full{warcaster}. They must put a weapon away or lower the shield first (unequip it on the sheet).",
-  "{name} stands inside {area}Silence, where no sound is made: {spell} has a verbal component and cannot be cast there. Step out of the silence first, or cast a spell with no verbal component. Nothing was spent.",
+// spellHeldProblem may be followed by this exact ring instruction (cast-guard.ts).
+const RING_SUFFIX = "{ring} holds it: use_item with spell casts it from there, then cast it with this tool.";
+const HELD_TEMPLATES = [
   "{name} has no Spellcasting feature and cannot cast spells.",
   "{name} cannot cast \"{spell}\": it is not among the spells they know or have prepared ({ready}).",
   "No spell called \"{spell}\" is known. {name} knows or has prepared {ready}: send the one meant, by the name on the sheet.",
@@ -23,6 +17,36 @@ const TEMPLATES = [
   "{name} casts {spell} through {source} {times}, and again after a {rest} rest; {uses} spent.",
   "{name} holds {spell} as a {classId} spell, and a {classId}'s Spellcasting does not cast rituals (bards, clerics, druids, wizards and artificers do, through their own spells). It can be cast from a slot instead.",
   "{spell} is not written in {name}'s ritual book, so it cannot be cast as a ritual. It goes in the book first (a ritual of a level they can cast, found and copied), or it is cast from a slot.",
+] as const;
+
+const TEMPLATES = [
+  "{spell} is from the 2024 rules, which this server does not play; pick a 2014 spell in its place. Nothing was spent.",
+  "{name} is dead and cannot spend a spell slot.",
+  "{name} is at 0 HP and cannot spend a spell slot.",
+  "{name} is {condition} and cannot spend a spell slot until the condition ends.",
+  "{spell} brings its creatures in with their stat blocks: cast it with cast_buff, the creature in variant (and count for fewer). Nothing was spent.",
+  "{name} casts {spell} through {source} only {limit}; this casting is not, and no spell slot of theirs casts it. Nothing was spent.",
+  "{spell} has a material component: {name}'s focus is their drone ({feature}), and no drone of theirs stands (Drone Companion builds them out of a fight; a component pouch serves too). Nothing was spent.",
+  "{name} stands inside Antimagic Field, where no spell can be cast. Step out of it first. Nothing was spent.",
+  "{name} stands inside {owner}'s Antimagic Field, where no spell can be cast. Step out of it first. Nothing was spent.",
+  "{spell} came to {name} through Marginalia, which casts it as a ritual only: cast it with ritual true (ten minutes longer, no slot). Nothing was spent.",
+  "{spell} takes {time} to cast. In a fight it is begun with use_spell_slot: the server holds the casting across {name}'s turns (their action on each, their concentration throughout) and spends the slot when it is complete, and then this tool resolves its effect. Nothing was spent.",
+  "{name} used Arcane Deflection and casts only cantrips until the end of their next turn, so {spell} is not cast. Nothing was spent.",
+  "No Ring of Spell Storing named \"{ring}\" is there to hold {spell}. Nothing was spent.",
+  "{ring} stores spells of 1st through 5th level, not level {level}. Nothing was spent.",
+  "{ring} has {free} of {total} levels free, and {spell} at level {level} does not fit. Nothing was spent.",
+  "{spell} is laid within {range} feet of {name}, and ({x},{y}) is {distance} feet away. Name a square within range. Nothing was spent.",
+  "A wall stands between {name} and ({x},{y}): {spell} needs a clear path to where it is laid. Name a square {name} can see. Nothing was spent.",
+  "Slow holds {spell} back (the d20 came up 11 or higher): the slot and this turn's action are spent and the spell does not take effect yet. On {name}'s next turn, cast it again with its tool to complete it: that spends their action and no slot. If they do not, the spell is wasted. Do not resolve it now.",
+  "{name} is raging and cannot cast spells or concentrate on them. They can cast once the rage ends.",
+  "{name} is polymorphed into a {form} and cannot cast spells; the form has no capacity for it. The spell waits until the transformation ends.",
+  "{name} is wild shaped as a {form} and cannot cast spells in beast form, cantrips included (that unlocks with Beast Spells at druid level 18). They can revert with use_resource on Wild Shape.",
+  "{name} is wearing armor they are not trained in ({armor}) and cannot cast spells in it. They cast again once it is off.",
+  "{spell} has a verbal component and {name} is {condition}: they cannot speak the words. A spell with no verbal component could still be cast.",
+  "{spell} needs a free hand for its gestures, and both of {name}'s hands are full. They must put a weapon away or lower the shield first (unequip it on the sheet).",
+  "{spell} needs a free hand for its material component{gestures}, and both of {name}'s hands are full{warcaster}. They must put a weapon away or lower the shield first (unequip it on the sheet).",
+  "{name} stands inside {area}Silence, where no sound is made: {spell} has a verbal component and cannot be cast there. Step out of the silence first, or cast a spell with no verbal component. Nothing was spent.",
+  ...HELD_TEMPLATES,
   "A ritual is a named spell with the ritual tag; name the spell being cast.",
   "{spell} is not a spell the server knows to be a ritual; it needs a slot.",
   "{spell} has no ritual tag; it cannot be cast as a ritual and needs a slot.",
@@ -51,6 +75,10 @@ const TEMPLATES = [
   "{name} has already used their bonus action this turn; casting {spell} needs one.",
   "{spell} is cast as a reaction: use_reaction with feature \"{spell}\" when its trigger happens; the server checks the trigger and applies it. Nothing was spent.",
   "A spell slot has a level from 1 to 9, not {level}. Name the slot {spell} is cast from, or leave the level out for the spell's own.",
+  "Awakened Spellbook changes the damage type of a wizard spell from {name}'s spellbook, and {spell} is not in it. Leave the damage type out for {spell}'s own ({ownDamage}). Nothing was spent.",
+  "Awakened Spellbook changes the damage type of a spell cast with a spell slot, and this casting of {spell} spends none. Leave the damage type out for {spell}'s own ({ownDamage}). Nothing was spent.",
+  "Awakened Spellbook takes a damage type found in another spell of the slot's level in {name}'s spellbook, and no other level {bookLevel} spell there deals {askedDamage} damage (no other damaging spell of that level is in the book). Leave the damage type out for {spell}'s own ({ownDamage}). Nothing was spent.",
+  "Awakened Spellbook takes a damage type found in another spell of the slot's level in {name}'s spellbook, and no other level {bookLevel} spell there deals {askedDamage} damage: the level {bookLevel} spells there deal {bookTypes}. Leave the damage type out for {spell}'s own ({ownDamage}). Nothing was spent.",
   "The caster is no longer at the table."
 ] as const;
 
@@ -74,7 +102,10 @@ function patternFor(template: string): RegExp {
   return new RegExp(pattern + escapePattern(template.slice(at)) + "$");
 }
 
-const PATTERNS = TEMPLATES.map((key) => ({ key, pattern: patternFor(key) }));
+const PATTERNS = [
+  ...HELD_TEMPLATES.map((key) => ({ key, pattern: patternFor(`${key} ${RING_SUFFIX}`), ring: true })),
+  ...TEMPLATES.map((key) => ({ key, pattern: patternFor(key), ring: false })),
+];
 
 function slotDisplay(raw: string, t: T): string {
   if (raw === "No slot is free.") return t("No slot is free.");
@@ -109,14 +140,234 @@ function fragment(field: string, raw: string, t: T): string {
   return raw;
 }
 
+// pointsPlan has separate singular/plural output and only refuses when the
+// points available are below the price. Reject malformed legacy values.
+const POINTS_REFUSALS = [
+  { singular: true, key: "{name} has 1 sorcery point left, and {spell} through {feature} costs {cost}. Nothing was spent." },
+  { singular: false, key: "{name} has {left} sorcery points left, and {spell} through {feature} costs {cost}. Nothing was spent." },
+].map(({ singular, key }) => ({ singular, key, pattern: patternFor(key) }));
+
+// A monster's Counterspell spends its reaction and its slot even on failure.
+// The check is only made against a spell above the slot's level (enemy-reactions.ts).
+const COUNTERSPELL_PATTERNS = [
+  {"key":"{enemy} casts Counterspell (its reaction, a level-{slot} slot): {name}'s {spell} fails. The slot and the action {name} cast it with are spent; do not resolve the spell or cast it again.","refusal":true,"checked":false},
+  {"key":"{enemy} casts Counterspell (its reaction, a level-{slot} slot) ({ability} check {rolled} against DC {dc}): {name}'s {spell} fails. The slot and the action {name} cast it with are spent; do not resolve the spell or cast it again.","refusal":true,"checked":true},
+  {"key":"{enemy} casts Counterspell (its reaction, a level-{slot} slot) ({ability} check {rolled} against DC {dc}) and fails: {name}'s {spell} goes ahead.","refusal":false,"checked":true},
+].map((entry) => ({ ...entry, pattern: patternFor(entry.key) }));
+
+function counterspellDisplay(raw: string, t: T, refusal: boolean, actor?: string): string | null {
+  for (const entry of COUNTERSPELL_PATTERNS) {
+    if (entry.refusal !== refusal) continue;
+    const groups = entry.pattern.exec(raw)?.groups;
+    if (!groups || Object.values(groups).some((value) => !value.trim() || value.includes(". "))) continue;
+    if (actor && groups.name !== actor) continue;
+    const slot = Number(groups.slot);
+    if (!Number.isSafeInteger(slot) || String(slot) !== groups.slot || slot < 3 || slot > 9) continue;
+    if (entry.checked) {
+      if (!/^(?:STR|DEX|CON|INT|WIS|CHA)$/.test(groups.ability)) continue;
+      const rolled = Number(groups.rolled);
+      const dc = Number(groups.dc);
+      if (!Number.isSafeInteger(rolled) || String(rolled) !== groups.rolled ||
+        !Number.isSafeInteger(dc) || String(dc) !== groups.dc ||
+        dc <= 10 + slot || dc > 19 || (rolled >= dc) !== refusal) continue;
+    }
+    return t(entry.key, groups);
+  }
+  return null;
+}
+
 export function castRefusalDisplay(error: string, t: T, actor?: string): string {
-  for (const { key, pattern } of PATTERNS) {
+  const countered = counterspellDisplay(error, t, true, actor);
+  if (countered !== null) return countered;
+  for (const { key, pattern, singular } of POINTS_REFUSALS) {
+    const groups = pattern.exec(error)?.groups;
+    if (!groups || !groups.name.trim() || !groups.spell.trim() || !groups.feature.trim()) continue;
+    if (actor && groups.name !== actor) continue;
+    const left = singular ? 1 : Number(groups.left);
+    const cost = Number(groups.cost);
+    if (!Number.isSafeInteger(left) || !Number.isSafeInteger(cost) || left < 0 || left >= cost) continue;
+    if (!singular && (left === 1 || String(left) !== groups.left) || String(cost) !== groups.cost) continue;
+    return t(key, groups);
+  }
+  for (const { key, pattern, ring } of PATTERNS) {
     const match = pattern.exec(error);
     if (!match) continue;
     const groups = match.groups ?? {};
     if (actor && groups.name !== undefined && groups.name !== actor) continue;
+    // Awakened Spellbook repeats the spell and slot level in its advice.
+    // patternFor enforces those repetitions; the damage type list stays opaque.
+    if (groups.ownDamage !== undefined) {
+      if (Object.values(groups).some((value) => !value.trim() || value.includes(". "))) continue;
+      if (!/^[^():\r\n]+$/.test(groups.ownDamage)) continue;
+      if (groups.askedDamage !== undefined && !/^[^():\r\n]+$/.test(groups.askedDamage)) continue;
+      if (groups.bookLevel !== undefined && !/^[1-9]$/.test(groups.bookLevel)) continue;
+      if (groups.bookTypes !== undefined && !/^[^()\r\n]+ \(.+\)$/.test(groups.bookTypes)) continue;
+    }
     const vars = Object.fromEntries(Object.entries(groups).map(([field, raw]) => [field, fragment(field, raw, t)]));
-    return t(key, vars);
+    if (ring && !groups.ring) continue;
+    const message = t(key, vars);
+    return ring ? `${message} ${t(RING_SUFFIX, { ring: groups.ring })}` : message;
   }
   return error;
+}
+
+// Successful slot notes are separate from refusals, and only read from the
+// tool result's slot fields by the console. The engine keeps its own text.
+const SLOT_RESULT_PATTERNS = [
+  "{spell} cast as a ritual: no slot spent.",
+  "{spell} completes the casting Slow held back: no slot spent.",
+  "{spell} is a Signature Spell: cast at 3rd level with no slot, once until a short rest.",
+  "{spell} is cast without a slot (a feat's spell at will).",
+  "{spell} is cast without a slot (a feat's free cast): once until a short rest.",
+  "{spell} is cast without a slot (a feat's free cast): once until a long rest.",
+  "{spell} is cast as a Mystic Arcanum, with no spell slot: once until a long rest.",
+  "{spell} is cast through Mantle of Majesty: no slot spent.",
+  "{spell} is cast through Read Thoughts: no slot spent, and the reading ends.",
+  "{spell} is a cantrip: no spell slot is spent. Cantrips are unlimited.",
+  "{spell} is mastered (Spell Mastery): cast at its own level, no slot is spent.",
+  "{spell} is cast with no spell slot ({condition}, now spent).",
+  "{spell} is cast with no spell slot ({condition}, for the minute).",
+  "{spell} is cast through {source} with no spell slot, at will.",
+  "{spell} is cast through {source}, with no spell slot.",
+  "{spell} is cast through {source}, with no spell slot: once until a long rest.",
+  "{spell} is cast through {source} with no spell slot: once, and again after a short rest, as a level {level} spell.",
+  "{spell} is cast through {source} with no spell slot: once, and again after a short rest.",
+  "{spell} is cast through {source} with no spell slot: {count} times, and again after a short rest, as a level {level} spell.",
+  "{spell} is cast through {source} with no spell slot: {count} times, and again after a short rest.",
+  "{spell} is cast through {source} with no spell slot: once, and again after a long rest, as a level {level} spell.",
+  "{spell} is cast through {source} with no spell slot: once, and again after a long rest.",
+  "{spell} is cast through {source} with no spell slot: {count} times, and again after a long rest, as a level {level} spell.",
+  "{spell} is cast through {source} with no spell slot: {count} times, and again after a long rest.",
+  "{spell} is cast through {source} with no spell slot, at will, as a level {level} spell.",
+  "{spell} is cast with 1 sorcery point in place of a spell slot ({source}). {left} left.",
+  "{spell} is cast with 1 sorcery point in place of a spell slot ({source}), with no verbal, somatic or material component. {left} left.",
+  "{spell} is cast with 1 sorcery point in place of a spell slot ({source}); {name} sees through it. {left} left.",
+  "{spell} is cast with {cost} sorcery points in place of a spell slot ({source}). {left} left.",
+  "{spell} is cast with {cost} sorcery points in place of a spell slot ({source}), with no verbal, somatic or material component. {left} left.",
+  "{spell} is cast with {cost} sorcery points in place of a spell slot ({source}); {name} sees through it. {left} left.",
+].map((key) => ({ key, pattern: patternFor(key) }));
+
+export function castSlotDisplay(raw: string, t: T): string {
+  const slot = /^(pact slot )?level (\d+): (\d+)\/(\d+) left$/.exec(raw);
+  if (slot) {
+    return t(slot[1] ? "pact slot level {level}: {left}/{max} left" : "level {level}: {left}/{max} left", { level: slot[2], left: slot[3], max: slot[4] });
+  }
+  for (const { key, pattern } of SLOT_RESULT_PATTERNS) {
+    const match = pattern.exec(raw);
+    if (!match?.groups?.spell) continue;
+    const { source, name, count, cost, level, left } = match.groups;
+    if (source !== undefined && !source.trim() || name !== undefined && !name.trim()) continue;
+    if ([count, cost, level, left].some((value) => value !== undefined &&
+      (!Number.isSafeInteger(Number(value)) || String(Number(value)) !== value || Number(value) < 0))) continue;
+    if (count !== undefined && Number(count) < 2 || cost !== undefined && Number(cost) < 2 ||
+      level !== undefined && (Number(level) < 1 || Number(level) > 9)) continue;
+    return t(key, match.groups);
+  }
+  return raw;
+}
+
+
+// Other successful cast result fields. Keep the source/feature names as
+// supplied by the engine; a grant with unknown appended prose is not a
+// plain grant. A dot in a source name is ambiguous in the legacy format.
+const EXTRA_CAST_PATTERNS = [
+  { field: "granted", key: "{spell} is cast through Chains of Carceri. Chains of Carceri targets a celestial, fiend or elemental only, and not the same creature again until a long rest." },
+  { field: "granted", key: "{spell} is cast through Grasping Tentacles. Casting it gives the warlock temporary hit points equal to their warlock level, and damage cannot break their concentration on it." },
+  { field: "granted", key: "{spell} is cast through Shapechanger. The free casting is on the wizard themselves, into a beast of challenge rating 1 or lower." },
+  { field: "granted", key: "{spell} is cast with a spell slot; {source} gives it without one, once a short rest." },
+  { field: "granted", key: "{spell} is cast with a spell slot; {source} gives it without one, once a long rest." },
+  { field: "granted", key: "{spell} is cast with a spell slot; {source} gives it without one, {count} times a short rest." },
+  { field: "granted", key: "{spell} is cast with a spell slot; {source} gives it without one, {count} times a long rest." },
+  { field: "granted", key: "{spell} is cast with a spell slot; {source} gives it without one." },
+  { field: "granted", key: "{spell} is cast through {source}." },
+  { field: "slotRefund", key: "{feature}: a spent level {level} slot comes back." },
+  { field: "completed", key: "{spell}'s casting is complete and it takes effect now; it costs no action." },
+  { field: "debtComesDue", key: "The Debt Comes Due: that was {name}'s last spell slot, and it comes straight back (level {level}). The use is spent until a long rest." },
+  { field: "cost", key: "their action" },
+  { field: "cost", key: "their bonus action" },
+  { field: "cost", key: "their reaction" },
+  { field: "wildMagicSurge", key: "Tides of Chaos is spent: the GM may have {name} roll on the wild magic table now, and if so use_resource \"Wild Magic Surge\" rolls it and gives the use back." },
+  { field: "wildMagicSurge", key: "The GM may have {name} roll a d20 for a Wild Magic Surge now: use_resource \"Wild Magic Surge\" rolls it, and on a 1 rolls on the wild magic table." },
+  { field: "refilled", key: "Benign Transposition is ready again: a conjuration spell of level 1 or higher was cast." },
+  { field: "castingTime", key: "1 minute of casting; the clock moved on." },
+  { field: "castingTime", key: "{count} minutes of casting; the clock moved on." },
+  { field: "castingTime", key: "1 hour of casting; the clock moved on." },
+  { field: "castingTime", key: "{count} hours of casting; the clock moved on." },
+  { field: "lunarBoons", key: "Lunar Boons: the spell just cast is of the {phase} phase's schools, so the Metamagic costs 1 sorcery point less. {name} has {left}/{max} boons left." },
+  { field: "lunarBoons", key: "Lunar Boons: a spell of the {phase} phase's schools, so the Metamagic costs 1 sorcery point less. {name} has {left}/{max} boons left." },
+  { field: "lunarBoons", key: "Lunar Boons: if the next spell {name} casts is of the {phase} phase's schools (abjuration or divination), 1 sorcery point comes back and a boon is spent." },
+  { field: "lunarBoons", key: "Lunar Boons: if the next spell {name} casts is of the {phase} phase's schools (enchantment or necromancy), 1 sorcery point comes back and a boon is spent." },
+  { field: "lunarBoons", key: "Lunar Boons: if the next spell {name} casts is of the {phase} phase's schools (illusion or transmutation), 1 sorcery point comes back and a boon is spent." },
+  { field: "shares", key: "{spell} holds {count} attack rolls from this one casting; {left} left this turn at no further cost, each its own entry in pc_attack's attacks." },
+  { field: "shares", key: "{spell} holds {count} darts from this one casting; {left} left this turn at no further cost, each its own entry in cast_at_enemy's targets." },
+  { field: "shares", key: "{spell} holds {count} darts from this one casting; {left} left this turn at no further cost, each its own entry in heal's targets." },
+  { field: "shares", key: "{spell} holds {count} targets from this one casting; {left} left this turn at no further cost, each its own entry in cast_at_enemy's targets." },
+  { field: "shares", key: "{spell} holds {count} targets from this one casting; {left} left this turn at no further cost, each its own entry in heal's targets." },
+  { field: "stoneChange", key: "{feature}: {name} may change its benefit now (it is {choice}): use_resource \"{feature}\" with the new one in variant, before their turn ends." },
+  { field: "droppedConcentration", key: "The earlier casting of {spell} ended when it was cast again; its effects are gone." },
+  { field: "droppedConcentration", key: "{previous} ended when {spell} was cast; its effects are gone." },
+  { field: "droppedConcentration", key: "{name}'s casting of {spell} fails ({next} took the concentration): the spell does not take effect, and no spell slot is spent." },
+  { field: "note", key: "{spell} cast as a ritual: {count} minutes of casting, no slot spent. The clock moved on." },
+  { field: "note", key: "{spell} cast as a ritual: no slot spent. Awakened Spellbook: cast at the spell's own casting time, without a ritual's 10 extra minutes (once until a long rest)." },
+  { field: "note", key: "{spell} cast as a ritual: no slot spent. Awakened Spellbook: cast at the spell's own casting time, without a ritual's 10 extra minutes (once until a long rest). 1 minutes of casting; the clock moved on." },
+  { field: "note", key: "{spell} cast as a ritual: no slot spent. Awakened Spellbook: cast at the spell's own casting time, without a ritual's 10 extra minutes (once until a long rest). {count} minutes of casting; the clock moved on." },
+  { field: "costNote", key: "Quickened Spell: {spell} took the bonus action instead of the action." },
+  { field: "costNote", key: "{feature}: {spell} took the bonus action instead of the action." },
+  { field: "costNote", key: "{name} spends their additional action (Action Surge) on casting {spell}." },
+  { field: "costNote", key: "{name} spends their extra action (Haste) on casting {spell}." },
+  { field: "metamagic", key: "Twinned Spell: {spell} takes a second creature in range, for 1 sorcery point. The second target is another creature, never the first again." },
+  { field: "metamagic", key: "Twinned Spell: {spell} takes a second creature in range, for {count} sorcery points. The second target is another creature, never the first again." },
+  { field: "awakenedSpellbook", key: "{spell} deals {type} damage in place of {own}: the type of {from}, a spell of the slot's level in the book." },
+  { field: "metamagic", key: "Twinned Spell: {spell} takes a second creature in range, for 1 sorcery point ({delta} given back: the price is the spell's level). The second target is another creature, never the first again." },
+  { field: "metamagic", key: "Twinned Spell: {spell} takes a second creature in range, for {count} sorcery points ({charge} more charged: the price is the spell's level). The second target is another creature, never the first again." },
+  { field: "metamagic", key: "Twinned Spell: {spell} takes a second creature in range, for {count} sorcery points ({delta} given back: the price is the spell's level). The second target is another creature, never the first again." },
+  { field: "metamagic", key: "Twinned Spell does not take {spell}: it has a range of self. The 1 sorcery point paid for it is back, and the spell is cast on its one target." },
+  { field: "metamagic", key: "Twinned Spell does not take {spell}: it has a range of self. The {count} sorcery points paid for it are back, and the spell is cast on its one target." },
+  { field: "metamagic", key: "Twinned Spell does not take {spell}: it can target more than one creature at this level. The 1 sorcery point paid for it is back, and the spell is cast on its one target." },
+  { field: "metamagic", key: "Twinned Spell does not take {spell}: it can target more than one creature at this level. The {count} sorcery points paid for it are back, and the spell is cast on its one target." },
+  { field: "metamagic", key: "Twinned Spell does not take {spell}: twinning it costs {price} sorcery points. The 1 sorcery point paid for it is back, and the spell is cast on its one target." },
+  { field: "metamagic", key: "Twinned Spell does not take {spell}: twinning it costs {price} sorcery points. The {count} sorcery points paid for it are back, and the spell is cast on its one target." },
+  { field: "costNote", key: "Extra Attack: {spell} takes the place of one attack of the Attack action." },
+  { field: "costNote", key: "{name} spends their additional action (Action Surge) on the Attack action. Extra Attack: {spell} takes the place of one attack of the Attack action." },
+].map(({ field, key }) => ({ field, key, pattern: patternFor(key) }));
+
+export function castExtraDisplay(raw: string, t: T, field: "granted" | "slotRefund" | "completed" | "debtComesDue" | "cost" | "wildMagicSurge" | "lunarBoons" | "refilled" | "castingTime" | "shares" | "stoneChange" | "droppedConcentration" | "note" | "costNote" | "metamagic" | "awakenedSpellbook" | "counterspell"): string {
+  if (field === "counterspell") return counterspellDisplay(raw, t, false) ?? raw;
+  for (const entry of EXTRA_CAST_PATTERNS) {
+    if (entry.field !== field) continue;
+    const match = entry.pattern.exec(raw);
+    if (!match) continue;
+    const groups = match.groups ?? {};
+    if (Object.values(groups).some((value) => !value.trim())) continue;
+    const { source, count, level, left, max } = groups;
+    if (source?.includes(".") || groups.previous?.includes(". ") ||
+      (field === "costNote" && (groups.feature?.includes(". ") || groups.name?.includes(". "))) ||
+      ((field === "note" || field === "costNote" || field === "metamagic" || field === "awakenedSpellbook") && groups.spell?.includes(". "))) continue;
+    // Settlement and rejection prices are canonical positive integers, not free text.
+    const { delta, price, charge } = groups;
+    const paid = count === undefined ? 1 : Number(count);
+    if (charge !== undefined) {
+      const adjustment = Number(charge);
+      if (!Number.isSafeInteger(adjustment) || String(adjustment) !== charge || adjustment < 1 || adjustment >= paid || paid > 9) continue;
+    }
+    if (delta !== undefined) {
+      const adjustment = Number(delta);
+      if (!Number.isSafeInteger(adjustment) || String(adjustment) !== delta || adjustment < 1) continue;
+    }
+    if (price !== undefined) {
+      const required = Number(price);
+      if (!Number.isSafeInteger(required) || String(required) !== price || required < 2 || required > 9 || required <= paid) continue;
+    }
+    if (left !== undefined) {
+      const remaining = Number(left);
+      const ceiling = Number(max ?? count);
+      if (!Number.isSafeInteger(remaining) || String(remaining) !== left || remaining < 0 ||
+        !Number.isSafeInteger(ceiling) || ceiling < 1 || remaining > ceiling ||
+        (max !== undefined && String(ceiling) !== max)) continue;
+    }
+    if (count !== undefined && (!Number.isSafeInteger(Number(count)) || String(Number(count)) !== count || Number(count) < 2)) continue;
+    if (level !== undefined && (!Number.isSafeInteger(Number(level)) || String(Number(level)) !== level || Number(level) < 1 || Number(level) > (field === "slotRefund" ? 8 : 9))) continue;
+    return t(entry.key, groups);
+  }
+  return raw;
 }

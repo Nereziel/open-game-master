@@ -1,8 +1,12 @@
 "use client";
 
 import { X } from "lucide-react";
+import { useEffect, useState } from "react";
 import { useLocale, useT } from "@/lib/locale";
-import { contentName } from "@/lib/content/names";
+import { contentName, type NamedRow } from "@/lib/content/names";
+import { scopeQuery } from "@/lib/content-scope";
+import { leadItemFlags, needsLeadItemReference } from "./lead-edit-display";
+import type { Locale } from "@/lib/i18n/translate";
 import { contentSlug } from "@/lib/help";
 import { InfoButton } from "@/components/ui/InfoDialog";
 import { cn } from "@/lib/cn";
@@ -24,15 +28,43 @@ export {
 // The pieces the lead's Adjust dialog (LeadEditDialog.tsx) is built from,
 // split out so the dialog stays about the correction it sends.
 
+// Resolve only distinct pack slugs, using the same campaign scope as the
+// picker. The returned map is presentation state, never part of the edit.
+// No pack or failed lookup leaves the canonical name visible.
+export function useLeadItemReferences(campaignId: string, items: readonly EquipmentItem[], locale: Locale) {
+  const slugKey = JSON.stringify([...new Set(items.filter(needsLeadItemReference).flatMap((item) => item.slug ? [item.slug] : []))].sort());
+  const [resolved, setResolved] = useState<{ campaignId: string; rows: Map<string, NamedRow> } | null>(null);
+  const localized = locale !== "en";
+  useEffect(() => {
+    if (!localized) return;
+    const slugs = JSON.parse(slugKey) as string[];
+    if (!slugs.length) return;
+    const controller = new AbortController();
+    void Promise.all(slugs.map(async (slug): Promise<[string, NamedRow] | null> => {
+      try {
+        const response = await fetch(`/api/content/items/${encodeURIComponent(slug)}${scopeQuery(campaignId)}`, {
+          signal: controller.signal,
+        });
+        if (!response.ok) return null;
+        const { entry } = (await response.json()) as { entry?: NamedRow };
+        return entry?.slug && entry.slug === slug ? [slug, entry] : null;
+      } catch {
+        return null;
+      }
+    })).then((entries) => {
+      if (!controller.signal.aborted) {
+        setResolved({ campaignId, rows: new Map(entries.filter((entry): entry is [string, NamedRow] => entry !== null)) });
+      }
+    });
+    return () => controller.abort();
+  }, [campaignId, localized, slugKey]);
+  return resolved?.campaignId === campaignId ? resolved.rows : undefined;
+}
+
 // What the row holds besides its name, as small chips: the state the save
 // now keeps.
 export function ItemFlags({ item }: { item: EquipmentItem }) {
-  const flags = [
-    item.equipped ? (item.layered ? "worn beside another (GM's call)" : "worn") : null,
-    item.attuned ? "attuned" : item.attuning ? "attunes at the next rest" : null,
-    item.identified === false ? "unidentified" : null,
-    item.charges !== undefined ? `${item.charges} charges` : null,
-  ].filter((flag): flag is string => Boolean(flag));
+  const flags = leadItemFlags(item, useLocale());
   if (!flags.length) {
     return null;
   }
@@ -107,10 +139,6 @@ export function syncCasterLists(
   return withCasterViews(after, views);
 }
 
-export function levelMeta(entry: { level?: number }): string {
-  return entry.level !== undefined ? (entry.level === 0 ? "cantrip" : `level ${entry.level}`) : "";
-}
-
 export type SlotEdits = Record<string, { max: string; used: string }>;
 
 // Used and maximum for each slot level the sheet stores, and the pact slots
@@ -124,6 +152,7 @@ export function SlotSteppers({
   slots: SlotEdits;
   onChange: (update: (previous: SlotEdits) => SlotEdits) => void;
 }) {
+  const t = useT();
   const set = (level: string, key: "max" | "used", value: number) =>
     onChange((previous) => ({
       ...previous,
@@ -132,15 +161,15 @@ export function SlotSteppers({
   return (
     <div className="stagger-pop flex flex-wrap gap-2">
       {levels.map((level) => {
-        const title = level === "pact" ? "Pact" : `L${level}`;
-        const named = level === "pact" ? "Pact" : `Level ${level}`;
+        const title = level === "pact" ? t("Pact") : `L${level}`;
+        const named = level === "pact" ? t("Pact") : t("Level {level}", { level });
         return (
           <div key={level} className="space-y-1">
-            <span className="text-stone-400">{title} used/max</span>
+            <span className="text-stone-400">{t("{name} used/max", { name: title })}</span>
             <div className="flex items-center gap-1">
-              <NumberStepper size="sm" min={0} value={Number(slots[level]?.used ?? "0") || 0} label={`${named} slots used`} onChange={(next) => set(level, "used", next)} />
+              <NumberStepper size="sm" min={0} value={Number(slots[level]?.used ?? "0") || 0} label={t("{name} slots used", { name: named })} onChange={(next) => set(level, "used", next)} />
               <span className="text-stone-500">/</span>
-              <NumberStepper size="sm" min={0} value={Number(slots[level]?.max ?? "0") || 0} label={`${named} slots max`} onChange={(next) => set(level, "max", next)} />
+              <NumberStepper size="sm" min={0} value={Number(slots[level]?.max ?? "0") || 0} label={t("{name} slots max", { name: named })} onChange={(next) => set(level, "max", next)} />
             </div>
           </div>
         );

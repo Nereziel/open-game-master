@@ -31,6 +31,7 @@ import { guidanceFor } from "@/lib/srd/feature-effects";
 import { subclassFeatureDescription } from "@/lib/srd/features";
 import { findOptionByFeatureName } from "@/lib/srd/options";
 import { subclassChoicePickDescription } from "@/lib/srd/subclass-choice-picks";
+import { readsAsRules } from "@/lib/srd/feat-text";
 import { choiceDamageTypeOf } from "@/lib/srd/chosen-element";
 
 export type GlossaryTerm = {
@@ -170,12 +171,12 @@ export function backgroundFeatureReference(
   background: string | null | undefined,
   classId = "",
   subclass = "",
-): { kind: "backgrounds"; slug: string; name: string } | null {
+): { kind: "backgrounds"; slug: string; name: string; exactSlug: true } | null {
   const slug = (background ?? "").trim();
   if (feature.source !== "background" || !slug || describeFeature(classId, subclass, feature.name)) {
     return null;
   }
-  return { kind: "backgrounds", slug, name: baseName(feature.name) };
+  return { kind: "backgrounds", slug, name: baseName(feature.name), exactSlug: true };
 }
 
 // The bundled lineage lines. Racial traits are written to describe themselves
@@ -274,19 +275,22 @@ export function describeContentEntry(data: Record<string, unknown> | undefined, 
       break;
     }
   }
+  // A prerequisite belongs to the entry even when its benefits are already
+  // in desc. The pack occasionally stores rules in that field instead.
+  const prerequisite = typeof data.prerequisite === "string" ? data.prerequisite.trim().replace(/^[*_]+|[*_]+$/g, "").trim() : "";
+  if (prerequisite && !/^(?:n\/a|none|-)$/i.test(prerequisite)) {
+    if (readsAsRules(prerequisite)) {
+      parts.unshift(prerequisite);
+    } else {
+      const label = translate(locale, prerequisite, { context: "content.featPrerequisite" });
+      parts.push(`*${translate(locale, "Requires {prereq}", { prereq: label })}*`);
+    }
+  }
   // A Level Up feat keeps its flavor line in desc and its rules in
   // effects_desc, one benefit per entry.
   const effects = textOf(data.effects_desc);
   if (effects.trim()) {
-    const prerequisite = typeof data.prerequisite === "string" && data.prerequisite.trim()
-      ? `*${translate(locale, "Requires {prereq}", { prereq: data.prerequisite.trim() })}*\n\n`
-      : "";
-    parts.push(
-      `${prerequisite}${effects
-        .split("\n\n")
-        .map((line) => `- ${line}`)
-        .join("\n")}`,
-    );
+    parts.push(effects.split("\n\n").map((line) => `- ${line}`).join("\n"));
   }
   // A background's feature is a field of its own.
   const feature = typeof data.feature === "string" ? data.feature.trim() : "";
@@ -298,6 +302,33 @@ export function describeContentEntry(data: Record<string, unknown> | undefined, 
   }
   const joined = normalizeRulesText(parts.join("\n\n"));
   return joined ? joined : null;
+}
+
+// A source-backed reference is not a request to find another book's
+// same-named entry. Legacy references may have only a guessed slug.
+export type ContentInfoIdentity = { slug: string; source?: string; documentSlug?: string; exactSlug?: boolean };
+
+// A stored slug may follow a deliberate server redirect, but a failed lookup
+// is not permission to find another record by its display name.
+export function contentInfoAllowsNameFallback(reference?: ContentInfoIdentity): boolean {
+  return !reference?.exactSlug && !reference?.source && !reference?.documentSlug;
+}
+
+export function contentInfoDirectMatches(entry: ContentInfoIdentity, reference: ContentInfoIdentity): boolean {
+  if (!reference.source && !reference.documentSlug) return true;
+  return entry.slug === reference.slug
+    && (!reference.source || entry.source === reference.source)
+    && (!reference.documentSlug || entry.documentSlug === reference.documentSlug);
+}
+
+// A missing legacy slug can be recovered from an exact whole-name search
+// only if it returned one unambiguous hit. Do not take the first of a
+// truncated page or use a different document to fill an empty description.
+export function uniqueContentInfoMatch<T extends { name: string }>(results: readonly T[], wanted: string, limit: number): T | undefined {
+  if (results.length >= limit || !wanted) return undefined;
+  const hits = results.filter((entry) => textKey(entry.name) === wanted);
+  const [only] = hits;
+  return hits.length === 1 ? only : undefined;
 }
 
 export type StarterSpells = {
@@ -335,7 +366,7 @@ const flagged = (value: unknown) =>
 // Whether a spell's row says it takes concentration (a pack's "yes", a
 // homebrew row's true): the spell tiles mark it (issue 252).
 export function spellRowConcentrates(data: Record<string, unknown> | undefined): boolean {
-  return Boolean(data && flagged(data.concentration));
+  return Boolean(data && (flagged(data.concentration) || flagged(data.requires_concentration)));
 }
 
 // Translate only complete recognized metadata values, never parse a
@@ -352,7 +383,7 @@ function spellCastingTimeLabel(value: unknown, locale: Locale): string {
       ? translatePlural(locale, "{count} minute", "{count} minutes", { count })
       : translatePlural(locale, "{count} hour", "{count} hours", { count });
   }
-  return raw;
+  return locale === "cs" ? translate(locale, raw.trim()) : raw;
 }
 
 function spellRangeLabel(value: unknown, locale: Locale): string {
@@ -363,7 +394,7 @@ function spellRangeLabel(value: unknown, locale: Locale): string {
   if (Object.hasOwn(labels, clean)) return translate(locale, labels[clean]);
   const distance = /^(\d+)\s+(?:feet|ft\.?|foot)$/.exec(clean);
   if (distance) return translate(locale, "{feet} ft", { feet: Number(distance[1]) });
-  return raw;
+  return locale === "cs" ? translate(locale, raw.trim()) : raw;
 }
 
 // The one-line summary shown under a spell's name in a picker: level, school
@@ -372,7 +403,9 @@ export function spellSummary(data: Record<string, unknown> | undefined, locale: 
   if (!data) {
     return "";
   }
-  const level = Number(data.level_int ?? data.level ?? 0);
+  // Open5e v1 also carries spell_level (numeric); its level can be a
+  // human-readable label. V2 and bundled rows carry numeric level.
+  const level = Number(data.level_int ?? data.spell_level ?? data.level ?? 0);
   const school = String(
     (data.school as { name?: string })?.name ?? data.school ?? "",
   ).toLowerCase();
@@ -383,8 +416,8 @@ export function spellSummary(data: Record<string, unknown> | undefined, locale: 
       : (schoolWord ? translate(locale, "level {level} {school}", { level, school: schoolWord }) : translate(locale, "level {level}", { level })),
     spellCastingTimeLabel(data.casting_time, locale),
     spellRangeLabel(data.range, locale),
-    flagged(data.concentration) ? translate(locale, "concentration") : "",
-    flagged(data.ritual) ? translate(locale, "ritual") : "",
+    spellRowConcentrates(data) ? translate(locale, "concentration") : "",
+    (flagged(data.ritual) || flagged(data.can_be_cast_as_ritual)) ? translate(locale, "ritual") : "",
   ].filter(Boolean);
   return parts.join(" · ");
 }

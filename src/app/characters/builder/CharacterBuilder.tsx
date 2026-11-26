@@ -352,7 +352,7 @@ function CharacterBuilderForm({
   // Each feat's prerequisite judged as the save judges it, against the
   // character as built so far (featPrereqs.ts): the feat pickers read it,
   // and the gates below flag a picked feat a later choice broke.
-  const featJudge = builderFeatJudge({ state, derived, race, klass, background }, featTexts.prerequisites, initial?.feats);
+  const featJudge = builderFeatJudge({ state, derived, race, klass, background }, featTexts.prerequisites, initial?.feats, locale);
   const actions = builderActions(state, klass, race, background);
   const pickers = usePickerGroups({
     races,

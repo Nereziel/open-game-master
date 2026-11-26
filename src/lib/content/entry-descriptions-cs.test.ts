@@ -5,13 +5,15 @@ import { buildItemSheet, itemCardRows } from "../help/item-sheet";
 import { czechGearDescription } from "./entry-descriptions-cs";
 import { localizeEntry } from "./entry-descriptions";
 import { bundledItemRows, bundledSpellRows } from "@/lib/rulebook/catalog-rows";
+import { SRD_GEAR, SRD_GOODS } from "@/lib/srd/adventuring-gear";
+import { SRD_ARMOR } from "@/lib/srd/armor";
 import { czechFullTranslation } from "@/lib/rulebook/czech-companion";
 import { rulebookPages } from "@/lib/rulebook/book";
 import { SRD_BACKGROUNDS, SRD_RACES } from "@/lib/srd";
 import { AUTHORED_SUBCLASS_ENTRIES } from "@/lib/srd/features";
 import { CUSTOM_BACKGROUNDS, describeBackgroundFeature } from "@/lib/backgrounds";
 import { translate } from "@/lib/i18n/translate";
-import { describeContentEntry } from "@/lib/help";
+import { describeContentEntry, spellRowConcentrates, spellSummary } from "@/lib/help";
 import spellFixture from "../../../scripts/fixtures/reader-golden/spell.json";
 import featFixture from "../../../scripts/fixtures/reader-golden/feat.json";
 import backgroundFixture from "../../../scripts/fixtures/reader-golden/background.json";
@@ -77,6 +79,42 @@ describe("Archetype and feat display is separate from mechanics", () => {
 });
 
 describe("Shared localized content descriptions", () => {
+  it("covers the bundled mundane equipment, goods and thirteen SRD armor rows", () => {
+    const armor = SRD_ARMOR.filter((row) => !row.genres?.length && row.name !== "Spiked Armor");
+    expect(armor).toHaveLength(13);
+    for (const row of [...SRD_GEAR, ...SRD_GOODS, ...armor]) {
+      expect(czechGearDescription(row.name), row.name).toBeTruthy();
+    }
+    expect(czechGearDescription("Rope, Hempen")).toBe(gearCs["rope hempen 50 feet"]);
+    expect(czechGearDescription("Acid")).toBe(gearCs["acid vial"]);
+    expect(czechGearDescription("An unknown custom item")).toBeUndefined();
+  });
+
+  it("distinguishes magic item rarity from the Common language", () => {
+    const row = { name: "Example charm", rarity: "common", type: "Wondrous item", desc: "A charm." };
+    expect(buildItemSheet(row.name, [row], { locale: "cs" })?.rarity).toBe("Běžný");
+    expect(buildItemSheet(row.name, [row], { locale: "en" })?.rarity).toBe("Common");
+    expect(translate("cs", "Common")).toBe("Obecná řeč");
+  });
+
+  it("carries Czech core shield prose through the item info card without changing mechanics", () => {
+    const row = {
+      slug: "shield", name: "Shield", source: "open5e", documentSlug: "wotc-srd",
+      data: { desc: "A shield is made from wood or metal and is carried in one hand. Wielding a shield increases your Armor Class by 2. You can benefit from only one shield at a time." } as Record<string, unknown>,
+    };
+    const localized = localizeEntry("items", row, "cs");
+    const description = czechGearDescription("Shield");
+    expect(description).toContain("obranné číslo o 2");
+    expect(localized.data).toEqual({ ...row.data, localized_desc: description });
+    expect(buildItemSheet("Shield", [row.data, localized.data], { locale: "cs" })?.description).toBe(description);
+    expect(localizeEntry("items", row, "en")).toBe(row);
+    for (const other of [
+      { ...row, source: "homebrew" },
+      { ...row, documentSlug: "srd-2024" },
+      { ...row, documentSlug: "other-book" },
+    ]) expect(localizeEntry("items", other, "cs")).toBe(other);
+  });
+
   it("preserves canonical spell and item data for all reader languages", () => {
     const spell = bundledSpellRows().find((row) => row.rulebook === "fireball")!;
     const item = bundledItemRows().find((row) => row.rulebook === "cloak-of-protection")!;
@@ -339,6 +377,11 @@ describe("Tome of Heroes spell metadata", () => {
       expect(data.casting_time, slug).toBeTypeOf("string");
       expect(data.range, slug).toBeTypeOf("string");
       expect(data.requires_concentration, slug).toBeTypeOf("boolean");
+      expect(spellRowConcentrates(data), slug).toBe(data.requires_concentration);
+      const equivalent = { ...data, level_int: data.spell_level, concentration: data.requires_concentration };
+      for (const locale of ["en", "fr", "cs"] as const) {
+        expect(spellSummary(data, locale), slug).toBe(spellSummary(equivalent, locale));
+      }
       const row = { slug, name: hit.englishName, documentSlug: "toh", source: "open5e", data };
       expect(localizeEntryCs("spells", row).data.localized_desc).toBe(hit.description);
       const changed = { ...row, data: { ...data, spell_level: -1 } };
@@ -416,15 +459,41 @@ describe("Czech everyday equipment display", () => {
 });
 
 describe("Item information card source identity", () => {
+  it("does not import the bundled weapon or armor stats into a different source", () => {
+    const core = { name: "Shield", slug: "shield", source: "open5e", documentSlug: "wotc-srd", data: { desc: "Core shield" } };
+    const foreign = { ...core, slug: "shield-other", documentSlug: "other-book", data: { desc: "Different shield" } };
+    const custom = { ...core, slug: "homebrew:shield", source: "homebrew", documentSlug: "homebrew", data: { itemKind: "gear", desc: "Custom shield" } };
+    for (const row of [foreign, custom]) {
+      const selected = itemCardRows("Shield", row, [core, foreign, custom], row)!;
+      expect(selected.allowBundledFallback).toBe(false);
+      const sheet = buildItemSheet("Shield", selected.rows, { allowBundledFallback: selected.allowBundledFallback });
+      expect(sheet?.armor).toBeNull();
+      expect(sheet?.weapon).toBeNull();
+      expect(sheet?.weight).toBeNull();
+      expect(sheet?.description).toBe(row.data.desc);
+      expect(itemCardRows("Shield", core, [row], row)).toBeNull();
+      expect(itemCardRows("Shield", null, [core], row)).toBeNull();
+    }
+    const stored = { slug: "missing-slug", exactSlug: true };
+    expect(itemCardRows("Shield", null, [core], stored)).toBeNull();
+    expect(itemCardRows("Shield", null, [core], undefined, 1)).toBeNull();
+    const legacy = itemCardRows("Shield", null, [])!;
+    expect(legacy.allowBundledFallback).toBe(true);
+    expect(buildItemSheet("Shield", legacy.rows, { allowBundledFallback: legacy.allowBundledFallback })?.armor?.ac).toBe("+2");
+  });
+
   it("never borrows localized prose from a different book or homebrew with the same name", () => {
     const core = { name: "Torch", slug: "torch", source: "open5e", documentSlug: "wotc-srd", data: { desc: "Core torch", localized_desc: "Pochodeň ze SRD" } };
     const foreign = { name: "Torch", slug: "torch-toh", source: "open5e", documentSlug: "toh", data: { desc: "Different torch" } };
     const brew = { name: "Torch", slug: "homebrew:torch", source: "homebrew", documentSlug: "homebrew", data: { desc: "My torch" } };
     const otherBrew = { ...brew, slug: "homebrew:other", data: { localized_desc: "Unrelated" } };
     for (const locale of ["en", "fr", "cs"] as const) {
-      expect(buildItemSheet("Torch", itemCardRows("Torch", foreign, [core, brew]), { locale })?.description).toBe("Different torch");
-      expect(buildItemSheet("Torch", itemCardRows("Torch", brew, [core, foreign, otherBrew]), { locale })?.description).toBe("My torch");
-      expect(itemCardRows("Torch", null, [foreign, core])).toEqual([foreign.data]);
+      const selectedForeign = itemCardRows("Torch", foreign, [core, brew])!;
+      expect(buildItemSheet("Torch", selectedForeign.rows, { locale, allowBundledFallback: selectedForeign.allowBundledFallback })?.description).toBe("Different torch");
+      const selectedBrew = itemCardRows("Torch", brew, [core, foreign, otherBrew])!;
+      expect(buildItemSheet("Torch", selectedBrew.rows, { locale, allowBundledFallback: selectedBrew.allowBundledFallback })?.description).toBe("My torch");
+      expect(itemCardRows("Torch", null, [foreign, core])).toBeNull();
+      expect(itemCardRows("Torch", null, [core, foreign])).toBeNull();
     }
   });
 
@@ -432,9 +501,11 @@ describe("Item information card source identity", () => {
     const stats = { name: "Torch", slug: "torch", source: "open5e", documentSlug: "wotc-srd", data: { weight: "1 lb." } };
     const prose = { ...stats, slug: "torch-v2", documentSlug: "srd-2014", data: { desc: "English prose", localized_desc: "Český popis" } };
     const other = { ...prose, documentSlug: "srd-2024", data: { localized_desc: "Wrong edition" } };
-    const rows = itemCardRows("Torch", stats, [other, prose]);
-    expect(rows).toEqual([stats.data, prose.data]);
-    expect(buildItemSheet("Torch", rows, { locale: "cs" })?.description).toBe("Český popis");
+    const selection = itemCardRows("Torch", stats, [other, prose])!;
+    expect(selection.rows).toEqual([stats.data, prose.data]);
+    expect(selection.allowBundledFallback).toBe(true);
+    expect(buildItemSheet("Torch", selection.rows, { locale: "cs", allowBundledFallback: selection.allowBundledFallback })?.description).toBe("Český popis");
+    expect(itemCardRows("Torch", null, [stats, prose])?.rows).toEqual([stats.data, prose.data]);
   });
 });
 
@@ -594,9 +665,16 @@ describe("Reviewed ODM authored feat rules", () => {
     expect(rows).toHaveLength(72);
     expect(Object.keys(authoredFeatTranslations)).toHaveLength(rows.length);
     let prerequisites = 0;
+    const checkedPrerequisites = new Set<string>();
     for (const row of rows) {
       const original = packFeatText(row.data);
-      if (original.prerequisite) prerequisites++;
+      if (original.prerequisite) {
+        prerequisites++;
+        checkedPrerequisites.add(original.prerequisite);
+        const reviewed = authoredFeatTranslations[row.slug as keyof typeof authoredFeatTranslations].description.match(/^\*Předpoklad: (.*?)\.\*/)?.[1];
+        expect(reviewed, row.name).toBeTruthy();
+        expect(translate("cs", original.prerequisite, { context: "content.featPrerequisite" }), row.name).toBe(reviewed);
+      }
       const result = localizeEntry("feats", row, "cs");
       const { localized_desc, ...canonical } = result.data;
       expect(typeof localized_desc, row.name).toBe("string");
@@ -620,6 +698,7 @@ describe("Reviewed ODM authored feat rules", () => {
       }
     }
     expect(prerequisites).toBe(30);
+    expect(checkedPrerequisites.size).toBe(22);
   });
 });
 

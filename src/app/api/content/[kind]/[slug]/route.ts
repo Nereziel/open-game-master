@@ -91,7 +91,7 @@ export async function GET(
   // The info button may know the canonical ID without the bundled srd: prefix.
   if (!decoded.includes(":")) {
     const row = kind === "spells" ? bundledSpellRows().find((r) => r.slug === `srd:${decoded}`)
-      : kind === "items" ? bundledItemRows().find((r) => r.slug === `srd:${decoded}`) : undefined;
+      : kind === "items" ? bundledItemRows().find((r) => r.slug === `srd:${decoded}`) ?? bundledGearRow(`srd-gear:${decoded}`) : undefined;
     if (row) return localizedResponse(row);
   }
   // The workshop's bundled lists also expose exact slugs for these

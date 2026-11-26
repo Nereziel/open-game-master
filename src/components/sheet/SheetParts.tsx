@@ -370,7 +370,7 @@ export function EquipmentChips({
     const idle = explicit ? wornButIdle(item, equipment) : null;
     if (idle) return t("worn, not in effect: {kind} at a time", { kind: oneOfKind(idle) ?? t("none", { context: "sheet.training.none" }) });
     if (item.equipped && item.layered) return t("worn beside another, on the GM's say");
-    return item.equipped ? (matchWeapon(item) ? "in hand" : t("worn")) : null;
+    return item.equipped ? (matchWeapon(item) ? t("in hand") : t("worn")) : null;
   };
   return (
     <InfoChipList
@@ -392,7 +392,7 @@ export function EquipmentChips({
               .join(", ") || undefined,
           // The card is the row's (src/lib/srd/item-row.ts), with the bonus the
           // item's own name declares.
-          reference: { kind: "items", slug: item.slug || contentSlug(rowName(item)), name: srdNameWithBonus(item) },
+          reference: item.identified === false ? undefined : { kind: "items", slug: item.slug || contentSlug(rowName(item)), name: srdNameWithBonus(item), exactSlug: Boolean(item.slug) },
         };
       })}
     />

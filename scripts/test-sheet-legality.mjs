@@ -18,7 +18,7 @@ const { bundledSubclassName } = await import("../src/lib/srd/features.ts");
 const { derivedMaxHp, hpRange } = await import("../src/lib/srd/hit-points.ts");
 const { asiOwed, readAsiLedger } = await import("../src/lib/srd/asi-ledger.ts");
 const { earnedAsiCount, earnedAsiCountFor, crossedAsiLevels } = await import("../src/lib/srd/asi.ts");
-const { isMechanicalFeature, unmetPrerequisite } = await import("../src/lib/srd/legality/features.ts");
+const { isMechanicalFeature, unmetPrerequisite, checkPrerequisite, judgeFeats, judgeFeatures } = await import("../src/lib/srd/legality/features.ts");
 const { slotTableFor } = await import("../src/lib/srd/multiclass.ts");
 const { splitPurse } = options;
 const { authoredFeatDesc } = await import("../src/lib/srd/feat-effects.ts");
@@ -293,6 +293,58 @@ test("feat prerequisites", () => {
   }
   assert.equal(unmetPrerequisite("", weak), null);
   refused({ ...FIGHTER, maxHp: 36, abilities: { str: 9, dex: 16, con: 15, int: 14, wis: 11, cha: 13 }, asiChoices: [{ mode: "feat", feat: "Grappler" }] }, { level: 4 });
+});
+
+test("feat prerequisite notes localize without changing the verdict or canonical requirements", () => {
+  const who = { abilities: { str: 12, dex: 10, con: 10, int: 10, wis: 10, cha: 10 }, armor: [], casts: false, raceId: "human", raceName: "Human", level: 4 };
+  const cases = [
+    ["Strength 13 or higher", {}, "Požadavek: Síla 13, máš 12"],
+    ["Strength 13 or higher", { abilities: ["str"] }, "Čeká se na: Síla"],
+    ["Strength 13 or higher", { abilityRoom: { str: 1 } }, "Síla 13, máš 12: čeká se na zbývající volby vlastností"],
+    ["Intelligence or Wisdom 13 or higher", {}, "Požadavek: Inteligence nebo Moudrost 13, máš 10 a 10"],
+    ["Proficiency with heavy armor", { armor: true }, "Čeká se na: volbu povolání"],
+    ["Halfling", {}, "Požadavek: Půlčík"],
+    ["8th level or higher", {}, "Vyžaduje úroveň 8, máš úroveň 4"],
+    ["Unknown custom requirement", {}, "Unknown custom requirement: ověří PJ"],
+  ];
+  for (const [requirement, waiting, note] of cases) {
+    const en = checkPrerequisite(requirement, who, waiting);
+    const cs = checkPrerequisite(requirement, who, waiting, "cs");
+    assert.equal(cs.requirements[0].note, note);
+    assert.deepEqual({ ...cs, requirements: cs.requirements.map(({ note: _note, ...rest }) => rest) }, { ...en, requirements: en.requirements.map(({ note: _note, ...rest }) => rest) });
+    assert.deepEqual(checkPrerequisite(requirement, who, waiting, "fr"), en);
+  }
+  assert.equal(checkPrerequisite("Strength 12 or higher", who, {}, "cs").requirements[0].note, "Síla 12, máš 12");
+  assert.equal(checkPrerequisite("Strength 13 or higher", who).requirements[0].note, "Needs Strength 13, you have 12");
+});
+
+test("server feat and feature refusals use Czech without changing grants", () => {
+  const who = { abilities: { str: 12, dex: 10, con: 10, int: 10, wis: 10, cha: 10 }, armor: [], casts: false, raceId: "human", raceName: "Human" };
+  const input = { sent: ["Grappler", "Unknown feat"], recorded: [], racialFeats: 0, unrecordedSlots: 0, held: [], featOf: (name) => name === "Grappler" ? { name, prerequisite: "Strength 13 or higher", desc: "" } : null, who };
+  for (const room of [0, 1, 2, 5]) {
+    const sent = room ? Array.from({ length: room + 1 }, (_, i) => `Unknown ${i}`) : input.sent;
+    const facts = { ...input, sent, racialFeats: room };
+    const en = judgeFeats(facts);
+    const cs = judgeFeats({ ...facts, locale: "cs" });
+    assert.deepEqual(cs.feats, en.feats);
+    assert.equal(cs.slotsUsed, en.slotsUsed);
+    assert.equal(cs.problems.length, en.problems.length);
+    assert.ok(cs.problems.every((problem, i) => problem !== en.problems[i]));
+    if (room === 0) assert.ok(cs.problems.includes("Odbornost Grappler má nesplněný předpoklad: Síla 13 nebo vyšší."));
+    if (room === 2) assert.match(cs.problems[0], /2 odbornosti/);
+    if (room === 5) assert.match(cs.problems[0], /5 odborností/);
+  }
+  assert.equal(judgeFeats(input).problems[0], "A feat is taken in place of an Ability Score Improvement; Grappler, Unknown feat have no improvement behind them.");
+  const features = { sent: [{ name: "Custom boon", source: "story" }], held: [], raceTraits: [], backgroundFeature: null, derived: [], allowPlainStory: false, sameBackground: false };
+  const en = judgeFeatures(features);
+  const cs = judgeFeatures({ ...features, locale: "cs" });
+  assert.deepEqual(cs.features, en.features);
+  assert.match(cs.problems[0], /příběhová/);
+  assert.equal(en.problems[0], '"Custom boon" is a story feature, and those are granted in play by whoever runs the table; a character\'s features come from its class, race and background. Remove it.');
+  const sheet = { ...FIGHTER, maxHp: 36, abilities: { ...FIGHTER.abilities, str: 12 }, asiChoices: [{ mode: "feat", feat: "Grappler" }] };
+  const localized = judge(sheet, { level: 4, locale: "cs" });
+  assert.ok(localized.problems.includes("Odbornost Grappler má nesplněný předpoklad: Síla 13 nebo vyšší."));
+  assert.deepEqual(localized.sheet, judge(sheet, { level: 4 }).sheet);
 });
 
 test("a caster's slots and ability are the class's, and the race's cantrip is on top", () => {

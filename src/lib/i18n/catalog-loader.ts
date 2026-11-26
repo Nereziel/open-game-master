@@ -9,7 +9,7 @@ const loaders: Record<Exclude<Locale, "en">, () => Promise<void>> = {
     const [catalog, names, resources, expansions, guides] = await Promise.all([
       import("./cs-catalog-data.ts"), import("../content/names-cs.ts"), import("../srd/class-resources-cs-data.ts"), import("../content/expansion-names-cs.json"), import("./workshop-guides-cs.json"),
     ]);
-    installCsTables({ names: names.CS_NAMES_BY_TABLE, guidance: resources.RESOURCE_CS_GUIDANCE, expansionNames: expansions.default ?? expansions, workshopGuides: guides.default ?? guides });
+    installCsTables({ names: names.CS_NAMES_BY_TABLE, guidance: resources.RESOURCE_CS_GUIDANCE, dynamicResource: resources.czechDynamicResourceDisplay, expansionNames: expansions.default ?? expansions, workshopGuides: guides.default ?? guides });
     installCatalog("cs", catalog.default ?? catalog);
   },
   fr: async () => {

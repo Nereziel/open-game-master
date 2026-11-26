@@ -148,7 +148,7 @@ export default function MultiContentPicker({
                   label={rowName(entry)}
                   meta={kind === "spells" ? spellSummary(entry.data, t.locale) : undefined}
                   text={describeContentEntry(entry.data, undefined, locale)}
-                  reference={entry.source === "homebrew" ? undefined : { kind, slug: entry.slug }}
+                  reference={entry.source === "homebrew" ? undefined : { kind, slug: entry.slug, source: entry.source, documentSlug: entry.documentSlug }}
                 />
               </li>
             );
@@ -207,7 +207,7 @@ export default function MultiContentPicker({
             onClick={commit}
             className="rounded-full bg-amber-300 px-2.5 py-0.5 text-xs font-medium text-stone-950 hover:bg-amber-200"
           >
-            Add {pending.length}
+            {t("Add {count}", { count: pending.length })}
           </button>
         </div>
       ) : null}

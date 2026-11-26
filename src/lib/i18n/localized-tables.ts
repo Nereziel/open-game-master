@@ -21,6 +21,8 @@ export type LocalizedTables = {
   translated?: Record<string, Record<string, string>>;
   resources?: Record<string, { name: string; guidance: string }>;
   guidance?: Record<string, string>;
+  // Optional locale-chunk adapter for counters generated from their stored IDs.
+  dynamicResource?: (id: string) => { name?: string; guidance?: string } | null;
   expansionNames?: ExpansionIndex<{ englishName: string; name: string }>;
 };
 

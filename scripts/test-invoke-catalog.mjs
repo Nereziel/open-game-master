@@ -1024,6 +1024,227 @@ test("what cannot be taken back asks first (U:UD8)", () => {
 
 const { describeAdjudicationResult } = await import("../src/lib/dm/catalog-result.ts");
 const said = (result) => describeAdjudicationResult(result).map((line) => line.text);
+const { translate: translateSlotResult, installCatalog } = await import("../src/lib/i18n/translate.ts");
+for (const locale of ["cs", "fr"]) {
+  installCatalog(locale, JSON.parse(read(`src/lib/i18n/${locale}.json`)));
+}
+
+test("the console localizes known slot outcomes without rewriting the engine result", () => {
+  const fixtures = [
+    [
+      "{spell} cast as a ritual: no slot spent.",
+      "{spell} sesláno jako rituál: žádná pozice kouzla nebyla utracena.",
+      "{spell} lancé comme rituel : aucun emplacement dépensé."
+    ],
+    [
+      "{spell} completes the casting Slow held back: no slot spent.",
+      "Sesílání kouzla {spell}, zdržené Zpomalením, je dokončeno: žádná pozice kouzla nebyla utracena.",
+      "L’incantation de {spell}, retardée par Lenteur, est terminée : aucun emplacement dépensé."
+    ],
+    [
+      "{spell} is a Signature Spell: cast at 3rd level with no slot, once until a short rest.",
+      "{spell} je typické kouzlo: sesláno na 3. stupni bez pozice, jednou do krátkého odpočinku.",
+      "{spell} est un sort de prédilection : lancé au niveau 3 sans emplacement, une fois jusqu’au prochain repos court."
+    ],
+    [
+      "{spell} is cast without a slot (a feat's spell at will).",
+      "{spell} sesláno bez pozice kouzla (neomezené sesílání díky odbornosti).",
+      "{spell} lancé sans emplacement (sort à volonté grâce à un don)."
+    ],
+    [
+      "{spell} is cast without a slot (a feat's free cast): once until a short rest.",
+      "{spell} sesláno bez pozice kouzla díky odbornosti: jednou do krátkého odpočinku.",
+      "{spell} lancé sans emplacement grâce à un don : une fois jusqu’au prochain repos court."
+    ],
+    [
+      "{spell} is cast without a slot (a feat's free cast): once until a long rest.",
+      "{spell} sesláno bez pozice kouzla díky odbornosti: jednou do důkladného odpočinku.",
+      "{spell} lancé sans emplacement grâce à un don : une fois jusqu’au prochain repos long."
+    ],
+    [
+      "{spell} is cast as a Mystic Arcanum, with no spell slot: once until a long rest.",
+      "{spell} sesláno jako mystický taj bez pozice kouzla: jednou do důkladného odpočinku.",
+      "{spell} lancé comme arcanum mystique sans emplacement : une fois jusqu’au prochain repos long."
+    ],
+    [
+      "{spell} is cast through Mantle of Majesty: no slot spent.",
+      "{spell} sesláno díky schopnosti Plášť majestátu: žádná pozice kouzla nebyla utracena.",
+      "{spell} lancé grâce au Manteau de majesté : aucun emplacement dépensé."
+    ],
+    [
+      "{spell} is cast through Read Thoughts: no slot spent, and the reading ends.",
+      "{spell} sesláno díky Čtení myšlenek: žádná pozice kouzla nebyla utracena a čtení končí.",
+      "{spell} lancé grâce à Lecture des pensées : aucun emplacement dépensé et la lecture prend fin."
+    ],
+    [
+      "{spell} is a cantrip: no spell slot is spent. Cantrips are unlimited.",
+      "{spell} je trik: žádná pozice kouzla nebyla utracena. Triky lze sesílat neomezeně.",
+      "{spell} est un sort mineur : aucun emplacement dépensé. Les sorts mineurs sont illimités."
+    ],
+    [
+      "{spell} is mastered (Spell Mastery): cast at its own level, no slot is spent.",
+      "{spell} je mistrovsky zvládnuté kouzlo (Mistr kouzel): sesláno na vlastním stupni bez utracení pozice.",
+      "{spell} est maîtrisé (Maîtrise des sorts) : lancé à son propre niveau sans dépenser d’emplacement."
+    ],
+    [
+      "{spell} is cast with no spell slot ({condition}, now spent).",
+      "{spell} sesláno bez pozice kouzla ({condition}, nyní vyčerpáno).",
+      "{spell} lancé sans emplacement ({condition}, désormais dépensé)."
+    ],
+    [
+      "{spell} is cast with no spell slot ({condition}, for the minute).",
+      "{spell} sesláno bez pozice kouzla ({condition}, po dobu jedné minuty).",
+      "{spell} lancé sans emplacement ({condition}, pendant la minute)."
+    ],
+    [
+      "{spell} is cast through {source} with no spell slot, at will.",
+      "{spell} sesláno díky {source} bez pozice kouzla, dle libosti.",
+      "{spell} lancé grâce à {source} sans emplacement, à volonté."
+    ],
+    [
+      "level {level}: {left}/{max} left",
+      "{level}. úroveň: zbývá {left}/{max}",
+      "niveau {level} : {left}/{max} restant(s)"
+    ],
+    [
+      "pact slot level {level}: {left}/{max} left",
+      "pozice paktové magie {level}. úrovně: zbývá {left}/{max}",
+      "emplacement de pacte de niveau {level} : {left}/{max} restant(s)"
+    ]
+  ];
+  const vars = { spell: "Custom [A+B]", condition: "Custom mark", source: "Custom ancestry", level: "2", left: "1", max: "3" };
+  const fill = (text) => text.replace(/\{(\w+)\}/g, (_, key) => vars[key]);
+  for (const [en, cs, fr] of fixtures) {
+    const raw = fill(en);
+    for (const [locale, expected] of [["en", en], ["cs", cs], ["fr", fr]]) {
+      for (const field of ["slot", "slotSpent"]) {
+        const result = { ok: true, [field]: raw };
+        const t = (key, vars) => translateSlotResult(locale, key, vars);
+        assert.deepEqual(describeAdjudicationResult(result, t), [{ text: fill(expected), tone: "info" }]);
+        assert.equal(result[field], raw);
+      }
+    }
+  }
+  const t = (key, vars) => translateSlotResult("cs", key, vars);
+  for (const slot of ["Custom unknown slot note.", "level two: 1/3 left", "Custom [A+B] cast as a ritual: no slot spent. Extra text."]) {
+    assert.deepEqual(describeAdjudicationResult({ slot }, t), [{ text: slot, tone: "info" }]);
+  }
+  const raw = fill(fixtures[0][0]);
+  assert.deepEqual(describeAdjudicationResult({ note: raw }, t), [{ text: raw, tone: "info" }]);
+});
+
+
+test("slot outcomes cover points, genre casts and counted grants", () => {
+  const fixtures = [
+    [
+      "{spell} is cast through {source}, with no spell slot.",
+      "{spell} sesláno díky {source} bez pozice kouzla.",
+      "{spell} lancé grâce à {source}, sans emplacement de sort."
+    ],
+    [
+      "{spell} is cast through {source}, with no spell slot: once until a long rest.",
+      "{spell} sesláno díky {source} bez pozice kouzla: jednou do důkladného odpočinku.",
+      "{spell} lancé grâce à {source}, sans emplacement de sort : une fois jusqu’au prochain repos long."
+    ],
+    [
+      "{spell} is cast through {source} with no spell slot: once, and again after a short rest, as a level {level} spell.",
+      "{spell} sesláno díky {source} bez pozice kouzla na {level}. úrovni: jednou, znovu po krátkém odpočinku.",
+      "{spell} lancé grâce à {source} sans emplacement au niveau {level} : une fois, puis de nouveau après un repos court."
+    ],
+    [
+      "{spell} is cast through {source} with no spell slot: once, and again after a short rest.",
+      "{spell} sesláno díky {source} bez pozice kouzla: jednou, znovu po krátkém odpočinku.",
+      "{spell} lancé grâce à {source} sans emplacement : une fois, puis de nouveau après un repos court."
+    ],
+    [
+      "{spell} is cast through {source} with no spell slot: {count} times, and again after a short rest, as a level {level} spell.",
+      "{spell} sesláno díky {source} bez pozice kouzla na {level}. úrovni: {count}krát, znovu po krátkém odpočinku.",
+      "{spell} lancé grâce à {source} sans emplacement au niveau {level} : {count} fois, puis de nouveau après un repos court."
+    ],
+    [
+      "{spell} is cast through {source} with no spell slot: {count} times, and again after a short rest.",
+      "{spell} sesláno díky {source} bez pozice kouzla: {count}krát, znovu po krátkém odpočinku.",
+      "{spell} lancé grâce à {source} sans emplacement : {count} fois, puis de nouveau après un repos court."
+    ],
+    [
+      "{spell} is cast through {source} with no spell slot: once, and again after a long rest, as a level {level} spell.",
+      "{spell} sesláno díky {source} bez pozice kouzla na {level}. úrovni: jednou, znovu po důkladném odpočinku.",
+      "{spell} lancé grâce à {source} sans emplacement au niveau {level} : une fois, puis de nouveau après un repos long."
+    ],
+    [
+      "{spell} is cast through {source} with no spell slot: once, and again after a long rest.",
+      "{spell} sesláno díky {source} bez pozice kouzla: jednou, znovu po důkladném odpočinku.",
+      "{spell} lancé grâce à {source} sans emplacement : une fois, puis de nouveau après un repos long."
+    ],
+    [
+      "{spell} is cast through {source} with no spell slot: {count} times, and again after a long rest, as a level {level} spell.",
+      "{spell} sesláno díky {source} bez pozice kouzla na {level}. úrovni: {count}krát, znovu po důkladném odpočinku.",
+      "{spell} lancé grâce à {source} sans emplacement au niveau {level} : {count} fois, puis de nouveau après un repos long."
+    ],
+    [
+      "{spell} is cast through {source} with no spell slot: {count} times, and again after a long rest.",
+      "{spell} sesláno díky {source} bez pozice kouzla: {count}krát, znovu po důkladném odpočinku.",
+      "{spell} lancé grâce à {source} sans emplacement : {count} fois, puis de nouveau après un repos long."
+    ],
+    [
+      "{spell} is cast through {source} with no spell slot, at will, as a level {level} spell.",
+      "{spell} sesláno díky {source} bez pozice kouzla na {level}. úrovni, dle libosti.",
+      "{spell} lancé grâce à {source} sans emplacement, à volonté, au niveau {level}."
+    ],
+    [
+      "{spell} is cast with 1 sorcery point in place of a spell slot ({source}). {left} left.",
+      "{spell} sesláno za 1 čarodějný bod místo pozice kouzla ({source}). Zbývá: {left}.",
+      "{spell} lancé avec 1 point de sorcellerie au lieu d’un emplacement de sort ({source}). Il en reste {left}."
+    ],
+    [
+      "{spell} is cast with 1 sorcery point in place of a spell slot ({source}), with no verbal, somatic or material component. {left} left.",
+      "{spell} sesláno za 1 čarodějný bod místo pozice kouzla ({source}), bez verbální, pohybové či surovinové složky. Zbývá: {left}.",
+      "{spell} lancé avec 1 point de sorcellerie au lieu d’un emplacement de sort ({source}), sans composante verbale, somatique ni matérielle. Il en reste {left}."
+    ],
+    [
+      "{spell} is cast with 1 sorcery point in place of a spell slot ({source}); {name} sees through it. {left} left.",
+      "{spell} sesláno za 1 čarodějný bod místo pozice kouzla ({source}); postava {name} skrze něj vidí. Zbývá: {left}.",
+      "{spell} lancé avec 1 point de sorcellerie au lieu d’un emplacement de sort ({source}) ; {name} voit à travers. Il en reste {left}."
+    ],
+    [
+      "{spell} is cast with {cost} sorcery points in place of a spell slot ({source}). {left} left.",
+      "{spell} sesláno za čarodějné body (počet: {cost}) místo pozice kouzla ({source}). Zbývá: {left}.",
+      "{spell} lancé avec {cost} points de sorcellerie au lieu d’un emplacement de sort ({source}). Il en reste {left}."
+    ],
+    [
+      "{spell} is cast with {cost} sorcery points in place of a spell slot ({source}), with no verbal, somatic or material component. {left} left.",
+      "{spell} sesláno za čarodějné body (počet: {cost}) místo pozice kouzla ({source}), bez verbální, pohybové či surovinové složky. Zbývá: {left}.",
+      "{spell} lancé avec {cost} points de sorcellerie au lieu d’un emplacement de sort ({source}), sans composante verbale, somatique ni matérielle. Il en reste {left}."
+    ],
+    [
+      "{spell} is cast with {cost} sorcery points in place of a spell slot ({source}); {name} sees through it. {left} left.",
+      "{spell} sesláno za čarodějné body (počet: {cost}) místo pozice kouzla ({source}); postava {name} skrze něj vidí. Zbývá: {left}.",
+      "{spell} lancé avec {cost} points de sorcellerie au lieu d’un emplacement de sort ({source}) ; {name} voit à travers. Il en reste {left}."
+    ]
+  ];
+  const vars = {"spell":"Custom [A+B]","source":"Custom (A+B)","name":"Iris [A+B]","count":"3","cost":"5","level":"2","left":"0"};
+  const fill = (text) => text.replace(/\{(\w+)\}/g, (_, key) => vars[key]);
+  for (const [en, cs, fr] of fixtures) {
+    const raw = fill(en);
+    for (const [locale, expected] of [["en", en], ["cs", cs], ["fr", fr]]) {
+      const t = (key, values) => translateSlotResult(locale, key, values);
+      for (const field of ["slot", "slotSpent"]) {
+        const result = Object.freeze({ [field]: raw });
+        assert.deepEqual(describeAdjudicationResult(result, t), [{ text: fill(expected), tone: "info" }]);
+        assert.equal(result[field], raw);
+      }
+      assert.deepEqual(describeAdjudicationResult({ slot: raw + " Extra." }, t), [{ text: raw + " Extra.", tone: "info" }]);
+    }
+  }
+  const t = (key, values) => translateSlotResult("cs", key, values);
+  for (const raw of [
+    "Custom is cast through Source with no spell slot: 1 times, and again after a long rest.",
+    "Custom is cast through Source with no spell slot, at will, as a level ten spell.",
+    "Custom is cast with many sorcery points in place of a spell slot (Source). 0 left.",
+    "Custom is cast with 2 sorcery points in place of a spell slot (Source). -1 left.",
+    "Custom is cast through Source with no spell slot: once, and again after a daily rest.",
+  ]) assert.deepEqual(describeAdjudicationResult({ slot: raw }, t), [{ text: raw, tone: "info" }]);
+});
 
 test("a result shows hit points, resistance, temp HP absorbed and broken concentration (U:UD3)", () => {
   const lines = said({
@@ -1350,6 +1571,603 @@ test("the rules audit's new console fields ask for the host", () => {
   const hazardTypes = (offers) => fieldForHost(field("apply_hazard", "type"), offers).options.map((option) => option.value);
   assert.ok(hazardTypes(() => true).includes("frigid_water"));
   assert.ok(!hazardTypes(() => false).includes("frigid_water"), "an older host is offered no frigid water");
+});
+
+
+test("extra cast outcomes localize only known result fields and preserve unknown grants", () => {
+  const fixtures = [
+    [
+      "granted",
+      "{spell} is cast through Chains of Carceri. Chains of Carceri targets a celestial, fiend or elemental only, and not the same creature again until a long rest.",
+      "{spell} sesláno díky Chains of Carceri. Chains of Carceri lze zacílit pouze na nebešťana, běsa nebo elementála, a na stejného tvora znovu až po důkladném odpočinku.",
+      "{spell} lancé grâce à Chains of Carceri. Chains of Carceri ne cible qu’un céleste, un fiélon ou un élémentaire, et ne peut cibler de nouveau la même créature avant un repos long."
+    ],
+    [
+      "granted",
+      "{spell} is cast through Grasping Tentacles. Casting it gives the warlock temporary hit points equal to their warlock level, and damage cannot break their concentration on it.",
+      "{spell} sesláno díky Grasping Tentacles. Seslání dá černokněžníkovi dočasné životy rovné jeho úrovni černokněžníka a zranění nemůže přerušit jeho soustředění na toto kouzlo.",
+      "{spell} lancé grâce à Grasping Tentacles. Le lancement confère à l’occultiste des points de vie temporaires égaux à son niveau d’occultiste, et les dégâts ne peuvent pas interrompre sa concentration sur ce sort."
+    ],
+    [
+      "granted",
+      "{spell} is cast through Shapechanger. The free casting is on the wizard themselves, into a beast of challenge rating 1 or lower.",
+      "{spell} sesláno díky Shapechanger. Bezplatné seslání cílí na samotného kouzelníka a promění ho ve zvíře s nebezpečností 1 nebo nižší.",
+      "{spell} lancé grâce à Shapechanger. Le lancement gratuit cible le magicien lui-même et le transforme en bête de facteur de puissance 1 ou moins."
+    ],
+    [
+      "granted",
+      "{spell} is cast with a spell slot; {source} gives it without one, once a short rest.",
+      "{spell} sesláno s pozicí kouzla; {source} umožňuje seslání bez pozice jednou za krátký odpočinek.",
+      "{spell} lancé avec un emplacement de sort ; {source} permet de le lancer sans emplacement une fois par repos court."
+    ],
+    [
+      "granted",
+      "{spell} is cast with a spell slot; {source} gives it without one, once a long rest.",
+      "{spell} sesláno s pozicí kouzla; {source} umožňuje seslání bez pozice jednou za důkladný odpočinek.",
+      "{spell} lancé avec un emplacement de sort ; {source} permet de le lancer sans emplacement une fois par repos long."
+    ],
+    [
+      "granted",
+      "{spell} is cast with a spell slot; {source} gives it without one, {count} times a short rest.",
+      "{spell} sesláno s pozicí kouzla; {source} umožňuje seslání bez pozice {count}krát za krátký odpočinek.",
+      "{spell} lancé avec un emplacement de sort ; {source} permet de le lancer sans emplacement {count} fois par repos court."
+    ],
+    [
+      "granted",
+      "{spell} is cast with a spell slot; {source} gives it without one, {count} times a long rest.",
+      "{spell} sesláno s pozicí kouzla; {source} umožňuje seslání bez pozice {count}krát za důkladný odpočinek.",
+      "{spell} lancé avec un emplacement de sort ; {source} permet de le lancer sans emplacement {count} fois par repos long."
+    ],
+    [
+      "granted",
+      "{spell} is cast with a spell slot; {source} gives it without one.",
+      "{spell} sesláno s pozicí kouzla; {source} umožňuje seslání bez pozice.",
+      "{spell} lancé avec un emplacement de sort ; {source} permet de le lancer sans emplacement."
+    ],
+    [
+      "granted",
+      "{spell} is cast through {source}.",
+      "{spell} sesláno díky {source}.",
+      "{spell} lancé grâce à {source}."
+    ],
+    [
+      "slotRefund",
+      "{feature}: a spent level {level} slot comes back.",
+      "{feature}: obnovena utracená pozice kouzla {level}. úrovně.",
+      "{feature} : un emplacement de sort dépensé de niveau {level} est récupéré."
+    ],
+    [
+      "completed",
+      "{spell}'s casting is complete and it takes effect now; it costs no action.",
+      "Sesílání kouzla {spell} je dokončeno a kouzlo nyní účinkuje; nevyžaduje žádnou akci.",
+      "L’incantation de {spell} est terminée et le sort prend effet maintenant ; cela ne coûte aucune action."
+    ]
+  ];
+  const vars = {"spell":"Custom [A+B]","source":"Custom Grant (A+B)","feature":"Custom Feature [A+B]","count":"3","level":"2"};
+  const fill = (text) => text.replace(/\{(\w+)\}/g, (_, key) => vars[key]);
+  for (const [field, en, cs, fr] of fixtures) {
+    const raw = fill(en);
+    for (const [locale, expected] of [["en", en], ["cs", cs], ["fr", fr]]) {
+      const t = (key, values) => translateSlotResult(locale, key, values);
+      const result = { [field]: raw };
+      assert.deepEqual(describeAdjudicationResult(result, t), [{ text: fill(expected), tone: "info" }]);
+      assert.equal(result[field], raw);
+      assert.deepEqual(describeAdjudicationResult({ note: raw }, t), [{ text: raw, tone: "info" }]);
+      const unknown = raw + " Unknown tail.";
+      assert.deepEqual(describeAdjudicationResult({ [field]: unknown }, t), [{ text: unknown, tone: "info" }]);
+    }
+  }
+  const t = (key, values) => translateSlotResult("cs", key, values);
+  for (const [field, raw] of [
+    [
+      "granted",
+      "Custom [A+B] is cast through Custom Grant. An unknown note."
+    ],
+    [
+      "granted",
+      "Custom [A+B] is cast through Dr. Custom."
+    ],
+    [
+      "granted",
+      "Custom [A+B] is cast with a spell slot; Custom Grant gives it without one, 1 times a short rest."
+    ],
+    [
+      "granted",
+      "Custom [A+B] is cast with a spell slot; Custom Grant gives it without one, 3 times a week rest."
+    ],
+    [
+      "slotRefund",
+      "Custom Feature: a spent level 0 slot comes back."
+    ],
+    [
+      "slotRefund",
+      "Custom Feature: a spent level 9 slot comes back."
+    ]
+  ]) {
+    assert.deepEqual(describeAdjudicationResult({ [field]: raw }, t), [{ text: raw, tone: "info" }]);
+  }
+});
+
+
+test("cast outcome costs, last slot recovery and wild surge advice localize only in their result fields", () => {
+  const fixtures = [
+    [
+      "debtComesDue",
+      "The Debt Comes Due: that was {name}'s last spell slot, and it comes straight back (level {level}). The use is spent until a long rest.",
+      "The Debt Comes Due: {name} právě utratil svou poslední pozici kouzla a ta se okamžitě obnovuje ({level}. úroveň). Použití se obnoví po důkladném odpočinku.",
+      "The Debt Comes Due : {name} vient de dépenser son dernier emplacement de sort, qui est immédiatement récupéré (niveau {level}). L’utilisation est dépensée jusqu’au prochain repos long."
+    ],
+    [
+      "cost",
+      "their action",
+      "jejich akce",
+      "son action"
+    ],
+    [
+      "cost",
+      "their bonus action",
+      "jejich bonusová akce",
+      "son action bonus"
+    ],
+    [
+      "cost",
+      "their reaction",
+      "jejich reakce",
+      "sa réaction"
+    ],
+    [
+      "wildMagicSurge",
+      "Tides of Chaos is spent: the GM may have {name} roll on the wild magic table now, and if so use_resource \"Wild Magic Surge\" rolls it and gives the use back.",
+      "Tides of Chaos je vyčerpáno: PJ nyní může nechat {name} hodit na tabulku divoké magie; v takovém případě use_resource \"Wild Magic Surge\" provede hod a obnoví použití schopnosti.",
+      "Tides of Chaos est dépensé : le MJ peut maintenant faire lancer {name} sur la table de magie sauvage ; dans ce cas, use_resource \"Wild Magic Surge\" effectue le jet et rend l’utilisation."
+    ],
+    [
+      "wildMagicSurge",
+      "The GM may have {name} roll a d20 for a Wild Magic Surge now: use_resource \"Wild Magic Surge\" rolls it, and on a 1 rolls on the wild magic table.",
+      "PJ nyní může nechat {name} hodit k20 na Wild Magic Surge: use_resource \"Wild Magic Surge\" provede hod a při výsledku 1 také hod na tabulku divoké magie.",
+      "Le MJ peut maintenant faire lancer un d20 à {name} pour Wild Magic Surge : use_resource \"Wild Magic Surge\" effectue le jet et, sur un 1, lance sur la table de magie sauvage."
+    ]
+  ];
+  const vars = {"name":"Iris (A+B)","spell":"Custom [A+B]","feature":"Custom Feature [A+B]","cost":"3","level":"9","left":"2"};
+  const fill = (text) => text.replace(/\{(\w+)\}/g, (_, key) => vars[key]);
+  for (const [field, en, cs, fr] of fixtures) {
+    const raw = fill(en);
+    for (const [locale, expected] of [["en", en], ["cs", cs], ["fr", fr]]) {
+      const t = (key, values) => translateSlotResult(locale, key, values);
+      const result = { [field]: raw };
+      assert.deepEqual(describeAdjudicationResult(result, t), [{ text: fill(expected), tone: "info" }]);
+      assert.equal(result[field], raw);
+      assert.deepEqual(describeAdjudicationResult({ note: raw }, t), [{ text: raw, tone: "info" }]);
+      const unknown = raw + " Unknown tail.";
+      assert.deepEqual(describeAdjudicationResult({ [field]: unknown }, t), [{ text: unknown, tone: "info" }]);
+    }
+  }
+  const t = (key, values) => translateSlotResult("cs", key, values);
+  for (const level of ["0", "10", "01"]) {
+    const raw = fill(fixtures[0][1]).replace("(level 9)", "(level " + level + ")");
+    assert.deepEqual(describeAdjudicationResult({ debtComesDue: raw }, t), [{ text: raw, tone: "info" }]);
+  }
+});
+
+
+test("cast timing, lunar boons, refills and shares localize known result templates", () => {
+  const fixtures = [
+    [
+      "refilled",
+      "Benign Transposition is ready again: a conjuration spell of level 1 or higher was cast.",
+      "Benign Transposition je opět připraveno: bylo sesláno kouzlo školy vyvolávání 1. nebo vyšší úrovně.",
+      "Benign Transposition est de nouveau disponible : un sort d’invocation de niveau 1 ou supérieur a été lancé."
+    ],
+    [
+      "castingTime",
+      "1 minute of casting; the clock moved on.",
+      "Doba sesílání: 1 minuta. Herní čas se posunul.",
+      "Durée d’incantation : 1 minute. Le temps de jeu a avancé."
+    ],
+    [
+      "castingTime",
+      "{count} minutes of casting; the clock moved on.",
+      "Doba sesílání: {count} min. Herní čas se posunul.",
+      "Durée d’incantation : {count} minutes. Le temps de jeu a avancé."
+    ],
+    [
+      "castingTime",
+      "1 hour of casting; the clock moved on.",
+      "Doba sesílání: 1 hodina. Herní čas se posunul.",
+      "Durée d’incantation : 1 heure. Le temps de jeu a avancé."
+    ],
+    [
+      "castingTime",
+      "{count} hours of casting; the clock moved on.",
+      "Doba sesílání: {count} h. Herní čas se posunul.",
+      "Durée d’incantation : {count} heures. Le temps de jeu a avancé."
+    ],
+    [
+      "lunarBoons",
+      "Lunar Boons: the spell just cast is of the {phase} phase's schools, so the Metamagic costs 1 sorcery point less. {name} has {left}/{max} boons left.",
+      "Lunar Boons: právě seslané kouzlo patří ke školám fáze {phase}, takže metamagie stojí o 1 čarodějný bod méně. {name}: zbývá {left}/{max} požehnání.",
+      "Lunar Boons : le sort qui vient d’être lancé appartient aux écoles de la phase {phase}, donc la métamagie coûte 1 point de sorcellerie de moins. Il reste {left}/{max} bienfaits à {name}."
+    ],
+    [
+      "lunarBoons",
+      "Lunar Boons: a spell of the {phase} phase's schools, so the Metamagic costs 1 sorcery point less. {name} has {left}/{max} boons left.",
+      "Lunar Boons: kouzlo patří ke školám fáze {phase}, takže metamagie stojí o 1 čarodějný bod méně. {name}: zbývá {left}/{max} požehnání.",
+      "Lunar Boons : le sort appartient aux écoles de la phase {phase}, donc la métamagie coûte 1 point de sorcellerie de moins. Il reste {left}/{max} bienfaits à {name}."
+    ],
+    [
+      "lunarBoons",
+      "Lunar Boons: if the next spell {name} casts is of the {phase} phase's schools (abjuration or divination), 1 sorcery point comes back and a boon is spent.",
+      "Lunar Boons: pokud další kouzlo postavy {name} patří ke školám fáze {phase} (vymítání nebo věštění), obnoví se 1 čarodějný bod a spotřebuje se jedno požehnání.",
+      "Lunar Boons : si le prochain sort lancé par {name} appartient aux écoles de la phase {phase} (abjuration ou divination), 1 point de sorcellerie est récupéré et un bienfait est dépensé."
+    ],
+    [
+      "lunarBoons",
+      "Lunar Boons: if the next spell {name} casts is of the {phase} phase's schools (enchantment or necromancy), 1 sorcery point comes back and a boon is spent.",
+      "Lunar Boons: pokud další kouzlo postavy {name} patří ke školám fáze {phase} (očarování nebo nekromancie), obnoví se 1 čarodějný bod a spotřebuje se jedno požehnání.",
+      "Lunar Boons : si le prochain sort lancé par {name} appartient aux écoles de la phase {phase} (enchantement ou nécromancie), 1 point de sorcellerie est récupéré et un bienfait est dépensé."
+    ],
+    [
+      "lunarBoons",
+      "Lunar Boons: if the next spell {name} casts is of the {phase} phase's schools (illusion or transmutation), 1 sorcery point comes back and a boon is spent.",
+      "Lunar Boons: pokud další kouzlo postavy {name} patří ke školám fáze {phase} (iluze nebo proměna), obnoví se 1 čarodějný bod a spotřebuje se jedno požehnání.",
+      "Lunar Boons : si le prochain sort lancé par {name} appartient aux écoles de la phase {phase} (illusion ou transmutation), 1 point de sorcellerie est récupéré et un bienfait est dépensé."
+    ],
+    [
+      "shares",
+      "{spell} holds {count} attack rolls from this one casting; {left} left this turn at no further cost, each its own entry in pc_attack's attacks.",
+      "Jediné seslání kouzla {spell} umožňuje {count} hodů na útok; v tomto tahu zbývá {left} bez dalších nákladů, každý jako samostatná položka attacks v pc_attack.",
+      "Cette seule incantation de {spell} permet {count} jets d’attaque ; il en reste {left} ce tour sans coût supplémentaire, chacun dans une entrée attacks de pc_attack."
+    ],
+    [
+      "shares",
+      "{spell} holds {count} darts from this one casting; {left} left this turn at no further cost, each its own entry in cast_at_enemy's targets.",
+      "Jediné seslání kouzla {spell} umožňuje {count} střel; v tomto tahu zbývá {left} bez dalších nákladů, každá jako samostatná položka targets v cast_at_enemy.",
+      "Cette seule incantation de {spell} permet {count} projectiles ; il en reste {left} ce tour sans coût supplémentaire, chacun dans une entrée targets de cast_at_enemy."
+    ],
+    [
+      "shares",
+      "{spell} holds {count} darts from this one casting; {left} left this turn at no further cost, each its own entry in heal's targets.",
+      "Jediné seslání kouzla {spell} umožňuje {count} střel; v tomto tahu zbývá {left} bez dalších nákladů, každá jako samostatná položka targets v heal.",
+      "Cette seule incantation de {spell} permet {count} projectiles ; il en reste {left} ce tour sans coût supplémentaire, chacun dans une entrée targets de heal."
+    ],
+    [
+      "shares",
+      "{spell} holds {count} targets from this one casting; {left} left this turn at no further cost, each its own entry in cast_at_enemy's targets.",
+      "Jediné seslání kouzla {spell} umožňuje zacílit na {count} cílů; v tomto tahu zbývá {left} bez dalších nákladů, každý jako samostatná položka targets v cast_at_enemy.",
+      "Cette seule incantation de {spell} permet {count} cibles ; il en reste {left} ce tour sans coût supplémentaire, chacune dans une entrée targets de cast_at_enemy."
+    ],
+    [
+      "shares",
+      "{spell} holds {count} targets from this one casting; {left} left this turn at no further cost, each its own entry in heal's targets.",
+      "Jediné seslání kouzla {spell} umožňuje zacílit na {count} cílů; v tomto tahu zbývá {left} bez dalších nákladů, každý jako samostatná položka targets v heal.",
+      "Cette seule incantation de {spell} permet {count} cibles ; il en reste {left} ce tour sans coût supplémentaire, chacune dans une entrée targets de heal."
+    ]
+  ];
+  const vars = {"name":"Iris (A+B)","spell":"Custom [A+B]","phase":"Full Moon","count":"3","left":"2","max":"4"};
+  const fill = (text, values = vars) => text.replace(/\{(\w+)\}/g, (_, key) => values[key]);
+  for (const [field, en, cs, fr] of fixtures) {
+    const raw = fill(en);
+    for (const [locale, expected] of [["en", en], ["cs", cs], ["fr", fr]]) {
+      const t = (key, values) => translateSlotResult(locale, key, values);
+      const result = { [field]: raw };
+      assert.deepEqual(describeAdjudicationResult(result, t), [{ text: fill(expected), tone: "info" }]);
+      assert.equal(result[field], raw);
+      assert.deepEqual(describeAdjudicationResult({ note: raw }, t), [{ text: raw, tone: "info" }]);
+      const unknown = raw + " Unknown tail.";
+      assert.deepEqual(describeAdjudicationResult({ [field]: unknown }, t), [{ text: unknown, tone: "info" }]);
+    }
+  }
+  const t = (key, values) => translateSlotResult("cs", key, values);
+  for (const [field, raw] of [
+    [
+      "refilled",
+      "Benign Transposition is ready again: a conjuration spell of level 1 or higher was cast. Unknown note."
+    ],
+    [
+      "castingTime",
+      "1 hours of casting; the clock moved on."
+    ],
+    [
+      "castingTime",
+      "0 minutes of casting; the clock moved on."
+    ],
+    [
+      "castingTime",
+      "1.5 hours of casting; the clock moved on."
+    ],
+    [
+      "lunarBoons",
+      "Lunar Boons: a spell of the Full Moon phase's schools, so the Metamagic costs 1 sorcery point less. Iris has 5/4 boons left."
+    ],
+    [
+      "lunarBoons",
+      "Lunar Boons: a spell of the Full Moon phase's schools, so the Metamagic costs 1 sorcery point less. Iris has 02/4 boons left."
+    ],
+    [
+      "lunarBoons",
+      "Lunar Boons: a spell of the Full Moon phase's schools, so the Metamagic costs 1 sorcery point less. Iris has 1/04 boons left."
+    ],
+    [
+      "shares",
+      "Custom holds 2 attack rolls from this one casting; 3 left this turn at no further cost, each its own entry in pc_attack's attacks."
+    ],
+    [
+      "shares",
+      "Custom holds 2 attack rolls from this one casting; -1 left this turn at no further cost, each its own entry in pc_attack's attacks."
+    ],
+    [
+      "shares",
+      "Custom holds 2 attack rolls from this one casting; 1 left this turn at no further cost, each its own entry in custom_tool's attacks."
+    ]
+  ]) {
+    assert.deepEqual(describeAdjudicationResult({ [field]: raw }, t), [{ text: raw, tone: "info" }]);
+  }
+  // Zero remaining uses and all remaining shares are both real outcomes.
+  for (const [field, en, cs] of fixtures.filter(([field, key]) => field === "shares" || field === "lunarBoons" && key.includes("{left}"))) {
+    for (const left of ["0", field === "shares" ? vars.count : vars.max]) {
+      const values = { ...vars, left };
+      assert.deepEqual(describeAdjudicationResult({ [field]: fill(en, values) }, t), [{ text: fill(cs, values), tone: "info" }]);
+    }
+  }
+});
+
+
+test("known ritual, stone, concentration, action and metamagic results support Czech and English fallback", () => {
+  const fixtures = [
+    [
+      "stoneChange",
+      "{feature}: {name} may change its benefit now (it is {choice}): use_resource \"{feature}\" with the new one in variant, before their turn ends.",
+      "{feature}: postava {name} nyní může změnit jeho účinek (aktuálně {choice}): použij use_resource \"{feature}\" s novou volbou v argumentu variant před koncem tahu."
+    ],
+    [
+      "droppedConcentration",
+      "The earlier casting of {spell} ended when it was cast again; its effects are gone.",
+      "Předchozí seslání kouzla {spell} skončilo jeho opětovným sesláním; jeho účinky pominuly."
+    ],
+    [
+      "droppedConcentration",
+      "{previous} ended when {spell} was cast; its effects are gone.",
+      "Sesláním kouzla {spell} skončilo kouzlo {previous}; jeho účinky pominuly."
+    ],
+    [
+      "droppedConcentration",
+      "{name}'s casting of {spell} fails ({next} took the concentration): the spell does not take effect, and no spell slot is spent.",
+      "Sesílání kouzla {spell} postavou {name} selhalo (soustředění vyžaduje kouzlo {next}): kouzlo nenabylo účinku a žádná pozice kouzla nebyla utracena."
+    ],
+    [
+      "note",
+      "{spell} cast as a ritual: {count} minutes of casting, no slot spent. The clock moved on.",
+      "{spell} sesláno jako rituál: doba sesílání {count} min, žádná pozice kouzla nebyla utracena. Herní čas se posunul."
+    ],
+    [
+      "note",
+      "{spell} cast as a ritual: no slot spent. Awakened Spellbook: cast at the spell's own casting time, without a ritual's 10 extra minutes (once until a long rest).",
+      "{spell} sesláno jako rituál: žádná pozice kouzla nebyla utracena. Awakened Spellbook: sesláno za běžnou dobu sesílání kouzla bez 10 dodatečných minut rituálu (jednou do důkladného odpočinku)."
+    ],
+    [
+      "note",
+      "{spell} cast as a ritual: no slot spent. Awakened Spellbook: cast at the spell's own casting time, without a ritual's 10 extra minutes (once until a long rest). 1 minutes of casting; the clock moved on.",
+      "{spell} sesláno jako rituál: žádná pozice kouzla nebyla utracena. Awakened Spellbook: sesláno za běžnou dobu sesílání kouzla bez 10 dodatečných minut rituálu (jednou do důkladného odpočinku). Doba sesílání: 1 minuta. Herní čas se posunul."
+    ],
+    [
+      "note",
+      "{spell} cast as a ritual: no slot spent. Awakened Spellbook: cast at the spell's own casting time, without a ritual's 10 extra minutes (once until a long rest). {count} minutes of casting; the clock moved on.",
+      "{spell} sesláno jako rituál: žádná pozice kouzla nebyla utracena. Awakened Spellbook: sesláno za běžnou dobu sesílání kouzla bez 10 dodatečných minut rituálu (jednou do důkladného odpočinku). Doba sesílání: {count} min. Herní čas se posunul."
+    ],
+    [
+      "costNote",
+      "Quickened Spell: {spell} took the bonus action instead of the action.",
+      "Quickened Spell: kouzlo {spell} spotřebovalo bonusovou akci namísto akce."
+    ],
+    [
+      "costNote",
+      "{feature}: {spell} took the bonus action instead of the action.",
+      "{feature}: kouzlo {spell} spotřebovalo bonusovou akci namísto akce."
+    ],
+    [
+      "costNote",
+      "{name} spends their additional action (Action Surge) on casting {spell}.",
+      "Postava {name} spotřebuje dodatečnou akci (Action Surge) na seslání kouzla {spell}."
+    ],
+    [
+      "costNote",
+      "{name} spends their extra action (Haste) on casting {spell}.",
+      "Postava {name} spotřebuje dodatečnou akci (Haste) na seslání kouzla {spell}."
+    ],
+    [
+      "metamagic",
+      "Twinned Spell: {spell} takes a second creature in range, for 1 sorcery point. The second target is another creature, never the first again.",
+      "Twinned Spell: kouzlo {spell} zasáhne druhého tvora v dosahu za 1 čarodějný bod. Druhým cílem musí být jiný tvor, nikoli opět první."
+    ],
+    [
+      "metamagic",
+      "Twinned Spell: {spell} takes a second creature in range, for {count} sorcery points. The second target is another creature, never the first again.",
+      "Twinned Spell: kouzlo {spell} zasáhne druhého tvora v dosahu za {count} čarodějných bodů. Druhým cílem musí být jiný tvor, nikoli opět první."
+    ]
+  ];
+  const vars = {"name":"Iris (A+B)","spell":"Custom [A+B]","feature":"Custom Feature [A+B]","choice":"Fire Resistance","previous":"Custom Previous [A+B]","next":"Custom Next [A+B]","count":"10"};
+  const fill = (text) => text.replace(/\{(\w+)\}/g, (_, key) => vars[key]);
+  for (const [field, en, cs] of fixtures) {
+    const raw = fill(en);
+    for (const [locale, expected] of [["en", en], ["cs", cs], ["fr", en]]) {
+      const t = (key, values) => translateSlotResult(locale, key, values);
+      const result = Object.freeze({ [field]: raw });
+      assert.deepEqual(describeAdjudicationResult(result, t), [{ text: fill(expected), tone: "info" }]);
+      assert.equal(result[field], raw);
+      if (field !== "note") {
+        assert.deepEqual(describeAdjudicationResult({ note: raw }, t), [{ text: raw, tone: "info" }]);
+      }
+      const unknown = raw + " Unknown tail.";
+      assert.deepEqual(describeAdjudicationResult({ [field]: unknown }, t), [{ text: unknown, tone: "info" }]);
+    }
+  }
+  const t = (key, values) => translateSlotResult("cs", key, values);
+  for (const [field, raw] of [
+    [
+      "stoneChange",
+      "Custom Feature: Iris may change its benefit now (it is fire): use_resource \"Different Feature\" with the new one in variant, before their turn ends."
+    ],
+    [
+      "costNote",
+      "Unknown sentence. Custom Feature: Custom took the bonus action instead of the action."
+    ],
+    [
+      "note",
+      "Custom cast as a ritual: 01 minutes of casting, no slot spent. The clock moved on."
+    ],
+    [
+      "metamagic",
+      "Twinned Spell: Custom takes a second creature in range, for 1 sorcery points. The second target is another creature, never the first again."
+    ],
+    [
+      "droppedConcentration",
+      "Unknown sentence. Bless ended when Bane was cast; its effects are gone."
+    ]
+  ]) {
+    assert.deepEqual(describeAdjudicationResult({ [field]: raw }, t), [{ text: raw, tone: "info" }]);
+  }
+});
+
+test("awakened spellbook and twinned spell settlements localize only known result templates", () => {
+  const fixtures = [
+    [
+      "awakenedSpellbook",
+      "{spell} deals {type} damage in place of {own}: the type of {from}, a spell of the slot's level in the book.",
+      "Kouzlo {spell} působí zranění typu {type} namísto typu {own}: tento typ má kouzlo {from} stejné úrovně jako použitá pozice, zapsané v knize kouzel."
+    ],
+    [
+      "metamagic",
+      "Twinned Spell: {spell} takes a second creature in range, for 1 sorcery point ({delta} given back: the price is the spell's level). The second target is another creature, never the first again.",
+      "Twinned Spell: kouzlo {spell} zasáhne druhého tvora v dosahu za 1 čarodějný bod (vráceno bodů: {delta}; cena odpovídá úrovni kouzla). Druhým cílem musí být jiný tvor, nikoli opět první."
+    ],
+    [
+      "metamagic",
+      "Twinned Spell: {spell} takes a second creature in range, for {count} sorcery points ({charge} more charged: the price is the spell's level). The second target is another creature, never the first again.",
+      "Twinned Spell: kouzlo {spell} zasáhne druhého tvora v dosahu za {count} čarodějných bodů (dodatečně utraceno bodů: {charge}; cena odpovídá úrovni kouzla). Druhým cílem musí být jiný tvor, nikoli opět první."
+    ],
+    [
+      "metamagic",
+      "Twinned Spell: {spell} takes a second creature in range, for {count} sorcery points ({delta} given back: the price is the spell's level). The second target is another creature, never the first again.",
+      "Twinned Spell: kouzlo {spell} zasáhne druhého tvora v dosahu za {count} čarodějných bodů (vráceno bodů: {delta}; cena odpovídá úrovni kouzla). Druhým cílem musí být jiný tvor, nikoli opět první."
+    ],
+    [
+      "metamagic",
+      "Twinned Spell does not take {spell}: it has a range of self. The 1 sorcery point paid for it is back, and the spell is cast on its one target.",
+      "Twinned Spell nelze použít na kouzlo {spell}: má dosah na sesilatele. Vrací se 1 čarodějný bod utracený za zdvojení a kouzlo je sesláno na jediný cíl."
+    ],
+    [
+      "metamagic",
+      "Twinned Spell does not take {spell}: it has a range of self. The {count} sorcery points paid for it are back, and the spell is cast on its one target.",
+      "Twinned Spell nelze použít na kouzlo {spell}: má dosah na sesilatele. Vrací se {count} čarodějných bodů utracených za zdvojení a kouzlo je sesláno na jediný cíl."
+    ],
+    [
+      "metamagic",
+      "Twinned Spell does not take {spell}: it can target more than one creature at this level. The 1 sorcery point paid for it is back, and the spell is cast on its one target.",
+      "Twinned Spell nelze použít na kouzlo {spell}: na této úrovni může cílit na více než jednoho tvora. Vrací se 1 čarodějný bod utracený za zdvojení a kouzlo je sesláno na jediný cíl."
+    ],
+    [
+      "metamagic",
+      "Twinned Spell does not take {spell}: it can target more than one creature at this level. The {count} sorcery points paid for it are back, and the spell is cast on its one target.",
+      "Twinned Spell nelze použít na kouzlo {spell}: na této úrovni může cílit na více než jednoho tvora. Vrací se {count} čarodějných bodů utracených za zdvojení a kouzlo je sesláno na jediný cíl."
+    ],
+    [
+      "metamagic",
+      "Twinned Spell does not take {spell}: twinning it costs {price} sorcery points. The 1 sorcery point paid for it is back, and the spell is cast on its one target.",
+      "Twinned Spell nelze použít na kouzlo {spell}: jeho zdvojení stojí {price} čarodějných bodů. Vrací se 1 čarodějný bod utracený za zdvojení a kouzlo je sesláno na jediný cíl."
+    ],
+    [
+      "metamagic",
+      "Twinned Spell does not take {spell}: twinning it costs {price} sorcery points. The {count} sorcery points paid for it are back, and the spell is cast on its one target.",
+      "Twinned Spell nelze použít na kouzlo {spell}: jeho zdvojení stojí {price} čarodějných bodů. Vrací se {count} čarodějných bodů utracených za zdvojení a kouzlo je sesláno na jediný cíl."
+    ]
+  ];
+  const vars = {"spell":"Custom [A+B]","type":"fire","own":"cold","from":"Other [C+D]","count":"2","delta":"3","charge":"1","price":"5"};
+  const fill = (text) => text.replace(/\{(\w+)\}/g, (_, key) => vars[key]);
+  for (const [field, en, cs] of fixtures) {
+    const raw = fill(en);
+    for (const [locale, expected] of [["en", en], ["cs", cs], ["fr", en]]) {
+      const t = (key, values) => translateSlotResult(locale, key, values);
+      const result = Object.freeze({ [field]: raw });
+      assert.deepEqual(describeAdjudicationResult(result, t), [{ text: fill(expected), tone: "info" }]);
+      assert.equal(result[field], raw);
+      assert.deepEqual(describeAdjudicationResult({ note: raw }, t), [{ text: raw, tone: "info" }]);
+      const unknown = raw + " Unknown tail.";
+      assert.deepEqual(describeAdjudicationResult({ [field]: unknown }, t), [{ text: unknown, tone: "info" }]);
+    }
+  }
+  const t = (key, values) => translateSlotResult("cs", key, values);
+  for (const [field, raw] of [
+    [
+      "metamagic",
+      "Twinned Spell: Custom takes a second creature in range, for 1 sorcery point (0 given back: the price is the spell's level). The second target is another creature, never the first again."
+    ],
+    [
+      "metamagic",
+      "Twinned Spell: Custom takes a second creature in range, for 1 sorcery point (1 more charged: the price is the spell's level). The second target is another creature, never the first again."
+    ],
+    [
+      "metamagic",
+      "Twinned Spell: Custom takes a second creature in range, for 2 sorcery points (2 more charged: the price is the spell's level). The second target is another creature, never the first again."
+    ],
+    [
+      "metamagic",
+      "Twinned Spell: Custom takes a second creature in range, for 2 sorcery points (01 more charged: the price is the spell's level). The second target is another creature, never the first again."
+    ],
+    [
+      "metamagic",
+      "Twinned Spell does not take Custom: twinning it costs 2 sorcery points. The 2 sorcery points paid for it are back, and the spell is cast on its one target."
+    ],
+    [
+      "metamagic",
+      "Twinned Spell does not take Custom: unknown reason. The 1 sorcery point paid for it is back, and the spell is cast on its one target."
+    ],
+    [
+      "awakenedSpellbook",
+      "Custom deals fire damage in place of cold: the type of Other, a spell of the slot's level in the book. Unknown tail."
+    ]
+  ]) {
+    assert.deepEqual(describeAdjudicationResult({ [field]: raw }, t), [{ text: raw, tone: "info" }]);
+  }
+});
+
+test("failed enemy Counterspell and cantrip attack result notes localize with English fallback", () => {
+  const fixtures = [
+    [
+      "counterspell",
+      "{enemy} casts Counterspell (its reaction, a level-{slot} slot) ({ability} check {rolled} against DC {dc}) and fails: {name}'s {spell} goes ahead.",
+      "Tvor {enemy} sesílá Counterspell (svou reakcí, z pozice {slot}. úrovně) (ověření {ability}: {rolled} proti SO {dc}) a neuspěje: kouzlo {spell} postavy {name} pokračuje."
+    ],
+    [
+      "costNote",
+      "Extra Attack: {spell} takes the place of one attack of the Attack action.",
+      "Extra Attack: kouzlo {spell} nahrazuje jeden útok v rámci akce Útok."
+    ],
+    [
+      "costNote",
+      "{name} spends their additional action (Action Surge) on the Attack action. Extra Attack: {spell} takes the place of one attack of the Attack action.",
+      "Postava {name} spotřebuje dodatečnou akci (Action Surge) na akci Útok. Extra Attack: kouzlo {spell} nahrazuje jeden útok v rámci akce Útok."
+    ]
+  ];
+  const vars = {"enemy":"Enemy [C+D]","name":"Iris (A+B)","spell":"Custom [A+B]","slot":"3","ability":"INT","rolled":"12","dc":"15"};
+  for (const [field, en, cs] of fixtures) {
+    const raw = translateSlotResult("en", en, vars);
+    for (const [locale, expected] of [["en", en], ["cs", cs], ["fr", en]]) {
+      const t = (key, values) => translateSlotResult(locale, key, values);
+      const result = Object.freeze({ [field]: raw });
+      assert.deepEqual(describeAdjudicationResult(result, t), [{ text: translateSlotResult("en", expected, vars), tone: "info" }]);
+      assert.equal(result[field], raw);
+      assert.deepEqual(describeAdjudicationResult({ note: raw }, t), [{ text: raw, tone: "info" }]);
+      const unknown = raw + " Unknown tail.";
+      assert.deepEqual(describeAdjudicationResult({ [field]: unknown }, t), [{ text: unknown, tone: "info" }]);
+    }
+  }
+  const t = (key, values) => translateSlotResult("cs", key, values);
+  for (const invalid of [{"slot":"2"},{"dc":"13"},{"rolled":"15"},{"rolled":"012"},{"ability":"XYZ"}]) {
+    const raw = translateSlotResult("en", fixtures[0][1], { ...vars, ...invalid });
+    assert.deepEqual(describeAdjudicationResult({ counterspell: raw }, t), [{ text: raw, tone: "info" }]);
+  }
+  const raw = "Unknown sentence. " + translateSlotResult("en", fixtures[2][1], vars);
+  assert.deepEqual(describeAdjudicationResult({ costNote: raw }, t), [{ text: raw, tone: "info" }]);
 });
 
 console.log(`invoke-catalog: ${passed} tests passed`);

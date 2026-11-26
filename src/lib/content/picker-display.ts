@@ -1,5 +1,6 @@
 import { archetypeDisplayName, contentName, type LocalizedNamesTable, type NamedRow } from "@/lib/content/names";
 import { translate, type Locale } from "@/lib/i18n/translate";
+import { itemRarityLabel } from "@/lib/content/item-rarity";
 
 // Display only: callers pass the original entry to the selection handler.
 export function pickerName(kind: string, entry: NamedRow, locale: Locale, classId = ""): string {
@@ -10,6 +11,6 @@ export function pickerName(kind: string, entry: NamedRow, locale: Locale, classI
 
 export function pickerMeta(entry: { level?: number; rarity?: string; kind?: string }, locale: Locale, levelKey = "Level {level}"): string {
   if (entry.level !== undefined) return translate(locale, levelKey, { level: entry.level });
-  if (entry.rarity) return translate(locale, entry.rarity, { context: "content.rarity" });
+  if (entry.rarity) return itemRarityLabel(entry.rarity, locale);
   return entry.kind ? translate(locale, entry.kind, { context: "content.itemKind" }) : "";
 }

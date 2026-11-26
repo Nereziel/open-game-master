@@ -112,6 +112,22 @@ test("a Level Up feat shows its benefits, not only its flavor line", () => {
   assert.equal(blocks[1].items.length, 2);
 });
 
+await import("../src/lib/i18n/server-catalogs.ts");
+
+test("a feat prerequisite is displayed with or without separate effects", () => {
+  const data = { desc: "Original rules.", prerequisite: "*Halfling*" };
+  const before = structuredClone(data);
+  assert.equal(describeContentEntry(data), "Original rules.\n\n*Requires Halfling*");
+  assert.equal(describeContentEntry(data, undefined, "cs"), "Original rules.\n\n*Vyžaduje Půlčík*");
+  assert.match(describeContentEntry({ ...data, effects_desc: ["A benefit."] }, undefined, "cs"), /Vyžaduje Půlčík\*\n\n- A benefit\./);
+  assert.equal(describeContentEntry({ ...data, prerequisite: "N/A" }), data.desc);
+  assert.equal(describeContentEntry({ ...data, prerequisite: "Unknown custom requirement" }, undefined, "cs"), "Original rules.\n\n*Vyžaduje Unknown custom requirement*");
+  assert.equal(describeContentEntry({ ...data, localized_desc: "Reviewed translation." }, undefined, "cs"), "Reviewed translation.");
+  assert.deepEqual(data, before);
+  const rules = "You gain a benefit when you complete a long rest and choose one of your allies to receive it.";
+  assert.equal(describeContentEntry({ prerequisite: rules }), rules);
+});
+
 test("a pack background's feature is part of its description", () => {
   const text = describeContentEntry({ desc: "You served at court.", feature: "Servant's Invisibility", feature_desc: "Nobody notices the help." });
   assert.match(text, /\*\*Feature: Servant's Invisibility\.\*\* Nobody notices the help\./);
