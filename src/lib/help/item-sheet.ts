@@ -86,7 +86,7 @@ function weightOf(row: Row, t: T): string | null {
   if (!problem) return null;
   const text = typeof row.weight === "number" ? String(row.weight) : str(row, "weight");
   const unit = str(row, "weight_unit");
-  return [text, unit].filter(Boolean).join(" ") || null;
+  return [text, /[a-z]/i.test(text) ? "" : unit].filter(Boolean).join(" ") || null;
 }
 
 // v1 rows say "15 gp", v2 rows a bare gold figure ("0.01"), homebrew
