@@ -53,6 +53,7 @@ const { pendingReason, pendingWords, rollAgainst, rollCardLabel, rollChronicleLe
 const { actionParts, actionUsed, attackParts, checkParts, foeTarget, keptTarget, noted, riderNote, sheetTarget, strikeParts, swingParts, swingUsed } = await import("../src/lib/roll-parts.ts");
 const { contentName } = await import("../src/lib/content/names.ts");
 const { ACTION_NAMES_FR, WEAPON_NAMES_FR } = await import("../src/lib/content/names-fr.ts");
+const { CS_NAMES_BY_TABLE } = await import("../src/lib/content/names-cs.ts");
 const { DAMAGE_TYPES } = await import("../src/lib/dm/damage-logic.ts");
 const CREATURES = JSON.parse(readFileSync(new URL("../src/lib/srd/srd-creatures.json", import.meta.url), "utf8"));
 const { SRD_WEAPONS } = await import("../src/lib/srd/weapons.ts");
@@ -759,6 +760,15 @@ test("an area's roll joins its creatures with the other aim, and a roll that nam
   assert.equal(rollWords(fr, fireball), "Boule de feu sur Goblin 1, Goblin 2");
   assert.equal(rollWords(en, { used: { kind: "spell", name: "Fireball" }, aim: "on", worded: WORDS_VERSION }), "Fireball");
   assert.equal(rollWords(en, {}), "");
+});
+
+test("the Czech creature action table covers every upstream action key through the public reader", () => {
+  const actions = CS_NAMES_BY_TABLE.actions;
+  assert.deepEqual(Object.keys(actions).sort(), Object.keys(ACTION_NAMES_FR).sort());
+  for (const [key, name] of Object.entries(actions)) {
+    assert.ok(name.trim(), key);
+    assert.equal(contentName("actions", key.replaceAll("-", " "), "cs"), name, key);
+  }
 });
 
 test("Czech creature actions are translated without changing stored English or user names", () => {
