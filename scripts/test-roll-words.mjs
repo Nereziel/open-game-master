@@ -772,6 +772,13 @@ test("Czech creature actions are translated without changing stored English or u
   assert.equal(contentName("actions", "Shadow Lash", "cs"), "Shadow Lash");
   assert.equal(rollWords(cs, actionParts({ name: "Turn" }, ARIA)).split(" ")[0], "Turn");
   assert.equal(contentName("actions", "Horn", "cs"), "Roh");
+  for (const t of [en, fr, cs]) {
+    const locale = t.locale;
+    for (const name of ["constructor", "toString", "__proto__"]) {
+      assert.equal(contentName("actions", name, locale), name);
+      assert.equal(rollWords(t, actionParts({ name }, ARIA)), `${name} ${t("vs", { context: "roll.aim" })} Aria`);
+    }
+  }
   const named = strikeParts(actionUsed({ name: "Bite" }, "Rex Bite"), ARIA);
   assert.equal(rollWords(cs, named), "Rex Kousnutí proti Aria");
 });

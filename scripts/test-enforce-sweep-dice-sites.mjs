@@ -103,7 +103,6 @@ const { ADJUDICATIONS, adjudication } = await import("../src/lib/dm/invoke-catal
 const { setMemberRealDice } = await import("../src/lib/db/campaigns.ts");
 const { listOpenPendingRolls } = await import("../src/lib/db/dm-turns.ts");
 const { getDatabase } = await import("../src/lib/db/core.ts");
-const { listRecentRolls } = await import("../src/lib/db/rolls.ts");
 const { ABILITIES, rollAbility, rollKeepsConcentration, rollPhysical, rollSkill, rollWeaponRow } = await import("../src/lib/roll-parts.ts");
 const { makesWords, ROLL_NOTES, rollSentence } = await import("../src/lib/roll-words.ts");
 const { UNARMED_STRIKE_KEY, weaponNamed } = await import("../src/lib/srd/weapons.ts");
