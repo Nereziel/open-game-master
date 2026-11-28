@@ -13457,6 +13457,11 @@
         "parse",
         2,
         "Diagnostic checks for opening and closing JSON braces; no record lookup."
+      ],
+      [
+        "parse",
+        1,
+        "Diagnostic word overlap uses exact membership of normalized prose tokens; no game record lookup."
       ]
     ],
     "lib/dm/deed-claims.ts#partial": [
@@ -22147,8 +22152,8 @@
       ],
       [
         "parse",
-        2,
-        "Diagnostic tokenization of prose for continuity coverage; strips roll markers and gathers lexical tokens, never chooses a game record."
+        1,
+        "Diagnostic tokenization of prose for continuity coverage; gathers lexical tokens, never chooses a game record."
       ]
     ],
     "lib/language/text-logic.ts#whole": [
