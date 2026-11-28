@@ -1,6 +1,7 @@
 name: Badge stats
 
-# Refresh README download badges by explicit request only.
+# Fork safety: disabled, including manual dispatch. Retained for deliberate
+# maintainer reactivation only.
 
 on:
   workflow_dispatch:
@@ -14,6 +15,7 @@ concurrency:
 
 jobs:
   count:
+    if: ${{ false }} # Intentionally disabled on this fork
     runs-on: ubuntu-latest
     timeout-minutes: 10
     steps:

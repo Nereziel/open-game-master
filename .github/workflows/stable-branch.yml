@@ -1,6 +1,7 @@
 name: Stable branch
 
-# Move stable to a validated release by explicit maintainer request only.
+# Fork safety: disabled, including manual dispatch. Retained for deliberate
+# maintainer reactivation only.
 
 on:
   workflow_dispatch:
@@ -19,6 +20,7 @@ concurrency:
 
 jobs:
   move:
+    if: ${{ false }} # Intentionally disabled on this fork
     runs-on: ubuntu-latest
     timeout-minutes: 10
     steps:
