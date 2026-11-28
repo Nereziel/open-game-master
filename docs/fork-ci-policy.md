@@ -6,14 +6,17 @@ GitHub can still suspend Actions; a maintainer must re-enable them when required
 
 ## Before merging an integration or releasing a version
 
-Run the following manually on the actual candidate branch or tag:
+Moving a draft PR to Ready for review runs full Linux validation once for
+that transition. Opening, updating or pushing to a PR does not trigger it.
+Windows remains manual. If the candidate changes after validation, dispatch
+Linux again manually. The commands for the actual candidate branch or tag are:
 
 ```sh
 gh workflow run linux-smoke.yml --ref YOUR_BRANCH --field mode=full
 gh workflow run windows-smoke.yml --ref YOUR_BRANCH --field mode=full
 ```
 
-Wait for both workflows to pass on the candidate commit. For intermediate work,
+Wait for both workflows to pass on the candidate commit (or its current PR merge ref). For intermediate work,
 use Linux `mode=build` (default; lint, dead code, build, bundle budget and
 platform checks), `mode=tests` (build plus all unit shards), or `mode=browser`
 (build plus all Chromium shards). Windows `mode=build` validates native
