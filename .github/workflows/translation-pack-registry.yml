@@ -1,36 +1,15 @@
 name: Source-scoped translation registry
 on:
-  push:
-    branches: [main]
-    paths:
-      - "src/lib/content/translations/**"
-      - "src/lib/rulebook/czech-terms.ts"
-      - "src/lib/rulebook/czech-companion.ts"
-      - "src/lib/content/names-cs.ts"
-      - "src/lib/content/names.ts"
-      - "src/lib/content/names-source.test.ts"
-      - "docs/srd-translation-adapter.md"
-      - ".github/workflows/translation-pack-registry.yml"
-  pull_request:
-    paths:
-      - "src/lib/content/translations/**"
-      - "src/lib/content/names.ts"
-      - "src/lib/content/names-source.test.ts"
-      - "src/lib/dm/shop-tools.ts"
-      - "src/lib/dm/shop-logic.ts"
-      - "src/lib/dm/shop-source.test.ts"
-      - "src/lib/dm/purchase-math.ts"
-      - "src/lib/dm/purchase-source.test.ts"
-      - "src/lib/dm/resource-tool-defs.ts"
-      - "src/lib/db/shops.ts"
-      - "docs/srd-translation-adapter.md"
-      - "docs/translation-pack-registry.md"
-      - ".github/workflows/translation-pack-registry.yml"
   workflow_dispatch:
+
+concurrency:
+  group: ${{ github.workflow }}-${{ github.ref }}
+  cancel-in-progress: true
 
 jobs:
   translation-packs:
     runs-on: ubuntu-latest
+    timeout-minutes: 35
     steps:
       - uses: actions/checkout@v4
       - uses: actions/setup-node@v4

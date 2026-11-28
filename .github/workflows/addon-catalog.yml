@@ -1,6 +1,6 @@
 name: Addon catalog
 
-# A push to main that adds or updates an addon on the downloader list
+# A pull request that adds or updates an addon on the downloader list
 # (addons/catalog.json). Each changed entry is derived again from its
 # author's repository at the listed commit and must match exactly; then the
 # addon is checked the way a server will check it, started in a throwaway
@@ -9,13 +9,16 @@ name: Addon catalog
 # and what the addon asks for. docs/addons/guidelines.md is the checklist.
 
 on:
-  push:
-    branches: [main]
+  pull_request:
     paths:
       - "addons/catalog.json"
 
 permissions:
   contents: read
+
+concurrency:
+  group: ${{ github.workflow }}-${{ github.ref }}
+  cancel-in-progress: true
 
 jobs:
   audit:
@@ -46,7 +49,7 @@ jobs:
           mkdir -p "$RUNNER_TEMP/addons"
           touch "$RUNNER_TEMP/addons/.derived"
           node scripts/addon-catalog.mjs verify \
-            --changed "HEAD^" \
+            --changed "origin/${{ github.base_ref }}" \
             --out-dir "$RUNNER_TEMP/addons" \
             --summary "$GITHUB_STEP_SUMMARY"
 
@@ -73,6 +76,7 @@ jobs:
     needs: audit
     strategy:
       fail-fast: false
+      max-parallel: 1
       matrix:
         os: [ubuntu-latest, windows-latest, macos-latest]
     runs-on: ${{ matrix.os }}

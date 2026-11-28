@@ -1,16 +1,6 @@
 name: Localized system event log
 
 on:
-  pull_request:
-    paths:
-      - "src/app/campaigns/**/event-log-logic.ts"
-      - "src/app/campaigns/**/event-log-localization.test.ts"
-      - "src/lib/characters/event-summary-cs.ts"
-      - "src/lib/characters/event-summary-cs.test.ts"
-      - "src/lib/sheet-audit-logic.ts"
-      - "src/lib/i18n/cs.json"
-      - "src/lib/i18n/fr.json"
-      - ".github/workflows/localized-event-log.yml"
   workflow_dispatch:
 
 permissions:

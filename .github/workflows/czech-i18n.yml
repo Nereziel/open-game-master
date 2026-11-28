@@ -1,19 +1,6 @@
 name: Czech localization checks
 
 on:
-  pull_request:
-    paths:
-      - "src/lib/i18n/**"
-      - "src/lib/content/**"
-      - "src/lib/srd/**"
-      - "src/lib/help/**"
-      - "src/app/characters/**"
-      - "src/app/campaigns/**"
-      - "src/components/**"
-      - "scripts/audit-cs-ui-keys.mjs"
-      - "scripts/generate-cs-localization.mjs"
-      - "docs/czech-translations.md"
-      - ".github/workflows/czech-i18n.yml"
   workflow_dispatch:
 
 permissions:

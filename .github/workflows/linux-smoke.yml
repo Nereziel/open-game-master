@@ -1,9 +1,14 @@
 name: Linux smoke
 
 on:
-  push:
-    branches: [main]
   workflow_dispatch:
+    inputs:
+      mode:
+        description: "Build only, tests, browser, or complete validation"
+        type: choice
+        options: [build, tests, browser, full]
+        default: build
+        required: true
 
 permissions:
   contents: read
@@ -15,9 +20,8 @@ permissions:
 env:
   ONNXRUNTIME_NODE_INSTALL: skip
 
-# Run checks only for commits on main or when explicitly requested.
-# Only the latest main push needs the full matrix. Group by branch,
-# not SHA, so superseded pushes cancel rather than consuming 10 more jobs.
+# Manual validation only; cancel superseded runs on the same ref.
+
 concurrency:
   group: ${{ github.workflow }}-${{ github.ref }}
   cancel-in-progress: true
@@ -76,11 +80,14 @@ jobs:
   # Each runner takes a share of the files and runs them a few at a time
   # (vitest.config.mts), each file in its own process.
   tests:
+    needs: build
+    if: ${{ inputs.mode == 'tests' || inputs.mode == 'full' }}
     name: tests (${{ matrix.shard }}/3)
     runs-on: ubuntu-latest
     timeout-minutes: 30
     strategy:
       fail-fast: false
+      max-parallel: 2
       matrix:
         shard: [1, 2, 3]
     steps:
@@ -99,16 +106,16 @@ jobs:
       - name: Tests
         run: npm test -- --shard=${{ matrix.shard }}/3
 
-  # Full Chromium scenarios are slower and build the app six more times.
-  # Run these after code reaches main or by manual request, not on every PR.
-  # Only commits on main or explicit manual runs are checked.
+  # Chromium scenarios run only when selected and after any requested unit tests.
   browser:
-    if: ${{ github.event_name == 'push' || github.event_name == 'workflow_dispatch' }}
+    needs: [build, tests]
+    if: ${{ !cancelled() && needs.build.result == 'success' && (needs.tests.result == 'success' || needs.tests.result == 'skipped') && (inputs.mode == 'browser' || inputs.mode == 'full') }}
     name: browser (${{ matrix.shard }}/6)
     runs-on: ubuntu-latest
     timeout-minutes: 40
     strategy:
       fail-fast: false
+      max-parallel: 2
       matrix:
         shard: [1, 2, 3, 4, 5, 6]
     steps:

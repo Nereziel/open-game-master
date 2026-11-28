@@ -1,22 +1,23 @@
 name: Windows smoke
 
-# Windows compatibility checks are useful for native Node dependencies,
-# filesystem paths and external process handling, but do not need to duplicate
-# the Linux test suite for every PR and every push.
-# Run the complete Windows matrix on published releases or manually when
-# changing native dependencies, installers or Windows-specific code.
+# Explicit native build or full validation, never on every push or PR.
 on:
   workflow_dispatch:
-  release:
-    types: [published]
+    inputs:
+      mode:
+        description: "Build only or full Windows validation"
+        type: choice
+        options: [build, full]
+        default: build
+        required: true
 
 permissions:
   contents: read
 
-# A release and a manual run are independent; do not cancel either.
+# Cancel superseded runs on the same ref.
 concurrency:
-  group: ${{ github.workflow }}-${{ github.run_id }}
-  cancel-in-progress: false
+  group: ${{ github.workflow }}-${{ github.ref }}
+  cancel-in-progress: true
 
 jobs:
   build:
@@ -53,11 +54,14 @@ jobs:
   # slow one ran out its 30 on 0.35.0 with every test still passing, so the
   # limit leaves room for a slow runner and still stops a hung test.
   tests:
+    needs: build
+    if: ${{ inputs.mode == 'full' }}
     name: windows tests (${{ matrix.shard }}/3)
     runs-on: windows-2025-vs2026
     timeout-minutes: 40
     strategy:
       fail-fast: false
+      max-parallel: 2
       matrix:
         shard: [1, 2, 3]
     steps:
