@@ -1,31 +1,8 @@
 name: Publish Docker image
 
-# Publishes the single-image install for every GitHub release, by channel
-# (docs/releases.md):
-#
-#   a beta (a prerelease) builds :0.29.6, and moves :beta when it is the
-#     newest release of any kind;
-#   a promotion to stable (the prerelease flag cleared) builds nothing: the
-#     beta's own image is tagged :latest, :stable and :0.29, so stable users
-#     run the bits the beta testers ran;
-#   a release published straight as stable, with no beta image to promote,
-#     is built with all of those tags.
-#
-# A failed release run is retried with "Re-run jobs", which replays its
-# release event and so its channel. Also runnable by hand against any tag or
-# branch, which publishes that version's tag (or :edge) and nothing else.
-#
-# GHCR needs no setup: it authenticates with the built-in GITHUB_TOKEN.
-#
-# Docker Hub is published to as well, but only when both of these repository
-# secrets exist. Without them the job still succeeds and publishes to GHCR only.
-#   DOCKERHUB_USERNAME  - your Docker ID (not necessarily your GitHub username;
-#                         it is shown in the top-right menu on hub.docker.com)
-#   DOCKERHUB_TOKEN     - Account settings > Personal access tokens, Read/Write.
-#                         Signing in to Docker Hub through GitHub OAuth does not
-#                         change this; a token is still how CI authenticates.
+# Fork safety: disabled, including manual dispatch. Retained for deliberate
+# maintainer reactivation only.
 
-# Fork safety: disabled until explicitly re-enabled in code. No release trigger, no Docker builds or registry pushes.
 on:
   workflow_dispatch:
 env:
@@ -42,6 +19,7 @@ concurrency:
 
 jobs:
   publish:
+    if: ${{ false }} # Intentionally disabled on this fork
     # No Docker build, retag, publish or smoke job can run until explicitly re-enabled.
     if: ${{ false }}
     runs-on: ubuntu-latest

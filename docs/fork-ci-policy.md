@@ -23,11 +23,10 @@ run at once within each workflow. Superseded runs on the same ref are canceled.
 
 Run dependency audit manually as needed; the weekly and lockfile-change audit
 remain lightweight automatic checks. Addon catalog checks are limited to PRs
-changing the catalog, with platform starts serialized. Badge statistics, Docker
-publishing and moving the stable branch require an explicit manual dispatch.
-For Docker, a manual dispatch publishes only the selected version or edge;
-stable/beta promotion is not automatic under this fork policy. Do not publish
-or promote an unvalidated release. Do not start multiple full matrices across
+changing the catalog, with platform starts serialized. Badge statistics, Docker publishing and automatic stable-branch movement are
+intentionally disabled on this fork, including manual runs. The workflow code
+is retained for a future deliberate maintainer decision to restore it. Do not
+publish or promote an unvalidated release. Do not start multiple full matrices across
 branches or repositories unnecessarily.
 
 The GitHub UI exposes the mode selector under Actions → Run workflow. If Actions
