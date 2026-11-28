@@ -9,6 +9,7 @@
     "authoring": "the workshop's and WorldForge's authoring tools, which read what an author writes as they go"
   },
   "sites": {
+    "lib/image-variants.ts#number": [["parse",1,"the time this server first wrote WebP copies with the plain encoder, read back from the marker file it wrote into the picture folder: no record name"]],
     "app/AuthForm.tsx#normalizer": [
       [
         "key",
