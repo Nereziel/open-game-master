@@ -14,6 +14,13 @@
     "lib/db/core.ts"
   ],
   "sites": {
+    "lib/language/text-logic.ts#re-word": [
+      [
+        "key",
+        1,
+        "Strip the engine's [roll:...] marker before diagnostic continuity scoring."
+      ]
+    ],
     "app/AuthForm.tsx#str-eq": [
       [
         "key",
@@ -18911,6 +18918,11 @@
         "human",
         1,
         "Literal vocabulary keys preserve punctuation and internal spacing in user input."
+      ],
+      [
+        "human",
+        1,
+        "Diagnostic continuity tokenization folds Czech/French accents and case using the existing lexical-only metric; no rule or identity depends on it."
       ]
     ],
     "lib/language/text-logic.ts#Intl.Collator": [
@@ -18932,6 +18944,11 @@
         "human",
         1,
         "the shared helpers themselves"
+      ],
+      [
+        "human",
+        1,
+        "Diagnostic continuity tokenization folds Czech/French accents and case using the existing lexical-only metric; no rule or identity depends on it."
       ]
     ],
     "lib/language/text-logic.ts#toLowerCase": [
@@ -18944,6 +18961,11 @@
         "human",
         1,
         "Literal vocabulary keys preserve punctuation and internal spacing in user input."
+      ],
+      [
+        "human",
+        1,
+        "Diagnostic continuity tokenization folds Czech/French accents and case using the existing lexical-only metric; no rule or identity depends on it."
       ]
     ],
     "lib/language/text-logic.ts#toUpperCase": [

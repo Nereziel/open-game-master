@@ -22144,6 +22144,11 @@
         "parse",
         1,
         "splitWords"
+      ],
+      [
+        "parse",
+        2,
+        "Diagnostic tokenization of prose for continuity coverage; strips roll markers and gathers lexical tokens, never chooses a game record."
       ]
     ],
     "lib/language/text-logic.ts#whole": [

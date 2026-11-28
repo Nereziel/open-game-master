@@ -276,3 +276,9 @@ export function asSentence(text: string): string {
   const clause = text.trim();
   return /[.!?…]["”’)]?$/u.test(clause) ? clause : `${clause}.`;
 }
+
+// A deliberately lexical diagnostic (not a semantic judge). Ignore roll
+// markers, case and Czech/French accents. No stemming or extra model call.
+export function continuityWords(text: string): Set<string> {
+  return new Set(text.replace(/\[roll:[^\]]+\]/g, " ").normalize("NFD").replace(/[\u0300-\u036f]/g, "").toLowerCase().match(/[a-z0-9]{4,}/g) ?? []);
+}

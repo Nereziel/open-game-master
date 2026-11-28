@@ -18,6 +18,7 @@
 // directly.
 
 import { normalizeSequence, type PlanSequence } from "./plan-order.ts";
+import { interpolate } from "../i18n/translate.ts";
 
 export type { PlanSequence } from "./plan-order.ts";
 
@@ -357,7 +358,7 @@ function orderedBlock(phase: Pick<CoordinationPhase, "entries" | "prompt">, play
 
 // The table note a fight or a lapse leaves when it sets an unresolved plan
 // aside: what was staged and did not happen, in its order when it had one.
-export function setAsideNote(phase: Pick<CoordinationPhase, "entries">, reason: "fight" | "lapsed" | "cancelled", t: T = (key, vars) => key.replace(/\{(\w+)\}/g, (slot, name: string) => String(vars?.[name] ?? slot))): string {
+export function setAsideNote(phase: Pick<CoordinationPhase, "entries">, reason: "fight" | "lapsed" | "cancelled", t: T = interpolate): string {
   const staged = phase.entries.filter((entry) => entry.text && (entry.companion || entry.state === "ready" || entry.state === "drafting"));
   const ordered = isOrdered(phase);
   const details = staged.map((entry) => `${ordered && entry.step ? t("step {step}, ", { step: entry.step }) : ""}${entry.name}: ${entry.text}`).join("; ");

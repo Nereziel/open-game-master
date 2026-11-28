@@ -1,5 +1,7 @@
 // Server-only structured diagnostics. Never pass settings, headers, URLs,
 // API keys or prompt bodies as fields. Raw story replies and game payloads require separate opt-in; textual prompts have an additional opt-in.
+import { continuityWords } from "../language/text-logic.ts";
+
 type DebugValue = string | number | boolean | null | undefined;
 
 export function dmDebugEnabled(): boolean {
@@ -67,11 +69,6 @@ export function dmDebugModelInput(fields: Record<string, DebugValue>, messages: 
 
 type ContinuityMessage = { id: string; seq: number; authorType: "player" | "dm" | "system"; characterId?: string | null; content: string };
 
-// A deliberately lexical diagnostic (not a semantic judge). Ignore roll
-// markers, case and Czech/French accents. No stemming or extra model call.
-function words(text: string): Set<string> {
-  return new Set(text.replace(/\[roll:[^\]]+\]/g, " ").normalize("NFD").replace(/[\u0300-\u036f]/g, "").toLowerCase().match(/[a-z0-9]{4,}/g) ?? []);
-}
 
 function coverage(source: Set<string>, target: Set<string>): number | null {
   if (!source.size) return null;
@@ -86,9 +83,9 @@ export function narrationContinuity(history: readonly ContinuityMessage[], seq: 
   const prior = history.filter((message) => message.seq < seq).sort((a, b) => a.seq - b.seq);
   const previous = prior.filter((message) => message.authorType === "dm").at(-1);
   const actions = prior.filter((message) => message.authorType === "player" && (!previous || message.seq > previous.seq));
-  const current = words(text);
-  const actionWords = words(actions.map((action) => action.content).join("\n"));
-  const previousWords = words(previous?.content ?? "");
+  const current = continuityWords(text);
+  const actionWords = continuityWords(actions.map((action) => action.content).join("\n"));
+  const previousWords = continuityWords(previous?.content ?? "");
   return {
     fields: {
       actionCount: actions.length,
