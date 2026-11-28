@@ -20,6 +20,9 @@ import { expansionTranslation } from "./expansion-identity";
 export type LocalizedNamesTable =
   | "spells"
   | "weapons"
+  // A creature's attack by its name ("Bite"), as its stat block has it: read
+  // only for a roll's creature action (src/lib/roll-words.ts).
+  | "actions"
   | "armor"
   | "gear"
   | "magicitems"
@@ -119,11 +122,14 @@ function lookup(table: LocalizedNamesTable, key: string, locale: Locale): string
         return names[overridden];
       }
     }
-    if (names[key]) {
-      return names[key];
+    // The key can come from an authored name, e.g. "constructor". Never
+    // treat an inherited prototype function as a translated string.
+    if (typeof names[key] === "string") {
+      return names[key] || null;
     }
   }
-  return translatedFor(locale)[table]?.[key] ?? null;
+  const translated = translatedFor(locale)[table]?.[key];
+  return typeof translated === "string" ? translated : null;
 }
 
 // The keys a table tries, in order: a row's own slug first (a third-party

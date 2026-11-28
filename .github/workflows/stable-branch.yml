@@ -1,18 +1,9 @@
 name: Stable branch
 
-# Keeps the `stable` branch on the latest stable release, so an install
-# cloned with `git clone -b stable` updates with a plain `git pull`
-# (docs/releases.md). Runs whenever a release becomes stable: published that
-# way, or promoted from a beta by clearing its prerelease flag. It also runs
-# when this file lands on main, which creates the branch at the latest
-# release, and by hand with a tag to set the branch to that release.
+# Fork safety: disabled, including manual dispatch. Retained for deliberate
+# maintainer reactivation only.
 
 on:
-  release:
-    types: [released]
-  push:
-    branches: [main]
-    paths: [.github/workflows/stable-branch.yml]
   workflow_dispatch:
     inputs:
       tag:
@@ -29,7 +20,9 @@ concurrency:
 
 jobs:
   move:
+    if: ${{ false }} # Intentionally disabled on this fork
     runs-on: ubuntu-latest
+    timeout-minutes: 10
     steps:
       - uses: actions/checkout@v6
         with:

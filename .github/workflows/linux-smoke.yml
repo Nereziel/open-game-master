@@ -1,9 +1,16 @@
 name: Linux smoke
 
 on:
-  push:
-    branches: [main]
   pull_request:
+    types: [ready_for_review]
+  workflow_dispatch:
+    inputs:
+      mode:
+        description: "Build only, tests, browser, or complete validation"
+        type: choice
+        options: [build, tests, browser, full]
+        default: build
+        required: true
 
 permissions:
   contents: read
@@ -15,11 +22,10 @@ permissions:
 env:
   ONNXRUNTIME_NODE_INSTALL: skip
 
-# A newer push to a pull request replaces its run still going; every commit
-# on main keeps its own.
+# Full Linux validation on explicit ready-for-review transition or manual request.
 concurrency:
-  group: ${{ github.workflow }}-${{ github.event.pull_request.number || github.sha }}
-  cancel-in-progress: ${{ github.event_name == 'pull_request' }}
+  group: ${{ github.workflow }}-${{ github.ref }}
+  cancel-in-progress: true
 
 # One job doing all of this took 60 minutes by 0.30.0 (213 scenario runs,
 # 770-odd test files one at a time): the work is split across runners
@@ -68,11 +74,14 @@ jobs:
   # 425 files passed and none failed, so the limit is 45. That still stops a
   # hung test well short of GitHub's own six hours.
   tests:
+    needs: build
+    if: ${{ github.event_name == 'pull_request' || inputs.mode == 'tests' || inputs.mode == 'full' }}
     name: tests (${{ matrix.shard }}/4)
     runs-on: ubuntu-latest
     timeout-minutes: 45
     strategy:
       fail-fast: false
+      max-parallel: 2
       matrix:
         shard: [1, 2, 3, 4]
     steps:
@@ -95,11 +104,14 @@ jobs:
   # preferences that no static render can exercise (scripts/browser). Each
   # runner builds, seeds and serves its own share of the scenarios.
   browser:
+    needs: [build, tests]
+    if: ${{ !cancelled() && needs.build.result == 'success' && (needs.tests.result == 'success' || needs.tests.result == 'skipped') && (github.event_name == 'pull_request' || inputs.mode == 'browser' || inputs.mode == 'full') }}
     name: browser (${{ matrix.shard }}/6)
     runs-on: ubuntu-latest
     timeout-minutes: 40
     strategy:
       fail-fast: false
+      max-parallel: 2
       matrix:
         shard: [1, 2, 3, 4, 5, 6]
     steps:

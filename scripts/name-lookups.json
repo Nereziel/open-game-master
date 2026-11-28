@@ -9,6 +9,28 @@
     "authoring": "the workshop's and WorldForge's authoring tools, which read what an author writes as they go"
   },
   "sites": {
+    "lib/roll-words.ts#partial": [
+      [
+        "parse",
+        1,
+        "a creature's action carried under more than its own name, cut at its spaces to find where the attack's own name starts: the attack is the one whose key the roll stored, matched whole through textKey, so no record is chosen by a word of the name"
+      ]
+    ],
+    "lib/roll-parts.ts#whole-single": [
+      [
+        "key",
+        1,
+        "the name a roll says a creature's action under against the attack's own name, both as the engine holds them: the same text means the action is carried under its own name and needs no key"
+      ]
+    ],
+    "lib/roll-words.ts#whole": [
+      [
+        "identity",
+        1,
+        "a creature's action carried under more than its own name (a beast form's \"Wolf Bite\", a pet's \"Rex's Bite\"): the attack the name ends with is the one whose key its roll stored, textKey on both sides, and a name that does not end with it is shown as written; and a names table's answer told from a miss, which hands the same name back"
+      ]
+    ],
+    "lib/image-variants.ts#number": [["parse",1,"the time this server first wrote WebP copies with the plain encoder, read back from the marker file it wrote into the picture folder: no record name"]],
     "app/AuthForm.tsx#normalizer": [
       [
         "key",
@@ -13435,6 +13457,11 @@
         "parse",
         2,
         "Diagnostic checks for opening and closing JSON braces; no record lookup."
+      ],
+      [
+        "parse",
+        1,
+        "Diagnostic word overlap uses exact membership of normalized prose tokens; no game record lookup."
       ]
     ],
     "lib/dm/deed-claims.ts#partial": [
@@ -22122,6 +22149,11 @@
         "parse",
         1,
         "splitWords"
+      ],
+      [
+        "parse",
+        1,
+        "Diagnostic tokenization of prose for continuity coverage; gathers lexical tokens, never chooses a game record."
       ]
     ],
     "lib/language/text-logic.ts#whole": [
@@ -23421,8 +23453,8 @@
     "lib/roll-words.ts#whole-single": [
       [
         "identity",
-        1,
-        "what a roll used, by its whole name through textKey against the key of the content row its roll stored: only a name that is its row's own is put into the reader's language, and any other is shown as written"
+        2,
+        "what a roll used, by its whole name through textKey against the key its roll stored: a weapon or a spell is put into the reader's language only under its row's own name, and any other is shown as written; a creature's action carried under more than its own name (a beast form's \"Wolf Bite\") is told from one carried under its own by the same key"
       ]
     ],
     "lib/rulebook/catalog-rows.ts#fallback": [

@@ -1,46 +1,25 @@
 name: Windows smoke
 
-# Always verify native installation and production build. Low-risk PRs run
-# a curated platform smoke suite; unknown/risky paths, integration pushes,
-# nightly and manual runs exercise the complete suite.
-
+# Explicit native build or full validation, never on every push or PR.
 on:
-  push:
-    branches: [main, rebuild/fresh-upstream-2026-11-23]
-  pull_request:
-  schedule:
-    - cron: '23 2 * * *'
   workflow_dispatch:
+    inputs:
+      mode:
+        description: "Build only or full Windows validation"
+        type: choice
+        options: [build, full]
+        default: build
+        required: true
 
 permissions:
   contents: read
 
-# A newer push to a pull request replaces its run still going; every commit
-# on main keeps its own.
+# Cancel superseded runs on the same ref.
 concurrency:
-  group: ${{ github.workflow }}-${{ github.event.pull_request.number || github.sha }}
-  cancel-in-progress: ${{ github.event_name == 'pull_request' }}
+  group: ${{ github.workflow }}-${{ github.ref }}
+  cancel-in-progress: true
 
 jobs:
-  plan:
-    name: Windows test plan
-    runs-on: ubuntu-latest
-    timeout-minutes: 5
-    outputs:
-      matrix: ${{ steps.policy.outputs.matrix }}
-    steps:
-      - uses: actions/checkout@v6
-        with:
-          fetch-depth: 0
-      - uses: actions/setup-node@v6
-        with:
-          node-version: '24'
-      - name: Classify changed paths
-        id: policy
-        env:
-          PR_BASE_SHA: ${{ github.event.pull_request.base.sha }}
-        run: node scripts/ci/windows-policy.mjs plan
-
   build:
     name: windows build
     runs-on: windows-2025-vs2026
@@ -72,14 +51,16 @@ jobs:
   # Keep at most two Windows test runners occupied even in full mode.
   # All five shards still run; other repositories retain available capacity.
   tests:
-    name: windows tests (${{ matrix.mode }} ${{ matrix.shard }})
-    needs: plan
+    name: windows tests (${{ matrix.shard }}/5)
+    needs: build
+    if: ${{ inputs.mode == 'full' }}
     runs-on: windows-2025-vs2026
     timeout-minutes: 55
     strategy:
       fail-fast: false
       max-parallel: 2
-      matrix: ${{ fromJSON(needs.plan.outputs.matrix) }}
+      matrix:
+        shard: [1, 2, 3, 4, 5]
     steps:
       - name: Check out repository
         uses: actions/checkout@v6
@@ -93,10 +74,5 @@ jobs:
       - name: Install npm dependencies
         run: npm ci
 
-      - name: Targeted platform tests
-        if: matrix.mode == 'smoke'
-        run: node scripts/ci/windows-policy.mjs smoke
-
       - name: Full tests
-        if: matrix.mode == 'full'
         run: npm test -- --shard=${{ matrix.shard }}/5

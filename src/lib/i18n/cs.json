@@ -10385,6 +10385,9 @@
     "Marla the smith": "Kovářka Marla",
     "Overturned cart": "Převrácený vůz",
     "{name}: details": "{name}: podrobnosti",
+    "{rider} on {mount}: details": "{rider} na {mount}: podrobnosti",
+    "{name}: conditions": "{name}: stavy",
+    "Riding {mount}": "Jede na: {mount}",
     "Next conditions": "Další stavy",
     "+{count} more: ": "+{count} dalších: ",
     "the next player": "další hráč",
@@ -14594,6 +14597,9 @@
     "Unlimited": "Neomezený"
   },
   "contexts": {
+    "rider": {
+      "roll.note": "dodatečný účinek"
+    },
     "Coordinate": {"lead.floor.coordinate":"Naplánovat společnou akci"},
     "The floor": {"lead.floor.title":"Řízení tahů"},
     "Floor mode": {"lead.floor.mode":"Režim řízení tahů"},
