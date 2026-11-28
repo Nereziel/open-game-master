@@ -20,6 +20,9 @@ import { expansionTranslation } from "./expansion-identity";
 export type LocalizedNamesTable =
   | "spells"
   | "weapons"
+  // A creature's attack by its name ("Bite"), as its stat block has it: read
+  // only for a roll's creature action (src/lib/roll-words.ts).
+  | "actions"
   | "armor"
   | "gear"
   | "magicitems"

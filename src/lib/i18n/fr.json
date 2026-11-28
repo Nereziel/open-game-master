@@ -12433,6 +12433,9 @@
     "reroll up to {dice} of the damage dice and keep the new rolls (Empowered Spell)": "relance jusqu’à {dice} des dés de dégâts et garde les nouveaux résultats (Empowered Spell)"
   },
   "contexts": {
+    "rider": {
+      "roll.note": "effet additionnel"
+    },
     "{count} {label}": {
       "tool-choice-count": "{count} × {label}"
     },
